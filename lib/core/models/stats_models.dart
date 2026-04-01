@@ -1,0 +1,199 @@
+/// 统计数据模型集合
+///
+/// 定义了应用中各类统计和指标的数据模型：
+///
+/// - [CatchStats]: 基础的捕获统计（总数、放流数、保留数、放流率）
+///   用于简单的统计展示场景
+///
+/// - [DashboardData]: 仪表盘综合数据
+///   聚合了今日、本月、本年、全部的统计数据和鱼种分布
+///   以及最大的3条渔获记录
+///
+/// - [EquipmentCatchStats]: 单个钓具的捕获统计
+///   用于分析特定钓具的捕获效果
+///
+/// - [AchievementMetrics]: 成就系统指标集合
+///   包含30+个指标字段，用于追踪用户成就进度
+///   涵盖：捕获数量、尺寸、物种、装备、时间段、早晚捕获等多维度数据
+///
+/// 设计特点：
+/// - CatchStats 使用简单的数值字段，便于计算和展示
+/// - AchievementMetrics 使用默认值，支持增量更新
+
+class CatchStats {
+  final int total;
+  final int release;
+  final int keep;
+
+  const CatchStats({
+    required this.total,
+    required this.release,
+    required this.keep,
+  });
+
+  double get releaseRate => total > 0 ? release / total : 0.0;
+
+  factory CatchStats.fromMap(Map<String, dynamic> map) {
+    return CatchStats(
+      total: map['total'] as int? ?? 0,
+      release: map['release'] as int? ?? 0,
+      keep: map['keep'] as int? ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {'total': total, 'release': release, 'keep': keep};
+  }
+
+  CatchStats copyWith({int? total, int? release, int? keep}) {
+    return CatchStats(
+      total: total ?? this.total,
+      release: release ?? this.release,
+      keep: keep ?? this.keep,
+    );
+  }
+}
+
+class DashboardData {
+  final CatchStats todayStats;
+  final Map<String, int> todaySpecies;
+  final CatchStats monthStats;
+  final Map<String, int> monthSpecies;
+  final CatchStats yearStats;
+  final Map<String, int> yearSpecies;
+  final CatchStats allStats;
+  final Map<String, int> allSpecies;
+  final List<Map<String, dynamic>> top3Longest;
+
+  const DashboardData({
+    required this.todayStats,
+    required this.todaySpecies,
+    required this.monthStats,
+    required this.monthSpecies,
+    required this.yearStats,
+    required this.yearSpecies,
+    required this.allStats,
+    required this.allSpecies,
+    required this.top3Longest,
+  });
+}
+
+class EquipmentCatchStats {
+  final int equipmentId;
+  final int catchCount;
+  final double? avgLength;
+  final double? avgWeight;
+  final int releaseCount;
+
+  const EquipmentCatchStats({
+    required this.equipmentId,
+    required this.catchCount,
+    this.avgLength,
+    this.avgWeight,
+    this.releaseCount = 0,
+  });
+
+  factory EquipmentCatchStats.fromMap(Map<String, dynamic> map) {
+    return EquipmentCatchStats(
+      equipmentId: map['equipment_id'] as int? ?? 0,
+      catchCount: map['catch_count'] as int? ?? 0,
+      avgLength: map['avg_length'] as double?,
+      avgWeight: map['avg_weight'] as double?,
+      releaseCount: map['release_count'] as int? ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'equipment_id': equipmentId,
+      'catch_count': catchCount,
+      'avg_length': avgLength,
+      'avg_weight': avgWeight,
+      'release_count': releaseCount,
+    };
+  }
+}
+
+class AchievementMetrics {
+  final int totalCatches;
+  final double maxLength;
+  final int speciesCount;
+  final int equipmentCount;
+  final int locationCount;
+  final int releaseCount;
+  final double releaseRate;
+  final int consecutiveDays;
+  final int monthlyMax;
+  final int dailyMax;
+  final int morningCatches;
+  final int nightCatches;
+  final int photoCount;
+  final double totalWeight;
+  final int equipmentComboMax;
+  final bool equipmentFull;
+  final bool newRecord;
+  final int shareCount;
+
+  const AchievementMetrics({
+    this.totalCatches = 0,
+    this.maxLength = 0.0,
+    this.speciesCount = 0,
+    this.equipmentCount = 0,
+    this.locationCount = 0,
+    this.releaseCount = 0,
+    this.releaseRate = 0.0,
+    this.consecutiveDays = 0,
+    this.monthlyMax = 0,
+    this.dailyMax = 0,
+    this.morningCatches = 0,
+    this.nightCatches = 0,
+    this.photoCount = 0,
+    this.totalWeight = 0.0,
+    this.equipmentComboMax = 0,
+    this.equipmentFull = false,
+    this.newRecord = false,
+    this.shareCount = 0,
+  });
+
+  AchievementMetrics copyWith({
+    int? totalCatches,
+    double? maxLength,
+    int? speciesCount,
+    int? equipmentCount,
+    int? locationCount,
+    int? releaseCount,
+    double? releaseRate,
+    int? consecutiveDays,
+    int? monthlyMax,
+    int? dailyMax,
+    int? morningCatches,
+    int? nightCatches,
+    int? photoCount,
+    double? totalWeight,
+    int? equipmentComboMax,
+    bool? equipmentFull,
+    bool? newRecord,
+    int? shareCount,
+  }) {
+    return AchievementMetrics(
+      totalCatches: totalCatches ?? this.totalCatches,
+      maxLength: maxLength ?? this.maxLength,
+      speciesCount: speciesCount ?? this.speciesCount,
+      equipmentCount: equipmentCount ?? this.equipmentCount,
+      locationCount: locationCount ?? this.locationCount,
+      releaseCount: releaseCount ?? this.releaseCount,
+      releaseRate: releaseRate ?? this.releaseRate,
+      consecutiveDays: consecutiveDays ?? this.consecutiveDays,
+      monthlyMax: monthlyMax ?? this.monthlyMax,
+      dailyMax: dailyMax ?? this.dailyMax,
+      morningCatches: morningCatches ?? this.morningCatches,
+      nightCatches: nightCatches ?? this.nightCatches,
+      photoCount: photoCount ?? this.photoCount,
+      totalWeight: totalWeight ?? this.totalWeight,
+      equipmentComboMax: equipmentComboMax ?? this.equipmentComboMax,
+      equipmentFull: equipmentFull ?? this.equipmentFull,
+      newRecord: newRecord ?? this.newRecord,
+      shareCount: shareCount ?? this.shareCount,
+    );
+  }
+}

@@ -1,0 +1,320 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../models/fish_catch.dart';
+import '../models/fish_filter.dart';
+import '../models/app_settings.dart';
+import '../di/di.dart';
+import '../services/fish_catch_service.dart';
+
+class FishListState {
+  final List<FishCatch> catches;
+  final List<FishCatch> filteredCatches;
+  final FishFilter filter;
+  final bool isLoading;
+  final String? errorMessage;
+  final Set<int> selectedIds;
+  final bool isSelectionMode;
+  final bool filterExpanded;
+  final int currentPage;
+  final bool hasMore;
+  final int totalCount;
+  final UnitSettings? displayUnits;
+
+  const FishListState({
+    this.catches = const [],
+    this.filteredCatches = const [],
+    this.filter = const FishFilter(),
+    this.isLoading = false,
+    this.errorMessage,
+    this.selectedIds = const {},
+    this.isSelectionMode = false,
+    this.filterExpanded = true,
+    this.currentPage = 0,
+    this.hasMore = true,
+    this.totalCount = 0,
+    this.displayUnits,
+  });
+
+  FishListState copyWith({
+    List<FishCatch>? catches,
+    List<FishCatch>? filteredCatches,
+    FishFilter? filter,
+    bool? isLoading,
+    String? Function()? errorMessage,
+    Set<int>? selectedIds,
+    bool? isSelectionMode,
+    bool? filterExpanded,
+    int? currentPage,
+    bool? hasMore,
+    int? totalCount,
+    UnitSettings? displayUnits,
+  }) {
+    return FishListState(
+      catches: catches ?? this.catches,
+      filteredCatches: filteredCatches ?? this.filteredCatches,
+      filter: filter ?? this.filter,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
+      selectedIds: selectedIds ?? this.selectedIds,
+      isSelectionMode: isSelectionMode ?? this.isSelectionMode,
+      filterExpanded: filterExpanded ?? this.filterExpanded,
+      currentPage: currentPage ?? this.currentPage,
+      hasMore: hasMore ?? this.hasMore,
+      totalCount: totalCount ?? this.totalCount,
+      displayUnits: displayUnits ?? this.displayUnits,
+    );
+  }
+
+  List<String> get uniqueSpecies {
+    final species = <String>{};
+    for (final fish in catches) {
+      species.add(fish.species);
+    }
+    return species.toList()..sort();
+  }
+
+  bool get hasFilters =>
+      filter.timeFilter != 'all' ||
+      filter.fateFilter != null ||
+      filter.speciesFilter != null ||
+      filter.customStartDate != null ||
+      filter.sortBy != 'time' ||
+      (filter.searchQuery?.isNotEmpty ?? false);
+
+  String getCustomDateLabel(String Function() getString) {
+    if (filter.customStartDate == null || filter.customEndDate == null) {
+      return getString();
+    }
+    final start = filter.customStartDate!;
+    final end = filter.customEndDate!.subtract(const Duration(days: 1));
+    return '${start.month}/${start.day} - ${end.month}/${end.day}';
+  }
+}
+
+class FishListViewModel extends StateNotifier<FishListState> {
+  final FishCatchService _fishCatchService;
+
+  FishListViewModel(this._fishCatchService) : super(const FishListState());
+
+  Future<void> loadCatches({bool reset = false, UnitSettings? units}) async {
+    if (reset) {
+      state = state.copyWith(
+        currentPage: 0,
+        hasMore: true,
+        filteredCatches: const [],
+        catches: const [],
+        displayUnits: units,
+      );
+    }
+
+    state = state.copyWith(
+      isLoading: true,
+      errorMessage: () => null,
+      displayUnits: units,
+    );
+    try {
+      const pageSize = 20;
+      final page = reset ? 1 : state.currentPage + 1;
+
+      List<FishCatch> newCatches;
+      int totalCount;
+      if (state.hasFilters) {
+        final result = await _fishCatchService.getFilteredPage(
+          page: page,
+          pageSize: pageSize,
+          startDate: state.filter.timeFilter == 'custom'
+              ? state.filter.customStartDate
+              : null,
+          endDate: state.filter.timeFilter == 'custom'
+              ? state.filter.customEndDate
+              : null,
+          fate: state.filter.fateFilter,
+          species: state.filter.speciesFilter,
+          orderBy: _getOrderBy(state.filter.sortBy, state.filter.sortAsc),
+        );
+        newCatches = result.items;
+        totalCount = result.totalCount;
+      } else {
+        final result = await _fishCatchService.getPage(
+          page: page,
+          pageSize: pageSize,
+          orderBy: _getOrderBy(state.filter.sortBy, state.filter.sortAsc),
+        );
+        newCatches = result.items;
+        totalCount = result.totalCount;
+      }
+      final allCatches = reset ? newCatches : [...state.catches, ...newCatches];
+      final filtered = _applyFilters(
+        allCatches,
+        state.filter,
+        state.displayUnits,
+      );
+
+      state = state.copyWith(
+        catches: allCatches,
+        filteredCatches: filtered,
+        isLoading: false,
+        currentPage: reset ? 1 : state.currentPage + 1,
+        hasMore: newCatches.length == pageSize,
+        totalCount: totalCount,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: () => e.toString(),
+      );
+    }
+  }
+
+  static const _sortToColumn = {
+    'length': 'length',
+    'weight': 'weight',
+    'time': 'catch_time',
+  };
+
+  String _getOrderBy(String sortBy, bool sortAsc) {
+    final column = _sortToColumn[sortBy] ?? 'catch_time';
+    return '$column ${sortAsc ? 'ASC' : 'DESC'}';
+  }
+
+  // Apply all filters to a list of catches (used after pagination)
+  List<FishCatch> _applyFilters(
+    List<FishCatch> catches,
+    FishFilter filter,
+    UnitSettings? units,
+  ) {
+    var result = catches;
+
+    if (filter.searchQuery != null && filter.searchQuery!.isNotEmpty) {
+      result = result.searchByKeyword(filter.searchQuery!);
+    }
+
+    result = result.filterByTime(filter.timeFilter);
+
+    if (filter.timeFilter == 'custom' &&
+        filter.customStartDate != null &&
+        filter.customEndDate != null) {
+      result = result.where((fish) {
+        return !fish.catchTime.isBefore(filter.customStartDate!) &&
+            fish.catchTime.isBefore(filter.customEndDate!);
+      }).toList();
+    }
+
+    if (filter.fateFilter != null) {
+      result = result.filterByFate(filter.fateFilter);
+    }
+
+    if (filter.speciesFilter != null) {
+      result = result.filterBySpecies(filter.speciesFilter);
+    }
+
+    result = result.sortBy(filter.sortBy, filter.sortAsc, units);
+    return result;
+  }
+
+  void setTimeFilter(String filter) {
+    final newFilter = state.filter.copyWith(timeFilter: filter);
+    _updateFilter(newFilter);
+  }
+
+  void setFateFilter(FishFateType? fate) {
+    final newFilter = state.filter.copyWith(fateFilter: () => fate);
+    _updateFilter(newFilter);
+  }
+
+  void setSpeciesFilter(String? species) {
+    final newFilter = state.filter.copyWith(speciesFilter: () => species);
+    _updateFilter(newFilter);
+  }
+
+  void setSortBy(String sortBy, {bool? ascending}) {
+    final newFilter = state.filter.copyWith(
+      sortBy: sortBy,
+      sortAsc: ascending ??
+          (state.filter.sortBy == sortBy ? !state.filter.sortAsc : false),
+    );
+    _updateFilter(newFilter);
+  }
+
+  void setCustomDateRange(DateTime? start, DateTime? end) {
+    final newFilter = state.filter.copyWith(
+      timeFilter: 'custom',
+      customStartDate: () => start,
+      customEndDate: () => end,
+    );
+    _updateFilter(newFilter);
+  }
+
+  void setSearchQuery(String? query) {
+    final newFilter = state.filter.copyWith(searchQuery: () => query);
+    _updateFilter(newFilter);
+  }
+
+  void toggleFilterExpanded() {
+    state = state.copyWith(filterExpanded: !state.filterExpanded);
+  }
+
+  void clearFilters() {
+    _updateFilter(const FishFilter());
+  }
+
+  Future<void> loadMore() async {
+    if (state.isLoading || !state.hasMore) return;
+    await loadCatches(units: state.displayUnits);
+  }
+
+  void _updateFilter(FishFilter filter) {
+    state = state.copyWith(filter: filter);
+    loadCatches(reset: true);
+  }
+
+  void toggleSelectionMode() {
+    state = state.copyWith(
+      isSelectionMode: !state.isSelectionMode,
+      selectedIds: state.isSelectionMode ? <int>{} : state.selectedIds,
+    );
+  }
+
+  void toggleSelection(int id) {
+    final newSelected = Set<int>.from(state.selectedIds);
+    if (newSelected.contains(id)) {
+      newSelected.remove(id);
+    } else {
+      newSelected.add(id);
+    }
+    state = state.copyWith(selectedIds: newSelected);
+  }
+
+  void selectAll() {
+    final allIds = state.filteredCatches.map((f) => f.id).toSet();
+    state = state.copyWith(selectedIds: allIds);
+  }
+
+  Future<void> deleteSelected() async {
+    if (state.selectedIds.isEmpty) return;
+
+    try {
+      await _fishCatchService.deleteMultiple(state.selectedIds.toList());
+      state = state.copyWith(selectedIds: <int>{}, isSelectionMode: false);
+      await loadCatches(units: state.displayUnits);
+    } catch (e) {
+      state = state.copyWith(errorMessage: () => e.toString());
+    }
+  }
+
+  void onScroll(double offset, double lastOffset) {
+    if (offset <= 0) {
+      if (!state.filterExpanded) {
+        state = state.copyWith(filterExpanded: true);
+      }
+    } else if (offset > lastOffset + 5) {
+      if (state.filterExpanded) {
+        state = state.copyWith(filterExpanded: false);
+      }
+    }
+  }
+}
+
+final fishListViewModelProvider =
+    StateNotifierProvider<FishListViewModel, FishListState>((ref) {
+  return FishListViewModel(ref.read(fishCatchServiceProvider));
+});

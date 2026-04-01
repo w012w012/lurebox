@@ -1,0 +1,572 @@
+import 'dart:io';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/constants/strings.dart';
+import '../../core/models/watermark_settings.dart';
+import '../../core/providers/language_provider.dart';
+import '../../core/providers/app_settings_provider.dart';
+import '../../core/providers/watermark_provider.dart';
+import '../../core/utils/unit_converter.dart';
+import '../../core/services/weather_service.dart';
+import '../../widgets/common/image_cache_helper.dart';
+
+/// 带水印的图片 Widget
+class WatermarkedImage extends ConsumerWidget {
+  final String imagePath;
+  final String species;
+  final double length;
+  final double? weight;
+  final String? lengthUnit;
+  final String? weightUnit;
+  final String? locationName;
+  final DateTime? catchTime;
+  final String? rodName;
+  final String? reelName;
+  final String? lureName;
+  final String? rodBrand;
+  final String? rodModel;
+  final String? rodMaterial;
+  final String? rodLength;
+  final String? rodLengthUnit;
+  final String? rodHardness;
+  final String? rodAction;
+  final String? reelBrand;
+  final String? reelModel;
+  final String? reelRatio;
+  final String? lureBrand;
+  final String? lureModel;
+  final String? lureSize;
+  final String? lureSizeUnit;
+  final String? lureColor;
+  final double? airTemperature;
+  final double? pressure;
+  final int? weatherCode;
+  final BoxFit fit;
+  final int? cacheWidth;
+  final int? cacheHeight;
+  final Widget Function(BuildContext, Object, StackTrace?)? errorBuilder;
+
+  const WatermarkedImage({
+    super.key,
+    required this.imagePath,
+    required this.species,
+    required this.length,
+    this.weight,
+    this.lengthUnit,
+    this.weightUnit,
+    this.locationName,
+    this.catchTime,
+    this.rodName,
+    this.reelName,
+    this.lureName,
+    this.rodBrand,
+    this.rodModel,
+    this.rodMaterial,
+    this.rodLength,
+    this.rodLengthUnit,
+    this.rodHardness,
+    this.rodAction,
+    this.reelBrand,
+    this.reelModel,
+    this.reelRatio,
+    this.lureBrand,
+    this.lureModel,
+    this.lureSize,
+    this.lureSizeUnit,
+    this.lureColor,
+    this.airTemperature,
+    this.pressure,
+    this.weatherCode,
+    this.fit = BoxFit.cover,
+    this.cacheWidth,
+    this.cacheHeight,
+    this.errorBuilder,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(watermarkSettingsProvider);
+    final strings = ref.watch(currentStringsProvider);
+    final appSettings = ref.watch(appSettingsProvider);
+    final displayUnits = appSettings.units;
+
+    // 转换长度和重量到当前显示单位
+    final double displayLength = lengthUnit != null
+        ? UnitConverter.convertLength(
+            length,
+            lengthUnit!,
+            displayUnits.fishLengthUnit,
+          )
+        : length;
+    final double? displayWeight = weight != null && weightUnit != null
+        ? UnitConverter.convertWeight(
+            weight!,
+            weightUnit!,
+            displayUnits.fishWeightUnit,
+          )
+        : weight;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            // 原图
+            Image(
+              image: ImageCacheHelper.getCachedThumbnailProvider(
+                imagePath,
+                width: cacheWidth,
+                height: cacheHeight,
+              ),
+              fit: fit,
+              errorBuilder: errorBuilder,
+            ),
+            // 水印层
+            if (settings.enabled)
+              CustomPaint(
+                size: Size(constraints.maxWidth, constraints.maxHeight),
+                painter: WatermarkPainter(
+                  species: species,
+                  length: length,
+                  weight: weight,
+                  lengthUnit: lengthUnit,
+                  weightUnit: weightUnit,
+                  locationName: locationName,
+                  catchTime: catchTime,
+                  rodName: rodName,
+                  reelName: reelName,
+                  lureName: lureName,
+                  rodBrand: rodBrand,
+                  rodModel: rodModel,
+                  rodMaterial: rodMaterial,
+                  rodLength: rodLength,
+                  rodLengthUnit: rodLengthUnit,
+                  rodHardness: rodHardness,
+                  rodAction: rodAction,
+                  reelBrand: reelBrand,
+                  reelModel: reelModel,
+                  reelRatio: reelRatio,
+                  lureBrand: lureBrand,
+                  lureModel: lureModel,
+                  lureSize: lureSize,
+                  lureSizeUnit: lureSizeUnit,
+                  lureColor: lureColor,
+                  airTemperature: airTemperature,
+                  pressure: pressure,
+                  weatherCode: weatherCode,
+                  settings: settings,
+                  strings: strings,
+                  displayLength: displayLength,
+                  displayWeight: displayWeight,
+                  displayLengthUnit: displayUnits.fishLengthUnit,
+                  displayWeightUnit: displayUnits.fishWeightUnit,
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// 水印绘制器
+class WatermarkPainter extends CustomPainter {
+  final String species;
+  final double length;
+  final double? weight;
+  final String? lengthUnit;
+  final String? weightUnit;
+  final String? locationName;
+  final DateTime? catchTime;
+  final String? rodName;
+  final String? reelName;
+  final String? lureName;
+  final String? rodBrand;
+  final String? rodModel;
+  final String? rodMaterial;
+  final String? rodLength;
+  final String? rodLengthUnit;
+  final String? rodHardness;
+  final String? rodAction;
+  final String? reelBrand;
+  final String? reelModel;
+  final String? reelRatio;
+  final String? lureBrand;
+  final String? lureModel;
+  final String? lureSize;
+  final String? lureSizeUnit;
+  final String? lureColor;
+  final double? airTemperature;
+  final double? pressure;
+  final int? weatherCode;
+  final WatermarkSettings settings;
+  final AppStrings strings;
+  final double displayLength;
+  final double? displayWeight;
+  final String displayLengthUnit;
+  final String displayWeightUnit;
+
+  WatermarkPainter({
+    required this.species,
+    required this.length,
+    this.weight,
+    this.lengthUnit,
+    this.weightUnit,
+    this.locationName,
+    this.catchTime,
+    this.rodName,
+    this.reelName,
+    this.lureName,
+    this.rodBrand,
+    this.rodModel,
+    this.rodMaterial,
+    this.rodLength,
+    this.rodLengthUnit,
+    this.rodHardness,
+    this.rodAction,
+    this.reelBrand,
+    this.reelModel,
+    this.reelRatio,
+    this.lureBrand,
+    this.lureModel,
+    this.lureSize,
+    this.lureSizeUnit,
+    this.lureColor,
+    this.airTemperature,
+    this.pressure,
+    this.weatherCode,
+    required this.settings,
+    required this.strings,
+    required this.displayLength,
+    this.displayWeight,
+    required this.displayLengthUnit,
+    required this.displayWeightUnit,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 构建水印文本列表
+    final waterLines = _buildWatermarkLines();
+    if (waterLines.isEmpty) return;
+
+    // 使用简约左下样式绘制水印
+    _drawMinimal(canvas, size, waterLines);
+  }
+
+  List<String> _buildWatermarkLines() {
+    final List<String> lines = [];
+
+    for (final type in settings.infoTypes) {
+      if (type == WatermarkInfoType.appName) continue; // App名称最后处理
+
+      switch (type) {
+        case WatermarkInfoType.species:
+          if (species.isNotEmpty) lines.add('${strings.species}：$species');
+          break;
+        case WatermarkInfoType.length:
+          lines.add(
+            '${strings.length}：${displayLength.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayLengthUnit)}',
+          );
+          break;
+        case WatermarkInfoType.weight:
+          if (displayWeight != null) {
+            lines.add(
+              '${strings.weight}：${displayWeight!.toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(displayWeightUnit)}',
+            );
+          }
+          break;
+        case WatermarkInfoType.location:
+          if (locationName != null && locationName!.isNotEmpty) {
+            lines.add('${strings.location}：$locationName');
+          }
+          break;
+        case WatermarkInfoType.rod:
+          if (rodBrand != null && rodBrand!.isNotEmpty) {
+            final rodParts = <String>[];
+            if (rodBrand != null && rodBrand!.isNotEmpty)
+              rodParts.add(rodBrand!);
+            if (rodModel != null && rodModel!.isNotEmpty)
+              rodParts.add(rodModel!);
+            if (rodLength != null && rodLength!.isNotEmpty) {
+              final lengthValue = double.tryParse(rodLength!) ?? 0.0;
+              final lengthUnit = rodLengthUnit ?? 'm';
+              rodParts.add('${lengthValue.toStringAsFixed(2)} $lengthUnit');
+            }
+            if (rodHardness != null && rodHardness!.isNotEmpty)
+              rodParts.add(rodHardness!);
+            if (rodAction != null && rodAction!.isNotEmpty)
+              rodParts.add(rodAction!);
+            if (rodParts.isNotEmpty)
+              lines.add('${strings.rod}：${rodParts.join(' / ')}');
+          } else if (rodName != null && rodName!.isNotEmpty) {
+            lines.add('${strings.rod}：$rodName');
+          }
+          break;
+        case WatermarkInfoType.reel:
+          if (reelBrand != null && reelBrand!.isNotEmpty) {
+            final reelParts = <String>[];
+            if (reelBrand != null && reelBrand!.isNotEmpty)
+              reelParts.add(reelBrand!);
+            if (reelModel != null && reelModel!.isNotEmpty)
+              reelParts.add(reelModel!);
+            if (reelRatio != null && reelRatio!.isNotEmpty)
+              reelParts.add(reelRatio!);
+            if (reelParts.isNotEmpty)
+              lines.add('${strings.reel}：${reelParts.join(' / ')}');
+          } else if (reelName != null && reelName!.isNotEmpty) {
+            lines.add('${strings.reel}：$reelName');
+          }
+          break;
+        case WatermarkInfoType.lure:
+          if (lureBrand != null && lureBrand!.isNotEmpty) {
+            final lureParts = <String>[];
+            if (lureBrand != null && lureBrand!.isNotEmpty)
+              lureParts.add(lureBrand!);
+            if (lureModel != null && lureModel!.isNotEmpty)
+              lureParts.add(lureModel!);
+            if (lureSize != null && lureSize!.isNotEmpty) {
+              final sizeUnit = lureSizeUnit ?? 'cm';
+              lureParts.add('${lureSize} ${sizeUnit}');
+            }
+            if (lureColor != null && lureColor!.isNotEmpty)
+              lureParts.add(lureColor!);
+            if (lureParts.isNotEmpty)
+              lines.add('${strings.lure}：${lureParts.join(' / ')}');
+          } else if (lureName != null && lureName!.isNotEmpty) {
+            lines.add('${strings.lure}：$lureName');
+          }
+          break;
+        case WatermarkInfoType.reel:
+          if (reelName != null && reelName!.isNotEmpty) {
+            lines.add('${strings.reel}：$reelName');
+          } else if (reelBrand != null && reelBrand!.isNotEmpty) {
+            final reelParts = <String>[];
+            if (reelBrand != null && reelBrand!.isNotEmpty)
+              reelParts.add(reelBrand!);
+            if (reelModel != null && reelModel!.isNotEmpty)
+              reelParts.add(reelModel!);
+            if (reelRatio != null && reelRatio!.isNotEmpty)
+              reelParts.add(reelRatio!);
+            if (reelParts.isNotEmpty)
+              lines.add('${strings.reel}：${reelParts.join(' / ')}');
+          }
+          break;
+        case WatermarkInfoType.lure:
+          if (lureName != null && lureName!.isNotEmpty) {
+            lines.add('${strings.lure}：$lureName');
+          } else if (lureBrand != null && lureBrand!.isNotEmpty) {
+            final lureParts = <String>[];
+            if (lureBrand != null && lureBrand!.isNotEmpty)
+              lureParts.add(lureBrand!);
+            if (lureModel != null && lureModel!.isNotEmpty)
+              lureParts.add(lureModel!);
+            if (lureSize != null && lureSize!.isNotEmpty)
+              lureParts.add(lureSize!);
+            if (lureColor != null && lureColor!.isNotEmpty)
+              lureParts.add(lureColor!);
+            if (lureParts.isNotEmpty)
+              lines.add('${strings.lure}：${lureParts.join(' / ')}');
+          }
+          break;
+        case WatermarkInfoType.time:
+          if (catchTime != null) {
+            final timeStr =
+                '${catchTime!.year}-${catchTime!.month.toString().padLeft(2, '0')}-${catchTime!.day.toString().padLeft(2, '0')} ${catchTime!.hour.toString().padLeft(2, '0')}:${catchTime!.minute.toString().padLeft(2, '0')}';
+            lines.add('${strings.time}：$timeStr');
+          }
+          break;
+        case WatermarkInfoType.airTemperature:
+          if (airTemperature != null) {
+            lines.add('气温：${airTemperature!.toStringAsFixed(1)}°C');
+          }
+          break;
+        case WatermarkInfoType.pressure:
+          if (pressure != null) {
+            lines.add('气压：${pressure!.toStringAsFixed(0)}hPa');
+          }
+          break;
+        case WatermarkInfoType.weather:
+          if (weatherCode != null) {
+            final weatherDesc = getWeatherDescription(weatherCode);
+            if (weatherDesc.isNotEmpty) {
+              lines.add('天气：$weatherDesc');
+            }
+          }
+          break;
+        case WatermarkInfoType.appName:
+          // 已在上面处理
+          break;
+      }
+    }
+
+    // App名称放在最后
+    if (settings.infoTypes.contains(WatermarkInfoType.appName)) {
+      lines.add(strings.fromLureBox);
+    }
+
+    return lines;
+  }
+
+  /// 简约左下水印（逐行显示）
+  void _drawMinimal(Canvas canvas, Size size, List<String> lines) {
+    // 使用图片宽度作为基准计算字号，确保水印大小与图片比例一致
+    final baseFontSize = size.width * 0.032;
+    final lineHeight = baseFontSize * 1.5;
+
+    // 使用相对值计算padding，确保在不同尺寸图片上位置一致
+    final paddingBottom = size.height * 0.05; // 图片高度的 5%
+    final paddingLeft = size.width * 0.03; // 图片宽度的 3%
+
+    // 计算起始位置（从下往上绘制，确保最后一行位置固定）
+    double y = size.height - paddingBottom - lineHeight;
+
+    // 从最后一行往上绘制
+    for (int i = lines.length - 1; i >= 0; i--) {
+      final line = lines[i];
+      final isAppName = line.startsWith('--');
+      final textPainter = TextPainter(
+        text: TextSpan(
+          text: line,
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.9),
+            fontSize: isAppName ? baseFontSize * 0.85 : baseFontSize,
+            fontWeight: isAppName ? FontWeight.normal : FontWeight.w500,
+            shadows: [
+              Shadow(
+                color: Colors.black.withOpacity(0.6),
+                blurRadius: size.width * 0.01,
+              ),
+            ],
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      );
+      textPainter.layout();
+      textPainter.paint(canvas, Offset(paddingLeft, y));
+      y -= lineHeight;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant WatermarkPainter oldDelegate) {
+    return settings != oldDelegate.settings ||
+        species != oldDelegate.species ||
+        length != oldDelegate.length ||
+        weight != oldDelegate.weight ||
+        locationName != oldDelegate.locationName ||
+        catchTime != oldDelegate.catchTime ||
+        rodName != oldDelegate.rodName ||
+        reelName != oldDelegate.reelName ||
+        lureName != oldDelegate.lureName ||
+        strings != oldDelegate.strings;
+  }
+}
+
+/// 用于导出带水印图片的工具类
+class WatermarkExporter {
+  /// 生成带水印的临时图片
+  static Future<String?> exportWatermarkedImage({
+    required String imagePath,
+    required String species,
+    required double length,
+    double? weight,
+    String? lengthUnit,
+    String? weightUnit,
+    String? locationName,
+    DateTime? catchTime,
+    String? rodName,
+    String? reelName,
+    String? lureName,
+    double? airTemperature,
+    double? pressure,
+    int? weatherCode,
+    required WatermarkSettings settings,
+    required AppStrings strings,
+    required double displayLength,
+    required double? displayWeight,
+    required String displayLengthUnit,
+    required String displayWeightUnit,
+  }) async {
+    try {
+      // 读取原图
+      final imageFile = File(imagePath);
+      final imageBytes = await imageFile.readAsBytes();
+      final codec = await ui.instantiateImageCodec(imageBytes);
+      final frame = await codec.getNextFrame();
+      final image = frame.image;
+
+      // 创建画布
+      final recorder = ui.PictureRecorder();
+      final canvas = Canvas(recorder);
+      final size = Size(image.width.toDouble(), image.height.toDouble());
+
+      // 绘制原图
+      canvas.drawImage(image, Offset.zero, Paint());
+
+      // 绘制水印
+      final painter = WatermarkPainter(
+        species: species,
+        length: length,
+        weight: weight,
+        lengthUnit: lengthUnit,
+        weightUnit: weightUnit,
+        locationName: locationName,
+        catchTime: catchTime,
+        rodName: rodName,
+        reelName: reelName,
+        lureName: lureName,
+        airTemperature: airTemperature,
+        pressure: pressure,
+        weatherCode: weatherCode,
+        settings: settings,
+        strings: strings,
+        displayLength: displayLength,
+        displayWeight: displayWeight,
+        displayLengthUnit: displayLengthUnit,
+        displayWeightUnit: displayWeightUnit,
+      );
+      painter.paint(canvas, size);
+
+      // 转换为图片
+      final picture = recorder.endRecording();
+      final img = await picture.toImage(image.width, image.height);
+      final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+      final pngBytes = byteData!.buffer.asUint8List();
+
+      // 保存临时文件
+      final tempDir = await Directory.systemTemp.createTemp('watermark');
+      final tempFile = File(
+        '${tempDir.path}/watermarked_${DateTime.now().millisecondsSinceEpoch}.png',
+      );
+      await tempFile.writeAsBytes(pngBytes);
+
+      return tempFile.path;
+    } catch (e) {
+      debugPrint('导出水印图片失败: $e');
+      return null;
+    }
+  }
+
+  /// 删除临时水印图片
+  static Future<void> deleteTempFile(String? path) async {
+    if (path == null) return;
+    try {
+      final file = File(path);
+      if (await file.exists()) {
+        await file.delete();
+      }
+      // 删除临时目录
+      final dir = file.parent;
+      if (await dir.exists()) {
+        final isEmpty = await dir.list().isEmpty;
+        if (isEmpty) {
+          await dir.delete();
+        }
+      }
+    } catch (e) {
+      debugPrint('删除临时文件失败: $e');
+    }
+  }
+}
