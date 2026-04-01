@@ -179,9 +179,17 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<double> getReleaseRate() async {
     try {
-      final total = await getTotalCatchCount();
+      final db = await DatabaseService.database;
+      // 优化：单次查询获取总数和放流数
+      final results = await db.rawQuery('''
+        SELECT
+          COUNT(*) as total,
+          SUM(CASE WHEN fate = 0 THEN 1 ELSE 0 END) as release
+        FROM fish_catches
+      ''');
+      final total = results.first['total'] as int? ?? 0;
       if (total == 0) return 0.0;
-      final release = await getReleaseCount();
+      final release = results.first['release'] as int? ?? 0;
       return release / total;
     } catch (e) {
       throw Exception('Failed to get release rate: $e');
@@ -357,33 +365,178 @@ class SqliteStatsRepository implements StatsRepository {
 
       final allStart = DateTime(2000, 1, 1);
 
+      // 优化：将 9 个查询合并为 3 个
       final results = await Future.wait([
-        getCatchStats(startDate: todayStart, endDate: todayEnd),
-        getSpeciesStats(startDate: todayStart, endDate: todayEnd),
-        getCatchStats(startDate: monthStart, endDate: monthEnd),
-        getSpeciesStats(startDate: monthStart, endDate: monthEnd),
-        getCatchStats(startDate: yearStart, endDate: yearEnd),
-        getSpeciesStats(startDate: yearStart, endDate: yearEnd),
-        getCatchStats(startDate: allStart, endDate: yearEnd),
-        getSpeciesStats(startDate: allStart, endDate: yearEnd),
+        _getAllPeriodCatchStats(
+          todayStart: todayStart,
+          todayEnd: todayEnd,
+          monthStart: monthStart,
+          monthEnd: monthEnd,
+          yearStart: yearStart,
+          yearEnd: yearEnd,
+          allStart: allStart,
+        ),
+        _getAllPeriodSpeciesStats(
+          todayStart: todayStart,
+          todayEnd: todayEnd,
+          monthStart: monthStart,
+          monthEnd: monthEnd,
+          yearStart: yearStart,
+          yearEnd: yearEnd,
+          allStart: allStart,
+        ),
         getTop3LongestCatches(),
       ]);
 
+      final catchStats = results[0] as Map<String, CatchStats>;
+      final speciesStats = results[1] as Map<String, Map<String, int>>;
+
       return DashboardData(
-        todayStats: results[0] as CatchStats,
-        todaySpecies: results[1] as Map<String, int>,
-        monthStats: results[2] as CatchStats,
-        monthSpecies: results[3] as Map<String, int>,
-        yearStats: results[4] as CatchStats,
-        yearSpecies: results[5] as Map<String, int>,
-        allStats: results[6] as CatchStats,
-        allSpecies: results[7] as Map<String, int>,
+        todayStats: catchStats['today']!,
+        todaySpecies: speciesStats['today'] ?? {},
+        monthStats: catchStats['month']!,
+        monthSpecies: speciesStats['month'] ?? {},
+        yearStats: catchStats['year']!,
+        yearSpecies: speciesStats['year'] ?? {},
+        allStats: catchStats['all']!,
+        allSpecies: speciesStats['all'] ?? {},
         top3Longest:
-            (results[8] as List<FishCatch>).map((f) => f.toMap()).toList(),
+            (results[2] as List<FishCatch>).map((f) => f.toMap()).toList(),
       );
     } catch (e) {
       throw Exception('Failed to get dashboard data: $e');
     }
+  }
+
+  /// 优化：单次查询获取所有时间段的渔获统计
+  Future<Map<String, CatchStats>> _getAllPeriodCatchStats({
+    required DateTime todayStart,
+    required DateTime todayEnd,
+    required DateTime monthStart,
+    required DateTime monthEnd,
+    required DateTime yearStart,
+    required DateTime yearEnd,
+    required DateTime allStart,
+  }) async {
+    final db = await DatabaseService.database;
+    final results = await db.rawQuery('''
+      SELECT
+        COUNT(*) as all_total,
+        SUM(CASE WHEN fate = 0 THEN 1 ELSE 0 END) as all_release,
+        SUM(CASE WHEN fate = 1 THEN 1 ELSE 0 END) as all_keep,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as today_total,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = 0 THEN 1 ELSE 0 END) as today_release,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = 1 THEN 1 ELSE 0 END) as today_keep,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as month_total,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = 0 THEN 1 ELSE 0 END) as month_release,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = 1 THEN 1 ELSE 0 END) as month_keep,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as year_total,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = 0 THEN 1 ELSE 0 END) as year_release,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = 1 THEN 1 ELSE 0 END) as year_keep
+      FROM fish_catches
+    ''', [
+      todayStart.toIso8601String(),
+      todayEnd.toIso8601String(),
+      todayStart.toIso8601String(),
+      todayEnd.toIso8601String(),
+      todayStart.toIso8601String(),
+      todayEnd.toIso8601String(),
+      monthStart.toIso8601String(),
+      monthEnd.toIso8601String(),
+      monthStart.toIso8601String(),
+      monthEnd.toIso8601String(),
+      monthStart.toIso8601String(),
+      monthEnd.toIso8601String(),
+      yearStart.toIso8601String(),
+      yearEnd.toIso8601String(),
+      yearStart.toIso8601String(),
+      yearEnd.toIso8601String(),
+      yearStart.toIso8601String(),
+      yearEnd.toIso8601String(),
+    ]);
+
+    final row = results.first;
+    return {
+      'today': CatchStats(
+        total: row['today_total'] as int? ?? 0,
+        release: row['today_release'] as int? ?? 0,
+        keep: row['today_keep'] as int? ?? 0,
+      ),
+      'month': CatchStats(
+        total: row['month_total'] as int? ?? 0,
+        release: row['month_release'] as int? ?? 0,
+        keep: row['month_keep'] as int? ?? 0,
+      ),
+      'year': CatchStats(
+        total: row['year_total'] as int? ?? 0,
+        release: row['year_release'] as int? ?? 0,
+        keep: row['year_keep'] as int? ?? 0,
+      ),
+      'all': CatchStats(
+        total: row['all_total'] as int? ?? 0,
+        release: row['all_release'] as int? ?? 0,
+        keep: row['all_keep'] as int? ?? 0,
+      ),
+    };
+  }
+
+  /// 优化：批量获取所有时间段的物种统计
+  Future<Map<String, Map<String, int>>> _getAllPeriodSpeciesStats({
+    required DateTime todayStart,
+    required DateTime todayEnd,
+    required DateTime monthStart,
+    required DateTime monthEnd,
+    required DateTime yearStart,
+    required DateTime yearEnd,
+    required DateTime allStart,
+  }) async {
+    final db = await DatabaseService.database;
+    final results = await db.rawQuery('''
+      SELECT
+        species,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as today_count,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as month_count,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as year_count,
+        COUNT(*) as all_count
+      FROM fish_catches
+      GROUP BY species
+      ORDER BY all_count DESC
+      LIMIT 10
+    ''', [
+      todayStart.toIso8601String(),
+      todayEnd.toIso8601String(),
+      monthStart.toIso8601String(),
+      monthEnd.toIso8601String(),
+      yearStart.toIso8601String(),
+      yearEnd.toIso8601String(),
+    ]);
+
+    final todaySpecies = <String, int>{};
+    final monthSpecies = <String, int>{};
+    final yearSpecies = <String, int>{};
+    final allSpecies = <String, int>{};
+
+    for (final row in results) {
+      final species = row['species'] as String?;
+      if (species == null || species.isEmpty) continue;
+
+      final todayCount = row['today_count'] as int? ?? 0;
+      final monthCount = row['month_count'] as int? ?? 0;
+      final yearCount = row['year_count'] as int? ?? 0;
+      final allCount = row['all_count'] as int? ?? 0;
+
+      if (todayCount > 0) todaySpecies[species] = todayCount;
+      if (monthCount > 0) monthSpecies[species] = monthCount;
+      if (yearCount > 0) yearSpecies[species] = yearCount;
+      if (allCount > 0) allSpecies[species] = allCount;
+    }
+
+    return {
+      'today': todaySpecies,
+      'month': monthSpecies,
+      'year': yearSpecies,
+      'all': allSpecies,
+    };
   }
 
   @override

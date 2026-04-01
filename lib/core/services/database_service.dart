@@ -283,6 +283,10 @@ class DatabaseService {
     await db.execute(
       'CREATE INDEX IF NOT EXISTS idx_species_history_name ON species_history(name)',
     );
+    // pending_recognition 索引 - 优化待识别查询
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_fish_catches_pending ON fish_catches(pending_recognition)',
+    );
     // 复合索引优化常见筛选查询
     await db.execute(
       'CREATE INDEX IF NOT EXISTS idx_fish_catches_time_fate ON fish_catches(catch_time, fate)',
