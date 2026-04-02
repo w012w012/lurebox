@@ -9,7 +9,7 @@ import '../../core/constants/strings.dart';
 import '../../core/providers/fish_detail_view_model.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
-import '../../core/models/watermark_settings.dart';
+import '../../core/providers/watermark_provider.dart';
 import '../../core/utils/unit_converter.dart';
 import '../../features/common/watermarked_image.dart';
 import '../../widgets/common/premium_button.dart';
@@ -105,6 +105,10 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
                       lureSizeUnit:
                           state.lureEquipment?['lure_size_unit'] as String?,
                       lureColor: state.lureEquipment?['lure_color'] as String?,
+                      lureWeight:
+                          state.lureEquipment?['lure_weight'] as String?,
+                      lureWeightUnit:
+                          state.lureEquipment?['lure_weight_unit'] as String?,
                       airTemperature: fish['air_temperature'] as double?,
                       pressure: fish['pressure'] as double?,
                       weatherCode: fish['weather_code'] as int?,
@@ -298,10 +302,12 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
         lureSize: state.lureEquipment?['lure_size'] as String?,
         lureSizeUnit: state.lureEquipment?['lure_size_unit'] as String?,
         lureColor: state.lureEquipment?['lure_color'] as String?,
+        lureWeight: state.lureEquipment?['lure_weight'] as String?,
+        lureWeightUnit: state.lureEquipment?['lure_weight_unit'] as String?,
         airTemperature: fish['air_temperature'] as double?,
         pressure: fish['pressure'] as double?,
         weatherCode: fish['weather_code'] as int?,
-        settings: WatermarkSettings(),
+        settings: ref.read(watermarkSettingsProvider),
         strings: strings,
         displayLength: displayLength,
         displayWeight: displayWeight,

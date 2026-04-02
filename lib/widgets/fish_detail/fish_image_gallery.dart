@@ -28,6 +28,8 @@ class FishImageGallery extends StatelessWidget {
   final String? lureSize;
   final String? lureSizeUnit;
   final String? lureColor;
+  final String? lureWeight;
+  final String? lureWeightUnit;
   final double? airTemperature;
   final double? pressure;
   final int? weatherCode;
@@ -61,6 +63,8 @@ class FishImageGallery extends StatelessWidget {
     this.lureSize,
     this.lureSizeUnit,
     this.lureColor,
+    this.lureWeight,
+    this.lureWeightUnit,
     this.airTemperature,
     this.pressure,
     this.weatherCode,
@@ -100,6 +104,8 @@ class FishImageGallery extends StatelessWidget {
           lureSize: lureSize,
           lureSizeUnit: lureSizeUnit,
           lureColor: lureColor,
+          lureWeight: lureWeight,
+          lureWeightUnit: lureWeightUnit,
           airTemperature: airTemperature,
           pressure: pressure,
           weatherCode: weatherCode,
@@ -156,6 +162,8 @@ class FishImageGallery extends StatelessWidget {
                 lureSize: lureSize,
                 lureSizeUnit: lureSizeUnit,
                 lureColor: lureColor,
+                lureWeight: lureWeight,
+                lureWeightUnit: lureWeightUnit,
                 airTemperature: airTemperature,
                 pressure: pressure,
                 weatherCode: weatherCode,
