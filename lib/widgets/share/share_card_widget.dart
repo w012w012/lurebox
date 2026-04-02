@@ -72,9 +72,9 @@ class ShareCardWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (config.showWatermark) ...[
-          Text(
+          const Text(
             ShareCardConfig.watermark,
-            style: const TextStyle(
+            style: TextStyle(
               color: Color(0xFF4A9EFF),
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -115,9 +115,9 @@ class ShareCardWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (config.showWatermark)
-          Text(
+          const Text(
             ShareCardConfig.watermark,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               fontSize: 32,
               fontWeight: FontWeight.bold,
@@ -164,7 +164,7 @@ class ShareCardWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             if (config.showWatermark)
-              Text(
+              const Text(
                 ShareCardConfig.watermark,
                 style: TextStyle(
                   color: AppColors.grey800,
@@ -178,7 +178,7 @@ class ShareCardWidget extends StatelessWidget {
                         ? config.customHashtags
                         : ShareCardConfig.defaultHashtags)
                     .first,
-                style: TextStyle(color: AppColors.grey400, fontSize: 12),
+                style: const TextStyle(color: AppColors.grey400, fontSize: 12),
               ),
           ],
         ),
@@ -254,7 +254,7 @@ class ShareCardWidget extends StatelessWidget {
             children: [
               Text(
                 e.value.toString(),
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppColors.grey800,
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -262,7 +262,7 @@ class ShareCardWidget extends StatelessWidget {
               ),
               Text(
                 e.key,
-                style: TextStyle(color: AppColors.grey500, fontSize: 10),
+                style: const TextStyle(color: AppColors.grey500, fontSize: 10),
               ),
             ],
           ),

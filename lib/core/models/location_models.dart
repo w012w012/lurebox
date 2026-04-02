@@ -15,6 +15,7 @@
 /// - 在地图上显示钓点标记
 /// - 统计各钓点的捕获数据
 /// - 分析不同钓点的鱼类分布
+library;
 
 class LocationWithStats {
   final String name;

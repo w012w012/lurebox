@@ -48,7 +48,7 @@ class EquipmentListPage extends ConsumerWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.error, size: 48, color: AppColors.error),
+                      const Icon(Icons.error, size: 48, color: AppColors.error),
                       const SizedBox(height: 16),
                       Text('Error: ${state.errorMessage}'),
                       const SizedBox(height: 16),
@@ -135,7 +135,6 @@ class EquipmentListPage extends ConsumerWidget {
     String type,
     AppStrings strings,
   ) {
-    final state = ref.watch(equipmentListViewModelProvider);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

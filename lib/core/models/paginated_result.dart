@@ -23,6 +23,7 @@
 /// - 泛型设计，支持任意数据类型
 /// - 简洁的数据结构，易于理解和解析
 /// - hasMore 字段简化了"是否还有更多"的判断逻辑
+library;
 
 class PaginatedResult<T> {
   final List<T> items;

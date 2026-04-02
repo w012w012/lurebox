@@ -62,7 +62,6 @@ final statsRepositoryProvider = Provider<StatsRepository>((ref) {
 
 final locationServiceProvider = Provider<LocationService>((ref) {
   return LocationService(
-    ref.watch(locationRepositoryProvider),
     ref.watch(databaseProvider),
   );
 });

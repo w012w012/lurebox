@@ -172,7 +172,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
     if (widget.title.contains(strings.today)) {
       _trendTitle = strings.hourlyTrend;
       for (int h = 0; h < 24; h++) {
-        trendMap['${h}${strings.hour}'] = 0;
+        trendMap['$h${strings.hour}'] = 0;
       }
       for (final fish in catches) {
         final t = DateTime.parse(fish['catch_time'] as String);
@@ -183,7 +183,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
       _trendTitle = strings.dailyTrend;
       final daysInMonth = DateTime(now.year, now.month + 1, 0).day;
       for (int d = 1; d <= daysInMonth; d++) {
-        trendMap['${d}${strings.day}'] = 0;
+        trendMap['$d${strings.day}'] = 0;
       }
       for (final fish in catches) {
         final t = DateTime.parse(fish['catch_time'] as String);
@@ -195,7 +195,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
     } else if (widget.title.contains(strings.year)) {
       _trendTitle = strings.monthlyTrend;
       for (int m = 1; m <= 12; m++) {
-        trendMap['${m}${strings.monthUnit}'] = 0;
+        trendMap['$m${strings.monthUnit}'] = 0;
       }
       for (final fish in catches) {
         final t = DateTime.parse(fish['catch_time'] as String);
@@ -265,7 +265,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
           ? DateTime.parse(catches.last['catch_time'] as String).year
           : now.year;
       for (int y = startYear; y <= now.year; y++) {
-        trendMap['${y}${strings.yearUnit}'] = 0;
+        trendMap['$y${strings.yearUnit}'] = 0;
       }
       for (final fish in catches) {
         final t = DateTime.parse(fish['catch_time'] as String);

@@ -128,7 +128,7 @@ class CameraState {
       species: species ?? this.species,
       length: length ?? this.length,
       lengthUnit: lengthUnit ?? this.lengthUnit,
-      weight: weight != null ? weight : this.weight,
+      weight: weight ?? this.weight,
       weightUnit: weightUnit ?? this.weightUnit,
       fate: fate ?? this.fate,
       locationName: locationName != null ? locationName() : this.locationName,

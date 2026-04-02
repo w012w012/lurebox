@@ -29,7 +29,7 @@ class EquipmentOverviewPage extends ConsumerStatefulWidget {
 class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
   final GlobalKey _repaintBoundaryKey = GlobalKey();
   bool _isSharing = false;
-  int _selectedCatchTab = 0;
+  final int _selectedCatchTab = 0;
 
   Future<void> _shareStats() async {
     if (_isSharing) return;
@@ -320,7 +320,8 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
           children: [
             Row(
               children: [
-                Icon(Icons.emoji_events, color: AppColors.warning, size: 20),
+                const Icon(Icons.emoji_events,
+                    color: AppColors.warning, size: 20),
                 const SizedBox(width: 8),
                 Text(
                   strings.equipmentCatchRanking,

@@ -270,7 +270,7 @@ class _HomePageBody extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.emoji_events, color: AppColors.gold, size: 20),
+              const Icon(Icons.emoji_events, color: AppColors.gold, size: 20),
               const SizedBox(width: 8),
               Text(
                 strings.personalRecord,
@@ -491,7 +491,7 @@ class _HomePageBody extends ConsumerWidget {
           },
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.auto_awesome,
                 color: AppColors.warning,
                 size: 24,

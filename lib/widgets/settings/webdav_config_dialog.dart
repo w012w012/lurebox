@@ -73,11 +73,11 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
               // 服务器 URL
               TextFormField(
                 controller: _urlController,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: '服务器地址',
                   hintText: 'https://dav.example.com',
-                  prefixIcon: const Icon(Icons.link),
-                  border: const OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.link),
+                  border: OutlineInputBorder(),
                   helperText: '支持 WebDAV 协议的 URL',
                 ),
                 keyboardType: TextInputType.url,
@@ -292,7 +292,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('备份已上传到云端'),
+            content: const Text('备份已上传到云端'),
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         );

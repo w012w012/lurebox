@@ -22,6 +22,7 @@
 /// - 渔获录入时的鱼种自动补全
 /// - 鱼种使用统计
 /// - 热门鱼种推荐
+library;
 
 class SpeciesHistory {
   final int id;

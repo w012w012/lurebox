@@ -5,6 +5,7 @@
 /// - 整数、浮点数、布尔值的便捷存取方法
 /// - 批量读取和写入设置
 /// - 设置存在性检查
+library;
 
 abstract class SettingsRepository {
   Future<String?> get(String key);

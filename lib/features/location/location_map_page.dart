@@ -230,7 +230,8 @@ class _LocationMapPageState extends ConsumerState<LocationMapPage> {
                     shape: BoxShape.circle,
                     border: Border.all(color: AppColors.info, width: 2),
                   ),
-                  child: Icon(Icons.person, color: AppColors.info, size: 24),
+                  child:
+                      const Icon(Icons.person, color: AppColors.info, size: 24),
                 ),
               ),
             ...locations.map((location) {

@@ -42,7 +42,7 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.surfaceDark,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),

@@ -42,7 +42,7 @@ class LocationGroupCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (onAutoMerge != null)
-              TextButton(onPressed: onAutoMerge, child: Text('合并')),
+              TextButton(onPressed: onAutoMerge, child: const Text('合并')),
             Icon(Icons.expand_more, color: theme.colorScheme.onSurfaceVariant),
           ],
         ),

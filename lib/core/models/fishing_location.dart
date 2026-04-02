@@ -25,6 +25,7 @@
 /// - 钓点管理（增删改查）
 /// - 在地图上显示钓点
 /// - 统计各钓点的捕获记录
+library;
 
 class FishingLocation {
   final int id;

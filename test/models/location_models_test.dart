@@ -84,7 +84,7 @@ void main() {
     });
 
     test('hashCode based on name, latitude, and longitude', () {
-      final other = LocationWithStats(
+      const other = LocationWithStats(
         name: 'Test Lake',
         latitude: 35.0,
         longitude: 139.0,
@@ -97,7 +97,7 @@ void main() {
 
   group('LocationStats', () {
     test('creates LocationStats with required fields', () {
-      final stats = LocationStats(
+      const stats = LocationStats(
         totalCatches: 10,
         releaseCount: 7,
         keepCount: 3,
@@ -114,7 +114,7 @@ void main() {
     });
 
     test('releaseRate calculates correctly', () {
-      final stats1 = LocationStats(
+      const stats1 = LocationStats(
         totalCatches: 10,
         releaseCount: 7,
         keepCount: 3,
@@ -123,7 +123,7 @@ void main() {
 
       expect(stats1.releaseRate, closeTo(0.7, 0.001));
 
-      final stats2 = LocationStats(
+      const stats2 = LocationStats(
         totalCatches: 0,
         releaseCount: 0,
         keepCount: 0,

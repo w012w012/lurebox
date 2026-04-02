@@ -12,10 +12,12 @@ import '../../core/services/weather_service.dart';
 String _buildRodDisplay(Map<String, dynamic>? rod, String displayUnit) {
   if (rod == null) return '';
   final parts = <String>[];
-  if (rod['brand'] != null && (rod['brand'] as String).isNotEmpty)
+  if (rod['brand'] != null && (rod['brand'] as String).isNotEmpty) {
     parts.add(rod['brand'] as String);
-  if (rod['model'] != null && (rod['model'] as String).isNotEmpty)
+  }
+  if (rod['model'] != null && (rod['model'] as String).isNotEmpty) {
     parts.add(rod['model'] as String);
+  }
   if (rod['length'] != null && (rod['length'] as String).isNotEmpty) {
     final lengthStr = rod['length'] as String;
     final lengthValue = double.tryParse(lengthStr) ?? 0.0;
@@ -27,34 +29,41 @@ String _buildRodDisplay(Map<String, dynamic>? rod, String displayUnit) {
       parts.add(lengthStr);
     }
   }
-  if (rod['hardness'] != null && (rod['hardness'] as String).isNotEmpty)
+  if (rod['hardness'] != null && (rod['hardness'] as String).isNotEmpty) {
     parts.add(rod['hardness'] as String);
-  if (rod['rod_action'] != null && (rod['rod_action'] as String).isNotEmpty)
+  }
+  if (rod['rod_action'] != null && (rod['rod_action'] as String).isNotEmpty) {
     parts.add(rod['rod_action'] as String);
+  }
   return parts.join(' / ');
 }
 
 String _buildReelDisplay(Map<String, dynamic>? reel) {
   if (reel == null) return '';
   final parts = <String>[];
-  if (reel['brand'] != null && (reel['brand'] as String).isNotEmpty)
+  if (reel['brand'] != null && (reel['brand'] as String).isNotEmpty) {
     parts.add(reel['brand'] as String);
-  if (reel['model'] != null && (reel['model'] as String).isNotEmpty)
+  }
+  if (reel['model'] != null && (reel['model'] as String).isNotEmpty) {
     parts.add(reel['model'] as String);
-  if (reel['reel_ratio'] != null && (reel['reel_ratio'] as String).isNotEmpty)
+  }
+  if (reel['reel_ratio'] != null && (reel['reel_ratio'] as String).isNotEmpty) {
     parts.add('${reel['reel_ratio']}');
+  }
   return parts.join(' / ');
 }
 
 String _buildLureDisplay(Map<String, dynamic>? lure, String displayUnit) {
   if (lure == null) return '';
   final parts = <String>[];
-  if (lure['brand'] != null && (lure['brand'] as String).isNotEmpty)
+  if (lure['brand'] != null && (lure['brand'] as String).isNotEmpty) {
     parts.add(lure['brand'] as String);
-  if (lure['model'] != null && (lure['model'] as String).isNotEmpty)
+  }
+  if (lure['model'] != null && (lure['model'] as String).isNotEmpty) {
     parts.add(lure['model'] as String);
+  }
   if (lure['lure_size'] != null && (lure['lure_size'] as String).isNotEmpty) {
-    final sizeValue = double.tryParse(lure['lure_size'] as String ?? '') ?? 0;
+    final sizeValue = double.tryParse(lure['lure_size'] as String) ?? 0;
     final sizeUnit = lure['lure_size_unit'] ?? 'cm';
     final convertedSize = UnitConverter.convertLength(
       sizeValue,
@@ -63,8 +72,9 @@ String _buildLureDisplay(Map<String, dynamic>? lure, String displayUnit) {
     );
     parts.add('${convertedSize.toStringAsFixed(1)} $displayUnit');
   }
-  if (lure['lure_color'] != null && (lure['lure_color'] as String).isNotEmpty)
+  if (lure['lure_color'] != null && (lure['lure_color'] as String).isNotEmpty) {
     parts.add(lure['lure_color'] as String);
+  }
   return parts.join(' / ');
 }
 
@@ -179,9 +189,9 @@ class FishInfoCard extends ConsumerWidget {
               pressure != null ||
               weatherCode != null) ...[
             const Divider(height: 24),
-            Text(
+            const Text(
               '天气信息',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             if (airTemperature != null)

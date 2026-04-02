@@ -129,7 +129,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.star_rounded,
                             color: AppColors.gold,
                             size: 12,
@@ -319,43 +319,63 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
           ),
         );
       }
-      if (e['sections'] != null)
+      if (e['sections'] != null) {
         items.add(_InfoItem(strings.sections, '${e['sections']}'));
-      if (e['hardness'] != null)
+      }
+      if (e['hardness'] != null) {
         items.add(_InfoItem(strings.hardness, e['hardness']));
-      if (e['rod_action'] != null)
+      }
+      if (e['rod_action'] != null) {
         items.add(_InfoItem(strings.rodAction, e['rod_action']));
-      if (e['material'] != null)
+      }
+      if (e['material'] != null) {
         items.add(_InfoItem(strings.material, e['material']));
-      if (e['weight_range'] != null)
+      }
+      if (e['weight_range'] != null) {
         items.add(_InfoItem(strings.weightRange, e['weight_range']));
+      }
     } else if (type == 'reel') {
-      if (e['reel_ratio'] != null)
+      if (e['reel_ratio'] != null) {
         items.add(_InfoItem(strings.reelRatio, e['reel_ratio']));
-      if (e['reel_capacity'] != null)
+      }
+      if (e['reel_capacity'] != null) {
         items.add(_InfoItem(strings.reelCapacity, e['reel_capacity']));
-      if (e['reel_brake_type'] != null)
+      }
+      if (e['reel_brake_type'] != null) {
         items.add(_InfoItem(strings.reelBrakeType, e['reel_brake_type']));
-      if (e['reel_line'] != null) items.add(_InfoItem('线容量', e['reel_line']));
+      }
+      if (e['reel_line'] != null) {
+        items.add(_InfoItem('线容量', e['reel_line']));
+      }
     } else if (type == 'lure') {
-      if (e['lure_type'] != null)
+      if (e['lure_type'] != null) {
         items.add(_InfoItem(strings.lureType, e['lure_type']));
-      if (e['lure_weight'] != null)
+      }
+      if (e['lure_weight'] != null) {
         items.add(_InfoItem(strings.lureWeight, e['lure_weight']));
-      if (e['lure_length'] != null)
+      }
+      if (e['lure_length'] != null) {
         items.add(_InfoItem(strings.lureSize, e['lure_length']));
-      if (e['lure_color'] != null)
+      }
+      if (e['lure_color'] != null) {
         items.add(_InfoItem(strings.lureColor, e['lure_color']));
-      if (e['lure_action'] != null)
+      }
+      if (e['lure_action'] != null) {
         items.add(_InfoItem('动作', e['lure_action']));
+      }
     } else if (type == 'line') {
-      if (e['line_type'] != null)
+      if (e['line_type'] != null) {
         items.add(_InfoItem(strings.lineType, e['line_type']));
-      if (e['line_length'] != null)
+      }
+      if (e['line_length'] != null) {
         items.add(_InfoItem(strings.lineLength, e['line_length']));
-      if (e['line_strength'] != null)
+      }
+      if (e['line_strength'] != null) {
         items.add(_InfoItem('强度', e['line_strength']));
-      if (e['line_color'] != null) items.add(_InfoItem('颜色', e['line_color']));
+      }
+      if (e['line_color'] != null) {
+        items.add(_InfoItem('颜色', e['line_color']));
+      }
     }
 
     if (items.isEmpty) return [];

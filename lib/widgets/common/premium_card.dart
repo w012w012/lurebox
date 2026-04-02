@@ -253,7 +253,7 @@ class PremiumImageCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.only(
+            borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(AppTheme.radiusMd),
               topRight: Radius.circular(AppTheme.radiusMd),
             ),

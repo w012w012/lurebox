@@ -6,7 +6,6 @@ import '../../core/design/theme/app_colors.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/watermark_provider.dart';
 import '../../core/providers/settings_view_model.dart';
-import '../../core/providers/ai_recognition_provider.dart';
 import '../../core/widgets/error_view.dart';
 import '../../widgets/common/premium_card.dart';
 import 'watermark_settings_page.dart';
@@ -279,7 +278,7 @@ class SettingsPage extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Column(
         children: [
-          Icon(Icons.eco, size: 48, color: AppColors.success),
+          const Icon(Icons.eco, size: 48, color: AppColors.success),
           const SizedBox(height: 12),
           Text(
             strings.protectionEcology,

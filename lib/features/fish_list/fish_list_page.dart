@@ -6,7 +6,6 @@ import '../../core/models/fish_catch.dart';
 import '../../core/providers/app_settings_provider.dart';
 import '../../core/providers/fish_list_view_model.dart';
 import '../../core/providers/language_provider.dart';
-import '../../core/providers/pending_recognition_providers.dart';
 import '../../core/widgets/error_view.dart';
 import '../../widgets/common/premium_button.dart';
 import '../../widgets/fish_list/fish_filter_panel.dart';
@@ -14,7 +13,6 @@ import '../../widgets/fish_list/fish_list_item.dart';
 import '../../widgets/fish_list/fish_search_delegate.dart';
 import '../fish_detail/fish_detail_page.dart';
 import '../settings/species_management_page.dart';
-import 'dart:io';
 
 class FishListPage extends ConsumerStatefulWidget {
   const FishListPage({super.key});

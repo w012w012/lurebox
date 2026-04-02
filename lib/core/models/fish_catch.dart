@@ -13,6 +13,7 @@
 /// 3. 记录渔获的物种、尺寸、重量等信息
 /// 4. 可关联使用的钓具（鱼竿、鱼轮、鱼饵）
 /// 5. 支持放流或保留的标记
+library;
 
 import '../utils/unit_converter.dart';
 import 'app_settings.dart';

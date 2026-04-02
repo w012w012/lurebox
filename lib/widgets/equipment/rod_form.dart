@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/language_provider.dart';
-import '../../../core/providers/app_settings_provider.dart';
 import '../common/premium_input.dart';
 import '../common/unit_dropdown.dart';
 
@@ -31,7 +30,6 @@ class RodForm extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = ref.watch(currentStringsProvider);
-    final appSettings = ref.watch(appSettingsProvider);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,7 +50,7 @@ class RodForm extends ConsumerWidget {
               flex: 2,
               child: UnitDropdown(
                 value: lengthUnit,
-                options: ['m', 'cm', 'ft', 'inch'],
+                options: const ['m', 'cm', 'ft', 'inch'],
                 label: '单位',
                 onUnitChanged: onLengthUnitChanged,
               ),

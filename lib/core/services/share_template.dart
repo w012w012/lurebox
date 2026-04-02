@@ -7,6 +7,7 @@
 ///
 /// 提供 [copyWith] 方法用于创建修改后的副本。
 /// 预定义默认标签和水印用于无配置时的展示。
+library;
 
 enum ShareTemplate { classic, card, minimal }
 

@@ -175,7 +175,6 @@ class CustomFishRecognitionProvider implements FishRecognitionProvider {
         );
       case 401:
         final keyLen = apiKey.length;
-        final keyStart = apiKey.substring(0, keyLen > 8 ? 8 : keyLen);
         final keyEnd = apiKey.substring(keyLen > 8 ? keyLen - 8 : 0);
         final keyInfo = 'Key长度:$keyLen 开头:$keyEnd... 结尾:...$keyEnd';
         debugPrint('[CustomProvider] 401 Response body: ${response.body}');

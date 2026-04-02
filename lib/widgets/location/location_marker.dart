@@ -46,7 +46,7 @@ class LocationMarker extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.location_on, color: Colors.white, size: 16),
+                const Icon(Icons.location_on, color: Colors.white, size: 16),
                 const SizedBox(width: 4),
                 Text(
                   name,

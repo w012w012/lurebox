@@ -127,7 +127,7 @@ class _EquipmentCardState extends ConsumerState<EquipmentCard> {
                           ),
                           child: Text(
                             '${widget.equipment['lure_quantity']}${widget.equipment['lure_quantity_unit'] ?? ''}',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 12,
                               color: AppColors.blue,
                               fontWeight: FontWeight.w500,
@@ -208,7 +208,7 @@ class _EquipmentCardState extends ConsumerState<EquipmentCard> {
                         const SizedBox(width: 4),
                         Text(
                           '${strings.record}: $total${strings.fishCountUnit}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: AppColors.success,
@@ -275,7 +275,7 @@ class _EquipmentCardState extends ConsumerState<EquipmentCard> {
           ),
           child: Text(
             '${e.key}: ${e.value}${strings.fishCountUnit}',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 12,
               color: AppColors.blue,
               fontWeight: FontWeight.w500,
@@ -300,53 +300,74 @@ class _EquipmentCardState extends ConsumerState<EquipmentCard> {
           ),
         );
       }
-      if (e['sections'] != null)
+      if (e['sections'] != null) {
         items.add(_InfoItem(strings.sections, '${e['sections']}'));
-      if (e['hardness'] != null)
+      }
+      if (e['hardness'] != null) {
         items.add(_InfoItem(strings.hardness, e['hardness']));
-      if (e['rod_action'] != null)
+      }
+      if (e['rod_action'] != null) {
         items.add(_InfoItem(strings.rodAction, e['rod_action']));
-      if (e['material'] != null)
+      }
+      if (e['material'] != null) {
         items.add(_InfoItem(strings.material, e['material']));
-      if (e['weight_range'] != null)
+      }
+      if (e['weight_range'] != null) {
         items.add(_InfoItem(strings.weightRange, e['weight_range']));
+      }
     } else if (type == 'reel') {
-      if (e['reel_ratio'] != null)
+      if (e['reel_ratio'] != null) {
         items.add(_InfoItem(strings.reelRatio, e['reel_ratio']));
-      if (e['reel_capacity'] != null)
+      }
+      if (e['reel_capacity'] != null) {
         items.add(_InfoItem(strings.reelCapacity, e['reel_capacity']));
-      if (e['reel_brake_type'] != null)
+      }
+      if (e['reel_brake_type'] != null) {
         items.add(_InfoItem(strings.reelBrakeType, e['reel_brake_type']));
+      }
       if (e['reel_line'] != null) {
         final lineParts = <String>[];
-        if (e['reel_line'] != null) lineParts.add(e['reel_line']);
-        if (e['reel_line_number'] != null) lineParts.add(e['reel_line_number']);
-        if (e['reel_line_length'] != null) lineParts.add(e['reel_line_length']);
+        if (e['reel_line'] != null) {
+          lineParts.add(e['reel_line']);
+        }
+        if (e['reel_line_number'] != null) {
+          lineParts.add(e['reel_line_number']);
+        }
+        if (e['reel_line_length'] != null) {
+          lineParts.add(e['reel_line_length']);
+        }
         items.add(_InfoItem(strings.line, lineParts.join(' · ')));
       }
-      if (e['reel_line_date'] != null)
+      if (e['reel_line_date'] != null) {
         items.add(
           _InfoItem(strings.lineDate, _formatDate(e['reel_line_date'])),
         );
+      }
     } else if (type == 'lure') {
       if (e['lure_quantity'] != null && e['lure_quantity'] > 0) {
         final qtyUnit = e['lure_quantity_unit'] as String? ?? '';
         items.add(_InfoItem(strings.quantity, '${e['lure_quantity']}$qtyUnit'));
       }
-      if (e['lure_type'] != null)
+      if (e['lure_type'] != null) {
         items.add(_InfoItem(strings.lureType, e['lure_type']));
+      }
       if (e['lure_weight'] != null) {
         String weightStr = e['lure_weight'].toString();
-        if (!weightStr.endsWith('g')) weightStr = '${weightStr}g';
+        if (!weightStr.endsWith('g')) {
+          weightStr = '${weightStr}g';
+        }
         items.add(_InfoItem(strings.lureWeight, weightStr));
       }
       if (e['lure_size'] != null) {
         String sizeStr = e['lure_size'].toString();
-        if (!sizeStr.endsWith('cm')) sizeStr = '${sizeStr}cm';
+        if (!sizeStr.endsWith('cm')) {
+          sizeStr = '${sizeStr}cm';
+        }
         items.add(_InfoItem(strings.lureSize, sizeStr));
       }
-      if (e['lure_color'] != null)
+      if (e['lure_color'] != null) {
         items.add(_InfoItem(strings.lureColor, e['lure_color']));
+      }
     }
     return _buildInfoGrid(items);
   }

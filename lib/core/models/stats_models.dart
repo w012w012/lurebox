@@ -19,6 +19,7 @@
 /// 设计特点：
 /// - CatchStats 使用简单的数值字段，便于计算和展示
 /// - AchievementMetrics 使用默认值，支持增量更新
+library;
 
 class CatchStats {
   final int total;

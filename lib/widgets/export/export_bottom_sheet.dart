@@ -28,7 +28,7 @@ class ExportBottomSheet extends StatefulWidget {
 class _ExportBottomSheetState extends State<ExportBottomSheet> {
   DateTime? _startDate;
   DateTime? _endDate;
-  Set<String> _selectedSpecies = {};
+  final Set<String> _selectedSpecies = {};
   ExportFormat _format = ExportFormat.csv;
   bool _includeImagePaths = false;
   bool _includeLocation = true;

@@ -82,8 +82,7 @@ class CsvExporter {
 
     for (final fish in catches) {
       // 待识别记录的品种显示为"待识别"
-      final displaySpecies =
-          fish.pendingRecognition == 1 ? '待识别' : fish.species;
+      final displaySpecies = fish.pendingRecognition ? '待识别' : fish.species;
       final row = <String>[
         // 基本信息
         fish.id.toString(),

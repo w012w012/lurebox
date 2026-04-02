@@ -27,7 +27,7 @@ void main() {
     });
 
     test('copyWith can clear nullable values', () {
-      final original = FishFilter(
+      const original = FishFilter(
         timeFilter: 'today',
         fateFilter: FishFateType.release,
       );

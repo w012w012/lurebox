@@ -1,4 +1,3 @@
-import '../repositories/location_repository.dart';
 import '../database/database_provider.dart';
 
 /// 位置服务 - 钓点管理的业务逻辑层
@@ -11,10 +10,9 @@ import '../database/database_provider.dart';
 /// 注意：[findSimilarLocations] 是同步方法，其他为异步方法。
 
 class LocationService {
-  final LocationRepository _repository;
   final DatabaseProvider _dbProvider;
 
-  LocationService(this._repository, this._dbProvider);
+  LocationService(this._dbProvider);
 
   Future<List<Map<String, dynamic>>> getAllLocations() async {
     final db = await _dbProvider.database;

@@ -120,11 +120,11 @@ class FishListItem extends ConsumerWidget {
                           color: AppColors.warning.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text('⚠️', style: TextStyle(fontSize: 10)),
-                            const SizedBox(width: 2),
+                            Text('⚠️', style: TextStyle(fontSize: 10)),
+                            SizedBox(width: 2),
                             Text(
                               '待识别',
                               style: TextStyle(
@@ -152,7 +152,7 @@ class FishListItem extends ConsumerWidget {
                         if (displayWeight != null) ...[
                           const SizedBox(width: 12),
                           Text(
-                            '${displayWeight!.toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(displayUnits.fishWeightUnit)}',
+                            '${displayWeight.toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(displayUnits.fishWeightUnit)}',
                             style: TextStyle(
                               fontSize: 14,
                               color: Theme.of(

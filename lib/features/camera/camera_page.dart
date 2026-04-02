@@ -460,58 +460,6 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     );
   }
 
-  Widget _buildSpeciesField(
-    CameraState state,
-    CameraViewModel vm,
-    AppStrings strings,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        PremiumTextField(
-          controller: _speciesController,
-          label: strings.species,
-          hint: strings.enterSpeciesName,
-          prefixIcon: const Icon(Icons.set_meal),
-          onChanged: (value) {
-            vm.setSpecies(value);
-          },
-        ),
-        if (state.speciesHistory.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Wrap(
-              spacing: 6,
-              runSpacing: 6,
-              children: state.speciesHistory.map((species) {
-                return Material(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(16),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: () {
-                      _speciesController.text = species;
-                      vm.setSpecies(species);
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      child: Text(
-                        species,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-      ],
-    );
-  }
-
   Widget _buildLengthField(
     AppStrings strings,
     CameraState state,
@@ -868,7 +816,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
           Icons.wb_sunny,
           color: Theme.of(context).colorScheme.primary,
         ),
-        title: Text('天气'),
+        title: const Text('天气'),
         subtitle:
             Text(weatherTexts.isNotEmpty ? weatherTexts.join(' | ') : '未获取天气'),
         trailing: IconButton(

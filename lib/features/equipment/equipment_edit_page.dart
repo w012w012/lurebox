@@ -55,7 +55,9 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
   @override
   void dispose() {
-    for (final c in _controllers.values) c.dispose();
+    for (final c in _controllers.values) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -116,7 +118,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                   'price',
                   state.price,
                   notifier.updatePrice,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
                 ),
                 _buildDatePicker(
                   strings.purchaseDate,
@@ -407,10 +410,11 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
           equipment: _loadedEquipment,
         )),
       );
-      if (s.errorMessage != null)
+      if (s.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('${strings.saveFailed}: ${s.errorMessage}')),
         );
+      }
     }
   }
 

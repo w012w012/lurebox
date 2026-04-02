@@ -3,7 +3,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/providers/fish_list_view_model.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
-import 'package:lurebox/core/models/paginated_result.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 import 'package:lurebox/core/repositories/species_history_repository.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
@@ -51,7 +50,7 @@ void main() {
         orderBy: any(named: 'orderBy'),
       ),
     ).thenAnswer(
-      (_) async => PaginatedResult(
+      (_) async => const PaginatedResult(
         items: [],
         totalCount: 0,
         page: 1,
@@ -70,7 +69,7 @@ void main() {
         orderBy: any(named: 'orderBy'),
       ),
     ).thenAnswer(
-      (_) async => PaginatedResult(
+      (_) async => const PaginatedResult(
         items: [],
         totalCount: 0,
         page: 1,

@@ -56,33 +56,33 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.backgroundLight,
       fontFamily: null, // 使用系统字体
       // AppBar 主题
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         centerTitle: true,
         elevation: 0,
         scrolledUnderElevation: 0.5,
         backgroundColor: AppColors.surfaceLight,
         foregroundColor: AppColors.textPrimaryLight,
-        titleTextStyle: const TextStyle(
+        titleTextStyle: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimaryLight,
           letterSpacing: -0.3,
         ),
-        iconTheme: const IconThemeData(
+        iconTheme: IconThemeData(
           color: AppColors.textPrimaryLight,
           size: 24,
         ),
       ),
 
-      // 卡片主题
-      cardTheme: CardTheme(
+// 卡片主题
+      cardTheme: const CardTheme(
         elevation: 0,
-        margin: const EdgeInsets.symmetric(
+        margin: EdgeInsets.symmetric(
           horizontal: spacingLg,
           vertical: spacingSm,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusMd),
+          borderRadius: BorderRadius.all(Radius.circular(radiusMd)),
           side: BorderSide(color: AppColors.borderLight, width: 1),
         ),
         color: AppColors.surfaceLight,
@@ -399,37 +399,37 @@ class AppTheme {
       colorScheme: colorScheme,
       brightness: Brightness.dark,
 
-      // 基础配置
+// 基础配置
       scaffoldBackgroundColor: AppColors.backgroundDark,
       fontFamily: null, // 使用系统字体
       // AppBar 主题
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         centerTitle: true,
         elevation: 0,
         scrolledUnderElevation: 0.5,
         backgroundColor: AppColors.surfaceDark,
         foregroundColor: AppColors.textPrimaryDark,
-        titleTextStyle: const TextStyle(
+        titleTextStyle: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimaryDark,
           letterSpacing: -0.3,
         ),
-        iconTheme: const IconThemeData(
+        iconTheme: IconThemeData(
           color: AppColors.textPrimaryDark,
           size: 24,
         ),
       ),
 
-      // 卡片主题
-      cardTheme: CardTheme(
+// 卡片主题
+      cardTheme: const CardTheme(
         elevation: 0,
-        margin: const EdgeInsets.symmetric(
+        margin: EdgeInsets.symmetric(
           horizontal: spacingLg,
           vertical: spacingSm,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radiusMd),
+          borderRadius: BorderRadius.all(Radius.circular(radiusMd)),
           side: BorderSide(color: AppColors.borderDark, width: 1),
         ),
         color: AppColors.surfaceDark,

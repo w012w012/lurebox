@@ -102,11 +102,13 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
         if (eq != null) {
           final equipment = eq.toMap();
           final type = equipment['type'] as String;
-          if (type == 'rod')
+          if (type == 'rod') {
             rodEquipment = equipment;
-          else if (type == 'reel')
+          } else if (type == 'reel') {
             reelEquipment = equipment;
-          else if (type == 'lure') lureEquipment = equipment;
+          } else if (type == 'lure') {
+            lureEquipment = equipment;
+          }
         }
       }
 

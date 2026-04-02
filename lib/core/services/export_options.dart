@@ -7,6 +7,7 @@
 /// - 可选字段：图片路径、位置坐标
 ///
 /// 作为数据传输对象（DTO）使用。
+library;
 
 class ExportOptions {
   final DateTime? startDate;

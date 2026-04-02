@@ -114,20 +114,25 @@ void main() {
 
   group('DashboardData', () {
     test('creates DashboardData with all fields', () {
-      final dashboard = DashboardData(
-        todayStats: const CatchStats(total: 5, release: 3, keep: 2),
-        todaySpecies: {'Bass': 3, 'Trout': 2},
-        monthStats: const CatchStats(total: 50, release: 35, keep: 15),
-        monthSpecies: {'Bass': 30, 'Trout': 20},
-        yearStats: const CatchStats(total: 200, release: 140, keep: 60),
-        yearSpecies: {'Bass': 120, 'Trout': 80},
-        allStats: const CatchStats(total: 500, release: 350, keep: 150),
-        allSpecies: {'Bass': 300, 'Trout': 200},
-        top3Longest: [
-          {'id': 1, 'length': 50.0},
-          {'id': 2, 'length': 45.0},
-          {'id': 3, 'length': 40.0},
-        ],
+      const todaySpecies = {'Bass': 3, 'Trout': 2};
+      const monthSpecies = {'Bass': 30, 'Trout': 20};
+      const yearSpecies = {'Bass': 120, 'Trout': 80};
+      const allSpecies = {'Bass': 300, 'Trout': 200};
+      const top3Longest = [
+        {'id': 1, 'length': 50.0},
+        {'id': 2, 'length': 45.0},
+        {'id': 3, 'length': 40.0},
+      ];
+      const dashboard = DashboardData(
+        todayStats: CatchStats(total: 5, release: 3, keep: 2),
+        todaySpecies: todaySpecies,
+        monthStats: CatchStats(total: 50, release: 35, keep: 15),
+        monthSpecies: monthSpecies,
+        yearStats: CatchStats(total: 200, release: 140, keep: 60),
+        yearSpecies: yearSpecies,
+        allStats: CatchStats(total: 500, release: 350, keep: 150),
+        allSpecies: allSpecies,
+        top3Longest: top3Longest,
       );
 
       expect(dashboard.todayStats.total, equals(5));
