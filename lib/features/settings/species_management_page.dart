@@ -144,7 +144,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
               ),
               child: Text(
                 '${pendingCatches.length}条',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
                   color: AppColors.warning,
                   fontWeight: FontWeight.bold,
@@ -164,7 +164,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
             child: Center(
               child: Column(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.check_circle,
                     size: 48,
                     color: AppColors.success,
@@ -498,19 +498,14 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.edit, size: 20),
+                          icon: const Icon(Icons.delete,
+                              size: 20, color: AppColors.error),
                           onPressed: () =>
                               _showRenameDialog(context, speciesName),
                           tooltip: '重命名',
                         ),
                         IconButton(
-                          icon: const Icon(Icons.merge, size: 20),
-                          onPressed: () => _showMergeDialog(context,
-                              speciesName, speciesCounts.keys.toList()),
-                          tooltip: '合并',
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.delete,
+                          icon: const Icon(Icons.delete,
                               size: 20, color: AppColors.error),
                           onPressed: () =>
                               _showDeleteDialog(context, speciesName, count),
@@ -557,7 +552,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('为以下鱼获指定品种：'),
+            const Text('为以下鱼获指定品种：'),
             Text(
               '${fish.catchTime.year}-${fish.catchTime.month.toString().padLeft(2, '0')}-${fish.catchTime.day.toString().padLeft(2, '0')}',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -628,7 +623,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       final fishCatch = await repository.getById(fish.id);
       if (fishCatch == null || fishCatch.imagePath.isEmpty) {
         setState(() {
-          _recognitionStates[fish.id] = SingleRecognitionState(
+          _recognitionStates[fish.id] = const SingleRecognitionState(
             error: '图片不存在',
           );
         });
@@ -638,7 +633,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       final file = File(fishCatch.imagePath);
       if (!await file.exists()) {
         setState(() {
-          _recognitionStates[fish.id] = SingleRecognitionState(
+          _recognitionStates[fish.id] = const SingleRecognitionState(
             error: '图片文件不存在',
           );
         });
@@ -649,7 +644,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       final currentConfig = settings.providerConfigs[settings.currentProvider];
       if (currentConfig == null || currentConfig.apiKey.isEmpty) {
         setState(() {
-          _recognitionStates[fish.id] = SingleRecognitionState(
+          _recognitionStates[fish.id] = const SingleRecognitionState(
             error: '请先配置 AI 识别 API Key',
           );
         });
@@ -665,7 +660,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       if (result.primarySpecies.chineseName.isNotEmpty) {
         options.add(AiRecognitionOption(
           speciesName: result.primarySpecies.chineseName,
-          confidence: (result.primarySpecies.confidence ?? 0.0) / 100.0,
+          confidence: result.primarySpecies.confidence / 100.0,
           providerName: 'AI 识别结果',
         ));
       }
@@ -676,7 +671,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           if (alt.chineseName.isNotEmpty) {
             options.add(AiRecognitionOption(
               speciesName: alt.chineseName,
-              confidence: (alt.confidence ?? 0.0) / 100.0,
+              confidence: alt.confidence / 100.0,
               providerName: '备选',
             ));
           }
@@ -686,7 +681,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       // 如果没有结果
       if (options.isEmpty) {
         setState(() {
-          _recognitionStates[fish.id] = SingleRecognitionState(
+          _recognitionStates[fish.id] = const SingleRecognitionState(
             error: '未能识别出结果',
           );
         });
@@ -792,10 +787,10 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         title: const Text('重命名品种'),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: '新名称',
             hintText: '输入新物种名称',
-            border: const OutlineInputBorder(),
+            border: OutlineInputBorder(),
           ),
           autofocus: true,
         ),
@@ -817,7 +812,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       ),
     );
 
-    if (result != null && mounted) {
+    if (result != null && context.mounted) {
       try {
         final repository = ref.read(fishCatchRepositoryProvider);
         await repository.renameSpecies(oldName, result);
@@ -825,103 +820,18 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         ref.invalidate(pendingRecognitionCountProvider);
         ref.invalidate(pendingRecognitionCatchesProvider);
         setState(() {});
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('已将 "$oldName" 重命名为 "$result"')),
-          );
-        }
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('已将 "$oldName" 重命名为 "$result"')),
+        );
       } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('重命名失败: $e')),
-          );
-        }
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('重命名失败: $e')),
+        );
       }
     }
     controller.dispose();
-  }
-
-  Future<void> _showMergeDialog(
-      BuildContext context, String fromName, List<String> allSpecies) async {
-    final availableTargets = allSpecies.where((s) => s != fromName).toList();
-    if (availableTargets.isEmpty) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('没有其他物种可以合并')),
-        );
-      }
-      return;
-    }
-
-    String? selectedTarget = availableTargets.first;
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          title: const Text('合并品种'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('将 "$fromName" 合并到：'),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                value: selectedTarget,
-                decoration: const InputDecoration(
-                  labelText: '目标品种',
-                  border: OutlineInputBorder(),
-                ),
-                items: availableTargets.map((species) {
-                  return DropdownMenuItem(
-                    value: species,
-                    child: Text(species),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setDialogState(() => selectedTarget = value);
-                },
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('取消'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (selectedTarget != null) {
-                  Navigator.pop(context, selectedTarget);
-                }
-              },
-              child: const Text('确认'),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    if (result != null && mounted) {
-      try {
-        final repository = ref.read(fishCatchRepositoryProvider);
-        await repository.mergeSpecies(fromName, result);
-        ref.invalidate(speciesCountsProvider);
-        ref.invalidate(pendingRecognitionCountProvider);
-        ref.invalidate(pendingRecognitionCatchesProvider);
-        setState(() {});
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('已将 "$fromName" 合并到 "$result"')),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('合并失败: $e')),
-          );
-        }
-      }
-    }
   }
 
   Future<void> _showDeleteDialog(
@@ -950,7 +860,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       ),
     );
 
-    if (confirmed == true && mounted) {
+    if (confirmed == true && context.mounted) {
       try {
         final repository = ref.read(fishCatchRepositoryProvider);
         await repository.deleteSpecies(speciesName);
@@ -958,17 +868,15 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         ref.invalidate(pendingRecognitionCountProvider);
         ref.invalidate(pendingRecognitionCatchesProvider);
         setState(() {});
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('已删除品种 "$speciesName" ($count 条记录)')),
-          );
-        }
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('已删除品种 "$speciesName" ($count 条记录)')),
+        );
       } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('删除失败: $e')),
-          );
-        }
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('删除失败: $e')),
+        );
       }
     }
   }

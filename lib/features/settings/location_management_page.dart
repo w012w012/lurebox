@@ -64,11 +64,11 @@ class _LocationManagementPageState
                   Expanded(
                     child: TextField(
                       controller: _mergeTargetController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         labelText: '合并到',
                         hintText: '输入目标名称',
                         border: OutlineInputBorder(),
-                        contentPadding: const EdgeInsets.symmetric(
+                        contentPadding: EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 8,
                         ),
@@ -179,7 +179,7 @@ class _LocationManagementPageState
                         ),
                   ),
                   const SizedBox(height: 4),
-                  Text('钓点数量'),
+                  const Text('钓点数量'),
                 ],
               ),
             ),
@@ -195,7 +195,7 @@ class _LocationManagementPageState
                         ),
                   ),
                   const SizedBox(height: 4),
-                  Text('总渔获数'),
+                  const Text('总渔获数'),
                 ],
               ),
             ),
@@ -288,10 +288,10 @@ class _LocationManagementPageState
         title: const Text('修改钓点名称'),
         content: TextField(
           controller: controller,
-          decoration: InputDecoration(
+          decoration: const InputDecoration(
             labelText: '新名称',
             hintText: '输入新的钓点名称',
-            border: const OutlineInputBorder(),
+            border: OutlineInputBorder(),
           ),
           autofocus: true,
         ),
@@ -313,15 +313,14 @@ class _LocationManagementPageState
       ),
     );
 
-    if (result != null && mounted) {
+    if (result != null && context.mounted) {
       final success = await viewModel.renameLocation(oldName, result);
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(success ? '修改成功' : '修改失败'),
-          ),
-        );
-      }
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(success ? '修改成功' : '修改失败'),
+        ),
+      );
     }
     controller.dispose();
   }
@@ -356,11 +355,9 @@ class _LocationManagementPageState
 
     if (confirmed == true) {
       final success = await viewModel.mergeLocations(targetName);
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(success ? '合并成功' : '合并失败')));
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(success ? '合并成功' : '合并失败')));
     }
   }
 
@@ -390,11 +387,9 @@ class _LocationManagementPageState
 
     if (confirmed == true) {
       final success = await viewModel.autoMergeGroup(group);
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(success ? '合并成功' : '合并失败')));
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(success ? '合并成功' : '合并失败')));
     }
   }
 }

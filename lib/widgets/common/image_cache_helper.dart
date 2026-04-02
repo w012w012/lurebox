@@ -2,7 +2,6 @@ import 'dart:collection';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ImageCacheHelper {
@@ -78,6 +77,7 @@ class ImageCacheHelper {
     int? height,
   }) async {
     if (imagePath == null || imagePath.isEmpty) return;
+    if (!context.mounted) return;
 
     final key = _getCacheKey(imagePath, width, height);
     if (_memoryCache.containsKey(key)) return;
@@ -85,6 +85,7 @@ class ImageCacheHelper {
     try {
       final file = File(imagePath);
       if (await file.exists()) {
+        if (!context.mounted) return;
         ImageProvider provider;
         if (width != null && height != null) {
           provider = ResizeImage(FileImage(file), width: width, height: height);
@@ -218,7 +219,8 @@ class LRUMap<K, V> {
 
   V? get(K key) {
     if (!_map.containsKey(key)) return null;
-    final value = _map.remove(key)!;
+    final value = _map.remove(key);
+    if (value == null) return null;
     _map[key] = value;
     return value;
   }
