@@ -498,8 +498,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.delete,
-                              size: 20, color: AppColors.error),
+                          icon: const Icon(Icons.edit, size: 20),
                           onPressed: () =>
                               _showRenameDialog(context, speciesName),
                           tooltip: '重命名',
