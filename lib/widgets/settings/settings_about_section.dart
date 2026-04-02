@@ -114,34 +114,79 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
             Text(strings.appName),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(strings.appDescription),
-            const SizedBox(height: 12),
-            Text(strings.features),
-            const SizedBox(height: 4),
-            Text('• ${strings.recordCatch}'),
-            Text('• ${strings.location}'),
-            Text('• ${strings.time}'),
-            Text('• ${strings.release}/${strings.keep}'),
-            Text('• ${strings.statistics}'),
-            Text('• ${strings.watermarkSettings}'),
-            const SizedBox(height: 12),
-            Text(
-              '© 2026 ${strings.appName}',
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(color: AppColors.secondaryLight),
-            ),
-          ],
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '路亚钓鱼爱好者的专业鱼获记录工具',
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                '主要功能',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              _buildFeatureItem('🐟', '渔获记录', '拍照记录、GPS定位、天气信息'),
+              _buildFeatureItem('🎣', '装备管理', '鱼竿、渔轮、鱼饵全面管理'),
+              _buildFeatureItem('📊', '数据统计', '趋势分析、物种分布、装备使用'),
+              _buildFeatureItem('📸', 'AI识别', '智能识别鱼种，自动填充信息'),
+              _buildFeatureItem('💧', '图片水印', '自定义水印样式，分享精彩瞬间'),
+              _buildFeatureItem('📤', '数据导出', '支持CSV、PDF导出与分享'),
+              _buildFeatureItem('☁️', '云备份', 'WebDAV同步，数据安全无忧'),
+              _buildFeatureItem('🏆', '成就系统', '解锁成就，记录钓鱼里程碑'),
+              const SizedBox(height: 16),
+              Text(
+                '© 2026 LureBox 路亚鱼护',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.secondaryLight,
+                    ),
+              ),
+            ],
+          ),
         ),
         actions: [
           PremiumButton(
             text: strings.gotIt,
             variant: PremiumButtonVariant.text,
             onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeatureItem(String emoji, String title, String description) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 16)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.secondaryLight,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
