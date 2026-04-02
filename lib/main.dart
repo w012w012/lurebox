@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/design/theme/app_theme.dart';
+import 'core/models/app_settings.dart';
 import 'core/providers/app_settings_provider.dart';
 import 'core/providers/language_provider.dart';
 import 'core/services/database_service.dart';
@@ -48,6 +50,16 @@ class LuYuHuApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(flutterThemeModeProvider);
     final strings = ref.watch(currentStringsProvider);
+    final language = ref.watch(appLanguageProvider);
+
+    // 根据当前语言设置 locale
+    final Locale locale;
+    switch (language) {
+      case AppLanguage.chinese:
+        locale = const Locale('zh', 'CN');
+      case AppLanguage.english:
+        locale = const Locale('en', 'US');
+    }
 
     return MaterialApp(
       title: strings.appName,
@@ -55,6 +67,17 @@ class LuYuHuApp extends ConsumerWidget {
       themeMode: themeMode,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
+      // 本地化配置
+      locale: locale,
+      supportedLocales: const [
+        Locale('zh', 'CN'),
+        Locale('en', 'US'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       home: const MainPage(),
     );
   }

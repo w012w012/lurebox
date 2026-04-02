@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   cupertino_icons: ^1.0.8
 
@@ -40,7 +42,7 @@ dependencies:
   # 工具库
   path_provider: ^2.1.1
   path: ^1.9.0
-  intl: ^0.18.1
+  intl: ^0.19.0
   uuid: ^4.2.1
   permission_handler: ^11.1.0
   package_info_plus: ^9.0.0
