@@ -1,31 +1,5 @@
 import 'dart:convert';
 
-/// 水印设置数据模型
-///
-/// 定义了渔获图片水印功能的配置结构。
-///
-/// 组成元素：
-/// - [WatermarkStyle]: 水印样式枚举（当前仅支持 minimal 简约风格）
-///
-/// - [WatermarkInfoType]: 可显示的水印信息类型
-///   品种、长度、重量、钓点、鱼竿、渔轮、鱼饵、时间、App名称
-///
-/// - [WatermarkSettings]: 水印配置类
-///   控制水印是否启用、使用的样式以及显示哪些信息
-///   支持 JSON 序列化和反序列化
-///
-/// - [WatermarkInfoTypeInfo]: 水印信息类型的元数据
-///   包含类型的显示名称和图标，用于 UI 展示
-///
-/// 默认配置：
-/// - 启用状态：true
-/// - 样式：minimal（简约左下）
-/// - 默认显示：品种、长度、钓点、App名称
-///
-/// 使用场景：
-/// - 用户拍摄渔获照片后添加水印
-/// - 在分享图片时嵌入渔获信息
-
 /// 水印样式枚举
 enum WatermarkStyle {
   minimal, // 简约左下
@@ -47,11 +21,27 @@ enum WatermarkInfoType {
   weather, // 天气
 }
 
+/// 水印位置枚举
+enum WatermarkPosition {
+  topLeft, // 左上
+  topRight, // 右上
+  bottomLeft, // 左下
+  bottomRight, // 右下
+  center, // 居中
+}
+
 /// 水印设置
 class WatermarkSettings {
   final bool enabled;
   final WatermarkStyle style;
   final List<WatermarkInfoType> infoTypes;
+  // 样式设置
+  final double blurRadius; // 背景圆角程度
+  final double backgroundOpacity; // 背景透明度（0.0-1.0）
+  final int backgroundColor; // 背景色（RGB）
+  final double fontSize; // 字体大小
+  final int textColor; // 字体颜色（ARGB）
+  final WatermarkPosition position; // 水印位置
 
   const WatermarkSettings({
     this.enabled = true,
@@ -65,17 +55,35 @@ class WatermarkSettings {
       WatermarkInfoType.weather,
       WatermarkInfoType.appName,
     ],
+    this.blurRadius = 10.0,
+    this.backgroundOpacity = 0.5,
+    this.backgroundColor = 0xFF000000, // 黑色
+    this.fontSize = 14.0,
+    this.textColor = 0xFFFFFFFF, // 白色
+    this.position = WatermarkPosition.bottomLeft,
   });
 
   WatermarkSettings copyWith({
     bool? enabled,
     WatermarkStyle? style,
     List<WatermarkInfoType>? infoTypes,
+    double? blurRadius,
+    double? backgroundOpacity,
+    int? backgroundColor,
+    double? fontSize,
+    int? textColor,
+    WatermarkPosition? position,
   }) {
     return WatermarkSettings(
       enabled: enabled ?? this.enabled,
       style: style ?? this.style,
       infoTypes: infoTypes ?? this.infoTypes,
+      blurRadius: blurRadius ?? this.blurRadius,
+      backgroundOpacity: backgroundOpacity ?? this.backgroundOpacity,
+      backgroundColor: backgroundColor ?? this.backgroundColor,
+      fontSize: fontSize ?? this.fontSize,
+      textColor: textColor ?? this.textColor,
+      position: position ?? this.position,
     );
   }
 
@@ -84,13 +92,22 @@ class WatermarkSettings {
       'enabled': enabled,
       'style': style.name,
       'infoTypes': infoTypes.map((e) => e.name).toList(),
+      'blurRadius': blurRadius,
+      'backgroundOpacity': backgroundOpacity,
+      'backgroundColor': backgroundColor,
+      'fontSize': fontSize,
+      'textColor': textColor,
+      'position': position.name,
     };
   }
 
   factory WatermarkSettings.fromJson(Map<String, dynamic> json) {
     return WatermarkSettings(
       enabled: json['enabled'] as bool? ?? true,
-      style: WatermarkStyle.minimal,
+      style: WatermarkStyle.values.firstWhere(
+        (e) => e.name == json['style'],
+        orElse: () => WatermarkStyle.minimal,
+      ),
       infoTypes: (json['infoTypes'] as List<dynamic>?)
               ?.map(
                 (e) => WatermarkInfoType.values.firstWhere(
@@ -108,6 +125,15 @@ class WatermarkSettings {
             WatermarkInfoType.weather,
             WatermarkInfoType.appName,
           ],
+      blurRadius: (json['blurRadius'] as num?)?.toDouble() ?? 10.0,
+      backgroundOpacity: (json['backgroundOpacity'] as num?)?.toDouble() ?? 0.5,
+      backgroundColor: json['backgroundColor'] as int? ?? 0xFF000000,
+      fontSize: (json['fontSize'] as num?)?.toDouble() ?? 14.0,
+      textColor: json['textColor'] as int? ?? 0xFFFFFFFF,
+      position: WatermarkPosition.values.firstWhere(
+        (e) => e.name == json['position'],
+        orElse: () => WatermarkPosition.bottomLeft,
+      ),
     );
   }
 

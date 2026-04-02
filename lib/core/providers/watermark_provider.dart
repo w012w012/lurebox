@@ -53,6 +53,36 @@ class WatermarkSettingsNotifier extends StateNotifier<WatermarkSettings> {
     final newSettings = state.copyWith(infoTypes: newTypes);
     await updateSettings(newSettings);
   }
+
+  Future<void> updateBlurRadius(double blurRadius) async {
+    final newSettings = state.copyWith(blurRadius: blurRadius);
+    await updateSettings(newSettings);
+  }
+
+  Future<void> updateBackgroundColor(int backgroundColor) async {
+    final newSettings = state.copyWith(backgroundColor: backgroundColor);
+    await updateSettings(newSettings);
+  }
+
+  Future<void> updateBackgroundOpacity(double backgroundOpacity) async {
+    final newSettings = state.copyWith(backgroundOpacity: backgroundOpacity);
+    await updateSettings(newSettings);
+  }
+
+  Future<void> updateFontSize(double fontSize) async {
+    final newSettings = state.copyWith(fontSize: fontSize);
+    await updateSettings(newSettings);
+  }
+
+  Future<void> updateTextColor(int textColor) async {
+    final newSettings = state.copyWith(textColor: textColor);
+    await updateSettings(newSettings);
+  }
+
+  Future<void> updatePosition(WatermarkPosition position) async {
+    final newSettings = state.copyWith(position: position);
+    await updateSettings(newSettings);
+  }
 }
 
 final watermarkSettingsProvider =

@@ -26,6 +26,8 @@ class WatermarkSettingsPage extends ConsumerWidget {
           if (settings.enabled) ...[
             _buildInfoSection(context, ref, settings, strings),
             const SizedBox(height: 16),
+            _buildStyleSection(context, ref, settings, strings),
+            const SizedBox(height: 16),
             _buildPreviewInfo(context, strings),
           ],
         ],
@@ -189,6 +191,269 @@ class WatermarkSettingsPage extends ConsumerWidget {
           ],
         ],
       ),
+    );
+  }
+
+  Widget _buildStyleSection(
+    BuildContext context,
+    WidgetRef ref,
+    WatermarkSettings settings,
+    AppStrings strings,
+  ) {
+    return PremiumCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.style,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '水印样式',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // 水印位置
+          _buildPositionSelector(context, ref, settings),
+          const SizedBox(height: 16),
+          // 背景圆角程度
+          _buildSliderSetting(
+            context: context,
+            label: '背景圆角',
+            value: settings.blurRadius,
+            min: 0,
+            max: 20,
+            onChanged: (value) {
+              ref
+                  .read(watermarkSettingsProvider.notifier)
+                  .updateBlurRadius(value);
+            },
+          ),
+          const SizedBox(height: 12),
+          // 背景透明度
+          _buildSliderSetting(
+            context: context,
+            label: '背景透明度',
+            value: settings.backgroundOpacity * 100,
+            min: 0,
+            max: 100,
+            onChanged: (value) {
+              ref
+                  .read(watermarkSettingsProvider.notifier)
+                  .updateBackgroundOpacity(value / 100);
+            },
+            valueFormatter: (v) => '${v.toInt()}%',
+          ),
+          const SizedBox(height: 12),
+          // 字体大小
+          _buildSliderSetting(
+            context: context,
+            label: '字体大小',
+            value: settings.fontSize,
+            min: 10,
+            max: 24,
+            onChanged: (value) {
+              ref
+                  .read(watermarkSettingsProvider.notifier)
+                  .updateFontSize(value);
+            },
+          ),
+          const SizedBox(height: 16),
+          // 字体颜色
+          _buildColorSelector(context, ref, settings),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildColorSelector(
+    BuildContext context,
+    WidgetRef ref,
+    WatermarkSettings settings,
+  ) {
+    final colors = [
+      (0xFFFFFFFF, '白色'),
+      (0xFF000000, '黑色'),
+      (0xFFFF0000, '红色'),
+      (0xFF00FF00, '绿色'),
+      (0xFF0000FF, '蓝色'),
+      (0xFFFFFF00, '黄色'),
+      (0xFFFF00FF, '紫色'),
+      (0xFF00FFFF, '青色'),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '字体颜色',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: colors.map((color) {
+            final isSelected = settings.textColor == color.$1;
+            return GestureDetector(
+              onTap: () {
+                ref
+                    .read(watermarkSettingsProvider.notifier)
+                    .updateTextColor(color.$1);
+              },
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: Color(color.$1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: isSelected
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context)
+                            .colorScheme
+                            .outline
+                            .withOpacity(0.3),
+                    width: isSelected ? 3 : 1,
+                  ),
+                ),
+                child: isSelected
+                    ? Icon(
+                        Icons.check,
+                        color: color.$1 == 0xFF000000
+                            ? Colors.white
+                            : Colors.black,
+                        size: 20,
+                      )
+                    : null,
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPositionSelector(
+    BuildContext context,
+    WidgetRef ref,
+    WatermarkSettings settings,
+  ) {
+    const positions = [
+      (WatermarkPosition.topLeft, '左上', Icons.north_west),
+      (WatermarkPosition.topRight, '右上', Icons.north_east),
+      (WatermarkPosition.bottomLeft, '左下', Icons.south_west),
+      (WatermarkPosition.bottomRight, '右下', Icons.south_east),
+      (WatermarkPosition.center, '居中', Icons.center_focus_strong),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '水印位置',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: positions.map((pos) {
+            final isSelected = settings.position == pos.$1;
+            return GestureDetector(
+              onTap: () {
+                ref
+                    .read(watermarkSettingsProvider.notifier)
+                    .updatePosition(pos.$1);
+              },
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: isSelected
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context)
+                            .colorScheme
+                            .outline
+                            .withOpacity(0.3),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      pos.$3,
+                      size: 20,
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      pos.$2,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSliderSetting({
+    required BuildContext context,
+    required String label,
+    required double value,
+    required double min,
+    required double max,
+    required ValueChanged<double> onChanged,
+    String Function(double)? valueFormatter,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            Text(
+              valueFormatter != null
+                  ? valueFormatter(value)
+                  : value.toStringAsFixed(1),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+            ),
+          ],
+        ),
+        Slider(
+          value: value,
+          min: min,
+          max: max,
+          onChanged: onChanged,
+        ),
+      ],
     );
   }
 

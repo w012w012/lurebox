@@ -40,6 +40,8 @@ class WatermarkedImage extends ConsumerWidget {
   final String? lureSize;
   final String? lureSizeUnit;
   final String? lureColor;
+  final String? lureWeight;
+  final String? lureWeightUnit;
   final double? airTemperature;
   final double? pressure;
   final int? weatherCode;
@@ -76,6 +78,8 @@ class WatermarkedImage extends ConsumerWidget {
     this.lureSize,
     this.lureSizeUnit,
     this.lureColor,
+    this.lureWeight,
+    this.lureWeightUnit,
     this.airTemperature,
     this.pressure,
     this.weatherCode,
@@ -153,6 +157,8 @@ class WatermarkedImage extends ConsumerWidget {
                   lureSize: lureSize,
                   lureSizeUnit: lureSizeUnit,
                   lureColor: lureColor,
+                  lureWeight: lureWeight,
+                  lureWeightUnit: lureWeightUnit,
                   airTemperature: airTemperature,
                   pressure: pressure,
                   weatherCode: weatherCode,
@@ -198,6 +204,8 @@ class WatermarkPainter extends CustomPainter {
   final String? lureSize;
   final String? lureSizeUnit;
   final String? lureColor;
+  final String? lureWeight;
+  final String? lureWeightUnit;
   final double? airTemperature;
   final double? pressure;
   final int? weatherCode;
@@ -234,6 +242,8 @@ class WatermarkPainter extends CustomPainter {
     this.lureSize,
     this.lureSizeUnit,
     this.lureColor,
+    this.lureWeight,
+    this.lureWeightUnit,
     this.airTemperature,
     this.pressure,
     this.weatherCode,
@@ -285,21 +295,26 @@ class WatermarkPainter extends CustomPainter {
         case WatermarkInfoType.rod:
           if (rodBrand != null && rodBrand!.isNotEmpty) {
             final rodParts = <String>[];
-            if (rodBrand != null && rodBrand!.isNotEmpty)
+            if (rodBrand != null && rodBrand!.isNotEmpty) {
               rodParts.add(rodBrand!);
-            if (rodModel != null && rodModel!.isNotEmpty)
+            }
+            if (rodModel != null && rodModel!.isNotEmpty) {
               rodParts.add(rodModel!);
+            }
             if (rodLength != null && rodLength!.isNotEmpty) {
               final lengthValue = double.tryParse(rodLength!) ?? 0.0;
               final lengthUnit = rodLengthUnit ?? 'm';
               rodParts.add('${lengthValue.toStringAsFixed(2)} $lengthUnit');
             }
-            if (rodHardness != null && rodHardness!.isNotEmpty)
+            if (rodHardness != null && rodHardness!.isNotEmpty) {
               rodParts.add(rodHardness!);
-            if (rodAction != null && rodAction!.isNotEmpty)
+            }
+            if (rodAction != null && rodAction!.isNotEmpty) {
               rodParts.add(rodAction!);
-            if (rodParts.isNotEmpty)
+            }
+            if (rodParts.isNotEmpty) {
               lines.add('${strings.rod}：${rodParts.join(' / ')}');
+            }
           } else if (rodName != null && rodName!.isNotEmpty) {
             lines.add('${strings.rod}：$rodName');
           }
@@ -307,14 +322,18 @@ class WatermarkPainter extends CustomPainter {
         case WatermarkInfoType.reel:
           if (reelBrand != null && reelBrand!.isNotEmpty) {
             final reelParts = <String>[];
-            if (reelBrand != null && reelBrand!.isNotEmpty)
+            if (reelBrand != null && reelBrand!.isNotEmpty) {
               reelParts.add(reelBrand!);
-            if (reelModel != null && reelModel!.isNotEmpty)
+            }
+            if (reelModel != null && reelModel!.isNotEmpty) {
               reelParts.add(reelModel!);
-            if (reelRatio != null && reelRatio!.isNotEmpty)
+            }
+            if (reelRatio != null && reelRatio!.isNotEmpty) {
               reelParts.add(reelRatio!);
-            if (reelParts.isNotEmpty)
+            }
+            if (reelParts.isNotEmpty) {
               lines.add('${strings.reel}：${reelParts.join(' / ')}');
+            }
           } else if (reelName != null && reelName!.isNotEmpty) {
             lines.add('${strings.reel}：$reelName');
           }
@@ -322,52 +341,28 @@ class WatermarkPainter extends CustomPainter {
         case WatermarkInfoType.lure:
           if (lureBrand != null && lureBrand!.isNotEmpty) {
             final lureParts = <String>[];
-            if (lureBrand != null && lureBrand!.isNotEmpty)
+            if (lureBrand != null && lureBrand!.isNotEmpty) {
               lureParts.add(lureBrand!);
-            if (lureModel != null && lureModel!.isNotEmpty)
+            }
+            if (lureModel != null && lureModel!.isNotEmpty) {
               lureParts.add(lureModel!);
+            }
             if (lureSize != null && lureSize!.isNotEmpty) {
               final sizeUnit = lureSizeUnit ?? 'cm';
-              lureParts.add('${lureSize} ${sizeUnit}');
+              lureParts.add('$lureSize $sizeUnit');
             }
-            if (lureColor != null && lureColor!.isNotEmpty)
+            if (lureWeight != null && lureWeight!.isNotEmpty) {
+              final weightUnit = lureWeightUnit ?? 'g';
+              lureParts.add('$lureWeight $weightUnit');
+            }
+            if (lureColor != null && lureColor!.isNotEmpty) {
               lureParts.add(lureColor!);
-            if (lureParts.isNotEmpty)
+            }
+            if (lureParts.isNotEmpty) {
               lines.add('${strings.lure}：${lureParts.join(' / ')}');
+            }
           } else if (lureName != null && lureName!.isNotEmpty) {
             lines.add('${strings.lure}：$lureName');
-          }
-          break;
-        case WatermarkInfoType.reel:
-          if (reelName != null && reelName!.isNotEmpty) {
-            lines.add('${strings.reel}：$reelName');
-          } else if (reelBrand != null && reelBrand!.isNotEmpty) {
-            final reelParts = <String>[];
-            if (reelBrand != null && reelBrand!.isNotEmpty)
-              reelParts.add(reelBrand!);
-            if (reelModel != null && reelModel!.isNotEmpty)
-              reelParts.add(reelModel!);
-            if (reelRatio != null && reelRatio!.isNotEmpty)
-              reelParts.add(reelRatio!);
-            if (reelParts.isNotEmpty)
-              lines.add('${strings.reel}：${reelParts.join(' / ')}');
-          }
-          break;
-        case WatermarkInfoType.lure:
-          if (lureName != null && lureName!.isNotEmpty) {
-            lines.add('${strings.lure}：$lureName');
-          } else if (lureBrand != null && lureBrand!.isNotEmpty) {
-            final lureParts = <String>[];
-            if (lureBrand != null && lureBrand!.isNotEmpty)
-              lureParts.add(lureBrand!);
-            if (lureModel != null && lureModel!.isNotEmpty)
-              lureParts.add(lureModel!);
-            if (lureSize != null && lureSize!.isNotEmpty)
-              lureParts.add(lureSize!);
-            if (lureColor != null && lureColor!.isNotEmpty)
-              lureParts.add(lureColor!);
-            if (lureParts.isNotEmpty)
-              lines.add('${strings.lure}：${lureParts.join(' / ')}');
           }
           break;
         case WatermarkInfoType.time:
@@ -412,25 +407,126 @@ class WatermarkPainter extends CustomPainter {
   /// 简约左下水印（逐行显示）
   void _drawMinimal(Canvas canvas, Size size, List<String> lines) {
     // 使用图片宽度作为基准计算字号，确保水印大小与图片比例一致
-    final baseFontSize = size.width * 0.032;
+    final baseFontSize =
+        settings.fontSize > 0 ? settings.fontSize : size.width * 0.032;
     final lineHeight = baseFontSize * 1.5;
 
-    // 使用相对值计算padding，确保在不同尺寸图片上位置一致
-    final paddingBottom = size.height * 0.05; // 图片高度的 5%
-    final paddingLeft = size.width * 0.03; // 图片宽度的 3%
+    // 根据位置设置计算padding
+    double paddingBottom, paddingLeft, paddingRight, paddingTop;
+    switch (settings.position) {
+      case WatermarkPosition.topLeft:
+        paddingTop = size.height * 0.05;
+        paddingLeft = size.width * 0.03;
+        paddingBottom = 0;
+        paddingRight = 0;
+        break;
+      case WatermarkPosition.topRight:
+        paddingTop = size.height * 0.05;
+        paddingRight = size.width * 0.03;
+        paddingBottom = 0;
+        paddingLeft = 0;
+        break;
+      case WatermarkPosition.bottomLeft:
+        paddingBottom = size.height * 0.05;
+        paddingLeft = size.width * 0.03;
+        paddingTop = 0;
+        paddingRight = 0;
+        break;
+      case WatermarkPosition.bottomRight:
+        paddingBottom = size.height * 0.05;
+        paddingRight = size.width * 0.03;
+        paddingTop = 0;
+        paddingLeft = 0;
+        break;
+      case WatermarkPosition.center:
+        paddingTop = size.height * 0.5 - (lines.length * lineHeight / 2);
+        paddingLeft = size.width * 0.5;
+        paddingBottom = 0;
+        paddingRight = 0;
+        break;
+    }
 
-    // 计算起始位置（从下往上绘制，确保最后一行位置固定）
-    double y = size.height - paddingBottom - lineHeight;
+    // 计算起始位置
+    double y;
+    if (settings.position == WatermarkPosition.topLeft ||
+        settings.position == WatermarkPosition.topRight) {
+      y = paddingTop;
+    } else if (settings.position == WatermarkPosition.center) {
+      y = paddingTop;
+    } else {
+      y = size.height - paddingBottom - lineHeight;
+    }
 
-    // 从最后一行往上绘制
-    for (int i = lines.length - 1; i >= 0; i--) {
-      final line = lines[i];
+    // 绘制背景（半透明矩形）
+    if (settings.blurRadius > 0 || settings.backgroundOpacity > 0) {
+      final bgColor = Color(settings.backgroundColor)
+          .withOpacity(settings.backgroundOpacity);
+      final paint = Paint()
+        ..color = bgColor
+        ..style = PaintingStyle.fill;
+
+      // 先计算文字区域大小
+      double bgWidth = 0;
+      for (final line in lines) {
+        final textPainter = TextPainter(
+          text: TextSpan(text: line, style: TextStyle(fontSize: baseFontSize)),
+          textDirection: TextDirection.ltr,
+        )..layout();
+        bgWidth = bgWidth > textPainter.width ? bgWidth : textPainter.width;
+      }
+
+      final bgHeight = lines.length * lineHeight + 16;
+      double bgX, bgY;
+
+      // 根据位置计算背景位置
+      switch (settings.position) {
+        case WatermarkPosition.topLeft:
+          bgX = paddingLeft - 8;
+          bgY = paddingTop - 8;
+          break;
+        case WatermarkPosition.topRight:
+          bgX = size.width - paddingRight - bgWidth - 8;
+          bgY = paddingTop - 8;
+          break;
+        case WatermarkPosition.bottomLeft:
+          bgX = paddingLeft - 8;
+          bgY = size.height - paddingBottom - bgHeight + 8;
+          break;
+        case WatermarkPosition.bottomRight:
+          bgX = size.width - paddingRight - bgWidth - 8;
+          bgY = size.height - paddingBottom - bgHeight + 8;
+          break;
+        case WatermarkPosition.center:
+          bgX = paddingLeft - bgWidth / 2 - 8;
+          bgY = paddingTop - 8;
+          break;
+      }
+
+      // 使用 blurRadius 作为圆角半径
+      final borderRadius = settings.blurRadius;
+      final rrect = RRect.fromRectAndRadius(
+        Rect.fromLTWH(bgX, bgY, bgWidth + 16, bgHeight),
+        Radius.circular(borderRadius),
+      );
+      canvas.drawRRect(rrect, paint);
+    }
+
+    // 绘制文字
+    final textColor = Color(settings.textColor);
+    final drawLines = settings.position == WatermarkPosition.topLeft ||
+            settings.position == WatermarkPosition.topRight ||
+            settings.position == WatermarkPosition.center
+        ? lines
+        : lines.reversed.toList();
+
+    for (int i = 0; i < drawLines.length; i++) {
+      final line = drawLines[i];
       final isAppName = line.startsWith('--');
       final textPainter = TextPainter(
         text: TextSpan(
           text: line,
           style: TextStyle(
-            color: Colors.white.withOpacity(0.9),
+            color: textColor.withOpacity(0.9),
             fontSize: isAppName ? baseFontSize * 0.85 : baseFontSize,
             fontWeight: isAppName ? FontWeight.normal : FontWeight.w500,
             shadows: [
@@ -444,8 +540,24 @@ class WatermarkPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       );
       textPainter.layout();
-      textPainter.paint(canvas, Offset(paddingLeft, y));
-      y -= lineHeight;
+
+      double x = paddingLeft;
+      if (settings.position == WatermarkPosition.topRight ||
+          settings.position == WatermarkPosition.bottomRight) {
+        x = size.width - paddingRight - textPainter.width;
+      } else if (settings.position == WatermarkPosition.center) {
+        x = paddingLeft - textPainter.width / 2;
+      }
+
+      textPainter.paint(canvas, Offset(x, y));
+
+      if (settings.position == WatermarkPosition.topLeft ||
+          settings.position == WatermarkPosition.topRight ||
+          settings.position == WatermarkPosition.center) {
+        y += lineHeight;
+      } else {
+        y -= lineHeight;
+      }
     }
   }
 

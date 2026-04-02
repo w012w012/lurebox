@@ -334,7 +334,7 @@ class _AiProviderConfigDialogState
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('配置已保存'),
+          content: const Text('配置已保存'),
           backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );
