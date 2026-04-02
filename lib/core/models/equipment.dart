@@ -43,7 +43,8 @@ class Equipment {
   final String? model;
   final String? length;
   final String lengthUnit; // 鱼竿长度单位 (m, cm, ft, inch)
-  final int? sections;
+  final String? sections;
+  final String? jointType;
   final String? material;
   final String? hardness;
   final String? weightRange;
@@ -82,6 +83,7 @@ class Equipment {
     this.length,
     this.lengthUnit = 'm',
     this.sections,
+    this.jointType,
     this.material,
     this.hardness,
     this.weightRange,
@@ -128,7 +130,8 @@ class Equipment {
       model: _getField(map, 'model') as String?,
       length: _getField(map, 'length') as String?,
       lengthUnit: _getField(map, 'length_unit') as String? ?? 'm',
-      sections: _getField(map, 'sections') as int?,
+      sections: _getField(map, 'sections')?.toString(),
+      jointType: _getField(map, 'joint_type') as String?,
       material: _getField(map, 'material') as String?,
       hardness: _getField(map, 'hardness') as String?,
       weightRange: _getField(map, 'weight_range') as String?,
@@ -174,6 +177,7 @@ class Equipment {
       'length': length,
       'length_unit': lengthUnit,
       'sections': sections,
+      'joint_type': jointType,
       'material': material,
       'hardness': hardness,
       'weight_range': weightRange,
@@ -232,7 +236,8 @@ class Equipment {
     String? Function()? brand,
     String? Function()? model,
     String? Function()? length,
-    int? Function()? sections,
+    String? Function()? sections,
+    String? Function()? jointType,
     String? Function()? material,
     String? Function()? hardness,
     String? Function()? weightRange,
@@ -267,6 +272,7 @@ class Equipment {
       model: model != null ? model() : this.model,
       length: length != null ? length() : this.length,
       sections: sections != null ? sections() : this.sections,
+      jointType: jointType != null ? jointType() : this.jointType,
       material: material != null ? material() : this.material,
       hardness: hardness != null ? hardness() : this.hardness,
       weightRange: weightRange != null ? weightRange() : this.weightRange,

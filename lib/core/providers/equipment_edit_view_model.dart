@@ -28,6 +28,7 @@ class EquipmentEditState {
   final String length;
   final String lengthUnit;
   final String sections;
+  final String jointType;
   final String material;
   final String hardness;
   final String rodAction;
@@ -71,6 +72,7 @@ class EquipmentEditState {
     this.length = '',
     this.lengthUnit = 'm',
     this.sections = '',
+    this.jointType = '',
     this.material = '',
     this.hardness = '',
     this.rodAction = '',
@@ -111,6 +113,7 @@ class EquipmentEditState {
     String? length,
     String? lengthUnit,
     String? sections,
+    String? jointType,
     String? material,
     String? hardness,
     String? rodAction,
@@ -148,6 +151,7 @@ class EquipmentEditState {
       length: length ?? this.length,
       lengthUnit: lengthUnit ?? this.lengthUnit,
       sections: sections ?? this.sections,
+      jointType: jointType ?? this.jointType,
       material: material ?? this.material,
       hardness: hardness ?? this.hardness,
       rodAction: rodAction ?? this.rodAction,
@@ -226,6 +230,7 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
       length: _getValue(e, 'length')?.toString() ?? '',
       lengthUnit: _getValue(e, 'length_unit')?.toString() ?? 'm',
       sections: _getValue(e, 'sections')?.toString() ?? '',
+      jointType: _getValue(e, 'joint_type')?.toString() ?? '',
       material: _getValue(e, 'material')?.toString() ?? '',
       hardness: _getValue(e, 'hardness')?.toString() ?? '',
       rodAction: _getValue(e, 'rod_action')?.toString() ?? '',
@@ -266,6 +271,8 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
   void updateLengthUnit(String value) =>
       state = state.copyWith(lengthUnit: value);
   void updateSections(String value) => state = state.copyWith(sections: value);
+  void updateJointType(String value) =>
+      state = state.copyWith(jointType: value);
   void updateMaterial(String value) => state = state.copyWith(material: value);
   void updateHardness(String value) => state = state.copyWith(hardness: value);
   void updateRodAction(String value) =>
@@ -353,7 +360,10 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
           data['length_unit'] = state.lengthUnit;
         }
         if (state.sections.isNotEmpty) {
-          data['sections'] = int.tryParse(state.sections);
+          data['sections'] = state.sections.trim();
+        }
+        if (state.jointType.isNotEmpty) {
+          data['joint_type'] = state.jointType.trim();
         }
         if (state.material.isNotEmpty) {
           data['material'] = state.material.trim();

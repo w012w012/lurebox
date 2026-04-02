@@ -6,7 +6,7 @@ import 'package:path/path.dart';
 /// 负责数据库的初始化和连接管理
 class DatabaseProvider {
   static const String _databaseName = 'lurebox.db';
-  static const int _databaseVersion = 12;
+  static const int _databaseVersion = 13;
 
   Database? _database;
   bool _initializing = false;
@@ -245,6 +245,11 @@ CREATE TABLE backup_history (
     if (oldVersion < 12) {
       await db.execute(
         'ALTER TABLE fish_catches ADD COLUMN pending_recognition INTEGER DEFAULT 0',
+      );
+    }
+    if (oldVersion < 13) {
+      await db.execute(
+        'ALTER TABLE equipments ADD COLUMN joint_type TEXT',
       );
     }
   }

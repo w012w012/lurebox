@@ -41,7 +41,7 @@ class DatabaseService {
 
     final db = await openDatabase(
       path,
-      version: 12,
+      version: 13,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -240,12 +240,24 @@ class DatabaseService {
       );
     }
 
+    if (oldVersion < 13) {
+      await db.execute(
+        'ALTER TABLE equipments ADD COLUMN joint_type TEXT',
+      );
+    }
+
     // 检查并添加缺失的列（防止版本跳跃）
     await _ensureColumnExists(
       db,
       'equipments',
       'lure_size_unit',
       'TEXT DEFAULT "cm"',
+    );
+    await _ensureColumnExists(
+      db,
+      'equipments',
+      'joint_type',
+      'TEXT',
     );
   }
 

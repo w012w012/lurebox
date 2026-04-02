@@ -176,21 +176,23 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                     'sections',
                     state.sections,
                   ),
+                  jointType: state.jointType,
+                  onJointTypeChanged: notifier.updateJointType,
                   materialController: _getOrCreateController(
                     'material',
                     state.material,
                   ),
-                  hardnessController: _getOrCreateController(
-                    'hardness',
-                    state.hardness,
+                  hardness: state.hardness,
+                  onHardnessChanged: notifier.updateHardness,
+                  action: state.rodAction,
+                  onActionChanged: notifier.updateRodAction,
+                  weightRangeMinController: _getOrCreateController(
+                    'weightRangeMin',
+                    _parseWeightRange(state.weightRange).$1,
                   ),
-                  actionController: _getOrCreateController(
-                    'rodAction',
-                    state.rodAction,
-                  ),
-                  weightRangeController: _getOrCreateController(
-                    'weightRange',
-                    state.weightRange,
+                  weightRangeMaxController: _getOrCreateController(
+                    'weightRangeMax',
+                    _parseWeightRange(state.weightRange).$2,
                   ),
                 ),
               ]),
@@ -220,18 +222,24 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                     'reelBearings',
                     state.reelBearings,
                   ),
-                  ratioController: _getOrCreateController(
-                    'reelRatio',
-                    state.reelRatio,
+                  ratioAController: _getOrCreateController(
+                    'reelRatioA',
+                    _parseRatio(state.reelRatio).$1,
                   ),
-                  capacityController: _getOrCreateController(
-                    'reelCapacity',
-                    state.reelCapacity,
+                  ratioBController: _getOrCreateController(
+                    'reelRatioB',
+                    _parseRatio(state.reelRatio).$2,
                   ),
-                  brakeTypeController: _getOrCreateController(
-                    'reelBrakeType',
-                    state.reelBrakeType,
+                  capacityNumberController: _getOrCreateController(
+                    'reelCapacityNumber',
+                    _parseCapacity(state.reelCapacity).$1,
                   ),
+                  capacityLengthController: _getOrCreateController(
+                    'reelCapacityLength',
+                    _parseCapacity(state.reelCapacity).$2,
+                  ),
+                  brakeType: state.reelBrakeType,
+                  onBrakeTypeChanged: notifier.updateReelBrakeType,
                 ),
               ]),
               _buildCard([
@@ -523,4 +531,38 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
           ),
         ),
       );
+
+  // 解析适合饵重格式 "a-b" 或 "a-b克"
+  (String, String) _parseWeightRange(String? value) {
+    if (value == null || value.isEmpty) return ('', '');
+    // 移除"克"后缀
+    final cleanValue = value.replaceAll('克', '');
+    final parts = cleanValue.split('-');
+    if (parts.length == 2) {
+      return (parts[0], parts[1]);
+    }
+    return ('', '');
+  }
+
+  // 解析速比格式 "a:b"
+  (String, String) _parseRatio(String? value) {
+    if (value == null || value.isEmpty) return ('', '');
+    final parts = value.split(':');
+    if (parts.length == 2) {
+      return (parts[0], parts[1]);
+    }
+    return ('', '');
+  }
+
+  // 解析线杯容量格式 "a号/b米"
+  (String, String) _parseCapacity(String? value) {
+    if (value == null || value.isEmpty) return ('', '');
+    final parts = value.split('/');
+    if (parts.length == 2) {
+      final number = parts[0].replaceAll('号', '');
+      final length = parts[1].replaceAll('米', '');
+      return (number, length);
+    }
+    return ('', '');
+  }
 }

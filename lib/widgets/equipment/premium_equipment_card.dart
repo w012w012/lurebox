@@ -322,6 +322,9 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       if (e['sections'] != null) {
         items.add(_InfoItem(strings.sections, '${e['sections']}'));
       }
+      if (e['joint_type'] != null) {
+        items.add(_InfoItem('插节方式', e['joint_type']));
+      }
       if (e['hardness'] != null) {
         items.add(_InfoItem(strings.hardness, e['hardness']));
       }
@@ -332,9 +335,12 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         items.add(_InfoItem(strings.material, e['material']));
       }
       if (e['weight_range'] != null) {
-        items.add(_InfoItem(strings.weightRange, e['weight_range']));
+        items.add(_InfoItem(strings.weightRange, '${e['weight_range']}克'));
       }
     } else if (type == 'reel') {
+      if (e['reel_bearings'] != null) {
+        items.add(_InfoItem(strings.bearings, '${e['reel_bearings']}'));
+      }
       if (e['reel_ratio'] != null) {
         items.add(_InfoItem(strings.reelRatio, e['reel_ratio']));
       }
