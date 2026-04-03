@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
 
-/// Premium Minimalist 调色板
+/// Blue-based 调色板 (iOS style)
 class AppColors {
-  // 主色系 - 中性高级灰
-  static const Color primaryLight = Color(0xFF2D3748); // 炭灰
-  static const Color primaryDark = Color(0xFFE2E8F0); // 浅灰
+  // 主色系 - 深海蓝
+  static const Color primaryLight = Color(0xFF1E3A5F); // 深海蓝
+  static const Color primaryDark = Color(0xFF8FADC5); // 浅蓝（深色模式对比色）
 
   // 次要色系
-  static const Color secondaryLight = Color(0xFF718096); // 中灰
-  static const Color secondaryDark = Color(0xFFA0AEC0); // 浅中灰
+  static const Color secondaryLight = Color(0xFF4A637E); // 中蓝灰
+  static const Color secondaryDark = Color(0xFF8BA3B8); // 浅蓝灰
 
-  // 强调色 - 青绿色（钓鱼/户外主题）
-  static const Color accentLight = Color(0xFF319795); // 青绿
-  static const Color accentDark = Color(0xFF81E6D9); // 浅青绿
+  // 强调色 - 亮蓝色
+  static const Color accentLight = Color(0xFF3B82F6); // 亮蓝
+  static const Color accentDark = Color(0xFF93C5FD); // 浅亮蓝
 
   // 表面色
   static const Color surfaceLight = Color(0xFFFFFFFF); // 白色
-  static const Color surfaceDark = Color(0xFF1A202C); // 深炭灰
+  static const Color surfaceDark = Color(0xFF0A0A0A); // 深黑（卡片色）
 
   // 背景色
   static const Color backgroundLight = Color(0xFFF7FAFC); // 极浅灰
-  static const Color backgroundDark = Color(0xFF171923); // 更深炭灰
+  static const Color backgroundDark = Color(0xFF000000); // 纯黑（True Black）
 
   // 边框色
   static const Color borderLight = Color(0xFFE2E8F0); // 浅灰边框
-  static const Color borderDark = Color(0xFF4A5568); // 深灰边框
+  static const Color borderDark = Color(0xFF1E293B); // 深蓝灰边框
 
   // 文字色
-  static const Color textPrimaryLight = Color(0xFF2D3748); // 主要文字（浅色模式）
-  static const Color textSecondaryLight = Color(0xFF718096); // 次要文字（浅色模式）
+  static const Color textPrimaryLight = Color(0xFF1E3A5F); // 主要文字（浅色模式）
+  static const Color textSecondaryLight = Color(0xFF4A637E); // 次要文字（浅色模式）
   static const Color textPrimaryDark = Color(0xFFE2E8F0); // 主要文字（深色模式）
   static const Color textSecondaryDark = Color(0xFFA0AEC0); // 次要文字（深色模式）
 
@@ -91,15 +91,15 @@ class AppColors {
     return const ColorScheme.light(
       primary: primaryLight,
       onPrimary: surfaceLight,
-      primaryContainer: Color(0xFFE2E8F0),
+      primaryContainer: Color(0xFFB8C5D6),
       onPrimaryContainer: primaryLight,
       secondary: secondaryLight,
       onSecondary: surfaceLight,
-      secondaryContainer: Color(0xFFE2E8F0),
+      secondaryContainer: Color(0xFFD1D9E0),
       onSecondaryContainer: secondaryLight,
       tertiary: accentLight,
       onTertiary: surfaceLight,
-      tertiaryContainer: Color(0xFFE6FFFA),
+      tertiaryContainer: Color(0xFFDBEAFE),
       onTertiaryContainer: accentLight,
       error: error,
       onError: surfaceLight,
@@ -122,24 +122,24 @@ class AppColors {
     return const ColorScheme.dark(
       primary: primaryDark,
       onPrimary: surfaceDark,
-      primaryContainer: Color(0xFF2D3748),
+      primaryContainer: primaryLight,
       onPrimaryContainer: primaryDark,
       secondary: secondaryDark,
       onSecondary: surfaceDark,
-      secondaryContainer: Color(0xFF2D3748),
+      secondaryContainer: secondaryLight,
       onSecondaryContainer: secondaryDark,
       tertiary: accentDark,
       onTertiary: surfaceDark,
-      tertiaryContainer: Color(0xFF234E52),
+      tertiaryContainer: accentLight,
       onTertiaryContainer: accentDark,
       error: error,
       onError: surfaceDark,
       surface: surfaceDark,
       onSurface: textPrimaryDark,
-      surfaceContainerHighest: Color(0xFF2D3748),
+      surfaceContainerHighest: Color(0xFF111111), // 输入框背景色
       onSurfaceVariant: textSecondaryDark,
       outline: borderDark,
-      outlineVariant: Color(0xFF4A5568),
+      outlineVariant: Color(0xFF1E293B),
       shadow: Color(0x1A000000),
       scrim: Color(0x80000000),
       inverseSurface: surfaceLight,
