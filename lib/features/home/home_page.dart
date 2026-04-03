@@ -83,7 +83,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
     _controllers = List.generate(
       _itemCount,
       (index) => AnimationController(
-        duration: const Duration(milliseconds: 400),
+        duration: const Duration(milliseconds: 300),
         vsync: this,
       ),
     );
