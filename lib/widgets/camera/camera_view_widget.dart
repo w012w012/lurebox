@@ -5,6 +5,7 @@ import 'package:camera/camera.dart';
 import '../../core/constants/strings.dart';
 import '../../core/camera/camera_state.dart';
 import '../../core/camera/camera_view_model.dart';
+import '../../core/design/theme/app_colors.dart';
 import '../../widgets/common/premium_button.dart';
 
 /// Camera view widget - displays camera preview with capture controls.
@@ -101,60 +102,81 @@ class CameraViewWidget extends ConsumerWidget {
   }
 
   Widget _buildCameraControls(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    final surfaceColor =
+        isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
+
     return Container(
       padding: const EdgeInsets.all(20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          PremiumIconButton(
-            icon: Icons.photo_library,
-            onPressed: onPickFromGallery,
-            tooltip: strings.selectFromGallery,
-            size: 48,
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
           ),
-          GestureDetector(
-            onTap: state.isTakingPicture ? null : onTakePicture,
-            child: Container(
-              width: 70,
-              height: 70,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 4,
-                ),
-              ),
-              child: Center(
-                child: Container(
-                  width: 54,
-                  height: 54,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Theme.of(context).colorScheme.primary,
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            PremiumIconButton(
+              icon: Icons.photo_library,
+              onPressed: onPickFromGallery,
+              tooltip: strings.selectFromGallery,
+              size: 48,
+              variant: PremiumButtonVariant.secondary,
+            ),
+            GestureDetector(
+              onTap: state.isTakingPicture ? null : onTakePicture,
+              child: Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: accentColor,
+                    width: 4,
                   ),
-                  child: state.isTakingPicture
-                      ? Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: CircularProgressIndicator(
-                            color: Theme.of(context).colorScheme.surface,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : null,
+                ),
+                child: Center(
+                  child: Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: accentColor,
+                    ),
+                    child: state.isTakingPicture
+                        ? Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: CircularProgressIndicator(
+                              color: surfaceColor,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : null,
+                  ),
                 ),
               ),
             ),
-          ),
-          PremiumIconButton(
-            icon: Icons.cameraswitch,
-            onPressed: state.canSwitchCamera ? () => vm.switchCamera() : null,
-            tooltip: strings.switchCamera,
-            size: 48,
-            color: state.canSwitchCamera
-                ? null
-                : Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ],
+            PremiumIconButton(
+              icon: Icons.cameraswitch,
+              onPressed: state.canSwitchCamera ? () => vm.switchCamera() : null,
+              tooltip: strings.switchCamera,
+              size: 48,
+              variant: PremiumButtonVariant.secondary,
+              color: state.canSwitchCamera
+                  ? accentColor
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ],
+        ),
       ),
     );
   }

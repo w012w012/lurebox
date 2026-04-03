@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/strings.dart';
+import '../../core/design/theme/animation_constants.dart';
+import '../../core/design/theme/app_colors.dart';
 import '../../core/models/fish_catch.dart';
 import '../../core/providers/app_settings_provider.dart';
 import '../../core/providers/fish_list_view_model.dart';
@@ -20,9 +22,14 @@ class FishListPage extends ConsumerStatefulWidget {
   ConsumerState<FishListPage> createState() => _FishListPageState();
 }
 
-class _FishListPageState extends ConsumerState<FishListPage> {
+class _FishListPageState extends ConsumerState<FishListPage>
+    with TickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
   double _lastScrollOffset = 0;
+
+  // Animation controllers for staggered list items
+  final Map<int, AnimationController> _itemAnimationControllers = {};
+  final Map<int, Animation<double>> _itemAnimations = {};
 
   @override
   void initState() {
@@ -37,7 +44,16 @@ class _FishListPageState extends ConsumerState<FishListPage> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _disposeAllAnimationControllers();
     super.dispose();
+  }
+
+  void _disposeAllAnimationControllers() {
+    for (final controller in _itemAnimationControllers.values) {
+      controller.dispose();
+    }
+    _itemAnimationControllers.clear();
+    _itemAnimations.clear();
   }
 
   void _onScroll() {
@@ -77,7 +93,7 @@ class _FishListPageState extends ConsumerState<FishListPage> {
         return Theme(
           data: Theme.of(context).copyWith(
             colorScheme: Theme.of(context).colorScheme.copyWith(
-                  primary: Theme.of(context).colorScheme.primary,
+                  primary: Theme.of(context).colorScheme.tertiary,
                 ),
           ),
           child: child!,
@@ -166,12 +182,45 @@ class _FishListPageState extends ConsumerState<FishListPage> {
     ref.read(fishListViewModelProvider.notifier).toggleSelection(fish.id);
   }
 
+  Animation<double> _getItemAnimation(int index) {
+    if (!_itemAnimations.containsKey(index)) {
+      final controller = AnimationController(
+        duration: const Duration(milliseconds: 350),
+        vsync: this,
+      );
+
+      final delay = AnimationConstants.staggerDelay * index;
+      final delayFraction = delay.inMilliseconds / 350;
+
+      final animation = CurvedAnimation(
+        parent: controller,
+        curve: Interval(
+          delayFraction.clamp(0.0, 0.6),
+          1.0,
+          curve: AnimationConstants.defaultCurve,
+        ),
+      );
+
+      _itemAnimationControllers[index] = controller;
+      _itemAnimations[index] = animation;
+
+      controller.forward();
+    }
+    return _itemAnimations[index]!;
+  }
+
+  void _resetAnimations() {
+    _disposeAllAnimationControllers();
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(fishListViewModelProvider);
     final strings = ref.watch(currentStringsProvider);
 
     return Scaffold(
+      backgroundColor: AppColors.backgroundLight,
       appBar: _buildAppBar(state, strings),
       body: _buildBody(state, strings),
     );
@@ -179,11 +228,23 @@ class _FishListPageState extends ConsumerState<FishListPage> {
 
   PreferredSizeWidget _buildAppBar(FishListState state, AppStrings strings) {
     return AppBar(
+      backgroundColor: AppColors.surfaceLight,
       title: state.isSelectionMode
           ? Text(
               '${strings.selected} ${state.selectedIds.length} ${strings.items}',
+              style: const TextStyle(
+                color: AppColors.textPrimaryLight,
+                fontWeight: FontWeight.w600,
+              ),
             )
-          : Text(strings.fishList),
+          : const Text(
+              '鱼获列表',
+              style: TextStyle(
+                color: AppColors.textPrimaryLight,
+                fontWeight: FontWeight.w600,
+                letterSpacing: -0.3,
+              ),
+            ),
       centerTitle: true,
       leading: state.isSelectionMode
           ? PremiumIconButton(
@@ -220,7 +281,11 @@ class _FishListPageState extends ConsumerState<FishListPage> {
 
   Widget _buildBody(FishListState state, AppStrings strings) {
     if (state.isLoading && state.filteredCatches.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(
+          color: AppColors.accentLight,
+        ),
+      );
     }
 
     if (state.errorMessage != null) {
@@ -237,9 +302,13 @@ class _FishListPageState extends ConsumerState<FishListPage> {
         final isTablet = constraints.maxWidth >= 600;
 
         return RefreshIndicator(
-          onRefresh: () async => ref
-              .read(fishListViewModelProvider.notifier)
-              .loadCatches(reset: true),
+          color: AppColors.accentLight,
+          onRefresh: () async {
+            _resetAnimations();
+            await ref
+                .read(fishListViewModelProvider.notifier)
+                .loadCatches(reset: true);
+          },
           child: isTablet
               ? _buildTabletGridView(constraints, state, strings)
               : _buildMobileListView(state, strings),
@@ -319,21 +388,28 @@ class _FishListPageState extends ConsumerState<FishListPage> {
               (context, index) {
                 if (index >= state.filteredCatches.length) {
                   if (state.isLoading && state.filteredCatches.isNotEmpty) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.accentLight,
+                      ),
+                    );
                   }
                   return null;
                 }
                 final fish = state.filteredCatches[index];
-                return FishListItem(
-                  fish: fish,
-                  strings: strings,
-                  isSelected: state.selectedIds.contains(fish.id),
-                  isSelectionMode: state.isSelectionMode,
-                  onTap: () => _onFishTap(fish),
-                  onLongPress: () => _onFishLongPress(fish),
-                  onQuickIdentify: fish.pendingRecognition
-                      ? () => _onQuickIdentify(fish)
-                      : null,
+                return _AnimatedListItem(
+                  animation: _getItemAnimation(index),
+                  child: FishListItem(
+                    fish: fish,
+                    strings: strings,
+                    isSelected: state.selectedIds.contains(fish.id),
+                    isSelectionMode: state.isSelectionMode,
+                    onTap: () => _onFishTap(fish),
+                    onLongPress: () => _onFishLongPress(fish),
+                    onQuickIdentify: fish.pendingRecognition
+                        ? () => _onQuickIdentify(fish)
+                        : null,
+                  ),
                 );
               },
               childCount:
@@ -392,22 +468,29 @@ class _FishListPageState extends ConsumerState<FishListPage> {
       if (state.isLoading && state.filteredCatches.isNotEmpty) {
         return const Padding(
           padding: EdgeInsets.all(16),
-          child: Center(child: CircularProgressIndicator()),
+          child: Center(
+            child: CircularProgressIndicator(
+              color: AppColors.accentLight,
+            ),
+          ),
         );
       }
       return const SizedBox.shrink();
     }
 
     final fish = state.filteredCatches[index - 1];
-    return FishListItem(
-      fish: fish,
-      strings: strings,
-      isSelected: state.selectedIds.contains(fish.id),
-      isSelectionMode: state.isSelectionMode,
-      onTap: () => _onFishTap(fish),
-      onLongPress: () => _onFishLongPress(fish),
-      onQuickIdentify:
-          fish.pendingRecognition ? () => _onQuickIdentify(fish) : null,
+    return _AnimatedListItem(
+      animation: _getItemAnimation(index - 1),
+      child: FishListItem(
+        fish: fish,
+        strings: strings,
+        isSelected: state.selectedIds.contains(fish.id),
+        isSelectionMode: state.isSelectionMode,
+        onTap: () => _onFishTap(fish),
+        onLongPress: () => _onFishLongPress(fish),
+        onQuickIdentify:
+            fish.pendingRecognition ? () => _onQuickIdentify(fish) : null,
+      ),
     );
   }
 
@@ -415,14 +498,23 @@ class _FishListPageState extends ConsumerState<FishListPage> {
   BoxConstraints get constraints => const BoxConstraints();
 
   Widget _buildSortBar(FishListState state, AppStrings strings) {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceLight,
+        border: Border(
+          bottom: BorderSide(
+            color: AppColors.borderLight.withOpacity(0.5),
+            width: 1,
+          ),
+        ),
+      ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.sort,
             size: 18,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: AppColors.accentLight,
           ),
           const SizedBox(width: 8),
           _SortButton(
@@ -451,11 +543,20 @@ class _FishListPageState extends ConsumerState<FishListPage> {
                 .setSortBy('weight'),
           ),
           const Spacer(),
-          Text(
-            '${strings.total} ${state.filteredCatches.length} ${strings.fishCountUnit}',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppColors.accentLight.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              '${strings.total} ${state.filteredCatches.length} ${strings.fishCountUnit}',
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.accentLight,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ],
       ),
@@ -480,28 +581,70 @@ class _SortButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-          ),
-          if (isSelected) ...[
-            const SizedBox(width: 2),
-            Icon(
-              isAsc ? Icons.arrow_upward : Icons.arrow_downward,
-              size: 12,
-              color: Theme.of(context).colorScheme.primary,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.accentLight.withOpacity(0.12)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                color: isSelected
+                    ? AppColors.accentLight
+                    : AppColors.textSecondaryLight,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              ),
             ),
+            if (isSelected) ...[
+              const SizedBox(width: 2),
+              Icon(
+                isAsc ? Icons.arrow_upward : Icons.arrow_downward,
+                size: 12,
+                color: AppColors.accentLight,
+              ),
+            ],
           ],
-        ],
+        ),
       ),
+    );
+  }
+}
+
+/// Animated wrapper for list items with staggered fade + slide effect
+class _AnimatedListItem extends StatelessWidget {
+  final Animation<double> animation;
+  final Widget child;
+
+  const _AnimatedListItem({
+    required this.animation,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.15),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
+        );
+      },
+      child: child,
     );
   }
 }

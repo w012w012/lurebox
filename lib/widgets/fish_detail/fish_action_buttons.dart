@@ -59,13 +59,15 @@ class _ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isDestructive ? AppColors.error : null;
+    final color = isDestructive
+        ? AppColors.error
+        : (onPressed != null ? AppColors.accentLight : AppColors.grey500);
 
     return InkWell(
       onTap: onPressed,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -78,14 +80,14 @@ class _ActionButton extends StatelessWidget {
                       color: color,
                     ),
                   )
-                : Icon(icon,
-                    color: onPressed != null ? color : AppColors.grey500),
+                : Icon(icon, color: color),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
                 fontSize: 12,
-                color: onPressed != null ? color : AppColors.grey500,
+                fontWeight: FontWeight.w500,
+                color: color,
               ),
             ),
           ],

@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../core/constants/strings.dart';
+import '../../core/design/theme/app_colors.dart';
 import '../../core/providers/fish_detail_view_model.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
@@ -38,15 +39,62 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
 
     if (state.isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text(strings.fishDetail)),
-        body: const Center(child: CircularProgressIndicator()),
+        backgroundColor: AppColors.backgroundLight,
+        appBar: AppBar(
+          title: Text(
+            strings.fishDetail,
+            style: const TextStyle(
+              color: AppColors.textPrimaryLight,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          backgroundColor: AppColors.surfaceLight,
+          foregroundColor: AppColors.textPrimaryLight,
+          elevation: 0,
+        ),
+        body: Center(
+          child: CircularProgressIndicator(
+            color: AppColors.accentLight,
+          ),
+        ),
       );
     }
 
     if (state.errorMessage != null || state.fish == null) {
       return Scaffold(
-        appBar: AppBar(title: Text(strings.fishDetail)),
-        body: Center(child: Text(state.errorMessage ?? 'Fish not found')),
+        backgroundColor: AppColors.backgroundLight,
+        appBar: AppBar(
+          title: Text(
+            strings.fishDetail,
+            style: const TextStyle(
+              color: AppColors.textPrimaryLight,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          backgroundColor: AppColors.surfaceLight,
+          foregroundColor: AppColors.textPrimaryLight,
+          elevation: 0,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline,
+                size: 48,
+                color: AppColors.error,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                state.errorMessage ?? 'Fish not found',
+                style: TextStyle(
+                  color: AppColors.textSecondaryLight,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
@@ -67,7 +115,20 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
         fish['weight_unit'] as String? ?? units.fishWeightUnit;
 
     return Scaffold(
-      appBar: AppBar(title: Text(strings.fishDetail)),
+      backgroundColor: AppColors.backgroundLight,
+      appBar: AppBar(
+        title: Text(
+          strings.fishDetail,
+          style: const TextStyle(
+            color: AppColors.textPrimaryLight,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        backgroundColor: AppColors.surfaceLight,
+        foregroundColor: AppColors.textPrimaryLight,
+        elevation: 0,
+        scrolledUnderElevation: 0.5,
+      ),
       body: Column(
         children: [
           Expanded(
@@ -76,42 +137,110 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
                 children: [
                   RepaintBoundary(
                     key: _imageKey,
-                    child: FishImageGallery(
-                      imagePath: fish['image_path'] as String,
-                      species: fish['species'] as String,
-                      length: fish['length'] as double,
-                      weight: fish['weight'] as double?,
-                      lengthUnit: fishLengthUnit,
-                      weightUnit: fishWeightUnit,
-                      locationName: fish['location_name'] as String?,
-                      catchTime: catchTime,
-                      rodName: rodName,
-                      reelName: reelName,
-                      lureName: lureName,
-                      rodBrand: state.rodEquipment?['brand'] as String?,
-                      rodModel: state.rodEquipment?['model'] as String?,
-                      rodMaterial: state.rodEquipment?['material'] as String?,
-                      rodLength: state.rodEquipment?['length'] as String?,
-                      rodLengthUnit:
-                          state.rodEquipment?['length_unit'] as String?,
-                      rodHardness: state.rodEquipment?['hardness'] as String?,
-                      rodAction: state.rodEquipment?['rod_action'] as String?,
-                      reelBrand: state.reelEquipment?['brand'] as String?,
-                      reelModel: state.reelEquipment?['model'] as String?,
-                      reelRatio: state.reelEquipment?['reel_ratio'] as String?,
-                      lureBrand: state.lureEquipment?['brand'] as String?,
-                      lureModel: state.lureEquipment?['model'] as String?,
-                      lureSize: state.lureEquipment?['lure_size'] as String?,
-                      lureSizeUnit:
-                          state.lureEquipment?['lure_size_unit'] as String?,
-                      lureColor: state.lureEquipment?['lure_color'] as String?,
-                      lureWeight:
-                          state.lureEquipment?['lure_weight'] as String?,
-                      lureWeightUnit:
-                          state.lureEquipment?['lure_weight_unit'] as String?,
-                      airTemperature: fish['air_temperature'] as double?,
-                      pressure: fish['pressure'] as double?,
-                      weatherCode: fish['weather_code'] as int?,
+                    child: Hero(
+                      tag: 'fish_image_${widget.fishId}',
+                      flightShuttleBuilder: (
+                        BuildContext flightContext,
+                        Animation<double> animation,
+                        HeroFlightDirection flightDirection,
+                        BuildContext fromHeroContext,
+                        BuildContext toHeroContext,
+                      ) {
+                        return AnimatedBuilder(
+                          animation: animation,
+                          builder: (context, child) {
+                            return FishImageGallery(
+                              imagePath: fish['image_path'] as String,
+                              species: fish['species'] as String,
+                              length: fish['length'] as double,
+                              weight: fish['weight'] as double?,
+                              lengthUnit: fishLengthUnit,
+                              weightUnit: fishWeightUnit,
+                              locationName: fish['location_name'] as String?,
+                              catchTime: catchTime,
+                              rodName: rodName,
+                              reelName: reelName,
+                              lureName: lureName,
+                              rodBrand: state.rodEquipment?['brand'] as String?,
+                              rodModel: state.rodEquipment?['model'] as String?,
+                              rodMaterial:
+                                  state.rodEquipment?['material'] as String?,
+                              rodLength:
+                                  state.rodEquipment?['length'] as String?,
+                              rodLengthUnit:
+                                  state.rodEquipment?['length_unit'] as String?,
+                              rodHardness:
+                                  state.rodEquipment?['hardness'] as String?,
+                              rodAction:
+                                  state.rodEquipment?['rod_action'] as String?,
+                              reelBrand:
+                                  state.reelEquipment?['brand'] as String?,
+                              reelModel:
+                                  state.reelEquipment?['model'] as String?,
+                              reelRatio:
+                                  state.reelEquipment?['reel_ratio'] as String?,
+                              lureBrand:
+                                  state.lureEquipment?['brand'] as String?,
+                              lureModel:
+                                  state.lureEquipment?['model'] as String?,
+                              lureSize:
+                                  state.lureEquipment?['lure_size'] as String?,
+                              lureSizeUnit: state
+                                  .lureEquipment?['lure_size_unit'] as String?,
+                              lureColor:
+                                  state.lureEquipment?['lure_color'] as String?,
+                              lureWeight: state.lureEquipment?['lure_weight']
+                                  as String?,
+                              lureWeightUnit:
+                                  state.lureEquipment?['lure_weight_unit']
+                                      as String?,
+                              airTemperature:
+                                  fish['air_temperature'] as double?,
+                              pressure: fish['pressure'] as double?,
+                              weatherCode: fish['weather_code'] as int?,
+                            );
+                          },
+                        );
+                      },
+                      child: FishImageGallery(
+                        imagePath: fish['image_path'] as String,
+                        species: fish['species'] as String,
+                        length: fish['length'] as double,
+                        weight: fish['weight'] as double?,
+                        lengthUnit: fishLengthUnit,
+                        weightUnit: fishWeightUnit,
+                        locationName: fish['location_name'] as String?,
+                        catchTime: catchTime,
+                        rodName: rodName,
+                        reelName: reelName,
+                        lureName: lureName,
+                        rodBrand: state.rodEquipment?['brand'] as String?,
+                        rodModel: state.rodEquipment?['model'] as String?,
+                        rodMaterial: state.rodEquipment?['material'] as String?,
+                        rodLength: state.rodEquipment?['length'] as String?,
+                        rodLengthUnit:
+                            state.rodEquipment?['length_unit'] as String?,
+                        rodHardness: state.rodEquipment?['hardness'] as String?,
+                        rodAction: state.rodEquipment?['rod_action'] as String?,
+                        reelBrand: state.reelEquipment?['brand'] as String?,
+                        reelModel: state.reelEquipment?['model'] as String?,
+                        reelRatio:
+                            state.reelEquipment?['reel_ratio'] as String?,
+                        lureBrand: state.lureEquipment?['brand'] as String?,
+                        lureModel: state.lureEquipment?['model'] as String?,
+                        lureSize: state.lureEquipment?['lure_size'] as String?,
+                        lureSizeUnit:
+                            state.lureEquipment?['lure_size_unit'] as String?,
+                        lureColor:
+                            state.lureEquipment?['lure_color'] as String?,
+                        lureWeight:
+                            state.lureEquipment?['lure_weight'] as String?,
+                        lureWeightUnit:
+                            state.lureEquipment?['lure_weight_unit'] as String?,
+                        airTemperature: fish['air_temperature'] as double?,
+                        pressure: fish['pressure'] as double?,
+                        weatherCode: fish['weather_code'] as int?,
+                      ),
                     ),
                   ),
                   FishInfoCard(
@@ -135,22 +264,37 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
               ),
             ),
           ),
-          FishActionButtons(
-            onEdit: () => _editFish(context, fish, strings),
-            onShare: () => _shareFish(
-              context,
-              ref,
-              strings,
-              fish,
-              state,
-              rodName,
-              reelName,
-              lureName,
-              catchTime,
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors.surfaceLight,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, -2),
+                ),
+              ],
             ),
-            onDelete: () => _deleteFish(context, ref, strings),
-            isDeleting: state.isDeleting,
-            isSharing: state.isSharing,
+            child: SafeArea(
+              top: false,
+              child: FishActionButtons(
+                onEdit: () => _editFish(context, fish, strings),
+                onShare: () => _shareFish(
+                  context,
+                  ref,
+                  strings,
+                  fish,
+                  state,
+                  rodName,
+                  reelName,
+                  lureName,
+                  catchTime,
+                ),
+                onDelete: () => _deleteFish(context, ref, strings),
+                isDeleting: state.isDeleting,
+                isSharing: state.isSharing,
+              ),
+            ),
           ),
         ],
       ),
@@ -165,8 +309,23 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(strings.confirmDelete),
-        content: Text(strings.confirmDeleteFish),
+        title: Text(
+          strings.confirmDelete,
+          style: const TextStyle(
+            color: AppColors.textPrimaryLight,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        content: Text(
+          strings.confirmDeleteFish,
+          style: const TextStyle(
+            color: AppColors.textSecondaryLight,
+          ),
+        ),
+        backgroundColor: AppColors.surfaceLight,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
         actions: [
           PremiumButton(
             text: strings.cancel,
@@ -251,12 +410,15 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CircularProgressIndicator(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: AppColors.accentLight,
                   ),
                   const SizedBox(height: 16),
                   Text(
                     '正在分享...',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    style: TextStyle(
+                      color: AppColors.textPrimaryLight,
+                      fontSize: 16,
+                    ),
                   ),
                 ],
               ),

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/constants/strings.dart';
+import '../../core/design/theme/animation_constants.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/providers/home_view_model.dart';
 import '../../core/providers/language_provider.dart';
@@ -53,23 +54,85 @@ class HomePage extends ConsumerWidget {
   }
 }
 
-class _HomePageBody extends ConsumerWidget {
+class _HomePageBody extends ConsumerStatefulWidget {
   final HomeState state;
   final AppStrings strings;
 
   const _HomePageBody({required this.state, required this.strings});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (state.isLoading) {
+  ConsumerState<_HomePageBody> createState() => _HomePageBodyState();
+}
+
+class _HomePageBodyState extends ConsumerState<_HomePageBody>
+    with TickerProviderStateMixin {
+  late final List<AnimationController> _controllers;
+  late final List<Animation<double>> _fadeAnimations;
+  late final List<Animation<Offset>> _slideAnimations;
+
+  static const int _itemCount = 6; // pending, podium, 4 stat cards
+
+  @override
+  void initState() {
+    super.initState();
+    _initAnimations();
+    _startStaggeredAnimation();
+  }
+
+  void _initAnimations() {
+    _controllers = List.generate(
+      _itemCount,
+      (index) => AnimationController(
+        duration: const Duration(milliseconds: 400),
+        vsync: this,
+      ),
+    );
+
+    _fadeAnimations = _controllers.map((controller) {
+      return Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(parent: controller, curve: Curves.easeOut),
+      );
+    }).toList();
+
+    _slideAnimations = _controllers.map((controller) {
+      return Tween<Offset>(
+        begin: const Offset(0, 0.15),
+        end: Offset.zero,
+      ).animate(
+        CurvedAnimation(parent: controller, curve: Curves.easeOut),
+      );
+    }).toList();
+  }
+
+  void _startStaggeredAnimation() {
+    for (var i = 0; i < _itemCount; i++) {
+      Future.delayed(AnimationConstants.staggerDelay * i, () {
+        if (mounted) {
+          _controllers[i].forward();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    for (final controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.state.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (state.errorMessage != null) {
+    if (widget.state.errorMessage != null) {
       return ErrorView(
-        message: state.errorMessage!,
+        message: widget.state.errorMessage!,
         onRetry: () => ref.read(homeViewModelProvider.notifier).refresh(),
-        strings: strings,
+        strings: widget.strings,
       );
     }
 
@@ -83,90 +146,115 @@ class _HomePageBody extends ConsumerWidget {
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.all(16),
         children: [
-          _buildPendingRecognitionCard(context, ref, strings),
-          _buildPodium(context),
-          const SizedBox(height: 20),
-          _buildStatCard(
-            context,
-            strings,
-            strings.todayCatch,
-            state.todayCount,
-            state.todayRelease,
-            state.todayKeep,
-            state.todaySpecies,
-            () {
-              final now = DateTime.now();
-              _navigateToDetail(
-                context,
-                strings.todayCatch,
-                DateTime(now.year, now.month, now.day),
-                DateTime(
-                  now.year,
-                  now.month,
-                  now.day,
-                ).add(const Duration(days: 1)),
-              );
-            },
-          ),
+          // Item 0: Pending recognition card
+          _buildAnimatedItem(0, _buildPendingRecognitionCard(context, ref)),
           const SizedBox(height: 12),
-          _buildStatCard(
-            context,
-            strings,
-            strings.monthCatch,
-            state.monthCount,
-            state.monthRelease,
-            state.monthKeep,
-            state.monthSpecies,
-            () {
-              final now = DateTime.now();
-              _navigateToDetail(
-                context,
-                strings.monthCatch,
-                DateTime(now.year, now.month, 1),
-                DateTime(now.year, now.month + 1, 1),
-              );
-            },
-          ),
+          // Item 1: Podium
+          _buildAnimatedItem(1, _buildPodium(context)),
           const SizedBox(height: 12),
-          _buildStatCard(
-            context,
-            strings,
-            strings.yearCatch,
-            state.yearCount,
-            state.yearRelease,
-            state.yearKeep,
-            state.yearSpecies,
-            () {
-              final now = DateTime.now();
-              _navigateToDetail(
+          // Item 2: Today stat card
+          _buildAnimatedItem(
+              2,
+              _buildStatCard(
                 context,
-                strings.yearCatch,
-                DateTime(now.year, 1, 1),
-                DateTime(now.year + 1, 1, 1),
-              );
-            },
-          ),
+                widget.strings,
+                widget.strings.todayCatch,
+                widget.state.todayCount,
+                widget.state.todayRelease,
+                widget.state.todayKeep,
+                widget.state.todaySpecies,
+                () {
+                  final now = DateTime.now();
+                  _navigateToDetail(
+                    context,
+                    widget.strings.todayCatch,
+                    DateTime(now.year, now.month, now.day),
+                    DateTime(
+                      now.year,
+                      now.month,
+                      now.day,
+                    ).add(const Duration(days: 1)),
+                  );
+                },
+              )),
           const SizedBox(height: 12),
-          _buildStatCard(
-            context,
-            strings,
-            strings.allCatch,
-            state.allCount,
-            state.allRelease,
-            state.allKeep,
-            state.allSpecies,
-            () {
-              final now = DateTime.now();
-              _navigateToDetail(
+          // Item 3: Month stat card
+          _buildAnimatedItem(
+              3,
+              _buildStatCard(
                 context,
-                strings.allCatch,
-                DateTime(2000, 1, 1),
-                DateTime(now.year + 1, 1, 1),
-              );
-            },
-          ),
+                widget.strings,
+                widget.strings.monthCatch,
+                widget.state.monthCount,
+                widget.state.monthRelease,
+                widget.state.monthKeep,
+                widget.state.monthSpecies,
+                () {
+                  final now = DateTime.now();
+                  _navigateToDetail(
+                    context,
+                    widget.strings.monthCatch,
+                    DateTime(now.year, now.month, 1),
+                    DateTime(now.year, now.month + 1, 1),
+                  );
+                },
+              )),
+          const SizedBox(height: 12),
+          // Item 4: Year stat card
+          _buildAnimatedItem(
+              4,
+              _buildStatCard(
+                context,
+                widget.strings,
+                widget.strings.yearCatch,
+                widget.state.yearCount,
+                widget.state.yearRelease,
+                widget.state.yearKeep,
+                widget.state.yearSpecies,
+                () {
+                  final now = DateTime.now();
+                  _navigateToDetail(
+                    context,
+                    widget.strings.yearCatch,
+                    DateTime(now.year, 1, 1),
+                    DateTime(now.year + 1, 1, 1),
+                  );
+                },
+              )),
+          const SizedBox(height: 12),
+          // Item 5: All catch stat card
+          _buildAnimatedItem(
+              5,
+              _buildStatCard(
+                context,
+                widget.strings,
+                widget.strings.allCatch,
+                widget.state.allCount,
+                widget.state.allRelease,
+                widget.state.allKeep,
+                widget.state.allSpecies,
+                () {
+                  final now = DateTime.now();
+                  _navigateToDetail(
+                    context,
+                    widget.strings.allCatch,
+                    DateTime(2000, 1, 1),
+                    DateTime(now.year + 1, 1, 1),
+                  );
+                },
+              )),
           const SizedBox(height: 80),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAnimatedItem(int index, Widget child) {
+    return FadeTransition(
+      opacity: _fadeAnimations[index],
+      child: SlideTransition(
+        position: _slideAnimations[index],
+        child: child,
       ),
     );
   }
@@ -183,7 +271,7 @@ class _HomePageBody extends ConsumerWidget {
   }
 
   Widget _buildPodium(BuildContext context) {
-    if (state.top3Fishes.isEmpty) {
+    if (widget.state.top3Fishes.isEmpty) {
       return Container(
         height: 160,
         decoration: BoxDecoration(
@@ -211,14 +299,14 @@ class _HomePageBody extends ConsumerWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                strings.noCatchYet,
+                widget.strings.noCatchYet,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
               ),
               const SizedBox(height: 4),
               Text(
-                strings.goCatchFish,
+                widget.strings.goCatchFish,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
@@ -229,7 +317,7 @@ class _HomePageBody extends ConsumerWidget {
       );
     }
 
-    final fishes = List<Map<String, dynamic>>.from(state.top3Fishes);
+    final fishes = List<Map<String, dynamic>>.from(widget.state.top3Fishes);
     fishes.sort(
       (a, b) => (b['length'] as double).compareTo(a['length'] as double),
     );
@@ -258,7 +346,7 @@ class _HomePageBody extends ConsumerWidget {
               const Icon(Icons.emoji_events, color: AppColors.gold, size: 20),
               const SizedBox(width: 8),
               Text(
-                strings.personalRecord,
+                widget.strings.personalRecord,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -458,7 +546,6 @@ class _HomePageBody extends ConsumerWidget {
   Widget _buildPendingRecognitionCard(
     BuildContext context,
     WidgetRef ref,
-    AppStrings strings,
   ) {
     final pendingCountAsync = ref.watch(pendingRecognitionCountProvider);
 

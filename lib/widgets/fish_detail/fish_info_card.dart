@@ -132,119 +132,154 @@ class FishInfoCard extends ConsumerWidget {
           )
         : null;
 
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _InfoRow(
-            icon: Icons.set_meal,
-            label: strings.species,
-            value: species,
+    return Container(
+      margin: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceLight,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
           ),
-          const Divider(height: 24),
-          _InfoRow(
-            icon: Icons.straighten,
-            label: strings.length,
-            value:
-                '${displayLength.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.fishLengthUnit)}',
-          ),
-          if (displayWeight != null) ...[
-            const Divider(height: 24),
-            _InfoRow(
-              icon: Icons.scale,
-              label: strings.weight,
-              value:
-                  '${displayWeight.toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(displayUnits.fishWeightUnit)}',
-            ),
-          ],
-          const Divider(height: 24),
-          _InfoRow(
-            icon: fate == FishFateType.release.value
-                ? Icons.water_drop
-                : Icons.restaurant,
-            label: strings.fate,
-            value: fate == FishFateType.release.value
-                ? '🐟 ${strings.release}'
-                : '🍳 ${strings.keep}',
-            valueColor: fate == FishFateType.release.value
-                ? AppColors.release
-                : AppColors.keep,
-          ),
-          const Divider(height: 24),
-          _InfoRow(
-            icon: Icons.access_time,
-            label: strings.catchTime,
-            value: DateFormat(DateFormats.dateTime).format(catchTime),
-          ),
-          if (locationName != null && locationName!.isNotEmpty) ...[
-            const Divider(height: 24),
-            _InfoRow(
-              icon: Icons.location_on,
-              label: strings.catchLocation,
-              value: locationName!,
-            ),
-          ],
-          if (airTemperature != null ||
-              pressure != null ||
-              weatherCode != null) ...[
-            const Divider(height: 24),
-            const Text(
-              '天气信息',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            if (airTemperature != null)
-              _InfoRow(
-                icon: Icons.thermostat,
-                label: '气温',
-                value: '${airTemperature!.toStringAsFixed(1)}°C',
-              ),
-            if (pressure != null)
-              _InfoRow(
-                icon: Icons.speed,
-                label: '气压',
-                value: '${pressure!.toStringAsFixed(0)}hPa',
-              ),
-            if (weatherCode != null)
-              _InfoRow(
-                icon: Icons.wb_sunny,
-                label: '天气',
-                value: getWeatherDescription(weatherCode),
-              ),
-          ],
-          if (rodEquipment != null ||
-              reelEquipment != null ||
-              lureEquipment != null) ...[
-            const Divider(height: 24),
-            Text(
-              strings.useEquipment,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            if (rodEquipment != null)
-              _EquipmentInfoRow(
-                label: strings.rod,
-                value: _buildRodDisplay(
-                  rodEquipment,
-                  displayUnits.rodLengthUnit,
-                ),
-              ),
-            if (reelEquipment != null)
-              _EquipmentInfoRow(
-                label: strings.reel,
-                value: _buildReelDisplay(reelEquipment),
-              ),
-            if (lureEquipment != null)
-              _EquipmentInfoRow(
-                label: strings.lure,
-                value: _buildLureDisplay(
-                  lureEquipment,
-                  displayUnits.lureLengthUnit,
-                ),
-              ),
-          ],
         ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _InfoRow(
+              icon: Icons.set_meal,
+              label: strings.species,
+              value: species,
+              iconColor: AppColors.accentLight,
+            ),
+            _IOSDivider(),
+            _InfoRow(
+              icon: Icons.straighten,
+              label: strings.length,
+              value:
+                  '${displayLength.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.fishLengthUnit)}',
+              iconColor: AppColors.accentLight,
+            ),
+            if (displayWeight != null) ...[
+              _IOSDivider(),
+              _InfoRow(
+                icon: Icons.scale,
+                label: strings.weight,
+                value:
+                    '${displayWeight.toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(displayUnits.fishWeightUnit)}',
+                iconColor: AppColors.accentLight,
+              ),
+            ],
+            _IOSDivider(),
+            _InfoRow(
+              icon: fate == FishFateType.release.value
+                  ? Icons.water_drop
+                  : Icons.restaurant,
+              label: strings.fate,
+              value: fate == FishFateType.release.value
+                  ? '🐟 ${strings.release}'
+                  : '🍳 ${strings.keep}',
+              valueColor: fate == FishFateType.release.value
+                  ? AppColors.release
+                  : AppColors.keep,
+              iconColor: AppColors.accentLight,
+            ),
+            _IOSDivider(),
+            _InfoRow(
+              icon: Icons.access_time,
+              label: strings.catchTime,
+              value: DateFormat(DateFormats.dateTime).format(catchTime),
+              iconColor: AppColors.accentLight,
+            ),
+            if (locationName != null && locationName!.isNotEmpty) ...[
+              _IOSDivider(),
+              _InfoRow(
+                icon: Icons.location_on,
+                label: strings.catchLocation,
+                value: locationName!,
+                iconColor: AppColors.accentLight,
+              ),
+            ],
+            if (airTemperature != null ||
+                pressure != null ||
+                weatherCode != null) ...[
+              _IOSDivider(),
+              const Padding(
+                padding: EdgeInsets.only(bottom: 8),
+                child: Text(
+                  '天气信息',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimaryLight,
+                  ),
+                ),
+              ),
+              if (airTemperature != null)
+                _InfoRow(
+                  icon: Icons.thermostat,
+                  label: '气温',
+                  value: '${airTemperature!.toStringAsFixed(1)}°C',
+                  iconColor: AppColors.accentLight,
+                ),
+              if (pressure != null)
+                _InfoRow(
+                  icon: Icons.speed,
+                  label: '气压',
+                  value: '${pressure!.toStringAsFixed(0)}hPa',
+                  iconColor: AppColors.accentLight,
+                ),
+              if (weatherCode != null)
+                _InfoRow(
+                  icon: Icons.wb_sunny,
+                  label: '天气',
+                  value: getWeatherDescription(weatherCode),
+                  iconColor: AppColors.accentLight,
+                ),
+            ],
+            if (rodEquipment != null ||
+                reelEquipment != null ||
+                lureEquipment != null) ...[
+              _IOSDivider(),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  strings.useEquipment,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimaryLight,
+                  ),
+                ),
+              ),
+              if (rodEquipment != null)
+                _EquipmentInfoRow(
+                  label: strings.rod,
+                  value: _buildRodDisplay(
+                    rodEquipment,
+                    displayUnits.rodLengthUnit,
+                  ),
+                ),
+              if (reelEquipment != null)
+                _EquipmentInfoRow(
+                  label: strings.reel,
+                  value: _buildReelDisplay(reelEquipment),
+                ),
+              if (lureEquipment != null)
+                _EquipmentInfoRow(
+                  label: strings.lure,
+                  value: _buildLureDisplay(
+                    lureEquipment,
+                    displayUnits.lureLengthUnit,
+                  ),
+                ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -255,25 +290,27 @@ class _InfoRow extends StatelessWidget {
   final String label;
   final String value;
   final Color? valueColor;
+  final Color? iconColor;
 
   const _InfoRow({
     required this.icon,
     required this.label,
     required this.value,
     this.valueColor,
+    this.iconColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: Theme.of(context).colorScheme.primary, size: 24),
+        Icon(icon, color: iconColor ?? AppColors.accentLight, size: 24),
         const SizedBox(width: 12),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: AppColors.textSecondaryLight,
           ),
         ),
         const Spacer(),
@@ -281,11 +318,21 @@ class _InfoRow extends StatelessWidget {
           value,
           style: TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: valueColor,
+            fontWeight: FontWeight.w600,
+            color: valueColor ?? AppColors.textPrimaryLight,
           ),
         ),
       ],
+    );
+  }
+}
+
+class _IOSDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 12),
+      child: Divider(height: 1, color: AppColors.borderLight),
     );
   }
 }
