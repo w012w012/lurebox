@@ -74,26 +74,26 @@ class AppTheme {
         ),
       ),
 
-// 卡片主题
-      cardTheme: const CardTheme(
+// 卡片主题 - iOS风格（微妙阴影，无边框）
+      cardTheme: CardTheme(
         elevation: 0,
-        margin: EdgeInsets.symmetric(
+        margin: const EdgeInsets.symmetric(
           horizontal: spacingLg,
           vertical: spacingSm,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(radiusMd)),
-          side: BorderSide(color: AppColors.borderLight, width: 1),
+          borderRadius: BorderRadius.circular(radiusMd),
         ),
         color: AppColors.surfaceLight,
         clipBehavior: Clip.antiAlias,
+        shadowColor: Colors.black.withOpacity(0.08),
       ),
 
-      // 导航栏主题
+      // 导航栏主题 - iOS风格
       navigationBarTheme: NavigationBarThemeData(
         height: 80,
         backgroundColor: AppColors.surfaceLight,
-        indicatorColor: AppColors.primaryLight.withOpacity(0.12),
+        indicatorColor: AppColors.accentLight.withOpacity(0.15),
         indicatorShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusMd),
         ),
@@ -103,7 +103,7 @@ class AppTheme {
         shadowColor: Colors.transparent,
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(color: AppColors.primaryLight, size: 24);
+            return const IconThemeData(color: AppColors.accentLight, size: 24);
           }
           return const IconThemeData(
             color: AppColors.textSecondaryLight,
@@ -115,7 +115,7 @@ class AppTheme {
             return const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: AppColors.primaryLight,
+              color: AppColors.accentLight,
             );
           }
           return const TextStyle(
@@ -126,10 +126,10 @@ class AppTheme {
         }),
       ),
 
-      // 按钮主题
+      // 按钮主题 - iOS风格蓝色
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryLight,
+          backgroundColor: AppColors.accentLight, // #3B82F6 bright blue
           foregroundColor: AppColors.surfaceLight,
           elevation: 0,
           padding: const EdgeInsets.symmetric(
@@ -149,7 +149,7 @@ class AppTheme {
 
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.primaryLight,
+          foregroundColor: AppColors.accentLight,
           elevation: 0,
           padding: const EdgeInsets.symmetric(
             horizontal: spacingXl,
@@ -158,7 +158,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusMd),
           ),
-          side: const BorderSide(color: AppColors.borderLight, width: 1),
+          side: const BorderSide(color: AppColors.accentLight, width: 1),
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -169,7 +169,7 @@ class AppTheme {
 
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.primaryLight,
+          foregroundColor: AppColors.accentLight,
           padding: const EdgeInsets.symmetric(
             horizontal: spacingLg,
             vertical: spacingSm,
@@ -185,21 +185,21 @@ class AppTheme {
         ),
       ),
 
-      // 输入框主题
+      // 输入框主题 - iOS风格
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.backgroundLight,
+        fillColor: AppColors.grey100, // #F7FAFC iOS-style filled input
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.borderLight, width: 1),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.borderLight, width: 1),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.primaryLight, width: 2),
+          borderSide: const BorderSide(color: AppColors.accentLight, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
@@ -328,16 +328,16 @@ class AppTheme {
         space: 1,
       ),
 
-      // Chip 主题
+      // Chip 主题 - iOS风格
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.backgroundLight,
-        selectedColor: AppColors.primaryLight.withOpacity(0.12),
+        selectedColor: AppColors.accentLight.withOpacity(0.12),
         labelStyle: const TextStyle(
           color: AppColors.textPrimaryLight,
           fontSize: 14,
         ),
         secondaryLabelStyle: const TextStyle(
-          color: AppColors.primaryLight,
+          color: AppColors.accentLight,
           fontSize: 14,
         ),
         shape: RoundedRectangleBorder(
@@ -375,9 +375,9 @@ class AppTheme {
         ),
       ),
 
-      // Snackbar 主题
+      // Snackbar 主题 - iOS风格蓝色
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.primaryLight,
+        backgroundColor: AppColors.accentLight,
         contentTextStyle: const TextStyle(
           color: AppColors.surfaceLight,
           fontSize: 14,
@@ -421,26 +421,26 @@ class AppTheme {
         ),
       ),
 
-// 卡片主题
-      cardTheme: const CardTheme(
+// 卡片主题 - iOS风格（微妙阴影，无边框，True Black表面）
+      cardTheme: CardTheme(
         elevation: 0,
-        margin: EdgeInsets.symmetric(
+        margin: const EdgeInsets.symmetric(
           horizontal: spacingLg,
           vertical: spacingSm,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(radiusMd)),
-          side: BorderSide(color: AppColors.borderDark, width: 1),
+          borderRadius: BorderRadius.circular(radiusMd),
         ),
-        color: AppColors.surfaceDark,
+        color: AppColors.surfaceDark, // #0A0A0A True Black cards
         clipBehavior: Clip.antiAlias,
+        shadowColor: Colors.black.withOpacity(0.3),
       ),
 
-      // 导航栏主题
+      // 导航栏主题 - iOS风格
       navigationBarTheme: NavigationBarThemeData(
         height: 80,
         backgroundColor: AppColors.surfaceDark,
-        indicatorColor: AppColors.primaryDark.withOpacity(0.12),
+        indicatorColor: AppColors.accentDark.withOpacity(0.2),
         indicatorShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusMd),
         ),
@@ -450,7 +450,7 @@ class AppTheme {
         shadowColor: Colors.transparent,
         iconTheme: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return const IconThemeData(color: AppColors.primaryDark, size: 24);
+            return const IconThemeData(color: AppColors.accentDark, size: 24);
           }
           return const IconThemeData(
             color: AppColors.textSecondaryDark,
@@ -462,7 +462,7 @@ class AppTheme {
             return const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: AppColors.primaryDark,
+              color: AppColors.accentDark,
             );
           }
           return const TextStyle(
@@ -473,10 +473,10 @@ class AppTheme {
         }),
       ),
 
-      // 按钮主题
+      // 按钮主题 - iOS风格蓝色
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryDark,
+          backgroundColor: AppColors.accentDark, // #93C5FD light blue
           foregroundColor: AppColors.surfaceDark,
           elevation: 0,
           padding: const EdgeInsets.symmetric(
@@ -496,7 +496,7 @@ class AppTheme {
 
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.primaryDark,
+          foregroundColor: AppColors.accentDark,
           elevation: 0,
           padding: const EdgeInsets.symmetric(
             horizontal: spacingXl,
@@ -505,7 +505,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusMd),
           ),
-          side: const BorderSide(color: AppColors.borderDark, width: 1),
+          side: const BorderSide(color: AppColors.accentDark, width: 1),
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -516,7 +516,7 @@ class AppTheme {
 
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: AppColors.primaryDark,
+          foregroundColor: AppColors.accentDark,
           padding: const EdgeInsets.symmetric(
             horizontal: spacingLg,
             vertical: spacingSm,
@@ -532,21 +532,21 @@ class AppTheme {
         ),
       ),
 
-      // 输入框主题
+      // 输入框主题 - iOS风格
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.backgroundDark,
+        fillColor: AppColors.surfaceDark, // #0A0A0A True Black
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.borderDark, width: 1),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.borderDark, width: 1),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.primaryDark, width: 2),
+          borderSide: const BorderSide(color: AppColors.accentDark, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
@@ -675,16 +675,16 @@ class AppTheme {
         space: 1,
       ),
 
-      // Chip 主题
+      // Chip 主题 - iOS风格
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.backgroundDark,
-        selectedColor: AppColors.primaryDark.withOpacity(0.12),
+        selectedColor: AppColors.accentDark.withOpacity(0.15),
         labelStyle: const TextStyle(
           color: AppColors.textPrimaryDark,
           fontSize: 14,
         ),
         secondaryLabelStyle: const TextStyle(
-          color: AppColors.primaryDark,
+          color: AppColors.accentDark,
           fontSize: 14,
         ),
         shape: RoundedRectangleBorder(
@@ -722,9 +722,9 @@ class AppTheme {
         ),
       ),
 
-      // Snackbar 主题
+      // Snackbar 主题 - iOS风格蓝色
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.primaryDark,
+        backgroundColor: AppColors.accentDark,
         contentTextStyle: const TextStyle(
           color: AppColors.surfaceDark,
           fontSize: 14,
