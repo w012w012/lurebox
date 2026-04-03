@@ -7,6 +7,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/design/theme/app_colors.dart';
+import '../../core/design/theme/animation_constants.dart';
 import '../../core/providers/location_map_view_model.dart';
 import '../../core/models/fishing_location.dart';
 import '../../core/constants/strings.dart';
@@ -226,12 +227,22 @@ class _LocationMapPageState extends ConsumerState<LocationMapPage> {
                 height: 40,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: AppColors.info.withAlpha(77),
+                    color:
+                        (isDark ? AppColors.accentDark : AppColors.accentLight)
+                            .withAlpha(77),
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.info, width: 2),
+                    border: Border.all(
+                      color:
+                          isDark ? AppColors.accentDark : AppColors.accentLight,
+                      width: 2,
+                    ),
                   ),
-                  child:
-                      const Icon(Icons.person, color: AppColors.info, size: 24),
+                  child: Icon(
+                    Icons.person,
+                    color:
+                        isDark ? AppColors.accentDark : AppColors.accentLight,
+                    size: 24,
+                  ),
                 ),
               ),
             ...locations.map((location) {
@@ -240,40 +251,94 @@ class _LocationMapPageState extends ConsumerState<LocationMapPage> {
                 point: LatLng(location.latitude!, location.longitude!),
                 width: isSelected ? 50 : 40,
                 height: isSelected ? 50 : 40,
-                child: GestureDetector(
+                child: _LocationMarkerWidget(
+                  isSelected: isSelected,
+                  isDark: isDark,
                   onTap: () => _showLocationDetails(location, strings),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: isSelected ? AppColors.warning : AppColors.error,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isDark
-                            ? AppColors.surfaceDark
-                            : AppColors.surfaceLight,
-                        width: isSelected ? 3 : 2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withAlpha(77),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      Icons.location_on,
-                      color: isDark
-                          ? AppColors.surfaceDark
-                          : AppColors.surfaceLight,
-                      size: isSelected ? 30 : 24,
-                    ),
-                  ),
                 ),
               );
             }),
           ],
         ),
       ],
+    );
+  }
+}
+
+/// Internal marker widget with blue accent styling and touch feedback.
+class _LocationMarkerWidget extends StatefulWidget {
+  final bool isSelected;
+  final bool isDark;
+  final VoidCallback onTap;
+
+  const _LocationMarkerWidget({
+    required this.isSelected,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  @override
+  State<_LocationMarkerWidget> createState() => _LocationMarkerWidgetState();
+}
+
+class _LocationMarkerWidgetState extends State<_LocationMarkerWidget> {
+  bool _isPressed = false;
+
+  void _handleTapDown(TapDownDetails details) {
+    setState(() => _isPressed = true);
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() => _isPressed = false);
+  }
+
+  void _handleTapCancel() {
+    setState(() => _isPressed = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Blue accent color scheme - primary #1E3A5F, accent #3B82F6
+    final markerColor =
+        widget.isDark ? AppColors.accentDark : AppColors.accentLight;
+    final selectedColor =
+        widget.isDark ? AppColors.accentLight : AppColors.accentLight;
+
+    return GestureDetector(
+      onTap: widget.onTap,
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      child: AnimatedScale(
+        scale: _isPressed ? AnimationConstants.touchScale : 1.0,
+        duration: AnimationConstants.touchFeedbackDuration,
+        curve: AnimationConstants.defaultCurve,
+        child: Container(
+          decoration: BoxDecoration(
+            color: widget.isSelected ? selectedColor : markerColor,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: widget.isDark
+                  ? AppColors.surfaceDark
+                  : AppColors.surfaceLight,
+              width: widget.isSelected ? 3 : 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(77),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Icon(
+            Icons.location_on,
+            color:
+                widget.isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+            size: widget.isSelected ? 30 : 24,
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-
 import '../../core/design/theme/app_colors.dart';
+import '../../core/design/theme/app_theme.dart';
+import '../../core/design/theme/animation_constants.dart';
 
-class LocationMarker extends StatelessWidget {
+/// Location marker widget with blue accent styling and iOS-style touch feedback.
+class LocationMarker extends StatefulWidget {
   final String name;
   final int fishCount;
   final bool isSelected;
@@ -17,72 +19,106 @@ class LocationMarker extends StatelessWidget {
   });
 
   @override
+  State<LocationMarker> createState() => _LocationMarkerState();
+}
+
+class _LocationMarkerState extends State<LocationMarker> {
+  bool _isPressed = false;
+
+  void _handleTapDown(TapDownDetails details) {
+    setState(() => _isPressed = true);
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() => _isPressed = false);
+  }
+
+  void _handleTapCancel() {
+    setState(() => _isPressed = false);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final backgroundColor =
-        isSelected ? AppColors.blue : Theme.of(context).colorScheme.primary;
-    final borderColor = isSelected
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Blue accent color scheme - primary #1E3A5F, accent #3B82F6
+    final backgroundColor = widget.isSelected
+        ? (isDark ? AppColors.accentDark : AppColors.accentLight)
+        : (isDark ? AppColors.primaryDark : AppColors.primaryLight);
+    final borderColor = widget.isSelected
         ? Colors.white
-        : Theme.of(context).colorScheme.primaryContainer;
+        : (isDark ? AppColors.accentDark : AppColors.accentLight);
 
     return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: borderColor, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.location_on, color: Colors.white, size: 16),
-                const SizedBox(width: 4),
-                Text(
-                  name,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
+      onTap: widget.onTap,
+      onTapDown: _handleTapDown,
+      onTapUp: _handleTapUp,
+      onTapCancel: _handleTapCancel,
+      child: AnimatedScale(
+        scale: _isPressed ? AnimationConstants.touchScale : 1.0,
+        duration: AnimationConstants.touchFeedbackDuration,
+        curve: AnimationConstants.defaultCurve,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingSm,
+                vertical: AppTheme.spacingXs,
+              ),
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                border: Border.all(color: borderColor, width: 2),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
                   ),
-                ),
-                const SizedBox(width: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    '$fishCount',
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.location_on, color: Colors.white, size: 16),
+                  const SizedBox(width: AppTheme.spacingXs),
+                  Text(
+                    widget.name,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: AppTheme.spacingXs),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '${widget.fishCount}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          CustomPaint(
-            size: const Size(12, 8),
-            painter: _TrianglePainter(color: backgroundColor),
-          ),
-        ],
+            CustomPaint(
+              size: const Size(12, 8),
+              painter: _TrianglePainter(color: backgroundColor),
+            ),
+          ],
+        ),
       ),
     );
   }

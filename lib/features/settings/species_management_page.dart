@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
+import '../../core/design/theme/app_theme.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/pending_recognition_providers.dart';
 import '../../core/providers/ai_recognition_provider.dart';
@@ -10,6 +11,8 @@ import '../../core/di/di.dart' hide aiRecognitionSettingsProvider;
 import '../../core/services/fish_recognition_service.dart';
 import '../../core/models/fish_catch.dart';
 import '../../widgets/common/image_cache_helper.dart';
+import '../../widgets/common/premium_card.dart';
+import '../../widgets/common/premium_button.dart';
 
 /// AI 识别结果选项
 class AiRecognitionOption {
@@ -109,10 +112,10 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
     AppStrings strings,
   ) {
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppTheme.spacingLg),
       children: [
         _buildPendingQueue(context, pendingCatches),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppTheme.spacingXl),
         _buildSpeciesList(context, strings),
       ],
     );
@@ -122,25 +125,31 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
     BuildContext context,
     List<FishCatch> pendingCatches,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            const Icon(Icons.list_alt, size: 20),
-            const SizedBox(width: 8),
+            Icon(Icons.list_alt, size: 20, color: accentColor),
+            const SizedBox(width: AppTheme.spacingSm),
             Text(
               '待识别列表',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppTheme.spacingSm),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingSm,
+                vertical: 2,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.warning.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
               ),
               child: Text(
                 '${pendingCatches.length}条',
@@ -153,14 +162,10 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppTheme.spacingMd),
         if (pendingCatches.isEmpty)
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(12),
-            ),
+          PremiumCard(
+            variant: PremiumCardVariant.flat,
             child: Center(
               child: Column(
                 children: [
@@ -169,7 +174,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
                     size: 48,
                     color: AppColors.success,
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: AppTheme.spacingSm),
                   Text(
                     '暂无待识别鱼获',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -184,7 +189,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           ...pendingCatches.take(10).map((fish) => _buildPendingItem(fish)),
           if (pendingCatches.length > 10)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
               child: Text(
                 '... 还有 ${pendingCatches.length - 10} 条',
                 textAlign: TextAlign.center,
@@ -193,7 +198,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
                     ),
               ),
             ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppTheme.spacingMd),
           _buildBatchRecognizeButton(pendingCatches),
         ],
       ],
@@ -203,18 +208,21 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
   Widget _buildPendingItem(FishCatch fish) {
     final recState =
         _recognitionStates[fish.id] ?? const SingleRecognitionState();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+      child: PremiumCard(
+        variant: PremiumCardVariant.flat,
+        onTap: () => _showPendingItemActions(fish),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                   child: SizedBox(
                     width: 50,
                     height: 50,
@@ -228,12 +236,18 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
                         color: Theme.of(context)
                             .colorScheme
                             .surfaceContainerHighest,
-                        child: const Icon(Icons.image, size: 24),
+                        child: Icon(
+                          Icons.image,
+                          size: 24,
+                          color: isDark
+                              ? AppColors.textSecondaryDark
+                              : AppColors.textSecondaryLight,
+                        ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AppTheme.spacingMd),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -249,57 +263,36 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
                     ],
                   ),
                 ),
-                SizedBox(
-                  width: 64,
-                  height: 32,
-                  child: ElevatedButton(
-                    onPressed: recState.isRecognizing
-                        ? null
-                        : () => _recognizeSingle(fish),
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.primaryContainer,
-                      foregroundColor:
-                          Theme.of(context).colorScheme.onPrimaryContainer,
-                    ),
-                    child: const Text(
-                      'AI识别',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                PremiumButton(
+                  text: 'AI识别',
+                  onPressed: recState.isRecognizing
+                      ? null
+                      : () => _recognizeSingle(fish),
+                  variant: PremiumButtonVariant.primary,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingMd,
+                    vertical: AppTheme.spacingSm,
                   ),
                 ),
-                const SizedBox(width: 6),
-                SizedBox(
-                  width: 64,
-                  height: 32,
-                  child: OutlinedButton(
-                    onPressed: () => _manualIdentify(fish),
-                    style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      side: BorderSide(
-                        color: Theme.of(context).colorScheme.outline,
-                      ),
-                    ),
-                    child: const Text(
-                      '手动',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                const SizedBox(width: AppTheme.spacingSm),
+                PremiumButton(
+                  text: '手动',
+                  onPressed: () => _manualIdentify(fish),
+                  variant: PremiumButtonVariant.outline,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppTheme.spacingMd,
+                    vertical: AppTheme.spacingSm,
                   ),
                 ),
               ],
             ),
             // 识别中进度条
             if (recState.isRecognizing) ...[
-              const SizedBox(height: 12),
-              const LinearProgressIndicator(),
-              const SizedBox(height: 4),
+              const SizedBox(height: AppTheme.spacingMd),
+              LinearProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+              ),
+              const SizedBox(height: AppTheme.spacingXs),
               Text(
                 '正在识别中...',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -309,14 +302,14 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
             ],
             // 识别结果选项
             if (recState.options.isNotEmpty) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: AppTheme.spacingMd),
               ...recState.options.map(
                 (option) => _buildRecognitionOption(fish, option),
               ),
             ],
             // 错误信息
             if (recState.error != null) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: AppTheme.spacingSm),
               Text(
                 recState.error!,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -330,17 +323,24 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
     );
   }
 
+  void _showPendingItemActions(FishCatch fish) {
+    // Placeholder for future expansion
+  }
+
   Widget _buildRecognitionOption(FishCatch fish, AiRecognitionOption option) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
       child: InkWell(
         onTap: () => _showConfirmDialog(fish, option),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingMd,
+            vertical: AppTheme.spacingSm,
+          ),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
             border: Border.all(
               color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
             ),
@@ -368,11 +368,14 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppTheme.spacingSm,
+                  vertical: 2,
+                ),
                 decoration: BoxDecoration(
                   color:
                       _getConfidenceColor(option.confidence).withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 ),
                 child: Text(
                   '${(option.confidence * 100).toInt()}%',
@@ -398,40 +401,45 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
 
   Widget _buildBatchRecognizeButton(List<FishCatch> pendingCatches) {
     if (_isBatchRecognizing) {
-      return Column(
-        children: [
-          LinearProgressIndicator(
-              value: _batchTotal > 0 ? _batchProgress / _batchTotal : 0),
-          const SizedBox(height: 8),
-          Text(
-            '识别中: $_batchProgress/$_batchTotal (成功: $_batchSuccess, 失败: $_batchFailed)',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ],
+      return PremiumCard(
+        variant: PremiumCardVariant.flat,
+        child: Column(
+          children: [
+            LinearProgressIndicator(
+              value: _batchTotal > 0 ? _batchProgress / _batchTotal : 0,
+            ),
+            const SizedBox(height: AppTheme.spacingSm),
+            Text(
+              '识别中: $_batchProgress/$_batchTotal (成功: $_batchSuccess, 失败: $_batchFailed)',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
       );
     }
 
-    return ElevatedButton.icon(
+    return PremiumButton(
+      text: '批量AI识别',
+      icon: Icons.auto_awesome,
       onPressed:
           pendingCatches.isEmpty ? null : () => _batchRecognize(pendingCatches),
-      icon: const Icon(Icons.auto_awesome),
-      label: const Text('🤖 批量AI识别'),
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 48),
-      ),
+      variant: PremiumButtonVariant.primary,
+      isFullWidth: true,
     );
   }
 
   Widget _buildSpeciesList(BuildContext context, AppStrings strings) {
     final speciesCountsAsync = ref.watch(speciesCountsProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            const Icon(Icons.category, size: 20),
-            const SizedBox(width: 8),
+            Icon(Icons.category, size: 20, color: accentColor),
+            const SizedBox(width: AppTheme.spacingSm),
             Text(
               '已保存品种',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -440,16 +448,12 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: AppTheme.spacingMd),
         speciesCountsAsync.when(
           data: (speciesCounts) {
             if (speciesCounts.isEmpty) {
-              return Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(12),
-                ),
+              return PremiumCard(
+                variant: PremiumCardVariant.flat,
                 child: Center(
                   child: Text(
                     '暂无品种记录',
@@ -467,68 +471,42 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
                 .toList()
               ..sort((a, b) => b.value.compareTo(a.value));
 
-            return Card(
+            return PremiumCard(
+              variant: PremiumCardVariant.flat,
+              padding: EdgeInsets.zero,
               child: ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: sortedSpecies.length,
-                separatorBuilder: (_, __) => const Divider(height: 1),
+                separatorBuilder: (_, __) => Divider(
+                  height: 1,
+                  color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                ),
                 itemBuilder: (context, index) {
                   final entry = sortedSpecies[index];
                   final speciesName = entry.key;
                   final count = entry.value;
 
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor:
-                          Theme.of(context).colorScheme.primaryContainer,
-                      child: Text(
-                        '$count',
-                        style: TextStyle(
-                          color:
-                              Theme.of(context).colorScheme.onPrimaryContainer,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ),
-                    title: Text(speciesName),
-                    subtitle: Text('$count 条渔获记录'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit, size: 20),
-                          onPressed: () =>
-                              _showRenameDialog(context, speciesName),
-                          tooltip: '重命名',
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete,
-                              size: 20, color: AppColors.error),
-                          onPressed: () =>
-                              _showDeleteDialog(context, speciesName, count),
-                          tooltip: '删除',
-                        ),
-                      ],
-                    ),
+                  return _buildSpeciesListItem(
+                    context,
+                    speciesName,
+                    count,
                   );
                 },
               ),
             );
           },
-          loading: () => const Center(
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: CircularProgressIndicator(),
+          loading: () => const PremiumCard(
+            variant: PremiumCardVariant.flat,
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.all(AppTheme.spacingXl),
+                child: CircularProgressIndicator(),
+              ),
             ),
           ),
-          error: (e, _) => Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(12),
-            ),
+          error: (e, _) => PremiumCard(
+            variant: PremiumCardVariant.flat,
             child: Center(
               child: Text(
                 '加载失败: $e',
@@ -539,6 +517,87 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         ),
       ],
     );
+  }
+
+  Widget _buildSpeciesListItem(
+    BuildContext context,
+    String speciesName,
+    int count,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+
+    return InkWell(
+      onTap: () => _showSpeciesActions(context, speciesName, count),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingSm,
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: accentColor.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              ),
+              child: Center(
+                child: Text(
+                  '$count',
+                  style: TextStyle(
+                    color: accentColor,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    speciesName,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
+                  ),
+                  Text(
+                    '$count 条渔获记录',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+            PremiumIconButton(
+              icon: Icons.edit,
+              onPressed: () => _showRenameDialog(context, speciesName),
+              variant: PremiumButtonVariant.text,
+              size: 36,
+              color: accentColor,
+            ),
+            PremiumIconButton(
+              icon: Icons.delete,
+              onPressed: () => _showDeleteDialog(context, speciesName, count),
+              variant: PremiumButtonVariant.text,
+              size: 36,
+              color: AppColors.error,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSpeciesActions(
+    BuildContext context,
+    String speciesName,
+    int count,
+  ) {
+    // Placeholder for future expansion
   }
 
   Future<void> _manualIdentify(FishCatch fish) async {
@@ -558,7 +617,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppTheme.spacingMd),
             TextField(
               controller: controller,
               decoration: const InputDecoration(
@@ -727,7 +786,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppTheme.spacingMd),
             TextField(
               controller: controller,
               decoration: const InputDecoration(
