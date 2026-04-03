@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import '../models/fish_catch.dart';
+import '../models/fish_filter.dart';
 import '../repositories/fish_catch_repository.dart';
 import '../repositories/species_history_repository.dart';
 import '../repositories/stats_repository.dart';
@@ -103,6 +104,21 @@ class FishCatchService {
     );
   }
 
+  /// Get filtered, sorted, paginated fish catches using FishFilter
+  ///
+  /// Uses SQL-level filtering for all filter fields
+  Future<PaginatedResult<FishCatch>> getFilteredPageByFilter({
+    required int page,
+    int pageSize = 20,
+    required FishFilter filter,
+  }) async {
+    return await _repository.getFilteredPageByFilter(
+      page: page,
+      pageSize: pageSize,
+      filter: filter,
+    );
+  }
+
   Future<int> getCount() async {
     final result = await _repository.getPage(page: 1, pageSize: 1);
     return result.totalCount;
@@ -182,6 +198,13 @@ class FishCatchService {
 
   Future<void> restoreSpeciesHistory(String name) async {
     await _speciesHistoryRepo.restore(name);
+  }
+
+  // ===== Soft Worm Analytics =====
+
+  /// 获取软虫钓组分析数据
+  Future<Map<String, Map<String, int>>> getSoftWormRigAnalytics() async {
+    return await _repository.getSoftWormRigAnalytics();
   }
 
   // ===== Private Helpers =====

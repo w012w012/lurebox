@@ -27,7 +27,8 @@ class SqliteLocationRepository implements LocationRepository {
         GROUP BY location_name, latitude, longitude
         ORDER BY fish_count DESC
       ''');
-      return results.map((map) => LocationWithStats.fromMap(map)).toList();
+      return List<LocationWithStats>.from(results.map(
+          (map) => LocationWithStats.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
       throw Exception('Failed to get all locations with stats: $e');
     }
@@ -94,7 +95,8 @@ class SqliteLocationRepository implements LocationRepository {
           longitude + radiusDeg,
         ],
       );
-      return results.map((map) => LocationWithStats.fromMap(map)).toList();
+      return List<LocationWithStats>.from(results.map(
+          (map) => LocationWithStats.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
       throw Exception('Failed to get nearby locations: $e');
     }

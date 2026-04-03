@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -15,7 +16,6 @@ import '../../features/common/watermarked_image.dart';
 import '../../widgets/common/premium_button.dart';
 import '../../widgets/common/premium_card.dart';
 import '../../widgets/fish_detail/fish_action_buttons.dart';
-import '../../widgets/fish_detail/fish_edit_page.dart';
 import '../../widgets/fish_detail/fish_info_card.dart';
 import '../../widgets/fish_detail/fish_image_gallery.dart';
 
@@ -365,11 +365,8 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
     Map<String, dynamic> fish,
     AppStrings strings,
   ) async {
-    final result = await Navigator.push<Map<String, dynamic>>(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FishEditPage(fish: fish, strings: strings),
-      ),
+    final result = await context.push<Map<String, dynamic>>(
+      '/fish/${widget.fishId}/edit',
     );
     if (result != null) {
       ref.read(fishDetailViewModelProvider(widget.fishId).notifier).refresh();

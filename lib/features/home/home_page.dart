@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
@@ -9,10 +10,6 @@ import '../../core/providers/pending_recognition_providers.dart';
 import '../../core/widgets/error_view.dart';
 import '../../widgets/common/premium_button.dart';
 import '../../widgets/common/premium_card.dart';
-import '../camera/camera_page.dart';
-import '../location/location_map_page.dart';
-import '../settings/species_management_page.dart';
-import '../stats/stats_detail_page.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -31,12 +28,7 @@ class HomePage extends ConsumerWidget {
             icon: const Icon(Icons.map),
             tooltip: strings.mapLocation,
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LocationMapPage(),
-                ),
-              );
+              context.push('/map');
             },
           ),
         ],
@@ -51,10 +43,7 @@ class HomePage extends ConsumerWidget {
             variant: PremiumButtonVariant.primary,
             isFullWidth: true,
             onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CameraPage()),
-              );
+              await context.push('/camera');
               ref.read(homeViewModelProvider.notifier).refresh();
             },
           ),
@@ -188,12 +177,8 @@ class _HomePageBody extends ConsumerWidget {
     DateTime start,
     DateTime end,
   ) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            StatsDetailPage(title: title, startDate: start, endDate: end),
-      ),
+    context.push(
+      '/stats?title=${Uri.encodeComponent(title)}&start=${start.toIso8601String()}&end=${end.toIso8601String()}',
     );
   }
 
@@ -482,12 +467,7 @@ class _HomePageBody extends ConsumerWidget {
         if (count <= 0) return const SizedBox.shrink();
         return PremiumCard(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const SpeciesManagementPage(),
-              ),
-            );
+            context.push('/species');
           },
           child: Row(
             children: [

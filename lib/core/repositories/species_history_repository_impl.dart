@@ -23,7 +23,8 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
         orderBy: 'use_count DESC, created_at ASC',
         limit: limit,
       );
-      return results.map((map) => SpeciesHistory.fromMap(map)).toList();
+      return List<SpeciesHistory>.from(results
+          .map((map) => SpeciesHistory.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
       throw Exception('Failed to get species history: $e');
     }

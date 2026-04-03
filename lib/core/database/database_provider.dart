@@ -6,7 +6,7 @@ import 'package:path/path.dart';
 /// 负责数据库的初始化和连接管理
 class DatabaseProvider {
   static const String _databaseName = 'lurebox.db';
-  static const int _databaseVersion = 14;
+  static const int _databaseVersion = 16;
 
   Database? _database;
   bool _initializing = false;
@@ -123,8 +123,35 @@ class DatabaseProvider {
         rod_weight TEXT,
         reel_size TEXT,
         reel_ratio TEXT,
+        reel_bearings INTEGER,
+        reel_capacity TEXT,
+        reel_brake_type TEXT,
+        reel_weight TEXT,
+        reel_weight_unit TEXT DEFAULT 'g',
+        joint_type TEXT,
+        lure_weight TEXT,
+        lure_weight_unit TEXT DEFAULT 'g',
+        lure_size TEXT,
+        lure_size_unit TEXT DEFAULT 'cm',
+        lure_color TEXT,
         notes TEXT,
+        price REAL,
+        purchase_date TEXT,
+        is_default INTEGER DEFAULT 0,
         is_deleted INTEGER DEFAULT 0,
+        category TEXT,
+        reel_line TEXT,
+        reel_line_date TEXT,
+        reel_line_number TEXT,
+        reel_line_length TEXT,
+        line_length_unit TEXT DEFAULT 'm',
+        line_weight_unit TEXT DEFAULT 'kg',
+        weight_range TEXT,
+        length TEXT,
+        length_unit TEXT DEFAULT 'm',
+        sections TEXT,
+        material TEXT,
+        hardness TEXT,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       )
@@ -162,6 +189,22 @@ class DatabaseProvider {
       'CREATE INDEX idx_fish_catches_location ON fish_catches(location_name)',
     );
     await db.execute('CREATE INDEX idx_equipment_type ON equipments(type)');
+    // 外键索引 - 优化 JOIN 和引用查询
+    await db.execute(
+      'CREATE INDEX idx_fish_catches_fate ON fish_catches(fate)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_fish_catches_equipment_id ON fish_catches(equipment_id)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_fish_catches_rod_id ON fish_catches(rod_id)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_fish_catches_reel_id ON fish_catches(reel_id)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_fish_catches_lure_id ON fish_catches(lure_id)',
+    );
   }
 
   /// 数据库迁移
@@ -253,12 +296,119 @@ CREATE TABLE backup_history (
       );
     }
     if (oldVersion < 14) {
-      await db.execute(
-        'ALTER TABLE equipments ADD COLUMN reel_weight TEXT',
+      await _addColumnIfNotExists(db, 'equipments', 'reel_weight', 'TEXT');
+      await _addColumnIfNotExists(
+        db,
+        'equipments',
+        'reel_weight_unit',
+        "TEXT DEFAULT 'g'",
       );
-      await db.execute(
-        'ALTER TABLE equipments ADD COLUMN reel_weight_unit TEXT DEFAULT \'g\'',
+    }
+    if (oldVersion < 15) {
+      // Ensure all columns exist for users who may have skipped migrations
+      await _addColumnIfNotExists(db, 'equipments', 'reel_bearings', 'INTEGER');
+      await _addColumnIfNotExists(db, 'equipments', 'reel_capacity', 'TEXT');
+      await _addColumnIfNotExists(
+        db,
+        'equipments',
+        'reel_brake_type',
+        'TEXT',
       );
+      await _addColumnIfNotExists(db, 'equipments', 'joint_type', 'TEXT');
+      await _addColumnIfNotExists(db, 'equipments', 'lure_weight', 'TEXT');
+      await _addColumnIfNotExists(
+        db,
+        'equipments',
+        'lure_weight_unit',
+        "TEXT DEFAULT 'g'",
+      );
+      await _addColumnIfNotExists(db, 'equipments', 'lure_size', 'TEXT');
+      await _addColumnIfNotExists(
+        db,
+        'equipments',
+        'lure_size_unit',
+        "TEXT DEFAULT 'cm'",
+      );
+      await _addColumnIfNotExists(db, 'equipments', 'lure_color', 'TEXT');
+      await _addColumnIfNotExists(db, 'equipments', 'price', 'REAL');
+      await _addColumnIfNotExists(db, 'equipments', 'purchase_date', 'TEXT');
+      await _addColumnIfNotExists(
+        db,
+        'equipments',
+        'is_default',
+        'INTEGER DEFAULT 0',
+      );
+      await _addColumnIfNotExists(db, 'equipments', 'category', 'TEXT');
+      await _addColumnIfNotExists(db, 'equipments', 'reel_line', 'TEXT');
+      await _addColumnIfNotExists(db, 'equipments', 'reel_line_date', 'TEXT');
+      await _addColumnIfNotExists(
+        db,
+        'equipments',
+        'reel_line_number',
+        'TEXT',
+      );
+      await _addColumnIfNotExists(
+        db,
+        'equipments',
+        'reel_line_length',
+        'TEXT',
+      );
+      await _addColumnIfNotExists(
+        db,
+        'equipments',
+        'line_length_unit',
+        "TEXT DEFAULT 'm'",
+      );
+      await _addColumnIfNotExists(
+        db,
+        'equipments',
+        'line_weight_unit',
+        "TEXT DEFAULT 'kg'",
+      );
+      await _addColumnIfNotExists(db, 'equipments', 'weight_range', 'TEXT');
+      await _addColumnIfNotExists(db, 'equipments', 'length', 'TEXT');
+      await _addColumnIfNotExists(
+        db,
+        'equipments',
+        'length_unit',
+        "TEXT DEFAULT 'm'",
+      );
+      await _addColumnIfNotExists(db, 'equipments', 'sections', 'TEXT');
+      await _addColumnIfNotExists(db, 'equipments', 'material', 'TEXT');
+      await _addColumnIfNotExists(db, 'equipments', 'hardness', 'TEXT');
+    }
+    if (oldVersion < 16) {
+      // 添加钓组配置字段到渔获表
+      await _addColumnIfNotExists(db, 'fish_catches', 'rig_type', 'TEXT');
+      await _addColumnIfNotExists(db, 'fish_catches', 'sinker_weight', 'TEXT');
+      await _addColumnIfNotExists(
+          db, 'fish_catches', 'sinker_position', 'TEXT');
+      await _addColumnIfNotExists(db, 'fish_catches', 'hook_type', 'TEXT');
+      await _addColumnIfNotExists(db, 'fish_catches', 'hook_size', 'TEXT');
+      await _addColumnIfNotExists(db, 'fish_catches', 'hook_weight', 'TEXT');
+    }
+  }
+
+  /// 安全添加列（如果不存在）
+  Future<void> _addColumnIfNotExists(
+    Database db,
+    String table,
+    String column,
+    String type,
+  ) async {
+    try {
+      final result = await db.rawQuery(
+        "PRAGMA table_info($table)",
+      );
+      final columnExists = result.any((row) => row['name'] == column);
+      if (!columnExists) {
+        await db.execute(
+          'ALTER TABLE $table ADD COLUMN $column $type',
+        );
+        debugPrint('Added column $column to $table');
+      }
+    } catch (e) {
+      debugPrint('Warning: Failed to add column $column to $table: $e');
     }
   }
 

@@ -303,6 +303,9 @@ class _EquipmentCardState extends ConsumerState<EquipmentCard> {
       if (e['sections'] != null) {
         items.add(_InfoItem(strings.sections, '${e['sections']}'));
       }
+      if (e['joint_type'] != null) {
+        items.add(_InfoItem('插节方式', e['joint_type']));
+      }
       if (e['hardness'] != null) {
         items.add(_InfoItem(strings.hardness, e['hardness']));
       }
@@ -313,7 +316,7 @@ class _EquipmentCardState extends ConsumerState<EquipmentCard> {
         items.add(_InfoItem(strings.material, e['material']));
       }
       if (e['weight_range'] != null) {
-        items.add(_InfoItem(strings.weightRange, e['weight_range']));
+        items.add(_InfoItem(strings.weightRange, '${e['weight_range']}g'));
       }
     } else if (type == 'reel') {
       if (e['reel_ratio'] != null) {
@@ -324,6 +327,10 @@ class _EquipmentCardState extends ConsumerState<EquipmentCard> {
       }
       if (e['reel_brake_type'] != null) {
         items.add(_InfoItem(strings.reelBrakeType, e['reel_brake_type']));
+      }
+      if (e['reel_weight'] != null) {
+        items.add(_InfoItem(
+            '渔轮重量', '${e['reel_weight']}${e['reel_weight_unit'] ?? 'g'}'));
       }
       if (e['reel_line'] != null) {
         final lineParts = <String>[];

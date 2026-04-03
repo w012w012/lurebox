@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ImageCacheHelper {
   // 动态缓存大小：根据设备内存调整
@@ -201,6 +202,65 @@ class ImageCacheHelper {
     if (futures.isNotEmpty) {
       await Future.wait(futures);
     }
+  }
+
+  /// 构建带 shimmer 加载效果的 Image widget
+  ///
+  /// [context] 构建上下文
+  /// [imagePath] 图像路径
+  /// [width] 显示宽度
+  /// [height] 显示高度
+  /// [fit] 填充模式
+  /// [cacheWidth] 缓存宽度
+  /// [cacheHeight] 缓存高度
+  /// [borderRadius] 圆角
+  static Widget buildShimmerImage({
+    required BuildContext context,
+    required String? imagePath,
+    double? width,
+    double? height,
+    BoxFit fit = BoxFit.cover,
+    int? cacheWidth,
+    int? cacheHeight,
+    BorderRadius? borderRadius,
+  }) {
+    return ClipRRect(
+      borderRadius: borderRadius ?? BorderRadius.circular(8),
+      child: SizedBox(
+        width: width,
+        height: height,
+        child: Image(
+          image: getCachedThumbnailProvider(
+            imagePath,
+            width: cacheWidth,
+            height: cacheHeight,
+          ),
+          fit: fit,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Shimmer.fromColors(
+              baseColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+              highlightColor: Theme.of(context).colorScheme.surface,
+              child: Container(
+                width: width,
+                height: height,
+                color: Colors.white,
+              ),
+            );
+          },
+          errorBuilder: (_, __, ___) => Container(
+            width: width,
+            height: height,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            child: Icon(
+              Icons.image,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              size: (width ?? 50) / 2,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
 

@@ -238,6 +238,12 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                     'reelCapacityLength',
                     _parseCapacity(state.reelCapacity).$2,
                   ),
+                  weightController: _getOrCreateController(
+                    'reelWeight',
+                    state.reelWeight,
+                  ),
+                  weightUnit: state.reelWeightUnit,
+                  onWeightUnitChanged: notifier.updateReelWeightUnit,
                   brakeType: state.reelBrakeType,
                   onBrakeTypeChanged: notifier.updateReelBrakeType,
                 ),
@@ -369,6 +375,9 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
           break;
         case 'reelBrakeType':
           notifier.updateReelBrakeType(value);
+          break;
+        case 'reelWeight':
+          notifier.updateReelWeight(value);
           break;
         case 'reelLine':
           notifier.updateReelLine(value);

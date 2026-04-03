@@ -1,17 +1,14 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:camera/camera.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/models/equipment.dart';
-import '../../core/models/fish_catch.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
-import '../../core/utils/unit_converter.dart';
 import '../../core/utils/file_utils.dart';
 import '../../core/utils/image_compressor.dart';
 import '../../core/camera/camera_view_model.dart';
@@ -19,11 +16,14 @@ import '../../core/camera/camera_state.dart';
 
 import '../../widgets/common/image_cache_helper.dart';
 import '../../widgets/common/premium_button.dart';
-import '../../widgets/common/premium_input.dart';
 import '../../widgets/catch/equipment_rig_card.dart';
 import '../../widgets/catch/auxiliary_info_row.dart';
-import '../fish_detail/fish_detail_page.dart';
-import '../equipment/equipment_list_page.dart';
+import '../../widgets/catch/species_input_card.dart';
+import '../../widgets/catch/length_input_field.dart';
+import '../../widgets/catch/weight_input_field.dart';
+import '../../widgets/catch/fate_selector_card.dart';
+import '../../widgets/catch/equipment_selection_sheet.dart';
+import '../../widgets/camera/camera_view_widget.dart';
 
 class CameraPage extends ConsumerStatefulWidget {
   const CameraPage({super.key});
@@ -119,157 +119,12 @@ class _CameraPageState extends ConsumerState<CameraPage> {
       return _buildFormView(state, vm, strings);
     }
 
-    return _buildCameraView(state, vm, strings);
-  }
-
-  Widget _buildCameraView(
-    CameraState state,
-    CameraViewModel vm,
-    AppStrings strings,
-  ) {
-    return Scaffold(
-      appBar: AppBar(title: Text(strings.recordCatch)),
-      body: Column(
-        children: [
-          Expanded(child: _buildCameraPreview(state, vm, strings)),
-          _buildCameraControls(state, vm, strings),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCameraPreview(
-    CameraState state,
-    CameraViewModel vm,
-    AppStrings strings,
-  ) {
-    if (state.errorMessage != null && !state.isCameraInitialized) {
-      return _buildErrorView(state, vm, strings);
-    }
-
-    if (!state.isCameraInitialized || state.isLoading) {
-      return _buildLoadingView(strings);
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: CameraPreview(vm.cameraHelper.cameraController!),
-      ),
-    );
-  }
-
-  Widget _buildErrorView(
-    CameraState state,
-    CameraViewModel vm,
-    AppStrings strings,
-  ) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.camera_alt,
-              size: 64,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              state.errorMessage ?? 'Camera error',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-            ),
-            const SizedBox(height: 16),
-            PremiumButton(
-              text: strings.retry,
-              onPressed: () => vm.initializeCamera(),
-              variant: PremiumButtonVariant.primary,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoadingView(AppStrings strings) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(),
-          const SizedBox(height: 16),
-          Text(strings.initializingCamera),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCameraControls(
-    CameraState state,
-    CameraViewModel vm,
-    AppStrings strings,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          PremiumIconButton(
-            icon: Icons.photo_library,
-            onPressed: () => _pickImageFromGallery(vm),
-            tooltip: strings.selectFromGallery,
-            size: 48,
-          ),
-          GestureDetector(
-            onTap:
-                state.isTakingPicture ? null : () => _takePicture(vm, strings),
-            child: Container(
-              width: 70,
-              height: 70,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary,
-                  width: 4,
-                ),
-              ),
-              child: Center(
-                child: Container(
-                  width: 54,
-                  height: 54,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  child: state.isTakingPicture
-                      ? Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: CircularProgressIndicator(
-                            color: Theme.of(context).colorScheme.surface,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : null,
-                ),
-              ),
-            ),
-          ),
-          PremiumIconButton(
-            icon: Icons.cameraswitch,
-            onPressed: state.canSwitchCamera ? () => vm.switchCamera() : null,
-            tooltip: strings.switchCamera,
-            size: 48,
-            color: state.canSwitchCamera
-                ? null
-                : Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ],
-      ),
+    return CameraViewWidget(
+      state: state,
+      vm: vm,
+      strings: strings,
+      onPickFromGallery: () => _pickImageFromGallery(vm),
+      onTakePicture: () => _takePicture(vm, strings),
     );
   }
 
@@ -318,402 +173,207 @@ class _CameraPageState extends ConsumerState<CameraPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _buildImagePreview(state),
-            const SizedBox(height: 20),
-            // Species field with skip button
-            _buildSpeciesFieldWithSkipButton(state, vm, strings),
-            const SizedBox(height: 16),
-            _buildLengthField(strings, state, vm),
-            const SizedBox(height: 16),
-            _buildWeightField(state, strings, vm),
-            const SizedBox(height: 20),
-            _buildFateSelector(state, vm, strings),
-            const SizedBox(height: 20),
-            EquipmentRigCard(
-              state: state,
-              vm: vm,
-              strings: strings,
-              onModifyPressed: () => _showEquipmentSheet(state, vm, strings),
-            ),
-            const SizedBox(height: 20),
-            AuxiliaryInfoRow(
-              state: state,
-              vm: vm,
-              strings: strings,
-              onEditLocation: () => _editLocation(state),
-              onEditTime: () => _editCatchTime(state),
-              onEditWeather: () => _editWeather(state),
-            ),
-            const SizedBox(height: 24),
-            _buildSaveButton(state, vm, strings),
-          ],
-        ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isLandscape = constraints.maxWidth > constraints.maxHeight;
+          final isTablet = constraints.maxWidth >= 600;
+
+          // Landscape or tablet: use two-column layout
+          if (isLandscape || isTablet) {
+            return _buildLandscapeFormView(state, vm, strings, constraints);
+          }
+
+          // Mobile portrait: original single-column layout
+          return _buildPortraitFormView(state, vm, strings);
+        },
       ),
     );
   }
 
-  Widget _buildImagePreview(CameraState state) {
+  Widget _buildPortraitFormView(
+    CameraState state,
+    CameraViewModel vm,
+    AppStrings strings,
+  ) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildImagePreview(state),
+          const SizedBox(height: 20),
+          SpeciesInputCard(
+            state: state,
+            vm: vm,
+            strings: strings,
+            controller: _speciesController,
+          ),
+          const SizedBox(height: 16),
+          LengthInputField(
+            state: state,
+            vm: vm,
+            strings: strings,
+            controller: _lengthController,
+          ),
+          const SizedBox(height: 16),
+          WeightInputField(
+            state: state,
+            vm: vm,
+            strings: strings,
+            controller: _weightController,
+          ),
+          const SizedBox(height: 20),
+          FateSelectorCard(
+            state: state,
+            vm: vm,
+            strings: strings,
+          ),
+          const SizedBox(height: 20),
+          EquipmentRigCard(
+            state: state,
+            vm: vm,
+            strings: strings,
+            onModifyPressed: () =>
+                EquipmentSelectionSheet.show(context, state, vm, strings),
+          ),
+          const SizedBox(height: 20),
+          AuxiliaryInfoRow(
+            state: state,
+            vm: vm,
+            strings: strings,
+            onEditLocation: () => _editLocation(state),
+            onEditTime: () => _editCatchTime(state),
+            onEditWeather: () => _editWeather(state),
+          ),
+          const SizedBox(height: 24),
+          _buildSaveButton(state, vm, strings),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLandscapeFormView(
+    CameraState state,
+    CameraViewModel vm,
+    AppStrings strings,
+    BoxConstraints constraints,
+  ) {
+    final contentWidth = constraints.maxWidth >= 900
+        ? constraints.maxWidth * 0.4
+        : constraints.maxWidth * 0.5;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Left side: Image preview
+        Expanded(
+          flex: 2,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                _buildImagePreview(state, isLandscape: true),
+                const SizedBox(height: 16),
+                AuxiliaryInfoRow(
+                  state: state,
+                  vm: vm,
+                  strings: strings,
+                  onEditLocation: () => _editLocation(state),
+                  onEditTime: () => _editCatchTime(state),
+                  onEditWeather: () => _editWeather(state),
+                ),
+              ],
+            ),
+          ),
+        ),
+        // Right side: Form fields
+        SizedBox(
+          width: contentWidth,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SpeciesInputCard(
+                  state: state,
+                  vm: vm,
+                  strings: strings,
+                  controller: _speciesController,
+                ),
+                const SizedBox(height: 12),
+                LengthInputField(
+                  state: state,
+                  vm: vm,
+                  strings: strings,
+                  controller: _lengthController,
+                ),
+                const SizedBox(height: 12),
+                WeightInputField(
+                  state: state,
+                  vm: vm,
+                  strings: strings,
+                  controller: _weightController,
+                ),
+                const SizedBox(height: 16),
+                FateSelectorCard(
+                  state: state,
+                  vm: vm,
+                  strings: strings,
+                ),
+                const SizedBox(height: 16),
+                EquipmentRigCard(
+                  state: state,
+                  vm: vm,
+                  strings: strings,
+                  onModifyPressed: () =>
+                      EquipmentSelectionSheet.show(context, state, vm, strings),
+                ),
+                const SizedBox(height: 20),
+                _buildSaveButton(state, vm, strings),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImagePreview(CameraState state, {bool isLandscape = false}) {
+    final previewHeight = isLandscape ? 150.0 : 200.0;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Image(
-        image: ImageCacheHelper.getCachedThumbnailProvider(
-          state.imagePath,
-          width: 400,
-          height: 400,
-        ),
-        height: 200,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-
-  Widget _buildSpeciesFieldWithSkipButton(
-    CameraState state,
-    CameraViewModel vm,
-    AppStrings strings,
-  ) {
-    // 过滤掉"待识别"等无效品种名
-    final validHistory =
-        state.speciesHistory.where((s) => s != '待识别' && s.isNotEmpty).toList();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: PremiumTextField(
-                controller: _speciesController,
-                label: strings.species,
-                hint: strings.enterSpeciesName,
-                prefixIcon: const Icon(Icons.set_meal),
-                enabled: !state.pendingRecognition,
-                onChanged: (value) {
-                  vm.setSpecies(value);
-                },
-              ),
-            ),
-            const SizedBox(width: 8),
-            SizedBox(
-              width: 120,
-              child: ElevatedButton(
-                onPressed: () {
-                  if (state.pendingRecognition) {
-                    // 切换回正常模式
-                    vm.setPendingRecognition(false);
-                  } else {
-                    _speciesController.text = '';
-                    vm.setSpecies('');
-                    vm.setPendingRecognition(true);
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  backgroundColor: state.pendingRecognition
-                      ? AppColors.warning.withOpacity(0.3)
-                      : Theme.of(context).colorScheme.secondary,
-                  foregroundColor: state.pendingRecognition
-                      ? AppColors.warning
-                      : Theme.of(context).colorScheme.onSecondary,
-                ),
-                child: Text(
-                  state.pendingRecognition ? '↩ 取消待识别' : '⏭ 加入待识别',
-                  style: const TextStyle(fontSize: 13),
-                ),
-              ),
-            ),
-          ],
-        ),
-        if (validHistory.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Wrap(
-              spacing: 6,
-              runSpacing: 6,
-              children: validHistory.map((species) {
-                return Material(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(16),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: state.pendingRecognition
-                        ? null
-                        : () {
-                            _speciesController.text = species;
-                            vm.setSpecies(species);
-                          },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      child: Text(
-                        species,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
+      child: SizedBox(
+        height: previewHeight,
+        child: Image(
+          image: ImageCacheHelper.getCachedThumbnailProvider(
+            state.imagePath,
+            width: 400,
+            height: 400,
           ),
-      ],
-    );
-  }
-
-  Widget _buildLengthField(
-    AppStrings strings,
-    CameraState state,
-    CameraViewModel vm,
-  ) {
-    return Row(
-      children: [
-        Expanded(
-          child: PremiumTextField(
-            controller: _lengthController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            label: strings.length,
-            hint: strings.enterLength,
-            prefixIcon: const Icon(Icons.straighten),
-          ),
-        ),
-        const SizedBox(width: 8),
-        DropdownButton<String>(
-          value: state.lengthUnit,
-          items: [
-            DropdownMenuItem(value: 'cm', child: Text(strings.centimeter)),
-            DropdownMenuItem(value: 'm', child: Text(strings.meter)),
-            DropdownMenuItem(value: 'inch', child: Text(strings.inch)),
-            DropdownMenuItem(value: 'ft', child: Text(strings.foot)),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              vm.setLengthUnit(value);
-            }
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildWeightField(
-    CameraState state,
-    AppStrings strings,
-    CameraViewModel vm,
-  ) {
-    double? displayEstimatedWeight;
-    if (state.estimatedWeight != null) {
-      final lengthInCm = UnitConverter.toBaseCm(state.length, state.lengthUnit);
-      final weightInGrams =
-          lengthInCm * lengthInCm * lengthInCm * CameraState.weightCoefficient;
-      final weightInKg = weightInGrams / 1000;
-      displayEstimatedWeight = UnitConverter.convertWeight(
-        weightInKg,
-        'kg',
-        state.weightUnit,
-      );
-    }
-
-    final unitSymbol = UnitConverter.getWeightSymbol(state.weightUnit);
-
-    return Row(
-      children: [
-        Expanded(
-          child: PremiumTextField(
-            controller: _weightController,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            label: '${strings.weight} (${strings.optional})',
-            hint: displayEstimatedWeight != null
-                ? '${strings.estimated}: ${displayEstimatedWeight.toStringAsFixed(2)} $unitSymbol'
-                : strings.enterActualWeight,
-            prefixIcon: const Icon(Icons.scale),
-            onChanged: (value) {
-              final weight = double.tryParse(value);
-              ref.read(cameraViewModelProvider.notifier).setWeight(weight);
-            },
-          ),
-        ),
-        const SizedBox(width: 8),
-        DropdownButton<String>(
-          value: state.weightUnit,
-          items: [
-            DropdownMenuItem(value: 'kg', child: Text(strings.kilogram)),
-            DropdownMenuItem(value: 'g', child: Text(strings.gram)),
-            DropdownMenuItem(value: 'lb', child: Text(strings.pound)),
-            DropdownMenuItem(value: 'oz', child: Text(strings.ounce)),
-          ],
-          onChanged: (value) {
-            if (value != null) {
-              vm.setWeightUnit(value);
-            }
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFateSelector(
-    CameraState state,
-    CameraViewModel vm,
-    AppStrings strings,
-  ) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(strings.fate, style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: _FateButton(
-                label: '🐟 ${strings.release}',
-                isSelected: state.fate == FishFateType.release,
-                color: AppColors.success,
-                onTap: () => vm.setFate(FishFateType.release),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _FateButton(
-                label: '🍳 ${strings.keep}',
-                isSelected: state.fate == FishFateType.keep,
-                color: AppColors.warning,
-                onTap: () => vm.setFate(FishFateType.keep),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  void _showEquipmentSheet(
-    CameraState state,
-    CameraViewModel vm,
-    AppStrings strings,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        Equipment? tempSelectedRod = state.selectedRod;
-        Equipment? tempSelectedReel = state.selectedReel;
-        Equipment? tempSelectedLure = state.selectedLure;
-
-        return StatefulBuilder(
-          builder: (context, setModalState) {
-            return Container(
-              padding: const EdgeInsets.all(16),
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.75,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        strings.selectEquipment,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      PremiumButton(
-                        text: strings.addEquipment,
-                        icon: Icons.add,
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const EquipmentListPage(),
-                            ),
-                          ).then((_) => vm.loadEquipments());
-                        },
-                        variant: PremiumButtonVariant.text,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  _buildEquipmentSection(
-                    context: context,
-                    title: '🎣 ${strings.rod}',
-                    items: state.rods,
-                    selected: tempSelectedRod,
-                    onSelected: (equipment) {
-                      setModalState(() => tempSelectedRod = equipment);
-                      vm.setSelectedRod(equipment);
-                    },
-                  ),
-                  _buildEquipmentSection(
-                    context: context,
-                    title: '⚙️ ${strings.reel}',
-                    items: state.reels,
-                    selected: tempSelectedReel,
-                    onSelected: (equipment) {
-                      setModalState(() => tempSelectedReel = equipment);
-                      vm.setSelectedReel(equipment);
-                    },
-                  ),
-                  _buildEquipmentSection(
-                    context: context,
-                    title: '🪝 ${strings.lure}',
-                    items: state.lures,
-                    selected: tempSelectedLure,
-                    onSelected: (equipment) {
-                      setModalState(() => tempSelectedLure = equipment);
-                      vm.setSelectedLure(equipment);
-                    },
-                  ),
-                ],
+          fit: BoxFit.cover,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Shimmer.fromColors(
+              baseColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+              highlightColor: Theme.of(context).colorScheme.surface,
+              child: Container(
+                height: previewHeight,
+                color: Colors.white,
               ),
             );
           },
-        );
-      },
-    );
-  }
-
-  Widget _buildEquipmentSection({
-    required BuildContext context,
-    required String title,
-    required List<Equipment> items,
-    required Equipment? selected,
-    required ValueChanged<Equipment?> onSelected,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
-        if (items.isEmpty)
-          const Text('暂无装备')
-        else
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: items.map((equipment) {
-              final isSelected = selected?.id == equipment.id;
-              return FilterChip(
-                label: Text(equipment.displayName),
-                selected: isSelected,
-                onSelected: (selected) {
-                  onSelected(selected ? equipment : null);
-                },
-                selectedColor: Theme.of(context).colorScheme.primaryContainer,
-              );
-            }).toList(),
+          errorBuilder: (_, __, ___) => Container(
+            height: previewHeight,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            child: Icon(
+              Icons.image,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              size: 50,
+            ),
           ),
-        const SizedBox(height: 16),
-      ],
+        ),
+      ),
     );
   }
 
@@ -778,13 +438,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
       final fishId = await vm.saveFishCatch();
 
       if (fishId != null && fishId > 0 && mounted) {
-        // 导航到详情页后再重置状态，避免状态污染
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => FishDetailPage(fishId: fishId),
-          ),
-        );
+        context.pushReplacement('/fish/$fishId');
       } else if (fishId == null || fishId <= 0) {
         // 从 viewModel 读取最新的错误信息
         final currentState = ref.read(cameraViewModelProvider);
@@ -974,49 +628,5 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     }
     tempController.dispose();
     pressureController.dispose();
-  }
-}
-
-class _FateButton extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final Color color;
-  final VoidCallback onTap;
-
-  const _FateButton({
-    required this.label,
-    required this.isSelected,
-    required this.color,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? color.withOpacity(0.2)
-              : Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? color : Theme.of(context).colorScheme.outline,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected
-                    ? color
-                    : Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-        ),
-      ),
-    );
   }
 }

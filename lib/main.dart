@@ -7,12 +7,7 @@ import 'core/models/app_settings.dart';
 import 'core/providers/app_settings_provider.dart';
 import 'core/providers/language_provider.dart';
 import 'core/services/database_service.dart';
-import 'widgets/common/premium_navigation_bar.dart';
-import 'features/achievement/achievement_page.dart';
-import 'features/home/home_page.dart';
-import 'features/fish_list/fish_list_page.dart';
-import 'features/equipment/equipment_list_page.dart';
-import 'features/settings/settings_page.dart';
+import 'core/router/app_router.dart';
 
 /// LureBox (路亚鱼护) 应用入口
 ///
@@ -61,13 +56,12 @@ class LuYuHuApp extends ConsumerWidget {
         locale = const Locale('en', 'US');
     }
 
-    return MaterialApp(
+    return MaterialApp.router(
       title: strings.appName,
       debugShowCheckedModeBanner: false,
       themeMode: themeMode,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      // 本地化配置
       locale: locale,
       supportedLocales: const [
         Locale('zh', 'CN'),
@@ -78,71 +72,7 @@ class LuYuHuApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: const MainPage(),
-    );
-  }
-}
-
-class MainPage extends ConsumerStatefulWidget {
-  const MainPage({super.key});
-
-  @override
-  ConsumerState<MainPage> createState() => _MainPageState();
-}
-
-class _MainPageState extends ConsumerState<MainPage> {
-  int _currentIndex = 2;
-
-  @override
-  Widget build(BuildContext context) {
-    final strings = ref.watch(currentStringsProvider);
-
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: const [
-          AchievementPage(),
-          FishListPage(),
-          HomePage(),
-          EquipmentListPage(),
-          SettingsPage(),
-        ],
-      ),
-      bottomNavigationBar: PremiumNavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        destinations: [
-          PremiumNavigationDestination(
-            icon: Icons.emoji_events_outlined,
-            selectedIcon: Icons.emoji_events,
-            label: strings.achievement,
-          ),
-          PremiumNavigationDestination(
-            icon: Icons.list_alt_outlined,
-            selectedIcon: Icons.list_alt,
-            label: strings.fishList,
-          ),
-          PremiumNavigationDestination(
-            icon: Icons.home_outlined,
-            selectedIcon: Icons.home,
-            label: strings.home,
-          ),
-          PremiumNavigationDestination(
-            icon: Icons.hardware_outlined,
-            selectedIcon: Icons.hardware,
-            label: strings.equipment,
-          ),
-          PremiumNavigationDestination(
-            icon: Icons.settings_outlined,
-            selectedIcon: Icons.settings,
-            label: strings.settings,
-          ),
-        ],
-      ),
+      routerConfig: ref.watch(routerProvider),
     );
   }
 }

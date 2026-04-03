@@ -66,29 +66,33 @@ class PremiumButton extends StatelessWidget {
     bool isDark,
     double borderRadius,
   ) {
-    return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor:
-            isDark ? AppColors.primaryDark : AppColors.primaryLight,
-        foregroundColor:
-            isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-        elevation: 0,
-        padding: padding ??
-            const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingXl,
-              vertical: AppTheme.spacingMd,
-            ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
+    return Semantics(
+      button: true,
+      label: text,
+      child: ElevatedButton(
+        onPressed: isLoading ? null : onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor:
+              isDark ? AppColors.primaryDark : AppColors.primaryLight,
+          foregroundColor:
+              isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+          elevation: 0,
+          padding: padding ??
+              const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingXl,
+                vertical: AppTheme.spacingMd,
+              ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.1,
+          ),
         ),
-        textStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.1,
-        ),
+        child: _buildButtonChild(),
       ),
-      child: _buildButtonChild(),
     );
   }
 
@@ -97,29 +101,34 @@ class PremiumButton extends StatelessWidget {
     bool isDark,
     double borderRadius,
   ) {
-    return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isDark
-            ? AppColors.accentDark.withOpacity(0.12)
-            : AppColors.accentLight.withOpacity(0.12),
-        foregroundColor: isDark ? AppColors.accentDark : AppColors.accentLight,
-        elevation: 0,
-        padding: padding ??
-            const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingXl,
-              vertical: AppTheme.spacingMd,
-            ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
+    return Semantics(
+      button: true,
+      label: text,
+      child: ElevatedButton(
+        onPressed: isLoading ? null : onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isDark
+              ? AppColors.accentDark.withOpacity(0.12)
+              : AppColors.accentLight.withOpacity(0.12),
+          foregroundColor:
+              isDark ? AppColors.accentDark : AppColors.accentLight,
+          elevation: 0,
+          padding: padding ??
+              const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingXl,
+                vertical: AppTheme.spacingMd,
+              ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.1,
+          ),
         ),
-        textStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.1,
-        ),
+        child: _buildButtonChild(),
       ),
-      child: _buildButtonChild(),
     );
   }
 
@@ -128,31 +137,35 @@ class PremiumButton extends StatelessWidget {
     bool isDark,
     double borderRadius,
   ) {
-    return OutlinedButton(
-      onPressed: isLoading ? null : onPressed,
-      style: OutlinedButton.styleFrom(
-        foregroundColor:
-            isDark ? AppColors.primaryDark : AppColors.primaryLight,
-        elevation: 0,
-        padding: padding ??
-            const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingXl,
-              vertical: AppTheme.spacingMd,
-            ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
+    return Semantics(
+      button: true,
+      label: text,
+      child: OutlinedButton(
+        onPressed: isLoading ? null : onPressed,
+        style: OutlinedButton.styleFrom(
+          foregroundColor:
+              isDark ? AppColors.primaryDark : AppColors.primaryLight,
+          elevation: 0,
+          padding: padding ??
+              const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingXl,
+                vertical: AppTheme.spacingMd,
+              ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          side: BorderSide(
+            color: isDark ? AppColors.borderDark : AppColors.borderLight,
+            width: 1,
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.1,
+          ),
         ),
-        side: BorderSide(
-          color: isDark ? AppColors.borderDark : AppColors.borderLight,
-          width: 1,
-        ),
-        textStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.1,
-        ),
+        child: _buildButtonChild(),
       ),
-      child: _buildButtonChild(),
     );
   }
 
@@ -161,26 +174,30 @@ class PremiumButton extends StatelessWidget {
     bool isDark,
     double borderRadius,
   ) {
-    return TextButton(
-      onPressed: isLoading ? null : onPressed,
-      style: TextButton.styleFrom(
-        foregroundColor:
-            isDark ? AppColors.primaryDark : AppColors.primaryLight,
-        padding: padding ??
-            const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingLg,
-              vertical: AppTheme.spacingSm,
-            ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
+    return Semantics(
+      button: true,
+      label: text,
+      child: TextButton(
+        onPressed: isLoading ? null : onPressed,
+        style: TextButton.styleFrom(
+          foregroundColor:
+              isDark ? AppColors.primaryDark : AppColors.primaryLight,
+          padding: padding ??
+              const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingLg,
+                vertical: AppTheme.spacingSm,
+              ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.1,
+          ),
         ),
-        textStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.1,
-        ),
+        child: _buildButtonChild(),
       ),
-      child: _buildButtonChild(),
     );
   }
 
@@ -189,27 +206,31 @@ class PremiumButton extends StatelessWidget {
     bool isDark,
     double borderRadius,
   ) {
-    return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.error,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        padding: padding ??
-            const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingXl,
-              vertical: AppTheme.spacingMd,
-            ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
+    return Semantics(
+      button: true,
+      label: text,
+      child: ElevatedButton(
+        onPressed: isLoading ? null : onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.error,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          padding: padding ??
+              const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingXl,
+                vertical: AppTheme.spacingMd,
+              ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.1,
+          ),
         ),
-        textStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.1,
-        ),
+        child: _buildButtonChild(),
       ),
-      child: _buildButtonChild(),
     );
   }
 
@@ -218,27 +239,31 @@ class PremiumButton extends StatelessWidget {
     bool isDark,
     double borderRadius,
   ) {
-    return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.success,
-        foregroundColor: Colors.white,
-        elevation: 0,
-        padding: padding ??
-            const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingXl,
-              vertical: AppTheme.spacingMd,
-            ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(borderRadius),
+    return Semantics(
+      button: true,
+      label: text,
+      child: ElevatedButton(
+        onPressed: isLoading ? null : onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.success,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          padding: padding ??
+              const EdgeInsets.symmetric(
+                horizontal: AppTheme.spacingXl,
+                vertical: AppTheme.spacingMd,
+              ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.1,
+          ),
         ),
-        textStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.1,
-        ),
+        child: _buildButtonChild(),
       ),
-      child: _buildButtonChild(),
     );
   }
 
@@ -284,6 +309,7 @@ class PremiumIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onPressed;
   final String? tooltip;
+  final String? accessibilityLabel;
   final PremiumButtonVariant variant;
   final double size;
   final Color? color;
@@ -294,6 +320,7 @@ class PremiumIconButton extends StatelessWidget {
     required this.icon,
     this.onPressed,
     this.tooltip,
+    this.accessibilityLabel,
     this.variant = PremiumButtonVariant.text,
     this.size = 40,
     this.color,
@@ -310,107 +337,131 @@ class PremiumIconButton extends StatelessWidget {
 
     switch (variant) {
       case PremiumButtonVariant.primary:
-        button = Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            color: backgroundColor ??
-                (isDark ? AppColors.primaryDark : AppColors.primaryLight),
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          ),
-          child: IconButton(
-            onPressed: onPressed,
-            icon: Icon(
-              icon,
-              color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+        button = Semantics(
+          button: true,
+          label: accessibilityLabel ?? tooltip ?? '图标按钮',
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: backgroundColor ??
+                  (isDark ? AppColors.primaryDark : AppColors.primaryLight),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
-            iconSize: size * 0.5,
-            padding: EdgeInsets.zero,
+            child: IconButton(
+              onPressed: onPressed,
+              icon: Icon(
+                icon,
+                color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+              ),
+              iconSize: size * 0.5,
+              padding: EdgeInsets.zero,
+            ),
           ),
         );
         break;
       case PremiumButtonVariant.secondary:
-        button = Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            color: backgroundColor ??
-                (isDark
-                    ? AppColors.accentDark.withOpacity(0.12)
-                    : AppColors.accentLight.withOpacity(0.12)),
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          ),
-          child: IconButton(
-            onPressed: onPressed,
-            icon: Icon(
-              icon,
-              color: isDark ? AppColors.accentDark : AppColors.accentLight,
+        button = Semantics(
+          button: true,
+          label: accessibilityLabel ?? tooltip ?? '图标按钮',
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: backgroundColor ??
+                  (isDark
+                      ? AppColors.accentDark.withOpacity(0.12)
+                      : AppColors.accentLight.withOpacity(0.12)),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
-            iconSize: size * 0.5,
-            padding: EdgeInsets.zero,
+            child: IconButton(
+              onPressed: onPressed,
+              icon: Icon(
+                icon,
+                color: isDark ? AppColors.accentDark : AppColors.accentLight,
+              ),
+              iconSize: size * 0.5,
+              padding: EdgeInsets.zero,
+            ),
           ),
         );
         break;
       case PremiumButtonVariant.outline:
-        button = Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: isDark ? AppColors.borderDark : AppColors.borderLight,
-              width: 1,
+        button = Semantics(
+          button: true,
+          label: accessibilityLabel ?? tooltip ?? '图标按钮',
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                width: 1,
+              ),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          ),
-          child: IconButton(
-            onPressed: onPressed,
-            icon: Icon(icon, color: iconColor),
-            iconSize: size * 0.5,
-            padding: EdgeInsets.zero,
+            child: IconButton(
+              onPressed: onPressed,
+              icon: Icon(icon, color: iconColor),
+              iconSize: size * 0.5,
+              padding: EdgeInsets.zero,
+            ),
           ),
         );
         break;
       case PremiumButtonVariant.text:
-        button = SizedBox(
-          width: size,
-          height: size,
-          child: IconButton(
-            onPressed: onPressed,
-            icon: Icon(icon, color: iconColor),
-            iconSize: size * 0.5,
-            padding: EdgeInsets.zero,
+        button = Semantics(
+          button: true,
+          label: accessibilityLabel ?? tooltip ?? '图标按钮',
+          child: SizedBox(
+            width: size,
+            height: size,
+            child: IconButton(
+              onPressed: onPressed,
+              icon: Icon(icon, color: iconColor),
+              iconSize: size * 0.5,
+              padding: EdgeInsets.zero,
+            ),
           ),
         );
         break;
       case PremiumButtonVariant.danger:
-        button = Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            color: backgroundColor ?? AppColors.error,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          ),
-          child: IconButton(
-            onPressed: onPressed,
-            icon: Icon(icon, color: Colors.white),
-            iconSize: size * 0.5,
-            padding: EdgeInsets.zero,
+        button = Semantics(
+          button: true,
+          label: accessibilityLabel ?? tooltip ?? '图标按钮',
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: backgroundColor ?? AppColors.error,
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            ),
+            child: IconButton(
+              onPressed: onPressed,
+              icon: Icon(icon, color: Colors.white),
+              iconSize: size * 0.5,
+              padding: EdgeInsets.zero,
+            ),
           ),
         );
         break;
       case PremiumButtonVariant.success:
-        button = Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            color: backgroundColor ?? AppColors.success,
-            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          ),
-          child: IconButton(
-            onPressed: onPressed,
-            icon: Icon(icon, color: Colors.white),
-            iconSize: size * 0.5,
-            padding: EdgeInsets.zero,
+        button = Semantics(
+          button: true,
+          label: accessibilityLabel ?? tooltip ?? '图标按钮',
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: backgroundColor ?? AppColors.success,
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            ),
+            child: IconButton(
+              onPressed: onPressed,
+              icon: Icon(icon, color: Colors.white),
+              iconSize: size * 0.5,
+              padding: EdgeInsets.zero,
+            ),
           ),
         );
         break;
@@ -447,21 +498,25 @@ class PremiumFAB extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return FloatingActionButton(
-      onPressed: onPressed,
-      tooltip: tooltip,
-      mini: mini,
-      backgroundColor: backgroundColor ??
-          (isDark ? AppColors.primaryDark : AppColors.primaryLight),
-      foregroundColor: foregroundColor ??
-          (isDark ? AppColors.surfaceDark : AppColors.surfaceLight),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(
-          mini ? AppTheme.radiusMd : AppTheme.radiusLg,
+    return Semantics(
+      button: true,
+      label: tooltip ?? '浮动操作按钮',
+      child: FloatingActionButton(
+        onPressed: onPressed,
+        tooltip: tooltip,
+        mini: mini,
+        backgroundColor: backgroundColor ??
+            (isDark ? AppColors.primaryDark : AppColors.primaryLight),
+        foregroundColor: foregroundColor ??
+            (isDark ? AppColors.surfaceDark : AppColors.surfaceLight),
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            mini ? AppTheme.radiusMd : AppTheme.radiusLg,
+          ),
         ),
+        child: Icon(icon, size: mini ? 20 : 24),
       ),
-      child: Icon(icon, size: mini ? 20 : 24),
     );
   }
 }

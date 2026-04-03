@@ -1,4 +1,4 @@
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart' hide Database;
 import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/equipment.dart';
@@ -8,6 +8,7 @@ import 'package:lurebox/core/repositories/species_history_repository.dart';
 import 'package:lurebox/core/repositories/location_repository.dart';
 import 'package:lurebox/core/repositories/settings_repository.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
+import 'package:lurebox/core/database/database.dart';
 
 void setUpDatabaseForTesting() {
   sqfliteFfiInit();
@@ -16,24 +17,129 @@ void setUpDatabaseForTesting() {
 
 void tearDownDatabase() {}
 
-// ===== Mock Database =====
+/// Mock Database implementing the Database interface for unit testing
+class MockDatabase extends Mock implements Database {
+  // Store query results for verification
+  final Map<String, List<Map<String, dynamic>>> _queryResults = {};
+  final List<Map<String, dynamic>> _insertedRecords = [];
 
-class MockDatabase extends Mock implements Database {}
-
-// Mock database service (for legacy tests)
-class MockDatabaseService extends Mock {
-  static Database? _mockDatabase;
-
-  static Future<Database> get database async {
-    return _mockDatabase ?? MockDatabase();
+  void addQueryResult(String sql, List<Map<String, dynamic>> results) {
+    _queryResults[sql] = results;
   }
 
-  static void setMockDatabase(Database database) {
-    _mockDatabase = database;
+  List<Map<String, dynamic>> getInsertedRecords() =>
+      List.from(_insertedRecords);
+
+  @override
+  Future<List<Map<String, dynamic>>> query(
+    String table, {
+    bool? distinct,
+    List<String>? columns,
+    String? where,
+    List<dynamic>? whereArgs,
+    String? groupBy,
+    String? having,
+    String? orderBy,
+    int? limit,
+    int? offset,
+  }) async {
+    // Return stored result or empty list
+    return _queryResults[table] ?? [];
   }
 
-  static void clearMocks() {
-    _mockDatabase = null;
+  @override
+  Future<int> insert(
+    String table,
+    Map<String, dynamic> values, {
+    String? nullColumnHack,
+    ConflictAlgorithm? conflictAlgorithm,
+  }) async {
+    // Store the inserted record
+    final record = Map<String, dynamic>.from(values);
+    record['id'] = _insertedRecords.length + 1;
+    _insertedRecords.add(record);
+    return record['id'] as int;
+  }
+
+  @override
+  Future<int> update(
+    String table,
+    Map<String, dynamic> values, {
+    String? where,
+    List<dynamic>? whereArgs,
+    ConflictAlgorithm? conflictAlgorithm,
+  }) async {
+    return 1; // Mock: updated 1 row
+  }
+
+  @override
+  Future<int> delete(
+    String table, {
+    String? where,
+    List<dynamic>? whereArgs,
+  }) async {
+    return 1; // Mock: deleted 1 row
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> rawQuery(
+    String sql, [
+    List<dynamic>? arguments,
+  ]) async {
+    // Match exact SQL or return stored result
+    return _queryResults[sql] ?? [];
+  }
+
+  @override
+  Future<int> rawUpdate(
+    String sql, [
+    List<dynamic>? arguments,
+  ]) async {
+    return 1; // Mock: updated 1 row
+  }
+
+  @override
+  Future<int> rawInsert(
+    String sql, [
+    List<dynamic>? arguments,
+  ]) async {
+    return 1; // Mock: inserted 1 row
+  }
+
+  @override
+  Future<int> rawDelete(
+    String sql, [
+    List<dynamic>? arguments,
+  ]) async {
+    return 1; // Mock: deleted 1 row
+  }
+
+  @override
+  Future<T> transaction<T>(
+    Future<T> Function(Transaction txn) action, {
+    bool? exclusive,
+  }) async {
+    return action(_MockTransaction());
+  }
+
+  @override
+  Future<void> close() async {}
+
+  @override
+  Future<void> execute(String sql, [List<Object?>? arguments]) async {}
+
+  /// Clear all stored data
+  void reset() {
+    _queryResults.clear();
+    _insertedRecords.clear();
+  }
+}
+
+/// Mock Transaction for testing
+class _MockTransaction implements Transaction {
+  @override
+  dynamic noSuchMethod(Invocation invocation) {
+    return Future.value([]);
   }
 }
 

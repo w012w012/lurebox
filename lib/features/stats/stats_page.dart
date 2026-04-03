@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/stats_provider.dart';
-import 'stats_detail_page.dart';
 
 /// 统计页
 class StatsPage extends ConsumerWidget {
@@ -157,15 +157,8 @@ class StatsPage extends ConsumerWidget {
     required DateTime startOfDay,
     required DateTime endOfDay,
   }) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => StatsDetailPage(
-          title: title,
-          startDate: startOfDay,
-          endDate: endOfDay,
-        ),
-      ),
+    context.push(
+      '/stats?title=${Uri.encodeComponent(title)}&start=${startOfDay.toIso8601String()}&end=${endOfDay.toIso8601String()}',
     );
   }
 }

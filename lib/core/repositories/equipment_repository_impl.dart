@@ -27,7 +27,8 @@ class SqliteEquipmentRepository implements EquipmentRepository {
         whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
         orderBy: 'is_default DESC, created_at DESC',
       );
-      return results.map((map) => Equipment.fromMap(map)).toList();
+      return List<Equipment>.from(
+          results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
       throw Exception('Failed to get equipments: $e');
     }
@@ -150,7 +151,8 @@ class SqliteEquipmentRepository implements EquipmentRepository {
         limit: pageSize,
         offset: offset,
       );
-      final items = results.map((map) => Equipment.fromMap(map)).toList();
+      final items = List<Equipment>.from(
+          results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)));
 
       final hasMore = (page * pageSize) < totalCount;
 
@@ -216,7 +218,8 @@ class SqliteEquipmentRepository implements EquipmentRepository {
         limit: pageSize,
         offset: offset,
       );
-      final items = results.map((map) => Equipment.fromMap(map)).toList();
+      final items = List<Equipment>.from(
+          results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)));
 
       final hasMore = (page * pageSize) < totalCount;
 

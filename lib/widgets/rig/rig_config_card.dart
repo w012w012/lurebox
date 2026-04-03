@@ -259,8 +259,12 @@ class _RigConfigCardState extends State<RigConfigCard> {
   }
 
   Widget _buildSinkerPositionDropdown() {
+    final currentValue = widget.config.sinkerPosition;
+    final safeValue = SinkerPosition.presets.contains(currentValue)
+        ? currentValue
+        : SinkerPosition.presets.first;
     return DropdownButtonFormField<String>(
-      value: widget.config.sinkerPosition,
+      value: safeValue,
       decoration: const InputDecoration(
         labelText: '位置',
         isDense: true,
@@ -318,8 +322,12 @@ class _RigConfigCardState extends State<RigConfigCard> {
   }
 
   Widget _buildFreeSinkerShapeDropdown() {
+    final currentValue = widget.config.freeSinkerShape;
+    final safeValue = FreeSinkerShape.presets.contains(currentValue)
+        ? currentValue
+        : FreeSinkerShape.presets.first;
     return DropdownButtonFormField<String>(
-      value: widget.config.freeSinkerShape,
+      value: safeValue,
       decoration: const InputDecoration(
         labelText: '形状',
         isDense: true,
@@ -412,9 +420,12 @@ class _RigConfigCardState extends State<RigConfigCard> {
 
   Widget _buildHookSizeDropdown() {
     final currentValue = widget.config.hookSize;
+    final safeValue = HookSize.presets.contains(currentValue)
+        ? currentValue
+        : HookSize.presets.first;
 
     return DropdownButtonFormField<String>(
-      value: currentValue,
+      value: safeValue,
       decoration: const InputDecoration(
         labelText: '钩号',
         isDense: true,

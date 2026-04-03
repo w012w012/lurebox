@@ -17,26 +17,30 @@ class UnitDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField<String>(
-      value: options.contains(value) ? value : options.first,
-      decoration: InputDecoration(
-        labelText: label,
-        border: const OutlineInputBorder(),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    return Semantics(
+      label: label,
+      child: DropdownButtonFormField<String>(
+        value: options.contains(value) ? value : options.first,
+        decoration: InputDecoration(
+          labelText: label,
+          border: const OutlineInputBorder(),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        ),
+        items: options
+            .map(
+              (unit) => DropdownMenuItem(
+                value: unit,
+                child: Text(unit, style: const TextStyle(fontSize: 14)),
+              ),
+            )
+            .toList(),
+        onChanged: (v) {
+          if (v != null) {
+            onUnitChanged(v);
+          }
+        },
       ),
-      items: options
-          .map(
-            (unit) => DropdownMenuItem(
-              value: unit,
-              child: Text(unit, style: const TextStyle(fontSize: 14)),
-            ),
-          )
-          .toList(),
-      onChanged: (v) {
-        if (v != null) {
-          onUnitChanged(v);
-        }
-      },
     );
   }
 }

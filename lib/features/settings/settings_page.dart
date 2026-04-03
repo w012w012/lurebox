@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
@@ -8,10 +9,6 @@ import '../../core/providers/watermark_provider.dart';
 import '../../core/providers/settings_view_model.dart';
 import '../../core/widgets/error_view.dart';
 import '../../widgets/common/premium_card.dart';
-import 'watermark_settings_page.dart';
-import 'location_management_page.dart';
-import 'species_management_page.dart';
-import 'ai_recognition_settings_page.dart';
 import '../../widgets/settings/settings_backup_section.dart';
 import '../../widgets/settings/settings_appearance_section.dart';
 import '../../widgets/settings/settings_units_section.dart';
@@ -52,6 +49,27 @@ class SettingsPage extends ConsumerWidget {
     AppStrings strings,
     dynamic watermarkSettings,
   ) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isTablet = constraints.maxWidth >= 600;
+
+        // Tablet: use two-column layout with sections in groups
+        if (isTablet) {
+          return _buildTabletSettings(context, ref, strings, watermarkSettings);
+        }
+
+        // Mobile: single column list (original)
+        return _buildMobileSettings(context, ref, strings, watermarkSettings);
+      },
+    );
+  }
+
+  Widget _buildMobileSettings(
+    BuildContext context,
+    WidgetRef ref,
+    AppStrings strings,
+    dynamic watermarkSettings,
+  ) {
     return ListView(
       children: [
         const SizedBox(height: 16),
@@ -77,6 +95,61 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
+  Widget _buildTabletSettings(
+    BuildContext context,
+    WidgetRef ref,
+    AppStrings strings,
+    dynamic watermarkSettings,
+  ) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // First row: Location, Species, Watermark
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: _buildLocationCard(context, strings)),
+              const SizedBox(width: 16),
+              Expanded(child: _buildSpeciesCard(context, strings)),
+              const SizedBox(width: 16),
+              Expanded(
+                  child:
+                      _buildWatermarkCard(context, strings, watermarkSettings)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Second row: AI Recognition
+          _buildAiRecognitionCard(context, strings),
+          const SizedBox(height: 16),
+          // Third row: Units and Appearance in parallel
+          const Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: SettingsUnitsSection()),
+              SizedBox(width: 16),
+              Expanded(child: SettingsAppearanceSection()),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Fourth row: Backup and About
+          const Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: SettingsBackupSection()),
+              SizedBox(width: 16),
+              Expanded(child: SettingsAboutSection()),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Center(child: _buildFooter(context, strings)),
+          const SizedBox(height: 32),
+        ],
+      ),
+    );
+  }
+
   Widget _buildWatermarkCard(
     BuildContext context,
     AppStrings strings,
@@ -85,12 +158,7 @@ class SettingsPage extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return PremiumCard(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const WatermarkSettingsPage(),
-          ),
-        );
+        context.push('/settings/watermark');
       },
       child: Row(
         children: [
@@ -138,12 +206,7 @@ class SettingsPage extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return PremiumCard(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const AiRecognitionSettingsPage(),
-          ),
-        );
+        context.push('/settings/ai');
       },
       child: Row(
         children: [
@@ -184,12 +247,7 @@ class SettingsPage extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return PremiumCard(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LocationManagementPage(),
-          ),
-        );
+        context.push('/settings/locations');
       },
       child: Row(
         children: [
@@ -230,12 +288,7 @@ class SettingsPage extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return PremiumCard(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const SpeciesManagementPage(),
-          ),
-        );
+        context.push('/species');
       },
       child: Row(
         children: [

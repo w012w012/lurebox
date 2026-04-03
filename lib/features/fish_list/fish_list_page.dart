@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/models/fish_catch.dart';
@@ -11,8 +12,6 @@ import '../../widgets/common/premium_button.dart';
 import '../../widgets/fish_list/fish_filter_panel.dart';
 import '../../widgets/fish_list/fish_list_item.dart';
 import '../../widgets/fish_list/fish_search_delegate.dart';
-import '../fish_detail/fish_detail_page.dart';
-import '../settings/species_management_page.dart';
 
 class FishListPage extends ConsumerStatefulWidget {
   const FishListPage({super.key});
@@ -106,12 +105,7 @@ class _FishListPageState extends ConsumerState<FishListPage> {
         state.catches,
         ref.read(currentStringsProvider),
         (fish) async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FishDetailPage(fishId: fish.id),
-            ),
-          );
+          await context.push('/fish/${fish.id}');
           ref.read(fishListViewModelProvider.notifier).loadCatches();
         },
       ),
@@ -150,12 +144,7 @@ class _FishListPageState extends ConsumerState<FishListPage> {
   }
 
   void _onQuickIdentify(FishCatch fish) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const SpeciesManagementPage(),
-      ),
-    );
+    context.push('/species');
   }
 
   void _onFishTap(FishCatch fish) {
@@ -163,12 +152,9 @@ class _FishListPageState extends ConsumerState<FishListPage> {
     if (state.isSelectionMode) {
       ref.read(fishListViewModelProvider.notifier).toggleSelection(fish.id);
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => FishDetailPage(fishId: fish.id),
-        ),
-      ).then((_) => ref.read(fishListViewModelProvider.notifier).loadCatches());
+      context.push('/fish/${fish.id}').then(
+            (_) => ref.read(fishListViewModelProvider.notifier).loadCatches(),
+          );
     }
   }
 
@@ -246,81 +232,187 @@ class _FishListPageState extends ConsumerState<FishListPage> {
       );
     }
 
-    return RefreshIndicator(
-      onRefresh: () async =>
-          ref.read(fishListViewModelProvider.notifier).loadCatches(reset: true),
-      child: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
-        controller: _scrollController,
-        itemCount: state.filteredCatches.length + (state.hasMore ? 2 : 1),
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return Column(
-              children: [
-                state.filterExpanded
-                    ? FishFilterPanel(
-                        strings: strings,
-                        timeFilter: state.filter.timeFilter,
-                        fateFilter: state.filter.fateFilter,
-                        speciesFilter: state.filter.speciesFilter,
-                        speciesList: state.uniqueSpecies,
-                        customDateLabel: state.getCustomDateLabel(
-                          () => strings.custom,
-                        ),
-                        onShowDateRangePicker: _showDateRangePicker,
-                        onTimeFilterChanged: (filter) => ref
-                            .read(fishListViewModelProvider.notifier)
-                            .setTimeFilter(filter),
-                        onFateFilterChanged: (fate) => ref
-                            .read(fishListViewModelProvider.notifier)
-                            .setFateFilter(fate),
-                        onSpeciesFilterChanged: (species) => ref
-                            .read(fishListViewModelProvider.notifier)
-                            .setSpeciesFilter(species),
-                      )
-                    : FishFilterCollapsed(
-                        hasFilters: state.hasFilters,
-                        filterLabel: strings.filterActive,
-                        expandLabel: strings.expandFilter,
-                        onTap: () => ref
-                            .read(fishListViewModelProvider.notifier)
-                            .toggleFilterExpanded(),
-                        onClear: state.hasFilters
-                            ? () => ref
-                                .read(fishListViewModelProvider.notifier)
-                                .clearFilters()
-                            : null,
-                      ),
-                _buildSortBar(state, strings),
-              ],
-            );
-          }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isTablet = constraints.maxWidth >= 600;
 
-          if (index > state.filteredCatches.length) {
-            if (state.isLoading && state.filteredCatches.isNotEmpty) {
-              return const Padding(
-                padding: EdgeInsets.all(16),
-                child: Center(child: CircularProgressIndicator()),
-              );
-            }
-            return const SizedBox.shrink();
-          }
-
-          final fish = state.filteredCatches[index - 1];
-          return FishListItem(
-            fish: fish,
-            strings: strings,
-            isSelected: state.selectedIds.contains(fish.id),
-            isSelectionMode: state.isSelectionMode,
-            onTap: () => _onFishTap(fish),
-            onLongPress: () => _onFishLongPress(fish),
-            onQuickIdentify:
-                fish.pendingRecognition ? () => _onQuickIdentify(fish) : null,
-          );
-        },
-      ),
+        return RefreshIndicator(
+          onRefresh: () async => ref
+              .read(fishListViewModelProvider.notifier)
+              .loadCatches(reset: true),
+          child: isTablet
+              ? _buildTabletGridView(constraints, state, strings)
+              : _buildMobileListView(state, strings),
+        );
+      },
     );
   }
+
+  Widget _buildMobileListView(FishListState state, AppStrings strings) {
+    return ListView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
+      controller: _scrollController,
+      itemCount: state.filteredCatches.length + (state.hasMore ? 2 : 1),
+      itemBuilder: (context, index) => _buildListItem(index, state, strings),
+    );
+  }
+
+  Widget _buildTabletGridView(
+      BoxConstraints constraints, FishListState state, AppStrings strings) {
+    final crossAxisCount = constraints.maxWidth >= 900 ? 3 : 2;
+    final itemWidth = (constraints.maxWidth - 32 - (crossAxisCount - 1) * 16) /
+        crossAxisCount;
+
+    return CustomScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      controller: _scrollController,
+      slivers: [
+        SliverToBoxAdapter(
+          child: state.filterExpanded
+              ? FishFilterPanel(
+                  strings: strings,
+                  timeFilter: state.filter.timeFilter,
+                  fateFilter: state.filter.fateFilter,
+                  speciesFilter: state.filter.speciesFilter,
+                  speciesList: state.uniqueSpecies,
+                  customDateLabel: state.getCustomDateLabel(
+                    () => strings.custom,
+                  ),
+                  onShowDateRangePicker: _showDateRangePicker,
+                  onTimeFilterChanged: (filter) => ref
+                      .read(fishListViewModelProvider.notifier)
+                      .setTimeFilter(filter),
+                  onFateFilterChanged: (fate) => ref
+                      .read(fishListViewModelProvider.notifier)
+                      .setFateFilter(fate),
+                  onSpeciesFilterChanged: (species) => ref
+                      .read(fishListViewModelProvider.notifier)
+                      .setSpeciesFilter(species),
+                )
+              : FishFilterCollapsed(
+                  hasFilters: state.hasFilters,
+                  filterLabel: strings.filterActive,
+                  expandLabel: strings.expandFilter,
+                  onTap: () => ref
+                      .read(fishListViewModelProvider.notifier)
+                      .toggleFilterExpanded(),
+                  onClear: state.hasFilters
+                      ? () => ref
+                          .read(fishListViewModelProvider.notifier)
+                          .clearFilters()
+                      : null,
+                ),
+        ),
+        SliverToBoxAdapter(
+          child: _buildSortBar(state, strings),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: itemWidth / 100,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                if (index >= state.filteredCatches.length) {
+                  if (state.isLoading && state.filteredCatches.isNotEmpty) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return null;
+                }
+                final fish = state.filteredCatches[index];
+                return FishListItem(
+                  fish: fish,
+                  strings: strings,
+                  isSelected: state.selectedIds.contains(fish.id),
+                  isSelectionMode: state.isSelectionMode,
+                  onTap: () => _onFishTap(fish),
+                  onLongPress: () => _onFishLongPress(fish),
+                  onQuickIdentify: fish.pendingRecognition
+                      ? () => _onQuickIdentify(fish)
+                      : null,
+                );
+              },
+              childCount:
+                  state.filteredCatches.length + (state.hasMore ? 1 : 0),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildListItem(int index, FishListState state, AppStrings strings) {
+    if (index == 0) {
+      return Column(
+        children: [
+          state.filterExpanded
+              ? FishFilterPanel(
+                  strings: strings,
+                  timeFilter: state.filter.timeFilter,
+                  fateFilter: state.filter.fateFilter,
+                  speciesFilter: state.filter.speciesFilter,
+                  speciesList: state.uniqueSpecies,
+                  customDateLabel: state.getCustomDateLabel(
+                    () => strings.custom,
+                  ),
+                  onShowDateRangePicker: _showDateRangePicker,
+                  onTimeFilterChanged: (filter) => ref
+                      .read(fishListViewModelProvider.notifier)
+                      .setTimeFilter(filter),
+                  onFateFilterChanged: (fate) => ref
+                      .read(fishListViewModelProvider.notifier)
+                      .setFateFilter(fate),
+                  onSpeciesFilterChanged: (species) => ref
+                      .read(fishListViewModelProvider.notifier)
+                      .setSpeciesFilter(species),
+                )
+              : FishFilterCollapsed(
+                  hasFilters: state.hasFilters,
+                  filterLabel: strings.filterActive,
+                  expandLabel: strings.expandFilter,
+                  onTap: () => ref
+                      .read(fishListViewModelProvider.notifier)
+                      .toggleFilterExpanded(),
+                  onClear: state.hasFilters
+                      ? () => ref
+                          .read(fishListViewModelProvider.notifier)
+                          .clearFilters()
+                      : null,
+                ),
+          _buildSortBar(state, strings),
+        ],
+      );
+    }
+
+    if (index > state.filteredCatches.length) {
+      if (state.isLoading && state.filteredCatches.isNotEmpty) {
+        return const Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(child: CircularProgressIndicator()),
+        );
+      }
+      return const SizedBox.shrink();
+    }
+
+    final fish = state.filteredCatches[index - 1];
+    return FishListItem(
+      fish: fish,
+      strings: strings,
+      isSelected: state.selectedIds.contains(fish.id),
+      isSelectionMode: state.isSelectionMode,
+      onTap: () => _onFishTap(fish),
+      onLongPress: () => _onFishLongPress(fish),
+      onQuickIdentify:
+          fish.pendingRecognition ? () => _onQuickIdentify(fish) : null,
+    );
+  }
+
+  // Track constraints for tablet grid view
+  BoxConstraints get constraints => const BoxConstraints();
 
   Widget _buildSortBar(FishListState state, AppStrings strings) {
     return Padding(

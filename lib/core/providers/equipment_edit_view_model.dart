@@ -39,6 +39,8 @@ class EquipmentEditState {
   final String reelRatio;
   final String reelCapacity;
   final String reelBrakeType;
+  final String reelWeight;
+  final String reelWeightUnit;
 
   // Reel line fields
   final String reelLine;
@@ -81,6 +83,8 @@ class EquipmentEditState {
     this.reelRatio = '',
     this.reelCapacity = '',
     this.reelBrakeType = '',
+    this.reelWeight = '',
+    this.reelWeightUnit = 'g',
     this.reelLine = '',
     this.reelLineNumber = '',
     this.reelLineLength = '',
@@ -122,6 +126,8 @@ class EquipmentEditState {
     String? reelRatio,
     String? reelCapacity,
     String? reelBrakeType,
+    String? reelWeight,
+    String? reelWeightUnit,
     String? reelLine,
     String? reelLineNumber,
     String? reelLineLength,
@@ -160,6 +166,8 @@ class EquipmentEditState {
       reelRatio: reelRatio ?? this.reelRatio,
       reelCapacity: reelCapacity ?? this.reelCapacity,
       reelBrakeType: reelBrakeType ?? this.reelBrakeType,
+      reelWeight: reelWeight ?? this.reelWeight,
+      reelWeightUnit: reelWeightUnit ?? this.reelWeightUnit,
       reelLine: reelLine ?? this.reelLine,
       reelLineNumber: reelLineNumber ?? this.reelLineNumber,
       reelLineLength: reelLineLength ?? this.reelLineLength,
@@ -239,6 +247,8 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
       reelRatio: _getValue(e, 'reel_ratio')?.toString() ?? '',
       reelCapacity: _getValue(e, 'reel_capacity')?.toString() ?? '',
       reelBrakeType: _getValue(e, 'reel_brake_type')?.toString() ?? '',
+      reelWeight: _getValue(e, 'reel_weight')?.toString() ?? '',
+      reelWeightUnit: _getValue(e, 'reel_weight_unit')?.toString() ?? 'g',
       reelLine: _getValue(e, 'reel_line')?.toString() ?? '',
       reelLineNumber: _getValue(e, 'reel_line_number')?.toString() ?? '',
       reelLineLength: _getValue(e, 'reel_line_length')?.toString() ?? '',
@@ -288,6 +298,10 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
       state = state.copyWith(reelCapacity: value);
   void updateReelBrakeType(String value) =>
       state = state.copyWith(reelBrakeType: value);
+  void updateReelWeight(String value) =>
+      state = state.copyWith(reelWeight: value);
+  void updateReelWeightUnit(String value) =>
+      state = state.copyWith(reelWeightUnit: value);
 
   void updateReelLine(String value) => state = state.copyWith(reelLine: value);
   void updateReelLineNumber(String value) =>
@@ -391,6 +405,10 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
         }
         if (state.reelBrakeType.isNotEmpty) {
           data['reel_brake_type'] = state.reelBrakeType.trim();
+        }
+        if (state.reelWeight.isNotEmpty) {
+          data['reel_weight'] = state.reelWeight.trim();
+          data['reel_weight_unit'] = state.reelWeightUnit;
         }
         if (state.reelLine.isNotEmpty) {
           data['reel_line'] = state.reelLine.trim();

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/language_provider.dart';
 import '../common/premium_input.dart';
+import '../common/unit_dropdown.dart';
 
 class ReelForm extends ConsumerWidget {
   final TextEditingController bearingsController;
@@ -10,6 +11,9 @@ class ReelForm extends ConsumerWidget {
   final TextEditingController ratioBController;
   final TextEditingController capacityNumberController;
   final TextEditingController capacityLengthController;
+  final TextEditingController weightController;
+  final String weightUnit;
+  final ValueChanged<String> onWeightUnitChanged;
   final String brakeType;
   final ValueChanged<String> onBrakeTypeChanged;
 
@@ -20,6 +24,9 @@ class ReelForm extends ConsumerWidget {
     required this.ratioBController,
     required this.capacityNumberController,
     required this.capacityLengthController,
+    required this.weightController,
+    required this.weightUnit,
+    required this.onWeightUnitChanged,
     required this.brakeType,
     required this.onBrakeTypeChanged,
   });
@@ -109,6 +116,30 @@ class ReelForm extends ConsumerWidget {
               onBrakeTypeChanged(value);
             }
           },
+        ),
+        const SizedBox(height: 10),
+        // 渔轮重量
+        Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: PremiumTextField(
+                controller: weightController,
+                label: strings.reelWeight,
+                hint: strings.reelWeightHint,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 2,
+              child: UnitDropdown(
+                value: weightUnit,
+                options: const ['g', 'oz'],
+                label: '单位',
+                onUnitChanged: onWeightUnitChanged,
+              ),
+            ),
+          ],
         ),
       ],
     );

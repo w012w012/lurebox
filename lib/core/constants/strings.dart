@@ -26,6 +26,8 @@ class AppStrings {
   final String reelRatio;
   final String reelCapacity;
   final String reelBrakeType;
+  final String reelWeight;
+  final String reelWeightHint;
   final String line;
   final String lureType;
   final String lureWeight;
@@ -269,6 +271,8 @@ class AppStrings {
   final String weightRangeHint;
   final String bearings;
   final String bearingsHint;
+  final String jointType;
+  final String jointTypeHint;
   final String ratio;
   final String ratioHint;
   final String capacityHint;
@@ -331,6 +335,19 @@ class AppStrings {
   final String errorLoadFailed;
   final String errorDeleteFailed;
   final String errorUnknown;
+
+  // Rig Config (钓组配置)
+  final String configureRig;
+  final String rigType;
+  final String sinkerConfig;
+  final String sinkerWeight;
+  final String sinkerPosition;
+  final String hookConfig;
+  final String hookWeight;
+  final String hookSize;
+  final String customOption;
+  final String customRigTypeHint;
+  final String customHookTypeHint;
 
   // Equipment option lists
   final List<String> rodHandleTypes;
@@ -449,6 +466,8 @@ class AppStrings {
     required this.reelRatio,
     required this.reelCapacity,
     required this.reelBrakeType,
+    required this.reelWeight,
+    required this.reelWeightHint,
     required this.line,
     required this.lureType,
     required this.lureWeight,
@@ -690,6 +709,8 @@ class AppStrings {
     required this.weightRangeHint,
     required this.bearings,
     required this.bearingsHint,
+    required this.jointType,
+    required this.jointTypeHint,
     required this.ratio,
     required this.ratioHint,
     required this.capacityHint,
@@ -782,6 +803,17 @@ class AppStrings {
     required this.geocodingTimeout,
     required this.unknownLocation,
     required this.catchCount,
+    required this.configureRig,
+    required this.rigType,
+    required this.sinkerConfig,
+    required this.sinkerWeight,
+    required this.sinkerPosition,
+    required this.hookConfig,
+    required this.hookWeight,
+    required this.hookSize,
+    required this.customOption,
+    required this.customRigTypeHint,
+    required this.customHookTypeHint,
     required this.exportFormat,
     required this.csvTable,
     required this.csvDescription,
@@ -857,6 +889,8 @@ class AppStrings {
     reelRatio: '齿轮比',
     reelCapacity: '线杯容量',
     reelBrakeType: '刹车类型',
+    reelWeight: '渔轮重量',
+    reelWeightHint: '如：200',
     line: '鱼线',
     lureType: '类型',
     lureWeight: '重量',
@@ -1098,6 +1132,8 @@ class AppStrings {
     weightRangeHint: '如：1-7g',
     bearings: '轴承数',
     bearingsHint: '如：6+1',
+    jointType: '插接方式',
+    jointTypeHint: '如：插节/拔节',
     ratio: '速比',
     ratioHint: '如：5.2:1',
     capacityHint: '如：0.8/150',
@@ -1168,7 +1204,6 @@ class AppStrings {
       '米诺',
       '波爬',
       '铅笔',
-      '卷尾蛆',
       '亮片',
       '软虫',
       '铁板',
@@ -1247,6 +1282,17 @@ class AppStrings {
     catchRecordsExport: '鱼获记录导出',
     allRecords: '全部记录',
     dateRangeTo: '至',
+    configureRig: '配置钓组',
+    rigType: '钓组类型',
+    sinkerConfig: '插铅配置',
+    sinkerWeight: '插铅重量',
+    sinkerPosition: '插铅位置',
+    hookConfig: '鱼钩配置',
+    hookWeight: '鱼钩重量',
+    hookSize: '钩号',
+    customOption: '自定义',
+    customRigTypeHint: '输入自定义钓组类型',
+    customHookTypeHint: '输入自定义鱼钩类型',
   );
 
   static const english = AppStrings(
@@ -1276,6 +1322,8 @@ class AppStrings {
     reelRatio: 'Gear Ratio',
     reelCapacity: 'Spool Capacity',
     reelBrakeType: 'Brake Type',
+    reelWeight: 'Reel Weight',
+    reelWeightHint: 'e.g.: 200',
     line: 'Line',
     lureType: 'Type',
     lureWeight: 'Weight',
@@ -1518,6 +1566,8 @@ class AppStrings {
     weightRangeHint: 'e.g., 1-7g',
     bearings: 'Bearings',
     bearingsHint: 'e.g., 6+1',
+    jointType: 'Joint Type',
+    jointTypeHint: 'e.g., Push/Pull',
     ratio: 'Gear Ratio',
     ratioHint: 'e.g., 5.2:1',
     capacityHint: 'e.g., 0.8/150',
@@ -1595,7 +1645,6 @@ class AppStrings {
       'Minnow',
       'Popper',
       'Pencil',
-      'Grub',
       'Spinner',
       'Soft',
       'Jig',
@@ -1674,5 +1723,16 @@ class AppStrings {
     catchRecordsExport: 'Catch Records Export',
     allRecords: 'All Records',
     dateRangeTo: 'to',
+    configureRig: '配置钓组',
+    rigType: '钓组类型',
+    sinkerConfig: '插铅配置',
+    sinkerWeight: '插铅重量',
+    sinkerPosition: '插铅位置',
+    hookConfig: '鱼钩配置',
+    hookWeight: '鱼钩重量',
+    hookSize: '钩号',
+    customOption: '自定义',
+    customRigTypeHint: '输入自定义钓组类型',
+    customHookTypeHint: '输入自定义鱼钩类型',
   );
 }

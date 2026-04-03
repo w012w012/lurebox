@@ -675,7 +675,8 @@ GROUP BY eq_id, species
         orderBy: 'length DESC',
         limit: 3,
       );
-      return results.map((map) => FishCatch.fromMap(map)).toList();
+      return List<FishCatch>.from(
+          results.map((map) => FishCatch.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
       throw Exception('Failed to get top 3 longest catches: $e');
     }

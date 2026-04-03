@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
@@ -10,8 +11,6 @@ import '../../widgets/common/premium_button.dart';
 import '../../widgets/equipment/equipment_type_tabs.dart';
 import '../../widgets/equipment/equipment_filter_bar.dart';
 import '../../widgets/equipment/equipment_card.dart';
-import 'equipment_edit_page.dart';
-import 'equipment_overview_page.dart';
 
 class EquipmentListPage extends ConsumerWidget {
   const EquipmentListPage({super.key});
@@ -30,12 +29,7 @@ class EquipmentListPage extends ConsumerWidget {
           IconButton(
             icon: const Icon(Icons.analytics),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const EquipmentOverviewPage(),
-                ),
-              );
+              context.push('/equipment/overview');
             },
             tooltip: strings.equipmentOverview,
           ),
@@ -167,12 +161,8 @@ class EquipmentListPage extends ConsumerWidget {
     String type, {
     int? equipmentId,
   }) async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) =>
-            EquipmentEditPage(type: type, equipmentId: equipmentId),
-      ),
+    final result = await context.push<bool>(
+      '/equipment/edit?type=$type${equipmentId != null ? '&id=$equipmentId' : ''}',
     );
     if (result == true) {
       ref.read(equipmentListViewModelProvider.notifier).refresh();

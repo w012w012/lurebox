@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/design/theme/app_colors.dart';
 import '../../../core/design/theme/app_theme.dart';
@@ -26,11 +27,7 @@ class SettingsUnitsSection extends ConsumerWidget {
                 '${strings.fishCountUnit}、${strings.equipment}、${strings.lure}',
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const UnitSettingsPage()),
-              );
+              context.push('/settings/units');
             },
           ),
         ],

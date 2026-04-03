@@ -1,8 +1,10 @@
 import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../services/error_service.dart' as error_service;
+import '../services/permission_service.dart';
 import '../services/weather_service.dart';
 
 class CameraHelper {
@@ -30,9 +32,25 @@ class CameraHelper {
   double? get positionLng => _longitude;
   WeatherData? get weatherData => _weatherData;
 
-  Future<void> initCamera() async {
+  Future<void> initCamera({BuildContext? context}) async {
     try {
       await error_service.ErrorService().wrap(() async {
+        // Request camera permission with education dialog
+        if (context != null) {
+          final result =
+              await PermissionService().requestCameraPermission(context);
+          if (!result.granted) {
+            _errorMessage = '需要相机权限';
+            return;
+          }
+        } else {
+          // Fallback: direct request without education
+          final status = await Permission.camera.status;
+          if (!status.isGranted) {
+            await Permission.camera.request();
+          }
+        }
+
         _cameras = await availableCameras();
         if (_cameras.isEmpty) {
           _errorMessage = 'No cameras available';
@@ -93,15 +111,26 @@ class CameraHelper {
     }
   }
 
-  Future<void> getLocation() async {
+  Future<void> getLocation({BuildContext? context}) async {
     try {
       await error_service.ErrorService().wrap(() async {
-        var status = await Permission.locationWhenInUse.status;
-        if (!status.isGranted) {
-          status = await Permission.locationWhenInUse.request();
-          if (!status.isGranted) {
+        // Request location permission with education dialog
+        if (context != null) {
+          final result =
+              await PermissionService().requestLocationPermission(context);
+          if (!result.granted) {
             _locationName = '位置权限未授权';
             return;
+          }
+        } else {
+          // Fallback: direct request without education
+          var status = await Permission.locationWhenInUse.status;
+          if (!status.isGranted) {
+            status = await Permission.locationWhenInUse.request();
+            if (!status.isGranted) {
+              _locationName = '位置权限未授权';
+              return;
+            }
           }
         }
 
