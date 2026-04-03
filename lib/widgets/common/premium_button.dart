@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../core/design/theme/app_theme.dart';
 import '../../core/design/theme/app_colors.dart';
+import '../../core/design/theme/animation_constants.dart';
 
 /// 高级极简按钮组件
 /// 提供多种样式的按钮，符合Premium Minimalist设计系统
-class PremiumButton extends StatelessWidget {
+class PremiumButton extends StatefulWidget {
   final String text;
   final VoidCallback? onPressed;
   final PremiumButtonVariant variant;
@@ -27,13 +28,32 @@ class PremiumButton extends StatelessWidget {
   });
 
   @override
+  State<PremiumButton> createState() => _PremiumButtonState();
+}
+
+class _PremiumButtonState extends State<PremiumButton> {
+  bool _isPressed = false;
+
+  void _handleTapDown(TapDownDetails details) {
+    setState(() => _isPressed = true);
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() => _isPressed = false);
+  }
+
+  void _handleTapCancel() {
+    setState(() => _isPressed = false);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final effectiveBorderRadius = borderRadius ?? AppTheme.radiusMd;
+    final effectiveBorderRadius = widget.borderRadius ?? AppTheme.radiusMd;
 
     Widget button;
 
-    switch (variant) {
+    switch (widget.variant) {
       case PremiumButtonVariant.primary:
         button = _buildPrimaryButton(context, isDark, effectiveBorderRadius);
         break;
@@ -54,11 +74,17 @@ class PremiumButton extends StatelessWidget {
         break;
     }
 
-    if (isFullWidth) {
-      return SizedBox(width: double.infinity, child: button);
-    }
-
-    return button;
+    return GestureDetector(
+      onTapDown: widget.onPressed != null ? _handleTapDown : null,
+      onTapUp: widget.onPressed != null ? _handleTapUp : null,
+      onTapCancel: widget.onPressed != null ? _handleTapCancel : null,
+      child: AnimatedScale(
+        scale: _isPressed ? AnimationConstants.touchScale : 1.0,
+        duration: AnimationConstants.touchFeedbackDuration,
+        curve: AnimationConstants.defaultCurve,
+        child: button,
+      ),
+    );
   }
 
   Widget _buildPrimaryButton(
@@ -68,16 +94,16 @@ class PremiumButton extends StatelessWidget {
   ) {
     return Semantics(
       button: true,
-      label: text,
+      label: widget.text,
       child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
+        onPressed: widget.isLoading ? null : widget.onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor:
-              isDark ? AppColors.primaryDark : AppColors.primaryLight,
+              isDark ? AppColors.accentDark : AppColors.accentLight,
           foregroundColor:
               isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
           elevation: 0,
-          padding: padding ??
+          padding: widget.padding ??
               const EdgeInsets.symmetric(
                 horizontal: AppTheme.spacingXl,
                 vertical: AppTheme.spacingMd,
@@ -103,9 +129,9 @@ class PremiumButton extends StatelessWidget {
   ) {
     return Semantics(
       button: true,
-      label: text,
+      label: widget.text,
       child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
+        onPressed: widget.isLoading ? null : widget.onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: isDark
               ? AppColors.accentDark.withOpacity(0.12)
@@ -113,7 +139,7 @@ class PremiumButton extends StatelessWidget {
           foregroundColor:
               isDark ? AppColors.accentDark : AppColors.accentLight,
           elevation: 0,
-          padding: padding ??
+          padding: widget.padding ??
               const EdgeInsets.symmetric(
                 horizontal: AppTheme.spacingXl,
                 vertical: AppTheme.spacingMd,
@@ -139,14 +165,14 @@ class PremiumButton extends StatelessWidget {
   ) {
     return Semantics(
       button: true,
-      label: text,
+      label: widget.text,
       child: OutlinedButton(
-        onPressed: isLoading ? null : onPressed,
+        onPressed: widget.isLoading ? null : widget.onPressed,
         style: OutlinedButton.styleFrom(
           foregroundColor:
-              isDark ? AppColors.primaryDark : AppColors.primaryLight,
+              isDark ? AppColors.accentDark : AppColors.accentLight,
           elevation: 0,
-          padding: padding ??
+          padding: widget.padding ??
               const EdgeInsets.symmetric(
                 horizontal: AppTheme.spacingXl,
                 vertical: AppTheme.spacingMd,
@@ -155,7 +181,7 @@ class PremiumButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(borderRadius),
           ),
           side: BorderSide(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
+            color: isDark ? AppColors.accentDark : AppColors.accentLight,
             width: 1,
           ),
           textStyle: const TextStyle(
@@ -176,13 +202,13 @@ class PremiumButton extends StatelessWidget {
   ) {
     return Semantics(
       button: true,
-      label: text,
+      label: widget.text,
       child: TextButton(
-        onPressed: isLoading ? null : onPressed,
+        onPressed: widget.isLoading ? null : widget.onPressed,
         style: TextButton.styleFrom(
           foregroundColor:
-              isDark ? AppColors.primaryDark : AppColors.primaryLight,
-          padding: padding ??
+              isDark ? AppColors.accentDark : AppColors.accentLight,
+          padding: widget.padding ??
               const EdgeInsets.symmetric(
                 horizontal: AppTheme.spacingLg,
                 vertical: AppTheme.spacingSm,
@@ -208,14 +234,14 @@ class PremiumButton extends StatelessWidget {
   ) {
     return Semantics(
       button: true,
-      label: text,
+      label: widget.text,
       child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
+        onPressed: widget.isLoading ? null : widget.onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.error,
           foregroundColor: Colors.white,
           elevation: 0,
-          padding: padding ??
+          padding: widget.padding ??
               const EdgeInsets.symmetric(
                 horizontal: AppTheme.spacingXl,
                 vertical: AppTheme.spacingMd,
@@ -241,14 +267,14 @@ class PremiumButton extends StatelessWidget {
   ) {
     return Semantics(
       button: true,
-      label: text,
+      label: widget.text,
       child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
+        onPressed: widget.isLoading ? null : widget.onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.success,
           foregroundColor: Colors.white,
           elevation: 0,
-          padding: padding ??
+          padding: widget.padding ??
               const EdgeInsets.symmetric(
                 horizontal: AppTheme.spacingXl,
                 vertical: AppTheme.spacingMd,
@@ -268,7 +294,7 @@ class PremiumButton extends StatelessWidget {
   }
 
   Widget _buildButtonChild() {
-    if (isLoading) {
+    if (widget.isLoading) {
       return const SizedBox(
         width: 20,
         height: 20,
@@ -279,18 +305,18 @@ class PremiumButton extends StatelessWidget {
       );
     }
 
-    if (icon != null) {
+    if (widget.icon != null) {
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 20),
+          Icon(widget.icon, size: 20),
           const SizedBox(width: AppTheme.spacingSm),
-          Text(text),
+          Text(widget.text),
         ],
       );
     }
 
-    return Text(text);
+    return Text(widget.text);
   }
 }
 
@@ -331,7 +357,7 @@ class PremiumIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final iconColor =
-        color ?? (isDark ? AppColors.primaryDark : AppColors.primaryLight);
+        color ?? (isDark ? AppColors.accentDark : AppColors.accentLight);
 
     Widget button;
 
@@ -345,7 +371,7 @@ class PremiumIconButton extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               color: backgroundColor ??
-                  (isDark ? AppColors.primaryDark : AppColors.primaryLight),
+                  (isDark ? AppColors.accentDark : AppColors.accentLight),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
             child: IconButton(
@@ -395,7 +421,7 @@ class PremiumIconButton extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               border: Border.all(
-                color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                color: isDark ? AppColors.accentDark : AppColors.accentLight,
                 width: 1,
               ),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
@@ -506,7 +532,7 @@ class PremiumFAB extends StatelessWidget {
         tooltip: tooltip,
         mini: mini,
         backgroundColor: backgroundColor ??
-            (isDark ? AppColors.primaryDark : AppColors.primaryLight),
+            (isDark ? AppColors.accentDark : AppColors.accentLight),
         foregroundColor: foregroundColor ??
             (isDark ? AppColors.surfaceDark : AppColors.surfaceLight),
         elevation: 2,

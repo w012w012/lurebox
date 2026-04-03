@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../core/design/theme/app_theme.dart';
 import '../../core/design/theme/app_colors.dart';
+import '../../core/design/theme/animation_constants.dart';
 
 /// 高级极简卡片组件
-/// 提供统一的卡片样式，支持多种变体
-class PremiumCard extends StatelessWidget {
+/// 提供统一的卡片样式，支持多种变体，iOS风格触摸反馈
+class PremiumCard extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
   final EdgeInsets? padding;
@@ -29,42 +30,59 @@ class PremiumCard extends StatelessWidget {
   });
 
   @override
+  State<PremiumCard> createState() => _PremiumCardState();
+}
+
+class _PremiumCardState extends State<PremiumCard> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
     final defaultBg = isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
-    final border = showBorder
-        ? BorderSide(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-            width: 1,
-          )
-        : BorderSide.none;
+    final borderColor = isDark ? AppColors.borderDark : AppColors.borderLight;
 
-    final effectiveBorderRadius = borderRadius ?? AppTheme.radiusMd;
+    final effectiveBorderRadius = widget.borderRadius ?? AppTheme.radiusMd;
     final effectivePadding =
-        padding ?? const EdgeInsets.all(AppTheme.spacingLg);
-    final effectiveMargin = margin ??
+        widget.padding ?? const EdgeInsets.all(AppTheme.spacingLg);
+    final effectiveMargin = widget.margin ??
         const EdgeInsets.symmetric(
           horizontal: AppTheme.spacingLg,
           vertical: AppTheme.spacingSm,
         );
 
-    Widget card = Container(
-      padding: effectivePadding,
-      decoration: BoxDecoration(
-        color: backgroundColor ?? defaultBg,
-        borderRadius: BorderRadius.circular(effectiveBorderRadius),
-        border: Border.fromBorderSide(border),
-        boxShadow: shadows ?? _getShadows(),
+    Widget card = AnimatedContainer(
+      duration: AnimationConstants.touchFeedbackDuration,
+      curve: AnimationConstants.defaultCurve,
+      transform: Matrix4.identity()
+        ..scale(_isPressed ? AnimationConstants.touchScale : 1.0),
+      transformAlignment: Alignment.center,
+      child: Container(
+        padding: effectivePadding,
+        decoration: BoxDecoration(
+          color: widget.backgroundColor ?? defaultBg,
+          borderRadius: BorderRadius.circular(effectiveBorderRadius),
+          border: widget.showBorder
+              ? Border.all(color: borderColor, width: 1)
+              : null,
+          boxShadow: widget.shadows ?? _getShadows(widget.variant, isDark),
+        ),
+        child: widget.child,
       ),
-      child: child,
     );
 
-    if (onTap != null) {
+    if (widget.onTap != null) {
       card = Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onTap,
+          onTap: widget.onTap,
+          onTapDown: (_) => setState(() => _isPressed = true),
+          onTapUp: (_) => setState(() => _isPressed = false),
+          onTapCancel: () => setState(() => _isPressed = false),
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
+          splashColor: accentColor.withOpacity(0.1),
+          highlightColor: accentColor.withOpacity(0.05),
           child: card,
         ),
       );
@@ -73,7 +91,7 @@ class PremiumCard extends StatelessWidget {
     return Padding(padding: effectiveMargin, child: card);
   }
 
-  List<BoxShadow> _getShadows() {
+  List<BoxShadow> _getShadows(PremiumCardVariant variant, bool isDark) {
     switch (variant) {
       case PremiumCardVariant.flat:
         return [];

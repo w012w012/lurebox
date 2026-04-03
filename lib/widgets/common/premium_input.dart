@@ -92,26 +92,19 @@ class PremiumTextField extends StatelessWidget {
               vertical: AppTheme.spacingMd,
             ),
         filled: true,
-        fillColor:
-            isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+        fillColor: isDark ? AppColors.surfaceDark : AppColors.grey100,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: BorderSide(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-            width: 1,
-          ),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: BorderSide(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-            width: 1,
-          ),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           borderSide: BorderSide(
-            color: isDark ? AppColors.primaryDark : AppColors.primaryLight,
+            color: isDark ? AppColors.accentDark : AppColors.accentLight,
             width: 2,
           ),
         ),
@@ -130,7 +123,7 @@ class PremiumTextField extends StatelessWidget {
           fontSize: 16,
         ),
         floatingLabelStyle: TextStyle(
-          color: isDark ? AppColors.primaryDark : AppColors.primaryLight,
+          color: isDark ? AppColors.accentDark : AppColors.accentLight,
           fontSize: 16,
         ),
         hintStyle: TextStyle(
@@ -216,25 +209,19 @@ class PremiumSearchField extends StatelessWidget {
           vertical: AppTheme.spacingMd,
         ),
         filled: true,
-        fillColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+        fillColor: isDark ? AppColors.surfaceDark : AppColors.grey100,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-          borderSide: BorderSide(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-            width: 1,
-          ),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-          borderSide: BorderSide(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-            width: 1,
-          ),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
           borderSide: BorderSide(
-            color: isDark ? AppColors.primaryDark : AppColors.primaryLight,
+            color: isDark ? AppColors.accentDark : AppColors.accentLight,
             width: 2,
           ),
         ),
@@ -318,26 +305,19 @@ class PremiumNumberField extends StatelessWidget {
           vertical: AppTheme.spacingMd,
         ),
         filled: true,
-        fillColor:
-            isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+        fillColor: isDark ? AppColors.surfaceDark : AppColors.grey100,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: BorderSide(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-            width: 1,
-          ),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: BorderSide(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-            width: 1,
-          ),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           borderSide: BorderSide(
-            color: isDark ? AppColors.primaryDark : AppColors.primaryLight,
+            color: isDark ? AppColors.accentDark : AppColors.accentLight,
             width: 2,
           ),
         ),
@@ -356,7 +336,7 @@ class PremiumNumberField extends StatelessWidget {
           fontSize: 16,
         ),
         floatingLabelStyle: TextStyle(
-          color: isDark ? AppColors.primaryDark : AppColors.primaryLight,
+          color: isDark ? AppColors.accentDark : AppColors.accentLight,
           fontSize: 16,
         ),
         hintStyle: TextStyle(
@@ -478,26 +458,19 @@ class PremiumTextArea extends StatelessWidget {
           vertical: AppTheme.spacingMd,
         ),
         filled: true,
-        fillColor:
-            isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+        fillColor: isDark ? AppColors.surfaceDark : AppColors.grey100,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: BorderSide(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-            width: 1,
-          ),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: BorderSide(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-            width: 1,
-          ),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           borderSide: BorderSide(
-            color: isDark ? AppColors.primaryDark : AppColors.primaryLight,
+            color: isDark ? AppColors.accentDark : AppColors.accentLight,
             width: 2,
           ),
         ),
@@ -516,7 +489,7 @@ class PremiumTextArea extends StatelessWidget {
           fontSize: 16,
         ),
         floatingLabelStyle: TextStyle(
-          color: isDark ? AppColors.primaryDark : AppColors.primaryLight,
+          color: isDark ? AppColors.accentDark : AppColors.accentLight,
           fontSize: 16,
         ),
         hintStyle: TextStyle(
@@ -589,26 +562,19 @@ class PremiumDropdown<T> extends StatelessWidget {
           vertical: AppTheme.spacingMd,
         ),
         filled: true,
-        fillColor:
-            isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+        fillColor: isDark ? AppColors.surfaceDark : AppColors.grey100,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: BorderSide(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-            width: 1,
-          ),
+          borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: BorderSide(
-            color: isDark ? AppColors.borderDark : AppColors.borderLight,
-            width: 1,
-          ),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           borderSide: BorderSide(
-            color: isDark ? AppColors.primaryDark : AppColors.primaryLight,
+            color: isDark ? AppColors.accentDark : AppColors.accentLight,
             width: 2,
           ),
         ),
@@ -627,7 +593,7 @@ class PremiumDropdown<T> extends StatelessWidget {
           fontSize: 16,
         ),
         floatingLabelStyle: TextStyle(
-          color: isDark ? AppColors.primaryDark : AppColors.primaryLight,
+          color: isDark ? AppColors.accentDark : AppColors.accentLight,
           fontSize: 16,
         ),
       ),
