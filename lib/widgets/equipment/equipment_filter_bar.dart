@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/language_provider.dart';
+import '../../../core/design/theme/app_colors.dart';
+import '../../../core/design/theme/app_theme.dart';
 
 class EquipmentFilterBar extends ConsumerWidget {
   final bool allExpanded;
@@ -16,9 +18,14 @@ class EquipmentFilterBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = ref.watch(currentStringsProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingLg,
+        vertical: AppTheme.spacingXs,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
@@ -33,7 +40,7 @@ class EquipmentFilterBar extends ConsumerWidget {
               style: const TextStyle(fontSize: 13),
             ),
             style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: accentColor,
             ),
           ),
         ],

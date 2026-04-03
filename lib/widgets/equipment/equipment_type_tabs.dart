@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/language_provider.dart';
+import '../../../core/design/theme/app_colors.dart';
+import '../../../core/design/theme/app_theme.dart';
+import '../../../core/design/theme/animation_constants.dart';
 
 class EquipmentTypeTabs extends ConsumerWidget {
   final String selectedType;
@@ -24,7 +27,12 @@ class EquipmentTypeTabs extends ConsumerWidget {
     final strings = ref.watch(currentStringsProvider);
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      padding: const EdgeInsets.fromLTRB(
+        AppTheme.spacingLg,
+        AppTheme.spacingLg,
+        AppTheme.spacingLg,
+        AppTheme.spacingSm,
+      ),
       child: Row(
         children: [
           _TypeButton(
@@ -32,13 +40,13 @@ class EquipmentTypeTabs extends ConsumerWidget {
             isSelected: selectedType == 'rod',
             onTap: () => onTypeChanged('rod'),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppTheme.spacingSm),
           _TypeButton(
             label: '${strings.reel} $reelCount',
             isSelected: selectedType == 'reel',
             onTap: () => onTypeChanged('reel'),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppTheme.spacingSm),
           _TypeButton(
             label: '${strings.lure} $lureCount',
             isSelected: selectedType == 'lure',
@@ -63,26 +71,33 @@ class _TypeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
+        child: AnimatedContainer(
+          duration: AnimationConstants.touchFeedbackDuration,
+          curve: AnimationConstants.defaultCurve,
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
             color: isSelected
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(8),
+                ? accentColor
+                : (isDark ? AppColors.surfaceDark : AppColors.grey100),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMd),
           ),
           child: Text(
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               color: isSelected
                   ? Colors.white
-                  : Theme.of(context).colorScheme.onSurface,
+                  : (isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimaryLight),
             ),
           ),
         ),

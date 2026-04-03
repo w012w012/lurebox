@@ -19,21 +19,19 @@ class SettingsAppearanceSection extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return PremiumCard(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingLg,
+        vertical: AppTheme.spacingMd,
+      ),
       child: Column(
         children: [
           // Dark Mode
-          _buildSettingRow(
+          _buildSettingTile(
             context: context,
+            ref: ref,
             icon: Icons.dark_mode,
             isDark: isDark,
-            child: Expanded(
-              child: Text(
-                strings.darkMode,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-              ),
-            ),
+            title: strings.darkMode,
             trailing: SizedBox(
               width: 140,
               child: PremiumDropdown<DarkMode>(
@@ -61,21 +59,16 @@ class SettingsAppearanceSection extends ConsumerWidget {
                 },
               ),
             ),
+            onTap: null,
           ),
           const Divider(height: 1),
           // Language
-          _buildSettingRow(
+          _buildSettingTile(
             context: context,
+            ref: ref,
             icon: Icons.language,
             isDark: isDark,
-            child: Expanded(
-              child: Text(
-                strings.language,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      fontWeight: FontWeight.w500,
-                    ),
-              ),
-            ),
+            title: strings.language,
             trailing: SizedBox(
               width: 140,
               child: PremiumDropdown<AppLanguage>(
@@ -99,34 +92,57 @@ class SettingsAppearanceSection extends ConsumerWidget {
                 },
               ),
             ),
+            onTap: null,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSettingRow({
+  Widget _buildSettingTile({
     required BuildContext context,
+    required WidgetRef ref,
     required IconData icon,
     required bool isDark,
-    required Widget child,
+    required String title,
     required Widget trailing,
+    VoidCallback? onTap,
   }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: AppTheme.spacingMd,
-        horizontal: AppTheme.spacingSm,
-      ),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: isDark ? AppColors.accentDark : AppColors.accentLight,
-          ),
-          const SizedBox(width: 16),
-          child,
-          trailing,
-        ],
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: AppTheme.spacingMd,
+          horizontal: AppTheme.spacingSm,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
+              decoration: BoxDecoration(
+                color: accentColor.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              ),
+              child: Icon(icon, color: accentColor, size: 22),
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: isDark
+                      ? AppColors.textPrimaryDark
+                      : AppColors.textPrimaryLight,
+                ),
+              ),
+            ),
+            trailing,
+          ],
+        ),
       ),
     );
   }

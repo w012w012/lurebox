@@ -4,15 +4,18 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
+import '../../core/design/theme/app_theme.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/watermark_provider.dart';
 import '../../core/providers/settings_view_model.dart';
 import '../../core/widgets/error_view.dart';
 import '../../widgets/common/premium_card.dart';
+import '../../widgets/common/settings_tile.dart';
 import '../../widgets/settings/settings_backup_section.dart';
 import '../../widgets/settings/settings_appearance_section.dart';
 import '../../widgets/settings/settings_units_section.dart';
 import '../../widgets/settings/settings_about_section.dart';
+import '../../widgets/settings/settings_stats_card.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
@@ -58,7 +61,7 @@ class SettingsPage extends ConsumerWidget {
           return _buildTabletSettings(context, ref, strings, watermarkSettings);
         }
 
-        // Mobile: single column list (original)
+        // Mobile: single column list with iOS-style tiles
         return _buildMobileSettings(context, ref, strings, watermarkSettings);
       },
     );
@@ -70,27 +73,82 @@ class SettingsPage extends ConsumerWidget {
     AppStrings strings,
     dynamic watermarkSettings,
   ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return ListView(
       children: [
-        const SizedBox(height: 16),
-        _buildLocationCard(context, strings),
-        const SizedBox(height: 8),
-        _buildSpeciesCard(context, strings),
-        const SizedBox(height: 8),
-        _buildWatermarkCard(context, strings, watermarkSettings),
-        const SizedBox(height: 8),
-        _buildAiRecognitionCard(context, strings),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppTheme.spacingMd),
+
+        // Location Management
+        SettingsTile(
+          icon: Icons.location_on,
+          title: strings.locationManagement,
+          subtitle: strings.locationManagementDesc,
+          showChevron: true,
+          onTap: () => context.push('/settings/locations'),
+        ),
+        const SizedBox(height: AppTheme.spacingSm),
+
+        // Species Management
+        SettingsTile(
+          icon: Icons.category,
+          title: '品种管理',
+          subtitle: '管理常用鱼种，合并相似品种',
+          showChevron: true,
+          onTap: () => context.push('/species'),
+        ),
+        const SizedBox(height: AppTheme.spacingSm),
+
+        // Watermark Settings
+        SettingsTile(
+          icon: Icons.branding_watermark,
+          title: strings.watermarkSettings,
+          subtitle:
+              watermarkSettings.enabled ? strings.enabled : strings.disabled,
+          trailing: Icon(
+            Icons.chevron_right,
+            color: watermarkSettings.enabled
+                ? AppColors.success
+                : isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondaryLight,
+          ),
+          onTap: () => context.push('/settings/watermark'),
+        ),
+        const SizedBox(height: AppTheme.spacingSm),
+
+        // AI Recognition Settings
+        SettingsTile(
+          icon: Icons.auto_awesome,
+          title: 'AI 配置',
+          subtitle: '管理 AI 识别提供商',
+          showChevron: true,
+          onTap: () => context.push('/settings/ai'),
+        ),
+        const SizedBox(height: AppTheme.spacingSm),
+
+        // Units Settings - use existing section
         const SettingsUnitsSection(),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppTheme.spacingSm),
+
+        // Appearance Settings - use existing section
         const SettingsAppearanceSection(),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppTheme.spacingSm),
+
+        // Backup Settings - use existing section
         const SettingsBackupSection(),
-        const SizedBox(height: 8),
+        const SizedBox(height: AppTheme.spacingSm),
+
+        // About Section - use existing section
         const SettingsAboutSection(),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppTheme.spacingLg),
+
+        // Stats Card
+        const SettingsStatsCard(),
+        const SizedBox(height: AppTheme.spacingXl),
+
         _buildFooter(context, strings),
-        const SizedBox(height: 32),
+        const SizedBox(height: AppTheme.spacingXxl),
       ],
     );
   }

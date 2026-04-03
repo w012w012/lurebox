@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/design/theme/app_colors.dart';
+import '../../../core/design/theme/app_theme.dart';
+import '../../../core/design/theme/animation_constants.dart';
 import '../../../core/providers/language_provider.dart';
+import '../../../widgets/common/premium_card.dart';
 
-class StatsSummaryCard extends ConsumerWidget {
+class StatsSummaryCard extends ConsumerStatefulWidget {
   final int totalCount;
   final List<Map<String, dynamic>> speciesSummary;
   final Map<String, int> rodDistribution;
@@ -21,13 +24,43 @@ class StatsSummaryCard extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final strings = ref.watch(currentStringsProvider);
-    if (speciesSummary.isEmpty) return const SizedBox();
+  ConsumerState<StatsSummaryCard> createState() => _StatsSummaryCardState();
+}
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+  late final Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: AnimationConstants.pageTransitionDuration,
+      vsync: this,
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: AnimationConstants.defaultCurve,
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = ref.watch(currentStringsProvider);
+    if (widget.speciesSummary.isEmpty) return const SizedBox();
+
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: PremiumCard(
+        variant: PremiumCardVariant.standard,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -35,24 +68,22 @@ class StatsSummaryCard extends ConsumerWidget {
               children: [
                 Text(
                   strings.fishDetail,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
                 const Spacer(),
                 Text(
-                  '${strings.total} $totalCount ${strings.fishCountUnit}',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontSize: 13,
-                  ),
+                  '${strings.total} ${widget.totalCount} ${strings.fishCountUnit}',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppTheme.spacingMd),
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
@@ -68,42 +99,43 @@ class StatsSummaryCard extends ConsumerWidget {
                     flex: 2,
                     child: Text(
                       strings.species,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppTheme.spacingSm),
                   Expanded(
                     child: Text(
                       strings.quantity,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                       textAlign: TextAlign.center,
                     ),
                   ),
                   Expanded(
                     child: Text(
                       strings.totalWeight,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                       textAlign: TextAlign.center,
                     ),
                   ),
                 ],
               ),
             ),
-            ...speciesSummary.map(
+            ...widget.speciesSummary.map(
               (item) => Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
@@ -119,17 +151,16 @@ class StatsSummaryCard extends ConsumerWidget {
                       flex: 2,
                       child: Text(
                         item['species'] as String,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: FontWeight.w500,
+                            ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppTheme.spacingSm),
                     Expanded(
                       child: Text(
                         '${item['count']}${strings.fishCountUnit}',
-                        style: const TextStyle(fontSize: 14),
+                        style: Theme.of(context).textTheme.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -138,7 +169,7 @@ class StatsSummaryCard extends ConsumerWidget {
                         (item['totalWeight'] as double) > 0
                             ? '${(item['totalWeight'] as double).toStringAsFixed(2)} kg'
                             : '-',
-                        style: const TextStyle(fontSize: 14),
+                        style: Theme.of(context).textTheme.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -153,7 +184,7 @@ class StatsSummaryCard extends ConsumerWidget {
   }
 }
 
-class EquipmentChart extends StatelessWidget {
+class EquipmentChart extends StatefulWidget {
   final String title;
   final Map<String, int> data;
   final Color color;
@@ -166,43 +197,75 @@ class EquipmentChart extends StatelessWidget {
   });
 
   @override
+  State<EquipmentChart> createState() => _EquipmentChartState();
+}
+
+class _EquipmentChartState extends State<EquipmentChart>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+  late final Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: AnimationConstants.pageTransitionDuration,
+      vsync: this,
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: AnimationConstants.defaultCurve,
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final total = data.values.fold(0, (a, b) => a + b);
+    final total = widget.data.values.fold(0, (a, b) => a + b);
     if (total == 0) return const SizedBox();
 
     final colors = [
-      color,
-      color.withOpacity(0.7),
-      color.withOpacity(0.5),
-      color.withOpacity(0.3),
+      widget.color,
+      widget.color.withOpacity(0.7),
+      widget.color.withOpacity(0.5),
+      widget.color.withOpacity(0.3),
       AppColors.grey700,
       AppColors.teal,
       Colors.indigo,
       Colors.brown,
     ];
 
-    // 排序：按数量降序排列
-    final sortedEntries = data.entries.toList()
+    // Sort by count descending
+    final sortedEntries = widget.data.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: PremiumCard(
+        variant: PremiumCardVariant.standard,
+        margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              widget.title,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
             ),
-            const SizedBox(height: 12),
-            ...sortedEntries.asMap().entries.map((e) {
-              final index = e.key;
-              final entry = e.value;
-              final pct = (entry.value / total * 100).toStringAsFixed(0);
+            const SizedBox(height: AppTheme.spacingMd),
+            ...sortedEntries.asMap().entries.map((entry) {
+              final index = entry.key;
+              final item = entry.value;
+              final pct = (item.value / total * 100).toStringAsFixed(0);
               return Padding(
-                padding: const EdgeInsets.only(bottom: 4),
+                padding: const EdgeInsets.only(bottom: AppTheme.spacingXs),
                 child: Row(
                   children: [
                     Container(
@@ -213,30 +276,29 @@ class EquipmentChart extends StatelessWidget {
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    const SizedBox(width: AppTheme.spacingXs),
                     Expanded(
                       child: Text(
-                        entry.key,
-                        style: const TextStyle(fontSize: 12),
+                        item.key,
+                        style: Theme.of(context).textTheme.bodySmall,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AppTheme.spacingXs),
                     Text(
                       '$pct%',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AppTheme.spacingXs),
                     Text(
-                      '${entry.value}条',
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      '${item.value}条',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
                   ],
                 ),

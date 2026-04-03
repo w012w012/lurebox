@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
+import '../../../core/design/theme/app_theme.dart';
+import '../../../core/design/theme/animation_constants.dart';
+import '../../../widgets/common/premium_card.dart';
 
-class SpeciesDistributionChart extends StatelessWidget {
+class SpeciesDistributionChart extends StatefulWidget {
   final Map<String, int> speciesStats;
   final Map<String, double>? speciesWeightStats;
   final int totalCount;
@@ -23,39 +26,72 @@ class SpeciesDistributionChart extends StatelessWidget {
     this.strings,
   });
 
+  @override
+  State<SpeciesDistributionChart> createState() =>
+      _SpeciesDistributionChartState();
+}
+
+class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+  late final Animation<double> _fadeAnimation;
+
   static const _chartColors = [
-    AppColors.grey700,
+    AppColors.accentLight,
     AppColors.teal,
     AppColors.cyan,
     AppColors.indigo,
-    AppColors.blue,
+    AppColors.primaryLight,
     AppColors.purple,
     AppColors.pink,
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: AnimationConstants.pageTransitionDuration,
+      vsync: this,
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: AnimationConstants.defaultCurve,
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final appStrings = strings;
-    if (speciesStats.isEmpty) return const SizedBox();
+    final appStrings = widget.strings;
+    if (widget.speciesStats.isEmpty) return const SizedBox();
 
-    final unitLabel = showByWeight ? 'kg' : (appStrings?.fishCountUnit ?? '');
-    final displayTotal = showByWeight ? totalWeight : totalCount;
+    final unitLabel =
+        widget.showByWeight ? 'kg' : (appStrings?.fishCountUnit ?? '');
+    final displayTotal =
+        widget.showByWeight ? widget.totalWeight : widget.totalCount;
 
-    // 排序：按数量或重量降序排列
-    final sortedEntries = speciesStats.entries.toList()
+    // Sort by count or weight descending
+    final sortedEntries = widget.speciesStats.entries.toList()
       ..sort((a, b) {
-        if (showByWeight) {
-          final weightA = speciesWeightStats?[a.key] ?? 0.0;
-          final weightB = speciesWeightStats?[b.key] ?? 0.0;
+        if (widget.showByWeight) {
+          final weightA = widget.speciesWeightStats?[a.key] ?? 0.0;
+          final weightB = widget.speciesWeightStats?[b.key] ?? 0.0;
           return weightB.compareTo(weightA);
         } else {
           return b.value.compareTo(a.value);
         }
       });
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: PremiumCard(
+        variant: PremiumCardVariant.standard,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -63,35 +99,38 @@ class SpeciesDistributionChart extends StatelessWidget {
               children: [
                 Text(
                   appStrings?.speciesDistribution ?? 'Species Distribution',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
                 const Spacer(),
-                if (onToggleShowByWeight != null && appStrings != null)
+                if (widget.onToggleShowByWeight != null && appStrings != null)
                   Container(
                     decoration: BoxDecoration(
                       color: Theme.of(
                         context,
                       ).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         _ToggleOption(
                           label: appStrings.quantity,
-                          isSelected: !showByWeight,
+                          isSelected: !widget.showByWeight,
                           onTap: () {
-                            if (showByWeight) onToggleShowByWeight!();
+                            if (widget.showByWeight) {
+                              widget.onToggleShowByWeight!();
+                            }
                           },
                         ),
                         _ToggleOption(
                           label: appStrings.weight,
-                          isSelected: showByWeight,
+                          isSelected: widget.showByWeight,
                           onTap: () {
-                            if (!showByWeight) onToggleShowByWeight!();
+                            if (!widget.showByWeight) {
+                              widget.onToggleShowByWeight!();
+                            }
                           },
                         ),
                       ],
@@ -99,18 +138,21 @@ class SpeciesDistributionChart extends StatelessWidget {
                   ),
               ],
             ),
-            const SizedBox(height: 16),
-            ...sortedEntries.map((e) {
-              final index = sortedEntries.toList().indexOf(e);
-              final weightValue = speciesWeightStats?[e.key] ?? 0.0;
-              final value =
-                  showByWeight ? weightValue.toStringAsFixed(2) : '${e.value}';
-              final percent = showByWeight
+            const SizedBox(height: AppTheme.spacingMd),
+            ...sortedEntries.asMap().entries.map((entry) {
+              final index = entry.key;
+              final e = entry.value;
+              final weightValue = widget.speciesWeightStats?[e.key] ?? 0.0;
+              final value = widget.showByWeight
+                  ? weightValue.toStringAsFixed(2)
+                  : '${e.value}';
+              final percent = widget.showByWeight
                   ? (displayTotal > 0 ? (weightValue / displayTotal) * 100 : 0)
                       .toStringAsFixed(1)
-                  : (e.value / totalCount * 100).toStringAsFixed(1);
+                  : (e.value / widget.totalCount * 100).toStringAsFixed(1);
               return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
                 child: Column(
                   children: [
                     Row(
@@ -123,42 +165,42 @@ class SpeciesDistributionChart extends StatelessWidget {
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AppTheme.spacingSm),
                         Expanded(
                           child: Text(
                             e.key,
-                            style: const TextStyle(fontSize: 14),
+                            style: Theme.of(context).textTheme.bodyMedium,
                           ),
                         ),
                         Text(
                           '$percent%',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurfaceVariant,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: AppTheme.spacingSm),
                         Text(
                           '$value $unitLabel',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppTheme.spacingXs),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(2),
                       child: LinearProgressIndicator(
-                        value: showByWeight
+                        value: widget.showByWeight
                             ? (displayTotal > 0
                                 ? weightValue / displayTotal
                                 : 0)
-                            : e.value / totalCount,
+                            : e.value / widget.totalCount,
                         backgroundColor: Theme.of(
                           context,
                         ).colorScheme.surfaceContainerHighest,
@@ -192,25 +234,28 @@ class _ToggleOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingXs,
+        ),
         decoration: BoxDecoration(
-          color: isSelected
-              ? Theme.of(context).colorScheme.primary
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
+          color: isSelected ? accentColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         ),
         child: Text(
           label,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: isSelected
-                ? Colors.white
-                : Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: isSelected
+                    ? Colors.white
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
         ),
       ),
     );

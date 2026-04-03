@@ -8,10 +8,13 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
+import '../../core/design/theme/app_theme.dart';
+import '../../core/design/theme/animation_constants.dart';
 import '../../core/di/di.dart';
 import '../../core/models/fish_catch.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/utils/file_utils.dart';
+import '../../widgets/common/premium_card.dart';
 import '../../widgets/stats/catch_trend_chart.dart';
 import '../../widgets/stats/species_distribution_chart.dart';
 import '../../widgets/stats/monthly_stats_card.dart';
@@ -36,7 +39,8 @@ class StatsDetailPage extends ConsumerStatefulWidget {
   ConsumerState<StatsDetailPage> createState() => _StatsDetailPageState();
 }
 
-class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
+class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
+    with SingleTickerProviderStateMixin {
   final GlobalKey _repaintBoundaryKey = GlobalKey();
   List<Map<String, dynamic>> _catches = [];
   Map<String, int> _speciesStats = {};
@@ -55,10 +59,27 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
   bool _showLocationDetails = true;
   double _totalWeight = 0;
 
+  late final AnimationController _contentAnimationController;
+  late final Animation<double> _fadeAnimation;
+
   @override
   void initState() {
     super.initState();
+    _contentAnimationController = AnimationController(
+      duration: AnimationConstants.pageTransitionDuration,
+      vsync: this,
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _contentAnimationController,
+      curve: AnimationConstants.defaultCurve,
+    );
     _loadDetail();
+  }
+
+  @override
+  void dispose() {
+    _contentAnimationController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadDetail() async {
@@ -127,6 +148,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
           _calculateWeightStats();
           _isLoading = false;
         });
+        _contentAnimationController.forward();
       }
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);
@@ -346,52 +368,70 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.accentLight,
+                      ),
                     )
-                  : const Icon(Icons.share),
+                  : Icon(
+                      Icons.share,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? AppColors.accentDark
+                          : AppColors.accentLight,
+                    ),
               onPressed: _shareStats,
               tooltip: strings.share,
             ),
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Stack(
-              children: [
-                SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: _buildContent(
-                    totalCount,
-                    releaseCount,
-                    keepCount,
-                    releaseRate,
-                    strings,
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.accentLight,
+              ),
+            )
+          : FadeTransition(
+              opacity: _fadeAnimation,
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(AppTheme.spacingLg),
+                    child: _buildContent(
+                      totalCount,
+                      releaseCount,
+                      keepCount,
+                      releaseRate,
+                      strings,
+                    ),
                   ),
-                ),
-                Positioned(
-                  left: -9999,
-                  top: 0,
-                  child: RepaintBoundary(
-                    key: _repaintBoundaryKey,
-                    child: Material(
-                      color: Colors.white,
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: _buildContent(
-                            totalCount,
-                            releaseCount,
-                            keepCount,
-                            releaseRate,
-                            strings,
+                  Positioned(
+                    left: -9999,
+                    top: 0,
+                    child: RepaintBoundary(
+                      key: _repaintBoundaryKey,
+                      child: Material(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? AppColors.surfaceDark
+                            : AppColors.surfaceLight,
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppTheme.spacingLg),
+                            child: _buildContent(
+                              totalCount,
+                              releaseCount,
+                              keepCount,
+                              releaseRate,
+                              strings,
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
     );
   }
@@ -413,7 +453,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
           keepCount: keepCount,
           releaseRate: releaseRate,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppTheme.spacingLg),
         if (_speciesStats.isNotEmpty) ...[
           SpeciesDistributionChart(
             speciesStats: _speciesStats,
@@ -424,7 +464,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
             onToggleShowByWeight: _toggleShowByWeight,
             strings: strings,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppTheme.spacingLg),
         ],
         if (_trendData.isNotEmpty) ...[
           CatchTrendChart(
@@ -434,7 +474,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
             trendType: _trendType,
             onTrendTypeChanged: _onTrendTypeChanged,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppTheme.spacingLg),
         ],
         if (_locationAnalysis.isNotEmpty) ...[
           LocationStatsCard(
@@ -446,22 +486,24 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
               });
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppTheme.spacingLg),
         ],
         if (_rodDistribution.isNotEmpty ||
             _reelDistribution.isNotEmpty ||
             _lureDistribution.isNotEmpty) ...[
           Text(
             strings.equipmentDistribution,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppTheme.spacingMd),
         ],
         if (_rodDistribution.isNotEmpty)
           EquipmentChart(
             title: strings.rodDistribution,
             data: _rodDistribution,
-            color: AppColors.blue,
+            color: AppColors.accentLight,
           ),
         if (_reelDistribution.isNotEmpty)
           EquipmentChart(
@@ -476,9 +518,10 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
             color: AppColors.purple,
           ),
         if (_catches.isEmpty)
-          Card(
+          PremiumCard(
+            variant: PremiumCardVariant.flat,
             child: Padding(
-              padding: const EdgeInsets.all(40),
+              padding: const EdgeInsets.all(AppTheme.spacingXxl),
               child: Center(
                 child: Column(
                   children: [
@@ -487,37 +530,44 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage> {
                       size: 60,
                       color: Theme.of(context).colorScheme.outline,
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppTheme.spacingLg),
                     Text(
                       strings.noData,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
               ),
             ),
           ),
-        const SizedBox(height: 24),
+        const SizedBox(height: AppTheme.spacingXl),
         _buildFooter(strings),
-        const SizedBox(height: 16),
+        const SizedBox(height: AppTheme.spacingLg),
       ],
     );
   }
 
   Widget _buildFooter(AppStrings strings) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+      padding: const EdgeInsets.symmetric(
+        vertical: AppTheme.spacingMd,
+        horizontal: AppTheme.spacingXl,
+      ),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.primary,
-        borderRadius: BorderRadius.circular(8),
+        color: accentColor,
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.set_meal, color: Colors.white, size: 20),
-          const SizedBox(width: 10),
+          const SizedBox(width: AppTheme.spacingSm),
           Text(
             strings.appName,
             style: const TextStyle(

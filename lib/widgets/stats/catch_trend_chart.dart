@@ -3,9 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import '../../../core/design/theme/app_colors.dart';
+import '../../../core/design/theme/app_theme.dart';
+import '../../../core/design/theme/animation_constants.dart';
 import '../../../core/providers/language_provider.dart';
+import '../../../widgets/common/premium_card.dart';
 
-class CatchTrendChart extends ConsumerWidget {
+class CatchTrendChart extends ConsumerStatefulWidget {
   final Map<String, int> trendData;
   final String trendTitle;
   final bool showDropdown;
@@ -22,69 +25,110 @@ class CatchTrendChart extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final strings = ref.watch(currentStringsProvider);
-    if (trendData.isEmpty) return const SizedBox();
+  ConsumerState<CatchTrendChart> createState() => _CatchTrendChartState();
+}
 
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _animationController;
+  late final Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: AnimationConstants.pageTransitionDuration,
+      vsync: this,
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: AnimationConstants.defaultCurve,
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final strings = ref.watch(currentStringsProvider);
+    if (widget.trendData.isEmpty) return const SizedBox();
+
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: PremiumCard(
+        variant: PremiumCardVariant.standard,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Text(
-                  trendTitle,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  widget.trendTitle,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
                 const Spacer(),
-                if (showDropdown &&
-                    trendType != null &&
-                    onTrendTypeChanged != null)
-                  DropdownButton<String>(
-                    value: trendType,
-                    items: [
-                      DropdownMenuItem(
-                        value: 'day',
-                        child: Text(
-                          strings.byDay,
-                          style: const TextStyle(fontSize: 12),
+                if (widget.showDropdown &&
+                    widget.trendType != null &&
+                    widget.onTrendTypeChanged != null)
+                  Container(
+                    decoration: BoxDecoration(
+                      color:
+                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: DropdownButton<String>(
+                      value: widget.trendType,
+                      items: [
+                        DropdownMenuItem(
+                          value: 'day',
+                          child: Text(
+                            strings.byDay,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
                         ),
-                      ),
-                      DropdownMenuItem(
-                        value: 'month',
-                        child: Text(
-                          strings.byMonth,
-                          style: const TextStyle(fontSize: 12),
+                        DropdownMenuItem(
+                          value: 'month',
+                          child: Text(
+                            strings.byMonth,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
                         ),
-                      ),
-                      DropdownMenuItem(
-                        value: 'year',
-                        child: Text(
-                          strings.byYear,
-                          style: const TextStyle(fontSize: 12),
+                        DropdownMenuItem(
+                          value: 'year',
+                          child: Text(
+                            strings.byYear,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
                         ),
-                      ),
-                    ],
-                    onChanged: (v) => onTrendTypeChanged!(v!),
-                    underline: const SizedBox(),
+                      ],
+                      onChanged: (v) => widget.onTrendTypeChanged!(v!),
+                      underline: const SizedBox(),
+                      isDense: true,
+                    ),
                   ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: AppTheme.spacingMd),
             SizedBox(
               height: 180,
               child: BarChart(
                 BarChartData(
                   alignment: BarChartAlignment.spaceAround,
-                  maxY: (trendData.values.isEmpty ||
-                          trendData.values.every((v) => v == 0))
+                  maxY: (widget.trendData.values.isEmpty ||
+                          widget.trendData.values.every((v) => v == 0))
                       ? 10
-                      : (trendData.values.reduce((a, b) => a > b ? a : b) *
+                      : (widget.trendData.values
+                                      .reduce((a, b) => a > b ? a : b) *
                                   1.3 +
                               1)
                           .toDouble(),
@@ -94,13 +138,13 @@ class CatchTrendChart extends ConsumerWidget {
                       tooltipBgColor: Theme.of(
                         context,
                       ).colorScheme.inverseSurface,
-                      tooltipRoundedRadius: 6,
+                      tooltipRoundedRadius: AppTheme.radiusSm,
                       tooltipPadding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
+                        horizontal: AppTheme.spacingSm,
+                        vertical: AppTheme.spacingXs,
                       ),
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                        final keys = trendData.keys.toList();
+                        final keys = widget.trendData.keys.toList();
                         final label = keys[group.x.toInt()];
                         final value = rod.toY.toInt();
                         return BarTooltipItem(
@@ -123,20 +167,22 @@ class CatchTrendChart extends ConsumerWidget {
                         showTitles: true,
                         reservedSize: 24,
                         getTitlesWidget: (value, meta) {
-                          final keys = trendData.keys.toList();
+                          final keys = widget.trendData.keys.toList();
                           if (value.toInt() < keys.length) {
                             final step = (keys.length / 6).ceil();
                             if (value.toInt() % step == 0) {
                               return Padding(
-                                padding: const EdgeInsets.only(top: 4),
+                                padding: const EdgeInsets.only(
+                                    top: AppTheme.spacingXs),
                                 child: Text(
                                   keys[value.toInt()],
-                                  style: TextStyle(
-                                    fontSize: 9,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
-                                  ),
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.labelSmall?.copyWith(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
+                                      ),
                                 ),
                               );
                             }
@@ -156,7 +202,8 @@ class CatchTrendChart extends ConsumerWidget {
                     ),
                   ),
                   borderData: FlBorderData(show: false),
-                  barGroups: trendData.entries.toList().asMap().entries.map((
+                  barGroups:
+                      widget.trendData.entries.toList().asMap().entries.map((
                     e,
                   ) {
                     return BarChartGroupData(
@@ -165,9 +212,9 @@ class CatchTrendChart extends ConsumerWidget {
                         BarChartRodData(
                           toY: e.value.value.toDouble(),
                           color: e.value.value > 0
-                              ? AppColors.grey700
-                              : AppColors.grey300,
-                          width: trendData.length > 15 ? 6 : 14,
+                              ? accentColor
+                              : Theme.of(context).colorScheme.outline,
+                          width: widget.trendData.length > 15 ? 6 : 14,
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(3),
                           ),
