@@ -17,6 +17,7 @@ library;
 
 import '../utils/unit_converter.dart';
 import 'app_settings.dart';
+import 'rig_config.dart';
 
 enum FishFateType {
   release(0, '放流'),
@@ -52,6 +53,7 @@ class FishCatch {
   final int? rodId;
   final int? reelId;
   final int? lureId;
+  final RigConfig? rigConfig; // 钓组配置
   final double? airTemperature; // 气温（摄氏度）
   final double? pressure; // 气压（hPa）
   final int? weatherCode; // 天气代码（WMO）
@@ -77,6 +79,7 @@ class FishCatch {
     this.rodId,
     this.reelId,
     this.lureId,
+    this.rigConfig,
     this.airTemperature,
     this.pressure,
     this.weatherCode,
@@ -104,6 +107,7 @@ class FishCatch {
       rodId: map['rod_id'] as int?,
       reelId: map['reel_id'] as int?,
       lureId: map['lure_id'] as int?,
+      rigConfig: map['rig_type'] != null ? RigConfig.fromMap(map) : null,
       airTemperature: (map['air_temperature'] as num?)?.toDouble(),
       pressure: (map['pressure'] as num?)?.toDouble(),
       weatherCode: map['weather_code'] as int?,
@@ -132,6 +136,12 @@ class FishCatch {
       'rod_id': rodId,
       'reel_id': reelId,
       'lure_id': lureId,
+      'rig_type': rigConfig?.rigType,
+      'sinker_weight': rigConfig?.sinkerWeight,
+      'sinker_position': rigConfig?.sinkerPosition,
+      'hook_type': rigConfig?.hookType,
+      'hook_size': rigConfig?.hookSize,
+      'hook_weight': rigConfig?.hookWeight,
       'air_temperature': airTemperature,
       'pressure': pressure,
       'weather_code': weatherCode,
@@ -159,6 +169,7 @@ class FishCatch {
     int? Function()? rodId,
     int? Function()? reelId,
     int? Function()? lureId,
+    RigConfig? rigConfig,
     double? Function()? airTemperature,
     double? Function()? pressure,
     int? Function()? weatherCode,
@@ -184,6 +195,7 @@ class FishCatch {
       rodId: rodId != null ? rodId() : this.rodId,
       reelId: reelId != null ? reelId() : this.reelId,
       lureId: lureId != null ? lureId() : this.lureId,
+      rigConfig: rigConfig ?? this.rigConfig,
       airTemperature:
           airTemperature != null ? airTemperature() : this.airTemperature,
       pressure: pressure != null ? pressure() : this.pressure,
@@ -317,13 +329,14 @@ extension FishCatchListExtension on List<FishCatch> {
       }
 
       if (resultDouble != null) {
+        // ascending: 升序 (从小到大), descending: 降序 (从大到小)
         return ascending
-            ? resultDouble.compareTo(0) > 0
-                ? 1
-                : -1
-            : resultDouble.compareTo(0) > 0
+            ? resultDouble < 0
                 ? -1
-                : 1;
+                : (resultDouble > 0 ? 1 : 0)
+            : resultDouble < 0
+                ? 1
+                : (resultDouble > 0 ? -1 : 0);
       } else if (resultDateTime != null) {
         final result = a.catchTime.compareTo(b.catchTime);
         return ascending ? result : -result;

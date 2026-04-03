@@ -83,6 +83,15 @@ class PermissionService {
       );
     }
 
+    // 检查 context 是否仍然有效（防止在异步操作后使用已卸载的 context）
+    if (!context.mounted) {
+      return PermissionResult(
+        granted: false,
+        permanentlyDenied: false,
+        errorMessage: '上下文已失效',
+      );
+    }
+
     return _requestPermissionWithEducation(context, locationInfo);
   }
 

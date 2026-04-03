@@ -140,17 +140,16 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         offset: offset,
       );
 
-      // 只在第一页或需要时查询总数
+      // 只在第一页查询总数
       int totalCount;
       if (page == 1) {
         final countResult = await db.rawQuery(
           'SELECT COUNT(*) as count FROM $_tableName',
         );
-        totalCount = countResult.first['count'] as int;
+        totalCount = countResult.first['count'] as int? ?? 0;
       } else {
-        // 对于非第一页，使用估算值避免额外查询
-        totalCount =
-            page * pageSize + (results.length < pageSize ? 0 : pageSize);
+        // 对于非第一页，不提供准确总数（需要额外查询）
+        totalCount = -1; // -1 表示未知
       }
 
       final items = results.map((map) => FishCatch.fromMap(map)).toList();
@@ -214,9 +213,9 @@ class SqliteFishCatchRepository implements FishCatchRepository {
             ? 'SELECT COUNT(*) as count FROM $_tableName WHERE $whereClause'
             : 'SELECT COUNT(*) as count FROM $_tableName';
         final countResult = await db.rawQuery(countQuery, whereArgs);
-        totalCount = countResult.first['count'] as int;
+        totalCount = countResult.first['count'] as int? ?? 0;
       } else {
-        totalCount = page * pageSize; // 估算值
+        totalCount = -1; // -1 表示未知，需要额外查询
       }
 
       final results = await db.query(
@@ -382,6 +381,63 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       );
     } catch (e) {
       throw Exception('Failed to delete species: $e');
+    }
+  }
+
+  @override
+  Future<Map<String, Map<String, int>>> getSoftWormRigAnalytics() async {
+    try {
+      final db = await DatabaseService.database;
+      // Use INNER JOIN since we only want catches with a lure of type '软虫'
+      final results = await db.rawQuery('''
+        SELECT 
+          fc.rig_type,
+          fc.hook_type,
+          fc.hook_size,
+          fc.hook_weight,
+          COUNT(*) as catch_count
+        FROM fish_catches fc
+        INNER JOIN equipments e ON fc.lure_id = e.id
+        WHERE e.lure_type = '软虫'
+          AND fc.rig_type IS NOT NULL
+        GROUP BY fc.rig_type, fc.hook_type, fc.hook_size, fc.hook_weight
+      ''');
+
+      final rigTypeStats = <String, int>{};
+      final hookTypeStats = <String, int>{};
+      final hookSizeStats = <String, int>{};
+      final hookWeightStats = <String, int>{};
+
+      for (final row in results) {
+        final rigType = row['rig_type'] as String?;
+        final hookType = row['hook_type'] as String?;
+        final hookSize = row['hook_size'] as String?;
+        final hookWeight = row['hook_weight'] as String?;
+        final count = row['catch_count'] as int;
+
+        if (rigType != null && rigType.isNotEmpty) {
+          rigTypeStats[rigType] = (rigTypeStats[rigType] ?? 0) + count;
+        }
+        if (hookType != null && hookType.isNotEmpty) {
+          hookTypeStats[hookType] = (hookTypeStats[hookType] ?? 0) + count;
+        }
+        if (hookSize != null && hookSize.isNotEmpty) {
+          hookSizeStats[hookSize] = (hookSizeStats[hookSize] ?? 0) + count;
+        }
+        if (hookWeight != null && hookWeight.isNotEmpty) {
+          hookWeightStats[hookWeight] =
+              (hookWeightStats[hookWeight] ?? 0) + count;
+        }
+      }
+
+      return {
+        'rigType': rigTypeStats,
+        'hookType': hookTypeStats,
+        'hookSize': hookSizeStats,
+        'hookWeight': hookWeightStats,
+      };
+    } catch (e) {
+      throw Exception('Failed to get soft worm rig analytics: $e');
     }
   }
 }

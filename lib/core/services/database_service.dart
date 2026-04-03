@@ -41,7 +41,7 @@ class DatabaseService {
 
     final db = await openDatabase(
       path,
-      version: 13,
+      version: 15,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -55,16 +55,53 @@ class DatabaseService {
   // 确保所有必需的列都存在
   static Future<void> _ensureRequiredColumns(Database db) async {
     try {
-      // 检查 equipment 表的 lure_size_unit 列
+      // 检查 equipment 表的列
       final result = await db.rawQuery('PRAGMA table_info(equipments)');
-      final columnExists = result.any((row) => row['name'] == 'lure_size_unit');
-      if (!columnExists) {
-        await db.execute(
-          'ALTER TABLE equipments ADD COLUMN lure_size_unit TEXT DEFAULT "cm"',
-        );
+      final columnNames = result.map((row) => row['name'] as String).toSet();
+
+      final requiredEquipmentColumns = <String, String>{
+        'lure_size_unit': 'TEXT DEFAULT "cm"',
+        'reel_weight': 'TEXT',
+        'reel_weight_unit': 'TEXT DEFAULT "g"',
+        'joint_type': 'TEXT',
+        'reel_bearings': 'INTEGER',
+        'reel_capacity': 'TEXT',
+        'reel_brake_type': 'TEXT',
+        'lure_weight_unit': 'TEXT DEFAULT "g"',
+        'line_length_unit': 'TEXT DEFAULT "m"',
+        'line_weight_unit': 'TEXT DEFAULT "kg"',
+        'length_unit': 'TEXT DEFAULT "m"',
+        'reel_line_number': 'TEXT',
+        'reel_line_length': 'TEXT',
+        'rod_action': 'TEXT',
+        'category': 'TEXT',
+        'reel_line': 'TEXT',
+        'reel_line_date': 'TEXT',
+        'weight_range': 'TEXT',
+        'sections': 'INTEGER',
+        'material': 'TEXT',
+        'hardness': 'TEXT',
+        'lure_type': 'TEXT',
+        'lure_color': 'TEXT',
+        'lure_quantity': 'INTEGER',
+        'lure_quantity_unit': 'TEXT',
+        'price': 'REAL',
+        'purchase_date': 'TEXT',
+        'is_default': 'INTEGER DEFAULT 0',
+        'is_deleted': 'INTEGER DEFAULT 0',
+        'length': 'TEXT',
+      };
+
+      for (final entry in requiredEquipmentColumns.entries) {
+        if (!columnNames.contains(entry.key)) {
+          await db.execute(
+            'ALTER TABLE equipments ADD COLUMN ${entry.key} ${entry.value}',
+          );
+          debugPrint('Added missing equipment column: ${entry.key}');
+        }
       }
     } catch (e) {
-      // 忽略错误
+      debugPrint('Error ensuring equipment columns: $e');
     }
 
     // 确保 fish_catches 表有所有必需的列
@@ -80,6 +117,12 @@ class DatabaseService {
         'length_unit': "TEXT DEFAULT 'cm'",
         'weight_unit': "TEXT DEFAULT 'kg'",
         'pending_recognition': 'INTEGER DEFAULT 0',
+        'rig_type': 'TEXT',
+        'sinker_weight': 'TEXT',
+        'sinker_position': 'TEXT',
+        'hook_type': 'TEXT',
+        'hook_size': 'TEXT',
+        'hook_weight': 'TEXT',
       };
 
       for (final entry in requiredColumns.entries) {
@@ -246,6 +289,30 @@ class DatabaseService {
       );
     }
 
+    if (oldVersion < 14) {
+      await _ensureColumnExists(
+        db,
+        'equipments',
+        'reel_weight',
+        'TEXT',
+      );
+      await _ensureColumnExists(
+        db,
+        'equipments',
+        'reel_weight_unit',
+        'TEXT DEFAULT "g"',
+      );
+    }
+
+    if (oldVersion < 15) {
+      await _ensureColumnExists(db, 'fish_catches', 'rig_type', 'TEXT');
+      await _ensureColumnExists(db, 'fish_catches', 'sinker_weight', 'TEXT');
+      await _ensureColumnExists(db, 'fish_catches', 'sinker_position', 'TEXT');
+      await _ensureColumnExists(db, 'fish_catches', 'hook_type', 'TEXT');
+      await _ensureColumnExists(db, 'fish_catches', 'hook_size', 'TEXT');
+      await _ensureColumnExists(db, 'fish_catches', 'hook_weight', 'TEXT');
+    }
+
     // 检查并添加缺失的列（防止版本跳跃）
     await _ensureColumnExists(
       db,
@@ -309,6 +376,19 @@ class DatabaseService {
     await db.execute(
       'CREATE INDEX IF NOT EXISTS idx_fish_catches_fate_time ON fish_catches(fate, catch_time)',
     );
+    // 外键索引 - 优化 JOIN 和引用查询
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_fish_catches_equipment_id ON fish_catches(equipment_id)',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_fish_catches_rod_id ON fish_catches(rod_id)',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_fish_catches_reel_id ON fish_catches(reel_id)',
+    );
+    await db.execute(
+      'CREATE INDEX IF NOT EXISTS idx_fish_catches_lure_id ON fish_catches(lure_id)',
+    );
   }
 
   static Future<void> _onCreate(Database db, int version) async {
@@ -330,8 +410,14 @@ class DatabaseService {
         equipment_id INTEGER,
         rod_id INTEGER,
         reel_id INTEGER,
-        lure_id INTEGER,
-        air_temperature REAL,
+lure_id INTEGER,
+  rig_type TEXT,
+  sinker_weight TEXT,
+  sinker_position TEXT,
+  hook_type TEXT,
+  hook_size TEXT,
+  hook_weight TEXT,
+  air_temperature REAL,
         pressure REAL,
         weather_code INTEGER,
         pending_recognition INTEGER DEFAULT 0,
@@ -366,6 +452,8 @@ class DatabaseService {
     reel_ratio TEXT,
     reel_capacity TEXT,
     reel_brake_type TEXT,
+    reel_weight TEXT,
+    reel_weight_unit TEXT DEFAULT 'g',
     lure_type TEXT,
     lure_weight TEXT,
     lure_weight_unit TEXT DEFAULT 'g',
@@ -387,7 +475,8 @@ class DatabaseService {
     reel_line_length TEXT,
     rod_action TEXT,
     line_length_unit TEXT DEFAULT 'm',
-    line_weight_unit TEXT DEFAULT 'kg'
+    line_weight_unit TEXT DEFAULT 'kg',
+    joint_type TEXT
   )
   ''');
 

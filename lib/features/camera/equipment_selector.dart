@@ -114,8 +114,37 @@ class EquipmentSelector extends ConsumerWidget {
                           color: Theme.of(context).colorScheme.primary,
                           itemBuilder: (item) =>
                               '${item['brand'] ?? ''} ${item['model'] ?? ''}',
-                          subtitleBuilder: (item) =>
-                              '${item['length'] ?? ''} ${item['is_default'] == 1 ? '⭐${strings.defaultLabel}' : ''}',
+                          subtitleBuilder: (item) {
+                            // 显示：长度 / 硬度 / 调性
+                            final parts = <String>[];
+                            final length = item['length'] as String?;
+                            final lengthUnit =
+                                item['length_unit'] as String? ?? 'm';
+                            if (length != null && length.isNotEmpty) {
+                              final lengthValue =
+                                  double.tryParse(length) ?? 0.0;
+                              parts.add(
+                                  '${lengthValue.toStringAsFixed(2)}$lengthUnit');
+                            }
+                            final hardness = item['hardness'] as String?;
+                            if (hardness != null && hardness.isNotEmpty) {
+                              parts.add(hardness);
+                            }
+                            final action = item['rod_action'] as String?;
+                            if (action != null && action.isNotEmpty) {
+                              parts.add(action);
+                            }
+                            final jointType = item['joint_type'] as String?;
+                            if (jointType != null && jointType.isNotEmpty) {
+                              parts.add(jointType);
+                            }
+                            final defaultLabel = item['is_default'] == 1
+                                ? '⭐${strings.defaultLabel}'
+                                : '';
+                            return parts.isNotEmpty
+                                ? '${parts.join(' / ')}$defaultLabel'
+                                : defaultLabel;
+                          },
                           strings: strings,
                         ),
                         const SizedBox(height: 16),
@@ -132,8 +161,33 @@ class EquipmentSelector extends ConsumerWidget {
                           color: AppColors.keep,
                           itemBuilder: (item) =>
                               '${item['brand'] ?? ''} ${item['model'] ?? ''}',
-                          subtitleBuilder: (item) =>
-                              '${item['reel_ratio'] ?? ''} ${item['is_default'] == 1 ? '⭐${strings.defaultLabel}' : ''}',
+                          subtitleBuilder: (item) {
+                            // 显示：齿轮比 / 轴承数 / 刹车类型
+                            final parts = <String>[];
+                            final ratio = item['reel_ratio'] as String?;
+                            if (ratio != null && ratio.isNotEmpty) {
+                              parts.add(ratio);
+                            }
+                            final bearings = item['reel_bearings'] as String?;
+                            if (bearings != null && bearings.isNotEmpty) {
+                              parts.add(bearings);
+                            }
+                            final brakeType =
+                                item['reel_brake_type'] as String?;
+                            if (brakeType != null && brakeType.isNotEmpty) {
+                              parts.add(brakeType);
+                            }
+                            final weight = item['reel_weight'] as String?;
+                            if (weight != null && weight.isNotEmpty) {
+                              parts.add(weight);
+                            }
+                            final defaultLabel = item['is_default'] == 1
+                                ? '⭐${strings.defaultLabel}'
+                                : '';
+                            return parts.isNotEmpty
+                                ? '${parts.join(' / ')}$defaultLabel'
+                                : defaultLabel;
+                          },
                           strings: strings,
                         ),
                         const SizedBox(height: 16),
@@ -149,9 +203,37 @@ class EquipmentSelector extends ConsumerWidget {
                           },
                           color: Colors.purple,
                           itemBuilder: (item) =>
-                              '${item['lure_type'] ?? ''} ${item['lure_weight'] ?? ''}',
-                          subtitleBuilder: (item) =>
-                              '${item['brand'] ?? ''} ${item['is_default'] == 1 ? '⭐${strings.defaultLabel}' : ''}',
+                              '${item['brand'] ?? ''} ${item['model'] ?? ''}',
+                          subtitleBuilder: (item) {
+                            // 显示：类型 / 尺寸 / 重量 / 颜色
+                            final parts = <String>[];
+                            final lureType = item['lure_type'] as String?;
+                            if (lureType != null && lureType.isNotEmpty) {
+                              parts.add(lureType);
+                            }
+                            final size = item['lure_size'] as String?;
+                            final sizeUnit =
+                                item['lure_size_unit'] as String? ?? 'cm';
+                            if (size != null && size.isNotEmpty) {
+                              parts.add('$size$sizeUnit');
+                            }
+                            final weight = item['lure_weight'] as String?;
+                            final weightUnit =
+                                item['lure_weight_unit'] as String? ?? 'g';
+                            if (weight != null && weight.isNotEmpty) {
+                              parts.add('$weight$weightUnit');
+                            }
+                            final color = item['lure_color'] as String?;
+                            if (color != null && color.isNotEmpty) {
+                              parts.add(color);
+                            }
+                            final defaultLabel = item['is_default'] == 1
+                                ? '⭐${strings.defaultLabel}'
+                                : '';
+                            return parts.isNotEmpty
+                                ? '${parts.join(' / ')}$defaultLabel'
+                                : defaultLabel;
+                          },
                           strings: strings,
                         ),
                         const SizedBox(height: 24),
@@ -249,7 +331,7 @@ class EquipmentSelector extends ConsumerWidget {
   }
 }
 
-/// 装备信息行组件
+/// 装备信息行组件 - 显示完整装备参数
 class EquipmentInfoRow extends ConsumerWidget {
   final String label;
   final Map<String, dynamic>? equipment;
@@ -275,28 +357,113 @@ class EquipmentInfoRow extends ConsumerWidget {
       );
     }
 
-    String detail = '';
-    if (label.contains(strings.rod) || label.contains('Rod')) {
-      detail = '${equipment!['length'] ?? ''} ${equipment!['hardness'] ?? ''}';
-    } else if (label.contains(strings.reel) || label.contains('Reel')) {
-      detail =
-          '${equipment!['reel_ratio'] ?? ''} ${equipment!['reel_line'] ?? ''}';
-    } else if (label.contains(strings.lure) || label.contains('Lure')) {
-      detail = '${equipment!['lure_weight'] ?? ''}';
-    }
+    // 构建完整的装备信息字符串
+    final info = _buildEquipmentInfo(equipment!, label, strings);
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
-            '${equipment!['brand'] ?? ''} ${equipment!['model'] ?? ''} ${detail.isNotEmpty ? '($detail)' : ''}',
+            info,
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
             overflow: TextOverflow.ellipsis,
+            maxLines: 2,
           ),
         ),
       ],
     );
+  }
+
+  /// 构建装备信息字符串，格式与水印一致
+  String _buildEquipmentInfo(
+      Map<String, dynamic> eq, String label, AppStrings strings) {
+    final parts = <String>[];
+
+    // 品牌和型号
+    final brand = eq['brand'] as String?;
+    final model = eq['model'] as String?;
+    if (brand != null && brand.isNotEmpty) parts.add(brand);
+    if (model != null && model.isNotEmpty) parts.add(model);
+
+    if (label.contains(strings.rod) || label.contains('Rod')) {
+      // 鱼竿：长度、硬度、调性、材质、节数、插接方式、适用饵重
+      final length = eq['length'] as String?;
+      final lengthUnit = eq['length_unit'] as String? ?? 'm';
+      if (length != null && length.isNotEmpty) {
+        final lengthValue = double.tryParse(length) ?? 0.0;
+        parts.add('${lengthValue.toStringAsFixed(2)} $lengthUnit');
+      }
+
+      final hardness = eq['hardness'] as String?;
+      if (hardness != null && hardness.isNotEmpty) parts.add(hardness);
+
+      final action = eq['rod_action'] as String?;
+      if (action != null && action.isNotEmpty) parts.add(action);
+
+      final material = eq['material'] as String?;
+      if (material != null && material.isNotEmpty) parts.add(material);
+
+      final sections = eq['sections'] as String?;
+      if (sections != null && sections.isNotEmpty) {
+        parts.add('${strings.sections}:$sections');
+      }
+
+      final jointType = eq['joint_type'] as String?;
+      if (jointType != null && jointType.isNotEmpty) parts.add(jointType);
+
+      final weightRange = eq['weight_range'] as String?;
+      if (weightRange != null && weightRange.isNotEmpty) {
+        parts.add('${strings.weightRange}:$weightRange');
+      }
+    } else if (label.contains(strings.reel) || label.contains('Reel')) {
+      // 渔轮：齿轮比、轴承数、线杯容量、刹车类型、重量
+      final ratio = eq['reel_ratio'] as String?;
+      if (ratio != null && ratio.isNotEmpty) parts.add(ratio);
+
+      final bearings = eq['reel_bearings'] as String?;
+      if (bearings != null && bearings.isNotEmpty) {
+        parts.add('${strings.bearings}:$bearings');
+      }
+
+      final capacity = eq['reel_capacity'] as String?;
+      if (capacity != null && capacity.isNotEmpty) {
+        parts.add('${strings.reelCapacity}:$capacity');
+      }
+
+      final brakeType = eq['reel_brake_type'] as String?;
+      if (brakeType != null && brakeType.isNotEmpty) parts.add(brakeType);
+
+      final weight = eq['reel_weight'] as String?;
+      if (weight != null && weight.isNotEmpty) parts.add(weight);
+    } else if (label.contains(strings.lure) || label.contains('Lure')) {
+      // 鱼饵：类型、尺寸、重量、颜色、数量
+      final lureType = eq['lure_type'] as String?;
+      if (lureType != null && lureType.isNotEmpty) parts.add(lureType);
+
+      final size = eq['lure_size'] as String?;
+      final sizeUnit = eq['lure_size_unit'] as String? ?? 'cm';
+      if (size != null && size.isNotEmpty) {
+        parts.add('$size $sizeUnit');
+      }
+
+      final weight = eq['lure_weight'] as String?;
+      final weightUnit = eq['lure_weight_unit'] as String? ?? 'g';
+      if (weight != null && weight.isNotEmpty) {
+        parts.add('$weight $weightUnit');
+      }
+
+      final color = eq['lure_color'] as String?;
+      if (color != null && color.isNotEmpty) parts.add(color);
+
+      final quantity = eq['lure_quantity'] as String?;
+      if (quantity != null && quantity.isNotEmpty) {
+        parts.add('x$quantity');
+      }
+    }
+
+    return parts.join(' / ');
   }
 }

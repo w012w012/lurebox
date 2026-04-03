@@ -52,6 +52,8 @@ class Equipment {
   final String? reelRatio;
   final String? reelCapacity;
   final String? reelBrakeType;
+  final String? reelWeight;
+  final String reelWeightUnit; // 渔轮重量单位 (g, oz)
   final String? lureType;
   final String? lureWeight;
   final String lureWeightUnit; // 假饵重量单位 (g, oz)
@@ -91,6 +93,8 @@ class Equipment {
     this.reelRatio,
     this.reelCapacity,
     this.reelBrakeType,
+    this.reelWeight,
+    this.reelWeightUnit = 'g',
     this.lureType,
     this.lureWeight,
     this.lureWeightUnit = 'g',
@@ -139,6 +143,8 @@ class Equipment {
       reelRatio: _getField(map, 'reel_ratio') as String?,
       reelCapacity: _getField(map, 'reel_capacity') as String?,
       reelBrakeType: _getField(map, 'reel_brake_type') as String?,
+      reelWeight: _getField(map, 'reel_weight') as String?,
+      reelWeightUnit: _getField(map, 'reel_weight_unit') as String? ?? 'g',
       lureType: _getField(map, 'lure_type') as String?,
       lureWeight: _getField(map, 'lure_weight') as String?,
       lureWeightUnit: _getField(map, 'lure_weight_unit') as String? ?? 'g',
@@ -185,6 +191,8 @@ class Equipment {
       'reel_ratio': reelRatio,
       'reel_capacity': reelCapacity,
       'reel_brake_type': reelBrakeType,
+      'reel_weight': reelWeight,
+      'reel_weight_unit': reelWeightUnit,
       'lure_type': lureType,
       'lure_weight': lureWeight,
       'lure_weight_unit': lureWeightUnit,
@@ -245,6 +253,8 @@ class Equipment {
     String? Function()? reelRatio,
     String? Function()? reelCapacity,
     String? Function()? reelBrakeType,
+    String? Function()? reelWeight,
+    String Function()? reelWeightUnit,
     String? Function()? lureType,
     String? Function()? lureWeight,
     String? Function()? lureSize,
@@ -281,6 +291,9 @@ class Equipment {
       reelCapacity: reelCapacity != null ? reelCapacity() : this.reelCapacity,
       reelBrakeType:
           reelBrakeType != null ? reelBrakeType() : this.reelBrakeType,
+      reelWeight: reelWeight != null ? reelWeight() : this.reelWeight,
+      reelWeightUnit:
+          reelWeightUnit != null ? reelWeightUnit() : this.reelWeightUnit,
       lureType: lureType != null ? lureType() : this.lureType,
       lureWeight: lureWeight != null ? lureWeight() : this.lureWeight,
       lureSize: lureSize != null ? lureSize() : this.lureSize,
@@ -313,6 +326,11 @@ class Equipment {
 
   @override
   int get hashCode => id.hashCode;
+
+  @override
+  String toString() {
+    return 'Equipment(id: $id, type: ${type.label}, brand: $brand, model: $model)';
+  }
 }
 
 extension EquipmentListExtension on List<Equipment> {

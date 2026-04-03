@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camera/camera.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../core/constants/constants.dart';
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/models/equipment.dart';
@@ -18,12 +16,12 @@ import '../../core/utils/file_utils.dart';
 import '../../core/utils/image_compressor.dart';
 import '../../core/camera/camera_view_model.dart';
 import '../../core/camera/camera_state.dart';
-import '../../core/services/weather_service.dart';
 
 import '../../widgets/common/image_cache_helper.dart';
 import '../../widgets/common/premium_button.dart';
-import '../../widgets/common/premium_card.dart';
 import '../../widgets/common/premium_input.dart';
+import '../../widgets/catch/equipment_rig_card.dart';
+import '../../widgets/catch/auxiliary_info_row.dart';
 import '../fish_detail/fish_detail_page.dart';
 import '../equipment/equipment_list_page.dart';
 
@@ -51,6 +49,9 @@ class _CameraPageState extends ConsumerState<CameraPage> {
   Future<void> _initialize() async {
     final vm = ref.read(cameraViewModelProvider.notifier);
     final appSettings = ref.read(appSettingsProvider);
+
+    // 初始化 context，用于权限对话框
+    vm.initialize(context);
 
     // 重置相机状态，确保每次进入页面都是干净状态
     vm.reset();
@@ -333,15 +334,21 @@ class _CameraPageState extends ConsumerState<CameraPage> {
             const SizedBox(height: 20),
             _buildFateSelector(state, vm, strings),
             const SizedBox(height: 20),
-            _buildEquipmentCard(state, vm, strings),
+            EquipmentRigCard(
+              state: state,
+              vm: vm,
+              strings: strings,
+              onModifyPressed: () => _showEquipmentSheet(state, vm, strings),
+            ),
             const SizedBox(height: 20),
-            if (state.locationName != null && state.locationName!.isNotEmpty)
-              _buildLocationCard(state, strings),
-            if (state.airTemperature != null ||
-                state.pressure != null ||
-                state.weatherCode != null)
-              _buildWeatherCard(state, strings),
-            _buildTimeCard(state, strings),
+            AuxiliaryInfoRow(
+              state: state,
+              vm: vm,
+              strings: strings,
+              onEditLocation: () => _editLocation(state),
+              onEditTime: () => _editCatchTime(state),
+              onEditWeather: () => _editWeather(state),
+            ),
             const SizedBox(height: 24),
             _buildSaveButton(state, vm, strings),
           ],
@@ -586,53 +593,6 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     );
   }
 
-  Widget _buildEquipmentCard(
-    CameraState state,
-    CameraViewModel vm,
-    AppStrings strings,
-  ) {
-    return PremiumCard(
-      child: Column(
-        children: [
-          ListTile(
-            leading: Icon(
-              Icons.hardware,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            title: Text(strings.useEquipment),
-            trailing: PremiumButton(
-              text: strings.modify,
-              onPressed: () => _showEquipmentSheet(state, vm, strings),
-              variant: PremiumButtonVariant.text,
-            ),
-          ),
-          const Divider(height: 1),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            child: Column(
-              children: [
-                _EquipmentInfoRow(
-                  label: '🎣 ${strings.rod}',
-                  equipment: state.selectedRod,
-                ),
-                const SizedBox(height: 8),
-                _EquipmentInfoRow(
-                  label: '⚙️ ${strings.reel}',
-                  equipment: state.selectedReel,
-                ),
-                const SizedBox(height: 8),
-                _EquipmentInfoRow(
-                  label: '🪝 ${strings.lure}',
-                  equipment: state.selectedLure,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   void _showEquipmentSheet(
     CameraState state,
     CameraViewModel vm,
@@ -754,77 +714,6 @@ class _CameraPageState extends ConsumerState<CameraPage> {
           ),
         const SizedBox(height: 16),
       ],
-    );
-  }
-
-  Widget _buildLocationCard(CameraState state, AppStrings strings) {
-    return PremiumCard(
-      child: ListTile(
-        leading: Icon(
-          Icons.location_on,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        title: Text(strings.catchLocation),
-        subtitle: Text(state.locationName ?? '未获取位置'),
-        trailing: IconButton(
-          icon: const Icon(Icons.edit, size: 20),
-          onPressed: () => _editLocation(state),
-          tooltip: '修改位置',
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTimeCard(CameraState state, AppStrings strings) {
-    return PremiumCard(
-      child: ListTile(
-        leading: Icon(
-          Icons.access_time,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        title: Text(strings.catchTime),
-        subtitle: Text(DateFormat(DateFormats.dateTime).format(
-          state.catchTime ?? DateTime.now(),
-        )),
-        trailing: IconButton(
-          icon: const Icon(Icons.edit, size: 20),
-          onPressed: () => _editCatchTime(state),
-          tooltip: '修改时间',
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWeatherCard(CameraState state, AppStrings strings) {
-    final weatherTexts = <String>[];
-    if (state.airTemperature != null) {
-      weatherTexts.add('气温: ${state.airTemperature!.toStringAsFixed(1)}°C');
-    }
-    if (state.pressure != null) {
-      weatherTexts.add('气压: ${state.pressure!.toStringAsFixed(0)}hPa');
-    }
-    if (state.weatherCode != null) {
-      final weatherDesc = getWeatherDescription(state.weatherCode);
-      if (weatherDesc.isNotEmpty) {
-        weatherTexts.add('天气: $weatherDesc');
-      }
-    }
-
-    return PremiumCard(
-      child: ListTile(
-        leading: Icon(
-          Icons.wb_sunny,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        title: const Text('天气'),
-        subtitle:
-            Text(weatherTexts.isNotEmpty ? weatherTexts.join(' | ') : '未获取天气'),
-        trailing: IconButton(
-          icon: const Icon(Icons.edit, size: 20),
-          onPressed: () => _editWeather(state),
-          tooltip: '修改天气',
-        ),
-      ),
     );
   }
 
@@ -1128,34 +1017,6 @@ class _FateButton extends StatelessWidget {
               ),
         ),
       ),
-    );
-  }
-}
-
-class _EquipmentInfoRow extends StatelessWidget {
-  final String label;
-  final Equipment? equipment;
-
-  const _EquipmentInfoRow({required this.label, this.equipment});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-        ),
-        const Spacer(),
-        Text(
-          equipment?.displayName ?? '-',
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
-        ),
-      ],
     );
   }
 }

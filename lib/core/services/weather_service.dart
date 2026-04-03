@@ -104,8 +104,9 @@ class WeatherService {
         weatherCode: current[WeatherCurrent.weather_code]?.value.toInt(),
       );
     } catch (e) {
-      // 静默失败，返回空数据
-      return const WeatherData();
+      // 返回 null 让调用者知道获取天气失败
+      return const WeatherData(
+          airTemperature: null, pressure: null, weatherCode: null);
     }
   }
 }
