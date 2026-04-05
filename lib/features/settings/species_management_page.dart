@@ -872,8 +872,9 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
 
     if (result != null && context.mounted) {
       try {
-        final repository = ref.read(fishCatchRepositoryProvider);
-        await repository.renameSpecies(oldName, result);
+        final speciesManagementService =
+            ref.read(speciesManagementServiceProvider);
+        await speciesManagementService.renameSpecies(oldName, result);
         ref.invalidate(speciesCountsProvider);
         ref.invalidate(pendingRecognitionCountProvider);
         ref.invalidate(pendingRecognitionCatchesProvider);

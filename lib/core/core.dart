@@ -33,7 +33,6 @@ export 'providers/fish_list_view_model.dart';
 export 'providers/fish_providers.dart' hide top3LongestCatchesProvider;
 export 'providers/home_view_model.dart';
 export 'providers/language_provider.dart';
-export 'providers/location_map_view_model.dart';
 export 'providers/location_view_model.dart';
 export 'providers/pending_recognition_providers.dart';
 export 'providers/providers.dart';

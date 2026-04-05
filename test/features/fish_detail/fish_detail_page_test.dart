@@ -12,7 +12,6 @@ import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
-import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/widgets/fish_detail/fish_action_buttons.dart';
 
 void main() {

@@ -10,7 +10,6 @@ import '../../features/equipment/equipment_overview_page.dart';
 import '../../features/fish_detail/fish_detail_page.dart';
 import '../../features/fish_list/fish_list_page.dart';
 import '../../features/home/home_page.dart';
-import '../../features/location/location_map_page.dart';
 import '../../features/settings/ai_recognition_settings_page.dart';
 import '../../features/settings/location_management_page.dart';
 import '../../features/settings/settings_page.dart';
@@ -71,11 +70,6 @@ final routerProvider = Provider<GoRouter>((ref) {
             endDate: end != null ? DateTime.parse(end) : DateTime.now(),
           );
         },
-      ),
-      GoRoute(
-        path: '/map',
-        parentNavigatorKey: _rootNavigatorKey,
-        builder: (context, state) => const LocationMapPage(),
       ),
       GoRoute(
         path: '/equipment/overview',

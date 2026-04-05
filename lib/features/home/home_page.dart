@@ -24,15 +24,6 @@ class HomePage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(strings.appName),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.map),
-            tooltip: strings.mapLocation,
-            onPressed: () {
-              context.push('/map');
-            },
-          ),
-        ],
       ),
       body: _HomePageBody(state: homeState, strings: strings),
       bottomNavigationBar: SafeArea(
@@ -70,7 +61,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
   late final List<Animation<double>> _fadeAnimations;
   late final List<Animation<Offset>> _slideAnimations;
 
-  static const int _itemCount = 6; // pending, podium, 4 stat cards
+  static const int _itemCount = 7; // pending, fish guide, podium, 4 stat cards
 
   @override
   void initState() {
@@ -150,11 +141,11 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
           _buildAnimatedItem(0, _buildPendingRecognitionCard(context, ref)),
           const SizedBox(height: 12),
           // Item 1: Podium
-          _buildAnimatedItem(1, _buildPodium(context)),
+          _buildAnimatedItem(2, _buildPodium(context)),
           const SizedBox(height: 12),
-          // Item 2: Today stat card
+          // Item 3: Today stat card
           _buildAnimatedItem(
-              2,
+              3,
               _buildStatCard(
                 context,
                 widget.strings,
@@ -178,9 +169,9 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                 },
               )),
           const SizedBox(height: 12),
-          // Item 3: Month stat card
+          // Item 4: Month stat card
           _buildAnimatedItem(
-              3,
+              4,
               _buildStatCard(
                 context,
                 widget.strings,
@@ -200,9 +191,9 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                 },
               )),
           const SizedBox(height: 12),
-          // Item 4: Year stat card
+          // Item 5: Year stat card
           _buildAnimatedItem(
-              4,
+              5,
               _buildStatCard(
                 context,
                 widget.strings,
@@ -222,9 +213,9 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                 },
               )),
           const SizedBox(height: 12),
-          // Item 5: All catch stat card
+          // Item 6: All catch stat card
           _buildAnimatedItem(
-              5,
+              6,
               _buildStatCard(
                 context,
                 widget.strings,

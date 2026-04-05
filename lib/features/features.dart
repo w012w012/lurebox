@@ -27,9 +27,6 @@ export 'fish_list/fish_list_page.dart';
 // Home
 export 'home/home_page.dart';
 
-// Location
-export 'location/location_map_page.dart';
-
 // Settings
 export 'settings/ai_recognition_settings_page.dart';
 export 'settings/location_management_page.dart';

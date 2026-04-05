@@ -146,7 +146,8 @@ class SqliteFishCatchRepository implements FishCatchRepository {
   Future<List<FishCatch>> getAll() async {
     try {
       final db = await _database;
-      final results = await db.query(_tableName, orderBy: 'catch_time DESC');
+      final results = await db.query(_tableName, orderBy: 'catch_time DESC')
+          as List<Map<String, dynamic>>;
       return results.map((map) => FishCatch.fromMap(map)).toList();
     } catch (e) {
       throw Exception('Failed to get all fish catches: $e');
@@ -162,7 +163,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         where: 'id = ?',
         whereArgs: [id],
         limit: 1,
-      );
+      ) as List<Map<String, dynamic>>;
       if (results.isEmpty) return null;
       return FishCatch.fromMap(results.first);
     } catch (e) {
@@ -231,9 +232,8 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         where: 'catch_time >= ? AND catch_time < ?',
         whereArgs: [start.toIso8601String(), end.toIso8601String()],
         orderBy: 'catch_time DESC',
-      );
-      return List<FishCatch>.from(
-          results.map((map) => FishCatch.fromMap(map as Map<String, dynamic>)));
+      ) as List<Map<String, dynamic>>;
+      return List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
     } catch (e) {
       throw Exception('Failed to get fish catches by date range: $e');
     }
@@ -248,9 +248,8 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         where: 'fate = ?',
         whereArgs: [fate.value],
         orderBy: 'catch_time DESC',
-      );
-      return List<FishCatch>.from(
-          results.map((map) => FishCatch.fromMap(map as Map<String, dynamic>)));
+      ) as List<Map<String, dynamic>>;
+      return List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
     } catch (e) {
       throw Exception('Failed to get fish catches by fate: $e');
     }
@@ -272,7 +271,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         orderBy: orderBy,
         limit: pageSize,
         offset: offset,
-      );
+      ) as List<Map<String, dynamic>>;
 
       // 只在第一页查询总数
       int totalCount;
@@ -286,8 +285,8 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         totalCount = -1; // -1 表示未知
       }
 
-      final items = List<FishCatch>.from(
-          results.map((map) => FishCatch.fromMap(map as Map<String, dynamic>)));
+      final items =
+          List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
       final hasMore = results.length == pageSize;
 
       return PaginatedResult(
@@ -367,9 +366,9 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         orderBy: orderBy,
         limit: pageSize,
         offset: offset,
-      );
-      final items = List<FishCatch>.from(
-          results.map((map) => FishCatch.fromMap(map as Map<String, dynamic>)));
+      ) as List<Map<String, dynamic>>;
+      final items =
+          List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
       final hasMore = results.length == pageSize;
 
       return PaginatedResult(
@@ -415,10 +414,11 @@ class SqliteFishCatchRepository implements FishCatchRepository {
           ? 'SELECT * FROM $_tableName WHERE $whereClause $sortClause LIMIT ? OFFSET ?'
           : 'SELECT * FROM $_tableName $sortClause LIMIT ? OFFSET ?';
       final dataArgs = [...whereArgs, pageSize, offset];
-      final results = await db.rawQuery(dataSql, dataArgs);
+      final results =
+          await db.rawQuery(dataSql, dataArgs) as List<Map<String, dynamic>>;
 
-      final items = List<FishCatch>.from(
-          results.map((map) => FishCatch.fromMap(map as Map<String, dynamic>)));
+      final items =
+          List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
 
       // Correct hasMore calculation based on total filtered count
       final hasMore = (page + 1) * pageSize < totalCount;
@@ -444,7 +444,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         where: 'pending_recognition = ?',
         whereArgs: [1],
         orderBy: 'catch_time DESC',
-      );
+      ) as List<Map<String, dynamic>>;
       return results.map((map) => FishCatch.fromMap(map)).toList();
     } catch (e) {
       throw Exception('Failed to get pending recognition catches: $e');

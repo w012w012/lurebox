@@ -338,6 +338,14 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         items.add(_InfoItem(strings.weightRange, '${e['weight_range']}克'));
       }
     } else if (type == 'reel') {
+      if (e['reel_weight'] != null) {
+        items.add(
+          _InfoItem(
+            strings.reelWeight,
+            '${e['reel_weight']} ${e['reel_weight_unit'] ?? 'g'}',
+          ),
+        );
+      }
       if (e['reel_bearings'] != null) {
         items.add(_InfoItem(strings.bearings, '${e['reel_bearings']}'));
       }
@@ -358,10 +366,20 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         items.add(_InfoItem(strings.lureType, e['lure_type']));
       }
       if (e['lure_weight'] != null) {
-        items.add(_InfoItem(strings.lureWeight, e['lure_weight']));
+        items.add(
+          _InfoItem(
+            strings.lureWeight,
+            '${e['lure_weight']} ${e['lure_weight_unit'] ?? 'g'}',
+          ),
+        );
       }
-      if (e['lure_length'] != null) {
-        items.add(_InfoItem(strings.lureSize, e['lure_length']));
+      if (e['lure_size'] != null) {
+        items.add(
+          _InfoItem(
+            strings.lureSize,
+            '${e['lure_size']} ${e['lure_size_unit'] ?? 'cm'}',
+          ),
+        );
       }
       if (e['lure_color'] != null) {
         items.add(_InfoItem(strings.lureColor, e['lure_color']));
@@ -386,13 +404,22 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
 
     if (items.isEmpty) return [];
 
-    return [
-      Wrap(
-        spacing: AppTheme.spacingMd,
-        runSpacing: AppTheme.spacingSm,
-        children: items.map((item) => _buildInfoItem(context, item)).toList(),
-      ),
-    ];
+    final row = Wrap(
+      spacing: AppTheme.spacingMd,
+      runSpacing: AppTheme.spacingSm,
+      children: items.map((item) => _buildInfoItem(context, item)).toList(),
+    );
+
+    // 添加数量显示（仅针对 lure）
+    if (type == 'lure' && e['lure_quantity'] != null) {
+      return [
+        row,
+        const SizedBox(height: AppTheme.spacingSm),
+        _buildQuantityBadge(context, e['lure_quantity']),
+      ];
+    }
+
+    return [row];
   }
 
   Widget _buildInfoItem(BuildContext context, _InfoItem item) {
@@ -414,6 +441,47 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
               ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
               overflow: TextOverflow.ellipsis,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuantityBadge(BuildContext context, int quantity) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppTheme.spacingMd,
+        vertical: AppTheme.spacingSm,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.accentLight.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        border: Border.all(
+          color: AppColors.accentLight.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.inventory_2_rounded,
+            size: 18,
+            color: AppColors.accentLight,
+          ),
+          const SizedBox(width: AppTheme.spacingSm),
+          Text(
+            '数量: ',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.accentLight,
+                ),
+          ),
+          Text(
+            '$quantity',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.accentLight,
+                ),
           ),
         ],
       ),

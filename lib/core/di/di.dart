@@ -11,6 +11,8 @@ import '../repositories/settings_repository.dart';
 import '../repositories/settings_repository_impl.dart';
 import '../repositories/stats_repository.dart';
 import '../repositories/stats_repository_impl.dart';
+import '../repositories/user_species_alias_repository.dart';
+import '../repositories/species_management_service.dart';
 import '../services/fish_catch_service.dart';
 import '../services/equipment_service.dart';
 import '../services/settings_service.dart';
@@ -18,6 +20,7 @@ import '../services/achievement_service.dart';
 import '../services/location_service.dart';
 import '../services/backup_service.dart';
 import '../services/backup_zip_service.dart';
+import '../services/fish_species_matcher.dart';
 import '../repositories/backup_config_repository.dart';
 import '../database/database_provider.dart';
 import '../models/ai_recognition_settings.dart';
@@ -56,6 +59,23 @@ final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
 
 final statsRepositoryProvider = Provider<StatsRepository>((ref) {
   return SqliteStatsRepository();
+});
+
+final userSpeciesAliasRepositoryProvider =
+    Provider<UserSpeciesAliasRepository>((ref) {
+  return SqliteUserSpeciesAliasRepository();
+});
+
+final fishSpeciesMatcherProvider = Provider<FishSpeciesMatcher>((ref) {
+  return FishSpeciesMatcher();
+});
+
+final speciesManagementServiceProvider =
+    Provider<SpeciesManagementService>((ref) {
+  return SpeciesManagementService(
+    aliasRepo: ref.watch(userSpeciesAliasRepositoryProvider),
+    matcher: ref.watch(fishSpeciesMatcherProvider),
+  );
 });
 
 // ===== Service 层 =====

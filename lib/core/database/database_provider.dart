@@ -6,7 +6,7 @@ import 'package:path/path.dart';
 /// 负责数据库的初始化和连接管理
 class DatabaseProvider {
   static const String _databaseName = 'lurebox.db';
-  static const int _databaseVersion = 16;
+  static const int _databaseVersion = 17;
 
   Database? _database;
   bool _initializing = false;
@@ -386,6 +386,39 @@ CREATE TABLE backup_history (
       await _addColumnIfNotExists(db, 'fish_catches', 'hook_type', 'TEXT');
       await _addColumnIfNotExists(db, 'fish_catches', 'hook_size', 'TEXT');
       await _addColumnIfNotExists(db, 'fish_catches', 'hook_weight', 'TEXT');
+    }
+    if (oldVersion < 17) {
+      // 创建 fish_species 表 (预定义鱼种，只读，通过 FishGuideData 访问)
+      await db.execute('''
+CREATE TABLE fish_species (
+  id TEXT PRIMARY KEY,
+  standard_name TEXT NOT NULL,
+  scientific_name TEXT,
+  category INTEGER NOT NULL,
+  rarity INTEGER NOT NULL,
+  habitat TEXT,
+  behavior TEXT,
+  fishing_method TEXT,
+  description TEXT,
+  icon_emoji TEXT
+)
+''');
+
+      // 创建 user_species_alias 表
+      await db.execute('''
+CREATE TABLE user_species_alias (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_alias TEXT NOT NULL UNIQUE,
+  species_id TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+)
+''');
+
+      // 创建索引
+      await db.execute(
+          'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)');
+      await db.execute(
+          'CREATE INDEX idx_alias_species ON user_species_alias(species_id)');
     }
   }
 
