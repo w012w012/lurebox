@@ -1,9 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../di/di.dart';
-import '../models/species_profile.dart';
 import '../services/fish_catch_service.dart';
 import '../services/equipment_service.dart';
-import '../services/species_profile_service.dart';
 
 class FishDetailState {
   final bool isLoading;
@@ -12,7 +10,6 @@ class FishDetailState {
   final Map<String, dynamic>? rodEquipment;
   final Map<String, dynamic>? reelEquipment;
   final Map<String, dynamic>? lureEquipment;
-  final SpeciesProfile? speciesProfile;
   final bool isDeleting;
   final bool isSharing;
 
@@ -23,7 +20,6 @@ class FishDetailState {
     this.rodEquipment,
     this.reelEquipment,
     this.lureEquipment,
-    this.speciesProfile,
     this.isDeleting = false,
     this.isSharing = false,
   });
@@ -35,7 +31,6 @@ class FishDetailState {
     Map<String, dynamic>? rodEquipment,
     Map<String, dynamic>? reelEquipment,
     Map<String, dynamic>? lureEquipment,
-    SpeciesProfile? speciesProfile,
     bool? isDeleting,
     bool? isSharing,
   }) {
@@ -46,7 +41,6 @@ class FishDetailState {
       rodEquipment: rodEquipment ?? this.rodEquipment,
       reelEquipment: reelEquipment ?? this.reelEquipment,
       lureEquipment: lureEquipment ?? this.lureEquipment,
-      speciesProfile: speciesProfile ?? this.speciesProfile,
       isDeleting: isDeleting ?? this.isDeleting,
       isSharing: isSharing ?? this.isSharing,
     );
@@ -57,13 +51,11 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
   final int fishId;
   final FishCatchService _fishCatchService;
   final EquipmentService _equipmentService;
-  final SpeciesProfileService _speciesProfileService;
 
   FishDetailViewModel(
     this.fishId,
     this._fishCatchService,
     this._equipmentService,
-    this._speciesProfileService,
   ) : super(const FishDetailState()) {
     loadFish();
   }
@@ -120,59 +112,16 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
         }
       }
 
-      // Load species profile based on species name
-      SpeciesProfile? speciesProfile;
-      final speciesName = fish['species'] as String?;
-      if (speciesName != null && speciesName.isNotEmpty) {
-        // First try to find by exact species name through fish_species lookup
-        speciesProfile =
-            await _speciesProfileService.getBySpeciesName(speciesName);
-        // If not found, try to find by aliases or partial match
-        speciesProfile ??= await _findSpeciesProfileByName(speciesName);
-      }
-
       state = state.copyWith(
         isLoading: false,
         fish: fish,
         rodEquipment: rodEquipment,
         reelEquipment: reelEquipment,
         lureEquipment: lureEquipment,
-        speciesProfile: speciesProfile,
       );
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
     }
-  }
-
-  /// Find species profile by name, trying various matching strategies
-  Future<SpeciesProfile?> _findSpeciesProfileByName(String speciesName) async {
-    final allProfiles = await _speciesProfileService.getAll();
-    final lowerName = speciesName.toLowerCase();
-
-    for (final profile in allProfiles) {
-      // Match by aliases (comma-separated list)
-      if (profile.aliases != null) {
-        final aliases = profile.aliases!.toLowerCase().split(',');
-        for (final alias in aliases) {
-          if (alias.trim() == lowerName) {
-            return profile;
-          }
-        }
-      }
-    }
-
-    // Try partial match
-    for (final profile in allProfiles) {
-      if (profile.aliases != null &&
-          profile.aliases!.toLowerCase().contains(lowerName)) {
-        return profile;
-      }
-      if (profile.speciesId.toLowerCase() == lowerName) {
-        return profile;
-      }
-    }
-
-    return null;
   }
 
   Future<bool> deleteFish() async {
@@ -199,6 +148,5 @@ final fishDetailViewModelProvider =
     fishId,
     ref.read(fishCatchServiceProvider),
     ref.read(equipmentServiceProvider),
-    ref.read(speciesProfileServiceProvider),
   ),
 );
