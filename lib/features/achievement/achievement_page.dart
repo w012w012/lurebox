@@ -5,64 +5,29 @@ import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/models/achievement.dart';
 import '../../core/providers/achievement_provider.dart';
-import '../../core/providers/fish_guide_provider.dart';
 import '../../core/providers/language_provider.dart';
 import '../../widgets/common/premium_button.dart';
 import '../../widgets/common/premium_card.dart';
-import 'widgets/achievement_overview_card.dart';
 import 'widgets/achievement_collapse_card.dart';
-import 'widgets/fish_detail_bottom_sheet.dart';
 
 /// 成就页
 ///
 /// Features:
-/// - Tabs for fish collection and achievements
-/// - Fish collection progress overview
 /// - Achievement progress overview
+/// - Achievement progress by category
 /// - AchievementCollapseCard in list mode
-class AchievementPage extends ConsumerStatefulWidget {
+class AchievementPage extends ConsumerWidget {
   const AchievementPage({super.key});
 
   @override
-  ConsumerState<AchievementPage> createState() => _AchievementPageState();
-}
-
-class _AchievementPageState extends ConsumerState<AchievementPage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final achievementsAsync = ref.watch(allAchievementsProvider);
-    final fishGuideState = ref.watch(fishGuideProvider);
     final strings = ref.watch(currentStringsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('成就 · 图鉴'),
+        title: const Text('成就'),
         centerTitle: true,
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: const [
-            Tab(text: '鱼类收藏'),
-            Tab(text: '成就'),
-          ],
-          labelColor: AppColors.primaryLight,
-          unselectedLabelColor: AppColors.textSecondaryLight,
-          indicatorColor: AppColors.accentLight,
-        ),
       ),
       body: achievementsAsync.when(
         loading: () => Center(
@@ -116,260 +81,15 @@ class _AchievementPageState extends ConsumerState<AchievementPage>
           ),
         ),
         data: (achievements) {
-          // Always show tabs and fish guide, even if achievements are empty
-          // Tab 1 (鱼类收藏) shows fish guide from fishGuideProvider
-          // Tab 2 (成就) shows original achievement content
-
-          return TabBarView(
-            controller: _tabController,
-            children: [
-              // Tab 1: 鱼类收藏 - 显示鱼种图鉴网格/列表视图（无概览卡片）
-              _buildFishCollectionContent(
-                  fishGuideState, achievements, strings),
-              // Tab 2: 成就 - 显示原有成就内容（成就统计概览卡片在方法内部）
-              _buildAchievementsContent(achievements, strings),
-            ],
-          );
+          return _buildAchievementsContent(context, achievements, strings);
         },
       ),
     );
   }
 
-  /// 构建鱼种图鉴概览卡片
-  /// 基于 FishGuideState 显示鱼种解锁进度
-  Widget _buildFishGuideOverviewCard(
-      FishGuideState fishGuideState, AppStrings strings) {
-    final unlockedCount = fishGuideState.unlockedCount;
-    final totalCount = fishGuideState.totalCount;
-
-    // 计算本月新增
-    final now = DateTime.now();
-    final monthStart = DateTime(now.year, now.month, 1);
-    final monthlyNewCount = fishGuideState.speciesList
-        .where((s) =>
-            s.stats.isUnlocked &&
-            s.stats.firstCaughtAt != null &&
-            s.stats.firstCaughtAt!.isAfter(monthStart))
-        .length;
-
-    AchievementProgressStatus status;
-    if (unlockedCount == 0) {
-      status = AchievementProgressStatus.locked;
-    } else if (unlockedCount == totalCount && totalCount > 0) {
-      status = AchievementProgressStatus.completed;
-    } else {
-      status = AchievementProgressStatus.inProgress;
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: AchievementOverviewCard(
-        unlockedCount: unlockedCount,
-        totalCount: totalCount,
-        monthlyNewCount: monthlyNewCount,
-        status: status,
-      ),
-    );
-  }
-
-  Widget _buildFishCollectionContent(
-    FishGuideState fishGuideState,
-    List<Achievement> achievements,
-    AppStrings strings,
-  ) {
-    // 如果正在加载，显示加载指示器
-    if (fishGuideState.isLoading) {
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('正在加载鱼种数据...'),
-          ],
-        ),
-      );
-    }
-
-    // 如果有错误，显示错误信息
-    if (fishGuideState.error != null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-              color: AppColors.error,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '加载失败: ${fishGuideState.error}',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                ref.read(fishGuideProvider.notifier).refresh();
-              },
-              child: const Text('重试'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return Column(
-      children: [
-        // 鱼种图鉴进度概览卡片
-        _buildFishGuideOverviewCard(fishGuideState, strings),
-        // 筛选标签
-        _buildCategoryFilterChips(fishGuideState),
-        // 列表视图
-        Expanded(
-          child: _buildFishListView(fishGuideState),
-        ),
-      ],
-    );
-  }
-
-  /// 构建分类筛选标签
-  Widget _buildCategoryFilterChips(FishGuideState fishGuideState) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: FishGuideCategoryFilter.values.map((filter) {
-            final isSelected = fishGuideState.categoryFilter == filter;
-            return Padding(
-              padding: const EdgeInsets.only(right: 8),
-              child: FilterChip(
-                label: Text(filter.label),
-                selected: isSelected,
-                onSelected: (selected) {
-                  ref
-                      .read(fishGuideProvider.notifier)
-                      .setCategoryFilter(filter);
-                },
-                backgroundColor: AppColors.grey100,
-                selectedColor: AppColors.accentLight.withOpacity(0.2),
-                checkmarkColor: AppColors.accentLight,
-                labelStyle: TextStyle(
-                  color: isSelected
-                      ? AppColors.accentLight
-                      : AppColors.textSecondaryLight,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                ),
-                side: BorderSide(
-                  color:
-                      isSelected ? AppColors.accentLight : Colors.transparent,
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  /// 构建鱼种列表视图
-  Widget _buildFishListView(FishGuideState fishGuideState) {
-    if (fishGuideState.speciesList.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.water_outlined,
-              size: 64,
-              color: AppColors.grey500,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '暂无鱼种数据',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: fishGuideState.speciesList.length,
-      itemBuilder: (context, index) {
-        final speciesWithStats = fishGuideState.speciesList[index];
-        final species = speciesWithStats.species;
-        final stats = speciesWithStats.stats;
-
-        return Card(
-          margin: const EdgeInsets.only(bottom: 8),
-          child: ListTile(
-            leading: Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: stats.isUnlocked
-                    ? AppColors.accentLight.withOpacity(0.1)
-                    : AppColors.grey200,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Icon(
-                stats.isUnlocked ? Icons.check_circle : Icons.lock_outline,
-                color: stats.isUnlocked
-                    ? AppColors.accentLight
-                    : AppColors.grey500,
-              ),
-            ),
-            title: Text(
-              species.standardName,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: stats.isUnlocked
-                    ? AppColors.textPrimaryLight
-                    : AppColors.textSecondaryLight,
-              ),
-            ),
-            subtitle: Text(
-              '${stats.totalCount} 次捕获 · ${species.category.label}',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            trailing: speciesWithStats.stats.isUnlocked
-                ? Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.success.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '已解锁',
-                      style: TextStyle(
-                        color: AppColors.success,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  )
-                : null,
-            onTap: () {
-              showFishDetailBottomSheet(
-                context,
-                species: species,
-                stats: stats,
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
   /// 构建成就内容（显示成就统计概览和成就列表）
   Widget _buildAchievementsContent(
+    BuildContext context,
     List<Achievement> achievements,
     AppStrings strings,
   ) {
@@ -387,9 +107,9 @@ class _AchievementPageState extends ConsumerState<AchievementPage>
             const SizedBox(height: 16),
             Text(
               strings.noAchievements,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodyMedium?.color,
+              ),
             ),
           ],
         ),
@@ -406,10 +126,10 @@ class _AchievementPageState extends ConsumerState<AchievementPage>
       children: [
         // 成就统计概览卡片（使用原始设计）
         _buildAchievementStatsOverview(
-            unlockedCount, totalCount, progress, strings),
+            context, unlockedCount, totalCount, progress, strings),
         // 成就列表
         Expanded(
-          child: _buildAchievementListView(achievements, strings),
+          child: _buildAchievementListView(context, achievements, strings),
         ),
       ],
     );
@@ -417,6 +137,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage>
 
   /// 构建成就统计概览卡片（原始设计）
   Widget _buildAchievementStatsOverview(
+    BuildContext context,
     int unlockedCount,
     int totalCount,
     int progress,
@@ -486,6 +207,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage>
                   Row(
                     children: [
                       _buildAchievementStatItem(
+                        context,
                         '已解锁',
                         '$unlockedCount',
                         Icons.emoji_events,
@@ -493,6 +215,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage>
                       ),
                       const SizedBox(width: 20),
                       _buildAchievementStatItem(
+                        context,
                         '总成就',
                         '$totalCount',
                         Icons.stars,
@@ -519,6 +242,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage>
   }
 
   Widget _buildAchievementStatItem(
+    BuildContext context,
     String label,
     String value,
     IconData icon,
@@ -551,6 +275,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage>
   }
 
   Widget _buildAchievementListView(
+    BuildContext context,
     List<Achievement> achievements,
     AppStrings strings,
   ) {
@@ -567,9 +292,9 @@ class _AchievementPageState extends ConsumerState<AchievementPage>
             const SizedBox(height: 16),
             Text(
               strings.noAchievements,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+              style: TextStyle(
+                color: Theme.of(context).textTheme.bodyMedium?.color,
+              ),
             ),
           ],
         ),

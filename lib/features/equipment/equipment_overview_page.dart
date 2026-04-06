@@ -111,7 +111,6 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                       _buildLureCharts(state.lureList, strings),
                       const SizedBox(height: 16),
                     ],
-                    _buildSoftWormAnalytics(state, strings),
                   ],
                 ),
               ),
@@ -607,57 +606,6 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
           '${strings.lureType}分布',
           AppColors.chartColors[2],
         ),
-      ],
-    );
-  }
-
-  Widget _buildSoftWormAnalytics(EquipmentListState state, AppStrings strings) {
-    final analytics = state.softWormAnalytics;
-    final hasData = analytics.isNotEmpty &&
-        (analytics['rigType']?.isNotEmpty == true ||
-            analytics['hookType']?.isNotEmpty == true ||
-            analytics['hookSize']?.isNotEmpty == true ||
-            analytics['hookWeight']?.isNotEmpty == true);
-
-    if (!hasData) {
-      return const SizedBox();
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionTitle('软虫数据分析', AppColors.chartColors[6]),
-        const SizedBox(height: 12),
-        if (analytics['rigType']?.isNotEmpty == true)
-          _buildBarChart(
-            analytics['rigType']!,
-            '钓组分布',
-            AppColors.chartColors[0],
-          ),
-        if (analytics['rigType']?.isNotEmpty == true)
-          const SizedBox(height: 12),
-        if (analytics['hookType']?.isNotEmpty == true)
-          _buildBarChart(
-            analytics['hookType']!,
-            '鱼钩分布',
-            AppColors.chartColors[1],
-          ),
-        if (analytics['hookType']?.isNotEmpty == true)
-          const SizedBox(height: 12),
-        if (analytics['hookSize']?.isNotEmpty == true)
-          _buildBarChart(
-            analytics['hookSize']!,
-            '钩号分布',
-            AppColors.chartColors[2],
-          ),
-        if (analytics['hookSize']?.isNotEmpty == true)
-          const SizedBox(height: 12),
-        if (analytics['hookWeight']?.isNotEmpty == true)
-          _buildBarChart(
-            analytics['hookWeight']!,
-            '鱼钩重量分布',
-            AppColors.chartColors[3],
-          ),
       ],
     );
   }

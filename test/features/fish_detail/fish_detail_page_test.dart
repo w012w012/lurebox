@@ -12,6 +12,7 @@ import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:lurebox/core/services/species_profile_service.dart';
 import 'package:lurebox/widgets/fish_detail/fish_action_buttons.dart';
 
 void main() {
@@ -25,11 +26,13 @@ void main() {
   group('FishDetailPage', () {
     late MockFishCatchService mockFishCatchService;
     late MockEquipmentService mockEquipmentService;
+    late MockSpeciesProfileService mockSpeciesProfileService;
     late FishDetailState testState;
 
     setUp(() {
       mockFishCatchService = MockFishCatchService();
       mockEquipmentService = MockEquipmentService();
+      mockSpeciesProfileService = MockSpeciesProfileService();
 
       testState = FishDetailState(
         fish: {
@@ -53,6 +56,7 @@ void main() {
         rodEquipment: null,
         reelEquipment: null,
         lureEquipment: null,
+        speciesProfile: null,
       );
     });
 
@@ -72,6 +76,7 @@ void main() {
               fishId,
               mockFishCatchService,
               mockEquipmentService,
+              mockSpeciesProfileService,
               effectiveState,
             );
           }),
@@ -134,6 +139,7 @@ void main() {
           rodEquipment: null,
           reelEquipment: null,
           lureEquipment: null,
+          speciesProfile: null,
         );
 
         await tester.pumpWidget(
@@ -144,6 +150,7 @@ void main() {
                   1,
                   mockFishCatchService,
                   mockEquipmentService,
+                  mockSpeciesProfileService,
                   loadingState,
                 );
               }),
@@ -174,6 +181,7 @@ void main() {
           rodEquipment: null,
           reelEquipment: null,
           lureEquipment: null,
+          speciesProfile: null,
         );
 
         await tester.pumpWidget(
@@ -184,6 +192,7 @@ void main() {
                   1,
                   mockFishCatchService,
                   mockEquipmentService,
+                  mockSpeciesProfileService,
                   errorState,
                 );
               }),
@@ -210,6 +219,7 @@ void main() {
           rodEquipment: null,
           reelEquipment: null,
           lureEquipment: null,
+          speciesProfile: null,
         );
 
         await tester.pumpWidget(
@@ -220,6 +230,7 @@ void main() {
                   1,
                   mockFishCatchService,
                   mockEquipmentService,
+                  mockSpeciesProfileService,
                   errorState,
                 );
               }),
@@ -275,11 +286,13 @@ class TestFishDetailViewModel extends StateNotifier<FishDetailState>
   final int fishId;
   final FishCatchService _fishCatchService;
   final EquipmentService _equipmentService;
+  final SpeciesProfileService _speciesProfileService;
 
   TestFishDetailViewModel(
     this.fishId,
     this._fishCatchService,
     this._equipmentService,
+    this._speciesProfileService,
     FishDetailState initialState,
   ) : super(initialState);
 
@@ -294,15 +307,14 @@ class TestFishDetailViewModel extends StateNotifier<FishDetailState>
 
   @override
   void setSharing(bool value) {}
-
-  @override
-  void setDeleting(bool value) {}
 }
 
 // Mock services for testing
 class MockFishCatchService extends Mock implements FishCatchService {}
 
 class MockEquipmentService extends Mock implements EquipmentService {}
+
+class MockSpeciesProfileService extends Mock implements SpeciesProfileService {}
 
 /// Test notifier that doesn't use database
 class TestAppSettingsNotifier extends StateNotifier<AppSettings>

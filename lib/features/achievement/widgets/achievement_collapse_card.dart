@@ -160,9 +160,9 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
                           color: AppColors.success,
                         )
                       else
-                        Text(
+                        const Text(
                           '🐟',
-                          style: const TextStyle(fontSize: 12),
+                          style: TextStyle(fontSize: 12),
                         ),
                     ],
                   ),

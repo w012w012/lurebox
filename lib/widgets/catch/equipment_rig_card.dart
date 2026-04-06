@@ -4,13 +4,11 @@ import '../../core/constants/strings.dart';
 import '../../core/models/equipment.dart';
 import '../../core/camera/camera_state.dart';
 import '../../core/camera/camera_view_model.dart';
-import '../rig/rig_config_card.dart';
 import '../common/premium_button.dart';
 
-/// 装备与钓组组合卡片
+/// 装备卡片
 ///
-/// 统一展示装备信息（鱼竿、鱼轮、鱼饵）和钓组配置
-/// 包含可展开的 RigConfigCard
+/// 展示装备信息（鱼竿、鱼轮、鱼饵）
 class EquipmentRigCard extends StatelessWidget {
   final CameraState state;
   final CameraViewModel vm;
@@ -36,7 +34,7 @@ class EquipmentRigCard extends StatelessWidget {
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
-          initiallyExpanded: state.selectedLure?.lureType == '软虫',
+          initiallyExpanded: true,
           onExpansionChanged: (expanded) {},
           leading: Icon(
             Icons.hardware,
@@ -66,27 +64,19 @@ class EquipmentRigCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Equipment rows with emoji icons
-                  _EquipmentInfoRow(
-                    label: '🎣 ${strings.rod}',
-                    equipment: state.selectedRod,
+                  _EquipmentRow(
+                    label: strings.rod,
+                    value: _buildRodDisplay(state.selectedRod),
                   ),
                   const SizedBox(height: 8),
-                  _EquipmentInfoRow(
-                    label: '⚙️ ${strings.reel}',
-                    equipment: state.selectedReel,
+                  _EquipmentRow(
+                    label: strings.reel,
+                    value: _buildReelDisplay(state.selectedReel),
                   ),
                   const SizedBox(height: 8),
-                  _EquipmentInfoRow(
-                    label: '🪝 ${strings.lure}',
-                    equipment: state.selectedLure,
-                  ),
-                  const SizedBox(height: 16),
-                  // Embedded RigConfigCard
-                  RigConfigCard(
-                    config: state.rigConfig,
-                    onChanged: (config) => vm.setRigConfig(config),
-                    initiallyExpanded: state.selectedLure?.lureType == '软虫',
+                  _EquipmentRow(
+                    label: strings.lure,
+                    value: _buildLureDisplay(state.selectedLure),
                   ),
                 ],
               ),
@@ -96,34 +86,71 @@ class EquipmentRigCard extends StatelessWidget {
       ),
     );
   }
+
+  String _buildRodDisplay(Equipment? rod) {
+    if (rod == null) return '-';
+    final parts = <String>[];
+    if (rod.brand?.isNotEmpty == true) parts.add(rod.brand!);
+    if (rod.model?.isNotEmpty == true) parts.add(rod.model!);
+    // 握柄类型
+    if (rod.category != null && rod.category!.contains('|')) {
+      parts.add(rod.category!.split('|')[0]);
+    }
+    if (rod.length?.isNotEmpty == true) {
+      parts.add('${rod.length}${rod.lengthUnit}');
+    }
+    if (rod.hardness?.isNotEmpty == true) parts.add(rod.hardness!);
+    if (rod.rodAction?.isNotEmpty == true) parts.add(rod.rodAction!);
+    return parts.isEmpty ? '-' : parts.join(' / ');
+  }
+
+  String _buildReelDisplay(Equipment? reel) {
+    if (reel == null) return '-';
+    final parts = <String>[];
+    if (reel.brand?.isNotEmpty == true) parts.add(reel.brand!);
+    if (reel.model?.isNotEmpty == true) parts.add(reel.model!);
+    if (reel.reelRatio?.isNotEmpty == true) parts.add(reel.reelRatio!);
+    return parts.isEmpty ? '-' : parts.join(' / ');
+  }
+
+  String _buildLureDisplay(Equipment? lure) {
+    if (lure == null) return '-';
+    final parts = <String>[];
+    if (lure.brand?.isNotEmpty == true) parts.add(lure.brand!);
+    if (lure.model?.isNotEmpty == true) parts.add(lure.model!);
+    if (lure.lureSize?.isNotEmpty == true) {
+      parts.add('${lure.lureSize}${lure.lureSizeUnit}');
+    }
+    if (lure.lureColor?.isNotEmpty == true) parts.add(lure.lureColor!);
+    return parts.isEmpty ? '-' : parts.join(' / ');
+  }
 }
 
-/// 装备信息行组件
-class _EquipmentInfoRow extends StatelessWidget {
+/// 装备信息行
+class _EquipmentRow extends StatelessWidget {
   final String label;
-  final Equipment? equipment;
+  final String value;
 
-  const _EquipmentInfoRow({
-    required this.label,
-    this.equipment,
-  });
+  const _EquipmentRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          '$label: ',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w500,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
         ),
-        const Spacer(),
-        Text(
-          equipment?.displayName ?? '-',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Text(
+            value,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
         ),
       ],
     );

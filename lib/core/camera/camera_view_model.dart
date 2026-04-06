@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/fish_catch.dart';
 import '../models/equipment.dart';
 import '../models/app_settings.dart';
-import '../models/rig_config.dart';
 import '../utils/unit_converter.dart';
 import '../di/di.dart';
 import '../services/fish_catch_service.dart';
@@ -253,50 +252,6 @@ class CameraViewModel extends StateNotifier<CameraState> {
     state = state.copyWith(selectedLure: () => lure);
   }
 
-  void setRigType(String? type) {
-    state = state.copyWith(
-      rigConfig: () => state.rigConfig.copyWith(rigType: type),
-    );
-  }
-
-  void setSinkerWeight(String? weight) {
-    state = state.copyWith(
-      rigConfig: () => state.rigConfig.copyWith(sinkerWeight: weight),
-    );
-  }
-
-  void setSinkerPosition(String? position) {
-    state = state.copyWith(
-      rigConfig: () => state.rigConfig.copyWith(sinkerPosition: position),
-    );
-  }
-
-  void setHookType(String? type) {
-    state = state.copyWith(
-      rigConfig: () => state.rigConfig.copyWith(hookType: type),
-    );
-  }
-
-  void setHookSize(String? size) {
-    state = state.copyWith(
-      rigConfig: () => state.rigConfig.copyWith(hookSize: size),
-    );
-  }
-
-  void setHookWeight(String? weight) {
-    state = state.copyWith(
-      rigConfig: () => state.rigConfig.copyWith(hookWeight: weight),
-    );
-  }
-
-  void resetRigConfig() {
-    state = state.copyWith(rigConfig: () => const RigConfig());
-  }
-
-  void setRigConfig(RigConfig config) {
-    state = state.copyWith(rigConfig: () => config);
-  }
-
   double? _calculateEstimatedWeight(double length) {
     if (length <= 0) return null;
     // 公式基于厘米计算，转换输入长度到厘米
@@ -346,7 +301,6 @@ class CameraViewModel extends StateNotifier<CameraState> {
           rodId: state.selectedRod?.id,
           reelId: state.selectedReel?.id,
           lureId: state.selectedLure?.id,
-          rigConfig: state.rigConfig.isNotEmpty ? state.rigConfig : null,
           airTemperature: state.airTemperature,
           pressure: state.pressure,
           weatherCode: state.weatherCode,

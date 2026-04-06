@@ -26,6 +26,7 @@ import '../database/database_provider.dart';
 import '../models/ai_recognition_settings.dart';
 import '../providers/ai_recognition_provider.dart';
 import '../services/fish_recognition_service.dart';
+import '../services/species_profile_service.dart';
 
 // ===== 核心依赖 =====
 
@@ -133,4 +134,10 @@ final aiRecognitionSettingsProvider =
 
 final fishRecognitionServiceProvider = Provider<FishRecognitionService>((ref) {
   return FishRecognitionService();
+});
+
+// ===== Species Profile Service =====
+
+final speciesProfileServiceProvider = Provider<SpeciesProfileService>((ref) {
+  return SpeciesProfileService(ref.watch(databaseProvider));
 });

@@ -200,13 +200,6 @@ class FishCatchService {
     await _speciesHistoryRepo.restore(name);
   }
 
-  // ===== Soft Worm Analytics =====
-
-  /// 获取软虫钓组分析数据
-  Future<Map<String, Map<String, int>>> getSoftWormRigAnalytics() async {
-    return await _repository.getSoftWormRigAnalytics();
-  }
-
   // ===== Private Helpers =====
 
   Future<void> _deleteImageFiles(FishCatch fish) async {

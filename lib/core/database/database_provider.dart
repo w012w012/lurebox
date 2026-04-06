@@ -6,7 +6,7 @@ import 'package:path/path.dart';
 /// 负责数据库的初始化和连接管理
 class DatabaseProvider {
   static const String _databaseName = 'lurebox.db';
-  static const int _databaseVersion = 17;
+  static const int _databaseVersion = 19;
 
   Database? _database;
   bool _initializing = false;
@@ -178,18 +178,7 @@ class DatabaseProvider {
       )
     ''');
 
-    // 创建索引
-    await db.execute(
-      'CREATE INDEX idx_fish_catches_species ON fish_catches(species)',
-    );
-    await db.execute(
-      'CREATE INDEX idx_fish_catches_catch_time ON fish_catches(catch_time)',
-    );
-    await db.execute(
-      'CREATE INDEX idx_fish_catches_location ON fish_catches(location_name)',
-    );
-    await db.execute('CREATE INDEX idx_equipment_type ON equipments(type)');
-    // 外键索引 - 优化 JOIN 和引用查询
+// 创建索引
     await db.execute(
       'CREATE INDEX idx_fish_catches_fate ON fish_catches(fate)',
     );
@@ -205,6 +194,30 @@ class DatabaseProvider {
     await db.execute(
       'CREATE INDEX idx_fish_catches_lure_id ON fish_catches(lure_id)',
     );
+
+    // 创建 species_profiles 表 (鱼种详细信息) - v18
+    await db.execute('''
+CREATE TABLE species_profiles (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  species_id TEXT NOT NULL UNIQUE,
+  aliases TEXT,
+  identification TEXT,
+  habitat TEXT,
+  feeding_behavior TEXT,
+  fishing_techniques TEXT,
+  size_records TEXT,
+  conservation_status TEXT,
+  source_references TEXT,
+  confidence_score TEXT,
+  version INTEGER DEFAULT 1,
+  created_at TEXT,
+  updated_at TEXT
+)
+''');
+
+    // 创建索引
+    await db.execute(
+        'CREATE INDEX idx_species_profiles_species_id ON species_profiles(species_id)');
   }
 
   /// 数据库迁移
@@ -419,6 +432,31 @@ CREATE TABLE user_species_alias (
           'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)');
       await db.execute(
           'CREATE INDEX idx_alias_species ON user_species_alias(species_id)');
+    }
+    if (oldVersion < 19) {
+      // 创建 species_profiles 表（如果不存在）
+      await db.execute('''
+CREATE TABLE IF NOT EXISTS species_profiles (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  species_id TEXT NOT NULL UNIQUE,
+  aliases TEXT,
+  identification TEXT,
+  habitat TEXT,
+  feeding_behavior TEXT,
+  fishing_techniques TEXT,
+  size_records TEXT,
+  conservation_status TEXT,
+  source_references TEXT,
+  confidence_score TEXT,
+  version INTEGER DEFAULT 1,
+  created_at TEXT,
+  updated_at TEXT
+)
+''');
+
+      // 创建索引
+      await db.execute(
+          'CREATE INDEX IF NOT EXISTS idx_species_profiles_species_id ON species_profiles(species_id)');
     }
   }
 

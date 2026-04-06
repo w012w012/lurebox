@@ -464,7 +464,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
+          const Icon(
             Icons.inventory_2_rounded,
             size: 18,
             color: AppColors.accentLight,

@@ -1,6 +1,5 @@
 import '../models/fish_catch.dart';
 import '../models/equipment.dart';
-import '../models/rig_config.dart';
 
 enum CameraCaptureState {
   initial,
@@ -46,8 +45,6 @@ class CameraState {
   final bool isRecognizing;
   final String? recognizedSpecies;
   final int? recognitionConfidence;
-  // 钓组配置
-  final RigConfig rigConfig;
 
   static const double weightCoefficient = 0.012;
 
@@ -85,7 +82,6 @@ class CameraState {
     this.recognizedSpecies,
     this.recognitionConfidence,
     this.pendingRecognition = false,
-    this.rigConfig = const RigConfig(),
   });
 
   CameraState copyWith({
@@ -122,7 +118,6 @@ class CameraState {
     String? Function()? recognizedSpecies,
     int? Function()? recognitionConfidence,
     bool? pendingRecognition,
-    RigConfig? Function()? rigConfig,
   }) {
     return CameraState(
       captureState: captureState ?? this.captureState,
@@ -166,8 +161,6 @@ class CameraState {
           ? recognitionConfidence()
           : this.recognitionConfidence,
       pendingRecognition: pendingRecognition ?? this.pendingRecognition,
-      rigConfig:
-          rigConfig != null ? (rigConfig() ?? this.rigConfig) : this.rigConfig,
     );
   }
 

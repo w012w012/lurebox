@@ -14,7 +14,6 @@ class EquipmentListState {
   final String selectedType;
   final bool allExpanded;
   final int? expandedId;
-  final Map<String, Map<String, int>> softWormAnalytics;
 
   const EquipmentListState({
     this.isLoading = true,
@@ -26,7 +25,6 @@ class EquipmentListState {
     this.selectedType = 'rod',
     this.allExpanded = true,
     this.expandedId,
-    this.softWormAnalytics = const {},
   });
 
   EquipmentListState copyWith({
@@ -39,7 +37,6 @@ class EquipmentListState {
     String? selectedType,
     bool? allExpanded,
     int? expandedId,
-    Map<String, Map<String, int>>? softWormAnalytics,
   }) {
     return EquipmentListState(
       isLoading: isLoading ?? this.isLoading,
@@ -51,7 +48,6 @@ class EquipmentListState {
       selectedType: selectedType ?? this.selectedType,
       allExpanded: allExpanded ?? this.allExpanded,
       expandedId: expandedId,
-      softWormAnalytics: softWormAnalytics ?? this.softWormAnalytics,
     );
   }
 
@@ -86,7 +82,6 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
         _equipmentService.getAll(type: 'reel'),
         _equipmentService.getAll(type: 'lure'),
         _fishCatchService.getAllEquipmentCatchStats(),
-        _fishCatchService.getSoftWormRigAnalytics(),
       ]);
 
       state = state.copyWith(
@@ -95,7 +90,6 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
         reelList: results[1] as List<Equipment>,
         lureList: results[2] as List<Equipment>,
         equipmentStats: (results[3] as Map).cast<int, Map<String, int>>(),
-        softWormAnalytics: (results[4] as Map).cast<String, Map<String, int>>(),
       );
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());

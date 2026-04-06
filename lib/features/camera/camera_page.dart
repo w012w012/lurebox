@@ -16,12 +16,12 @@ import '../../core/camera/camera_state.dart';
 
 import '../../widgets/common/image_cache_helper.dart';
 import '../../widgets/common/premium_button.dart';
-import '../../widgets/catch/equipment_rig_card.dart';
 import '../../widgets/catch/auxiliary_info_row.dart';
 import '../../widgets/catch/species_input_card.dart';
 import '../../widgets/catch/length_input_field.dart';
 import '../../widgets/catch/weight_input_field.dart';
 import '../../widgets/catch/fate_selector_card.dart';
+import '../../widgets/catch/equipment_rig_card.dart';
 import '../../widgets/catch/equipment_selection_sheet.dart';
 import '../../widgets/camera/camera_view_widget.dart';
 

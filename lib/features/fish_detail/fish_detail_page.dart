@@ -52,7 +52,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
           foregroundColor: AppColors.textPrimaryLight,
           elevation: 0,
         ),
-        body: Center(
+        body: const Center(
           child: CircularProgressIndicator(
             color: AppColors.accentLight,
           ),
@@ -79,7 +79,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              const Icon(
                 Icons.error_outline,
                 size: 48,
                 color: AppColors.error,
@@ -87,7 +87,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
               const SizedBox(height: 16),
               Text(
                 state.errorMessage ?? 'Fish not found',
-                style: TextStyle(
+                style: const TextStyle(
                   color: AppColors.textSecondaryLight,
                   fontSize: 16,
                 ),
@@ -402,17 +402,17 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
       showDialog<void>(
         context: context,
         barrierDismissible: false,
-        builder: (ctx) => Center(
+        builder: (ctx) => const Center(
           child: PremiumCard(
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(24),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CircularProgressIndicator(
                     color: AppColors.accentLight,
                   ),
-                  const SizedBox(height: 16),
+                  SizedBox(height: 16),
                   Text(
                     '正在分享...',
                     style: TextStyle(
