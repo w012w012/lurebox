@@ -1,3 +1,4 @@
+import '../models/fish_catch.dart';
 import '../services/database_service.dart';
 import 'location_repository.dart';
 
@@ -135,8 +136,8 @@ class SqliteLocationRepository implements LocationRepository {
         '''
         SELECT 
           COUNT(*) as total_catches,
-          SUM(CASE WHEN fate = 0 THEN 1 ELSE 0 END) as release_count,
-          SUM(CASE WHEN fate = 1 THEN 1 ELSE 0 END) as keep_count,
+          SUM(CASE WHEN fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as release_count,
+          SUM(CASE WHEN fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as keep_count,
           AVG(length) as avg_length,
           AVG(weight) as avg_weight
         FROM $_tableName

@@ -230,7 +230,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       final results = await db.query(
         _tableName,
         where: 'catch_time >= ? AND catch_time < ?',
-        whereArgs: [start.toIso8601String(), end.toIso8601String()],
+        whereArgs: [start.millisecondsSinceEpoch, end.millisecondsSinceEpoch],
         orderBy: 'catch_time DESC',
       ) as List<Map<String, dynamic>>;
       return List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
@@ -311,13 +311,8 @@ class SqliteFishCatchRepository implements FishCatchRepository {
     String? species,
     String orderBy = 'catch_time DESC',
   }) async {
-    // TODO: [SQL-FILTER-IMPL] Migrate to FishFilter parameter
-    // Current implementation uses old parameters, will be replaced with:
-    // Future<PaginatedResult<FishCatch>> getFilteredPage({
-    //   required int page,
-    //   int pageSize = 20,
-    //   required FishFilter filter,
-    // });
+    // NOTE: This method uses legacy parameter style. The FishFilter-based
+    // migration was deferred - current implementation is functional.
     try {
       final db = await _database;
       final offset = (page - 1) * pageSize;
@@ -459,7 +454,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         'SELECT COUNT(*) as count FROM $_tableName WHERE pending_recognition = ?',
         [1],
       );
-      return result.first['count'] as int;
+      return (result.first['count'] as int?) ?? 0;
     } catch (e) {
       throw Exception('Failed to get pending recognition count: $e');
     }
