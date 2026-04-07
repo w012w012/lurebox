@@ -56,9 +56,9 @@ class FishCatchService {
     final fishList = await Future.wait(
       ids.map((id) => _repository.getById(id)),
     );
-    for (final fish in fishList.whereType<FishCatch>()) {
-      await _deleteImageFiles(fish);
-    }
+    await Future.wait(
+      fishList.whereType<FishCatch>().map(_deleteImageFiles),
+    );
     await _repository.deleteMultiple(ids);
   }
 
