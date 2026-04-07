@@ -608,7 +608,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       final db = await _database;
       // Use INNER JOIN since we only want catches with a lure of type '软虫'
       final results = await db.rawQuery('''
-        SELECT 
+        SELECT
           fc.rig_type,
           fc.hook_type,
           fc.hook_size,
@@ -656,6 +656,19 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       };
     } catch (e) {
       throw Exception('Failed to get soft worm rig analytics: $e');
+    }
+  }
+
+  @override
+  Future<int> getCount() async {
+    try {
+      final db = await _database;
+      final result = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM $_tableName',
+      );
+      return result.first['count'] as int? ?? 0;
+    } catch (e) {
+      throw Exception('Failed to get fish catch count: $e');
     }
   }
 }

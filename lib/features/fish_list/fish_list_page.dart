@@ -28,6 +28,8 @@ class _FishListPageState extends ConsumerState<FishListPage>
   double _lastScrollOffset = 0;
 
   // Animation controllers for staggered list items
+  // 限制同时运行的动画控制器数量，防止长列表内存问题
+  static const int _maxActiveAnimations = 10;
   final Map<int, AnimationController> _itemAnimationControllers = {};
   final Map<int, Animation<double>> _itemAnimations = {};
 
@@ -183,29 +185,37 @@ class _FishListPageState extends ConsumerState<FishListPage>
   }
 
   Animation<double> _getItemAnimation(int index) {
-    if (!_itemAnimations.containsKey(index)) {
-      final controller = AnimationController(
-        duration: const Duration(milliseconds: 350),
-        vsync: this,
-      );
-
-      final delay = AnimationConstants.staggerDelay * index;
-      final delayFraction = delay.inMilliseconds / 350;
-
-      final animation = CurvedAnimation(
-        parent: controller,
-        curve: Interval(
-          delayFraction.clamp(0.0, 0.6),
-          1.0,
-          curve: AnimationConstants.defaultCurve,
-        ),
-      );
-
-      _itemAnimationControllers[index] = controller;
-      _itemAnimations[index] = animation;
-
-      controller.forward();
+    // 如果已有动画，直接返回
+    if (_itemAnimations.containsKey(index)) {
+      return _itemAnimations[index]!;
     }
+
+    // 如果超过最大动画数量，跳过动画（返回已完成动画）
+    if (_itemAnimationControllers.length >= _maxActiveAnimations) {
+      return const AlwaysStoppedAnimation(1.0);
+    }
+
+    final controller = AnimationController(
+      duration: const Duration(milliseconds: 350),
+      vsync: this,
+    );
+
+    final delay = AnimationConstants.staggerDelay * index;
+    final delayFraction = delay.inMilliseconds / 350;
+
+    final animation = CurvedAnimation(
+      parent: controller,
+      curve: Interval(
+        delayFraction.clamp(0.0, 0.6),
+        1.0,
+        curve: AnimationConstants.defaultCurve,
+      ),
+    );
+
+    _itemAnimationControllers[index] = controller;
+    _itemAnimations[index] = animation;
+
+    controller.forward();
     return _itemAnimations[index]!;
   }
 
@@ -318,11 +328,54 @@ class _FishListPageState extends ConsumerState<FishListPage>
   }
 
   Widget _buildMobileListView(FishListState state, AppStrings strings) {
-    return ListView.builder(
-      physics: const AlwaysScrollableScrollPhysics(),
-      controller: _scrollController,
-      itemCount: state.filteredCatches.length + (state.hasMore ? 2 : 1),
-      itemBuilder: (context, index) => _buildListItem(index, state, strings),
+    return Column(
+      children: [
+        // Filter panel and sort bar are built once outside the list
+        state.filterExpanded
+            ? FishFilterPanel(
+                strings: strings,
+                timeFilter: state.filter.timeFilter,
+                fateFilter: state.filter.fateFilter,
+                speciesFilter: state.filter.speciesFilter,
+                speciesList: state.uniqueSpecies,
+                customDateLabel: state.getCustomDateLabel(
+                  () => strings.custom,
+                ),
+                onShowDateRangePicker: _showDateRangePicker,
+                onTimeFilterChanged: (filter) => ref
+                    .read(fishListViewModelProvider.notifier)
+                    .setTimeFilter(filter),
+                onFateFilterChanged: (fate) => ref
+                    .read(fishListViewModelProvider.notifier)
+                    .setFateFilter(fate),
+                onSpeciesFilterChanged: (species) => ref
+                    .read(fishListViewModelProvider.notifier)
+                    .setSpeciesFilter(species),
+              )
+            : FishFilterCollapsed(
+                hasFilters: state.hasFilters,
+                filterLabel: strings.filterActive,
+                expandLabel: strings.expandFilter,
+                onTap: () => ref
+                    .read(fishListViewModelProvider.notifier)
+                    .toggleFilterExpanded(),
+                onClear: state.hasFilters
+                    ? () => ref
+                        .read(fishListViewModelProvider.notifier)
+                        .clearFilters()
+                    : null,
+              ),
+        _buildSortBar(state, strings),
+        Expanded(
+          child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            controller: _scrollController,
+            itemCount: state.filteredCatches.length + (state.hasMore ? 1 : 0),
+            itemBuilder: (context, index) =>
+                _buildListItem(index, state, strings),
+          ),
+        ),
+      ],
     );
   }
 
@@ -422,49 +475,8 @@ class _FishListPageState extends ConsumerState<FishListPage>
   }
 
   Widget _buildListItem(int index, FishListState state, AppStrings strings) {
-    if (index == 0) {
-      return Column(
-        children: [
-          state.filterExpanded
-              ? FishFilterPanel(
-                  strings: strings,
-                  timeFilter: state.filter.timeFilter,
-                  fateFilter: state.filter.fateFilter,
-                  speciesFilter: state.filter.speciesFilter,
-                  speciesList: state.uniqueSpecies,
-                  customDateLabel: state.getCustomDateLabel(
-                    () => strings.custom,
-                  ),
-                  onShowDateRangePicker: _showDateRangePicker,
-                  onTimeFilterChanged: (filter) => ref
-                      .read(fishListViewModelProvider.notifier)
-                      .setTimeFilter(filter),
-                  onFateFilterChanged: (fate) => ref
-                      .read(fishListViewModelProvider.notifier)
-                      .setFateFilter(fate),
-                  onSpeciesFilterChanged: (species) => ref
-                      .read(fishListViewModelProvider.notifier)
-                      .setSpeciesFilter(species),
-                )
-              : FishFilterCollapsed(
-                  hasFilters: state.hasFilters,
-                  filterLabel: strings.filterActive,
-                  expandLabel: strings.expandFilter,
-                  onTap: () => ref
-                      .read(fishListViewModelProvider.notifier)
-                      .toggleFilterExpanded(),
-                  onClear: state.hasFilters
-                      ? () => ref
-                          .read(fishListViewModelProvider.notifier)
-                          .clearFilters()
-                      : null,
-                ),
-          _buildSortBar(state, strings),
-        ],
-      );
-    }
-
-    if (index > state.filteredCatches.length) {
+    // 加载更多时的 loading indicator
+    if (index >= state.filteredCatches.length) {
       if (state.isLoading && state.filteredCatches.isNotEmpty) {
         return const Padding(
           padding: EdgeInsets.all(16),
@@ -478,9 +490,9 @@ class _FishListPageState extends ConsumerState<FishListPage>
       return const SizedBox.shrink();
     }
 
-    final fish = state.filteredCatches[index - 1];
+    final fish = state.filteredCatches[index];
     return _AnimatedListItem(
-      animation: _getItemAnimation(index - 1),
+      animation: _getItemAnimation(index),
       child: FishListItem(
         fish: fish,
         strings: strings,

@@ -120,8 +120,7 @@ class FishCatchService {
   }
 
   Future<int> getCount() async {
-    final result = await _repository.getPage(page: 1, pageSize: 1);
-    return result.totalCount;
+    return await _repository.getCount();
   }
 
   // ===== Stats Operations (delegated to StatsRepository) =====

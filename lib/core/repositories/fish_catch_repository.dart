@@ -77,4 +77,7 @@ abstract class FishCatchRepository {
     int pageSize = 20,
     required FishFilter filter,
   });
+
+  /// 获取渔获总数（高效实现，使用 SELECT COUNT(*)）
+  Future<int> getCount();
 }
