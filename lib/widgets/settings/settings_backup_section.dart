@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/constants/strings.dart';
+import '../../../core/design/theme/app_colors.dart';
+import '../../../core/design/theme/app_theme.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../core/providers/settings_view_model.dart';
 import '../../../core/services/export_service.dart';
@@ -16,6 +18,8 @@ class SettingsBackupSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = ref.watch(currentStringsProvider);
     final settingsState = ref.watch(settingsViewModelProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
 
     return PremiumCard(
       child: Column(
@@ -24,12 +28,22 @@ class SettingsBackupSection extends ConsumerWidget {
           InkWell(
             onTap: () => _showWebDAVDialog(context, ref, strings),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+              padding: const EdgeInsets.symmetric(
+                vertical: AppTheme.spacingMd,
+                horizontal: AppTheme.spacingSm,
+              ),
               child: Row(
                 children: [
-                  Icon(Icons.cloud_upload,
-                      color: Theme.of(context).colorScheme.primary),
-                  const SizedBox(width: 16),
+                  Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    decoration: BoxDecoration(
+                      color: accentColor.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child:
+                        Icon(Icons.cloud_upload, color: accentColor, size: 22),
+                  ),
+                  const SizedBox(width: AppTheme.spacingMd),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,16 +75,27 @@ class SettingsBackupSection extends ConsumerWidget {
                 ? null
                 : () => _handleCsvExport(context, ref),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+              padding: const EdgeInsets.symmetric(
+                vertical: AppTheme.spacingMd,
+                horizontal: AppTheme.spacingSm,
+              ),
               child: Row(
                 children: [
-                  Icon(
-                    settingsState.isExporting
-                        ? Icons.hourglass_empty
-                        : Icons.table_chart,
-                    color: Theme.of(context).colorScheme.primary,
+                  Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    decoration: BoxDecoration(
+                      color: accentColor.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: Icon(
+                      settingsState.isExporting
+                          ? Icons.hourglass_empty
+                          : Icons.table_chart,
+                      color: accentColor,
+                      size: 22,
+                    ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: AppTheme.spacingMd),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,16 +133,27 @@ class SettingsBackupSection extends ConsumerWidget {
                 ? null
                 : () => _showFullBackupDialog(context, ref, strings),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+              padding: const EdgeInsets.symmetric(
+                vertical: AppTheme.spacingMd,
+                horizontal: AppTheme.spacingSm,
+              ),
               child: Row(
                 children: [
-                  Icon(
-                    settingsState.isCreatingZipBackup
-                        ? Icons.hourglass_empty
-                        : Icons.archive,
-                    color: Theme.of(context).colorScheme.primary,
+                  Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    decoration: BoxDecoration(
+                      color: accentColor.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: Icon(
+                      settingsState.isCreatingZipBackup
+                          ? Icons.hourglass_empty
+                          : Icons.archive,
+                      color: accentColor,
+                      size: 22,
+                    ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: AppTheme.spacingMd),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -156,16 +192,27 @@ class SettingsBackupSection extends ConsumerWidget {
                 ? null
                 : () => _handleZipRestore(context, ref, strings),
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+              padding: const EdgeInsets.symmetric(
+                vertical: AppTheme.spacingMd,
+                horizontal: AppTheme.spacingSm,
+              ),
               child: Row(
                 children: [
-                  Icon(
-                    settingsState.isRestoringZipBackup
-                        ? Icons.hourglass_empty
-                        : Icons.restore,
-                    color: Theme.of(context).colorScheme.primary,
+                  Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    decoration: BoxDecoration(
+                      color: accentColor.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: Icon(
+                      settingsState.isRestoringZipBackup
+                          ? Icons.hourglass_empty
+                          : Icons.restore,
+                      color: accentColor,
+                      size: 22,
+                    ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: AppTheme.spacingMd),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

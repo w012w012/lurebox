@@ -15,7 +15,7 @@
 
 ## 技术栈
 
-- **Flutter** 3.11+
+- **Flutter** 3.24.5
 - **Riverpod** 状态管理
 - **SQLite** 本地数据库
 - **fl_chart** 图表统计

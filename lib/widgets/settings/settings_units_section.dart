@@ -43,6 +43,9 @@ class SettingsUnitsSection extends ConsumerWidget {
     required Widget trailing,
     required VoidCallback onTap,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -52,8 +55,15 @@ class SettingsUnitsSection extends ConsumerWidget {
         ),
         child: Row(
           children: [
-            Icon(icon, color: Theme.of(context).colorScheme.primary),
-            const SizedBox(width: 16),
+            Container(
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
+              decoration: BoxDecoration(
+                color: accentColor.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              ),
+              child: Icon(icon, color: accentColor, size: 22),
+            ),
+            const SizedBox(width: AppTheme.spacingMd),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

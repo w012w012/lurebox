@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
+import '../../../core/design/theme/app_theme.dart';
 import '../../../core/providers/language_provider.dart';
 import '../common/premium_button.dart';
 import '../common/premium_card.dart';
@@ -80,12 +81,25 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
     required Widget trailing,
     VoidCallback? onTap,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+
     final child = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+      padding: const EdgeInsets.symmetric(
+        vertical: AppTheme.spacingMd,
+        horizontal: AppTheme.spacingSm,
+      ),
       child: Row(
         children: [
-          Icon(icon, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(width: 16),
+          Container(
+            padding: const EdgeInsets.all(AppTheme.spacingSm),
+            decoration: BoxDecoration(
+              color: accentColor.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+            ),
+            child: Icon(icon, color: accentColor, size: 22),
+          ),
+          const SizedBox(width: AppTheme.spacingMd),
           Expanded(
               child: Text(title,
                   style: Theme.of(context)
