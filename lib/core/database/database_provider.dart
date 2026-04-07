@@ -6,7 +6,7 @@ import 'package:path/path.dart';
 /// 负责数据库的初始化和连接管理
 class DatabaseProvider {
   static const String _databaseName = 'lurebox.db';
-  static const int _databaseVersion = 20;
+  static const int _databaseVersion = 21;
 
   Database? _database;
   bool _initializing = false;
@@ -193,6 +193,14 @@ class DatabaseProvider {
     );
     await db.execute(
       'CREATE INDEX idx_fish_catches_lure_id ON fish_catches(lure_id)',
+    );
+    // 关键索引：按时间排序查询（最常见的查询模式）
+    await db.execute(
+      'CREATE INDEX idx_fish_catches_catch_time ON fish_catches(catch_time)',
+    );
+    // 复合索引：时间 + 命运筛选（首页/列表常用）
+    await db.execute(
+      'CREATE INDEX idx_fish_catches_time_fate ON fish_catches(catch_time, fate)',
     );
   }
 
@@ -408,6 +416,16 @@ CREATE TABLE user_species_alias (
           'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)');
       await db.execute(
           'CREATE INDEX idx_alias_species ON user_species_alias(species_id)');
+    }
+    if (oldVersion < 21) {
+      // 添加 catch_time 索引以优化按时间排序的查询
+      await db.execute(
+        'CREATE INDEX idx_fish_catches_catch_time ON fish_catches(catch_time)',
+      );
+      // 复合索引：时间 + 命运筛选
+      await db.execute(
+        'CREATE INDEX idx_fish_catches_time_fate ON fish_catches(catch_time, fate)',
+      );
     }
   }
 
