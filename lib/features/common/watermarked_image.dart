@@ -168,6 +168,7 @@ class WatermarkedImage extends ConsumerWidget {
                   displayWeight: displayWeight,
                   displayLengthUnit: displayUnits.fishLengthUnit,
                   displayWeightUnit: displayUnits.fishWeightUnit,
+                  displayTemperatureUnit: displayUnits.temperatureUnit,
                 ),
               ),
           ],
@@ -215,6 +216,7 @@ class WatermarkPainter extends CustomPainter {
   final double? displayWeight;
   final String displayLengthUnit;
   final String displayWeightUnit;
+  final String displayTemperatureUnit;
 
   WatermarkPainter({
     required this.species,
@@ -253,6 +255,7 @@ class WatermarkPainter extends CustomPainter {
     this.displayWeight,
     required this.displayLengthUnit,
     required this.displayWeightUnit,
+    required this.displayTemperatureUnit,
   });
 
   @override
@@ -374,7 +377,14 @@ class WatermarkPainter extends CustomPainter {
           break;
         case WatermarkInfoType.airTemperature:
           if (airTemperature != null) {
-            lines.add('气温：${airTemperature!.toStringAsFixed(1)}°C');
+            final displayTemp = UnitConverter.convertTemperature(
+              airTemperature!,
+              'C',
+              displayTemperatureUnit,
+            );
+            lines.add(
+                '气温：${UnitConverter.formatTemperature(displayTemp, displayTemperatureUnit)}',
+            );
           }
           break;
         case WatermarkInfoType.pressure:
@@ -600,6 +610,7 @@ class WatermarkExporter {
     required double? displayWeight,
     required String displayLengthUnit,
     required String displayWeightUnit,
+    required String displayTemperatureUnit,
   }) async {
     try {
       // 读取原图
@@ -638,6 +649,7 @@ class WatermarkExporter {
         displayWeight: displayWeight,
         displayLengthUnit: displayLengthUnit,
         displayWeightUnit: displayWeightUnit,
+        displayTemperatureUnit: displayTemperatureUnit,
       );
       painter.paint(canvas, size);
 

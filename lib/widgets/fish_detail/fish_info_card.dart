@@ -223,7 +223,10 @@ class FishInfoCard extends ConsumerWidget {
                 _InfoRow(
                   icon: Icons.thermostat,
                   label: '气温',
-                  value: '${airTemperature!.toStringAsFixed(1)}°C',
+                  value: UnitConverter.formatTemperature(
+                    airTemperature!,
+                    displayUnits.temperatureUnit,
+                  ),
                   iconColor: AppColors.accentLight,
                 ),
               if (pressure != null)

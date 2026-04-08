@@ -6,6 +6,8 @@ import '../../core/design/theme/app_colors.dart';
 import '../../core/di/di.dart';
 import '../../core/models/fish_catch.dart';
 import '../../core/models/equipment.dart';
+import '../../core/providers/app_settings_provider.dart';
+import '../../core/utils/unit_converter.dart';
 
 class FishEditPage extends ConsumerStatefulWidget {
   final Map<String, dynamic> fish;
@@ -140,6 +142,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
   @override
   Widget build(BuildContext context) {
     final s = widget.strings;
+    final temperatureUnit = ref.watch(appSettingsProvider).units.temperatureUnit;
     return Scaffold(
       appBar: AppBar(
         title: Text(s.editFish),
@@ -209,7 +212,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(_weatherDisplayText),
+                  Text(_getWeatherDisplayText(temperatureUnit)),
                 ],
               ),
             ),
@@ -367,6 +370,8 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
   }
 
   Future<void> _editWeather() async {
+    final temperatureUnit = ref.read(appSettingsProvider).units.temperatureUnit;
+    final tempSymbol = UnitConverter.getTemperatureSymbol(temperatureUnit);
     final tempController = TextEditingController(
       text: _airTemperature?.toStringAsFixed(1) ?? '',
     );
@@ -395,9 +400,9 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
             children: [
               TextField(
                 controller: tempController,
-                decoration: const InputDecoration(
-                  labelText: '气温 (°C)',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: '气温 ($tempSymbol)',
+                  border: const OutlineInputBorder(),
                 ),
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
@@ -456,10 +461,10 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
     pressureController.dispose();
   }
 
-  String get _weatherDisplayText {
+  String _getWeatherDisplayText(String temperatureUnit) {
     final parts = <String>[];
     if (_airTemperature != null) {
-      parts.add('气温: ${_airTemperature!.toStringAsFixed(1)}°C');
+      parts.add('气温: ${UnitConverter.formatTemperature(_airTemperature!, temperatureUnit)}');
     }
     if (_pressure != null) {
       parts.add('气压: ${_pressure!.toStringAsFixed(0)}hPa');
