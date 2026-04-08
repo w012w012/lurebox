@@ -16,11 +16,23 @@ import 'widgets/achievement_collapse_card.dart';
 /// - Achievement progress overview
 /// - Achievement progress by category
 /// - AchievementCollapseCard in list mode
-class AchievementPage extends ConsumerWidget {
+/// - Pull-to-refresh support
+class AchievementPage extends ConsumerStatefulWidget {
   const AchievementPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AchievementPage> createState() => _AchievementPageState();
+}
+
+class _AchievementPageState extends ConsumerState<AchievementPage> {
+  Future<void> _onRefresh() async {
+    ref.invalidate(allAchievementsProvider);
+    ref.invalidate(achievementStatsProvider);
+    await ref.read(allAchievementsProvider.future);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final achievementsAsync = ref.watch(allAchievementsProvider);
     final strings = ref.watch(currentStringsProvider);
 
@@ -71,78 +83,73 @@ class AchievementPage extends ConsumerWidget {
                   text: strings.retry,
                   variant: PremiumButtonVariant.primary,
                   icon: Icons.refresh,
-                  onPressed: () {
-                    ref.invalidate(allAchievementsProvider);
-                    ref.invalidate(achievementStatsProvider);
-                  },
+                  onPressed: _onRefresh,
                 ),
               ],
             ),
           ),
         ),
-        data: (achievements) {
-          return _buildAchievementsContent(context, achievements, strings);
-        },
-      ),
-    );
-  }
-
-  /// 构建成就内容（显示成就统计概览和成就列表）
-  Widget _buildAchievementsContent(
-    BuildContext context,
-    List<Achievement> achievements,
-    AppStrings strings,
-  ) {
-    // 显示所有成就
-    if (achievements.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.emoji_events_outlined,
-              size: 64,
-              color: AppColors.grey500,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              strings.noAchievements,
-              style: TextStyle(
-                color: Theme.of(context).textTheme.bodyMedium?.color,
+        data: (achievements) => RefreshIndicator(
+          onRefresh: _onRefresh,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverToBoxAdapter(
+                child: _buildAchievementStatsOverview(
+                  context,
+                  achievements,
+                  strings,
+                ),
               ),
-            ),
-          ],
+              SliverToBoxAdapter(
+                child: _buildAchievementListView(
+                  context,
+                  achievements,
+                  strings,
+                ),
+              ),
+            ],
+          ),
         ),
-      );
-    }
-
-    // 计算成就统计
-    final unlockedCount = achievements.where((a) => a.isUnlocked).length;
-    final totalCount = achievements.length;
-    final progress =
-        totalCount > 0 ? (unlockedCount / totalCount * 100).round() : 0;
-
-    return Column(
-      children: [
-        // 成就统计概览卡片（使用原始设计）
-        _buildAchievementStatsOverview(
-            context, unlockedCount, totalCount, progress, strings),
-        // 成就列表
-        Expanded(
-          child: _buildAchievementListView(context, achievements, strings),
-        ),
-      ],
+      ),
     );
   }
 
   /// 构建成就统计概览卡片（原始设计）
   Widget _buildAchievementStatsOverview(
     BuildContext context,
-    int unlockedCount,
-    int totalCount,
-    int progress,
+    List<Achievement> achievements,
     AppStrings strings,
   ) {
+    if (achievements.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.emoji_events_outlined,
+                size: 64,
+                color: AppColors.grey500,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                strings.noAchievements,
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final unlockedCount = achievements.where((a) => a.isUnlocked).length;
+    final totalCount = achievements.length;
+    final progress =
+        totalCount > 0 ? (unlockedCount / totalCount * 100).round() : 0;
     return Padding(
       padding: const EdgeInsets.all(16),
       child: PremiumCard(
@@ -282,23 +289,26 @@ class AchievementPage extends ConsumerWidget {
     AppStrings strings,
   ) {
     if (achievements.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.emoji_events_outlined,
-              size: 64,
-              color: AppColors.grey500,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              strings.noAchievements,
-              style: TextStyle(
-                color: Theme.of(context).textTheme.bodyMedium?.color,
+      return SizedBox(
+        height: 200,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.emoji_events_outlined,
+                size: 64,
+                color: AppColors.grey500,
               ),
-            ),
-          ],
+              const SizedBox(height: 16),
+              Text(
+                strings.noAchievements,
+                style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
