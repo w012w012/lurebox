@@ -4,7 +4,9 @@ import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/di/di.dart';
 import '../../core/providers/language_provider.dart';
+import '../../core/providers/app_settings_provider.dart';
 import '../../core/providers/equipment_edit_view_model.dart';
+import '../../core/utils/unit_converter.dart';
 import '../../widgets/common/premium_button.dart';
 import '../../widgets/common/premium_card.dart';
 import '../../widgets/common/premium_input.dart';
@@ -71,6 +73,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     }
 
     final strings = ref.watch(currentStringsProvider);
+    final displayUnits = ref.watch(appSettingsProvider).units;
+    final lineLengthSymbol = UnitConverter.getLengthSymbol(displayUnits.lineLengthUnit);
     final params = (type: widget.type, equipment: _loadedEquipment);
     final state = ref.watch(equipmentEditViewModelProvider(params));
     final notifier = ref.read(equipmentEditViewModelProvider(params).notifier);
@@ -270,7 +274,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                     'reelLineLength',
                     state.reelLineLength,
                     notifier.updateReelLineLength,
-                    suffix: 'm',
+                    suffix: lineLengthSymbol,
                   ),
                 ]),
                 const SizedBox(height: 10),

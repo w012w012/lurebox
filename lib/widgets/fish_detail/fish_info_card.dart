@@ -23,8 +23,14 @@ String _buildRodDisplay(Map<String, dynamic>? rod, String displayUnit) {
     final lengthValue = double.tryParse(lengthStr) ?? 0.0;
     final lengthUnit = rod['length_unit'] ?? 'm';
     if (lengthValue > 0) {
-      // 直接使用存储的单位显示，保留 2 位小数
-      parts.add('${lengthValue.toStringAsFixed(2)} $lengthUnit');
+      final convertedLength = UnitConverter.convertLength(
+        lengthValue,
+        lengthUnit,
+        displayUnit,
+      );
+      parts.add(
+        '${convertedLength.toStringAsFixed(2)} ${UnitConverter.getLengthSymbol(displayUnit)}',
+      );
     } else {
       parts.add(lengthStr);
     }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/language_provider.dart';
+import '../../../core/providers/app_settings_provider.dart';
+import '../../../core/utils/unit_converter.dart';
 import '../common/premium_input.dart';
 import '../common/unit_dropdown.dart';
 
@@ -40,6 +42,8 @@ class RodForm extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = ref.watch(currentStringsProvider);
+    final displayUnits = ref.watch(appSettingsProvider).units;
+    final weightUnitSymbol = UnitConverter.getWeightSymbol(displayUnits.lureWeightUnit);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,9 +179,9 @@ class RodForm extends ConsumerWidget {
                 keyboardType: TextInputType.number,
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(left: 8),
-              child: Text('克', style: TextStyle(fontSize: 14)),
+            Padding(
+              padding: const EdgeInsets.only(left: 8),
+              child: Text(weightUnitSymbol, style: const TextStyle(fontSize: 14)),
             ),
           ],
         ),

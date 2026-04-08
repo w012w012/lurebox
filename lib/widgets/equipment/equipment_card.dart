@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/design/theme/app_colors.dart';
 import '../../../core/providers/language_provider.dart';
+import '../../../core/providers/app_settings_provider.dart';
+import '../../../core/utils/unit_converter.dart';
 
 class EquipmentCard extends ConsumerStatefulWidget {
   final Map<String, dynamic> equipment;
@@ -288,15 +290,21 @@ class _EquipmentCardState extends ConsumerState<EquipmentCard> {
 
   List<Widget> _buildInfoRows(String type, Map<String, dynamic> e) {
     final strings = ref.watch(currentStringsProvider);
+    final displayUnits = ref.watch(appSettingsProvider).units;
     final items = <_InfoItem>[];
     if (type == 'rod') {
       if (e['length'] != null) {
         final lengthValue = double.tryParse(e['length'].toString()) ?? 0;
         final lengthUnit = e['length_unit'] ?? 'm';
+        final displayLength = UnitConverter.convertLength(
+          lengthValue,
+          lengthUnit,
+          displayUnits.rodLengthUnit,
+        );
         items.add(
           _InfoItem(
             strings.rodLength,
-            '${lengthValue.toStringAsFixed(2)} $lengthUnit',
+            '${displayLength.toStringAsFixed(2)} ${UnitConverter.getLengthSymbol(displayUnits.rodLengthUnit)}',
           ),
         );
       }
@@ -316,7 +324,19 @@ class _EquipmentCardState extends ConsumerState<EquipmentCard> {
         items.add(_InfoItem(strings.material, e['material']));
       }
       if (e['weight_range'] != null) {
-        items.add(_InfoItem(strings.weightRange, '${e['weight_range']}g'));
+        final weightValue = double.tryParse(e['weight_range'].toString()) ?? 0;
+        final weightUnit = e['weight_unit'] ?? 'g';
+        final displayWeight = UnitConverter.convertWeight(
+          weightValue,
+          weightUnit,
+          displayUnits.lureWeightUnit,
+        );
+        items.add(
+          _InfoItem(
+            strings.weightRange,
+            '${displayWeight.toStringAsFixed(1)} ${UnitConverter.getWeightSymbol(displayUnits.lureWeightUnit)}',
+          ),
+        );
       }
     } else if (type == 'reel') {
       if (e['reel_ratio'] != null) {
@@ -329,8 +349,19 @@ class _EquipmentCardState extends ConsumerState<EquipmentCard> {
         items.add(_InfoItem(strings.reelBrakeType, e['reel_brake_type']));
       }
       if (e['reel_weight'] != null) {
-        items.add(_InfoItem(
-            '渔轮重量', '${e['reel_weight']}${e['reel_weight_unit'] ?? 'g'}'));
+        final weightValue = double.tryParse(e['reel_weight'].toString()) ?? 0;
+        final weightUnit = e['reel_weight_unit'] ?? 'g';
+        final displayWeight = UnitConverter.convertWeight(
+          weightValue,
+          weightUnit,
+          displayUnits.lureWeightUnit,
+        );
+        items.add(
+          _InfoItem(
+            '渔轮重量',
+            '${displayWeight.toStringAsFixed(1)} ${UnitConverter.getWeightSymbol(displayUnits.lureWeightUnit)}',
+          ),
+        );
       }
       if (e['reel_line'] != null) {
         final lineParts = <String>[];
@@ -352,25 +383,41 @@ class _EquipmentCardState extends ConsumerState<EquipmentCard> {
       }
     } else if (type == 'lure') {
       if (e['lure_quantity'] != null && e['lure_quantity'] > 0) {
-        final qtyUnit = e['lure_quantity_unit'] as String? ?? '';
+        final qtyUnit = e['lure_quantity_unit'] as String? ?? displayUnits.lureQuantityUnit;
         items.add(_InfoItem(strings.quantity, '${e['lure_quantity']}$qtyUnit'));
       }
       if (e['lure_type'] != null) {
         items.add(_InfoItem(strings.lureType, e['lure_type']));
       }
       if (e['lure_weight'] != null) {
-        String weightStr = e['lure_weight'].toString();
-        if (!weightStr.endsWith('g')) {
-          weightStr = '${weightStr}g';
-        }
-        items.add(_InfoItem(strings.lureWeight, weightStr));
+        final weightValue = double.tryParse(e['lure_weight'].toString()) ?? 0;
+        final weightUnit = e['lure_weight_unit'] ?? 'g';
+        final displayWeight = UnitConverter.convertWeight(
+          weightValue,
+          weightUnit,
+          displayUnits.lureWeightUnit,
+        );
+        items.add(
+          _InfoItem(
+            strings.lureWeight,
+            '${displayWeight.toStringAsFixed(1)} ${UnitConverter.getWeightSymbol(displayUnits.lureWeightUnit)}',
+          ),
+        );
       }
       if (e['lure_size'] != null) {
-        String sizeStr = e['lure_size'].toString();
-        if (!sizeStr.endsWith('cm')) {
-          sizeStr = '${sizeStr}cm';
-        }
-        items.add(_InfoItem(strings.lureSize, sizeStr));
+        final sizeValue = double.tryParse(e['lure_size'].toString()) ?? 0;
+        final sizeUnit = e['lure_size_unit'] ?? 'cm';
+        final displaySize = UnitConverter.convertLength(
+          sizeValue,
+          sizeUnit,
+          displayUnits.lureLengthUnit,
+        );
+        items.add(
+          _InfoItem(
+            strings.lureSize,
+            '${displaySize.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.lureLengthUnit)}',
+          ),
+        );
       }
       if (e['lure_color'] != null) {
         items.add(_InfoItem(strings.lureColor, e['lure_color']));
