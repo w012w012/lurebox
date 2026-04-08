@@ -4,6 +4,7 @@ import '../../core/constants/strings.dart';
 import '../../core/models/equipment.dart';
 import '../../core/camera/camera_state.dart';
 import '../../core/camera/camera_view_model.dart';
+import '../../core/utils/unit_converter.dart';
 import '../common/premium_button.dart';
 
 /// 装备卡片
@@ -97,7 +98,8 @@ class EquipmentRigCard extends StatelessWidget {
       parts.add(rod.category!.split('|')[0]);
     }
     if (rod.length?.isNotEmpty == true) {
-      parts.add('${rod.length}${rod.lengthUnit}');
+      parts.add(
+          '${rod.length}${UnitConverter.getLengthSymbol(rod.lengthUnit ?? 'cm')}');
     }
     if (rod.hardness?.isNotEmpty == true) parts.add(rod.hardness!);
     if (rod.rodAction?.isNotEmpty == true) parts.add(rod.rodAction!);
@@ -119,7 +121,8 @@ class EquipmentRigCard extends StatelessWidget {
     if (lure.brand?.isNotEmpty == true) parts.add(lure.brand!);
     if (lure.model?.isNotEmpty == true) parts.add(lure.model!);
     if (lure.lureSize?.isNotEmpty == true) {
-      parts.add('${lure.lureSize}${lure.lureSizeUnit}');
+      parts.add(
+          '${lure.lureSize}${UnitConverter.getLengthSymbol(lure.lureSizeUnit ?? 'cm')}');
     }
     if (lure.lureColor?.isNotEmpty == true) parts.add(lure.lureColor!);
     return parts.isEmpty ? '-' : parts.join(' / ');

@@ -5,6 +5,7 @@ import '../../../core/design/theme/app_colors.dart';
 import '../../../core/design/theme/app_theme.dart';
 import '../../../core/design/theme/animation_constants.dart';
 import '../../../core/providers/language_provider.dart';
+import '../../../core/utils/unit_converter.dart';
 import '../../../widgets/common/premium_card.dart';
 
 class StatsSummaryCard extends ConsumerStatefulWidget {
@@ -13,6 +14,7 @@ class StatsSummaryCard extends ConsumerStatefulWidget {
   final Map<String, int> rodDistribution;
   final Map<String, int> reelDistribution;
   final Map<String, int> lureDistribution;
+  final String weightUnit;
 
   const StatsSummaryCard({
     super.key,
@@ -21,6 +23,7 @@ class StatsSummaryCard extends ConsumerStatefulWidget {
     required this.rodDistribution,
     required this.reelDistribution,
     required this.lureDistribution,
+    required this.weightUnit,
   });
 
   @override
@@ -167,7 +170,7 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
                     Expanded(
                       child: Text(
                         (item['totalWeight'] as double) > 0
-                            ? '${(item['totalWeight'] as double).toStringAsFixed(2)} kg'
+                            ? '${(item['totalWeight'] as double).toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(widget.weightUnit)}'
                             : '-',
                         style: Theme.of(context).textTheme.bodyMedium,
                         textAlign: TextAlign.center,
