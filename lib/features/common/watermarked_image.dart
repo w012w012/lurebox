@@ -460,7 +460,7 @@ class WatermarkPainter extends CustomPainter {
     // 绘制背景（半透明矩形）
     if (settings.blurRadius > 0 || settings.backgroundOpacity > 0) {
       final bgColor = Color(settings.backgroundColor)
-          .withOpacity(settings.backgroundOpacity);
+          .withValues(alpha: settings.backgroundOpacity);
       final paint = Paint()
         ..color = bgColor
         ..style = PaintingStyle.fill;
@@ -526,12 +526,12 @@ class WatermarkPainter extends CustomPainter {
         text: TextSpan(
           text: line,
           style: TextStyle(
-            color: textColor.withOpacity(0.9),
+            color: textColor.withValues(alpha: 0.9),
             fontSize: isAppName ? baseFontSize * 0.85 : baseFontSize,
             fontWeight: isAppName ? FontWeight.normal : FontWeight.w500,
             shadows: [
               Shadow(
-                color: Colors.black.withOpacity(0.6),
+                color: Colors.black.withValues(alpha: 0.6),
                 blurRadius: size.width * 0.01,
               ),
             ],

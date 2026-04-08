@@ -55,8 +55,11 @@ class _PremiumCardState extends State<PremiumCard> {
     Widget card = AnimatedContainer(
       duration: AnimationConstants.touchFeedbackDuration,
       curve: AnimationConstants.defaultCurve,
-      transform: Matrix4.identity()
-        ..scale(_isPressed ? AnimationConstants.touchScale : 1.0),
+      transform: Matrix4.diagonal3Values(
+        _isPressed ? AnimationConstants.touchScale : 1.0,
+        _isPressed ? AnimationConstants.touchScale : 1.0,
+        1.0,
+      ),
       transformAlignment: Alignment.center,
       child: Container(
         padding: effectivePadding,
@@ -81,8 +84,8 @@ class _PremiumCardState extends State<PremiumCard> {
           onTapUp: (_) => setState(() => _isPressed = false),
           onTapCancel: () => setState(() => _isPressed = false),
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
-          splashColor: accentColor.withOpacity(0.1),
-          highlightColor: accentColor.withOpacity(0.05),
+          splashColor: accentColor.withValues(alpha: 0.1),
+          highlightColor: accentColor.withValues(alpha: 0.05),
           child: card,
         ),
       );
@@ -204,7 +207,7 @@ class PremiumStatCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(AppTheme.spacingSm),
               decoration: BoxDecoration(
-                color: (iconColor ?? accentColor).withOpacity(0.12),
+                color: (iconColor ?? accentColor).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(AppTheme.radiusSm),
               ),
               child: Icon(icon, color: iconColor ?? accentColor, size: 24),

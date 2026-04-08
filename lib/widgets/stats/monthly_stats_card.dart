@@ -193,7 +193,7 @@ class _AnimatedStatItemState extends State<_AnimatedStatItem>
           Container(
             padding: const EdgeInsets.all(AppTheme.spacingSm),
             decoration: BoxDecoration(
-              color: widget.color.withOpacity(0.12),
+              color: widget.color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(AppTheme.radiusSm),
             ),
             child: Icon(

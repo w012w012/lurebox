@@ -232,9 +232,9 @@ class _EquipmentChartState extends State<EquipmentChart>
 
     final colors = [
       widget.color,
-      widget.color.withOpacity(0.7),
-      widget.color.withOpacity(0.5),
-      widget.color.withOpacity(0.3),
+      widget.color.withValues(alpha: 0.7),
+      widget.color.withValues(alpha: 0.5),
+      widget.color.withValues(alpha: 0.3),
       AppColors.grey700,
       AppColors.teal,
       Colors.indigo,

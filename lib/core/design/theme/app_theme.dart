@@ -21,7 +21,7 @@ class AppTheme {
   // 阴影系统
   static List<BoxShadow> get shadowSm => [
         BoxShadow(
-          color: Colors.black.withOpacity(0.05),
+          color: Colors.black.withValues(alpha: 0.05),
           blurRadius: 2,
           offset: const Offset(0, 1),
         ),
@@ -29,7 +29,7 @@ class AppTheme {
 
   static List<BoxShadow> get shadowMd => [
         BoxShadow(
-          color: Colors.black.withOpacity(0.08),
+          color: Colors.black.withValues(alpha: 0.08),
           blurRadius: 4,
           offset: const Offset(0, 2),
         ),
@@ -37,7 +37,7 @@ class AppTheme {
 
   static List<BoxShadow> get shadowLg => [
         BoxShadow(
-          color: Colors.black.withOpacity(0.12),
+          color: Colors.black.withValues(alpha: 0.12),
           blurRadius: 8,
           offset: const Offset(0, 4),
         ),
@@ -86,14 +86,14 @@ class AppTheme {
         ),
         color: AppColors.surfaceLight,
         clipBehavior: Clip.antiAlias,
-        shadowColor: Colors.black.withOpacity(0.08),
+        shadowColor: Colors.black.withValues(alpha: 0.08),
       ),
 
       // 导航栏主题 - iOS风格
       navigationBarTheme: NavigationBarThemeData(
         height: 80,
         backgroundColor: AppColors.surfaceLight,
-        indicatorColor: AppColors.accentLight.withOpacity(0.15),
+        indicatorColor: AppColors.accentLight.withValues(alpha: 0.15),
         indicatorShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusMd),
         ),
@@ -331,7 +331,7 @@ class AppTheme {
       // Chip 主题 - iOS风格
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.backgroundLight,
-        selectedColor: AppColors.accentLight.withOpacity(0.12),
+        selectedColor: AppColors.accentLight.withValues(alpha: 0.12),
         labelStyle: const TextStyle(
           color: AppColors.textPrimaryLight,
           fontSize: 14,
@@ -433,14 +433,14 @@ class AppTheme {
         ),
         color: AppColors.surfaceDark, // #0A0A0A True Black cards
         clipBehavior: Clip.antiAlias,
-        shadowColor: Colors.black.withOpacity(0.3),
+        shadowColor: Colors.black.withValues(alpha: 0.3),
       ),
 
       // 导航栏主题 - iOS风格
       navigationBarTheme: NavigationBarThemeData(
         height: 80,
         backgroundColor: AppColors.surfaceDark,
-        indicatorColor: AppColors.accentDark.withOpacity(0.2),
+        indicatorColor: AppColors.accentDark.withValues(alpha: 0.2),
         indicatorShape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusMd),
         ),
@@ -678,7 +678,7 @@ class AppTheme {
       // Chip 主题 - iOS风格
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.backgroundDark,
-        selectedColor: AppColors.accentDark.withOpacity(0.15),
+        selectedColor: AppColors.accentDark.withValues(alpha: 0.15),
         labelStyle: const TextStyle(
           color: AppColors.textPrimaryDark,
           fontSize: 14,

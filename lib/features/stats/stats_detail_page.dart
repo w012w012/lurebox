@@ -581,7 +581,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
             strings.yourFishingAssistant,
             style: TextStyle(
               fontSize: 13,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
         ],

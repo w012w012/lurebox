@@ -23,8 +23,8 @@ class PremiumNavigationBar extends StatelessWidget {
       onDestinationSelected: onDestinationSelected,
       backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
       indicatorColor: isDark
-          ? AppColors.primaryDark.withOpacity(0.12)
-          : AppColors.primaryLight.withOpacity(0.12),
+          ? AppColors.primaryDark.withValues(alpha: 0.12)
+          : AppColors.primaryLight.withValues(alpha: 0.12),
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       elevation: 0,
       height: 65,

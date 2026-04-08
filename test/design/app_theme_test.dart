@@ -124,7 +124,7 @@ void main() {
       group('ChipTheme (iOS-style)', () {
         test('selected color should use accent light opacity', () {
           expect(lightTheme.chipTheme.selectedColor,
-              AppColors.accentLight.withOpacity(0.12));
+              AppColors.accentLight.withValues(alpha: 0.12));
         });
       });
 
@@ -257,7 +257,7 @@ void main() {
       group('ChipTheme (iOS-style)', () {
         test('selected color should use accent dark opacity', () {
           expect(darkTheme.chipTheme.selectedColor,
-              AppColors.accentDark.withOpacity(0.15));
+              AppColors.accentDark.withValues(alpha: 0.15));
         });
       });
 

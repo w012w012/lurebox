@@ -134,8 +134,8 @@ class _PremiumButtonState extends State<PremiumButton> {
         onPressed: widget.isLoading ? null : widget.onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: isDark
-              ? AppColors.accentDark.withOpacity(0.12)
-              : AppColors.accentLight.withOpacity(0.12),
+              ? AppColors.accentDark.withValues(alpha: 0.12)
+              : AppColors.accentLight.withValues(alpha: 0.12),
           foregroundColor:
               isDark ? AppColors.accentDark : AppColors.accentLight,
           elevation: 0,
@@ -396,8 +396,8 @@ class PremiumIconButton extends StatelessWidget {
             decoration: BoxDecoration(
               color: backgroundColor ??
                   (isDark
-                      ? AppColors.accentDark.withOpacity(0.12)
-                      : AppColors.accentLight.withOpacity(0.12)),
+                      ? AppColors.accentDark.withValues(alpha: 0.12)
+                      : AppColors.accentLight.withValues(alpha: 0.12)),
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
             child: IconButton(

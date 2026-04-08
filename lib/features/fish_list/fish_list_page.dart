@@ -516,7 +516,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
         color: AppColors.surfaceLight,
         border: Border(
           bottom: BorderSide(
-            color: AppColors.borderLight.withOpacity(0.5),
+            color: AppColors.borderLight.withValues(alpha: 0.5),
             width: 1,
           ),
         ),
@@ -558,7 +558,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.accentLight.withOpacity(0.1),
+              color: AppColors.accentLight.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -598,7 +598,7 @@ class _SortButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.accentLight.withOpacity(0.12)
+              ? AppColors.accentLight.withValues(alpha: 0.12)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(6),
         ),

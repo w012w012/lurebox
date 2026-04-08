@@ -437,7 +437,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: mainColor.withOpacity(0.4),
+                  color: mainColor.withValues(alpha: 0.4),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),

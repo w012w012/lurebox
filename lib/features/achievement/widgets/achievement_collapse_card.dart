@@ -136,7 +136,7 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
                   ),
                   decoration: BoxDecoration(
                     color: widget.isCompleted
-                        ? AppColors.success.withOpacity(0.1)
+                        ? AppColors.success.withValues(alpha: 0.1)
                         : AppColors.grey200,
                     borderRadius: BorderRadius.circular(12),
                   ),

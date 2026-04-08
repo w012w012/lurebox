@@ -148,7 +148,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
                 vertical: 2,
               ),
               decoration: BoxDecoration(
-                color: AppColors.warning.withOpacity(0.15),
+                color: AppColors.warning.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
               ),
               child: Text(
@@ -342,7 +342,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(AppTheme.radiusSm),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+              color:
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
             ),
           ),
           child: Row(
@@ -373,8 +374,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
                   vertical: 2,
                 ),
                 decoration: BoxDecoration(
-                  color:
-                      _getConfidenceColor(option.confidence).withOpacity(0.15),
+                  color: _getConfidenceColor(option.confidence)
+                      .withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 ),
                 child: Text(
@@ -540,7 +541,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: accentColor.withOpacity(0.12),
+                color: accentColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(AppTheme.radiusSm),
               ),
               child: Center(

@@ -137,7 +137,7 @@ void main() {
             elevatedButton.style?.backgroundColor?.resolve(<WidgetState>{});
         expect(
           backgroundColor,
-          equals(AppColors.accentLight.withOpacity(0.12)),
+          equals(AppColors.accentLight.withValues(alpha: 0.12)),
         );
       });
 

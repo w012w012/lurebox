@@ -128,8 +128,8 @@ class PremiumTextField extends StatelessWidget {
         ),
         hintStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark.withOpacity(0.7)
-              : AppColors.textSecondaryLight.withOpacity(0.7),
+              ? AppColors.textSecondaryDark.withValues(alpha: 0.7)
+              : AppColors.textSecondaryLight.withValues(alpha: 0.7),
           fontSize: 16,
         ),
         errorStyle: const TextStyle(color: AppColors.error, fontSize: 12),
@@ -341,8 +341,8 @@ class PremiumNumberField extends StatelessWidget {
         ),
         hintStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark.withOpacity(0.7)
-              : AppColors.textSecondaryLight.withOpacity(0.7),
+              ? AppColors.textSecondaryDark.withValues(alpha: 0.7)
+              : AppColors.textSecondaryLight.withValues(alpha: 0.7),
           fontSize: 16,
         ),
         suffixStyle: TextStyle(
@@ -494,8 +494,8 @@ class PremiumTextArea extends StatelessWidget {
         ),
         hintStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark.withOpacity(0.7)
-              : AppColors.textSecondaryLight.withOpacity(0.7),
+              ? AppColors.textSecondaryDark.withValues(alpha: 0.7)
+              : AppColors.textSecondaryLight.withValues(alpha: 0.7),
           fontSize: 16,
         ),
       ),
@@ -529,7 +529,7 @@ class PremiumDropdown<T> extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return DropdownButtonFormField<T>(
-      value: value,
+      initialValue: value,
       items: items.map((item) {
         return DropdownMenuItem<T>(
           value: item.value,

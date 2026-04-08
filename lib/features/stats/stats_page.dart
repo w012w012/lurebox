@@ -426,7 +426,7 @@ class _StatItem extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(AppTheme.spacingSm),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.12),
+            color: color.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(AppTheme.radiusSm),
           ),
           child: Icon(icon, color: color, size: 20),

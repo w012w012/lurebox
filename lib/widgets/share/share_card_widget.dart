@@ -41,7 +41,7 @@ class ShareCardWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF4A9EFF).withOpacity(0.3),
+              color: const Color(0xFF4A9EFF).withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
