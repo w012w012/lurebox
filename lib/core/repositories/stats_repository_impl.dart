@@ -363,8 +363,6 @@ class SqliteStatsRepository implements StatsRepository {
       final yearStart = DateTime(now.year, 1, 1);
       final yearEnd = DateTime(now.year + 1, 1, 1);
 
-      final allStart = DateTime(2000, 1, 1);
-
       // 优化：将 9 个查询合并为 3 个
       final results = await Future.wait([
         _getAllPeriodCatchStats(
@@ -374,7 +372,6 @@ class SqliteStatsRepository implements StatsRepository {
           monthEnd: monthEnd,
           yearStart: yearStart,
           yearEnd: yearEnd,
-          allStart: allStart,
         ),
         _getAllPeriodSpeciesStats(
           todayStart: todayStart,
@@ -383,7 +380,6 @@ class SqliteStatsRepository implements StatsRepository {
           monthEnd: monthEnd,
           yearStart: yearStart,
           yearEnd: yearEnd,
-          allStart: allStart,
         ),
         getTop3LongestCatches(),
       ]);
@@ -416,7 +412,6 @@ class SqliteStatsRepository implements StatsRepository {
     required DateTime monthEnd,
     required DateTime yearStart,
     required DateTime yearEnd,
-    required DateTime allStart,
   }) async {
     final db = await DatabaseService.database;
     final results = await db.rawQuery('''
@@ -488,7 +483,6 @@ class SqliteStatsRepository implements StatsRepository {
     required DateTime monthEnd,
     required DateTime yearStart,
     required DateTime yearEnd,
-    required DateTime allStart,
   }) async {
     final db = await DatabaseService.database;
     final results = await db.rawQuery('''

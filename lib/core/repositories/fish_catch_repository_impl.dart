@@ -79,9 +79,9 @@ class SqliteFishCatchRepository implements FishCatchRepository {
     if (start == null || end == null) return;
 
     clauses.add('catch_time >= ?');
-    args.add(start.millisecondsSinceEpoch);
+    args.add(start.toIso8601String());
     clauses.add('catch_time < ?');
-    args.add(end.millisecondsSinceEpoch);
+    args.add(end.toIso8601String());
   }
 
   /// Compute date range from timeFilter string
@@ -230,7 +230,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       final results = await db.query(
         _tableName,
         where: 'catch_time >= ? AND catch_time < ?',
-        whereArgs: [start.millisecondsSinceEpoch, end.millisecondsSinceEpoch],
+        whereArgs: [start.toIso8601String(), end.toIso8601String()],
         orderBy: 'catch_time DESC',
       ) as List<Map<String, dynamic>>;
       return List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));

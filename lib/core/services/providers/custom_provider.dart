@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -98,6 +99,11 @@ class CustomFishRecognitionProvider implements FishRecognitionProvider {
 
       // 处理响应
       return _handleResponse(response, config.apiKey);
+    } on TimeoutException catch (_) {
+      throw const FishRecognitionException(
+        FishRecognitionErrorType.timeout,
+        '请求超时，请检查网络连接',
+      );
     } on http.ClientException catch (e) {
       throw FishRecognitionException(
         FishRecognitionErrorType.networkError,
@@ -122,45 +128,7 @@ class CustomFishRecognitionProvider implements FishRecognitionProvider {
   /// 处理 API 响应
   FishRecognitionResult _handleResponse(http.Response response, String apiKey) {
     // 检查 HTTP 状态码
-    switch (response.statusCode) {
-      case 200:
-        // 成功
-        break;
-      case 400:
-        debugPrint('[CustomProvider] 400 Response body: ${response.body}');
-        throw FishRecognitionException(
-          FishRecognitionErrorType.unknown,
-          '请求错误 (400): ${response.body}',
-        );
-      case 401:
-        debugPrint('[CustomProvider] 401 Response body: ${response.body}');
-        throw FishRecognitionException(
-          FishRecognitionErrorType.apiKeyInvalid,
-          'API 密钥无效 (401): ${response.body}',
-        );
-      case 403:
-        throw const FishRecognitionException(
-          FishRecognitionErrorType.apiKeyInvalid,
-          'API 密钥没有权限',
-        );
-      case 429:
-        throw const FishRecognitionException(
-          FishRecognitionErrorType.rateLimited,
-          '请求过于频繁，请稍后重试',
-        );
-      case 500:
-      case 502:
-      case 503:
-        throw FishRecognitionException(
-          FishRecognitionErrorType.networkError,
-          '服务器错误: ${response.statusCode}',
-        );
-      default:
-        throw FishRecognitionException(
-          FishRecognitionErrorType.unknown,
-          '未知错误: ${response.statusCode}',
-        );
-    }
+    throwHttpError(response);
 
     // 解析响应体
     try {
