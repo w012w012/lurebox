@@ -475,6 +475,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
         displayWeight: displayWeight,
         displayLengthUnit: units.fishLengthUnit,
         displayWeightUnit: units.fishWeightUnit,
+        displayTemperatureUnit: units.temperatureUnit,
       );
 
       watermarkPainter.paint(
@@ -500,7 +501,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
 
       await Share.shareXFiles([
         XFile(tempFile.path),
-      ], text: '${fish['species']} - ${fish['length']}cm');
+      ], text: '${fish['species']} - ${displayLength.toStringAsFixed(2)}${UnitConverter.getLengthSymbol(units.fishLengthUnit)}');
 
       try {
         await tempFile.delete();

@@ -47,8 +47,8 @@ void main() {
         expect(text, contains('放流数量: 1'));
         expect(text, contains('保留数量: 0'));
         expect(text, contains('鳜鱼'));
-        expect(text, contains('35.5cm'));
-        expect(text, contains('1.2kg'));
+        expect(text, contains('35.50cm'));
+        expect(text, contains('1.20kg'));
       });
 
       test('includes date range when provided', () async {
@@ -100,7 +100,8 @@ void main() {
 
         final text = utf8.decode(result);
         expect(text, contains('2024-01-01'));
-        expect(text, contains('现在')); // When only startDate is set, shows "现在" for end
+        expect(text,
+            contains('现在')); // When only startDate is set, shows "现在" for end
       });
 
       test('shows only end date when start date is null', () async {
@@ -259,7 +260,7 @@ void main() {
         // Verify UTF-8 encoding by decoding back
         final text = utf8.decode(result);
         expect(text.contains('TestFish'), isTrue);
-        expect(text.contains('35.0cm'), isTrue);
+        expect(text.contains('35.00cm'), isTrue);
         // UTF-8 encoding works - other tests with Chinese characters verify the encoding
       });
 

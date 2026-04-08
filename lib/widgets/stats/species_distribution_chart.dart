@@ -4,6 +4,7 @@ import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
 import '../../../core/design/theme/app_theme.dart';
 import '../../../core/design/theme/animation_constants.dart';
+import '../../../core/utils/unit_converter.dart';
 import '../../../widgets/common/premium_card.dart';
 
 class SpeciesDistributionChart extends StatefulWidget {
@@ -14,6 +15,7 @@ class SpeciesDistributionChart extends StatefulWidget {
   final bool showByWeight;
   final VoidCallback? onToggleShowByWeight;
   final AppStrings? strings;
+  final String weightUnit;
 
   const SpeciesDistributionChart({
     super.key,
@@ -24,6 +26,7 @@ class SpeciesDistributionChart extends StatefulWidget {
     this.showByWeight = false,
     this.onToggleShowByWeight,
     this.strings,
+    this.weightUnit = 'kg',
   });
 
   @override
@@ -72,7 +75,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
     if (widget.speciesStats.isEmpty) return const SizedBox();
 
     final unitLabel =
-        widget.showByWeight ? 'kg' : (appStrings?.fishCountUnit ?? '');
+        widget.showByWeight ? UnitConverter.getWeightSymbol(widget.weightUnit) : (appStrings?.fishCountUnit ?? '');
     final displayTotal =
         widget.showByWeight ? widget.totalWeight : widget.totalCount;
 

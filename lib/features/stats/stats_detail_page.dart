@@ -13,7 +13,9 @@ import '../../core/design/theme/animation_constants.dart';
 import '../../core/di/di.dart';
 import '../../core/models/fish_catch.dart';
 import '../../core/providers/language_provider.dart';
+import '../../core/providers/app_settings_provider.dart';
 import '../../core/utils/file_utils.dart';
+import '../../core/utils/unit_converter.dart';
 import '../../widgets/common/premium_card.dart';
 import '../../widgets/stats/catch_trend_chart.dart';
 import '../../widgets/stats/species_distribution_chart.dart';
@@ -85,6 +87,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
   Future<void> _loadDetail() async {
     setState(() => _isLoading = true);
     try {
+      final displayUnits = ref.read(appSettingsProvider).units;
       final fishList = await ref
           .read(fishCatchServiceProvider)
           .getByDateRange(widget.startDate, widget.endDate);
@@ -109,9 +112,16 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
         speciesData[species]!['count'] =
             (speciesData[species]!['count'] as int) + 1;
         final weight = fish['weight'] as double?;
+        final weightUnit = fish['weight_unit'] as String? ?? 'kg';
         if (weight != null) {
+          // Convert to display unit before summing
+          final displayWeight = UnitConverter.convertWeight(
+            weight,
+            weightUnit,
+            displayUnits.fishWeightUnit,
+          );
           speciesData[species]!['totalWeight'] =
-              (speciesData[species]!['totalWeight'] as double) + weight;
+              (speciesData[species]!['totalWeight'] as double) + displayWeight;
         }
       }
       final speciesSummary = speciesData.values.toList()
@@ -349,6 +359,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
   @override
   Widget build(BuildContext context) {
     final strings = ref.watch(currentStringsProvider);
+    final displayUnits = ref.watch(appSettingsProvider).units;
     final releaseCount =
         _catches.where((f) => f['fate'] == FishFateType.release.value).length;
     final keepCount =
@@ -403,6 +414,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                       keepCount,
                       releaseRate,
                       strings,
+                      displayUnits.fishWeightUnit,
                     ),
                   ),
                   Positioned(
@@ -424,6 +436,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                               keepCount,
                               releaseRate,
                               strings,
+                              displayUnits.fishWeightUnit,
                             ),
                           ),
                         ),
@@ -442,6 +455,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
     int keepCount,
     double releaseRate,
     AppStrings strings,
+    String weightUnit,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -463,6 +477,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
             showByWeight: _showByWeight,
             onToggleShowByWeight: _toggleShowByWeight,
             strings: strings,
+            weightUnit: weightUnit,
           ),
           const SizedBox(height: AppTheme.spacingLg),
         ],

@@ -1,4 +1,5 @@
 import '../models/fish_catch.dart';
+import '../utils/unit_converter.dart';
 
 /// CSV 导出器 - 渔获数据转换为 CSV 格式
 ///
@@ -54,18 +55,25 @@ class CsvExporter {
   static Future<String> exportFishCatches({
     required List<FishCatch> catches,
     bool includeImagePaths = true,
+    String lengthUnit = 'cm',
+    String weightUnit = 'kg',
+    String temperatureUnit = 'C',
   }) async {
+    final lengthSymbol = UnitConverter.getLengthSymbol(lengthUnit);
+    final weightSymbol = UnitConverter.getWeightSymbol(weightUnit);
+    final tempSymbol = UnitConverter.getTemperatureSymbol(temperatureUnit);
+
     // 完整的 CSV 表头
     final headers = [
       'ID',
       '品种',
-      '长度(cm)',
-      '重量(kg)',
+      '长度($lengthSymbol)',
+      '重量($weightSymbol)',
       '命运',
       '钓点',
       '经度',
       '纬度',
-      '气温(°C)',
+      '气温($tempSymbol)',
       '气压(hPa)',
       '天气',
       '装备ID',
@@ -83,19 +91,41 @@ class CsvExporter {
     for (final fish in catches) {
       // 待识别记录的品种显示为"待识别"
       final displaySpecies = fish.pendingRecognition ? '待识别' : fish.species;
+
+      // Convert length to display unit
+      final displayLength = fish.lengthUnit != null && fish.lengthUnit != lengthUnit
+          ? UnitConverter.convertLength(fish.length, fish.lengthUnit!, lengthUnit)
+          : fish.length;
+
+      // Convert weight to display unit
+      double? displayWeight;
+      if (fish.weight != null) {
+        displayWeight = fish.weightUnit != null && fish.weightUnit != weightUnit
+            ? UnitConverter.convertWeight(fish.weight!, fish.weightUnit!, weightUnit)
+            : fish.weight;
+      }
+
+      // Convert temperature to display unit
+      double? displayTemp;
+      if (fish.airTemperature != null) {
+        displayTemp = temperatureUnit != 'C'
+            ? UnitConverter.convertTemperature(fish.airTemperature!, 'C', temperatureUnit)
+            : fish.airTemperature;
+      }
+
       final row = <String>[
         // 基本信息
         fish.id.toString(),
         _escapeCsvField(displaySpecies),
-        fish.length.toString(),
-        _escapeCsvField(fish.weight?.toString() ?? ''),
+        displayLength.toStringAsFixed(2),
+        _escapeCsvField(displayWeight?.toStringAsFixed(2) ?? ''),
         _escapeCsvField(fish.fate.label),
         // 位置信息
         _escapeCsvField(fish.locationName ?? ''),
         _escapeCsvField(fish.longitude?.toString() ?? ''),
         _escapeCsvField(fish.latitude?.toString() ?? ''),
         // 天气信息
-        _escapeCsvField(fish.airTemperature?.toString() ?? ''),
+        _escapeCsvField(displayTemp?.toStringAsFixed(1) ?? ''),
         _escapeCsvField(fish.pressure?.toString() ?? ''),
         _escapeCsvField(_getWeatherDescription(fish.weatherCode)),
         // 装备信息
