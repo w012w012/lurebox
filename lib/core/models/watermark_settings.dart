@@ -109,12 +109,16 @@ class WatermarkSettings {
         orElse: () => WatermarkStyle.minimal,
       ),
       infoTypes: (json['infoTypes'] as List<dynamic>?)
-              ?.map(
-                (e) => WatermarkInfoType.values.firstWhere(
-                  (type) => type.name == e,
-                  orElse: () => WatermarkInfoType.species,
-                ),
-              )
+              ?.map((e) {
+                try {
+                  return WatermarkInfoType.values.firstWhere(
+                    (type) => type.name == e,
+                  );
+                } catch (_) {
+                  return null;
+                }
+              })
+              .whereType<WatermarkInfoType>()
               .toList() ??
           [
             WatermarkInfoType.species,

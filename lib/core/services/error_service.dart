@@ -74,7 +74,7 @@ class ErrorService {
     } catch (e, stack) {
       final message = context != null ? '$context: $e' : '$e';
       handleError(Exception(message), stack);
-      rethrow;
+      throw Exception(message);
     }
   }
 
@@ -84,7 +84,7 @@ class ErrorService {
     } catch (e, stack) {
       final message = context != null ? '$context: $e' : '$e';
       handleError(Exception(message), stack);
-      rethrow;
+      throw Exception(message);
     }
   }
 
