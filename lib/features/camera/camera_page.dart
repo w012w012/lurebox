@@ -11,6 +11,7 @@ import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
 import '../../core/utils/file_utils.dart';
 import '../../core/utils/image_compressor.dart';
+import '../../core/utils/unit_converter.dart';
 import '../../core/camera/camera_view_model.dart';
 import '../../core/camera/camera_state.dart';
 
@@ -540,6 +541,8 @@ class _CameraPageState extends ConsumerState<CameraPage> {
   }
 
   Future<void> _editWeather(CameraState state) async {
+    final temperatureUnit = ref.read(appSettingsProvider).units.temperatureUnit;
+    final tempSymbol = UnitConverter.getTemperatureSymbol(temperatureUnit);
     final tempController = TextEditingController(
       text: state.airTemperature?.toStringAsFixed(1) ?? '',
     );
@@ -569,9 +572,9 @@ class _CameraPageState extends ConsumerState<CameraPage> {
               children: [
                 TextField(
                   controller: tempController,
-                  decoration: const InputDecoration(
-                    labelText: '气温 (°C)',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: '气温 ($tempSymbol)',
+                    border: const OutlineInputBorder(),
                   ),
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),

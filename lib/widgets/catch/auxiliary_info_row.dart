@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/constants/constants.dart';
 import '../../core/constants/strings.dart';
 import '../../core/camera/camera_state.dart';
 import '../../core/camera/camera_view_model.dart';
+import '../../core/providers/app_settings_provider.dart';
 import '../../core/services/weather_service.dart';
+import '../../core/utils/unit_converter.dart';
 
 /// An expanded info row displaying location, weather, and time.
 /// Each item is displayed in a card-like container with clear icon and text.
-class AuxiliaryInfoRow extends StatelessWidget {
+class AuxiliaryInfoRow extends ConsumerWidget {
   final CameraState state;
   final CameraViewModel vm;
   final AppStrings strings;
@@ -28,7 +31,10 @@ class AuxiliaryInfoRow extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final displayUnits = ref.watch(appSettingsProvider).units;
+    final temperatureUnit = displayUnits.temperatureUnit;
+
     return Card(
       margin: EdgeInsets.zero,
       child: Padding(
@@ -51,7 +57,7 @@ class AuxiliaryInfoRow extends StatelessWidget {
               context: context,
               icon: Icons.wb_sunny,
               label: '天气',
-              text: _getWeatherText(),
+              text: _getWeatherText(strings, temperatureUnit),
               onTap: onEditWeather,
             ),
             const Divider(height: 16),
@@ -71,7 +77,7 @@ class AuxiliaryInfoRow extends StatelessWidget {
     );
   }
 
-  String _getWeatherText() {
+  String _getWeatherText(AppStrings strings, String temperatureUnit) {
     final parts = <String>[];
     if (state.weatherCode != null) {
       final weatherDesc = getWeatherDescription(state.weatherCode);
@@ -80,7 +86,10 @@ class AuxiliaryInfoRow extends StatelessWidget {
       }
     }
     if (state.airTemperature != null) {
-      parts.add('${state.airTemperature!.toStringAsFixed(1)}°C');
+      parts.add(UnitConverter.formatTemperature(
+        state.airTemperature!,
+        temperatureUnit,
+      ));
     }
     if (parts.isEmpty) return '点击设置';
     return parts.join(' · ');
