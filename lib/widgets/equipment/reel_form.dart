@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/language_provider.dart';
+import '../../../core/providers/app_settings_provider.dart';
+import '../../../core/utils/unit_converter.dart';
 import '../common/premium_input.dart';
 import '../common/unit_dropdown.dart';
 
@@ -34,6 +36,8 @@ class ReelForm extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = ref.watch(currentStringsProvider);
+    final displayUnits = ref.watch(appSettingsProvider).units;
+    final lineLengthSymbol = UnitConverter.getLengthSymbol(displayUnits.lineLengthUnit);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -93,9 +97,9 @@ class ReelForm extends ConsumerWidget {
                 keyboardType: TextInputType.number,
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(left: 4),
-              child: Text('米', style: TextStyle(fontSize: 14)),
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: Text(lineLengthSymbol, style: const TextStyle(fontSize: 14)),
             ),
           ],
         ),
