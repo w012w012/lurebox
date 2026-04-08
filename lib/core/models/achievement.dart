@@ -5,6 +5,7 @@ enum AchievementLevel {
   gold,
   platinum;
 
+  /// Display name (Chinese)
   String get name {
     switch (this) {
       case AchievementLevel.bronze:
@@ -18,9 +19,23 @@ enum AchievementLevel {
     }
   }
 
+  /// JSON serialization name (English)
+  String get jsonName {
+    switch (this) {
+      case AchievementLevel.bronze:
+        return 'bronze';
+      case AchievementLevel.silver:
+        return 'silver';
+      case AchievementLevel.gold:
+        return 'gold';
+      case AchievementLevel.platinum:
+        return 'platinum';
+    }
+  }
+
   static AchievementLevel fromJson(String value) {
     return AchievementLevel.values.firstWhere(
-      (e) => e.name == value,
+      (e) => e.jsonName == value || e.name == value,
       orElse: () => AchievementLevel.bronze,
     );
   }
@@ -54,7 +69,10 @@ class Achievement {
 
   bool get isUnlocked => current >= target;
   bool get isLocked => !isUnlocked;
-  double get progressPercent => (current / target * 100).clamp(0, 100);
+  double get progressPercent {
+    if (target == 0) return 0.0;
+    return (current / target * 100).clamp(0, 100);
+  }
 
   Achievement copyWith({
     String? id,
@@ -88,7 +106,7 @@ class Achievement {
       'title': title,
       'description': description,
       'icon': icon,
-      'level': level.name,
+      'level': level.jsonName,
       'category': category,
       'target': target,
       'current': current,

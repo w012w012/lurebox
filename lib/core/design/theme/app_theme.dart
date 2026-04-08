@@ -75,7 +75,7 @@ class AppTheme {
       ),
 
 // 卡片主题 - iOS风格（微妙阴影，无边框）
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 0,
         margin: const EdgeInsets.symmetric(
           horizontal: spacingLg,
@@ -351,7 +351,7 @@ class AppTheme {
       ),
 
       // 对话框主题
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: AppColors.surfaceLight,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusLg),
@@ -422,7 +422,7 @@ class AppTheme {
       ),
 
 // 卡片主题 - iOS风格（微妙阴影，无边框，True Black表面）
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         elevation: 0,
         margin: const EdgeInsets.symmetric(
           horizontal: spacingLg,
@@ -698,7 +698,7 @@ class AppTheme {
       ),
 
       // 对话框主题
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: AppColors.surfaceDark,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusLg),
