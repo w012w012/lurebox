@@ -56,7 +56,6 @@ class AppStrings {
   final String unitSettings;
   final String lengthUnit;
   final String weightUnit;
-  final String distanceUnit;
   final String darkMode;
   final String language;
   final String watermarkSettings;
@@ -496,7 +495,6 @@ class AppStrings {
     required this.unitSettings,
     required this.lengthUnit,
     required this.weightUnit,
-    required this.distanceUnit,
     required this.darkMode,
     required this.language,
     required this.watermarkSettings,
@@ -919,7 +917,6 @@ class AppStrings {
     unitSettings: '单位设置',
     lengthUnit: '长度单位',
     weightUnit: '重量单位',
-    distanceUnit: '距离单位',
     darkMode: '深色模式',
     language: '语言',
     watermarkSettings: '水印设置',
@@ -1352,7 +1349,6 @@ class AppStrings {
     unitSettings: 'Unit Settings',
     lengthUnit: 'Length Unit',
     weightUnit: 'Weight Unit',
-    distanceUnit: 'Distance Unit',
     darkMode: 'Dark Mode',
     language: 'Language',
     watermarkSettings: 'Watermark Settings',
