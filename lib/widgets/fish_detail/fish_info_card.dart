@@ -76,7 +76,8 @@ String _buildLureDisplay(Map<String, dynamic>? lure, String displayUnit) {
       sizeUnit,
       displayUnit,
     );
-    parts.add('${convertedSize.toStringAsFixed(1)} $displayUnit');
+    parts.add(
+        '${convertedSize.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnit)}');
   }
   if (lure['lure_color'] != null && (lure['lure_color'] as String).isNotEmpty) {
     parts.add(lure['lure_color'] as String);

@@ -161,26 +161,31 @@ class UnitConverter {
     return fromBaseCelsius(base, toUnit);
   }
 
-  // ==================== 单位符号 ====================
+  // ==================== 单位符号（统一格式：中文名（符号））====================
 
   static const _lengthSymbols = {
-    'cm': 'cm',
-    'm': 'm',
-    'mm': 'mm',
-    'inch': 'in',
-    'ft': 'ft',
+    'cm': '厘米（cm）',
+    'm': '米（m）',
+    'mm': '毫米（mm）',
+    'inch': '英寸（in）',
+    'ft': '英尺（ft）',
   };
 
-  static const _weightSymbols = {'kg': 'kg', 'lb': 'lb', 'oz': 'oz', 'g': 'g'};
+  static const _weightSymbols = {
+    'kg': '千克（kg）',
+    'lb': '磅（lb）',
+    'oz': '盎司（oz）',
+    'g': '克（g）',
+  };
 
   static const _distanceSymbols = {
-    'm': 'm',
-    'km': 'km',
-    'ft': 'ft',
-    'mile': 'mi',
+    'm': '米（m）',
+    'km': '千米（km）',
+    'ft': '英尺（ft）',
+    'mile': '英里（mi）',
   };
 
-  static const _temperatureSymbols = {'C': '°C', 'F': '°F'};
+  static const _temperatureSymbols = {'C': '摄氏度（°C）', 'F': '华氏度（°F）'};
 
   /// 获取长度单位符号
   static String getLengthSymbol(String unit) => _lengthSymbols[unit] ?? unit;
@@ -219,6 +224,6 @@ class UnitConverter {
     String unit, {
     int decimals = 1,
   }) {
-    return '${value.toStringAsFixed(decimals)}°${unit == 'C' ? 'C' : 'F'}';
+    return '${value.toStringAsFixed(decimals)}${getTemperatureSymbol(unit)}';
   }
 }

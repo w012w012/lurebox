@@ -101,12 +101,10 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                   strings,
                 ),
               ),
-              SliverToBoxAdapter(
-                child: _buildAchievementListView(
-                  context,
-                  achievements,
-                  strings,
-                ),
+              _buildAchievementListView(
+                context,
+                achievements,
+                strings,
               ),
             ],
           ),
@@ -283,31 +281,34 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
     );
   }
 
+  /// 构建成就列表视图（使用 Sliver 实现）
   Widget _buildAchievementListView(
     BuildContext context,
     List<Achievement> achievements,
     AppStrings strings,
   ) {
     if (achievements.isEmpty) {
-      return SizedBox(
-        height: 200,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.emoji_events_outlined,
-                size: 64,
-                color: AppColors.grey500,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                strings.noAchievements,
-                style: TextStyle(
-                  color: Theme.of(context).textTheme.bodyMedium?.color,
+      return SliverToBoxAdapter(
+        child: SizedBox(
+          height: 200,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.emoji_events_outlined,
+                  size: 64,
+                  color: AppColors.grey500,
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+                Text(
+                  strings.noAchievements,
+                  style: TextStyle(
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -320,38 +321,47 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
       groupedAchievements[achievement.category]!.add(achievement);
     }
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: groupedAchievements.length,
-      itemBuilder: (context, index) {
-        final category = groupedAchievements.keys.elementAt(index);
-        final categoryAchievements = groupedAchievements[category]!;
+    return SliverMainAxisGroup(
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.all(16),
+          sliver: SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final category = groupedAchievements.keys.elementAt(index);
+                final categoryAchievements = groupedAchievements[category]!;
 
-        final completedCount =
-            categoryAchievements.where((a) => a.isUnlocked).length;
-        final isCompleted = completedCount == categoryAchievements.length;
+                final completedCount =
+                    categoryAchievements.where((a) => a.isUnlocked).length;
+                final isCompleted =
+                    completedCount == categoryAchievements.length;
 
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: AchievementCollapseCard(
-            title: category,
-            currentCount: completedCount,
-            totalCount: categoryAchievements.length,
-            icon: _getCategoryIcon(category),
-            isCompleted: isCompleted,
-            initiallyExpanded: index == 0,
-            children: categoryAchievements.map((achievement) {
-              return AchievementChildItem(
-                title: achievement.title,
-                currentCount: achievement.current,
-                totalCount: achievement.target,
-                isCompleted: achievement.isUnlocked,
-                subtitle: achievement.description,
-              );
-            }).toList(),
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: AchievementCollapseCard(
+                    title: category,
+                    currentCount: completedCount,
+                    totalCount: categoryAchievements.length,
+                    icon: _getCategoryIcon(category),
+                    isCompleted: isCompleted,
+                    initiallyExpanded: index == 0,
+                    children: categoryAchievements.map((achievement) {
+                      return AchievementChildItem(
+                        title: achievement.title,
+                        currentCount: achievement.current,
+                        totalCount: achievement.target,
+                        isCompleted: achievement.isUnlocked,
+                        subtitle: achievement.description,
+                      );
+                    }).toList(),
+                  ),
+                );
+              },
+              childCount: groupedAchievements.length,
+            ),
           ),
-        );
-      },
+        ),
+      ],
     );
   }
 

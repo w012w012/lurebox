@@ -307,7 +307,8 @@ class WatermarkPainter extends CustomPainter {
             if (rodLength != null && rodLength!.isNotEmpty) {
               final lengthValue = double.tryParse(rodLength!) ?? 0.0;
               final lengthUnit = rodLengthUnit ?? 'm';
-              rodParts.add('${lengthValue.toStringAsFixed(2)} $lengthUnit');
+              rodParts.add(
+                  '${lengthValue.toStringAsFixed(2)} ${UnitConverter.getLengthSymbol(lengthUnit)}');
             }
             if (rodHardness != null && rodHardness!.isNotEmpty) {
               rodParts.add(rodHardness!);
@@ -352,11 +353,13 @@ class WatermarkPainter extends CustomPainter {
             }
             if (lureSize != null && lureSize!.isNotEmpty) {
               final sizeUnit = lureSizeUnit ?? 'cm';
-              lureParts.add('$lureSize $sizeUnit');
+              lureParts
+                  .add('$lureSize ${UnitConverter.getLengthSymbol(sizeUnit)}');
             }
             if (lureWeight != null && lureWeight!.isNotEmpty) {
               final weightUnit = lureWeightUnit ?? 'g';
-              lureParts.add('$lureWeight $weightUnit');
+              lureParts.add(
+                  '$lureWeight ${UnitConverter.getWeightSymbol(weightUnit)}');
             }
             if (lureColor != null && lureColor!.isNotEmpty) {
               lureParts.add(lureColor!);
@@ -383,7 +386,7 @@ class WatermarkPainter extends CustomPainter {
               displayTemperatureUnit,
             );
             lines.add(
-                '气温：${UnitConverter.formatTemperature(displayTemp, displayTemperatureUnit)}',
+              '气温：${UnitConverter.formatTemperature(displayTemp, displayTemperatureUnit)}',
             );
           }
           break;
