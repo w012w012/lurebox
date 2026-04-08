@@ -31,7 +31,8 @@ void main() {
 
         errorService.unregisterHandler(handler);
         errorService.handleError(Exception('test2'), StackTrace.current);
-        expect(handlerCallCount, equals(1)); // Still 1, handler was unregistered
+        expect(
+            handlerCallCount, equals(1)); // Still 1, handler was unregistered
       });
 
       test('handles error with no handlers gracefully', () {
@@ -321,7 +322,8 @@ void main() {
 
       test('returns correct message for each error type', () {
         expect(
-          ErrorService.getLocalizedMessage(AppErrorType.cameraPermission, strings),
+          ErrorService.getLocalizedMessage(
+              AppErrorType.cameraPermission, strings),
           equals(strings.errorCameraPermission),
         );
         expect(
@@ -333,7 +335,8 @@ void main() {
           equals(strings.errorCameraSwitch),
         );
         expect(
-          ErrorService.getLocalizedMessage(AppErrorType.locationPermission, strings),
+          ErrorService.getLocalizedMessage(
+              AppErrorType.locationPermission, strings),
           equals(strings.errorLocationPermission),
         );
         expect(
@@ -361,7 +364,8 @@ void main() {
           equals(strings.errorFileImport),
         );
         expect(
-          ErrorService.getLocalizedMessage(AppErrorType.networkConnect, strings),
+          ErrorService.getLocalizedMessage(
+              AppErrorType.networkConnect, strings),
           equals(strings.errorNetworkConnect),
         );
         expect(
@@ -373,7 +377,8 @@ void main() {
           equals(strings.errorWebDAVUpload),
         );
         expect(
-          ErrorService.getLocalizedMessage(AppErrorType.webDAVDownload, strings),
+          ErrorService.getLocalizedMessage(
+              AppErrorType.webDAVDownload, strings),
           equals(strings.errorWebDAVDownload),
         );
         expect(
@@ -454,7 +459,8 @@ void main() {
   group('DatabaseException', () {
     test('creates with message and original error', () {
       final original = Exception('DB error');
-      final exception = DatabaseException('Database failed', originalError: original);
+      final exception =
+          DatabaseException('Database failed', originalError: original);
       expect(exception.message, equals('Database failed'));
       expect(exception.originalError, equals(original));
     });

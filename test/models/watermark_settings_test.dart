@@ -132,11 +132,14 @@ void main() {
 
         final settings = WatermarkSettings.fromJson(json);
 
-        expect(settings.position, equals(WatermarkPosition.bottomLeft)); // default
+        expect(
+            settings.position, equals(WatermarkPosition.bottomLeft)); // default
       });
 
       test('fromJson handles unknown infoType', () {
-        final json = {'infoTypes': ['species', 'unknown_type', 'length']};
+        final json = {
+          'infoTypes': ['species', 'unknown_type', 'length']
+        };
 
         final settings = WatermarkSettings.fromJson(json);
 

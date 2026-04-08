@@ -20,21 +20,28 @@ void main() {
     group('getAllAchievements', () {
       test('returns list of achievements with progress', () async {
         // Setup mock returns
-        when(() => mockStatsRepo.getTotalCatchCount()).thenAnswer((_) async => 50);
+        when(() => mockStatsRepo.getTotalCatchCount())
+            .thenAnswer((_) async => 50);
         when(() => mockStatsRepo.getMaxLength()).thenAnswer((_) async => 45.0);
-        when(() => mockStatsRepo.getDistinctSpeciesCount()).thenAnswer((_) async => 5);
+        when(() => mockStatsRepo.getDistinctSpeciesCount())
+            .thenAnswer((_) async => 5);
         when(() => mockStatsRepo.getLocationCount()).thenAnswer((_) async => 3);
         when(() => mockStatsRepo.getReleaseCount()).thenAnswer((_) async => 30);
         when(() => mockStatsRepo.getReleaseRate()).thenAnswer((_) async => 0.6);
-        when(() => mockStatsRepo.getConsecutiveDays()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getConsecutiveDays())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getMonthlyMax()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getDailyMax()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getMorningCatchCount()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getNightCatchCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getMorningCatchCount())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getNightCatchCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getPhotoCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getTotalWeight()).thenAnswer((_) async => 0.0);
-        when(() => mockStatsRepo.getEquipmentFullStatus()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getEquipmentCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentFullStatus())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentCount())
+            .thenAnswer((_) async => 0);
 
         final achievements = await achievementService.getAllAchievements();
 
@@ -42,22 +49,30 @@ void main() {
         expect(achievements.first, isA<Achievement>());
       });
 
-      test('calculates correct progress for catch count achievements', () async {
-        when(() => mockStatsRepo.getTotalCatchCount()).thenAnswer((_) async => 50);
+      test('calculates correct progress for catch count achievements',
+          () async {
+        when(() => mockStatsRepo.getTotalCatchCount())
+            .thenAnswer((_) async => 50);
         when(() => mockStatsRepo.getMaxLength()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getDistinctSpeciesCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getDistinctSpeciesCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getLocationCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getReleaseCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getReleaseRate()).thenAnswer((_) async => 0.0);
-        when(() => mockStatsRepo.getConsecutiveDays()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getConsecutiveDays())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getMonthlyMax()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getDailyMax()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getMorningCatchCount()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getNightCatchCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getMorningCatchCount())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getNightCatchCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getPhotoCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getTotalWeight()).thenAnswer((_) async => 0.0);
-        when(() => mockStatsRepo.getEquipmentFullStatus()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getEquipmentCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentFullStatus())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentCount())
+            .thenAnswer((_) async => 0);
 
         final achievements = await achievementService.getAllAchievements();
 
@@ -74,21 +89,28 @@ void main() {
       });
 
       test('calculates length achievements correctly', () async {
-        when(() => mockStatsRepo.getTotalCatchCount()).thenAnswer((_) async => 100);
+        when(() => mockStatsRepo.getTotalCatchCount())
+            .thenAnswer((_) async => 100);
         when(() => mockStatsRepo.getMaxLength()).thenAnswer((_) async => 55.0);
-        when(() => mockStatsRepo.getDistinctSpeciesCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getDistinctSpeciesCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getLocationCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getReleaseCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getReleaseRate()).thenAnswer((_) async => 0.0);
-        when(() => mockStatsRepo.getConsecutiveDays()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getConsecutiveDays())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getMonthlyMax()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getDailyMax()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getMorningCatchCount()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getNightCatchCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getMorningCatchCount())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getNightCatchCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getPhotoCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getTotalWeight()).thenAnswer((_) async => 0.0);
-        when(() => mockStatsRepo.getEquipmentFullStatus()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getEquipmentCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentFullStatus())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentCount())
+            .thenAnswer((_) async => 0);
 
         final achievements = await achievementService.getAllAchievements();
 
@@ -109,26 +131,34 @@ void main() {
       });
 
       test('calculates release rate achievement correctly', () async {
-        when(() => mockStatsRepo.getTotalCatchCount()).thenAnswer((_) async => 100);
+        when(() => mockStatsRepo.getTotalCatchCount())
+            .thenAnswer((_) async => 100);
         when(() => mockStatsRepo.getMaxLength()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getDistinctSpeciesCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getDistinctSpeciesCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getLocationCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getReleaseCount()).thenAnswer((_) async => 80);
         when(() => mockStatsRepo.getReleaseRate()).thenAnswer((_) async => 0.8);
-        when(() => mockStatsRepo.getConsecutiveDays()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getConsecutiveDays())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getMonthlyMax()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getDailyMax()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getMorningCatchCount()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getNightCatchCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getMorningCatchCount())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getNightCatchCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getPhotoCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getTotalWeight()).thenAnswer((_) async => 0.0);
-        when(() => mockStatsRepo.getEquipmentFullStatus()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getEquipmentCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentFullStatus())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentCount())
+            .thenAnswer((_) async => 0);
 
         final achievements = await achievementService.getAllAchievements();
 
         // release_rate_80 should be unlocked
-        final releaseRate80 = achievements.firstWhere((a) => a.id == 'release_rate_80');
+        final releaseRate80 =
+            achievements.firstWhere((a) => a.id == 'release_rate_80');
         expect(releaseRate80.isUnlocked, isTrue);
         expect(releaseRate80.current, equals(1));
       });
@@ -137,19 +167,25 @@ void main() {
         when(() => mockStatsRepo.getTotalCatchCount())
             .thenThrow(Exception('Database error'));
         when(() => mockStatsRepo.getMaxLength()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getDistinctSpeciesCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getDistinctSpeciesCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getLocationCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getReleaseCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getReleaseRate()).thenAnswer((_) async => 0.0);
-        when(() => mockStatsRepo.getConsecutiveDays()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getConsecutiveDays())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getMonthlyMax()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getDailyMax()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getMorningCatchCount()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getNightCatchCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getMorningCatchCount())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getNightCatchCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getPhotoCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getTotalWeight()).thenAnswer((_) async => 0.0);
-        when(() => mockStatsRepo.getEquipmentFullStatus()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getEquipmentCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentFullStatus())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentCount())
+            .thenAnswer((_) async => 0);
 
         // Should not throw, should return achievements with 0 progress
         final achievements = await achievementService.getAllAchievements();
@@ -162,21 +198,28 @@ void main() {
       });
 
       test('handles new_record achievement', () async {
-        when(() => mockStatsRepo.getTotalCatchCount()).thenAnswer((_) async => 1);
+        when(() => mockStatsRepo.getTotalCatchCount())
+            .thenAnswer((_) async => 1);
         when(() => mockStatsRepo.getMaxLength()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getDistinctSpeciesCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getDistinctSpeciesCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getLocationCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getReleaseCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getReleaseRate()).thenAnswer((_) async => 0.0);
-        when(() => mockStatsRepo.getConsecutiveDays()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getConsecutiveDays())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getMonthlyMax()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getDailyMax()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getMorningCatchCount()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getNightCatchCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getMorningCatchCount())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getNightCatchCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getPhotoCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getTotalWeight()).thenAnswer((_) async => 0.0);
-        when(() => mockStatsRepo.getEquipmentFullStatus()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getEquipmentCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentFullStatus())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentCount())
+            .thenAnswer((_) async => 0);
 
         final achievements = await achievementService.getAllAchievements();
 
@@ -188,46 +231,64 @@ void main() {
 
     group('getAchievementStats', () {
       test('returns correct statistics', () async {
-        when(() => mockStatsRepo.getTotalCatchCount()).thenAnswer((_) async => 100);
+        when(() => mockStatsRepo.getTotalCatchCount())
+            .thenAnswer((_) async => 100);
         when(() => mockStatsRepo.getMaxLength()).thenAnswer((_) async => 100);
-        when(() => mockStatsRepo.getDistinctSpeciesCount()).thenAnswer((_) async => 20);
-        when(() => mockStatsRepo.getLocationCount()).thenAnswer((_) async => 50);
-        when(() => mockStatsRepo.getReleaseCount()).thenAnswer((_) async => 200);
+        when(() => mockStatsRepo.getDistinctSpeciesCount())
+            .thenAnswer((_) async => 20);
+        when(() => mockStatsRepo.getLocationCount())
+            .thenAnswer((_) async => 50);
+        when(() => mockStatsRepo.getReleaseCount())
+            .thenAnswer((_) async => 200);
         when(() => mockStatsRepo.getReleaseRate()).thenAnswer((_) async => 1.0);
-        when(() => mockStatsRepo.getConsecutiveDays()).thenAnswer((_) async => 7);
+        when(() => mockStatsRepo.getConsecutiveDays())
+            .thenAnswer((_) async => 7);
         when(() => mockStatsRepo.getMonthlyMax()).thenAnswer((_) async => 30);
         when(() => mockStatsRepo.getDailyMax()).thenAnswer((_) async => 5);
-        when(() => mockStatsRepo.getMorningCatchCount()).thenAnswer((_) async => 20);
-        when(() => mockStatsRepo.getNightCatchCount()).thenAnswer((_) async => 20);
+        when(() => mockStatsRepo.getMorningCatchCount())
+            .thenAnswer((_) async => 20);
+        when(() => mockStatsRepo.getNightCatchCount())
+            .thenAnswer((_) async => 20);
         when(() => mockStatsRepo.getPhotoCount()).thenAnswer((_) async => 100);
-        when(() => mockStatsRepo.getTotalWeight()).thenAnswer((_) async => 10.0);
-        when(() => mockStatsRepo.getEquipmentFullStatus()).thenAnswer((_) async => 1);
-        when(() => mockStatsRepo.getEquipmentCount()).thenAnswer((_) async => 50);
+        when(() => mockStatsRepo.getTotalWeight())
+            .thenAnswer((_) async => 10.0);
+        when(() => mockStatsRepo.getEquipmentFullStatus())
+            .thenAnswer((_) async => 1);
+        when(() => mockStatsRepo.getEquipmentCount())
+            .thenAnswer((_) async => 50);
 
         final stats = await achievementService.getAchievementStats();
 
         expect(stats['unlockedCount'], greaterThan(0));
-        expect(stats['totalCount'], equals(AchievementConfig.definitions.length));
+        expect(
+            stats['totalCount'], equals(AchievementConfig.definitions.length));
         expect(stats['progress'], greaterThanOrEqualTo(0));
         expect(stats['progress'], lessThanOrEqualTo(100));
       });
 
       test('calculates progress percentage correctly', () async {
-        when(() => mockStatsRepo.getTotalCatchCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getTotalCatchCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getMaxLength()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getDistinctSpeciesCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getDistinctSpeciesCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getLocationCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getReleaseCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getReleaseRate()).thenAnswer((_) async => 0.0);
-        when(() => mockStatsRepo.getConsecutiveDays()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getConsecutiveDays())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getMonthlyMax()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getDailyMax()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getMorningCatchCount()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getNightCatchCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getMorningCatchCount())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getNightCatchCount())
+            .thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getPhotoCount()).thenAnswer((_) async => 0);
         when(() => mockStatsRepo.getTotalWeight()).thenAnswer((_) async => 0.0);
-        when(() => mockStatsRepo.getEquipmentFullStatus()).thenAnswer((_) async => 0);
-        when(() => mockStatsRepo.getEquipmentCount()).thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentFullStatus())
+            .thenAnswer((_) async => 0);
+        when(() => mockStatsRepo.getEquipmentCount())
+            .thenAnswer((_) async => 0);
 
         final stats = await achievementService.getAchievementStats();
 
@@ -238,21 +299,31 @@ void main() {
 
     group('achievement categories', () {
       test('all achievement categories are represented', () async {
-        when(() => mockStatsRepo.getTotalCatchCount()).thenAnswer((_) async => 100);
+        when(() => mockStatsRepo.getTotalCatchCount())
+            .thenAnswer((_) async => 100);
         when(() => mockStatsRepo.getMaxLength()).thenAnswer((_) async => 100);
-        when(() => mockStatsRepo.getDistinctSpeciesCount()).thenAnswer((_) async => 20);
-        when(() => mockStatsRepo.getLocationCount()).thenAnswer((_) async => 50);
-        when(() => mockStatsRepo.getReleaseCount()).thenAnswer((_) async => 200);
+        when(() => mockStatsRepo.getDistinctSpeciesCount())
+            .thenAnswer((_) async => 20);
+        when(() => mockStatsRepo.getLocationCount())
+            .thenAnswer((_) async => 50);
+        when(() => mockStatsRepo.getReleaseCount())
+            .thenAnswer((_) async => 200);
         when(() => mockStatsRepo.getReleaseRate()).thenAnswer((_) async => 1.0);
-        when(() => mockStatsRepo.getConsecutiveDays()).thenAnswer((_) async => 7);
+        when(() => mockStatsRepo.getConsecutiveDays())
+            .thenAnswer((_) async => 7);
         when(() => mockStatsRepo.getMonthlyMax()).thenAnswer((_) async => 30);
         when(() => mockStatsRepo.getDailyMax()).thenAnswer((_) async => 5);
-        when(() => mockStatsRepo.getMorningCatchCount()).thenAnswer((_) async => 20);
-        when(() => mockStatsRepo.getNightCatchCount()).thenAnswer((_) async => 20);
+        when(() => mockStatsRepo.getMorningCatchCount())
+            .thenAnswer((_) async => 20);
+        when(() => mockStatsRepo.getNightCatchCount())
+            .thenAnswer((_) async => 20);
         when(() => mockStatsRepo.getPhotoCount()).thenAnswer((_) async => 100);
-        when(() => mockStatsRepo.getTotalWeight()).thenAnswer((_) async => 10.0);
-        when(() => mockStatsRepo.getEquipmentFullStatus()).thenAnswer((_) async => 1);
-        when(() => mockStatsRepo.getEquipmentCount()).thenAnswer((_) async => 50);
+        when(() => mockStatsRepo.getTotalWeight())
+            .thenAnswer((_) async => 10.0);
+        when(() => mockStatsRepo.getEquipmentFullStatus())
+            .thenAnswer((_) async => 1);
+        when(() => mockStatsRepo.getEquipmentCount())
+            .thenAnswer((_) async => 50);
 
         final achievements = await achievementService.getAllAchievements();
 
@@ -270,21 +341,31 @@ void main() {
     group('progress clamping', () {
       test('progress is clamped to 100 when exceeded', () async {
         // Very high catch count
-        when(() => mockStatsRepo.getTotalCatchCount()).thenAnswer((_) async => 10000);
+        when(() => mockStatsRepo.getTotalCatchCount())
+            .thenAnswer((_) async => 10000);
         when(() => mockStatsRepo.getMaxLength()).thenAnswer((_) async => 200);
-        when(() => mockStatsRepo.getDistinctSpeciesCount()).thenAnswer((_) async => 100);
-        when(() => mockStatsRepo.getLocationCount()).thenAnswer((_) async => 100);
-        when(() => mockStatsRepo.getReleaseCount()).thenAnswer((_) async => 10000);
+        when(() => mockStatsRepo.getDistinctSpeciesCount())
+            .thenAnswer((_) async => 100);
+        when(() => mockStatsRepo.getLocationCount())
+            .thenAnswer((_) async => 100);
+        when(() => mockStatsRepo.getReleaseCount())
+            .thenAnswer((_) async => 10000);
         when(() => mockStatsRepo.getReleaseRate()).thenAnswer((_) async => 1.0);
-        when(() => mockStatsRepo.getConsecutiveDays()).thenAnswer((_) async => 100);
+        when(() => mockStatsRepo.getConsecutiveDays())
+            .thenAnswer((_) async => 100);
         when(() => mockStatsRepo.getMonthlyMax()).thenAnswer((_) async => 100);
         when(() => mockStatsRepo.getDailyMax()).thenAnswer((_) async => 100);
-        when(() => mockStatsRepo.getMorningCatchCount()).thenAnswer((_) async => 100);
-        when(() => mockStatsRepo.getNightCatchCount()).thenAnswer((_) async => 100);
+        when(() => mockStatsRepo.getMorningCatchCount())
+            .thenAnswer((_) async => 100);
+        when(() => mockStatsRepo.getNightCatchCount())
+            .thenAnswer((_) async => 100);
         when(() => mockStatsRepo.getPhotoCount()).thenAnswer((_) async => 1000);
-        when(() => mockStatsRepo.getTotalWeight()).thenAnswer((_) async => 1000.0);
-        when(() => mockStatsRepo.getEquipmentFullStatus()).thenAnswer((_) async => 1);
-        when(() => mockStatsRepo.getEquipmentCount()).thenAnswer((_) async => 100);
+        when(() => mockStatsRepo.getTotalWeight())
+            .thenAnswer((_) async => 1000.0);
+        when(() => mockStatsRepo.getEquipmentFullStatus())
+            .thenAnswer((_) async => 1);
+        when(() => mockStatsRepo.getEquipmentCount())
+            .thenAnswer((_) async => 100);
 
         final achievements = await achievementService.getAllAchievements();
 
