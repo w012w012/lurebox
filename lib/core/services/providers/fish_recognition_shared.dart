@@ -1,7 +1,5 @@
 library fish_recognition_shared;
 
-import 'dart:async';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../fish_recognition_service.dart';
 
@@ -77,7 +75,10 @@ String extractJsonFromResponse(String content) {
     case 500:
     case 502:
     case 503:
-      return (FishRecognitionErrorType.networkError, '服务器错误: ${response.statusCode}');
+      return (
+        FishRecognitionErrorType.networkError,
+        '服务器错误: ${response.statusCode}'
+      );
     default:
       return (FishRecognitionErrorType.unknown, '未知错误: ${response.statusCode}');
   }
