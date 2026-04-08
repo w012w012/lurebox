@@ -29,6 +29,9 @@ class ExportService {
     DateTime? endDate,
     bool includeImagePaths = false,
     bool includeLocation = true,
+    String lengthUnit = 'cm',
+    String weightUnit = 'kg',
+    String temperatureUnit = 'C',
   }) async {
     final directory = await getApplicationDocumentsDirectory();
     final timestamp = DateFormat('yyyyMMdd_HHmmss').format(DateTime.now());
@@ -42,6 +45,9 @@ class ExportService {
       final content = await CsvExporter.exportFishCatches(
         catches: catches,
         includeImagePaths: includeImagePaths,
+        lengthUnit: lengthUnit,
+        weightUnit: weightUnit,
+        temperatureUnit: temperatureUnit,
       );
       await File(filePath).writeAsString(content);
       xFile = XFile(filePath);
@@ -52,6 +58,9 @@ class ExportService {
         startDate: startDate,
         endDate: endDate,
         appVersion: '1.0.1',
+        lengthUnit: lengthUnit,
+        weightUnit: weightUnit,
+        temperatureUnit: temperatureUnit,
       );
       await File(filePath).writeAsBytes(pdfBytes);
       xFile = XFile(filePath);
@@ -76,12 +85,18 @@ class ExportService {
     required List<FishCatch> catches,
     DateTime? startDate,
     DateTime? endDate,
+    String lengthUnit = 'cm',
+    String weightUnit = 'kg',
+    String temperatureUnit = 'C',
   }) async {
     final pdfBytes = await TextExporter.exportFishCatchesText(
       catches: catches,
       startDate: startDate,
       endDate: endDate,
       appVersion: '1.0.1',
+      lengthUnit: lengthUnit,
+      weightUnit: weightUnit,
+      temperatureUnit: temperatureUnit,
     );
 
     await Printing.sharePdf(bytes: pdfBytes, filename: 'fish_catches.pdf');

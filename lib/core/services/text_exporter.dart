@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import '../models/fish_catch.dart';
+import '../utils/unit_converter.dart';
 
 /// 文本导出器 - 渔获报告生成
 ///
@@ -19,6 +20,9 @@ class TextExporter {
     DateTime? startDate,
     DateTime? endDate,
     required String appVersion,
+    String lengthUnit = 'cm',
+    String weightUnit = 'kg',
+    String temperatureUnit = 'C',
   }) async {
     final buffer = StringBuffer();
 
@@ -59,11 +63,22 @@ class TextExporter {
     buffer.writeln('渔获明细');
     buffer.writeln('--------');
     for (final fish in catches) {
+      final displayLength = fish.lengthUnit != lengthUnit
+          ? UnitConverter.convertLength(fish.length, fish.lengthUnit, lengthUnit)
+          : fish.length;
+      final displayLengthSymbol = UnitConverter.getLengthSymbol(lengthUnit);
+      String displayWeightSymbol = UnitConverter.getWeightSymbol(weightUnit);
+      double? displayWeight;
+      if (fish.weight != null) {
+        displayWeight = fish.weightUnit != weightUnit
+            ? UnitConverter.convertWeight(fish.weight!, fish.weightUnit, weightUnit)
+            : fish.weight;
+      }
       buffer.writeln(
         '${fish.catchTime.toIso8601String().substring(0, 10)} | '
         '${fish.species} | '
-        '${fish.length}cm | '
-        '${fish.weight?.toString() ?? '-'}kg | '
+        '${displayLength.toStringAsFixed(2)}$displayLengthSymbol | '
+        '${displayWeight?.toStringAsFixed(2) ?? '-'}$displayWeightSymbol | '
         '${fish.fate.label}',
       );
     }
