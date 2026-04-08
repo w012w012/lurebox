@@ -48,8 +48,7 @@ class UnitSettings {
   final String lureLengthUnit; // cm, mm, inch
   final String lureQuantityUnit; // 条、只、个、包、盒
 
-  // 距离/温度
-  final String distanceUnit; // m, km, ft, mile
+  // 温度
   final String temperatureUnit; // C, F
 
   const UnitSettings({
@@ -60,7 +59,6 @@ class UnitSettings {
     this.lureWeightUnit = 'g',
     this.lureLengthUnit = 'cm',
     this.lureQuantityUnit = '个',
-    this.distanceUnit = 'm',
     this.temperatureUnit = 'C',
   });
 
@@ -72,7 +70,6 @@ class UnitSettings {
     String? lureWeightUnit,
     String? lureLengthUnit,
     String? lureQuantityUnit,
-    String? distanceUnit,
     String? temperatureUnit,
   }) {
     return UnitSettings(
@@ -83,7 +80,6 @@ class UnitSettings {
       lureWeightUnit: lureWeightUnit ?? this.lureWeightUnit,
       lureLengthUnit: lureLengthUnit ?? this.lureLengthUnit,
       lureQuantityUnit: lureQuantityUnit ?? this.lureQuantityUnit,
-      distanceUnit: distanceUnit ?? this.distanceUnit,
       temperatureUnit: temperatureUnit ?? this.temperatureUnit,
     );
   }
@@ -96,7 +92,6 @@ class UnitSettings {
         'lureWeightUnit': lureWeightUnit,
         'lureLengthUnit': lureLengthUnit,
         'lureQuantityUnit': lureQuantityUnit,
-        'distanceUnit': distanceUnit,
         'temperatureUnit': temperatureUnit,
       };
 
@@ -109,7 +104,6 @@ class UnitSettings {
       lureWeightUnit: json['lureWeightUnit'] as String? ?? 'g',
       lureLengthUnit: json['lureLengthUnit'] as String? ?? 'cm',
       lureQuantityUnit: json['lureQuantityUnit'] as String? ?? '个',
-      distanceUnit: json['distanceUnit'] as String? ?? 'm',
       temperatureUnit: json['temperatureUnit'] as String? ?? 'C',
     );
   }

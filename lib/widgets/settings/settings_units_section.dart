@@ -253,46 +253,21 @@ class UnitSettingsPage extends ConsumerWidget {
               ),
             ],
           ),
-          _buildUnitSection(
+          _buildUnitTile(
             context: context,
-            title: strings.location,
-            icon: Icons.location_on,
-            children: [
-              _buildUnitTile(
-                context: context,
-                title: strings.distanceUnit,
-                value: units.distanceUnit,
-                items: [
-                  PremiumDropdownItem(value: 'm', label: strings.meter),
-                  PremiumDropdownItem(value: 'km', label: strings.kilometer),
-                  PremiumDropdownItem(value: 'ft', label: strings.foot),
-                  PremiumDropdownItem(value: 'mile', label: strings.mile),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    ref
-                        .read(appSettingsProvider.notifier)
-                        .updateUnits(units.copyWith(distanceUnit: value));
-                  }
-                },
-              ),
-              _buildUnitTile(
-                context: context,
-                title: 'Temperature',
-                value: units.temperatureUnit,
-                items: [
-                  PremiumDropdownItem(value: 'C', label: strings.celsius),
-                  PremiumDropdownItem(value: 'F', label: strings.fahrenheit),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    ref
-                        .read(appSettingsProvider.notifier)
-                        .updateUnits(units.copyWith(temperatureUnit: value));
-                  }
-                },
-              ),
+            title: 'Temperature',
+            value: units.temperatureUnit,
+            items: [
+              PremiumDropdownItem(value: 'C', label: strings.celsius),
+              PremiumDropdownItem(value: 'F', label: strings.fahrenheit),
             ],
+            onChanged: (value) {
+              if (value != null) {
+                ref
+                    .read(appSettingsProvider.notifier)
+                    .updateUnits(units.copyWith(temperatureUnit: value));
+              }
+            },
           ),
           const SizedBox(height: 24),
         ],
