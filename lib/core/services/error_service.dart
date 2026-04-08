@@ -72,9 +72,11 @@ class ErrorService {
     try {
       return await fn();
     } catch (e, stack) {
-      final message = context != null ? '$context: $e' : '$e';
-      handleError(Exception(message), stack);
-      throw Exception(message);
+      handleError(e, stack);
+      if (context != null) {
+        throw Exception('$context: $e');
+      }
+      rethrow;
     }
   }
 
@@ -82,9 +84,11 @@ class ErrorService {
     try {
       return fn();
     } catch (e, stack) {
-      final message = context != null ? '$context: $e' : '$e';
-      handleError(Exception(message), stack);
-      throw Exception(message);
+      handleError(e, stack);
+      if (context != null) {
+        throw Exception('$context: $e');
+      }
+      rethrow;
     }
   }
 

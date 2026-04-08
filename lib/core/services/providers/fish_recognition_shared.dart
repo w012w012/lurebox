@@ -1,7 +1,9 @@
-/// 鱼类识别共享常量和工具函数
-///
-/// 所有 AI Provider 共用的系统提示词和 JSON 解析逻辑
 library fish_recognition_shared;
+
+import 'dart:async';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import '../fish_recognition_service.dart';
 
 /// 系统提示词 - 用于指导模型识别鱼类物种
 const String fishRecognitionSystemPrompt = '''你是一个专业的鱼类识别助手，专门帮助用户识别钓鱼时钓到的鱼类。
@@ -55,4 +57,46 @@ String extractJsonFromResponse(String content) {
     jsonText = jsonText.substring(0, jsonText.length - 3);
   }
   return jsonText.trim();
+}
+
+/// 解析 HTTP 响应状态码，返回 (错误类型, 错误消息)
+///
+/// [response] HTTP 响应
+/// 返回 (FishRecognitionErrorType, 错误消息)。若状态码为 200，返回 (null, null)
+(FishRecognitionErrorType?, String?) parseHttpStatus(http.Response response) {
+  switch (response.statusCode) {
+    case 200:
+      return (null, null);
+    case 400:
+      return (FishRecognitionErrorType.unknown, '请求错误: 400');
+    case 401:
+    case 403:
+      return (FishRecognitionErrorType.apiKeyInvalid, 'API 密钥无效或无权限');
+    case 429:
+      return (FishRecognitionErrorType.rateLimited, '请求过于频繁');
+    case 500:
+    case 502:
+    case 503:
+      return (FishRecognitionErrorType.networkError, '服务器错误: ${response.statusCode}');
+    default:
+      return (FishRecognitionErrorType.unknown, '未知错误: ${response.statusCode}');
+  }
+}
+
+/// 根据 HTTP 错误类型抛出对应的异常
+///
+/// [response] HTTP 响应
+/// [onRateLimited] 可选的速率限制额外处理回调
+void throwHttpError(
+  http.Response response, {
+  void Function()? onRateLimited,
+}) {
+  final (type, message) = parseHttpStatus(response);
+  if (type == null) return; // 200 OK
+
+  if (type == FishRecognitionErrorType.rateLimited && onRateLimited != null) {
+    onRateLimited();
+  }
+
+  throw FishRecognitionException(type, message ?? '未知错误');
 }

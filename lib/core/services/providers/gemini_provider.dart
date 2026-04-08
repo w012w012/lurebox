@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -67,6 +68,11 @@ class GeminiFishRecognitionProvider implements FishRecognitionProvider {
 
       // 处理响应
       return _handleResponse(response);
+    } on TimeoutException catch (_) {
+      throw const FishRecognitionException(
+        FishRecognitionErrorType.timeout,
+        '请求超时，请检查网络连接',
+      );
     } on http.ClientException catch (e) {
       throw FishRecognitionException(
         FishRecognitionErrorType.networkError,
@@ -91,53 +97,7 @@ class GeminiFishRecognitionProvider implements FishRecognitionProvider {
   /// 处理 API 响应
   FishRecognitionResult _handleResponse(http.Response response) {
     // 检查 HTTP 状态码
-    switch (response.statusCode) {
-      case 200:
-        // 成功
-        break;
-      case 400:
-        // 检查是否是 API 密钥无效
-        final body = response.body;
-        if (body.contains('API_KEY_INVALID') ||
-            body.contains('API_KEY') ||
-            body.contains('invalid')) {
-          throw const FishRecognitionException(
-            FishRecognitionErrorType.apiKeyInvalid,
-            'API 密钥无效',
-          );
-        }
-        throw FishRecognitionException(
-          FishRecognitionErrorType.unknown,
-          '请求错误: ${response.statusCode}',
-        );
-      case 401:
-        throw const FishRecognitionException(
-          FishRecognitionErrorType.apiKeyInvalid,
-          'API 密钥无效或已过期',
-        );
-      case 403:
-        throw const FishRecognitionException(
-          FishRecognitionErrorType.apiKeyInvalid,
-          'API 密钥没有权限',
-        );
-      case 429:
-        throw const FishRecognitionException(
-          FishRecognitionErrorType.rateLimited,
-          '请求过于频繁，请稍后重试',
-        );
-      case 500:
-      case 502:
-      case 503:
-        throw FishRecognitionException(
-          FishRecognitionErrorType.networkError,
-          '服务器错误: ${response.statusCode}',
-        );
-      default:
-        throw FishRecognitionException(
-          FishRecognitionErrorType.unknown,
-          '未知错误: ${response.statusCode}',
-        );
-    }
+    throwHttpError(response);
 
     // 解析响应体
     try {
