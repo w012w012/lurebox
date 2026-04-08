@@ -11,14 +11,18 @@ void main() {
     });
 
     test('fromJson parses valid values', () {
-      expect(AchievementLevel.fromJson('bronze'), equals(AchievementLevel.bronze));
-      expect(AchievementLevel.fromJson('silver'), equals(AchievementLevel.silver));
+      expect(
+          AchievementLevel.fromJson('bronze'), equals(AchievementLevel.bronze));
+      expect(
+          AchievementLevel.fromJson('silver'), equals(AchievementLevel.silver));
       expect(AchievementLevel.fromJson('gold'), equals(AchievementLevel.gold));
-      expect(AchievementLevel.fromJson('platinum'), equals(AchievementLevel.platinum));
+      expect(AchievementLevel.fromJson('platinum'),
+          equals(AchievementLevel.platinum));
     });
 
     test('fromJson returns bronze for unknown values', () {
-      expect(AchievementLevel.fromJson('unknown'), equals(AchievementLevel.bronze));
+      expect(AchievementLevel.fromJson('unknown'),
+          equals(AchievementLevel.bronze));
       expect(AchievementLevel.fromJson(''), equals(AchievementLevel.bronze));
     });
   });
@@ -197,7 +201,8 @@ void main() {
         };
 
         final fromJsonAchievement = Achievement.fromJson(json);
-        expect(fromJsonAchievement.unlockedAt, equals(DateTime(2024, 6, 15, 10, 30)));
+        expect(fromJsonAchievement.unlockedAt,
+            equals(DateTime(2024, 6, 15, 10, 30)));
       });
 
       test('fromJson handles int progress', () {
