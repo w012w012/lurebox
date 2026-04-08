@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId = "com.lurebox.lurebox"
-        minSdk = 21
+        minSdk = flutter.minSdkVersion
         targetSdk = 34
         versionCode = project.property("flutter.versionCode").toString().toInt()
         versionName = project.property("flutter.versionName").toString()

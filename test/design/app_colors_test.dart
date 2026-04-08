@@ -11,7 +11,7 @@ void main() {
 
       test('primaryDark should be light blue for dark mode contrast', () {
         // Should be lighter than primaryLight for dark mode readability
-        expect(AppColors.primaryDark.value, isNotNull);
+        expect(AppColors.primaryDark.r, isNotNull);
       });
     });
 
@@ -21,7 +21,7 @@ void main() {
       });
 
       test('accentDark should be lighter blue for dark mode', () {
-        expect(AppColors.accentDark.value, isNotNull);
+        expect(AppColors.accentDark.r, isNotNull);
       });
     });
 

@@ -79,7 +79,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<AiRecognitionProvider>(
-              value: aiSettings.currentProvider,
+              initialValue: aiSettings.currentProvider,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 contentPadding:

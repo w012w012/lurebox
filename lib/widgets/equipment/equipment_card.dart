@@ -178,7 +178,7 @@ class _EquipmentCardState extends ConsumerState<EquipmentCard> {
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.teal.withOpacity(0.1),
+                        color: AppColors.teal.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(

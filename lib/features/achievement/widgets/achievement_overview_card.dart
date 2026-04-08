@@ -70,7 +70,7 @@ class AchievementOverviewCard extends StatelessWidget {
           Text(
             '$unlockedCount / $totalCount 种鱼',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.surfaceLight.withOpacity(0.9),
+                  color: AppColors.surfaceLight.withValues(alpha: 0.9),
                 ),
           ),
           const SizedBox(height: 8),
@@ -80,7 +80,7 @@ class AchievementOverviewCard extends StatelessWidget {
             Text(
               '本月新增: +$monthlyNewCount 种',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.surfaceLight.withOpacity(0.7),
+                    color: AppColors.surfaceLight.withValues(alpha: 0.7),
                   ),
             ),
         ],
@@ -131,7 +131,7 @@ class AchievementOverviewCard extends StatelessWidget {
                 height: 8,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
-                  color: AppColors.surfaceLight.withOpacity(0.2),
+                  color: AppColors.surfaceLight.withValues(alpha: 0.2),
                 ),
                 child: FractionallySizedBox(
                   alignment: Alignment.centerLeft,
@@ -143,7 +143,7 @@ class AchievementOverviewCard extends StatelessWidget {
                           ? LinearGradient(
                               colors: [
                                 AppColors.accentLight,
-                                AppColors.accentLight.withOpacity(0.8),
+                                AppColors.accentLight.withValues(alpha: 0.8),
                               ],
                             )
                           : null,

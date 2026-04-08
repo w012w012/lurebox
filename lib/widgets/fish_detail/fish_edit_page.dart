@@ -277,7 +277,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
     required ValueChanged<int?> onChanged,
   }) {
     return DropdownButtonFormField<int?>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
@@ -318,7 +318,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
           color: isSelected
-              ? color.withOpacity(0.2)
+              ? color.withValues(alpha: 0.2)
               : Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
@@ -414,7 +414,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<int>(
-                value: selectedWeatherCode,
+                initialValue: selectedWeatherCode,
                 decoration: const InputDecoration(
                   labelText: '天气状况',
                   border: OutlineInputBorder(),

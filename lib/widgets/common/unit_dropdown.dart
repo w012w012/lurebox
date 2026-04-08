@@ -20,7 +20,7 @@ class UnitDropdown extends StatelessWidget {
     return Semantics(
       label: label,
       child: DropdownButtonFormField<String>(
-        value: options.contains(value) ? value : options.first,
+        initialValue: options.contains(value) ? value : options.first,
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(),

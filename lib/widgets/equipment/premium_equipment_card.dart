@@ -66,7 +66,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
               Container(
                 padding: const EdgeInsets.all(AppTheme.spacingSm),
                 decoration: BoxDecoration(
-                  color: typeInfo.color.withOpacity(0.12),
+                  color: typeInfo.color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                 ),
                 child: Icon(typeInfo.icon, color: typeInfo.color, size: 24),
@@ -97,7 +97,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: typeInfo.color.withOpacity(0.08),
+                        color: typeInfo.color.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                       ),
                       child: Text(
@@ -123,7 +123,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.gold.withOpacity(0.12),
+                        color: AppColors.gold.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                       ),
                       child: Row(
@@ -155,7 +155,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.success.withOpacity(0.12),
+                        color: AppColors.success.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(AppTheme.radiusSm),
                       ),
                       child: Text(
@@ -250,7 +250,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: AppColors.accentLight.withOpacity(0.08),
+        color: AppColors.accentLight.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(AppTheme.radiusSm),
       ),
       child: Text(
@@ -276,7 +276,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
             vertical: 2,
           ),
           decoration: BoxDecoration(
-            color: AppColors.success.withOpacity(0.08),
+            color: AppColors.success.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(AppTheme.radiusSm),
           ),
           child: Text(
@@ -454,10 +454,10 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         vertical: AppTheme.spacingSm,
       ),
       decoration: BoxDecoration(
-        color: AppColors.accentLight.withOpacity(0.12),
+        color: AppColors.accentLight.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
         border: Border.all(
-          color: AppColors.accentLight.withOpacity(0.3),
+          color: AppColors.accentLight.withValues(alpha: 0.3),
           width: 1,
         ),
       ),

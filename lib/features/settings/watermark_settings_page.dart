@@ -320,7 +320,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                         : Theme.of(context)
                             .colorScheme
                             .outline
-                            .withOpacity(0.3),
+                            .withValues(alpha: 0.3),
                     width: isSelected ? 3 : 1,
                   ),
                 ),
@@ -376,7 +376,10 @@ class WatermarkSettingsPage extends ConsumerWidget {
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? Theme.of(context).colorScheme.primary.withOpacity(0.2)
+                      ? Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withValues(alpha: 0.2)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
@@ -385,7 +388,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                         : Theme.of(context)
                             .colorScheme
                             .outline
-                            .withOpacity(0.3),
+                            .withValues(alpha: 0.3),
                   ),
                 ),
                 child: Column(
@@ -542,12 +545,12 @@ class _WatermarkInfoTile extends StatelessWidget {
         color: isSelected
             ? Theme.of(
                 context,
-              ).colorScheme.primaryContainer.withOpacity(0.3)
+              ).colorScheme.primaryContainer.withValues(alpha: 0.3)
             : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: isSelected
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.3)
+              ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
               : Colors.transparent,
         ),
       ),
@@ -571,7 +574,7 @@ class _WatermarkInfoTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppColors.secondaryLight.withOpacity(0.2),
+                  color: AppColors.secondaryLight.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(

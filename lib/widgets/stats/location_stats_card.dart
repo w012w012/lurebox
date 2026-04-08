@@ -157,7 +157,7 @@ class _LocationStatsCardState extends State<LocationStatsCard>
                             vertical: AppTheme.spacingXs,
                           ),
                           decoration: BoxDecoration(
-                            color: accentColor.withOpacity(0.12),
+                            color: accentColor.withValues(alpha: 0.12),
                             borderRadius:
                                 BorderRadius.circular(AppTheme.radiusMd),
                           ),

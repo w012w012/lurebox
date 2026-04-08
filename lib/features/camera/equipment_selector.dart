@@ -305,7 +305,7 @@ class EquipmentSelector extends ConsumerWidget {
           final isSelected =
               selectedItem != null && selectedItem['id'] == item['id'];
           return Card(
-            color: isSelected ? color.withOpacity(0.15) : null,
+            color: isSelected ? color.withValues(alpha: 0.15) : null,
             margin: const EdgeInsets.only(bottom: 8),
             child: ListTile(
               leading: isSelected

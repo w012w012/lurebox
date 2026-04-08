@@ -588,7 +588,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<int>(
-                  value: selectedWeatherCode,
+                  initialValue: selectedWeatherCode,
                   decoration: const InputDecoration(
                     labelText: '天气状况',
                     border: OutlineInputBorder(),

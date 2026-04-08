@@ -68,11 +68,11 @@ class DistributionChart extends StatelessWidget {
   ) {
     final colors = [
       color,
-      color.withOpacity(0.8),
-      color.withOpacity(0.6),
-      color.withOpacity(0.4),
-      color.withOpacity(0.3),
-      color.withOpacity(0.2),
+      color.withValues(alpha: 0.8),
+      color.withValues(alpha: 0.6),
+      color.withValues(alpha: 0.4),
+      color.withValues(alpha: 0.3),
+      color.withValues(alpha: 0.2),
     ];
 
     return Column(

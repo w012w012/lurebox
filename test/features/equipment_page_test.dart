@@ -234,8 +234,7 @@ void main() {
 
     test('secondary color complements primary', () {
       // Secondary should be lighter than primary (higher RGB values)
-      expect(AppColors.secondaryLight.value,
-          greaterThan(AppColors.primaryLight.value));
+      expect(AppColors.secondaryLight.r, greaterThan(AppColors.primaryLight.r));
     });
   });
 }

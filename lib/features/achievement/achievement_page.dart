@@ -161,7 +161,8 @@ class AchievementPage extends ConsumerWidget {
                   CircularProgressIndicator(
                     value: progress / 100,
                     strokeWidth: 8,
-                    backgroundColor: AppColors.surfaceLight.withOpacity(0.2),
+                    backgroundColor:
+                        AppColors.surfaceLight.withValues(alpha: 0.2),
                     valueColor:
                         const AlwaysStoppedAnimation<Color>(AppColors.gold),
                   ),
@@ -226,7 +227,8 @@ class AchievementPage extends ConsumerWidget {
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
                     value: progress / 100,
-                    backgroundColor: AppColors.surfaceLight.withOpacity(0.2),
+                    backgroundColor:
+                        AppColors.surfaceLight.withValues(alpha: 0.2),
                     valueColor:
                         const AlwaysStoppedAnimation<Color>(AppColors.gold),
                     minHeight: 6,

@@ -39,7 +39,7 @@ class SharePreviewDialog extends StatelessWidget {
           color: AppColors.surfaceDark,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: AppColors.accentLight.withOpacity(0.3),
+            color: AppColors.accentLight.withValues(alpha: 0.3),
             width: 1,
           ),
         ),
@@ -72,7 +72,7 @@ class SharePreviewDialog extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 24),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.borderDark.withOpacity(0.15),
+                color: AppColors.borderDark.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: ShareCardWidget(config: config),
@@ -158,7 +158,7 @@ class SharePreviewDialog extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.accentLight.withOpacity(0.2),
+        color: AppColors.accentLight.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(

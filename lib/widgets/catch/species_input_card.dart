@@ -63,7 +63,7 @@ class SpeciesInputCard extends ConsumerWidget {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   backgroundColor: state.pendingRecognition
-                      ? AppColors.warning.withOpacity(0.3)
+                      ? AppColors.warning.withValues(alpha: 0.3)
                       : Theme.of(context).colorScheme.secondary,
                   foregroundColor: state.pendingRecognition
                       ? AppColors.warning

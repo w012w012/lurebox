@@ -58,7 +58,7 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.borderDark.withOpacity(0.5),
+                    color: AppColors.borderDark.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -113,7 +113,7 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.accentLight
-                          : AppColors.borderDark.withOpacity(0.3),
+                          : AppColors.borderDark.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected
@@ -192,7 +192,7 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: AppColors.accentLight,
+            activeThumbColor: AppColors.accentLight,
           ),
         ],
       ),
@@ -206,7 +206,7 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: AppColors.backgroundDark.withOpacity(0.3),
+              color: AppColors.backgroundDark.withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),

@@ -66,9 +66,9 @@ class EquipmentPieChart extends StatelessWidget {
 
     final colors = [
       color,
-      color.withOpacity(0.7),
-      color.withOpacity(0.5),
-      color.withOpacity(0.3),
+      color.withValues(alpha: 0.7),
+      color.withValues(alpha: 0.5),
+      color.withValues(alpha: 0.3),
       AppColors.grey700,
       AppColors.teal,
       AppColors.indigo,

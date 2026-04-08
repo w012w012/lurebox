@@ -263,8 +263,8 @@ class _ExportBottomSheetState extends State<ExportBottomSheet> {
         ? AppColors.accentDark
         : AppColors.accentLight;
     final accentBackground = Theme.of(context).brightness == Brightness.dark
-        ? AppColors.accentDark.withOpacity(0.12)
-        : AppColors.accentLight.withOpacity(0.12);
+        ? AppColors.accentDark.withValues(alpha: 0.12)
+        : AppColors.accentLight.withValues(alpha: 0.12);
     return InkWell(
       onTap: onTap,
       child: Container(
