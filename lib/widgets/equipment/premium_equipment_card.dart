@@ -454,7 +454,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         if (lineNumber.isNotEmpty) lineInfo += ' / $lineNumber';
         if (lineLength.isNotEmpty) lineInfo += ' / $lineLength';
         if (lineDate != null) {
-          final dateStr = lineDate.toString().split(' ')[0];
+          final dateStr = lineDate.toString().split(RegExp(r'[ T]'))[0];
           lineInfo += ' / $dateStr';
         }
         reelLineItem = _InfoItem(strings.line, lineInfo);
