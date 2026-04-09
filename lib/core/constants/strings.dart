@@ -192,6 +192,12 @@ class AppStrings {
   final String disabled;
   final String locationManagement;
   final String locationManagementDesc;
+  final String speciesManagement;
+  final String speciesManagementDesc;
+  final String aiConfiguration;
+  final String aiConfigurationDesc;
+  final String exportAndBackupManagement;
+  final String exportAndBackupManagementDesc;
   final String syncToCloud;
   final String exportToLocal;
   final String importFromLocal;
@@ -648,6 +654,12 @@ class AppStrings {
     required this.disabled,
     required this.locationManagement,
     required this.locationManagementDesc,
+    required this.speciesManagement,
+    required this.speciesManagementDesc,
+    required this.aiConfiguration,
+    required this.aiConfigurationDesc,
+    required this.exportAndBackupManagement,
+    required this.exportAndBackupManagementDesc,
     required this.syncToCloud,
     required this.exportToLocal,
     required this.importFromLocal,
@@ -1088,6 +1100,12 @@ class AppStrings {
     disabled: '已关闭',
     locationManagement: '钓点管理',
     locationManagementDesc: '管理钓点，合并相似钓点',
+    speciesManagement: '品种管理',
+    speciesManagementDesc: '管理鱼种，编辑常用鱼种',
+    aiConfiguration: 'AI配置',
+    aiConfigurationDesc: '配置AI识别功能',
+    exportAndBackupManagement: '导出与备份',
+    exportAndBackupManagementDesc: '导出数据或备份到云端',
     syncToCloud: '同步到云端',
     exportToLocal: '导出到本地文件',
     importFromLocal: '从本地文件导入',
@@ -1539,6 +1557,12 @@ class AppStrings {
     disabled: 'Disabled',
     locationManagement: 'Location Management',
     locationManagementDesc: 'Manage locations, merge similar ones',
+    speciesManagement: 'Species Management',
+    speciesManagementDesc: 'Manage fish species, edit common species',
+    aiConfiguration: 'AI Configuration',
+    aiConfigurationDesc: 'Configure AI recognition settings',
+    exportAndBackupManagement: 'Export & Backup',
+    exportAndBackupManagementDesc: 'Export data or backup to cloud',
     syncToCloud: 'Sync to Cloud',
     exportToLocal: 'Export to local file',
     importFromLocal: 'Import from local file',
