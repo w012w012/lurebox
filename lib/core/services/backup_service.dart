@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import '../database/database_provider.dart';
+import 'error_service.dart';
 
 /// 备份服务 - 数据备份与云同步
 ///
@@ -50,7 +51,7 @@ class BackupService {
   Future<int> importFromJson(String filePath) async {
     final file = File(filePath);
     if (!await file.exists()) {
-      throw Exception('File not found');
+      throw DatabaseException('File not found');
     }
 
     final jsonString = await file.readAsString();
@@ -135,7 +136,7 @@ class BackupService {
 
       final uri = Uri.parse(url);
       if (uri.host.isEmpty) {
-        throw Exception('Invalid server URL: missing host');
+        throw DatabaseException('Invalid server URL: missing host');
       }
 
       client = HttpClient();
@@ -154,7 +155,7 @@ class BackupService {
       if (response.statusCode == 201 || response.statusCode == 204) {
         return url;
       } else {
-        throw Exception('Upload failed: ${response.statusCode}');
+        throw DatabaseException('Upload failed: ${response.statusCode}');
       }
     } catch (e) {
       debugPrint('WebDAV upload error: $e');

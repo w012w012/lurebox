@@ -16,7 +16,6 @@ export 'common/watermarked_image.dart';
 export 'equipment/equipment_edit_page.dart';
 export 'equipment/equipment_list_page.dart';
 export 'equipment/equipment_overview_page.dart';
-export 'equipment/widgets/equipment_forms.dart';
 
 // Fish Detail
 export 'fish_detail/fish_detail_page.dart';

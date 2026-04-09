@@ -1,5 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import '../services/database_service.dart';
+import '../services/error_service.dart';
 import 'settings_repository.dart';
 
 /// SQLite 实现 - 应用设置仓储层
@@ -23,7 +24,7 @@ class SqliteSettingsRepository implements SettingsRepository {
       if (results.isEmpty) return null;
       return results.first['value'] as String?;
     } catch (e) {
-      throw Exception('Failed to get setting: $e');
+      throw DatabaseException('Failed to get setting: $e');
     }
   }
 
@@ -46,7 +47,7 @@ class SqliteSettingsRepository implements SettingsRepository {
           },
           conflictAlgorithm: ConflictAlgorithm.replace);
     } catch (e) {
-      throw Exception('Failed to set setting: $e');
+      throw DatabaseException('Failed to set setting: $e');
     }
   }
 
@@ -56,7 +57,7 @@ class SqliteSettingsRepository implements SettingsRepository {
       final db = await DatabaseService.database;
       await db.delete(_tableName, where: 'key = ?', whereArgs: [key]);
     } catch (e) {
-      throw Exception('Failed to delete setting: $e');
+      throw DatabaseException('Failed to delete setting: $e');
     }
   }
 
@@ -72,7 +73,7 @@ class SqliteSettingsRepository implements SettingsRepository {
       );
       return results.isNotEmpty;
     } catch (e) {
-      throw Exception('Failed to check setting existence: $e');
+      throw DatabaseException('Failed to check setting existence: $e');
     }
   }
 
@@ -91,7 +92,7 @@ class SqliteSettingsRepository implements SettingsRepository {
       }
       return settings;
     } catch (e) {
-      throw Exception('Failed to get all settings: $e');
+      throw DatabaseException('Failed to get all settings: $e');
     }
   }
 
@@ -112,7 +113,7 @@ class SqliteSettingsRepository implements SettingsRepository {
         }
       });
     } catch (e) {
-      throw Exception('Failed to set all settings: $e');
+      throw DatabaseException('Failed to set all settings: $e');
     }
   }
 

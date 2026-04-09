@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
 import '../../../core/design/theme/app_theme.dart';
 import '../../../core/design/theme/animation_constants.dart';
@@ -9,10 +10,12 @@ class LocationStatsCard extends StatefulWidget {
   final Map<String, Map<String, int>> locationAnalysis;
   final bool showDetails;
   final VoidCallback? onToggleDetails;
+  final AppStrings strings;
 
   const LocationStatsCard({
     super.key,
     required this.locationAnalysis,
+    required this.strings,
     this.showDetails = true,
     this.onToggleDetails,
   });
@@ -73,7 +76,7 @@ class _LocationStatsCardState extends State<LocationStatsCard>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '钓点分析',
+                  widget.strings.locationAnalysis,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -86,7 +89,9 @@ class _LocationStatsCardState extends State<LocationStatsCard>
                     color: accentColor,
                   ),
                   onPressed: widget.onToggleDetails,
-                  tooltip: widget.showDetails ? '隐藏钓点' : '显示钓点',
+                  tooltip: widget.showDetails
+                      ? widget.strings.hideLocation
+                      : widget.strings.showLocation,
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -136,7 +141,7 @@ class _LocationStatsCardState extends State<LocationStatsCard>
                           ),
                         ),
                         Text(
-                          '合计 $total 条',
+                          widget.strings.totalCountPattern.replaceAll('%d', total.toString()),
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: Theme.of(
@@ -162,7 +167,9 @@ class _LocationStatsCardState extends State<LocationStatsCard>
                                 BorderRadius.circular(AppTheme.radiusMd),
                           ),
                           child: Text(
-                            '${speciesEntry.key}: ${speciesEntry.value}条',
+                            widget.strings.speciesCountPattern
+                                .replaceAll('%s', speciesEntry.key)
+                                .replaceAll('%d', speciesEntry.value.toString()),
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                         );

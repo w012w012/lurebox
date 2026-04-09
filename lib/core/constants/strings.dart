@@ -56,6 +56,7 @@ class AppStrings {
   final String unitSettings;
   final String lengthUnit;
   final String weightUnit;
+  final String unit;
   final String darkMode;
   final String language;
   final String watermarkSettings;
@@ -438,6 +439,24 @@ class AppStrings {
   final String allRecords;
   final String dateRangeTo;
 
+  // UI Labels
+  final String address;
+  final String weather;
+  final String tapToSet;
+  final String pendingRecognition;
+  final String addToPendingRecognition;
+  final String cancelPendingRecognition;
+  final String ascending;
+  final String descending;
+  final String noEquipment;
+  final String hideLocation;
+  final String showLocation;
+  final String totalCountPattern;
+  final String speciesCountPattern;
+  final String rodUnit;
+  final String reelUnit;
+  final String lureUnit;
+
   const AppStrings({
     required this.appName,
     required this.home,
@@ -495,6 +514,7 @@ class AppStrings {
     required this.unitSettings,
     required this.lengthUnit,
     required this.weightUnit,
+    required this.unit,
     required this.darkMode,
     required this.language,
     required this.watermarkSettings,
@@ -858,6 +878,23 @@ class AppStrings {
     required this.catchRecordsExport,
     required this.allRecords,
     required this.dateRangeTo,
+    // UI Labels
+    required this.address,
+    required this.weather,
+    required this.tapToSet,
+    required this.pendingRecognition,
+    required this.addToPendingRecognition,
+    required this.cancelPendingRecognition,
+    required this.ascending,
+    required this.descending,
+    required this.noEquipment,
+    required this.hideLocation,
+    required this.showLocation,
+    required this.totalCountPattern,
+    required this.speciesCountPattern,
+    required this.rodUnit,
+    required this.reelUnit,
+    required this.lureUnit,
   });
 
   static const chinese = AppStrings(
@@ -917,6 +954,7 @@ class AppStrings {
     unitSettings: '单位设置',
     lengthUnit: '长度单位',
     weightUnit: '重量单位',
+    unit: '单位',
     darkMode: '深色模式',
     language: '语言',
     watermarkSettings: '水印设置',
@@ -1279,6 +1317,23 @@ class AppStrings {
     catchRecordsExport: '鱼获记录导出',
     allRecords: '全部记录',
     dateRangeTo: '至',
+    // UI Labels
+    address: '地址',
+    weather: '天气',
+    tapToSet: '点击设置',
+    pendingRecognition: '待识别',
+    addToPendingRecognition: '⏭ 加入待识别',
+    cancelPendingRecognition: '↩ 取消待识别',
+    ascending: '升序',
+    descending: '降序',
+    noEquipment: '暂无装备',
+    hideLocation: '隐藏钓点',
+    showLocation: '显示钓点',
+    totalCountPattern: '合计 %d 条',
+    speciesCountPattern: '%s: %d条',
+    rodUnit: '支',
+    reelUnit: '只',
+    lureUnit: '种',
     configureRig: '配置钓组',
     rigType: '钓组类型',
     sinkerConfig: '插铅配置',
@@ -1349,6 +1404,7 @@ class AppStrings {
     unitSettings: 'Unit Settings',
     lengthUnit: 'Length Unit',
     weightUnit: 'Weight Unit',
+    unit: 'Unit',
     darkMode: 'Dark Mode',
     language: 'Language',
     watermarkSettings: 'Watermark Settings',
@@ -1719,6 +1775,23 @@ class AppStrings {
     catchRecordsExport: 'Catch Records Export',
     allRecords: 'All Records',
     dateRangeTo: 'to',
+    // UI Labels
+    address: 'Address',
+    weather: 'Weather',
+    tapToSet: 'Tap to set',
+    pendingRecognition: 'Pending',
+    addToPendingRecognition: '⏭ Add to pending',
+    cancelPendingRecognition: '↩ Cancel pending',
+    ascending: 'Ascending',
+    descending: 'Descending',
+    noEquipment: 'No equipment',
+    hideLocation: 'Hide spots',
+    showLocation: 'Show spots',
+    totalCountPattern: 'Total: %d',
+    speciesCountPattern: '%s: %d',
+    rodUnit: '',
+    reelUnit: '',
+    lureUnit: '',
     configureRig: 'Configure Rig',
     rigType: 'Rig Type',
     sinkerConfig: 'Sinker Config',
@@ -1728,7 +1801,7 @@ class AppStrings {
     hookWeight: 'Hook Weight',
     hookSize: 'Hook Size',
     customOption: 'Custom',
-    customRigTypeHint: 'Input custom rig type',
-    customHookTypeHint: 'Input custom hook type',
+    customRigTypeHint: 'Enter custom rig type',
+    customHookTypeHint: 'Enter custom hook type',
   );
 }

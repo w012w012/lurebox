@@ -1,6 +1,7 @@
 import '../models/fish_catch.dart';
 import '../models/fish_filter.dart';
 import '../services/database_service.dart';
+import '../services/error_service.dart';
 import 'fish_catch_repository.dart';
 
 /// SQLite 实现 - 渔获记录仓储层
@@ -150,7 +151,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
           as List<Map<String, dynamic>>;
       return results.map((map) => FishCatch.fromMap(map)).toList();
     } catch (e) {
-      throw Exception('Failed to get all fish catches: $e');
+      throw DatabaseException('Failed to get all fish catches: $e');
     }
   }
 
@@ -167,7 +168,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       if (results.isEmpty) return null;
       return FishCatch.fromMap(results.first);
     } catch (e) {
-      throw Exception('Failed to get fish catch by id: $e');
+      throw DatabaseException('Failed to get fish catch by id: $e');
     }
   }
 
@@ -181,7 +182,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       map['updated_at'] = DateTime.now().toIso8601String();
       return await db.insert(_tableName, map);
     } catch (e) {
-      throw Exception('Failed to create fish catch: $e');
+      throw DatabaseException('Failed to create fish catch: $e');
     }
   }
 
@@ -193,7 +194,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       map['updated_at'] = DateTime.now().toIso8601String();
       await db.update(_tableName, map, where: 'id = ?', whereArgs: [fish.id]);
     } catch (e) {
-      throw Exception('Failed to update fish catch: $e');
+      throw DatabaseException('Failed to update fish catch: $e');
     }
   }
 
@@ -203,7 +204,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       final db = await _database;
       await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
     } catch (e) {
-      throw Exception('Failed to delete fish catch: $e');
+      throw DatabaseException('Failed to delete fish catch: $e');
     }
   }
 
@@ -219,7 +220,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         whereArgs: ids,
       );
     } catch (e) {
-      throw Exception('Failed to delete multiple fish catches: $e');
+      throw DatabaseException('Failed to delete multiple fish catches: $e');
     }
   }
 
@@ -235,7 +236,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       ) as List<Map<String, dynamic>>;
       return List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
     } catch (e) {
-      throw Exception('Failed to get fish catches by date range: $e');
+      throw DatabaseException('Failed to get fish catches by date range: $e');
     }
   }
 
@@ -251,7 +252,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       ) as List<Map<String, dynamic>>;
       return List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
     } catch (e) {
-      throw Exception('Failed to get fish catches by fate: $e');
+      throw DatabaseException('Failed to get fish catches by fate: $e');
     }
   }
 
@@ -297,7 +298,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         hasMore: hasMore,
       );
     } catch (e) {
-      throw Exception('Failed to get paginated fish catches: $e');
+      throw DatabaseException('Failed to get paginated fish catches: $e');
     }
   }
 
@@ -374,7 +375,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         hasMore: hasMore,
       );
     } catch (e) {
-      throw Exception('Failed to get filtered paginated fish catches: $e');
+      throw DatabaseException('Failed to get filtered paginated fish catches: $e');
     }
   }
 
@@ -426,7 +427,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         hasMore: hasMore,
       );
     } catch (e) {
-      throw Exception('Failed to get filtered paginated fish catches: $e');
+      throw DatabaseException('Failed to get filtered paginated fish catches: $e');
     }
   }
 
@@ -442,7 +443,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       ) as List<Map<String, dynamic>>;
       return results.map((map) => FishCatch.fromMap(map)).toList();
     } catch (e) {
-      throw Exception('Failed to get pending recognition catches: $e');
+      throw DatabaseException('Failed to get pending recognition catches: $e');
     }
   }
 
@@ -456,7 +457,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       );
       return (result.first['count'] as int?) ?? 0;
     } catch (e) {
-      throw Exception('Failed to get pending recognition count: $e');
+      throw DatabaseException('Failed to get pending recognition count: $e');
     }
   }
 
@@ -475,7 +476,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         whereArgs: [id],
       );
     } catch (e) {
-      throw Exception('Failed to update species: $e');
+      throw DatabaseException('Failed to update species: $e');
     }
   }
 
@@ -530,7 +531,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       // Single SQL execution - single database round-trip
       await db.rawUpdate(buffer.toString(), args);
     } catch (e) {
-      throw Exception('Failed to batch update species: $e');
+      throw DatabaseException('Failed to batch update species: $e');
     }
   }
 
@@ -551,14 +552,14 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       }
       return counts;
     } catch (e) {
-      throw Exception('Failed to get species counts: $e');
+      throw DatabaseException('Failed to get species counts: $e');
     }
   }
 
   @override
   Future<void> renameSpecies(String oldName, String newName) async {
     if (oldName.isEmpty || newName.isEmpty) {
-      throw Exception('Species names cannot be empty');
+      throw DatabaseException('Species names cannot be empty');
     }
     try {
       final db = await _database;
@@ -570,7 +571,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         whereArgs: [oldName],
       );
     } catch (e) {
-      throw Exception('Failed to rename species: $e');
+      throw DatabaseException('Failed to rename species: $e');
     }
   }
 
@@ -583,7 +584,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
   @override
   Future<void> deleteSpecies(String speciesName) async {
     if (speciesName.isEmpty) {
-      throw Exception('Species name cannot be empty');
+      throw DatabaseException('Species name cannot be empty');
     }
     try {
       final db = await _database;
@@ -593,7 +594,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         whereArgs: [speciesName],
       );
     } catch (e) {
-      throw Exception('Failed to delete species: $e');
+      throw DatabaseException('Failed to delete species: $e');
     }
   }
 
@@ -650,7 +651,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         'hookWeight': hookWeightStats,
       };
     } catch (e) {
-      throw Exception('Failed to get soft worm rig analytics: $e');
+      throw DatabaseException('Failed to get soft worm rig analytics: $e');
     }
   }
 
@@ -663,7 +664,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       );
       return result.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get fish catch count: $e');
+      throw DatabaseException('Failed to get fish catch count: $e');
     }
   }
 }

@@ -196,15 +196,15 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                         switch (group.x.toInt()) {
                           case 0:
                             label = strings.rod;
-                            unit = '支';
+                            unit = strings.rodUnit;
                             break;
                           case 1:
                             label = strings.reel;
-                            unit = '只';
+                            unit = strings.reelUnit;
                             break;
                           case 2:
                             label = strings.lure;
-                            unit = '种';
+                            unit = strings.lureUnit;
                             break;
                           default:
                             return null;
@@ -229,7 +229,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                           switch (value.toInt()) {
                             case 0:
                               return Text(
-                                '$rodCount支',
+                                '$rodCount${strings.rodUnit}',
                                 style: const TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
@@ -237,7 +237,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                               );
                             case 1:
                               return Text(
-                                '$reelCount只',
+                                '$reelCount${strings.reelUnit}',
                                 style: const TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
@@ -245,7 +245,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                               );
                             case 2:
                               return Text(
-                                '$lureCount种',
+                                '$lureCount${strings.lureUnit}',
                                 style: const TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,

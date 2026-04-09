@@ -502,6 +502,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
         if (_locationAnalysis.isNotEmpty) ...[
           LocationStatsCard(
             locationAnalysis: _locationAnalysis,
+            strings: strings,
             showDetails: _showLocationDetails,
             onToggleDetails: () {
               setState(() {

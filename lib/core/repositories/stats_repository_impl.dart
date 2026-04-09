@@ -1,5 +1,6 @@
 import '../models/fish_catch.dart';
 import '../services/database_service.dart';
+import '../services/error_service.dart';
 import 'stats_repository.dart';
 
 /// SQLite 实现 - 统计数据仓储层
@@ -40,7 +41,7 @@ class SqliteStatsRepository implements StatsRepository {
 
       return CatchStats.fromMap(results.first);
     } catch (e) {
-      throw Exception('Failed to get catch stats: $e');
+      throw DatabaseException('Failed to get catch stats: $e');
     }
   }
 
@@ -83,7 +84,7 @@ class SqliteStatsRepository implements StatsRepository {
       }
       return stats;
     } catch (e) {
-      throw Exception('Failed to get species stats: $e');
+      throw DatabaseException('Failed to get species stats: $e');
     }
   }
 
@@ -96,7 +97,7 @@ class SqliteStatsRepository implements StatsRepository {
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get total catch count: $e');
+      throw DatabaseException('Failed to get total catch count: $e');
     }
   }
 
@@ -110,7 +111,7 @@ class SqliteStatsRepository implements StatsRepository {
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get catches above length: $e');
+      throw DatabaseException('Failed to get catches above length: $e');
     }
   }
 
@@ -123,7 +124,7 @@ class SqliteStatsRepository implements StatsRepository {
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get distinct species count: $e');
+      throw DatabaseException('Failed to get distinct species count: $e');
     }
   }
 
@@ -144,7 +145,7 @@ class SqliteStatsRepository implements StatsRepository {
         ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get equipment count: $e');
+      throw DatabaseException('Failed to get equipment count: $e');
     }
   }
 
@@ -159,7 +160,7 @@ class SqliteStatsRepository implements StatsRepository {
         ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get location count: $e');
+      throw DatabaseException('Failed to get location count: $e');
     }
   }
 
@@ -172,7 +173,7 @@ class SqliteStatsRepository implements StatsRepository {
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get release count: $e');
+      throw DatabaseException('Failed to get release count: $e');
     }
   }
 
@@ -192,7 +193,7 @@ class SqliteStatsRepository implements StatsRepository {
       final release = results.first['release'] as int? ?? 0;
       return release / total;
     } catch (e) {
-      throw Exception('Failed to get release rate: $e');
+      throw DatabaseException('Failed to get release rate: $e');
     }
   }
 
@@ -238,7 +239,7 @@ class SqliteStatsRepository implements StatsRepository {
 
       return consecutiveDays;
     } catch (e) {
-      throw Exception('Failed to get consecutive days: $e');
+      throw DatabaseException('Failed to get consecutive days: $e');
     }
   }
 
@@ -257,7 +258,7 @@ class SqliteStatsRepository implements StatsRepository {
       if (results.isEmpty) return 0;
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get monthly max: $e');
+      throw DatabaseException('Failed to get monthly max: $e');
     }
   }
 
@@ -276,7 +277,7 @@ class SqliteStatsRepository implements StatsRepository {
       if (results.isEmpty) return 0;
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get daily max: $e');
+      throw DatabaseException('Failed to get daily max: $e');
     }
   }
 
@@ -291,7 +292,7 @@ class SqliteStatsRepository implements StatsRepository {
       ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get morning catch count: $e');
+      throw DatabaseException('Failed to get morning catch count: $e');
     }
   }
 
@@ -306,7 +307,7 @@ class SqliteStatsRepository implements StatsRepository {
       ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get night catch count: $e');
+      throw DatabaseException('Failed to get night catch count: $e');
     }
   }
 
@@ -319,7 +320,7 @@ class SqliteStatsRepository implements StatsRepository {
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get photo count: $e');
+      throw DatabaseException('Failed to get photo count: $e');
     }
   }
 
@@ -332,7 +333,7 @@ class SqliteStatsRepository implements StatsRepository {
       );
       return (results.first['total'] as num?)?.toDouble() ?? 0.0;
     } catch (e) {
-      throw Exception('Failed to get total weight: $e');
+      throw DatabaseException('Failed to get total weight: $e');
     }
   }
 
@@ -345,7 +346,7 @@ class SqliteStatsRepository implements StatsRepository {
       );
       return (results.first['max_length'] as num?)?.toDouble() ?? 0.0;
     } catch (e) {
-      throw Exception('Failed to get max length: $e');
+      throw DatabaseException('Failed to get max length: $e');
     }
   }
 
@@ -400,7 +401,7 @@ class SqliteStatsRepository implements StatsRepository {
             (results[2] as List<FishCatch>).map((f) => f.toMap()).toList(),
       );
     } catch (e) {
-      throw Exception('Failed to get dashboard data: $e');
+      throw DatabaseException('Failed to get dashboard data: $e');
     }
   }
 
@@ -564,7 +565,7 @@ GROUP BY eq_id
       }
       return stats;
     } catch (e) {
-      throw Exception('Failed to get equipment catch stats: $e');
+      throw DatabaseException('Failed to get equipment catch stats: $e');
     }
   }
 
@@ -603,7 +604,7 @@ GROUP BY eq_id, species
       }
       return stats;
     } catch (e) {
-      throw Exception('Failed to get equipment species stats: $e');
+      throw DatabaseException('Failed to get equipment species stats: $e');
     }
   }
 
@@ -656,7 +657,7 @@ GROUP BY eq_id, species
       }
       return distribution;
     } catch (e) {
-      throw Exception('Failed to get equipment distribution: $e');
+      throw DatabaseException('Failed to get equipment distribution: $e');
     }
   }
 
@@ -672,7 +673,7 @@ GROUP BY eq_id, species
       return List<FishCatch>.from(
           results.map((map) => FishCatch.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
-      throw Exception('Failed to get top 3 longest catches: $e');
+      throw DatabaseException('Failed to get top 3 longest catches: $e');
     }
   }
 
@@ -687,7 +688,7 @@ GROUP BY eq_id, species
       ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get equipment full status: $e');
+      throw DatabaseException('Failed to get equipment full status: $e');
     }
   }
 }

@@ -65,7 +65,7 @@ class RodForm extends ConsumerWidget {
               child: UnitDropdown(
                 value: lengthUnit,
                 options: const ['m', 'cm', 'ft', 'inch'],
-                label: '单位',
+                label: strings.unit,
                 onUnitChanged: onLengthUnitChanged,
               ),
             ),

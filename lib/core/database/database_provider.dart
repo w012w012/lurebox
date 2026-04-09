@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -9,7 +10,7 @@ class DatabaseProvider {
   static const int _databaseVersion = 21;
 
   Database? _database;
-  bool _initializing = false;
+  Completer<Database>? _initCompleter;
 
   /// 获取数据库实例（单例模式）
   Future<Database> get database async {
@@ -17,20 +18,32 @@ class DatabaseProvider {
       return _database!;
     }
 
-    if (_initializing) {
-      // 等待初始化完成
-      while (_initializing && _database == null) {
-        await Future.delayed(const Duration(milliseconds: 10));
-      }
-      return _database!;
+    // 首次调用时启动初始化
+    _initCompleter ??= Completer<Database>();
+    if (_initCompleter!.isCompleted) {
+      // 初始化已完成但_database非空（正常情况）
+      if (_database != null) return _database!;
+      // 异常状态：Completer已完成但database为null，创建一个新的
+      _initCompleter = Completer<Database>();
     }
 
-    _initializing = true;
+    final completer = _initCompleter!;
+
+    // 如果初始化还未开始
+    if (_database == null && !completer.isCompleted) {
+      _doInitialize(completer);
+    }
+
+    return completer.future;
+  }
+
+  Future<void> _doInitialize(Completer<Database> completer) async {
     try {
       _database = await _initDatabase();
-      return _database!;
-    } finally {
-      _initializing = false;
+      completer.complete(_database!);
+    } catch (e) {
+      completer.completeError(e);
+      rethrow;
     }
   }
 
