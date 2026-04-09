@@ -95,11 +95,14 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       ),
       body: Form(
         key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          children: [
-            _buildCard([
-              _buildSectionTitle(strings.basicInfo),
+        child: GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            children: [
+              _buildCard([
+                _buildSectionTitle(strings.basicInfo),
               const SizedBox(height: 12),
               _buildExpandedRow([
                 _buildTextField(
@@ -323,7 +326,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                   onQuantityUnitChanged: notifier.updateLureQuantityUnit,
                 ),
               ]),
-          ],
+            ],
+          ),
         ),
       ),
     );
