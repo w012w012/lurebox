@@ -448,7 +448,18 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         items.add(_InfoItem(strings.reelBrakeType, e['reel_brake_type']));
       }
       if (e['reel_line'] != null) {
-        items.add(_InfoItem('线容量', e['reel_line']));
+        final lineBrand = e['reel_line'] as String? ?? '';
+        final lineNumber = e['reel_line_number'] as String? ?? '';
+        final lineLength = e['reel_line_length'] as String? ?? '';
+        final lineDate = e['reel_line_date'];
+        String lineInfo = lineBrand;
+        if (lineNumber.isNotEmpty) lineInfo += ' / $lineNumber';
+        if (lineLength.isNotEmpty) lineInfo += ' / $lineLength';
+        if (lineDate != null) {
+          final dateStr = lineDate.toString().split(' ')[0];
+          lineInfo += ' / $dateStr';
+        }
+        items.add(_InfoItem(strings.line, lineInfo));
       }
     } else if (type == 'lure') {
       if (e['lure_type'] != null) {
