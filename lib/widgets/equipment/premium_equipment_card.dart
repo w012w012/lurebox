@@ -374,6 +374,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     final strings = ref.watch(currentStringsProvider);
     final displayUnits = ref.watch(appSettingsProvider).units;
     final items = <_InfoItem>[];
+    _InfoItem? reelLineItem; // Store reel line info separately for its own row
 
     if (type == 'rod') {
       if (e['length'] != null) {
@@ -435,9 +436,6 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
           ),
         );
       }
-      if (e['reel_bearings'] != null) {
-        items.add(_InfoItem(strings.bearings, '${e['reel_bearings']}'));
-      }
       if (e['reel_ratio'] != null) {
         items.add(_InfoItem(strings.reelRatio, e['reel_ratio']));
       }
@@ -459,7 +457,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
           final dateStr = lineDate.toString().split(' ')[0];
           lineInfo += ' / $dateStr';
         }
-        items.add(_InfoItem(strings.line, lineInfo));
+        reelLineItem = _InfoItem(strings.line, lineInfo);
       }
     } else if (type == 'lure') {
       if (e['lure_type'] != null) {
@@ -516,7 +514,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       }
     }
 
-    if (items.isEmpty) return [];
+    if (items.isEmpty && reelLineItem == null) return [];
 
     final row = Wrap(
       spacing: AppTheme.spacingMd,
@@ -532,6 +530,15 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         row,
         const SizedBox(height: AppTheme.spacingSm),
         _buildQuantityBadge(context, quantity, unit),
+      ];
+    }
+
+    // 渔轮鱼线信息单独一行展示
+    if (type == 'reel' && reelLineItem != null) {
+      return [
+        row,
+        const SizedBox(height: AppTheme.spacingSm),
+        _buildInfoItem(context, reelLineItem),
       ];
     }
 
