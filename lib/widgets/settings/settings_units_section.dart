@@ -253,21 +253,28 @@ class UnitSettingsPage extends ConsumerWidget {
               ),
             ],
           ),
-          _buildUnitTile(
+          _buildUnitSection(
             context: context,
-            title: 'Temperature',
-            value: units.temperatureUnit,
-            items: [
-              PremiumDropdownItem(value: 'C', label: strings.celsius),
-              PremiumDropdownItem(value: 'F', label: strings.fahrenheit),
+            title: strings.temperature,
+            icon: Icons.thermostat,
+            children: [
+              _buildUnitTile(
+                context: context,
+                title: strings.temperature,
+                value: units.temperatureUnit,
+                items: [
+                  PremiumDropdownItem(value: 'C', label: strings.celsius),
+                  PremiumDropdownItem(value: 'F', label: strings.fahrenheit),
+                ],
+                onChanged: (value) {
+                  if (value != null) {
+                    ref
+                        .read(appSettingsProvider.notifier)
+                        .updateUnits(units.copyWith(temperatureUnit: value));
+                  }
+                },
+              ),
             ],
-            onChanged: (value) {
-              if (value != null) {
-                ref
-                    .read(appSettingsProvider.notifier)
-                    .updateUnits(units.copyWith(temperatureUnit: value));
-              }
-            },
           ),
           const SizedBox(height: 24),
         ],
