@@ -182,6 +182,7 @@ class AppStrings {
   final String mile;
   final String celsius;
   final String fahrenheit;
+  final String temperature;
   final String millimeter;
   final String unitsSettings;
   final String followSystem;
@@ -644,6 +645,7 @@ class AppStrings {
     required this.mile,
     required this.celsius,
     required this.fahrenheit,
+    required this.temperature,
     required this.millimeter,
     required this.unitsSettings,
     required this.followSystem,
@@ -1090,6 +1092,7 @@ class AppStrings {
     mile: '英里',
     celsius: '摄氏度',
     fahrenheit: '华氏度',
+    temperature: '温度',
     millimeter: '毫米',
     unitsSettings: '单位设置',
     followSystem: '跟随系统',
@@ -1547,6 +1550,7 @@ class AppStrings {
     mile: 'mi',
     celsius: '°C',
     fahrenheit: '°F',
+    temperature: 'Temperature',
     millimeter: 'mm',
     unitsSettings: 'Unit Settings',
     followSystem: 'Follow System',
