@@ -127,16 +127,6 @@ class SettingsPage extends ConsumerWidget {
         ),
         const SizedBox(height: AppTheme.spacingSm),
 
-        // Export/Backup Management
-        SettingsTile(
-          icon: Icons.backup,
-          title: strings.exportAndBackupManagement,
-          subtitle: strings.exportAndBackupManagementDesc,
-          showChevron: true,
-          onTap: () => context.push('/settings/export-backup'),
-        ),
-        const SizedBox(height: AppTheme.spacingSm),
-
         // Units Settings - use existing section
         const SettingsUnitsSection(),
         const SizedBox(height: AppTheme.spacingSm),
