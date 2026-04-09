@@ -1,4 +1,5 @@
 import '../services/database_service.dart';
+import '../services/error_service.dart';
 import 'species_history_repository.dart';
 
 /// SQLite 实现 - 物种历史记录仓储层
@@ -26,7 +27,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
       return List<SpeciesHistory>.from(results
           .map((map) => SpeciesHistory.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
-      throw Exception('Failed to get species history: $e');
+      throw DatabaseException('Failed to get species history: $e');
     }
   }
 
@@ -43,7 +44,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
       if (results.isEmpty) return null;
       return SpeciesHistory.fromMap(results.first);
     } catch (e) {
-      throw Exception('Failed to get species history by name: $e');
+      throw DatabaseException('Failed to get species history by name: $e');
     }
   }
 
@@ -76,7 +77,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
         });
       }
     } catch (e) {
-      throw Exception('Failed to upsert species history: $e');
+      throw DatabaseException('Failed to upsert species history: $e');
     }
   }
 
@@ -109,7 +110,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
         });
       }
     } catch (e) {
-      throw Exception('Failed to increment use count: $e');
+      throw DatabaseException('Failed to increment use count: $e');
     }
   }
 
@@ -124,7 +125,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
         whereArgs: [name],
       );
     } catch (e) {
-      throw Exception('Failed to soft delete species history: $e');
+      throw DatabaseException('Failed to soft delete species history: $e');
     }
   }
 
@@ -139,7 +140,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
         whereArgs: [name],
       );
     } catch (e) {
-      throw Exception('Failed to restore species history: $e');
+      throw DatabaseException('Failed to restore species history: $e');
     }
   }
 
@@ -155,7 +156,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
       );
       return results.isNotEmpty;
     } catch (e) {
-      throw Exception('Failed to check species history existence: $e');
+      throw DatabaseException('Failed to check species history existence: $e');
     }
   }
 
@@ -169,7 +170,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get species history count: $e');
+      throw DatabaseException('Failed to get species history count: $e');
     }
   }
 }

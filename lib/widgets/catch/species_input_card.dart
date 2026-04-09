@@ -26,7 +26,7 @@ class SpeciesInputCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Filter out invalid species names
     final validHistory =
-        state.speciesHistory.where((s) => s != '待识别' && s.isNotEmpty).toList();
+        state.speciesHistory.where((s) => s != strings.pendingRecognition && s.isNotEmpty).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,7 +70,9 @@ class SpeciesInputCard extends ConsumerWidget {
                       : Theme.of(context).colorScheme.onSecondary,
                 ),
                 child: Text(
-                  state.pendingRecognition ? '↩ 取消待识别' : '⏭ 加入待识别',
+                  state.pendingRecognition
+                      ? strings.cancelPendingRecognition
+                      : strings.addToPendingRecognition,
                   style: const TextStyle(fontSize: 13),
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_theme.dart';
 import '../../core/design/theme/app_colors.dart';
 
@@ -154,6 +155,7 @@ class PremiumSearchField extends StatelessWidget {
   final bool autofocus;
   final FocusNode? focusNode;
   final Widget? prefixIcon;
+  final AppStrings? strings;
 
   const PremiumSearchField({
     super.key,
@@ -165,6 +167,7 @@ class PremiumSearchField extends StatelessWidget {
     this.autofocus = false,
     this.focusNode,
     this.prefixIcon,
+    this.strings,
   });
 
   @override
@@ -182,7 +185,7 @@ class PremiumSearchField extends StatelessWidget {
         fontSize: 16,
       ),
       decoration: InputDecoration(
-        hintText: hint ?? '搜索...',
+        hintText: hint ?? strings?.search ?? 'Search...',
         prefixIcon: prefixIcon ??
             Icon(
               Icons.search_rounded,

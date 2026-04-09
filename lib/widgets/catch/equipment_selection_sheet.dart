@@ -160,7 +160,7 @@ class _EquipmentSelectionContentState
         Text(title, style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
         if (items.isEmpty)
-          const Text('暂无装备')
+          Text(widget.strings.noEquipment)
         else
           Wrap(
             spacing: 8,

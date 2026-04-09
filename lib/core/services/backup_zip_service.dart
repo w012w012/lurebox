@@ -7,9 +7,10 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
 import '../database/database_provider.dart';
+import 'error_service.dart';
 
 /// 备份 ZIP 服务 - ZIP 压缩备份与完整性校验
 ///
@@ -304,7 +305,7 @@ class BackupZipService {
       final dbPath = await _getDatabasePath();
       final dbFile = File(dbPath);
       if (!await dbFile.exists()) {
-        throw Exception('Database file not found');
+        throw DatabaseException('Database file not found');
       }
 
       // 3. 创建临时目录
@@ -483,7 +484,7 @@ class BackupZipService {
     // 编码为 ZIP
     final zipData = ZipEncoder().encode(archive);
     if (zipData == null) {
-      throw Exception('Failed to encode ZIP archive');
+      throw DatabaseException('Failed to encode ZIP archive');
     }
 
     final zipFile = File(zipPath);

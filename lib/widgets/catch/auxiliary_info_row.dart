@@ -45,10 +45,10 @@ class AuxiliaryInfoRow extends ConsumerWidget {
             _buildInfoRow(
               context: context,
               icon: Icons.location_on,
-              label: '地址',
+              label: strings.address,
               text: state.locationName?.isNotEmpty == true
                   ? state.locationName!
-                  : '点击设置',
+                  : strings.tapToSet,
               onTap: onEditLocation,
             ),
             const Divider(height: 16),
@@ -56,7 +56,7 @@ class AuxiliaryInfoRow extends ConsumerWidget {
             _buildInfoRow(
               context: context,
               icon: Icons.wb_sunny,
-              label: '天气',
+              label: strings.weather,
               text: _getWeatherText(strings, temperatureUnit),
               onTap: onEditWeather,
             ),
@@ -65,10 +65,10 @@ class AuxiliaryInfoRow extends ConsumerWidget {
             _buildInfoRow(
               context: context,
               icon: Icons.access_time,
-              label: '时间',
+              label: strings.time,
               text: state.catchTime != null
                   ? DateFormat(DateFormats.dateTime).format(state.catchTime!)
-                  : '点击设置',
+                  : strings.tapToSet,
               onTap: onEditTime,
             ),
           ],
@@ -91,7 +91,7 @@ class AuxiliaryInfoRow extends ConsumerWidget {
         temperatureUnit,
       ));
     }
-    if (parts.isEmpty) return '点击设置';
+    if (parts.isEmpty) return strings.tapToSet;
     return parts.join(' · ');
   }
 

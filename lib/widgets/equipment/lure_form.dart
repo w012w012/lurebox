@@ -58,7 +58,7 @@ class LureForm extends ConsumerWidget {
               child: UnitDropdown(
                 value: weightUnit,
                 options: const ['g', 'oz'],
-                label: '单位',
+                label: strings.unit,
                 onUnitChanged: onWeightUnitChanged,
               ),
             ),
@@ -82,7 +82,7 @@ class LureForm extends ConsumerWidget {
               child: UnitDropdown(
                 value: sizeUnit,
                 options: const ['cm', 'mm', 'inch'],
-                label: '单位',
+                label: strings.unit,
                 onUnitChanged: onSizeUnitChanged,
               ),
             ),

@@ -1,5 +1,6 @@
 import '../models/equipment.dart';
 import '../services/database_service.dart';
+import '../services/error_service.dart';
 import 'equipment_repository.dart';
 
 /// SQLite 实现 - 钓具/装备仓储层
@@ -30,7 +31,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       return List<Equipment>.from(
           results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
-      throw Exception('Failed to get equipments: $e');
+      throw DatabaseException('Failed to get equipments: $e');
     }
   }
 
@@ -47,7 +48,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       if (results.isEmpty) return null;
       return Equipment.fromMap(results.first);
     } catch (e) {
-      throw Exception('Failed to get equipment by id: $e');
+      throw DatabaseException('Failed to get equipment by id: $e');
     }
   }
 
@@ -64,7 +65,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       if (results.isEmpty) return null;
       return Equipment.fromMap(results.first);
     } catch (e) {
-      throw Exception('Failed to get default equipment: $e');
+      throw DatabaseException('Failed to get default equipment: $e');
     }
   }
 
@@ -80,7 +81,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       map['is_default'] = equipment.isDefault ? 1 : 0;
       return await db.insert(_tableName, map);
     } catch (e) {
-      throw Exception('Failed to create equipment: $e');
+      throw DatabaseException('Failed to create equipment: $e');
     }
   }
 
@@ -97,7 +98,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
         whereArgs: [equipment.id],
       );
     } catch (e) {
-      throw Exception('Failed to update equipment: $e');
+      throw DatabaseException('Failed to update equipment: $e');
     }
   }
 
@@ -112,7 +113,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
         whereArgs: [id],
       );
     } catch (e) {
-      throw Exception('Failed to delete equipment: $e');
+      throw DatabaseException('Failed to delete equipment: $e');
     }
   }
 
@@ -164,7 +165,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
         hasMore: hasMore,
       );
     } catch (e) {
-      throw Exception('Failed to get paginated equipments: $e');
+      throw DatabaseException('Failed to get paginated equipments: $e');
     }
   }
 
@@ -231,7 +232,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
         hasMore: hasMore,
       );
     } catch (e) {
-      throw Exception('Failed to get filtered paginated equipments: $e');
+      throw DatabaseException('Failed to get filtered paginated equipments: $e');
     }
   }
 
@@ -254,7 +255,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
         );
       });
     } catch (e) {
-      throw Exception('Failed to set default equipment: $e');
+      throw DatabaseException('Failed to set default equipment: $e');
     }
   }
 
@@ -275,7 +276,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       }
       return stats;
     } catch (e) {
-      throw Exception('Failed to get equipment stats: $e');
+      throw DatabaseException('Failed to get equipment stats: $e');
     }
   }
 
@@ -292,7 +293,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
 
       return results.map((row) => row['brand'] as String).toList();
     } catch (e) {
-      throw Exception('Failed to get brands: $e');
+      throw DatabaseException('Failed to get brands: $e');
     }
   }
 
@@ -312,7 +313,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
 
       return results.map((row) => row['model'] as String).toList();
     } catch (e) {
-      throw Exception('Failed to get models by brand: $e');
+      throw DatabaseException('Failed to get models by brand: $e');
     }
   }
 
@@ -338,7 +339,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       }
       return distribution;
     } catch (e) {
-      throw Exception('Failed to get category distribution: $e');
+      throw DatabaseException('Failed to get category distribution: $e');
     }
   }
 }

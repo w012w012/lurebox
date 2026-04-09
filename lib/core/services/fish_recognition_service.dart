@@ -134,27 +134,27 @@ abstract class FishRecognitionProvider {
 ///
 /// 统一的鱼类识别服务接口，根据配置选择不同的 AI 提供商
 class FishRecognitionService {
-  final GeminiFishRecognitionProvider _geminiProvider =
+  late final GeminiFishRecognitionProvider _geminiProvider =
       GeminiFishRecognitionProvider();
-  final OpenAIFishRecognitionProvider _openaiProvider =
+  late final OpenAIFishRecognitionProvider _openaiProvider =
       OpenAIFishRecognitionProvider();
-  final ClaudeFishRecognitionProvider _claudeProvider =
+  late final ClaudeFishRecognitionProvider _claudeProvider =
       ClaudeFishRecognitionProvider();
-  final MiniMaxFishRecognitionProvider _minimaxProvider =
+  late final MiniMaxFishRecognitionProvider _minimaxProvider =
       MiniMaxFishRecognitionProvider();
-  final SiliconFlowFishRecognitionProvider _siliconflowProvider =
+  late final SiliconFlowFishRecognitionProvider _siliconflowProvider =
       SiliconFlowFishRecognitionProvider();
-  final DeepSeekFishRecognitionProvider _deepseekProvider =
+  late final DeepSeekFishRecognitionProvider _deepseekProvider =
       DeepSeekFishRecognitionProvider();
-  final BaiduFishRecognitionProvider _baiduProvider =
+  late final BaiduFishRecognitionProvider _baiduProvider =
       BaiduFishRecognitionProvider();
-  final AliyunFishRecognitionProvider _aliyunProvider =
+  late final AliyunFishRecognitionProvider _aliyunProvider =
       AliyunFishRecognitionProvider();
-  final TencentFishRecognitionProvider _tencentProvider =
+  late final TencentFishRecognitionProvider _tencentProvider =
       TencentFishRecognitionProvider();
-  final ZhipuFishRecognitionProvider _zhipuProvider =
+  late final ZhipuFishRecognitionProvider _zhipuProvider =
       ZhipuFishRecognitionProvider();
-  final CustomFishRecognitionProvider _customProvider =
+  late final CustomFishRecognitionProvider _customProvider =
       CustomFishRecognitionProvider();
 
   /// 识别鱼类物种

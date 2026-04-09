@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:image/image.dart' as img;
+import '../services/error_service.dart';
 
 /// 图像压缩工具
 ///
@@ -39,14 +40,14 @@ class ImageCompressor {
     try {
       final inputFile = File(inputPath);
       if (!await inputFile.exists()) {
-        throw Exception('Input file does not exist: $inputPath');
+        throw FileException('Input file does not exist: $inputPath');
       }
 
       final bytes = await inputFile.readAsBytes();
       final image = img.decodeImage(bytes);
 
       if (image == null) {
-        throw Exception('Failed to decode image: $inputPath');
+        throw FileException('Failed to decode image: $inputPath');
       }
 
       // 计算新的尺寸
@@ -107,14 +108,14 @@ class ImageCompressor {
     try {
       final inputFile = File(inputPath);
       if (!await inputFile.exists()) {
-        throw Exception('Input file does not exist: $inputPath');
+        throw FileException('Input file does not exist: $inputPath');
       }
 
       final bytes = await inputFile.readAsBytes();
       final image = img.decodeImage(bytes);
 
       if (image == null) {
-        throw Exception('Failed to decode image: $inputPath');
+        throw FileException('Failed to decode image: $inputPath');
       }
 
       // 计算保持宽高比的尺寸

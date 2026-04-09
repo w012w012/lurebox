@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqflite.dart' hide DatabaseException;
 import 'package:share_plus/share_plus.dart';
 
 import '../database/database_provider.dart';
@@ -12,6 +12,7 @@ import '../models/backup_history.dart';
 import '../repositories/backup_config_repository.dart';
 import 'backup_service.dart';
 import 'backup_zip_service.dart';
+import 'error_service.dart';
 
 /// 增强备份服务
 ///
@@ -274,7 +275,7 @@ class EnhancedBackupService {
   Future<String?> uploadToCloud() async {
     final config = await getActiveWebDAVConfig();
     if (config == null) {
-      throw Exception('No active cloud configuration found');
+      throw DatabaseException('No active cloud configuration found');
     }
 
     return await _backupService.uploadToWebDAV(
@@ -305,7 +306,7 @@ class EnhancedBackupService {
       String filePath) async {
     final file = File(filePath);
     if (!await file.exists()) {
-      throw Exception('File not found');
+      throw DatabaseException('File not found');
     }
 
     final jsonString = await file.readAsString();

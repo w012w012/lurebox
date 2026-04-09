@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
 
 /// 可复用的排序按钮组件
@@ -8,6 +9,7 @@ class AppSortButton extends StatelessWidget {
   final bool isSelected;
   final bool isAsc;
   final VoidCallback onTap;
+  final AppStrings? strings;
 
   const AppSortButton({
     super.key,
@@ -15,6 +17,7 @@ class AppSortButton extends StatelessWidget {
     required this.isSelected,
     required this.isAsc,
     required this.onTap,
+    this.strings,
   });
 
   @override
@@ -22,7 +25,11 @@ class AppSortButton extends StatelessWidget {
     return Semantics(
       button: true,
       label: label,
-      hint: isSelected ? (isAsc ? '升序' : '降序') : null,
+      hint: isSelected
+          ? (isAsc
+              ? (strings?.ascending ?? 'Ascending')
+              : (strings?.descending ?? 'Descending'))
+          : null,
       child: GestureDetector(
         onTap: onTap,
         child: Container(

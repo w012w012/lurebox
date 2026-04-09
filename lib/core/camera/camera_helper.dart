@@ -140,7 +140,7 @@ class CameraHelper {
             desiredAccuracy: LocationAccuracy.medium,
           ).timeout(
             const Duration(seconds: 10),
-            onTimeout: () => throw Exception('定位超时'),
+            onTimeout: () => throw error_service.LocationException('定位超时'),
           );
           _position = position;
         } catch (e) {
@@ -162,7 +162,7 @@ class CameraHelper {
           final placemarks =
               await placemarkFromCoordinates(_latitude!, _longitude!).timeout(
             const Duration(seconds: 5),
-            onTimeout: () => throw Exception('地址解析超时'),
+            onTimeout: () => throw error_service.LocationException('地址解析超时'),
           );
           if (placemarks.isNotEmpty) {
             final place = placemarks[0];

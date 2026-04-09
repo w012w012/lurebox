@@ -1,5 +1,6 @@
 import '../models/fish_catch.dart';
 import '../services/database_service.dart';
+import '../services/error_service.dart';
 import 'location_repository.dart';
 
 /// SQLite 实现 - 钓点位置仓储层
@@ -31,7 +32,7 @@ class SqliteLocationRepository implements LocationRepository {
       return List<LocationWithStats>.from(results.map(
           (map) => LocationWithStats.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
-      throw Exception('Failed to get all locations with stats: $e');
+      throw DatabaseException('Failed to get all locations with stats: $e');
     }
   }
 
@@ -58,7 +59,7 @@ class SqliteLocationRepository implements LocationRepository {
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get fish count by coordinates: $e');
+      throw DatabaseException('Failed to get fish count by coordinates: $e');
     }
   }
 
@@ -99,7 +100,7 @@ class SqliteLocationRepository implements LocationRepository {
       return List<LocationWithStats>.from(results.map(
           (map) => LocationWithStats.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
-      throw Exception('Failed to get nearby locations: $e');
+      throw DatabaseException('Failed to get nearby locations: $e');
     }
   }
 
@@ -123,7 +124,7 @@ class SqliteLocationRepository implements LocationRepository {
         );
       });
     } catch (e) {
-      throw Exception('Failed to merge locations: $e');
+      throw DatabaseException('Failed to merge locations: $e');
     }
   }
 
@@ -181,7 +182,7 @@ class SqliteLocationRepository implements LocationRepository {
         avgWeight: stat['avg_weight'] as double?,
       );
     } catch (e) {
-      throw Exception('Failed to get location stats: $e');
+      throw DatabaseException('Failed to get location stats: $e');
     }
   }
 
@@ -196,7 +197,7 @@ class SqliteLocationRepository implements LocationRepository {
       ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw Exception('Failed to get location count: $e');
+      throw DatabaseException('Failed to get location count: $e');
     }
   }
 }
