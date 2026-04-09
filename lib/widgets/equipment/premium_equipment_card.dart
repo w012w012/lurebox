@@ -538,7 +538,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       return [
         row,
         const SizedBox(height: AppTheme.spacingSm),
-        _buildInfoItem(context, reelLineItem),
+        _buildInfoItemFullWidth(context, reelLineItem),
       ];
     }
 
@@ -567,6 +567,28 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildInfoItemFullWidth(BuildContext context, _InfoItem item) {
+    return Row(
+      children: [
+        Text(
+          '${item.label}: ',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+        ),
+        Expanded(
+          child: Text(
+            item.value,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w500),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
   }
 
