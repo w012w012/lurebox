@@ -15,6 +15,7 @@ class EquipmentRigCard extends StatelessWidget {
   final CameraViewModel vm;
   final AppStrings strings;
   final VoidCallback onModifyPressed;
+  final bool isChinese;
 
   const EquipmentRigCard({
     super.key,
@@ -22,6 +23,7 @@ class EquipmentRigCard extends StatelessWidget {
     required this.vm,
     required this.strings,
     required this.onModifyPressed,
+    this.isChinese = true,
   });
 
   @override
@@ -99,7 +101,7 @@ class EquipmentRigCard extends StatelessWidget {
     }
     if (rod.length?.isNotEmpty == true) {
       parts.add(
-          '${rod.length}${UnitConverter.getLengthSymbol(rod.lengthUnit ?? 'cm')}');
+          '${rod.length}${UnitConverter.getLengthSymbol(rod.lengthUnit ?? 'cm', isChinese: isChinese)}');
     }
     if (rod.hardness?.isNotEmpty == true) parts.add(rod.hardness!);
     if (rod.rodAction?.isNotEmpty == true) parts.add(rod.rodAction!);
@@ -122,7 +124,7 @@ class EquipmentRigCard extends StatelessWidget {
     if (lure.model?.isNotEmpty == true) parts.add(lure.model!);
     if (lure.lureSize?.isNotEmpty == true) {
       parts.add(
-          '${lure.lureSize}${UnitConverter.getLengthSymbol(lure.lureSizeUnit ?? 'cm')}');
+          '${lure.lureSize}${UnitConverter.getLengthSymbol(lure.lureSizeUnit ?? 'cm', isChinese: isChinese)}');
     }
     if (lure.lureColor?.isNotEmpty == true) parts.add(lure.lureColor!);
     return parts.isEmpty ? '-' : parts.join(' / ');

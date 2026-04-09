@@ -23,6 +23,7 @@ class TextExporter {
     String lengthUnit = 'cm',
     String weightUnit = 'kg',
     String temperatureUnit = 'C',
+    bool isChinese = false,
   }) async {
     final buffer = StringBuffer();
 
@@ -64,14 +65,18 @@ class TextExporter {
     buffer.writeln('--------');
     for (final fish in catches) {
       final displayLength = fish.lengthUnit != lengthUnit
-          ? UnitConverter.convertLength(fish.length, fish.lengthUnit, lengthUnit)
+          ? UnitConverter.convertLength(
+              fish.length, fish.lengthUnit, lengthUnit)
           : fish.length;
-      final displayLengthSymbol = UnitConverter.getLengthSymbol(lengthUnit);
-      String displayWeightSymbol = UnitConverter.getWeightSymbol(weightUnit);
+      final displayLengthSymbol =
+          UnitConverter.getLengthSymbol(lengthUnit, isChinese: isChinese);
+      String displayWeightSymbol =
+          UnitConverter.getWeightSymbol(weightUnit, isChinese: isChinese);
       double? displayWeight;
       if (fish.weight != null) {
         displayWeight = fish.weightUnit != weightUnit
-            ? UnitConverter.convertWeight(fish.weight!, fish.weightUnit, weightUnit)
+            ? UnitConverter.convertWeight(
+                fish.weight!, fish.weightUnit, weightUnit)
             : fish.weight;
       }
       buffer.writeln(

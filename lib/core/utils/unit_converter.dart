@@ -161,61 +161,83 @@ class UnitConverter {
     return fromBaseCelsius(base, toUnit);
   }
 
-  // ==================== 单位符号（统一格式：中文名（符号））====================
+  // ==================== 单位符号（语言自适应）====================
+  // 中文：克、厘米 等；英文：g、cm 等
 
   static const _lengthSymbols = {
-    'cm': '厘米（cm）',
-    'm': '米（m）',
-    'mm': '毫米（mm）',
-    'inch': '英寸（in）',
-    'ft': '英尺（ft）',
+    'cm': {'zh': '厘米', 'en': 'cm'},
+    'm': {'zh': '米', 'en': 'm'},
+    'mm': {'zh': '毫米', 'en': 'mm'},
+    'inch': {'zh': '英寸', 'en': 'in'},
+    'ft': {'zh': '英尺', 'en': 'ft'},
   };
 
   static const _weightSymbols = {
-    'kg': '千克（kg）',
-    'lb': '磅（lb）',
-    'oz': '盎司（oz）',
-    'g': '克（g）',
+    'kg': {'zh': '千克', 'en': 'kg'},
+    'lb': {'zh': '磅', 'en': 'lb'},
+    'oz': {'zh': '盎司', 'en': 'oz'},
+    'g': {'zh': '克', 'en': 'g'},
   };
 
   static const _distanceSymbols = {
-    'm': '米（m）',
-    'km': '千米（km）',
-    'ft': '英尺（ft）',
-    'mile': '英里（mi）',
+    'm': {'zh': '米', 'en': 'm'},
+    'km': {'zh': '千米', 'en': 'km'},
+    'ft': {'zh': '英尺', 'en': 'ft'},
+    'mile': {'zh': '英里', 'en': 'mi'},
   };
 
-  static const _temperatureSymbols = {'C': '摄氏度（°C）', 'F': '华氏度（°F）'};
+  static const _temperatureSymbols = {
+    'C': {'zh': '摄氏度', 'en': '°C'},
+    'F': {'zh': '华氏度', 'en': '°F'},
+  };
 
   /// 获取长度单位符号
-  static String getLengthSymbol(String unit) => _lengthSymbols[unit] ?? unit;
+  /// [isChinese] - true 返回中文（如"厘米"），false 返回英文符号（如"cm"）
+  static String getLengthSymbol(String unit, {bool isChinese = true}) {
+    final symbols = _lengthSymbols[unit];
+    if (symbols == null) return unit;
+    return isChinese ? symbols['zh']! : symbols['en']!;
+  }
 
   /// 获取重量单位符号
-  static String getWeightSymbol(String unit) => _weightSymbols[unit] ?? unit;
+  static String getWeightSymbol(String unit, {bool isChinese = true}) {
+    final symbols = _weightSymbols[unit];
+    if (symbols == null) return unit;
+    return isChinese ? symbols['zh']! : symbols['en']!;
+  }
 
   /// 获取距离单位符号
-  static String getDistanceSymbol(String unit) =>
-      _distanceSymbols[unit] ?? unit;
+  static String getDistanceSymbol(String unit, {bool isChinese = true}) {
+    final symbols = _distanceSymbols[unit];
+    if (symbols == null) return unit;
+    return isChinese ? symbols['zh']! : symbols['en']!;
+  }
 
   /// 获取温度单位符号
-  static String getTemperatureSymbol(String unit) =>
-      _temperatureSymbols[unit] ?? unit;
+  static String getTemperatureSymbol(String unit, {bool isChinese = true}) {
+    final symbols = _temperatureSymbols[unit];
+    if (symbols == null) return unit;
+    return isChinese ? symbols['zh']! : symbols['en']!;
+  }
 
   // ==================== 格式化显示 ====================
 
   /// 格式化长度显示
-  static String formatLength(double value, String unit, {int decimals = 1}) {
-    return '${value.toStringAsFixed(decimals)} ${getLengthSymbol(unit)}';
+  static String formatLength(double value, String unit,
+      {int decimals = 1, bool isChinese = true}) {
+    return '${value.toStringAsFixed(decimals)} ${getLengthSymbol(unit, isChinese: isChinese)}';
   }
 
   /// 格式化重量显示
-  static String formatWeight(double value, String unit, {int decimals = 2}) {
-    return '${value.toStringAsFixed(decimals)} ${getWeightSymbol(unit)}';
+  static String formatWeight(double value, String unit,
+      {int decimals = 2, bool isChinese = true}) {
+    return '${value.toStringAsFixed(decimals)} ${getWeightSymbol(unit, isChinese: isChinese)}';
   }
 
   /// 格式化距离显示
-  static String formatDistance(double value, String unit, {int decimals = 1}) {
-    return '${value.toStringAsFixed(decimals)} ${getDistanceSymbol(unit)}';
+  static String formatDistance(double value, String unit,
+      {int decimals = 1, bool isChinese = true}) {
+    return '${value.toStringAsFixed(decimals)} ${getDistanceSymbol(unit, isChinese: isChinese)}';
   }
 
   /// 格式化温度显示
@@ -223,7 +245,8 @@ class UnitConverter {
     double value,
     String unit, {
     int decimals = 1,
+    bool isChinese = true,
   }) {
-    return '${value.toStringAsFixed(decimals)}${getTemperatureSymbol(unit)}';
+    return '${value.toStringAsFixed(decimals)}${getTemperatureSymbol(unit, isChinese: isChinese)}';
   }
 }

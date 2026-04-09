@@ -4,12 +4,14 @@ import 'package:intl/intl.dart';
 import '../../core/constants/constants.dart';
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
+import '../../core/models/app_settings.dart';
 import '../../core/models/fish_catch.dart';
 import '../../core/providers/app_settings_provider.dart';
 import '../../core/utils/unit_converter.dart';
 import '../../core/services/weather_service.dart';
 
-String _buildRodDisplay(Map<String, dynamic>? rod, String displayUnit) {
+String _buildRodDisplay(Map<String, dynamic>? rod, String displayUnit,
+    {bool isChinese = true}) {
   if (rod == null) return '';
   final parts = <String>[];
   if (rod['brand'] != null && (rod['brand'] as String).isNotEmpty) {
@@ -29,7 +31,7 @@ String _buildRodDisplay(Map<String, dynamic>? rod, String displayUnit) {
         displayUnit,
       );
       parts.add(
-        '${convertedLength.toStringAsFixed(2)} ${UnitConverter.getLengthSymbol(displayUnit)}',
+        '${convertedLength.toStringAsFixed(2)} ${UnitConverter.getLengthSymbol(displayUnit, isChinese: isChinese)}',
       );
     } else {
       parts.add(lengthStr);
@@ -59,7 +61,8 @@ String _buildReelDisplay(Map<String, dynamic>? reel) {
   return parts.join(' / ');
 }
 
-String _buildLureDisplay(Map<String, dynamic>? lure, String displayUnit) {
+String _buildLureDisplay(Map<String, dynamic>? lure, String displayUnit,
+    {bool isChinese = true}) {
   if (lure == null) return '';
   final parts = <String>[];
   if (lure['brand'] != null && (lure['brand'] as String).isNotEmpty) {
@@ -77,7 +80,7 @@ String _buildLureDisplay(Map<String, dynamic>? lure, String displayUnit) {
       displayUnit,
     );
     parts.add(
-        '${convertedSize.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnit)}');
+        '${convertedSize.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnit, isChinese: isChinese)}');
   }
   if (lure['lure_color'] != null && (lure['lure_color'] as String).isNotEmpty) {
     parts.add(lure['lure_color'] as String);
@@ -125,6 +128,7 @@ class FishInfoCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final appSettings = ref.watch(appSettingsProvider);
     final displayUnits = appSettings.units;
+    final isChinese = appSettings.language == AppLanguage.chinese;
 
     final displayLength = UnitConverter.convertLength(
       length,
@@ -168,7 +172,7 @@ class FishInfoCard extends ConsumerWidget {
               icon: Icons.straighten,
               label: strings.length,
               value:
-                  '${displayLength.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.fishLengthUnit)}',
+                  '${displayLength.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.fishLengthUnit, isChinese: isChinese)}',
               iconColor: AppColors.accentLight,
             ),
             if (displayWeight != null) ...[
@@ -177,7 +181,7 @@ class FishInfoCard extends ConsumerWidget {
                 icon: Icons.scale,
                 label: strings.weight,
                 value:
-                    '${displayWeight.toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(displayUnits.fishWeightUnit)}',
+                    '${displayWeight.toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(displayUnits.fishWeightUnit, isChinese: isChinese)}',
                 iconColor: AppColors.accentLight,
               ),
             ],
@@ -233,6 +237,7 @@ class FishInfoCard extends ConsumerWidget {
                   value: UnitConverter.formatTemperature(
                     airTemperature!,
                     displayUnits.temperatureUnit,
+                    isChinese: isChinese,
                   ),
                   iconColor: AppColors.accentLight,
                 ),
@@ -272,6 +277,7 @@ class FishInfoCard extends ConsumerWidget {
                   value: _buildRodDisplay(
                     rodEquipment,
                     displayUnits.rodLengthUnit,
+                    isChinese: isChinese,
                   ),
                 ),
               if (reelEquipment != null)
@@ -285,6 +291,7 @@ class FishInfoCard extends ConsumerWidget {
                   value: _buildLureDisplay(
                     lureEquipment,
                     displayUnits.lureLengthUnit,
+                    isChinese: isChinese,
                   ),
                 ),
             ],

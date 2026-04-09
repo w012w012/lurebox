@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
+import '../../core/models/app_settings.dart';
 import '../../core/models/fish_catch.dart';
 import '../../core/providers/app_settings_provider.dart';
 import '../../core/utils/unit_converter.dart';
@@ -33,6 +34,10 @@ class FishListItem extends ConsumerWidget {
     final displayUnits = ref.watch(
       appSettingsProvider.select((settings) => settings.units),
     );
+    final isChinese = ref.watch(
+      appSettingsProvider
+          .select((settings) => settings.language == AppLanguage.chinese),
+    );
 
     final displayLength = UnitConverter.convertLength(
       fish.length,
@@ -51,7 +56,7 @@ class FishListItem extends ConsumerWidget {
     final locationName = fish.locationName;
 
     final a11yLabel =
-        '${fish.species}, ${displayLength.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.fishLengthUnit)}';
+        '${fish.species}, ${displayLength.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.fishLengthUnit, isChinese: isChinese)}';
 
     return Semantics(
       label: a11yLabel,
@@ -160,7 +165,7 @@ class FishListItem extends ConsumerWidget {
                       Row(
                         children: [
                           Text(
-                            '${displayLength.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.fishLengthUnit)}',
+                            '${displayLength.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.fishLengthUnit, isChinese: isChinese)}',
                             style: TextStyle(
                               fontSize: 14,
                               color: Theme.of(
@@ -171,7 +176,7 @@ class FishListItem extends ConsumerWidget {
                           if (displayWeight != null) ...[
                             const SizedBox(width: 12),
                             Text(
-                              '${displayWeight.toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(displayUnits.fishWeightUnit)}',
+                              '${displayWeight.toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(displayUnits.fishWeightUnit, isChinese: isChinese)}',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Theme.of(

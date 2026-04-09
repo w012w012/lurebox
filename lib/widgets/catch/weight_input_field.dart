@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/strings.dart';
 import '../../core/camera/camera_state.dart';
 import '../../core/camera/camera_view_model.dart';
+import '../../core/models/app_settings.dart';
+import '../../core/providers/app_settings_provider.dart';
 import '../../core/utils/unit_converter.dart';
 import '../../widgets/common/premium_input.dart';
 
@@ -24,6 +26,10 @@ class WeightInputField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isChinese = ref.watch(
+      appSettingsProvider.select((s) => s.language == AppLanguage.chinese),
+    );
+
     double? displayEstimatedWeight;
     if (state.estimatedWeight != null) {
       final lengthInCm = UnitConverter.toBaseCm(state.length, state.lengthUnit);
@@ -37,7 +43,8 @@ class WeightInputField extends ConsumerWidget {
       );
     }
 
-    final unitSymbol = UnitConverter.getWeightSymbol(state.weightUnit);
+    final unitSymbol =
+        UnitConverter.getWeightSymbol(state.weightUnit, isChinese: isChinese);
 
     return Row(
       children: [

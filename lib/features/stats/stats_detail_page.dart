@@ -11,6 +11,7 @@ import '../../core/design/theme/app_colors.dart';
 import '../../core/design/theme/app_theme.dart';
 import '../../core/design/theme/animation_constants.dart';
 import '../../core/di/di.dart';
+import '../../core/models/app_settings.dart';
 import '../../core/models/fish_catch.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
@@ -360,6 +361,9 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
   Widget build(BuildContext context) {
     final strings = ref.watch(currentStringsProvider);
     final displayUnits = ref.watch(appSettingsProvider).units;
+    final isChinese = ref.watch(
+      appSettingsProvider.select((s) => s.language == AppLanguage.chinese),
+    );
     final releaseCount =
         _catches.where((f) => f['fate'] == FishFateType.release.value).length;
     final keepCount =
@@ -415,6 +419,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                       releaseRate,
                       strings,
                       displayUnits.fishWeightUnit,
+                      isChinese,
                     ),
                   ),
                   Positioned(
@@ -437,6 +442,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                               releaseRate,
                               strings,
                               displayUnits.fishWeightUnit,
+                              isChinese,
                             ),
                           ),
                         ),
@@ -456,6 +462,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
     double releaseRate,
     AppStrings strings,
     String weightUnit,
+    bool isChinese,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -478,6 +485,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
             onToggleShowByWeight: _toggleShowByWeight,
             strings: strings,
             weightUnit: weightUnit,
+            isChinese: isChinese,
           ),
           const SizedBox(height: AppTheme.spacingLg),
         ],

@@ -16,6 +16,7 @@ class SpeciesDistributionChart extends StatefulWidget {
   final VoidCallback? onToggleShowByWeight;
   final AppStrings? strings;
   final String weightUnit;
+  final bool isChinese;
 
   const SpeciesDistributionChart({
     super.key,
@@ -27,6 +28,7 @@ class SpeciesDistributionChart extends StatefulWidget {
     this.onToggleShowByWeight,
     this.strings,
     this.weightUnit = 'kg',
+    this.isChinese = true,
   });
 
   @override
@@ -74,8 +76,10 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
     final appStrings = widget.strings;
     if (widget.speciesStats.isEmpty) return const SizedBox();
 
-    final unitLabel =
-        widget.showByWeight ? UnitConverter.getWeightSymbol(widget.weightUnit) : (appStrings?.fishCountUnit ?? '');
+    final unitLabel = widget.showByWeight
+        ? UnitConverter.getWeightSymbol(widget.weightUnit,
+            isChinese: widget.isChinese)
+        : (appStrings?.fishCountUnit ?? '');
     final displayTotal =
         widget.showByWeight ? widget.totalWeight : widget.totalCount;
 
