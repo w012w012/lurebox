@@ -312,7 +312,6 @@ class _FishListPageState extends ConsumerState<FishListPage>
         final isTablet = constraints.maxWidth >= 600;
 
         return RefreshIndicator(
-          color: AppColors.accentLight,
           onRefresh: () async {
             _resetAnimations();
             await ref

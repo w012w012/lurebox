@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/constants/strings.dart';
@@ -240,6 +241,54 @@ class SettingsBackupSection extends ConsumerWidget {
                     )
                   else
                     const Icon(Icons.chevron_right),
+                ],
+              ),
+            ),
+          ),
+          const Divider(height: 1),
+          // Export/Backup Management
+          InkWell(
+            onTap: () => context.push('/settings/export-backup'),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: AppTheme.spacingMd,
+                horizontal: AppTheme.spacingSm,
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    ),
+                    child: Icon(
+                      Icons.folder_open,
+                      color: accentColor,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(width: AppTheme.spacingMd),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '导出和备份管理',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '查看和管理导出备份文件',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.chevron_right),
                 ],
               ),
             ),

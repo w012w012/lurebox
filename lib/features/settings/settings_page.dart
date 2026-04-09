@@ -92,8 +92,8 @@ class SettingsPage extends ConsumerWidget {
         // Species Management
         SettingsTile(
           icon: Icons.category,
-          title: '品种管理',
-          subtitle: '管理常用鱼种，合并相似品种',
+          title: strings.speciesManagement,
+          subtitle: strings.speciesManagementDesc,
           showChevron: true,
           onTap: () => context.push('/species'),
         ),
@@ -120,10 +120,20 @@ class SettingsPage extends ConsumerWidget {
         // AI Recognition Settings
         SettingsTile(
           icon: Icons.auto_awesome,
-          title: 'AI 配置',
-          subtitle: '管理 AI 识别提供商',
+          title: strings.aiConfiguration,
+          subtitle: strings.aiConfigurationDesc,
           showChevron: true,
           onTap: () => context.push('/settings/ai'),
+        ),
+        const SizedBox(height: AppTheme.spacingSm),
+
+        // Export/Backup Management
+        SettingsTile(
+          icon: Icons.backup,
+          title: strings.exportAndBackupManagement,
+          subtitle: strings.exportAndBackupManagementDesc,
+          showChevron: true,
+          onTap: () => context.push('/settings/export-backup'),
         ),
         const SizedBox(height: AppTheme.spacingSm),
 
@@ -278,14 +288,14 @@ class SettingsPage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'AI 配置',
+                  strings.aiConfiguration,
                   style: Theme.of(
                     context,
                   ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '管理 AI 识别提供商',
+                  strings.aiConfigurationDesc,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: isDark
                             ? AppColors.textSecondaryDark
@@ -360,14 +370,14 @@ class SettingsPage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '品种管理',
+                  strings.speciesManagement,
                   style: Theme.of(
                     context,
                   ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  '管理常用鱼种，合并相似品种',
+                  strings.speciesManagementDesc,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: isDark
                             ? AppColors.textSecondaryDark

@@ -244,6 +244,70 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     );
   }
 
+  String _parseWeightRange(String rangeStr, String displayUnit) {
+    if (rangeStr.isEmpty) return '';
+
+    // Remove all whitespace and convert to lowercase for parsing
+    final cleanStr = rangeStr.toLowerCase().replaceAll(' ', '');
+
+    // Extract unit from the string (g, gv, oz, lb)
+    String unit = 'g';
+    String numericStr = cleanStr;
+
+    // Check for known units at the end
+    final unitPattern = RegExp(r'(g|gv|oz|lb)$');
+    final unitMatch = unitPattern.firstMatch(cleanStr);
+    if (unitMatch != null) {
+      unit = unitMatch.group(1)!;
+      numericStr = cleanStr.substring(0, unitMatch.start);
+    }
+
+    // Parse the numeric range (e.g., "5-20" or "5~20" or "5to20")
+    double? minValue;
+    double? maxValue;
+
+    final dashIndex = numericStr.indexOf('-');
+    final tildeIndex = numericStr.indexOf('~');
+    final toIndex = numericStr.indexOf('to');
+
+    if (dashIndex > 0) {
+      minValue = double.tryParse(numericStr.substring(0, dashIndex));
+      maxValue = double.tryParse(numericStr.substring(dashIndex + 1));
+    } else if (tildeIndex > 0) {
+      minValue = double.tryParse(numericStr.substring(0, tildeIndex));
+      maxValue = double.tryParse(numericStr.substring(tildeIndex + 1));
+    } else if (toIndex > 0) {
+      minValue = double.tryParse(numericStr.substring(0, toIndex));
+      maxValue = double.tryParse(numericStr.substring(toIndex + 2));
+    } else {
+      // Single value, not a range
+      minValue = double.tryParse(numericStr);
+      maxValue = minValue;
+    }
+
+    if (minValue == null && maxValue == null) {
+      return rangeStr; // Could not parse numbers
+    }
+
+    minValue ??= 0;
+    maxValue ??= minValue;
+
+    // Convert to display unit
+    final convertedMin =
+        UnitConverter.convertWeight(minValue, unit, displayUnit);
+    final convertedMax =
+        UnitConverter.convertWeight(maxValue, unit, displayUnit);
+
+    // Get display unit symbol
+    final symbol = UnitConverter.getWeightSymbol(displayUnit);
+
+    // Format: "5-20g" or "5g" if both values are equal
+    if (minValue == maxValue) {
+      return '${convertedMin.toStringAsFixed(1)}$symbol';
+    }
+    return '${convertedMin.toStringAsFixed(1)}-${convertedMax.toStringAsFixed(1)}$symbol';
+  }
+
   Widget _buildCategoryChip(BuildContext context, String category) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
@@ -343,19 +407,17 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         items.add(_InfoItem(strings.material, e['material']));
       }
       if (e['weight_range'] != null) {
-        final weightValue = double.tryParse(e['weight_range'].toString()) ?? 0;
-        final weightUnit = e['weight_unit'] ?? 'g';
-        final displayWeight = UnitConverter.convertWeight(
-          weightValue,
-          weightUnit,
-          displayUnits.lureWeightUnit,
-        );
-        items.add(
-          _InfoItem(
-            strings.weightRange,
-            '${displayWeight.toStringAsFixed(1)} ${UnitConverter.getWeightSymbol(displayUnits.lureWeightUnit)}',
-          ),
-        );
+        final rangeStr = e['weight_range'].toString();
+        final displayWeight =
+            _parseWeightRange(rangeStr, displayUnits.lureWeightUnit);
+        if (displayWeight.isNotEmpty) {
+          items.add(
+            _InfoItem(
+              strings.weightRange,
+              displayWeight,
+            ),
+          );
+        }
       }
     } else if (type == 'reel') {
       if (e['reel_weight'] != null) {
@@ -453,10 +515,12 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
 
     // 添加数量显示（仅针对 lure）
     if (type == 'lure' && e['lure_quantity'] != null) {
+      final quantity = e['lure_quantity'] as int;
+      final unit = e['lure_quantity_unit'] as String? ?? '条';
       return [
         row,
         const SizedBox(height: AppTheme.spacingSm),
-        _buildQuantityBadge(context, e['lure_quantity']),
+        _buildQuantityBadge(context, quantity, unit),
       ];
     }
 
@@ -488,7 +552,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     );
   }
 
-  Widget _buildQuantityBadge(BuildContext context, int quantity) {
+  Widget _buildQuantityBadge(BuildContext context, int quantity, String unit) {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppTheme.spacingMd,
@@ -518,7 +582,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
                 ),
           ),
           Text(
-            '$quantity',
+            '$quantity$unit',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: AppColors.accentLight,
