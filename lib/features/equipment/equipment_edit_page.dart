@@ -487,22 +487,38 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     void Function(String) callback,
     List<String> options,
     String hint,
-  ) =>
-      Autocomplete<String>(
-        optionsBuilder: (t) =>
-            t.text.isEmpty ? options : options.where((x) => x.contains(t.text)),
-        onSelected: callback,
-        initialValue: TextEditingValue(text: value),
-        fieldViewBuilder: (ctx, ctrl, fn, _) => PremiumTextField(
-          controller: ctrl,
+  ) {
+    final focusNode = FocusNode();
+
+    return Autocomplete<String>(
+      optionsBuilder: (t) =>
+          t.text.isEmpty ? options : options.where((x) => x.contains(t.text)),
+      onSelected: callback,
+      initialValue: TextEditingValue(text: value),
+      fieldViewBuilder: (ctx, ctrl, fn, _) {
+        // Listen for focus changes to dismiss options on tap outside
+        return _DismissibleAutocompleteField(
           focusNode: fn,
-          label: label,
-          hint: hint,
-          onChanged: callback,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        ),
-      );
+          child: PremiumTextField(
+            controller: ctrl,
+            focusNode: fn,
+            label: label,
+            hint: hint,
+            onChanged: callback,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          ),
+        );
+      },
+      optionsViewBuilder: (context, onSelected, options) {
+        return _DismissibleAutocompleteOptions(
+          onSelected: onSelected,
+          options: options,
+          focusNode: focusNode,
+        );
+      },
+    );
+  }
   Widget _buildDatePicker(
     String label,
     String value,
@@ -577,5 +593,114 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       return (number, length);
     }
     return ('', '');
+  }
+}
+
+/// 包裹 Autocomplete 文本字段，处理点击外部关闭
+class _DismissibleAutocompleteField extends StatefulWidget {
+  final FocusNode focusNode;
+  final Widget child;
+
+  const _DismissibleAutocompleteField({
+    required this.focusNode,
+    required this.child,
+  });
+
+  @override
+  State<_DismissibleAutocompleteField> createState() =>
+      _DismissibleAutocompleteFieldState();
+}
+
+class _DismissibleAutocompleteFieldState
+    extends State<_DismissibleAutocompleteField> {
+  @override
+  void initState() {
+    super.initState();
+    widget.focusNode.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    widget.focusNode.removeListener(_onFocusChange);
+    super.dispose();
+  }
+
+  void _onFocusChange() {
+    if (!widget.focusNode.hasFocus) {
+      // 当焦点失去时，关闭键盘和潜在的 Overlay
+      FocusScope.of(context).unfocus();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}
+
+/// 可关闭的下拉选项面板 - 支持点击外部关闭
+class _DismissibleAutocompleteOptions<T> extends StatelessWidget {
+  final void Function(T) onSelected;
+  final Iterable<T> options;
+  final FocusNode focusNode;
+
+  const _DismissibleAutocompleteOptions({
+    required this.onSelected,
+    required this.options,
+    required this.focusNode,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Stack(
+      children: [
+        // 点击外部关闭
+        Positioned.fill(
+          child: GestureDetector(
+            onTap: () {
+              focusNode.unfocus();
+            },
+            child: Container(color: Colors.transparent),
+          ),
+        ),
+        // 选项面板
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child: Material(
+            elevation: 4,
+            borderRadius: BorderRadius.circular(8),
+            color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 200),
+              child: ListView(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                children: options.map((option) {
+                  return ListTile(
+                    dense: true,
+                    title: Text(
+                      option.toString(),
+                      style: TextStyle(
+                        color: isDark
+                            ? AppColors.textPrimaryDark
+                            : AppColors.textPrimaryLight,
+                      ),
+                    ),
+                    onTap: () {
+                      onSelected(option);
+                      focusNode.unfocus();
+                    },
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
