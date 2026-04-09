@@ -84,7 +84,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('品种管理'),
+        title: Text(strings.speciesManagement),
         centerTitle: true,
       ),
       body: RefreshIndicator(

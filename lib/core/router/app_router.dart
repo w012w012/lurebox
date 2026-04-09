@@ -11,6 +11,7 @@ import '../../features/fish_detail/fish_detail_page.dart';
 import '../../features/fish_list/fish_list_page.dart';
 import '../../features/home/home_page.dart';
 import '../../features/settings/ai_recognition_settings_page.dart';
+import '../../features/settings/export_backup_management_page.dart';
 import '../../features/settings/location_management_page.dart';
 import '../../features/settings/settings_page.dart';
 import '../../features/settings/species_management_page.dart';
@@ -100,6 +101,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/settings/locations',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const LocationManagementPage(),
+      ),
+      GoRoute(
+        path: '/settings/export-backup',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const ExportBackupManagementPage(),
       ),
       GoRoute(
         path: '/settings/units',
