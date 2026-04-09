@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/di/di.dart';
+import '../../core/models/app_settings.dart';
 import '../../core/models/fish_catch.dart';
 import '../../core/models/equipment.dart';
 import '../../core/providers/app_settings_provider.dart';
@@ -142,7 +143,8 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
   @override
   Widget build(BuildContext context) {
     final s = widget.strings;
-    final temperatureUnit = ref.watch(appSettingsProvider).units.temperatureUnit;
+    final temperatureUnit =
+        ref.watch(appSettingsProvider).units.temperatureUnit;
     return Scaffold(
       appBar: AppBar(
         title: Text(s.editFish),
@@ -370,8 +372,11 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
   }
 
   Future<void> _editWeather() async {
-    final temperatureUnit = ref.read(appSettingsProvider).units.temperatureUnit;
-    final tempSymbol = UnitConverter.getTemperatureSymbol(temperatureUnit);
+    final appSettings = ref.read(appSettingsProvider);
+    final temperatureUnit = appSettings.units.temperatureUnit;
+    final isChinese = appSettings.language == AppLanguage.chinese;
+    final tempSymbol = UnitConverter.getTemperatureSymbol(temperatureUnit,
+        isChinese: isChinese);
     final tempController = TextEditingController(
       text: _airTemperature?.toStringAsFixed(1) ?? '',
     );
@@ -464,7 +469,8 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
   String _getWeatherDisplayText(String temperatureUnit) {
     final parts = <String>[];
     if (_airTemperature != null) {
-      parts.add('气温: ${UnitConverter.formatTemperature(_airTemperature!, temperatureUnit)}');
+      parts.add(
+          '气温: ${UnitConverter.formatTemperature(_airTemperature!, temperatureUnit)}');
     }
     if (_pressure != null) {
       parts.add('气压: ${_pressure!.toStringAsFixed(0)}hPa');

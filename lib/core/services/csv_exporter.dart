@@ -58,10 +58,14 @@ class CsvExporter {
     String lengthUnit = 'cm',
     String weightUnit = 'kg',
     String temperatureUnit = 'C',
+    bool isChinese = false,
   }) async {
-    final lengthSymbol = UnitConverter.getLengthSymbol(lengthUnit);
-    final weightSymbol = UnitConverter.getWeightSymbol(weightUnit);
-    final tempSymbol = UnitConverter.getTemperatureSymbol(temperatureUnit);
+    final lengthSymbol =
+        UnitConverter.getLengthSymbol(lengthUnit, isChinese: isChinese);
+    final weightSymbol =
+        UnitConverter.getWeightSymbol(weightUnit, isChinese: isChinese);
+    final tempSymbol = UnitConverter.getTemperatureSymbol(temperatureUnit,
+        isChinese: isChinese);
 
     // 完整的 CSV 表头
     final headers = [
@@ -93,15 +97,18 @@ class CsvExporter {
       final displaySpecies = fish.pendingRecognition ? '待识别' : fish.species;
 
       // Convert length to display unit
-      final displayLength = fish.lengthUnit != null && fish.lengthUnit != lengthUnit
-          ? UnitConverter.convertLength(fish.length, fish.lengthUnit!, lengthUnit)
-          : fish.length;
+      final displayLength =
+          fish.lengthUnit != null && fish.lengthUnit != lengthUnit
+              ? UnitConverter.convertLength(
+                  fish.length, fish.lengthUnit!, lengthUnit)
+              : fish.length;
 
       // Convert weight to display unit
       double? displayWeight;
       if (fish.weight != null) {
         displayWeight = fish.weightUnit != null && fish.weightUnit != weightUnit
-            ? UnitConverter.convertWeight(fish.weight!, fish.weightUnit!, weightUnit)
+            ? UnitConverter.convertWeight(
+                fish.weight!, fish.weightUnit!, weightUnit)
             : fish.weight;
       }
 
@@ -109,7 +116,8 @@ class CsvExporter {
       double? displayTemp;
       if (fish.airTemperature != null) {
         displayTemp = temperatureUnit != 'C'
-            ? UnitConverter.convertTemperature(fish.airTemperature!, 'C', temperatureUnit)
+            ? UnitConverter.convertTemperature(
+                fish.airTemperature!, 'C', temperatureUnit)
             : fish.airTemperature;
       }
 

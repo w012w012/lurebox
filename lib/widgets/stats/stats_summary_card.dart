@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/design/theme/app_colors.dart';
 import '../../../core/design/theme/app_theme.dart';
 import '../../../core/design/theme/animation_constants.dart';
+import '../../../core/models/app_settings.dart';
+import '../../../core/providers/app_settings_provider.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../core/utils/unit_converter.dart';
 import '../../../widgets/common/premium_card.dart';
@@ -58,6 +60,8 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
   @override
   Widget build(BuildContext context) {
     final strings = ref.watch(currentStringsProvider);
+    final isChinese = ref.watch(
+        appSettingsProvider.select((s) => s.language == AppLanguage.chinese));
     if (widget.speciesSummary.isEmpty) return const SizedBox();
 
     return FadeTransition(
@@ -170,7 +174,7 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
                     Expanded(
                       child: Text(
                         (item['totalWeight'] as double) > 0
-                            ? '${(item['totalWeight'] as double).toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(widget.weightUnit)}'
+                            ? '${(item['totalWeight'] as double).toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(widget.weightUnit, isChinese: isChinese)}'
                             : '-',
                         style: Theme.of(context).textTheme.bodyMedium,
                         textAlign: TextAlign.center,

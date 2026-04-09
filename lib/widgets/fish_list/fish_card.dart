@@ -14,6 +14,7 @@ class FishCard extends StatelessWidget {
   final AppStrings strings;
   final String lengthUnit;
   final String weightUnit;
+  final bool isChinese;
 
   const FishCard({
     super.key,
@@ -25,6 +26,7 @@ class FishCard extends StatelessWidget {
     required this.strings,
     this.lengthUnit = 'cm',
     this.weightUnit = 'kg',
+    this.isChinese = true,
   });
 
   @override
@@ -129,7 +131,7 @@ class FishCard extends StatelessWidget {
         Row(
           children: [
             Text(
-              '${length.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(lengthUnit)}',
+              '${length.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(lengthUnit, isChinese: isChinese)}',
               style: TextStyle(
                 fontSize: 14,
                 color: colorScheme.onSurfaceVariant,
@@ -138,7 +140,7 @@ class FishCard extends StatelessWidget {
             if (weight != null) ...[
               const SizedBox(width: 12),
               Text(
-                '${weight.toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(weightUnit)}',
+                '${weight.toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(weightUnit, isChinese: isChinese)}',
                 style: TextStyle(
                   fontSize: 14,
                   color: colorScheme.onSurfaceVariant,
