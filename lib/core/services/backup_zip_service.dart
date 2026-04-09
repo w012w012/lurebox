@@ -364,6 +364,91 @@ class BackupZipService {
     }
   }
 
+  /// 导出数据库和照片到 ZIP 文件并保存到文档目录
+  ///
+  /// 与 exportToZip 的区别是：这个方法会将 ZIP 文件保存到应用文档目录
+  /// 而不是临时目录，方便用户在"导出和备份管理"页面进行管理
+  ///
+  /// 返回保存后的文件路径
+  Future<String> exportToZipAndSave({
+    BackupExportOptions options = BackupExportOptions.defaultOptions,
+  }) async {
+    try {
+      // 1. 关闭数据库连接
+      await _dbProvider.close();
+
+      // 2. 获取数据库路径
+      final dbPath = await _getDatabasePath();
+      final dbFile = File(dbPath);
+      if (!await dbFile.exists()) {
+        throw DatabaseException('Database file not found');
+      }
+
+      // 3. 创建临时目录
+      final tempDir = await getTemporaryDirectory();
+      final backupDir = Directory(p.join(tempDir.path,
+          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}'));
+      await backupDir.create(recursive: true);
+
+      // 4. 复制数据库文件到临时目录
+      final dbCopyPath = p.join(backupDir.path, 'lurebox.db');
+      await dbFile.copy(dbCopyPath);
+
+      // 5. 计算数据库文件的 SHA-256 校验和
+      final dbChecksum = await _calculateSha256(dbCopyPath);
+
+      // 6. 收集并复制照片（如果选项包含照片）
+      int photoCount = 0;
+      if (options.includePhotos) {
+        final photosDir = Directory(p.join(backupDir.path, 'photos'));
+        await photosDir.create(recursive: true);
+
+        photoCount = await _copyPhotosToBackup(dbPath, photosDir.path);
+      }
+
+      // 7. 获取统计数据
+      final stats = await _getBackupStats(dbPath);
+
+      // 8. 生成 metadata.json
+      final metadata = BackupMetadata(
+        version: 1,
+        exportTime: DateTime.now(),
+        databaseChecksum: dbChecksum,
+        photoCount: photoCount,
+        fishCatchesCount: stats['fishCatchesCount'] as int,
+        equipmentCount: stats['equipmentCount'] as int,
+        appVersion: '1.0.3',
+      );
+
+      final metadataJson =
+          const JsonEncoder.withIndent('  ').convert(metadata.toMap());
+      await File(p.join(backupDir.path, 'metadata.json'))
+          .writeAsString(metadataJson);
+
+      // 9. 创建 ZIP 文件（先在 temp 目录）
+      final tempZipPath = p.join(tempDir.path,
+          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}.zip');
+      await _createZip(backupDir.path, tempZipPath);
+
+      // 10. 将 ZIP 复制到应用文档目录
+      final appDir = await getApplicationDocumentsDirectory();
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final savedZipName = 'lurebox_backup_$timestamp.zip';
+      final savedZipPath = p.join(appDir.path, savedZipName);
+
+      await File(tempZipPath).copy(savedZipPath);
+
+      // 11. 清理临时备份目录
+      await backupDir.delete(recursive: true);
+
+      // 12. 返回文档目录中的 ZIP 文件路径
+      return savedZipPath;
+    } catch (e) {
+      debugPrint('Export to ZIP and save error: $e');
+      rethrow;
+    }
+  }
+
   /// 获取数据库文件路径
   Future<String> _getDatabasePath() async {
     final dbPath = await getDatabasesPath();
@@ -521,6 +606,23 @@ class BackupZipService {
       final zipPath = result.files.single.path;
       if (zipPath == null) {
         return const ImportResult.failure('Invalid file path');
+      }
+
+      return importFromZipPath(zipPath);
+    } catch (e) {
+      debugPrint('Import from ZIP error: $e');
+      return ImportResult.failure('Import failed: $e');
+    }
+  }
+
+  /// 从指定 ZIP 文件路径导入数据库和照片
+  ///
+  /// 适用于从已选择的备份文件恢复
+  Future<ImportResult> importFromZipPath(String zipPath) async {
+    try {
+      final zipFile = File(zipPath);
+      if (!await zipFile.exists()) {
+        return const ImportResult.failure('File not found');
       }
 
       // 2. 提取 ZIP 到临时目录

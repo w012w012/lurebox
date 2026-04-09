@@ -326,67 +326,83 @@ class SettingsBackupSection extends ConsumerWidget {
     );
   }
 
-  /// 显示完整备份对话框（ZIP格式）
+  /// 显示完整备份确认对话框（ZIP格式）
   void _showFullBackupDialog(
       BuildContext context, WidgetRef ref, AppStrings strings) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                '完整备份',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
-            const Divider(),
-            ListTile(
-              leading: const Icon(Icons.backup),
-              title: const Text('完整备份（含照片）'),
-              subtitle: const Text('包含数据库和所有照片，文件较大'),
-              onTap: () {
-                Navigator.pop(context);
-                _handleFullBackup(context, ref, includePhotos: true);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.storage),
-              title: const Text('仅备份数据库'),
-              subtitle: const Text('只包含数据记录，文件较小'),
-              onTap: () {
-                Navigator.pop(context);
-                _handleFullBackup(context, ref, includePhotos: false);
-              },
-            ),
-            const SizedBox(height: 8),
-          ],
+      builder: (context) => AlertDialog(
+        title: const Text('完整备份'),
+        content: const Text(
+          '将创建包含数据库和所有照片的完整备份。\n\n是否继续？',
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(strings.cancel),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _handleFullBackup(context, ref, includePhotos: true);
+            },
+            child: const Text('开始备份'),
+          ),
+        ],
       ),
     );
   }
 
-  /// 处理完整备份
+  /// 处理完整备份（保存到后台，不立即分享）
   Future<void> _handleFullBackup(
     BuildContext context,
     WidgetRef ref, {
     required bool includePhotos,
   }) async {
     final viewModel = ref.read(settingsViewModelProvider.notifier);
+
+    // 显示备份进行中对话框
+    showDialog(
+      context: context,
+      barrierDismissible: false, // 防止用户关闭对话框
+      builder: (context) => AlertDialog(
+        title: const Text('正在创建备份'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            const Text('备份正在后台运行，请稍候...'),
+          ],
+        ),
+      ),
+    );
+
     try {
-      final xFile =
-          await viewModel.exportZipBackup(includePhotos: includePhotos);
-      if (context.mounted && xFile != null) {
-        await Share.shareXFiles(
-          [xFile],
-          subject: 'LureBox 完整备份',
-          text: '包含数据库${includePhotos ? "和照片" : ""}的完整备份',
+      final savedPath =
+          await viewModel.startZipBackup(includePhotos: includePhotos);
+
+      if (!context.mounted) return;
+
+      // 关闭"正在创建备份"对话框
+      Navigator.of(context).pop();
+
+      if (savedPath != null) {
+        // 显示备份完成提示
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('备份已完成，请到"导出和备份管理"中查看'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('备份失败')),
         );
       }
     } catch (e) {
       if (context.mounted) {
+        Navigator.of(context).pop(); // 关闭对话框
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('备份失败: $e')),
         );

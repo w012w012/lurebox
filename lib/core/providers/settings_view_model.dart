@@ -166,6 +166,29 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     }
   }
 
+  /// 开始完整备份（后台运行，保存到文档目录）
+  ///
+  /// 备份完成后，用户可以在"导出和备份管理"页面查看和管理备份文件
+  Future<String?> startZipBackup({bool includePhotos = true}) async {
+    state = state.copyWith(isCreatingZipBackup: true, errorMessage: null);
+    try {
+      final options = BackupExportOptions(
+        includePhotos: includePhotos,
+        createRecoveryPoint: true,
+      );
+      final savedPath =
+          await _backupZipService.exportToZipAndSave(options: options);
+      state = state.copyWith(isCreatingZipBackup: false);
+      return savedPath;
+    } catch (e) {
+      state = state.copyWith(
+        isCreatingZipBackup: false,
+        errorMessage: e.toString(),
+      );
+      return null;
+    }
+  }
+
   Future<ImportResult> importZipBackup() async {
     state = state.copyWith(isRestoringZipBackup: true, errorMessage: null);
     try {

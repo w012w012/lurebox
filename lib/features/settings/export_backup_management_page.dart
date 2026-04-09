@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
@@ -10,20 +11,35 @@ import '../../core/design/theme/app_theme.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/di/di.dart';
 
+/// 文件类型枚举
+enum FileType {
+  /// CSV 导出文件
+  csvExport,
+
+  /// PDF 导出文件
+  pdfExport,
+
+  /// JSON 导出文件
+  jsonExport,
+
+  /// ZIP 备份文件
+  zipBackup,
+}
+
 /// 文件信息类
 class FileInfo {
   final String name;
   final String path;
   final DateTime modified;
   final int size;
-  final bool isBackup;
+  final FileType fileType;
 
   const FileInfo({
     required this.name,
     required this.path,
     required this.modified,
     required this.size,
-    required this.isBackup,
+    required this.fileType,
   });
 
   String get formattedSize {
@@ -35,6 +51,13 @@ class FileInfo {
       return '${(size / (1024 * 1024)).toStringAsFixed(1)} MB';
     }
   }
+
+  bool get isExport =>
+      fileType == FileType.csvExport ||
+      fileType == FileType.pdfExport ||
+      fileType == FileType.jsonExport;
+
+  bool get isBackup => fileType == FileType.zipBackup;
 }
 
 /// 列出导出和备份文件
@@ -46,21 +69,28 @@ Future<List<FileInfo>> _listExportBackupFiles() async {
   await for (final entity in dir.list()) {
     if (entity is File) {
       final name = entity.uri.pathSegments.last;
-      final isExport = name.startsWith('fish_catches_') &&
-          (name.endsWith('.csv') ||
-              name.endsWith('.pdf') ||
-              name.endsWith('.json'));
-      final isBackup =
-          name.startsWith('lurebox_backup_') && name.endsWith('.json');
 
-      if (isExport || isBackup) {
+      FileType? fileType;
+
+      // 判断文件类型
+      if (name.startsWith('fish_catches_') && name.endsWith('.csv')) {
+        fileType = FileType.csvExport;
+      } else if (name.startsWith('fish_catches_') && name.endsWith('.pdf')) {
+        fileType = FileType.pdfExport;
+      } else if (name.startsWith('fish_catches_') && name.endsWith('.json')) {
+        fileType = FileType.jsonExport;
+      } else if (name.startsWith('lurebox_backup_') && name.endsWith('.zip')) {
+        fileType = FileType.zipBackup;
+      }
+
+      if (fileType != null) {
         final stat = await entity.stat();
         files.add(FileInfo(
           name: name,
           path: entity.path,
           modified: stat.modified,
           size: stat.size,
-          isBackup: isBackup,
+          fileType: fileType,
         ));
       }
     }
@@ -139,51 +169,86 @@ class _ExportBackupManagementPageState
     }
   }
 
-  Future<void> _importBackup(FileInfo file) async {
-    final strings = ref.read(currentStringsProvider);
+  /// 分享文件
+  Future<void> _shareFile(FileInfo file) async {
+    try {
+      final xFile = XFile(file.path);
+      await Share.shareXFiles(
+        [xFile],
+        subject: file.isBackup ? 'LureBox 完整备份' : 'LureBox 数据导出',
+      );
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('分享失败: $e')),
+        );
+      }
+    }
+  }
+
+  /// 从 ZIP 备份恢复数据
+  Future<void> _restoreBackup(FileInfo file) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(strings.confirmImportFile),
-        content: Text(file.name),
+        title: const Text('恢复备份'),
+        content: Text(
+          '恢复备份将覆盖当前所有数据。建议在恢复前导出一份当前数据的备份。\n\n'
+          '即将恢复: ${file.name}\n\n'
+          '是否继续？',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text(strings.cancel),
+            child: const Text('取消'),
           ),
-          TextButton(
+          FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text(strings.importData),
+            child: const Text('继续'),
           ),
         ],
       ),
     );
 
-    if (confirmed == true) {
-      try {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(strings.importingData)),
-          );
-        }
+    if (confirmed != true) return;
 
-        final backupService = ref.read(backupServiceProvider);
-        final count = await backupService.importFromJson(file.path);
+    try {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('正在恢复备份...')),
+        );
+      }
 
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(strings.importedCount
-                  .replaceAll(r'$count', count.toString())),
-            ),
-          );
+      final backupZipService = ref.read(backupZipServiceProvider);
+      final result = await backupZipService.importFromZipPath(file.path);
+
+      if (!mounted) return;
+
+      if (result.isSuccess) {
+        final metadata = result.metadata;
+        String message = '恢复成功';
+        if (metadata != null) {
+          message = '恢复成功\n'
+              '渔获: ${metadata.fishCatchesCount} 条\n'
+              '装备: ${metadata.equipmentCount} 件\n'
+              '照片: ${metadata.photoCount} 张';
         }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(strings.errorFileImport)),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(message)),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('恢复失败: ${result.errorMessage ?? "未知错误"}'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('恢复失败: $e')),
+        );
       }
     }
   }
@@ -281,19 +346,24 @@ class _ExportBackupManagementPageState
 
     IconData icon;
     Color iconColor;
+    String fileTypeLabel;
 
     if (file.isBackup) {
       icon = Icons.backup;
       iconColor = AppColors.primaryLight;
-    } else if (file.name.endsWith('.csv')) {
+      fileTypeLabel = '完整备份';
+    } else if (file.fileType == FileType.csvExport) {
       icon = Icons.table_chart;
       iconColor = AppColors.success;
-    } else if (file.name.endsWith('.pdf')) {
+      fileTypeLabel = 'CSV 导出';
+    } else if (file.fileType == FileType.pdfExport) {
       icon = Icons.picture_as_pdf;
       iconColor = AppColors.error;
+      fileTypeLabel = 'PDF 导出';
     } else {
       icon = Icons.code;
       iconColor = AppColors.accentLight;
+      fileTypeLabel = 'JSON 导出';
     }
 
     return Card(
@@ -302,7 +372,7 @@ class _ExportBackupManagementPageState
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.1),
+            color: iconColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, color: iconColor),
@@ -315,7 +385,36 @@ class _ExportBackupManagementPageState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 4),
-            Text(dateFormat.format(file.modified)),
+            Row(
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: iconColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    fileTypeLabel,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: iconColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  dateFormat.format(file.modified),
+                  style: TextStyle(
+                    color: isDark
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondaryLight,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 2),
             Text(
               file.formattedSize,
@@ -331,12 +430,20 @@ class _ExportBackupManagementPageState
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Share button for all files
+            IconButton(
+              icon: const Icon(Icons.share),
+              tooltip: strings.share,
+              onPressed: () => _shareFile(file),
+            ),
+            // Restore button only for ZIP backups
             if (file.isBackup)
               IconButton(
                 icon: const Icon(Icons.restore),
-                tooltip: strings.importData,
-                onPressed: () => _importBackup(file),
+                tooltip: '恢复备份',
+                onPressed: () => _restoreBackup(file),
               ),
+            // Delete button for all files
             IconButton(
               icon: const Icon(Icons.delete_outline),
               tooltip: strings.delete,
