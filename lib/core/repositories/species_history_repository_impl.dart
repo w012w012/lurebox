@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart' hide DatabaseException;
 import '../services/database_service.dart';
 import '../services/error_service.dart';
 import 'species_history_repository.dart';
@@ -10,13 +11,31 @@ import 'species_history_repository.dart';
 class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
   static const String _tableName = 'species_history';
 
+  /// Optional database instance (for test injection)
+  Future<Database>? _testDb;
+
+  /// Internal database getter
+  Future<Database> get _database async {
+    final testDb = _testDb;
+    if (testDb != null) return await testDb;
+    return await DatabaseService.database;
+  }
+
+  /// Default constructor (uses DatabaseService)
+  SqliteSpeciesHistoryRepository();
+
+  /// Constructor with database injection (for testing)
+  SqliteSpeciesHistoryRepository.withDatabase(Future<Database> testDb) {
+    _testDb = testDb;
+  }
+
   @override
   Future<List<SpeciesHistory>> getAll({
     int limit = 100,
     bool includeDeleted = false,
   }) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
       final results = await db.query(
         _tableName,
         where: includeDeleted ? null : 'is_deleted = ?',
@@ -34,7 +53,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
   @override
   Future<SpeciesHistory?> getByName(String name) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
       final results = await db.query(
         _tableName,
         where: 'name = ?',
@@ -51,7 +70,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
   @override
   Future<void> upsert(String name) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
       final existing = await db.query(
         _tableName,
         where: 'name = ?',
@@ -84,7 +103,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
   @override
   Future<void> incrementUseCount(String name) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
       final existing = await db.query(
         _tableName,
         where: 'name = ?',
@@ -117,7 +136,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
   @override
   Future<void> softDelete(String name) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
       await db.update(
         _tableName,
         {'is_deleted': 1},
@@ -132,7 +151,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
   @override
   Future<void> restore(String name) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
       await db.update(
         _tableName,
         {'is_deleted': 0},
@@ -147,7 +166,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
   @override
   Future<bool> exists(String name) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
       final results = await db.query(
         _tableName,
         where: 'name = ? AND is_deleted = ?',
@@ -163,7 +182,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
   @override
   Future<int> getCount() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
       final results = await db.rawQuery(
         'SELECT COUNT(*) as count FROM $_tableName WHERE is_deleted = ?',
         [0],

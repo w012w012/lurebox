@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart' hide DatabaseException;
 import '../models/fish_catch.dart';
 import '../services/database_service.dart';
 import '../services/error_service.dart';
@@ -10,10 +11,28 @@ import 'location_repository.dart';
 class SqliteLocationRepository implements LocationRepository {
   static const String _tableName = 'fish_catches';
 
+  /// 可选的数据库实例（用于测试注入）
+  Future<Database>? _testDb;
+
+  /// 内部获取数据库实例
+  Future<Database> get _database async {
+    final testDb = _testDb;
+    if (testDb != null) return await testDb;
+    return await DatabaseService.database;
+  }
+
+  /// 无参构造函数（使用默认 DatabaseService）
+  SqliteLocationRepository();
+
+  /// 带数据库的构造函数（用于测试）
+  SqliteLocationRepository.withDatabase(Future<Database> testDb) {
+    _testDb = testDb;
+  }
+
   @override
   Future<List<LocationWithStats>> getAllWithStats() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
       final results = await db.rawQuery('''
         SELECT 
           location_name,
@@ -43,7 +62,7 @@ class SqliteLocationRepository implements LocationRepository {
     double tolerance = 0.001,
   }) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
       final results = await db.rawQuery(
         '''
         SELECT COUNT(*) as count FROM $_tableName
@@ -70,7 +89,7 @@ class SqliteLocationRepository implements LocationRepository {
     required double radiusKm,
   }) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
       final radiusDeg = radiusKm / 111.0;
       final results = await db.rawQuery(
         '''
@@ -110,7 +129,7 @@ class SqliteLocationRepository implements LocationRepository {
     required LocationWithStats target,
   }) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
       await db.transaction((txn) async {
         await txn.update(
           _tableName,
@@ -131,7 +150,7 @@ class SqliteLocationRepository implements LocationRepository {
   @override
   Future<LocationStats?> getStats(String locationName) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
 
       final basicStats = await db.rawQuery(
         '''
@@ -189,7 +208,7 @@ class SqliteLocationRepository implements LocationRepository {
   @override
   Future<int> getLocationCount() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await _database;
       final results = await db.rawQuery('''
         SELECT COUNT(DISTINCT location_name) as count
         FROM $_tableName

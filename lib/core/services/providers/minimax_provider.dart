@@ -12,6 +12,13 @@ import 'fish_recognition_shared.dart';
 class MiniMaxFishRecognitionProvider implements FishRecognitionProvider {
   static const String _systemPrompt = fishRecognitionSystemPrompt;
 
+  /// HTTP client for making requests (injectable for testing)
+  final http.Client? _client;
+
+  /// Creates a MiniMax provider with optional HTTP client injection
+  /// If no client is provided, uses the default http.Client
+  MiniMaxFishRecognitionProvider({http.Client? client}) : _client = client;
+
   @override
   Future<FishRecognitionResult> identifySpecies(
     File image,
@@ -55,7 +62,7 @@ class MiniMaxFishRecognitionProvider implements FishRecognitionProvider {
 
     try {
       // 发送请求，设置 10 秒超时
-      final response = await http
+      final response = await (_client ?? http.Client())
           .post(
             url,
             headers: {

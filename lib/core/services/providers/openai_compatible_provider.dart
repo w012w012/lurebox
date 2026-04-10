@@ -31,16 +31,17 @@ enum UrlPathStrategy {
 /// 封装了 OpenAI Chat Completions 兼容 API 的通用逻辑，
 /// 子类只需提供默认配置（baseUrl、model、URL策略），
 /// 无需重复实现识别逻辑。
-///
-/// 支持的提供商:
-/// - OpenAI (GPT-4o)
-/// - SiliconFlow (Qwen2-VL)
-/// - 阿里云 DashScope (Qwen-VL)
-/// - 腾讯云 Hunyuan
-/// - 百度 ERNIE-VL
-/// - 智谱 GLM-4V
-/// - 自定义 provider
 abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
+  /// HTTP client for making requests (injectable for testing)
+  final http.Client? _client;
+
+  /// Creates an OpenAI compatible provider with optional HTTP client injection
+  /// If no client is provided, uses the default http.Client
+  OpenAICompatibleProvider({http.Client? client}) : _client = client;
+
+  /// Protected getter for HTTP client (allows subclasses to use injected client)
+  http.Client? get client => _client;
+
   /// 默认 Base URL
   ///
   /// 子类应返回其 API 的默认端点
@@ -95,9 +96,8 @@ abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
     final base64Image = base64Encode(imageBytes);
 
     // 确定使用的模型名称
-    final modelName = config.modelName?.isNotEmpty == true
-        ? config.modelName!
-        : defaultModel;
+    final modelName =
+        config.modelName?.isNotEmpty == true ? config.modelName! : defaultModel;
 
     // 构建请求体 - 使用 vision API
     final requestBody = {
@@ -137,7 +137,7 @@ abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
 
     try {
       // 发送请求，设置 10 秒超时
-      final response = await http
+      final response = await (_client ?? http.Client())
           .post(
             url,
             headers: {
