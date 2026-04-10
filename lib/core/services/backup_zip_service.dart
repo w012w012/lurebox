@@ -305,7 +305,7 @@ class BackupZipService {
       final dbPath = await _getDatabasePath();
       final dbFile = File(dbPath);
       if (!await dbFile.exists()) {
-        throw DatabaseException('Database file not found');
+        throw const DatabaseException('Database file not found');
       }
 
       // 3. 创建临时目录
@@ -381,7 +381,7 @@ class BackupZipService {
       final dbPath = await _getDatabasePath();
       final dbFile = File(dbPath);
       if (!await dbFile.exists()) {
-        throw DatabaseException('Database file not found');
+        throw const DatabaseException('Database file not found');
       }
 
       // 3. 创建临时目录
@@ -569,7 +569,7 @@ class BackupZipService {
     // 编码为 ZIP
     final zipData = ZipEncoder().encode(archive);
     if (zipData == null) {
-      throw DatabaseException('Failed to encode ZIP archive');
+      throw const DatabaseException('Failed to encode ZIP archive');
     }
 
     final zipFile = File(zipPath);

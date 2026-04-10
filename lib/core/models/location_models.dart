@@ -119,4 +119,66 @@ class LocationStats {
       avgWeight: map['avg_weight'] as double?,
     );
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'total_catches': totalCatches,
+      'release_count': releaseCount,
+      'keep_count': keepCount,
+      'species_distribution': speciesDistribution,
+      'avg_length': avgLength,
+      'avg_weight': avgWeight,
+    };
+  }
+
+  LocationStats copyWith({
+    int? totalCatches,
+    int? releaseCount,
+    int? keepCount,
+    Map<String, int>? speciesDistribution,
+    double? avgLength,
+    double? avgWeight,
+  }) {
+    return LocationStats(
+      totalCatches: totalCatches ?? this.totalCatches,
+      releaseCount: releaseCount ?? this.releaseCount,
+      keepCount: keepCount ?? this.keepCount,
+      speciesDistribution: speciesDistribution ?? this.speciesDistribution,
+      avgLength: avgLength ?? this.avgLength,
+      avgWeight: avgWeight ?? this.avgWeight,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is LocationStats &&
+        other.totalCatches == totalCatches &&
+        other.releaseCount == releaseCount &&
+        other.keepCount == keepCount &&
+        _mapEquals(other.speciesDistribution, speciesDistribution) &&
+        other.avgLength == avgLength &&
+        other.avgWeight == avgWeight;
+  }
+
+  static bool _mapEquals(Map<String, int>? a, Map<String, int>? b) {
+    if (a == null && b == null) return true;
+    if (a == null || b == null) return false;
+    if (a.length != b.length) return false;
+    for (final key in a.keys) {
+      if (a[key] != b[key]) return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        totalCatches,
+        releaseCount,
+        keepCount,
+        Object.hashAll(speciesDistribution.entries
+            .map((e) => Object.hash(e.key, e.value))),
+        avgLength,
+        avgWeight,
+      );
 }

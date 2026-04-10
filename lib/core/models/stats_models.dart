@@ -53,6 +53,18 @@ class CatchStats {
       keep: keep ?? this.keep,
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is CatchStats &&
+        other.total == total &&
+        other.release == release &&
+        other.keep == keep;
+  }
+
+  @override
+  int get hashCode => Object.hash(total, release, keep);
 }
 
 class DashboardData {
@@ -113,6 +125,42 @@ class EquipmentCatchStats {
       'release_count': releaseCount,
     };
   }
+
+  EquipmentCatchStats copyWith({
+    int? equipmentId,
+    int? catchCount,
+    double? avgLength,
+    double? avgWeight,
+    int? releaseCount,
+  }) {
+    return EquipmentCatchStats(
+      equipmentId: equipmentId ?? this.equipmentId,
+      catchCount: catchCount ?? this.catchCount,
+      avgLength: avgLength ?? this.avgLength,
+      avgWeight: avgWeight ?? this.avgWeight,
+      releaseCount: releaseCount ?? this.releaseCount,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is EquipmentCatchStats &&
+        other.equipmentId == equipmentId &&
+        other.catchCount == catchCount &&
+        other.avgLength == avgLength &&
+        other.avgWeight == avgWeight &&
+        other.releaseCount == releaseCount;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        equipmentId,
+        catchCount,
+        avgLength,
+        avgWeight,
+        releaseCount,
+      );
 }
 
 class AchievementMetrics {

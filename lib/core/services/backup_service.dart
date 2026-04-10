@@ -51,7 +51,7 @@ class BackupService {
   Future<int> importFromJson(String filePath) async {
     final file = File(filePath);
     if (!await file.exists()) {
-      throw DatabaseException('File not found');
+      throw const DatabaseException('File not found');
     }
 
     final jsonString = await file.readAsString();
@@ -136,7 +136,7 @@ class BackupService {
 
       final uri = Uri.parse(url);
       if (uri.host.isEmpty) {
-        throw DatabaseException('Invalid server URL: missing host');
+        throw const DatabaseException('Invalid server URL: missing host');
       }
 
       client = HttpClient();

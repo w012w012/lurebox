@@ -136,4 +136,13 @@ class Achievement {
   String toString() {
     return 'Achievement(id: $id, title: $title, current: $current, target: $target, isUnlocked: $isUnlocked)';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Achievement && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

@@ -375,7 +375,8 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         hasMore: hasMore,
       );
     } catch (e) {
-      throw DatabaseException('Failed to get filtered paginated fish catches: $e');
+      throw DatabaseException(
+          'Failed to get filtered paginated fish catches: $e');
     }
   }
 
@@ -427,7 +428,8 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         hasMore: hasMore,
       );
     } catch (e) {
-      throw DatabaseException('Failed to get filtered paginated fish catches: $e');
+      throw DatabaseException(
+          'Failed to get filtered paginated fish catches: $e');
     }
   }
 
@@ -559,7 +561,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
   @override
   Future<void> renameSpecies(String oldName, String newName) async {
     if (oldName.isEmpty || newName.isEmpty) {
-      throw DatabaseException('Species names cannot be empty');
+      throw const DatabaseException('Species names cannot be empty');
     }
     try {
       final db = await _database;
@@ -584,7 +586,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
   @override
   Future<void> deleteSpecies(String speciesName) async {
     if (speciesName.isEmpty) {
-      throw DatabaseException('Species name cannot be empty');
+      throw const DatabaseException('Species name cannot be empty');
     }
     try {
       final db = await _database;

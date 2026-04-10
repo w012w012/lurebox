@@ -101,7 +101,7 @@ class EquipmentRigCard extends StatelessWidget {
     }
     if (rod.length?.isNotEmpty == true) {
       parts.add(
-          '${rod.length}${UnitConverter.getLengthSymbol(rod.lengthUnit ?? 'cm', isChinese: isChinese)}');
+          '${rod.length}${UnitConverter.getLengthSymbol(rod.lengthUnit, isChinese: isChinese)}');
     }
     if (rod.hardness?.isNotEmpty == true) parts.add(rod.hardness!);
     if (rod.rodAction?.isNotEmpty == true) parts.add(rod.rodAction!);
@@ -124,7 +124,7 @@ class EquipmentRigCard extends StatelessWidget {
     if (lure.model?.isNotEmpty == true) parts.add(lure.model!);
     if (lure.lureSize?.isNotEmpty == true) {
       parts.add(
-          '${lure.lureSize}${UnitConverter.getLengthSymbol(lure.lureSizeUnit ?? 'cm', isChinese: isChinese)}');
+          '${lure.lureSize}${UnitConverter.getLengthSymbol(lure.lureSizeUnit, isChinese: isChinese)}');
     }
     if (lure.lureColor?.isNotEmpty == true) parts.add(lure.lureColor!);
     return parts.isEmpty ? '-' : parts.join(' / ');
