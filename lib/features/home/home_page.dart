@@ -539,6 +539,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
     BuildContext context,
     WidgetRef ref,
   ) {
+    final strings = ref.watch(currentStringsProvider);
     final pendingCountAsync = ref.watch(pendingRecognitionCountProvider);
 
     return pendingCountAsync.when(
@@ -561,13 +562,14 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '你有 $count 条鱼获待识别品种',
+                      strings.pendingFishCountPattern
+                          .replaceAll('%d', '$count'),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
                     ),
                     Text(
-                      '点击前往品种管理',
+                      strings.goToSpeciesManagement,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color:
                                 Theme.of(context).colorScheme.onSurfaceVariant,

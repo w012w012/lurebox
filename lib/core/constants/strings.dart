@@ -463,6 +463,8 @@ class AppStrings {
   final String rodUnit;
   final String reelUnit;
   final String lureUnit;
+  final String pendingFishCountPattern;
+  final String goToSpeciesManagement;
 
   const AppStrings({
     required this.appName,
@@ -909,6 +911,8 @@ class AppStrings {
     required this.rodUnit,
     required this.reelUnit,
     required this.lureUnit,
+    required this.pendingFishCountPattern,
+    required this.goToSpeciesManagement,
   });
 
   static const chinese = AppStrings(
@@ -1366,6 +1370,8 @@ class AppStrings {
     customOption: '自定义',
     customRigTypeHint: '输入自定义钓组类型',
     customHookTypeHint: '输入自定义鱼钩类型',
+    pendingFishCountPattern: '你有 %d 条鱼获待识别品种',
+    goToSpeciesManagement: '点击前往品种管理',
   );
 
   static const english = AppStrings(
@@ -1831,5 +1837,8 @@ class AppStrings {
     customOption: 'Custom',
     customRigTypeHint: 'Enter custom rig type',
     customHookTypeHint: 'Enter custom hook type',
+    pendingFishCountPattern:
+        'You have %d fish catches pending species recognition',
+    goToSpeciesManagement: 'Go to species management',
   );
 }
