@@ -36,6 +36,7 @@ class HomePage extends ConsumerWidget {
             isFullWidth: true,
             onPressed: () async {
               await context.push('/camera');
+              if (!context.mounted) return;
               ref.read(homeViewModelProvider.notifier).refresh();
             },
           ),

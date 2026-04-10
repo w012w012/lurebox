@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/strings.dart';
 import '../constants/price_ranges.dart';
@@ -7,6 +6,12 @@ import '../di/di.dart';
 import '../models/equipment.dart';
 import '../services/equipment_service.dart';
 
+// =============================================================================
+// State Classes
+// =============================================================================
+
+/// Unified state for equipment editing - maintains backwards compatibility.
+/// Contains all fields for all equipment types.
 class EquipmentEditState {
   final String type;
   final Map<String, dynamic>? equipment;
@@ -20,7 +25,7 @@ class EquipmentEditState {
   final String purchaseDate;
   final bool isDefault;
 
-  // Category fields
+  // Category fields (used by rod and reel)
   final String categoryType1;
   final String categoryType2;
 
@@ -185,22 +190,25 @@ class EquipmentEditState {
   }
 }
 
-class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
+// =============================================================================
+// Base Notifier (Handles Shared Fields)
+// =============================================================================
+
+class _BaseEquipmentEditNotifier {
   final EquipmentService _equipmentService;
+  EquipmentEditState _state;
+  final String type;
 
-  EquipmentEditViewModel(
+  _BaseEquipmentEditNotifier(
     this._equipmentService,
-    String type,
+    this.type, [
     Map<String, dynamic>? equipment,
-  ) : super(EquipmentEditState(type: type, equipment: equipment)) {
-    if (equipment != null) {
-      _loadData();
-    }
-  }
+  ]) : _state = EquipmentEditState(type: type, equipment: equipment);
 
-  void loadDataFromMap(Map<String, dynamic> equipment) {
-    state = state.copyWith(equipment: equipment);
-    _loadData();
+  EquipmentEditState get state => _state;
+
+  void _updateState(EquipmentEditState newState) {
+    _state = newState;
   }
 
   dynamic _getValue(Map<String, dynamic> map, String key) {
@@ -212,138 +220,71 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
     return null;
   }
 
-  void _loadData() {
-    final e = state.equipment!;
-    String categoryType1 = '';
-    String categoryType2 = '';
-
-    final category = _getValue(e, 'category')?.toString();
-    if (category != null && category.contains('|')) {
-      final parts = category.split('|');
-      categoryType1 = parts[0];
-      categoryType2 = parts.length > 1 ? parts[1] : '';
-    } else {
-      categoryType1 = '';
-      categoryType2 = category ?? '';
-    }
-
-    state = state.copyWith(
-      brand: _getValue(e, 'brand')?.toString() ?? '',
-      model: _getValue(e, 'model')?.toString() ?? '',
-      price: _getValue(e, 'price')?.toString() ?? '',
-      purchaseDate: _getValue(e, 'purchase_date')?.toString() ?? '',
-      isDefault: _getValue(e, 'is_default') == 1,
-      categoryType1: categoryType1,
-      categoryType2: categoryType2,
-      length: _getValue(e, 'length')?.toString() ?? '',
-      lengthUnit: _getValue(e, 'length_unit')?.toString() ?? 'm',
-      sections: _getValue(e, 'sections')?.toString() ?? '',
-      jointType: _getValue(e, 'joint_type')?.toString() ?? '',
-      material: _getValue(e, 'material')?.toString() ?? '',
-      hardness: _getValue(e, 'hardness')?.toString() ?? '',
-      rodAction: _getValue(e, 'rod_action')?.toString() ?? '',
-      weightRange: _getValue(e, 'weight_range')?.toString() ?? '',
-      reelBearings: _getValue(e, 'reel_bearings')?.toString() ?? '',
-      reelRatio: _getValue(e, 'reel_ratio')?.toString() ?? '',
-      reelCapacity: _getValue(e, 'reel_capacity')?.toString() ?? '',
-      reelBrakeType: _getValue(e, 'reel_brake_type')?.toString() ?? '',
-      reelWeight: _getValue(e, 'reel_weight')?.toString() ?? '',
-      reelWeightUnit: _getValue(e, 'reel_weight_unit')?.toString() ?? 'g',
-      reelLine: _getValue(e, 'reel_line')?.toString() ?? '',
-      reelLineNumber: _getValue(e, 'reel_line_number')?.toString() ?? '',
-      reelLineLength: _getValue(e, 'reel_line_length')?.toString() ?? '',
-      reelLineLengthUnit:
-          _getValue(e, 'reel_line_length_unit')?.toString() ?? 'm',
-      reelLineDate: _getValue(e, 'reel_line_date')?.toString() ?? '',
-      lureType: _getValue(e, 'lure_type')?.toString() ?? '',
-      lureWeight: _getValue(e, 'lure_weight')?.toString() ?? '',
-      lureWeightUnit: _getValue(e, 'lure_weight_unit')?.toString() ?? 'g',
-      lureSize: _getValue(e, 'lure_size')?.toString() ?? '',
-      lureSizeUnit: _getValue(e, 'lure_size_unit')?.toString() ?? 'cm',
-      lureColor: _getValue(e, 'lure_color')?.toString() ?? '',
-      lureQuantity: _getValue(e, 'lure_quantity')?.toString() ?? '',
-      lureQuantityUnit: _getValue(e, 'lure_quantity_unit')?.toString() ?? '',
-    );
+  void loadDataFromMap(Map<String, dynamic> equipment) {
+    _state = _state.copyWith(equipment: equipment);
+    _loadData(equipment);
   }
 
-  void updateBrand(String value) => state = state.copyWith(brand: value);
-  void updateModel(String value) => state = state.copyWith(model: value);
-  void updatePrice(String value) => state = state.copyWith(price: value);
+  void _loadData(Map<String, dynamic> e) {
+    // Implemented by subclasses
+  }
+
+  // Shared update methods
+  void updateBrand(String value) => _updateState(_state.copyWith(brand: value));
+  void updateModel(String value) => _updateState(_state.copyWith(model: value));
+  void updatePrice(String value) => _updateState(_state.copyWith(price: value));
   void updatePurchaseDate(String value) =>
-      state = state.copyWith(purchaseDate: value);
-  void updateIsDefault(bool value) => state = state.copyWith(isDefault: value);
-  void updateCategoryType1(String value) =>
-      state = state.copyWith(categoryType1: value);
-  void updateCategoryType2(String value) =>
-      state = state.copyWith(categoryType2: value);
-
-  void updateLength(String value) => state = state.copyWith(length: value);
-  void updateLengthUnit(String value) =>
-      state = state.copyWith(lengthUnit: value);
-  void updateSections(String value) => state = state.copyWith(sections: value);
-  void updateJointType(String value) =>
-      state = state.copyWith(jointType: value);
-  void updateMaterial(String value) => state = state.copyWith(material: value);
-  void updateHardness(String value) => state = state.copyWith(hardness: value);
-  void updateRodAction(String value) =>
-      state = state.copyWith(rodAction: value);
-  void updateWeightRange(String value) =>
-      state = state.copyWith(weightRange: value);
-
-  void updateReelBearings(String value) =>
-      state = state.copyWith(reelBearings: value);
-  void updateReelRatio(String value) =>
-      state = state.copyWith(reelRatio: value);
-  void updateReelCapacity(String value) =>
-      state = state.copyWith(reelCapacity: value);
-  void updateReelBrakeType(String value) =>
-      state = state.copyWith(reelBrakeType: value);
-  void updateReelWeight(String value) =>
-      state = state.copyWith(reelWeight: value);
-  void updateReelWeightUnit(String value) =>
-      state = state.copyWith(reelWeightUnit: value);
-
-  void updateReelLine(String value) => state = state.copyWith(reelLine: value);
-  void updateReelLineNumber(String value) =>
-      state = state.copyWith(reelLineNumber: value);
-  void updateReelLineLength(String value) =>
-      state = state.copyWith(reelLineLength: value);
-  void updateReelLineLengthUnit(String value) =>
-      state = state.copyWith(reelLineLengthUnit: value);
-  void updateReelLineDate(String value) =>
-      state = state.copyWith(reelLineDate: value);
-
-  void updateLureType(String value) => state = state.copyWith(lureType: value);
-  void updateLureWeight(String value) =>
-      state = state.copyWith(lureWeight: value);
-  void updateLureWeightUnit(String value) =>
-      state = state.copyWith(lureWeightUnit: value);
-  void updateLureSize(String value) => state = state.copyWith(lureSize: value);
-  void updateLureSizeUnit(String value) =>
-      state = state.copyWith(lureSizeUnit: value);
-  void updateLureColor(String value) =>
-      state = state.copyWith(lureColor: value);
-  void updateLureQuantity(String value) =>
-      state = state.copyWith(lureQuantity: value);
-  void updateLureQuantityUnit(String? value) =>
-      state = state.copyWith(lureQuantityUnit: value ?? '');
+      _updateState(_state.copyWith(purchaseDate: value));
+  void updateIsDefault(bool value) =>
+      _updateState(_state.copyWith(isDefault: value));
 
   String? validatePrice(AppStrings strings) {
-    if (state.price.isNotEmpty) {
-      final price = double.tryParse(state.price);
+    if (_state.price.isNotEmpty) {
+      final price = double.tryParse(_state.price);
       if (price == null || price < 0) return strings.invalidPrice;
       if (price > PriceRanges.maxPrice) return strings.priceTooHigh;
     }
     return null;
   }
 
+  // Stub implementations for type-specific methods - overridden by subclasses
+  void updateCategoryType1(String value) {}
+  void updateCategoryType2(String value) {}
+  void updateLength(String value) {}
+  void updateLengthUnit(String value) {}
+  void updateSections(String value) {}
+  void updateJointType(String value) {}
+  void updateMaterial(String value) {}
+  void updateHardness(String value) {}
+  void updateRodAction(String value) {}
+  void updateWeightRange(String value) {}
+  void updateReelBearings(String value) {}
+  void updateReelRatio(String value) {}
+  void updateReelCapacity(String value) {}
+  void updateReelBrakeType(String value) {}
+  void updateReelWeight(String value) {}
+  void updateReelWeightUnit(String value) {}
+  void updateReelLine(String value) {}
+  void updateReelLineNumber(String value) {}
+  void updateReelLineLength(String value) {}
+  void updateReelLineLengthUnit(String value) {}
+  void updateReelLineDate(String value) {}
+  void updateLureType(String value) {}
+  void updateLureWeight(String value) {}
+  void updateLureWeightUnit(String value) {}
+  void updateLureSize(String value) {}
+  void updateLureSizeUnit(String value) {}
+  void updateLureColor(String value) {}
+  void updateLureQuantity(String value) {}
+  void updateLureQuantityUnit(String? value) {}
+
   Future<bool> save() async {
-    state = state.copyWith(isSaving: true, errorMessage: null);
+    _updateState(_state.copyWith(isSaving: true, errorMessage: null));
 
     try {
       String? category;
-      final type1 = state.categoryType1.trim();
-      final type2 = state.categoryType2.trim();
+      final type1 = _state.categoryType1.trim();
+      final type2 = _state.categoryType2.trim();
       if (type1.isNotEmpty && type2.isNotEmpty) {
         category = '$type1|$type2';
       } else if (type1.isNotEmpty) {
@@ -353,108 +294,30 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
       }
 
       final data = <String, dynamic>{
-        'type': state.type,
-        'brand': state.brand.trim(),
-        'model': state.model.trim(),
-        'is_default': state.isDefault ? 1 : 0,
+        'type': _state.type,
+        'brand': _state.brand.trim(),
+        'model': _state.model.trim(),
+        'is_default': _state.isDefault ? 1 : 0,
         'category': category,
       };
 
-      if (state.price.isNotEmpty) {
-        data['price'] = double.tryParse(state.price);
+      if (_state.price.isNotEmpty) {
+        data['price'] = double.tryParse(_state.price);
       }
 
-      if (state.purchaseDate.isNotEmpty) {
-        data['purchase_date'] = state.purchaseDate;
+      if (_state.purchaseDate.isNotEmpty) {
+        data['purchase_date'] = _state.purchaseDate;
       }
 
-      if (state.type == 'rod') {
-        if (state.length.isNotEmpty) {
-          data['length'] = state.length.trim();
-          data['length_unit'] = state.lengthUnit;
-        }
-        if (state.sections.isNotEmpty) {
-          data['sections'] = state.sections.trim();
-        }
-        if (state.jointType.isNotEmpty) {
-          data['joint_type'] = state.jointType.trim();
-        }
-        if (state.material.isNotEmpty) {
-          data['material'] = state.material.trim();
-        }
-        if (state.hardness.isNotEmpty) {
-          data['hardness'] = state.hardness.trim();
-        }
-        if (state.rodAction.isNotEmpty) {
-          data['rod_action'] = state.rodAction.trim();
-        }
-        if (state.weightRange.isNotEmpty) {
-          data['weight_range'] = state.weightRange.trim();
-        }
-      }
-
-      if (state.type == 'reel') {
-        if (state.reelBearings.isNotEmpty) {
-          data['reel_bearings'] = int.tryParse(state.reelBearings);
-        }
-        if (state.reelRatio.isNotEmpty) {
-          data['reel_ratio'] = state.reelRatio.trim();
-        }
-        if (state.reelCapacity.isNotEmpty) {
-          data['reel_capacity'] = state.reelCapacity.trim();
-        }
-        if (state.reelBrakeType.isNotEmpty) {
-          data['reel_brake_type'] = state.reelBrakeType.trim();
-        }
-        if (state.reelWeight.isNotEmpty) {
-          data['reel_weight'] = state.reelWeight.trim();
-          data['reel_weight_unit'] = state.reelWeightUnit;
-        }
-        if (state.reelLine.isNotEmpty) {
-          data['reel_line'] = state.reelLine.trim();
-        }
-        if (state.reelLineNumber.isNotEmpty) {
-          data['reel_line_number'] = state.reelLineNumber.trim();
-        }
-        if (state.reelLineLength.isNotEmpty) {
-          data['reel_line_length'] = state.reelLineLength.trim();
-          data['reel_line_length_unit'] = state.reelLineLengthUnit;
-        }
-        if (state.reelLineDate.isNotEmpty) {
-          data['reel_line_date'] = state.reelLineDate.trim();
-        }
-      }
-
-      if (state.type == 'lure') {
-        if (state.lureType.isNotEmpty) {
-          data['lure_type'] = state.lureType.trim();
-        }
-        if (state.lureWeight.isNotEmpty) {
-          data['lure_weight'] = state.lureWeight.trim();
-          data['lure_weight_unit'] = state.lureWeightUnit;
-        }
-        if (state.lureSize.isNotEmpty) {
-          data['lure_size'] = state.lureSize.trim();
-          data['lure_size_unit'] = state.lureSizeUnit;
-        }
-        if (state.lureColor.isNotEmpty) {
-          data['lure_color'] = state.lureColor.trim();
-        }
-        if (state.lureQuantity.isNotEmpty) {
-          data['lure_quantity'] = int.tryParse(state.lureQuantity);
-        }
-        if (state.lureQuantityUnit.isNotEmpty) {
-          data['lure_quantity_unit'] = state.lureQuantityUnit.trim();
-        }
-      }
+      _buildTypeSpecificData(data);
 
       int equipmentId;
-      if (state.equipment != null) {
-        equipmentId = state.equipment!['id'] as int;
+      if (_state.equipment != null) {
+        equipmentId = _state.equipment!['id'] as int;
         final equipment = Equipment.fromMap({
           ...data,
           'id': equipmentId,
-          'created_at': state.equipment!['created_at'] ??
+          'created_at': _state.equipment!['created_at'] ??
               DateTime.now().toIso8601String(),
           'updated_at': DateTime.now().toIso8601String(),
         });
@@ -469,19 +332,523 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
         equipmentId = await _equipmentService.create(equipment);
       }
 
-      if (state.isDefault) {
-        await _equipmentService.setDefaultEquipment(equipmentId, state.type);
+      if (_state.isDefault) {
+        await _equipmentService.setDefaultEquipment(equipmentId, _state.type);
       }
 
-      state = state.copyWith(isSaving: false);
+      _updateState(_state.copyWith(isSaving: false));
       return true;
     } catch (e) {
       debugPrint('保存装备失败: $e');
-      state = state.copyWith(isSaving: false, errorMessage: e.toString());
+      _updateState(
+          _state.copyWith(isSaving: false, errorMessage: e.toString()));
       return false;
     }
   }
+
+  void _buildTypeSpecificData(Map<String, dynamic> data) {
+    // Implemented by subclasses
+  }
 }
+
+// =============================================================================
+// Rod Notifier
+// =============================================================================
+
+class RodEditNotifier extends _BaseEquipmentEditNotifier {
+  RodEditNotifier(
+    EquipmentService equipmentService,
+    String type,
+    Map<String, dynamic>? equipment,
+  ) : super(equipmentService, type, equipment) {
+    if (equipment != null) {
+      _loadData(equipment);
+    }
+  }
+
+  @override
+  void _loadData(Map<String, dynamic> e) {
+    String categoryType1 = '';
+    String categoryType2 = '';
+
+    final category = _getValue(e, 'category')?.toString();
+    if (category != null && category.contains('|')) {
+      final parts = category.split('|');
+      categoryType1 = parts[0];
+      categoryType2 = parts.length > 1 ? parts[1] : '';
+    } else {
+      categoryType1 = '';
+      categoryType2 = category ?? '';
+    }
+
+    _updateState(state.copyWith(
+      categoryType1: categoryType1,
+      categoryType2: categoryType2,
+      length: _getValue(e, 'length')?.toString() ?? '',
+      lengthUnit: _getValue(e, 'length_unit')?.toString() ?? 'm',
+      sections: _getValue(e, 'sections')?.toString() ?? '',
+      jointType: _getValue(e, 'joint_type')?.toString() ?? '',
+      material: _getValue(e, 'material')?.toString() ?? '',
+      hardness: _getValue(e, 'hardness')?.toString() ?? '',
+      rodAction: _getValue(e, 'rod_action')?.toString() ?? '',
+      weightRange: _getValue(e, 'weight_range')?.toString() ?? '',
+    ));
+  }
+
+  void updateCategoryType1(String value) =>
+      _updateState(state.copyWith(categoryType1: value));
+  void updateCategoryType2(String value) =>
+      _updateState(state.copyWith(categoryType2: value));
+  void updateLength(String value) =>
+      _updateState(state.copyWith(length: value));
+  void updateLengthUnit(String value) =>
+      _updateState(state.copyWith(lengthUnit: value));
+  void updateSections(String value) =>
+      _updateState(state.copyWith(sections: value));
+  void updateJointType(String value) =>
+      _updateState(state.copyWith(jointType: value));
+  void updateMaterial(String value) =>
+      _updateState(state.copyWith(material: value));
+  void updateHardness(String value) =>
+      _updateState(state.copyWith(hardness: value));
+  void updateRodAction(String value) =>
+      _updateState(state.copyWith(rodAction: value));
+  void updateWeightRange(String value) =>
+      _updateState(state.copyWith(weightRange: value));
+
+  @override
+  void _buildTypeSpecificData(Map<String, dynamic> data) {
+    if (state.length.isNotEmpty) {
+      data['length'] = state.length.trim();
+      data['length_unit'] = state.lengthUnit;
+    }
+    if (state.sections.isNotEmpty) {
+      data['sections'] = state.sections.trim();
+    }
+    if (state.jointType.isNotEmpty) {
+      data['joint_type'] = state.jointType.trim();
+    }
+    if (state.material.isNotEmpty) {
+      data['material'] = state.material.trim();
+    }
+    if (state.hardness.isNotEmpty) {
+      data['hardness'] = state.hardness.trim();
+    }
+    if (state.rodAction.isNotEmpty) {
+      data['rod_action'] = state.rodAction.trim();
+    }
+    if (state.weightRange.isNotEmpty) {
+      data['weight_range'] = state.weightRange.trim();
+    }
+  }
+}
+
+// =============================================================================
+// Reel Notifier
+// =============================================================================
+
+class ReelEditNotifier extends _BaseEquipmentEditNotifier {
+  ReelEditNotifier(
+    EquipmentService equipmentService,
+    String type,
+    Map<String, dynamic>? equipment,
+  ) : super(equipmentService, type, equipment) {
+    if (equipment != null) {
+      _loadData(equipment);
+    }
+  }
+
+  @override
+  void _loadData(Map<String, dynamic> e) {
+    String categoryType1 = '';
+    String categoryType2 = '';
+
+    final category = _getValue(e, 'category')?.toString();
+    if (category != null && category.contains('|')) {
+      final parts = category.split('|');
+      categoryType1 = parts[0];
+      categoryType2 = parts.length > 1 ? parts[1] : '';
+    } else {
+      categoryType1 = '';
+      categoryType2 = category ?? '';
+    }
+
+    _updateState(state.copyWith(
+      categoryType1: categoryType1,
+      categoryType2: categoryType2,
+      reelBearings: _getValue(e, 'reel_bearings')?.toString() ?? '',
+      reelRatio: _getValue(e, 'reel_ratio')?.toString() ?? '',
+      reelCapacity: _getValue(e, 'reel_capacity')?.toString() ?? '',
+      reelBrakeType: _getValue(e, 'reel_brake_type')?.toString() ?? '',
+      reelWeight: _getValue(e, 'reel_weight')?.toString() ?? '',
+      reelWeightUnit: _getValue(e, 'reel_weight_unit')?.toString() ?? 'g',
+      reelLine: _getValue(e, 'reel_line')?.toString() ?? '',
+      reelLineNumber: _getValue(e, 'reel_line_number')?.toString() ?? '',
+      reelLineLength: _getValue(e, 'reel_line_length')?.toString() ?? '',
+      reelLineLengthUnit:
+          _getValue(e, 'reel_line_length_unit')?.toString() ?? 'm',
+      reelLineDate: _getValue(e, 'reel_line_date')?.toString() ?? '',
+    ));
+  }
+
+  void updateCategoryType1(String value) =>
+      _updateState(state.copyWith(categoryType1: value));
+  void updateCategoryType2(String value) =>
+      _updateState(state.copyWith(categoryType2: value));
+  void updateReelBearings(String value) =>
+      _updateState(state.copyWith(reelBearings: value));
+  void updateReelRatio(String value) =>
+      _updateState(state.copyWith(reelRatio: value));
+  void updateReelCapacity(String value) =>
+      _updateState(state.copyWith(reelCapacity: value));
+  void updateReelBrakeType(String value) =>
+      _updateState(state.copyWith(reelBrakeType: value));
+  void updateReelWeight(String value) =>
+      _updateState(state.copyWith(reelWeight: value));
+  void updateReelWeightUnit(String value) =>
+      _updateState(state.copyWith(reelWeightUnit: value));
+  void updateReelLine(String value) =>
+      _updateState(state.copyWith(reelLine: value));
+  void updateReelLineNumber(String value) =>
+      _updateState(state.copyWith(reelLineNumber: value));
+  void updateReelLineLength(String value) =>
+      _updateState(state.copyWith(reelLineLength: value));
+  void updateReelLineLengthUnit(String value) =>
+      _updateState(state.copyWith(reelLineLengthUnit: value));
+  void updateReelLineDate(String value) =>
+      _updateState(state.copyWith(reelLineDate: value));
+
+  @override
+  void _buildTypeSpecificData(Map<String, dynamic> data) {
+    if (state.reelBearings.isNotEmpty) {
+      data['reel_bearings'] = int.tryParse(state.reelBearings);
+    }
+    if (state.reelRatio.isNotEmpty) {
+      data['reel_ratio'] = state.reelRatio.trim();
+    }
+    if (state.reelCapacity.isNotEmpty) {
+      data['reel_capacity'] = state.reelCapacity.trim();
+    }
+    if (state.reelBrakeType.isNotEmpty) {
+      data['reel_brake_type'] = state.reelBrakeType.trim();
+    }
+    if (state.reelWeight.isNotEmpty) {
+      data['reel_weight'] = state.reelWeight.trim();
+      data['reel_weight_unit'] = state.reelWeightUnit;
+    }
+    if (state.reelLine.isNotEmpty) {
+      data['reel_line'] = state.reelLine.trim();
+    }
+    if (state.reelLineNumber.isNotEmpty) {
+      data['reel_line_number'] = state.reelLineNumber.trim();
+    }
+    if (state.reelLineLength.isNotEmpty) {
+      data['reel_line_length'] = state.reelLineLength.trim();
+      data['reel_line_length_unit'] = state.reelLineLengthUnit;
+    }
+    if (state.reelLineDate.isNotEmpty) {
+      data['reel_line_date'] = state.reelLineDate.trim();
+    }
+  }
+}
+
+// =============================================================================
+// Lure Notifier
+// =============================================================================
+
+class LureEditNotifier extends _BaseEquipmentEditNotifier {
+  LureEditNotifier(
+    EquipmentService equipmentService,
+    String type,
+    Map<String, dynamic>? equipment,
+  ) : super(equipmentService, type, equipment) {
+    if (equipment != null) {
+      _loadData(equipment);
+    }
+  }
+
+  @override
+  void _loadData(Map<String, dynamic> e) {
+    _updateState(state.copyWith(
+      lureType: _getValue(e, 'lure_type')?.toString() ?? '',
+      lureWeight: _getValue(e, 'lure_weight')?.toString() ?? '',
+      lureWeightUnit: _getValue(e, 'lure_weight_unit')?.toString() ?? 'g',
+      lureSize: _getValue(e, 'lure_size')?.toString() ?? '',
+      lureSizeUnit: _getValue(e, 'lure_size_unit')?.toString() ?? 'cm',
+      lureColor: _getValue(e, 'lure_color')?.toString() ?? '',
+      lureQuantity: _getValue(e, 'lure_quantity')?.toString() ?? '',
+      lureQuantityUnit: _getValue(e, 'lure_quantity_unit')?.toString() ?? '',
+    ));
+  }
+
+  void updateLureType(String value) =>
+      _updateState(state.copyWith(lureType: value));
+  void updateLureWeight(String value) =>
+      _updateState(state.copyWith(lureWeight: value));
+  void updateLureWeightUnit(String value) =>
+      _updateState(state.copyWith(lureWeightUnit: value));
+  void updateLureSize(String value) =>
+      _updateState(state.copyWith(lureSize: value));
+  void updateLureSizeUnit(String value) =>
+      _updateState(state.copyWith(lureSizeUnit: value));
+  void updateLureColor(String value) =>
+      _updateState(state.copyWith(lureColor: value));
+  void updateLureQuantity(String value) =>
+      _updateState(state.copyWith(lureQuantity: value));
+  void updateLureQuantityUnit(String? value) =>
+      _updateState(state.copyWith(lureQuantityUnit: value ?? ''));
+
+  @override
+  void _buildTypeSpecificData(Map<String, dynamic> data) {
+    if (state.lureType.isNotEmpty) {
+      data['lure_type'] = state.lureType.trim();
+    }
+    if (state.lureWeight.isNotEmpty) {
+      data['lure_weight'] = state.lureWeight.trim();
+      data['lure_weight_unit'] = state.lureWeightUnit;
+    }
+    if (state.lureSize.isNotEmpty) {
+      data['lure_size'] = state.lureSize.trim();
+      data['lure_size_unit'] = state.lureSizeUnit;
+    }
+    if (state.lureColor.isNotEmpty) {
+      data['lure_color'] = state.lureColor.trim();
+    }
+    if (state.lureQuantity.isNotEmpty) {
+      data['lure_quantity'] = int.tryParse(state.lureQuantity);
+    }
+    if (state.lureQuantityUnit.isNotEmpty) {
+      data['lure_quantity_unit'] = state.lureQuantityUnit.trim();
+    }
+  }
+}
+
+// =============================================================================
+// Main ViewModel (Delegates to Type-Specific Notifiers)
+// =============================================================================
+
+/// Main ViewModel that delegates to type-specific notifiers.
+/// Maintains the existing API for backwards compatibility.
+class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
+  final EquipmentService _equipmentService;
+  late final _BaseEquipmentEditNotifier _delegate;
+
+  EquipmentEditViewModel(
+    this._equipmentService,
+    String type,
+    Map<String, dynamic>? equipment,
+  ) : super(EquipmentEditState(type: type, equipment: equipment)) {
+    _delegate = _createDelegate(type, equipment);
+    state = _delegate.state;
+  }
+
+  _BaseEquipmentEditNotifier _createDelegate(
+      String type, Map<String, dynamic>? equipment) {
+    switch (type) {
+      case 'rod':
+        return RodEditNotifier(_equipmentService, type, equipment);
+      case 'reel':
+        return ReelEditNotifier(_equipmentService, type, equipment);
+      case 'lure':
+        return LureEditNotifier(_equipmentService, type, equipment);
+      default:
+        return RodEditNotifier(_equipmentService, type, equipment);
+    }
+  }
+
+  void loadDataFromMap(Map<String, dynamic> equipment) {
+    _delegate.loadDataFromMap(equipment);
+    state = _delegate.state;
+  }
+
+  // Shared update methods
+  void updateBrand(String value) {
+    _delegate.updateBrand(value);
+    state = _delegate.state;
+  }
+
+  void updateModel(String value) {
+    _delegate.updateModel(value);
+    state = _delegate.state;
+  }
+
+  void updatePrice(String value) {
+    _delegate.updatePrice(value);
+    state = _delegate.state;
+  }
+
+  void updatePurchaseDate(String value) {
+    _delegate.updatePurchaseDate(value);
+    state = _delegate.state;
+  }
+
+  void updateIsDefault(bool value) {
+    _delegate.updateIsDefault(value);
+    state = _delegate.state;
+  }
+
+  // Rod-specific update methods
+  void updateCategoryType1(String value) {
+    _delegate.updateCategoryType1(value);
+    state = _delegate.state;
+  }
+
+  void updateCategoryType2(String value) {
+    _delegate.updateCategoryType2(value);
+    state = _delegate.state;
+  }
+
+  void updateLength(String value) {
+    _delegate.updateLength(value);
+    state = _delegate.state;
+  }
+
+  void updateLengthUnit(String value) {
+    _delegate.updateLengthUnit(value);
+    state = _delegate.state;
+  }
+
+  void updateSections(String value) {
+    _delegate.updateSections(value);
+    state = _delegate.state;
+  }
+
+  void updateJointType(String value) {
+    _delegate.updateJointType(value);
+    state = _delegate.state;
+  }
+
+  void updateMaterial(String value) {
+    _delegate.updateMaterial(value);
+    state = _delegate.state;
+  }
+
+  void updateHardness(String value) {
+    _delegate.updateHardness(value);
+    state = _delegate.state;
+  }
+
+  void updateRodAction(String value) {
+    _delegate.updateRodAction(value);
+    state = _delegate.state;
+  }
+
+  void updateWeightRange(String value) {
+    _delegate.updateWeightRange(value);
+    state = _delegate.state;
+  }
+
+  // Reel-specific update methods
+  void updateReelBearings(String value) {
+    _delegate.updateReelBearings(value);
+    state = _delegate.state;
+  }
+
+  void updateReelRatio(String value) {
+    _delegate.updateReelRatio(value);
+    state = _delegate.state;
+  }
+
+  void updateReelCapacity(String value) {
+    _delegate.updateReelCapacity(value);
+    state = _delegate.state;
+  }
+
+  void updateReelBrakeType(String value) {
+    _delegate.updateReelBrakeType(value);
+    state = _delegate.state;
+  }
+
+  void updateReelWeight(String value) {
+    _delegate.updateReelWeight(value);
+    state = _delegate.state;
+  }
+
+  void updateReelWeightUnit(String value) {
+    _delegate.updateReelWeightUnit(value);
+    state = _delegate.state;
+  }
+
+  void updateReelLine(String value) {
+    _delegate.updateReelLine(value);
+    state = _delegate.state;
+  }
+
+  void updateReelLineNumber(String value) {
+    _delegate.updateReelLineNumber(value);
+    state = _delegate.state;
+  }
+
+  void updateReelLineLength(String value) {
+    _delegate.updateReelLineLength(value);
+    state = _delegate.state;
+  }
+
+  void updateReelLineLengthUnit(String value) {
+    _delegate.updateReelLineLengthUnit(value);
+    state = _delegate.state;
+  }
+
+  void updateReelLineDate(String value) {
+    _delegate.updateReelLineDate(value);
+    state = _delegate.state;
+  }
+
+  // Lure-specific update methods
+  void updateLureType(String value) {
+    _delegate.updateLureType(value);
+    state = _delegate.state;
+  }
+
+  void updateLureWeight(String value) {
+    _delegate.updateLureWeight(value);
+    state = _delegate.state;
+  }
+
+  void updateLureWeightUnit(String value) {
+    _delegate.updateLureWeightUnit(value);
+    state = _delegate.state;
+  }
+
+  void updateLureSize(String value) {
+    _delegate.updateLureSize(value);
+    state = _delegate.state;
+  }
+
+  void updateLureSizeUnit(String value) {
+    _delegate.updateLureSizeUnit(value);
+    state = _delegate.state;
+  }
+
+  void updateLureColor(String value) {
+    _delegate.updateLureColor(value);
+    state = _delegate.state;
+  }
+
+  void updateLureQuantity(String value) {
+    _delegate.updateLureQuantity(value);
+    state = _delegate.state;
+  }
+
+  void updateLureQuantityUnit(String? value) {
+    _delegate.updateLureQuantityUnit(value);
+    state = _delegate.state;
+  }
+
+  String? validatePrice(AppStrings strings) {
+    return _delegate.validatePrice(strings);
+  }
+
+  Future<bool> save() async {
+    final result = await _delegate.save();
+    state = _delegate.state;
+    return result;
+  }
+}
+
+// =============================================================================
+// Provider
+// =============================================================================
 
 final equipmentEditViewModelProvider = StateNotifierProvider.autoDispose.family<
     EquipmentEditViewModel,
