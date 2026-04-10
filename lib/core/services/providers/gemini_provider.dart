@@ -12,6 +12,13 @@ import 'fish_recognition_shared.dart';
 class GeminiFishRecognitionProvider implements FishRecognitionProvider {
   static const String _systemPrompt = fishRecognitionSystemPrompt;
 
+  /// HTTP client for making requests (injectable for testing)
+  final http.Client? _client;
+
+  /// Creates a Gemini provider with optional HTTP client injection
+  /// If no client is provided, uses the default http.Client
+  GeminiFishRecognitionProvider({http.Client? client}) : _client = client;
+
   @override
   Future<FishRecognitionResult> identifySpecies(
     File image,
@@ -56,7 +63,7 @@ class GeminiFishRecognitionProvider implements FishRecognitionProvider {
 
     try {
       // 发送请求，设置 10 秒超时
-      final response = await http
+      final response = await (_client ?? http.Client())
           .post(
             url,
             headers: {

@@ -522,13 +522,18 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       }
       buffer.write(')');
 
-      // Build argument list: 2N + 1 parameters (id, species for each, updated_at)
+      // Build argument list: 3N + 1 parameters (id, species for each CASE, updated_at, id for WHERE)
+      // SQL: UPDATE ... SET species = CASE id WHEN ? THEN ? ... END ... WHERE id IN (?, ?, ...)
       final args = <dynamic>[];
       for (int i = 0; i < count; i++) {
         args.add(ids[i]);
         args.add(speciesList[i]);
       }
       args.add(now);
+      // Add ids for WHERE clause (the missing N parameters)
+      for (int i = 0; i < count; i++) {
+        args.add(ids[i]);
+      }
 
       // Single SQL execution - single database round-trip
       await db.rawUpdate(buffer.toString(), args);

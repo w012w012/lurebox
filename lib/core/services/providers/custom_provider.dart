@@ -13,6 +13,9 @@ import 'openai_compatible_provider.dart';
 /// 使用 OpenAI 兼容接口进行鱼类识别
 /// 支持用户自定义 Base URL 和 Model Name
 class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
+  /// Creates a Custom provider with optional HTTP client injection
+  CustomFishRecognitionProvider({http.Client? client}) : super(client: client);
+
   @override
   String get defaultBaseUrl => '';
 
@@ -63,9 +66,8 @@ class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
     final base64Image = base64Encode(imageBytes);
 
     // 确定使用的模型名称
-    final modelName = config.modelName?.isNotEmpty == true
-        ? config.modelName!
-        : defaultModel;
+    final modelName =
+        config.modelName?.isNotEmpty == true ? config.modelName! : defaultModel;
 
     // 构建请求体 - 使用 OpenAI 兼容的 vision API
     final requestBody = {
@@ -106,7 +108,7 @@ class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
 
     try {
       // 发送请求，设置 10 秒超时
-      final response = await http
+      final response = await (client ?? http.Client())
           .post(
             url,
             headers: {

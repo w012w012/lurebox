@@ -1,5 +1,18 @@
 import 'dart:convert';
 
+import '../services/fish_recognition_service.dart';
+import '../services/providers/gemini_provider.dart';
+import '../services/providers/openai_provider.dart';
+import '../services/providers/claude_provider.dart';
+import '../services/providers/minimax_provider.dart';
+import '../services/providers/siliconflow_provider.dart';
+import '../services/providers/deepseek_provider.dart';
+import '../services/providers/baidu_provider.dart';
+import '../services/providers/aliyun_provider.dart';
+import '../services/providers/tencent_provider.dart';
+import '../services/providers/zhipu_provider.dart';
+import '../services/providers/custom_provider.dart';
+
 /// AI 识别设置数据模型
 ///
 /// 定义了应用中 AI 鱼类识别功能的配置。
@@ -44,6 +57,45 @@ enum AiRecognitionProvider {
       (e) => e.value == value,
       orElse: () => AiRecognitionProvider.gemini,
     );
+  }
+
+  /// 根据类型字符串创建对应的鱼类识别提供者实例
+  ///
+  /// [type] 提供商类型字符串，如 "openai", "gemini", "claude", "baidu" 等
+  ///
+  /// 返回对应的 [FishRecognitionProvider] 实例
+  ///
+  /// 示例:
+  /// ```dart
+  /// final provider = AiRecognitionProvider.fromConfig('openai');
+  /// ```
+  static FishRecognitionProvider fromConfig(String type) {
+    switch (type.toLowerCase()) {
+      case 'openai':
+        return OpenAIFishRecognitionProvider();
+      case 'gemini':
+        return GeminiFishRecognitionProvider();
+      case 'claude':
+        return ClaudeFishRecognitionProvider();
+      case 'minimax':
+        return MiniMaxFishRecognitionProvider();
+      case 'siliconflow':
+        return SiliconFlowFishRecognitionProvider();
+      case 'deepseek':
+        return DeepSeekFishRecognitionProvider();
+      case 'baidu':
+        return BaiduFishRecognitionProvider();
+      case 'aliyun':
+        return AliyunFishRecognitionProvider();
+      case 'tencent':
+        return TencentFishRecognitionProvider();
+      case 'zhipu':
+        return ZhipuFishRecognitionProvider();
+      case 'custom':
+        return CustomFishRecognitionProvider();
+      default:
+        throw ArgumentError('Unknown AI recognition provider type: $type');
+    }
   }
 }
 

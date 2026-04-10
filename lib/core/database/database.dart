@@ -251,3 +251,92 @@ class DatabaseWrapper implements Database {
     return _db.execute(sql);
   }
 }
+
+/// 数据库辅助类
+///
+/// 提供表名常量 SQL 语句构建辅助方法
+class DatabaseHelper {
+  DatabaseHelper._();
+
+  // ==================== 表名常量 ====================
+
+  /// 鱼获表
+  static const String tableFishCatches = 'fish_catches';
+
+  /// 装备表
+  static const String tableEquipments = 'equipments';
+
+  /// 设置表
+  static const String tableSettings = 'settings';
+
+  /// 物种历史表
+  static const String tableSpeciesHistory = 'species_history';
+
+  /// 云备份配置表
+  static const String tableCloudConfigs = 'cloud_configs';
+
+  /// 备份历史表
+  static const String tableBackupHistory = 'backup_history';
+
+  /// 鱼种表
+  static const String tableFishSpecies = 'fish_species';
+
+  /// 用户物种别名表
+  static const String tableUserSpeciesAlias = 'user_species_alias';
+
+  // ==================== SQL 语句辅助方法 ====================
+
+  /// 构建鱼获表 INSERT 语句
+  static String createFishCatchInsertSQL() {
+    return '''
+      INSERT INTO $tableFishCatches (
+        image_path, watermarked_image_path, species, length, length_unit,
+        weight, weight_unit, fate, catch_time, location_name,
+        latitude, longitude, notes, equipment_id, rod_id, reel_id, lure_id,
+        air_temperature, pressure, weather_code, pending_recognition,
+        created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''';
+  }
+
+  /// 构建鱼获表基础 SELECT 语句
+  static String createFishCatchSelectSQL() {
+    return 'SELECT * FROM $tableFishCatches';
+  }
+
+  /// 构建装备表 INSERT 语句
+  static String createEquipmentInsertSQL() {
+    return '''
+      INSERT INTO $tableEquipments (
+        type, brand, model, lure_type, lure_quantity, lure_quantity_unit,
+        rod_power, rod_action, rod_length, rod_weight, reel_size, reel_ratio,
+        reel_bearings, reel_capacity, reel_brake_type, reel_weight, reel_weight_unit,
+        joint_type, lure_weight, lure_weight_unit, lure_size, lure_size_unit,
+        lure_color, notes, price, purchase_date, is_default, is_deleted,
+        category, reel_line, reel_line_date, reel_line_number, reel_line_length,
+        line_length_unit, line_weight_unit, weight_range, length, length_unit,
+        sections, material, hardness, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''';
+  }
+
+  /// 构建设置表 INSERT 语句
+  static String createSettingInsertSQL() {
+    return '''
+      INSERT INTO $tableSettings (key, value, updated_at) VALUES (?, ?, ?)
+    ''';
+  }
+
+  /// 构建物种历史表 INSERT 语句
+  static String createSpeciesHistoryInsertSQL() {
+    return '''
+      INSERT INTO $tableSpeciesHistory (name, use_count, is_deleted, created_at)
+      VALUES (?, ?, ?, ?)
+    ''';
+  }
+
+  /// 获取当前时间戳（ISO 8601 格式）
+  static String currentTimestamp() {
+    return DateTime.now().toIso8601String();
+  }
+}
