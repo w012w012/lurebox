@@ -97,18 +97,17 @@ class CsvExporter {
       final displaySpecies = fish.pendingRecognition ? '待识别' : fish.species;
 
       // Convert length to display unit
-      final displayLength =
-          fish.lengthUnit != null && fish.lengthUnit != lengthUnit
-              ? UnitConverter.convertLength(
-                  fish.length, fish.lengthUnit!, lengthUnit)
-              : fish.length;
+      final displayLength = fish.lengthUnit != lengthUnit
+          ? UnitConverter.convertLength(
+              fish.length, fish.lengthUnit, lengthUnit)
+          : fish.length;
 
       // Convert weight to display unit
       double? displayWeight;
       if (fish.weight != null) {
-        displayWeight = fish.weightUnit != null && fish.weightUnit != weightUnit
+        displayWeight = fish.weightUnit != weightUnit
             ? UnitConverter.convertWeight(
-                fish.weight!, fish.weightUnit!, weightUnit)
+                fish.weight!, fish.weightUnit, weightUnit)
             : fish.weight;
       }
 

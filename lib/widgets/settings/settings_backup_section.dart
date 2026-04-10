@@ -365,14 +365,14 @@ class SettingsBackupSection extends ConsumerWidget {
     showDialog(
       context: context,
       barrierDismissible: false, // 防止用户关闭对话框
-      builder: (context) => AlertDialog(
-        title: const Text('正在创建备份'),
+      builder: (context) => const AlertDialog(
+        title: Text('正在创建备份'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            const Text('备份正在后台运行，请稍候...'),
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('备份正在后台运行，请稍候...'),
           ],
         ),
       ),

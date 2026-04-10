@@ -275,7 +275,7 @@ class EnhancedBackupService {
   Future<String?> uploadToCloud() async {
     final config = await getActiveWebDAVConfig();
     if (config == null) {
-      throw DatabaseException('No active cloud configuration found');
+      throw const DatabaseException('No active cloud configuration found');
     }
 
     return await _backupService.uploadToWebDAV(
@@ -306,7 +306,7 @@ class EnhancedBackupService {
       String filePath) async {
     final file = File(filePath);
     if (!await file.exists()) {
-      throw DatabaseException('File not found');
+      throw const DatabaseException('File not found');
     }
 
     final jsonString = await file.readAsString();

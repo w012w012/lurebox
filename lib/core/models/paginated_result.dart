@@ -39,4 +39,42 @@ class PaginatedResult<T> {
     required this.pageSize,
     required this.hasMore,
   });
+
+  PaginatedResult<T> copyWith({
+    List<T>? items,
+    int? totalCount,
+    int? page,
+    int? pageSize,
+    bool? hasMore,
+  }) {
+    return PaginatedResult<T>(
+      items: items ?? this.items,
+      totalCount: totalCount ?? this.totalCount,
+      page: page ?? this.page,
+      pageSize: pageSize ?? this.pageSize,
+      hasMore: hasMore ?? this.hasMore,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is PaginatedResult<T> &&
+        other.totalCount == totalCount &&
+        other.page == page &&
+        other.pageSize == pageSize &&
+        other.hasMore == hasMore &&
+        _listEquals(other.items, items);
+  }
+
+  static bool _listEquals<T>(List<T> a, List<T> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
+  @override
+  int get hashCode => Object.hash(totalCount, page, pageSize, hasMore);
 }

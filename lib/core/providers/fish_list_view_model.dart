@@ -91,6 +91,8 @@ class FishListState {
 }
 
 class FishListViewModel extends StateNotifier<FishListState> {
+  static const int _defaultPageSize = 20;
+
   final FishCatchService _fishCatchService;
 
   FishListViewModel(this._fishCatchService) : super(const FishListState());
@@ -112,7 +114,7 @@ class FishListViewModel extends StateNotifier<FishListState> {
       displayUnits: units,
     );
     try {
-      const pageSize = 20;
+      const pageSize = _defaultPageSize;
       final page = reset ? 1 : state.currentPage + 1;
 
       List<FishCatch> newCatches;
