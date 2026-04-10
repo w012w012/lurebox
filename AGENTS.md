@@ -20,6 +20,12 @@ dart format .                # Format all Dart files
 dart format --set-exit-if-changed .  # Check formatting (CI mode)
 ```
 
+## CI/CD
+**No CI/CD pipeline configured** - all builds are local:
+- No GitHub Actions, no automated tests on push
+- Run `flutter analyze` and `flutter test` manually before commits
+- Consider adding `.github/workflows/flutter.yml` for automation
+
 ## Testing Commands
 ```bash
 flutter test                           # Run all tests
@@ -40,6 +46,12 @@ Use helpers from `test/helpers/test_helpers.dart`:
 - `MockDatabase`, `MockFishCatchRepository`, etc.
 - `TestDataFactory.createFishCatch()`, `createEquipment()`
 - `registerFallbackValues()` in `setUpAll`
+
+## Anti-Patterns (THIS PROJECT)
+- No anti-pattern comments (`DO NOT`, `NEVER`, `ALWAYS`, `DEPRECATED`) found in code
+- **Architecture deviation**: Widgets exist in BOTH `lib/widgets/` AND nested in `lib/features/` - dual location creates confusion
+- **Architecture deviation**: AI providers in `core/services/providers/` (12 files) - non-standard location
+- **Architecture deviation**: `core/camera/` separate from `features/camera/` - camera logic split
 
 ## Code Style
 
@@ -116,16 +128,17 @@ final homeViewModelProvider = StateNotifierProvider<HomeNotifier, HomeState>((re
 ```
 lib/
 ├── core/
-│   ├── models/           # Data models (13 models: FishCatch, Equipment, etc.)
+│   ├── models/           # Data models (17 models: FishCatch, Equipment, etc.)
 │   ├── providers/        # Riverpod providers & notifiers (19 files)
 │   ├── services/         # Business logic (17 services)
 │   ├── database/         # DatabaseProvider singleton
 │   ├── constants/        # AppStrings, achievements, price ranges
 │   ├── design/           # Theme, colors (light/dark), styles
 │   ├── utils/            # Helpers, converters
+│   ├── exceptions/       # Custom exceptions (SpeciesAliasException)
 │   └── widgets/          # Shared widgets
 ├── features/             # Feature modules (home, fish_list, fish_detail, etc.)
-├── widgets/              # Common UI components
+├── widgets/              # Common UI components (including settings/ subdirectory)
 └── main.dart             # App entry point
 ```
 
@@ -145,7 +158,7 @@ lib/
 ## Database
 - SQLite via sqflite
 - Schema versioning in `DatabaseProvider._onUpgrade`
-- Current version: **11** (defined in `database_provider.dart`)
+- Current version: **22** (defined in `database_provider.dart`)
 - Tables: `fish_catches`, `equipments`, `species_history`, `settings`
 - Foreign keys enabled via `PRAGMA foreign_keys = ON`
 - Downgrade: no-op (preserves data)

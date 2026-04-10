@@ -1,4 +1,5 @@
 import 'package:sqflite/sqflite.dart';
+import '../exceptions/species_alias_exception.dart';
 import '../models/user_species_alias.dart';
 import '../services/database_service.dart';
 
@@ -54,7 +55,11 @@ class SqliteUserSpeciesAliasRepository implements UserSpeciesAliasRepository {
         'created_at': DateTime.now().millisecondsSinceEpoch,
       });
     } catch (e) {
-      throw Exception('Failed to create species alias: $e');
+      throw SpeciesAliasException(
+        message: 'Failed to create species alias',
+        operation: 'create',
+        cause: e,
+      );
     }
   }
 
@@ -71,7 +76,11 @@ class SqliteUserSpeciesAliasRepository implements UserSpeciesAliasRepository {
       if (results.isEmpty) return null;
       return UserSpeciesAlias.fromMap(results.first);
     } catch (e) {
-      throw Exception('Failed to find species alias by alias: $e');
+      throw SpeciesAliasException(
+        message: 'Failed to find species alias by alias',
+        operation: 'findByAlias',
+        cause: e,
+      );
     }
   }
 
@@ -87,7 +96,11 @@ class SqliteUserSpeciesAliasRepository implements UserSpeciesAliasRepository {
       );
       return results.map((map) => UserSpeciesAlias.fromMap(map)).toList();
     } catch (e) {
-      throw Exception('Failed to find species aliases by speciesId: $e');
+      throw SpeciesAliasException(
+        message: 'Failed to find species aliases by speciesId',
+        operation: 'findBySpeciesId',
+        cause: e,
+      );
     }
   }
 
@@ -101,7 +114,11 @@ class SqliteUserSpeciesAliasRepository implements UserSpeciesAliasRepository {
         whereArgs: [id],
       );
     } catch (e) {
-      throw Exception('Failed to delete species alias: $e');
+      throw SpeciesAliasException(
+        message: 'Failed to delete species alias',
+        operation: 'delete',
+        cause: e,
+      );
     }
   }
 
@@ -115,7 +132,11 @@ class SqliteUserSpeciesAliasRepository implements UserSpeciesAliasRepository {
       );
       return results.map((map) => UserSpeciesAlias.fromMap(map)).toList();
     } catch (e) {
-      throw Exception('Failed to get all species aliases: $e');
+      throw SpeciesAliasException(
+        message: 'Failed to get all species aliases',
+        operation: 'getAll',
+        cause: e,
+      );
     }
   }
 }

@@ -7,7 +7,7 @@ import 'package:path/path.dart';
 /// 负责数据库的初始化和连接管理
 class DatabaseProvider {
   static const String _databaseName = 'lurebox.db';
-  static const int _databaseVersion = 21;
+  static const int _databaseVersion = 22;
 
   Database? _database;
   Completer<Database>? _initCompleter;
@@ -214,6 +214,19 @@ class DatabaseProvider {
     // 复合索引：时间 + 命运筛选（首页/列表常用）
     await db.execute(
       'CREATE INDEX idx_fish_catches_time_fate ON fish_catches(catch_time, fate)',
+    );
+
+    // 装备表索引：按类型查询
+    await db.execute(
+      'CREATE INDEX idx_equipments_type ON equipments(type)',
+    );
+    // 装备表索引：按分类查询
+    await db.execute(
+      'CREATE INDEX idx_equipments_category ON equipments(category)',
+    );
+    // 装备表索引：按删除状态查询（软删除）
+    await db.execute(
+      'CREATE INDEX idx_equipments_is_deleted ON equipments(is_deleted)',
     );
   }
 
@@ -438,6 +451,18 @@ CREATE TABLE user_species_alias (
       // 复合索引：时间 + 命运筛选
       await db.execute(
         'CREATE INDEX idx_fish_catches_time_fate ON fish_catches(catch_time, fate)',
+      );
+    }
+    if (oldVersion < 22) {
+      // 装备表索引：按类型、分类、删除状态查询
+      await db.execute(
+        'CREATE INDEX idx_equipments_type ON equipments(type)',
+      );
+      await db.execute(
+        'CREATE INDEX idx_equipments_category ON equipments(category)',
+      );
+      await db.execute(
+        'CREATE INDEX idx_equipments_is_deleted ON equipments(is_deleted)',
       );
     }
   }
