@@ -506,10 +506,6 @@ void main() {
     test('returns AsyncValue with data', () async {
       fakeService.getByDateRangeResult = [];
 
-      final now = DateTime.now();
-      final expectedStart = DateTime(now.year, now.month, 1);
-      final expectedEnd = DateTime(now.month == 12 ? now.year + 1 : now.year, now.month == 12 ? 1 : now.month + 1, 1);
-
       final asyncValue = container.read(monthStatsProvider);
 
       // Just verify it returns an AsyncValue

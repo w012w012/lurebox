@@ -413,7 +413,7 @@ void main() {
               orderBy: any(named: 'orderBy'),
             )).thenAnswer((_) async => paginatedResult);
 
-        final result = await service.getPage(
+        await service.getPage(
           page: 2,
           pageSize: 10,
           orderBy: 'length ASC',
