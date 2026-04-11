@@ -3,7 +3,7 @@
 /// 定义数据导出的各种选项：
 /// - 日期范围：可选的起始和结束日期
 /// - 物种筛选：可选的物种白名单
-/// - 导出格式：CSV 或 PDF
+/// - 导出格式：CSV
 /// - 可选字段：图片路径、位置坐标
 ///
 /// 作为数据传输对象（DTO）使用。
@@ -27,4 +27,4 @@ class ExportOptions {
   });
 }
 
-enum ExportFormat { csv, pdf }
+enum ExportFormat { csv }

@@ -63,8 +63,6 @@ dependencies:
 
   # 导出功能
   csv: ^5.1.1
-  pdf: ^3.10.4
-  printing: ^5.11.1
   screenshot: ^2.1.0
 
 dev_dependencies:

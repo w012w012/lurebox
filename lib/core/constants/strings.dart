@@ -398,20 +398,15 @@ class AppStrings {
   final String exportFormat;
   final String csvTable;
   final String csvDescription;
-  final String pdfReport;
-  final String pdfDescription;
   final String jsonFullBackup;
   final String jsonDescription;
   final String exportingCsv;
   final String csvExportSuccess;
-  final String generatingPdf;
-  final String pdfShareOpened;
   final String generationFailed;
   final String exportingJson;
   final String lureboxBackup;
   final String exporting;
   final String generatingCsvFile;
-  final String generatingPdfFile;
   final String exportConfirm;
   final String confirmExport;
   final String willExportNRecords;
@@ -851,20 +846,15 @@ class AppStrings {
     required this.exportFormat,
     required this.csvTable,
     required this.csvDescription,
-    required this.pdfReport,
-    required this.pdfDescription,
     required this.jsonFullBackup,
     required this.jsonDescription,
     required this.exportingCsv,
     required this.csvExportSuccess,
-    required this.generatingPdf,
-    required this.pdfShareOpened,
     required this.generationFailed,
     required this.exportingJson,
     required this.lureboxBackup,
     required this.exporting,
     required this.generatingCsvFile,
-    required this.generatingPdfFile,
     required this.exportConfirm,
     required this.confirmExport,
     required this.willExportNRecords,
@@ -1299,20 +1289,15 @@ class AppStrings {
     exportFormat: '导出格式',
     csvTable: 'CSV 表格',
     csvDescription: '适用于 Excel/数据分析',
-    pdfReport: 'PDF 报告',
-    pdfDescription: '适用于打印/分享',
     jsonFullBackup: 'JSON 完整备份',
     jsonDescription: '包含所有数据的完整备份',
     exportingCsv: '正在导出 CSV...',
     csvExportSuccess: 'CSV 导出成功',
-    generatingPdf: '正在生成 PDF...',
-    pdfShareOpened: 'PDF 分享已打开',
     generationFailed: '生成失败',
     exportingJson: '正在导出 JSON...',
     lureboxBackup: 'LureBox 备份',
     exporting: '正在导出',
     generatingCsvFile: '正在生成 CSV 文件...',
-    generatingPdfFile: '正在生成 PDF 文件...',
     exportConfirm: '导出确认',
     confirmExport: '确认导出',
     willExportNRecords: '将导出 \$count 条记录',
@@ -1766,20 +1751,15 @@ class AppStrings {
     exportFormat: 'Export Format',
     csvTable: 'CSV Table',
     csvDescription: 'For Excel / data analysis',
-    pdfReport: 'PDF Report',
-    pdfDescription: 'For printing / sharing',
     jsonFullBackup: 'JSON Full Backup',
     jsonDescription: 'Complete backup of all data',
     exportingCsv: 'Exporting CSV...',
     csvExportSuccess: 'CSV export successful',
-    generatingPdf: 'Generating PDF...',
-    pdfShareOpened: 'PDF share opened',
     generationFailed: 'Generation failed',
     exportingJson: 'Exporting JSON...',
     lureboxBackup: 'LureBox Backup',
     exporting: 'Exporting',
     generatingCsvFile: 'Generating CSV file...',
-    generatingPdfFile: 'Generating PDF file...',
     exportConfirm: 'Export Confirm',
     confirmExport: 'Confirm Export',
     willExportNRecords: 'Will export \$count records',

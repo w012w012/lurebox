@@ -16,9 +16,6 @@ enum FileType {
   /// CSV 导出文件
   csvExport,
 
-  /// PDF 导出文件
-  pdfExport,
-
   /// JSON 导出文件
   jsonExport,
 
@@ -53,9 +50,7 @@ class FileInfo {
   }
 
   bool get isExport =>
-      fileType == FileType.csvExport ||
-      fileType == FileType.pdfExport ||
-      fileType == FileType.jsonExport;
+      fileType == FileType.csvExport || fileType == FileType.jsonExport;
 
   bool get isBackup => fileType == FileType.zipBackup;
 }
@@ -75,8 +70,6 @@ Future<List<FileInfo>> _listExportBackupFiles() async {
       // 判断文件类型
       if (name.startsWith('fish_catches_') && name.endsWith('.csv')) {
         fileType = FileType.csvExport;
-      } else if (name.startsWith('fish_catches_') && name.endsWith('.pdf')) {
-        fileType = FileType.pdfExport;
       } else if (name.startsWith('fish_catches_') && name.endsWith('.json')) {
         fileType = FileType.jsonExport;
       } else if (name.startsWith('lurebox_backup_') && name.endsWith('.zip')) {
@@ -356,10 +349,6 @@ class _ExportBackupManagementPageState
       icon = Icons.table_chart;
       iconColor = AppColors.success;
       fileTypeLabel = 'CSV 导出';
-    } else if (file.fileType == FileType.pdfExport) {
-      icon = Icons.picture_as_pdf;
-      iconColor = AppColors.error;
-      fileTypeLabel = 'PDF 导出';
     } else {
       icon = Icons.code;
       iconColor = AppColors.accentLight;

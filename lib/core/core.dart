@@ -58,7 +58,6 @@ export 'services/location_service.dart';
 export 'services/settings_service.dart';
 export 'services/share_card_service.dart';
 export 'services/share_template.dart';
-export 'services/text_exporter.dart';
 export 'services/weather_service.dart';
 
 // Repositories
