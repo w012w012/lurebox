@@ -6,8 +6,13 @@ import 'package:path/path.dart';
 /// 数据库提供者
 /// 负责数据库的初始化和连接管理
 class DatabaseProvider {
+  static DatabaseProvider? _instance;
+  static DatabaseProvider get instance => _instance ??= DatabaseProvider._();
+
   static const String _databaseName = 'lurebox.db';
   static const int _databaseVersion = 22;
+
+  DatabaseProvider._();
 
   Database? _database;
   Completer<Database>? _initCompleter;

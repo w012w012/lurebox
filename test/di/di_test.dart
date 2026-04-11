@@ -150,7 +150,7 @@ void main() {
 
     group('Provider Override Tests', () {
       test('can override databaseProvider with mock', () {
-        final mockDbProvider = DatabaseProvider();
+        final mockDbProvider = DatabaseProvider.instance;
         final container = ProviderContainer(
           overrides: [
             databaseProvider.overrideWithValue(mockDbProvider),
@@ -244,7 +244,8 @@ void main() {
         final mockRepository = MockUserSpeciesAliasRepository();
         final container = ProviderContainer(
           overrides: [
-            userSpeciesAliasRepositoryProvider.overrideWithValue(mockRepository),
+            userSpeciesAliasRepositoryProvider
+                .overrideWithValue(mockRepository),
           ],
         );
 
