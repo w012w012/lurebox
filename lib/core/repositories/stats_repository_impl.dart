@@ -1,5 +1,5 @@
+import '../database/database_provider.dart';
 import '../models/fish_catch.dart';
-import '../services/database_service.dart';
 import '../services/error_service.dart';
 import 'stats_repository.dart';
 
@@ -16,7 +16,7 @@ class SqliteStatsRepository implements StatsRepository {
     DateTime? endDate,
   }) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
 
       String whereClause = '';
       List<dynamic> whereArgs = [];
@@ -52,7 +52,7 @@ class SqliteStatsRepository implements StatsRepository {
     int limit = 10,
   }) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
 
       String whereClause = '';
       List<dynamic> whereArgs = [];
@@ -91,7 +91,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<int> getTotalCatchCount() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery(
         'SELECT COUNT(*) as count FROM $_tableName',
       );
@@ -104,7 +104,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<int> getCatchesAboveLength(double minLength) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery(
         'SELECT COUNT(*) as count FROM $_tableName WHERE length >= ?',
         [minLength],
@@ -118,7 +118,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<int> getDistinctSpeciesCount() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery(
         'SELECT COUNT(DISTINCT species) as count FROM $_tableName',
       );
@@ -131,7 +131,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<int> getEquipmentCount() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery('''
         SELECT COUNT(DISTINCT eq_id) as count FROM (
           SELECT equipment_id as eq_id FROM $_tableName WHERE equipment_id IS NOT NULL
@@ -152,7 +152,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<int> getLocationCount() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery('''
         SELECT COUNT(DISTINCT location_name) as count 
         FROM $_tableName 
@@ -167,7 +167,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<int> getReleaseCount() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery(
         'SELECT COUNT(*) as count FROM $_tableName WHERE fate = 0',
       );
@@ -180,7 +180,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<double> getReleaseRate() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       // 优化：单次查询获取总数和放流数
       final results = await db.rawQuery('''
         SELECT
@@ -200,7 +200,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<int> getConsecutiveDays() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery('''
         SELECT DATE(catch_time) as catch_date, COUNT(*) as count
         FROM $_tableName
@@ -246,7 +246,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<int> getMonthlyMax() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery('''
         SELECT strftime('%Y-%m', catch_time) as month, COUNT(*) as count
         FROM $_tableName
@@ -265,7 +265,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<int> getDailyMax() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery('''
         SELECT DATE(catch_time) as day, COUNT(*) as count
         FROM $_tableName
@@ -284,7 +284,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<int> getMorningCatchCount() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery('''
         SELECT COUNT(*) as count FROM $_tableName
         WHERE strftime('%H', catch_time) >= '05' 
@@ -299,7 +299,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<int> getNightCatchCount() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery('''
         SELECT COUNT(*) as count FROM $_tableName
         WHERE strftime('%H', catch_time) >= '20' 
@@ -314,7 +314,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<int> getPhotoCount() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery(
         'SELECT COUNT(*) as count FROM $_tableName WHERE image_path IS NOT NULL AND image_path != ""',
       );
@@ -327,7 +327,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<double> getTotalWeight() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery(
         'SELECT SUM(weight) as total FROM $_tableName WHERE weight IS NOT NULL',
       );
@@ -340,7 +340,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<double> getMaxLength() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery(
         'SELECT MAX(length) as max_length FROM $_tableName WHERE length IS NOT NULL',
       );
@@ -414,7 +414,7 @@ class SqliteStatsRepository implements StatsRepository {
     required DateTime yearStart,
     required DateTime yearEnd,
   }) async {
-    final db = await DatabaseService.database;
+    final db = await DatabaseProvider.instance.database;
     final results = await db.rawQuery('''
       SELECT
         COUNT(*) as all_total,
@@ -485,7 +485,7 @@ class SqliteStatsRepository implements StatsRepository {
     required DateTime yearStart,
     required DateTime yearEnd,
   }) async {
-    final db = await DatabaseService.database;
+    final db = await DatabaseProvider.instance.database;
     final results = await db.rawQuery('''
       SELECT
         species,
@@ -537,7 +537,7 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<Map<int, EquipmentCatchStats>> getEquipmentCatchStats() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery('''
 SELECT
   eq_id as equipment_id,
@@ -572,7 +572,7 @@ GROUP BY eq_id
   @override
   Future<Map<int, Map<String, int>>> getAllEquipmentSpeciesStats() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery('''
 SELECT
   eq_id as equipment_id,
@@ -615,7 +615,7 @@ GROUP BY eq_id, species
     DateTime? endDate,
   }) async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
 
       final typeToColumn = {
         'rod': 'rod_id',
@@ -664,7 +664,7 @@ GROUP BY eq_id, species
   @override
   Future<List<FishCatch>> getTop3LongestCatches() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.query(
         _tableName,
         orderBy: 'length DESC',
@@ -680,7 +680,7 @@ GROUP BY eq_id, species
   @override
   Future<int> getEquipmentFullStatus() async {
     try {
-      final db = await DatabaseService.database;
+      final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery('''
         SELECT COUNT(*) as count FROM $_tableName
         WHERE equipment_id IS NOT NULL 
