@@ -221,8 +221,26 @@ class _BaseEquipmentEditNotifier {
   }
 
   void loadDataFromMap(Map<String, dynamic> equipment) {
-    _state = _state.copyWith(equipment: equipment);
+    // Load common fields from equipment map
+    final brandValue = _getValue(equipment, 'brand')?.toString() ?? '';
+    final modelValue = _getValue(equipment, 'model')?.toString() ?? '';
+    final priceValue = _getValue(equipment, 'price')?.toString() ?? '';
+    final purchaseDateValue =
+        _getValue(equipment, 'purchase_date')?.toString() ?? '';
+    final isDefaultValue = _getValue(equipment, 'is_default');
+
+    // Load type-specific fields first
     _loadData(equipment);
+
+    // Then overlay basic fields
+    _state = _state.copyWith(
+      equipment: equipment,
+      brand: brandValue,
+      model: modelValue,
+      price: priceValue,
+      purchaseDate: purchaseDateValue,
+      isDefault: isDefaultValue == 1,
+    );
   }
 
   void _loadData(Map<String, dynamic> e) {
