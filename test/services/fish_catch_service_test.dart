@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/models/fish_filter.dart';
 import 'package:lurebox/core/models/paginated_result.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 import 'package:lurebox/core/repositories/species_history_repository.dart';
@@ -16,6 +17,8 @@ class MockStatsRepository extends Mock implements StatsRepository {}
 
 class FakeFishCatch extends Fake implements FishCatch {}
 
+class FakeSpeciesHistory extends Fake implements SpeciesHistory {}
+
 void main() {
   late FishCatchService service;
   late MockFishCatchRepository mockRepository;
@@ -24,6 +27,8 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(FakeFishCatch());
+    registerFallbackValue(FakeSpeciesHistory());
+    registerFallbackValue(const FishFilter());
   });
 
   setUp(() {
@@ -278,6 +283,386 @@ void main() {
               fate: FishFateType.keep,
               species: 'Trout',
               orderBy: 'length DESC',
+            )).called(1);
+      });
+    });
+
+    group('getById', () {
+      test('returns fish when exists', () async {
+        final fish = _createFishCatch(id: 5, species: 'Bass');
+        when(() => mockRepository.getById(5)).thenAnswer((_) async => fish);
+
+        final result = await service.getById(5);
+
+        expect(result, equals(fish));
+        verify(() => mockRepository.getById(5)).called(1);
+      });
+
+      test('returns null when not found', () async {
+        when(() => mockRepository.getById(999)).thenAnswer((_) async => null);
+
+        final result = await service.getById(999);
+
+        expect(result, isNull);
+        verify(() => mockRepository.getById(999)).called(1);
+      });
+    });
+
+    group('getAll', () {
+      test('returns all fish from repository', () async {
+        final fishList = [
+          _createFishCatch(id: 1, species: 'Bass'),
+          _createFishCatch(id: 2, species: 'Trout'),
+        ];
+        when(() => mockRepository.getAll()).thenAnswer((_) async => fishList);
+
+        final result = await service.getAll();
+
+        expect(result.length, equals(2));
+        verify(() => mockRepository.getAll()).called(1);
+      });
+
+      test('returns empty list when no fish', () async {
+        when(() => mockRepository.getAll()).thenAnswer((_) async => []);
+
+        final result = await service.getAll();
+
+        expect(result, isEmpty);
+        verify(() => mockRepository.getAll()).called(1);
+      });
+    });
+
+    group('getByDateRange', () {
+      test('delegates to repository', () async {
+        final start = DateTime(2024, 1, 1);
+        final end = DateTime(2024, 12, 31);
+        final fishList = [_createFishCatch(id: 1)];
+        when(() => mockRepository.getByDateRange(start, end))
+            .thenAnswer((_) async => fishList);
+
+        final result = await service.getByDateRange(start, end);
+
+        expect(result, equals(fishList));
+        verify(() => mockRepository.getByDateRange(start, end)).called(1);
+      });
+    });
+
+    group('getByFate', () {
+      test('delegates to repository with release fate', () async {
+        final fishList = [
+          _createFishCatch(id: 1, fate: FishFateType.release),
+          _createFishCatch(id: 2, fate: FishFateType.release),
+        ];
+        when(() => mockRepository.getByFate(FishFateType.release))
+            .thenAnswer((_) async => fishList);
+
+        final result = await service.getByFate(FishFateType.release);
+
+        expect(result.length, equals(2));
+        verify(() => mockRepository.getByFate(FishFateType.release)).called(1);
+      });
+
+      test('delegates to repository with keep fate', () async {
+        final fishList = [_createFishCatch(id: 1, fate: FishFateType.keep)];
+        when(() => mockRepository.getByFate(FishFateType.keep))
+            .thenAnswer((_) async => fishList);
+
+        final result = await service.getByFate(FishFateType.keep);
+
+        expect(result.length, equals(1));
+        verify(() => mockRepository.getByFate(FishFateType.keep)).called(1);
+      });
+    });
+
+    group('getPage', () {
+      test('delegates to repository with default parameters', () async {
+        final paginatedResult = PaginatedResult<FishCatch>(
+          items: [_createFishCatch(id: 1)],
+          totalCount: 1,
+          page: 1,
+          pageSize: 20,
+          hasMore: false,
+        );
+        when(() => mockRepository.getPage(
+              page: any(named: 'page'),
+              pageSize: any(named: 'pageSize'),
+              orderBy: any(named: 'orderBy'),
+            )).thenAnswer((_) async => paginatedResult);
+
+        final result = await service.getPage(page: 1);
+
+        expect(result.items.length, equals(1));
+        verify(() => mockRepository.getPage(
+              page: 1,
+              pageSize: 20,
+              orderBy: 'catch_time DESC',
+            )).called(1);
+      });
+
+      test('passes custom parameters to repository', () async {
+        final paginatedResult = PaginatedResult<FishCatch>(
+          items: [],
+          totalCount: 0,
+          page: 2,
+          pageSize: 10,
+          hasMore: false,
+        );
+        when(() => mockRepository.getPage(
+              page: any(named: 'page'),
+              pageSize: any(named: 'pageSize'),
+              orderBy: any(named: 'orderBy'),
+            )).thenAnswer((_) async => paginatedResult);
+
+        final result = await service.getPage(
+          page: 2,
+          pageSize: 10,
+          orderBy: 'length ASC',
+        );
+
+        verify(() => mockRepository.getPage(
+              page: 2,
+              pageSize: 10,
+              orderBy: 'length ASC',
+            )).called(1);
+      });
+    });
+
+    group('getCount', () {
+      test('delegates to repository', () async {
+        when(() => mockRepository.getCount()).thenAnswer((_) async => 42);
+
+        final result = await service.getCount();
+
+        expect(result, equals(42));
+        verify(() => mockRepository.getCount()).called(1);
+      });
+    });
+
+    group('getTop3LongestCatches', () {
+      test('delegates to stats repository', () async {
+        final fishList = [
+          _createFishCatch(id: 1, length: 50.0),
+          _createFishCatch(id: 2, length: 45.0),
+          _createFishCatch(id: 3, length: 40.0),
+        ];
+        when(() => mockStatsRepo.getTop3LongestCatches())
+            .thenAnswer((_) async => fishList);
+
+        final result = await service.getTop3LongestCatches();
+
+        expect(result.length, equals(3));
+        verify(() => mockStatsRepo.getTop3LongestCatches()).called(1);
+      });
+
+      test('returns empty list when no catches', () async {
+        when(() => mockStatsRepo.getTop3LongestCatches())
+            .thenAnswer((_) async => []);
+
+        final result = await service.getTop3LongestCatches();
+
+        expect(result, isEmpty);
+      });
+    });
+
+    group('getSpeciesStats', () {
+      test('delegates to stats repository without date range', () async {
+        final stats = {'Bass': 10, 'Trout': 5};
+        when(() => mockStatsRepo.getSpeciesStats(
+              startDate: any(named: 'startDate'),
+              endDate: any(named: 'endDate'),
+            )).thenAnswer((_) async => stats);
+
+        final result = await service.getSpeciesStats();
+
+        expect(result, equals(stats));
+        verify(() => mockStatsRepo.getSpeciesStats(
+              startDate: null,
+              endDate: null,
+            )).called(1);
+      });
+
+      test('passes date range to stats repository', () async {
+        final startDate = DateTime(2024, 1, 1);
+        final endDate = DateTime(2024, 6, 30);
+        when(() => mockStatsRepo.getSpeciesStats(
+              startDate: any(named: 'startDate'),
+              endDate: any(named: 'endDate'),
+            )).thenAnswer((_) async => {});
+
+        await service.getSpeciesStats(startDate: startDate, endDate: endDate);
+
+        verify(() => mockStatsRepo.getSpeciesStats(
+              startDate: startDate,
+              endDate: endDate,
+            )).called(1);
+      });
+    });
+
+    group('getAllEquipmentCatchStats', () {
+      test('builds combined stats map', () async {
+        when(() => mockStatsRepo.getEquipmentCatchStats())
+            .thenAnswer((_) async => {
+                  1: EquipmentCatchStats(
+                    equipmentId: 1,
+                    catchCount: 5,
+                    avgLength: 30.0,
+                    avgWeight: 2.0,
+                    releaseCount: 3,
+                  ),
+                });
+        when(() => mockStatsRepo.getAllEquipmentSpeciesStats())
+            .thenAnswer((_) async => {
+                  1: {'Bass': 3, 'Trout': 2},
+                });
+
+        final result = await service.getAllEquipmentCatchStats();
+
+        expect(result[1], equals({'_total': 5, 'Bass': 3, 'Trout': 2}));
+      });
+
+      test('handles empty stats', () async {
+        when(() => mockStatsRepo.getEquipmentCatchStats())
+            .thenAnswer((_) async => {});
+        when(() => mockStatsRepo.getAllEquipmentSpeciesStats())
+            .thenAnswer((_) async => {});
+
+        final result = await service.getAllEquipmentCatchStats();
+
+        expect(result, isEmpty);
+      });
+    });
+
+    group('getEquipmentDistribution', () {
+      test('delegates to stats repository', () async {
+        final distribution = {'spinning': 10, 'casting': 5};
+        when(() => mockStatsRepo.getEquipmentDistribution(
+              any(),
+              startDate: any(named: 'startDate'),
+              endDate: any(named: 'endDate'),
+            )).thenAnswer((_) async => distribution);
+
+        final result = await service.getEquipmentDistribution('rod');
+
+        expect(result, equals(distribution));
+      });
+    });
+
+    group('getEquipmentCatchStats', () {
+      test('delegates to stats repository', () async {
+        when(() => mockStatsRepo.getEquipmentCatchStats())
+            .thenAnswer((_) async => {
+                  1: EquipmentCatchStats(
+                    equipmentId: 1,
+                    catchCount: 5,
+                    avgLength: 30.0,
+                    avgWeight: 2.0,
+                    releaseCount: 3,
+                  ),
+                });
+
+        final result = await service.getEquipmentCatchStats(1);
+
+        expect(result, equals({'_total': 5}));
+      });
+
+      test('returns zero count for unknown equipment', () async {
+        when(() => mockStatsRepo.getEquipmentCatchStats())
+            .thenAnswer((_) async => {});
+
+        final result = await service.getEquipmentCatchStats(999);
+
+        expect(result, equals({'_total': 0}));
+      });
+    });
+
+    group('getSpeciesHistory', () {
+      test('returns species names from repository', () async {
+        final now = DateTime.now();
+        final history = [
+          SpeciesHistory(id: 1, name: 'Bass', useCount: 10, createdAt: now),
+          SpeciesHistory(id: 2, name: 'Trout', useCount: 5, createdAt: now),
+        ];
+        when(() => mockSpeciesHistoryRepo.getAll(limit: any(named: 'limit')))
+            .thenAnswer((_) async => history);
+
+        final result = await service.getSpeciesHistory();
+
+        expect(result, equals(['Bass', 'Trout']));
+      });
+
+      test('passes limit to repository', () async {
+        when(() => mockSpeciesHistoryRepo.getAll(limit: any(named: 'limit')))
+            .thenAnswer((_) async => []);
+
+        await service.getSpeciesHistory(limit: 100);
+
+        verify(() => mockSpeciesHistoryRepo.getAll(limit: 100)).called(1);
+      });
+    });
+
+    group('updateSpeciesHistory', () {
+      test('calls speciesHistoryRepo.incrementUseCount', () async {
+        when(() => mockSpeciesHistoryRepo.incrementUseCount(any()))
+            .thenAnswer((_) async {});
+
+        await service.updateSpeciesHistory('Bass');
+
+        verify(() => mockSpeciesHistoryRepo.incrementUseCount('Bass')).called(1);
+      });
+    });
+
+    group('deleteSpeciesHistory', () {
+      test('calls speciesHistoryRepo.softDelete', () async {
+        when(() => mockSpeciesHistoryRepo.softDelete(any()))
+            .thenAnswer((_) async {});
+
+        await service.deleteSpeciesHistory('Bass');
+
+        verify(() => mockSpeciesHistoryRepo.softDelete('Bass')).called(1);
+      });
+    });
+
+    group('restoreSpeciesHistory', () {
+      test('calls speciesHistoryRepo.restore', () async {
+        when(() => mockSpeciesHistoryRepo.restore(any()))
+            .thenAnswer((_) async {});
+
+        await service.restoreSpeciesHistory('Bass');
+
+        verify(() => mockSpeciesHistoryRepo.restore('Bass')).called(1);
+      });
+    });
+
+    group('getFilteredPageByFilter', () {
+      test('delegates to repository with FishFilter', () async {
+        final filter = FishFilter(
+          timeFilter: 'month',
+          fateFilter: FishFateType.release,
+          speciesFilter: 'Bass',
+        );
+        final paginatedResult = PaginatedResult<FishCatch>(
+          items: [_createFishCatch(id: 1, species: 'Bass')],
+          totalCount: 1,
+          page: 1,
+          pageSize: 20,
+          hasMore: false,
+        );
+        when(() => mockRepository.getFilteredPageByFilter(
+              page: any(named: 'page'),
+              pageSize: any(named: 'pageSize'),
+              filter: any(named: 'filter'),
+            )).thenAnswer((_) async => paginatedResult);
+
+        final result = await service.getFilteredPageByFilter(
+          page: 1,
+          filter: filter,
+        );
+
+        expect(result.items.length, equals(1));
+        verify(() => mockRepository.getFilteredPageByFilter(
+              page: 1,
+              pageSize: 20,
+              filter: filter,
             )).called(1);
       });
     });

@@ -12,6 +12,13 @@ import 'fish_recognition_shared.dart';
 class ClaudeFishRecognitionProvider implements FishRecognitionProvider {
   static const String _systemPrompt = fishRecognitionSystemPrompt;
 
+  /// HTTP client for making requests (injectable for testing)
+  final http.Client? _client;
+
+  /// Creates a Claude provider with optional HTTP client injection
+  /// If no client is provided, uses the default http.Client
+  ClaudeFishRecognitionProvider({http.Client? client}) : _client = client;
+
   @override
   Future<FishRecognitionResult> identifySpecies(
     File image,
@@ -53,7 +60,7 @@ class ClaudeFishRecognitionProvider implements FishRecognitionProvider {
 
     try {
       // 发送请求，设置 10 秒超时
-      final response = await http
+      final response = await (_client ?? http.Client())
           .post(
             url,
             headers: {
@@ -100,7 +107,9 @@ class ClaudeFishRecognitionProvider implements FishRecognitionProvider {
 
     // 解析响应体
     try {
-      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      // Use utf8.decode for proper Chinese character support
+      final bodyString = utf8.decode(response.bodyBytes);
+      final json = jsonDecode(bodyString) as Map<String, dynamic>;
 
       // 检查 API 错误
       if (json.containsKey('error')) {
