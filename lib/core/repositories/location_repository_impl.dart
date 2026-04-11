@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
+import '../database/database_provider.dart';
 import '../models/fish_catch.dart';
-import '../services/database_service.dart';
 import '../services/error_service.dart';
 import 'location_repository.dart';
 
@@ -18,7 +18,7 @@ class SqliteLocationRepository implements LocationRepository {
   Future<Database> get _database async {
     final testDb = _testDb;
     if (testDb != null) return await testDb;
-    return await DatabaseService.database;
+    return await DatabaseProvider.instance.database;
   }
 
   /// 无参构造函数（使用默认 DatabaseService）
