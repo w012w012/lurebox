@@ -1,30 +1,30 @@
+﻿import '../database/database_provider.dart';
 import '../models/fish_catch.dart';
 import '../models/fish_filter.dart';
-import '../services/database_service.dart';
 import '../services/error_service.dart';
 import 'fish_catch_repository.dart';
 
-/// SQLite 实现 - 渔获记录仓储层
+/// SQLite 瀹炵幇 - 娓旇幏璁板綍浠撳偍灞?
 ///
-/// 使用 SQLite 数据库实现渔获记录的数据访问。
-/// 数据表名：fish_catches
+/// 浣跨敤 SQLite 鏁版嵁搴撳疄鐜版笖鑾疯褰曠殑鏁版嵁璁块棶銆?
+/// 鏁版嵁琛ㄥ悕锛歠ish_catches
 
 class SqliteFishCatchRepository implements FishCatchRepository {
   static const String _tableName = 'fish_catches';
 
-  /// 可选的数据库实例（用于测试注入）
+  /// 鍙€夌殑鏁版嵁搴撳疄渚嬶紙鐢ㄤ簬娴嬭瘯娉ㄥ叆锛?
   Future<dynamic>? _testDb;
 
-  /// 内部获取数据库实例
+  /// 鍐呴儴鑾峰彇鏁版嵁搴撳疄渚?
   Future<dynamic> get _database async {
     if (_testDb != null) return await _testDb!;
-    return DatabaseService.database;
+    return DatabaseProvider.instance.database;
   }
 
-  /// 无参构造函数（使用默认 DatabaseService）
+  /// 鏃犲弬鏋勯€犲嚱鏁帮紙浣跨敤榛樿 DatabaseService锛?
   SqliteFishCatchRepository();
 
-  /// 带数据库的构造函数（用于测试）
+  /// 甯︽暟鎹簱鐨勬瀯閫犲嚱鏁帮紙鐢ㄤ簬娴嬭瘯锛?
   SqliteFishCatchRepository.withDatabase(Future<dynamic> testDb) {
     _testDb = testDb;
   }
@@ -266,7 +266,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       final db = await _database;
       final offset = (page - 1) * pageSize;
 
-      // 优化：使用单次查询获取数据和COUNT
+      // 浼樺寲锛氫娇鐢ㄥ崟娆℃煡璇㈣幏鍙栨暟鎹拰COUNT
       final results = await db.query(
         _tableName,
         orderBy: orderBy,
@@ -274,7 +274,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         offset: offset,
       ) as List<Map<String, dynamic>>;
 
-      // 只在第一页查询总数
+      // 鍙湪绗竴椤垫煡璇㈡€绘暟
       int totalCount;
       if (page == 1) {
         final countResult = await db.rawQuery(
@@ -282,8 +282,8 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         );
         totalCount = countResult.first['count'] as int? ?? 0;
       } else {
-        // 对于非第一页，不提供准确总数（需要额外查询）
-        totalCount = -1; // -1 表示未知
+        // 瀵逛簬闈炵涓€椤碉紝涓嶆彁渚涘噯纭€绘暟锛堥渶瑕侀澶栨煡璇級
+        totalCount = -1; // -1 琛ㄧず鏈煡
       }
 
       final items =
@@ -334,7 +334,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         whereArgs.add(fate.value);
       }
       if (species != null && species.isNotEmpty) {
-        // 优化：使用更高效的LIKE查询，避免前导通配符
+        // 浼樺寲锛氫娇鐢ㄦ洿楂樻晥鐨凩IKE鏌ヨ锛岄伩鍏嶅墠瀵奸€氶厤绗?
         whereClauses.add('species = ? OR species LIKE ?');
         whereArgs.add(species);
         whereArgs.add('$species%');
@@ -343,7 +343,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       final whereClause =
           whereClauses.isNotEmpty ? whereClauses.join(' AND ') : null;
 
-      // 优化：只在第一页查询总数
+      // 浼樺寲锛氬彧鍦ㄧ涓€椤垫煡璇㈡€绘暟
       int totalCount;
       if (page == 1) {
         final countQuery = whereClause != null
@@ -352,7 +352,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         final countResult = await db.rawQuery(countQuery, whereArgs);
         totalCount = countResult.first['count'] as int? ?? 0;
       } else {
-        totalCount = -1; // -1 表示未知，需要额外查询
+        totalCount = -1; // -1 琛ㄧず鏈煡锛岄渶瑕侀澶栨煡璇?
       }
 
       final results = await db.query(
@@ -609,7 +609,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
   Future<Map<String, Map<String, int>>> getSoftWormRigAnalytics() async {
     try {
       final db = await _database;
-      // Use INNER JOIN since we only want catches with a lure of type '软虫'
+      // Use INNER JOIN since we only want catches with a lure of type '杞櫕'
       final results = await db.rawQuery('''
         SELECT
           fc.rig_type,
@@ -619,7 +619,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
           COUNT(*) as catch_count
         FROM fish_catches fc
         INNER JOIN equipments e ON fc.lure_id = e.id
-        WHERE e.lure_type = '软虫'
+        WHERE e.lure_type = '杞櫕'
           AND fc.rig_type IS NOT NULL
         GROUP BY fc.rig_type, fc.hook_type, fc.hook_size, fc.hook_weight
       ''');
