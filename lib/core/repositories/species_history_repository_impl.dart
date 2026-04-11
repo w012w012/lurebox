@@ -1,5 +1,5 @@
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
-import '../services/database_service.dart';
+import '../database/database_provider.dart';
 import '../services/error_service.dart';
 import 'species_history_repository.dart';
 
@@ -18,7 +18,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
   Future<Database> get _database async {
     final testDb = _testDb;
     if (testDb != null) return await testDb;
-    return await DatabaseService.database;
+    return await DatabaseProvider.instance.database;
   }
 
   /// Default constructor (uses DatabaseService)
