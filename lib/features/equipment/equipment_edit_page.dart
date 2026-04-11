@@ -28,30 +28,52 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   bool _isLoading = true;
   Map<String, dynamic>? _loadedEquipment;
 
+  ({String type, Map<String, dynamic>? equipment})? _params;
+  bool _isLoadingEquipment = false;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (_isLoading && widget.equipmentId != null) {
+    if (_isLoading && widget.equipmentId != null && !_isLoadingEquipment) {
       _loadEquipmentData();
     }
   }
 
   Future<void> _loadEquipmentData() async {
-    if (widget.equipmentId != null) {
+    if (widget.equipmentId == null || _isLoadingEquipment) return;
+
+    _isLoadingEquipment = true;
+    try {
       final service = ref.read(equipmentServiceProvider);
       final equipment = await service.getById(widget.equipmentId!);
-      if (equipment != null && mounted) {
-        final equipmentMap = equipment.toMap();
+
+      // Equipment not found - just return, don't show error for edit
+      if (equipment == null) return;
+
+      final equipmentMap = equipment.toMap();
+      _params = (type: widget.type, equipment: equipmentMap);
+
+      // Update ViewModel FIRST - this populates the state
+      ref
+          .read(equipmentEditViewModelProvider(_params!).notifier)
+          .loadDataFromMap(equipmentMap);
+
+      // Create/update controllers with loaded values
+      _getOrCreateController('brand', equipment.brand ?? '');
+      _getOrCreateController('model', equipment.model ?? '');
+      _getOrCreateController('price', equipment.price?.toString() ?? '');
+      _getOrCreateController('purchaseDate',
+          equipment.purchaseDate?.toIso8601String().split('T').first ?? '');
+
+      if (mounted) {
         setState(() {
           _loadedEquipment = equipmentMap;
           _isLoading = false;
+          _params = (type: widget.type, equipment: equipmentMap);
         });
-        // 更新 ViewModel
-        final params = (type: widget.type, equipment: equipmentMap);
-        ref
-            .read(equipmentEditViewModelProvider(params).notifier)
-            .loadDataFromMap(equipmentMap);
       }
+    } finally {
+      _isLoadingEquipment = false;
     }
   }
 
@@ -63,8 +85,15 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     super.dispose();
   }
 
-  TextEditingController _getOrCreateController(String field, String value) =>
-      _controllers.putIfAbsent(field, () => TextEditingController(text: value));
+  TextEditingController _getOrCreateController(String field, String value) {
+    final controller = _controllers.putIfAbsent(
+        field, () => TextEditingController(text: value));
+    // Update controller text if value changed (handles case where controller was created before data loaded)
+    if (controller.text != value) {
+      controller.text = value;
+    }
+    return controller;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +103,9 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
     final strings = ref.watch(currentStringsProvider);
     final displayUnits = ref.watch(appSettingsProvider).units;
-    final lineLengthSymbol = UnitConverter.getLengthSymbol(displayUnits.lineLengthUnit);
-    final params = (type: widget.type, equipment: _loadedEquipment);
+    final lineLengthSymbol =
+        UnitConverter.getLengthSymbol(displayUnits.lineLengthUnit);
+    final params = _params ?? (type: widget.type, equipment: _loadedEquipment);
     final state = ref.watch(equipmentEditViewModelProvider(params));
     final notifier = ref.read(equipmentEditViewModelProvider(params).notifier);
     return Scaffold(
@@ -103,229 +133,229 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
             children: [
               _buildCard([
                 _buildSectionTitle(strings.basicInfo),
-              const SizedBox(height: 12),
-              _buildExpandedRow([
-                _buildTextField(
-                  strings.brand,
-                  'brand',
-                  state.brand,
-                  notifier.updateBrand,
-                ),
-                _buildTextField(
-                  strings.model,
-                  'model',
-                  state.model,
-                  notifier.updateModel,
-                ),
-              ]),
-              const SizedBox(height: 10),
-              _buildExpandedRow([
-                _buildTextField(
-                  strings.price,
-                  'price',
-                  state.price,
-                  notifier.updatePrice,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                ),
-                _buildDatePicker(
-                  strings.purchaseDate,
-                  state.purchaseDate,
-                  notifier.updatePurchaseDate,
-                  strings,
-                ),
-              ]),
-              const SizedBox(height: 8),
-              SwitchListTile(
-                title: Text(
-                  strings.setDefault,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                subtitle: Text(
-                  strings.autoAssociate,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                value: state.isDefault,
-                onChanged: notifier.updateIsDefault,
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-              ),
-            ]),
-            if (widget.type == 'rod')
-              _buildCard([
-                _buildSectionTitle(strings.rodParameters),
                 const SizedBox(height: 12),
                 _buildExpandedRow([
-                  _buildAutocomplete(
-                    strings.handleType,
-                    state.categoryType1,
-                    notifier.updateCategoryType1,
-                    strings.rodHandleTypes,
-                    strings.handleTypeHint,
+                  _buildTextField(
+                    strings.brand,
+                    'brand',
+                    _controllers['brand']?.text ?? state.brand,
+                    notifier.updateBrand,
                   ),
-                  _buildAutocomplete(
-                    strings.usageType,
-                    state.categoryType2,
-                    notifier.updateCategoryType2,
-                    strings.rodUsageTypes,
-                    strings.selectOrEnterUsage,
+                  _buildTextField(
+                    strings.model,
+                    'model',
+                    _controllers['model']?.text ?? state.model,
+                    notifier.updateModel,
                   ),
                 ]),
-                const SizedBox(height: 10),
-                RodForm(
-                  lengthController: _getOrCreateController(
-                    'length',
-                    state.length,
-                  ),
-                  lengthUnit: state.lengthUnit,
-                  onLengthUnitChanged: notifier.updateLengthUnit,
-                  sectionsController: _getOrCreateController(
-                    'sections',
-                    state.sections,
-                  ),
-                  jointType: state.jointType,
-                  onJointTypeChanged: notifier.updateJointType,
-                  materialController: _getOrCreateController(
-                    'material',
-                    state.material,
-                  ),
-                  hardness: state.hardness,
-                  onHardnessChanged: notifier.updateHardness,
-                  action: state.rodAction,
-                  onActionChanged: notifier.updateRodAction,
-                  weightRangeMinController: _getOrCreateController(
-                    'weightRangeMin',
-                    _parseWeightRange(state.weightRange).$1,
-                  ),
-                  weightRangeMaxController: _getOrCreateController(
-                    'weightRangeMax',
-                    _parseWeightRange(state.weightRange).$2,
-                  ),
-                ),
-              ]),
-            if (widget.type == 'reel') ...[
-              _buildCard([
-                _buildSectionTitle(strings.reelParameters),
-                const SizedBox(height: 12),
-                _buildExpandedRow([
-                  _buildAutocomplete(
-                    strings.reelType,
-                    state.categoryType1,
-                    notifier.updateCategoryType1,
-                    strings.reelTypes,
-                    strings.reelTypeHint,
-                  ),
-                  _buildAutocomplete(
-                    strings.usageType,
-                    state.categoryType2,
-                    notifier.updateCategoryType2,
-                    strings.reelUsageTypes,
-                    strings.reelUsageHint,
-                  ),
-                ]),
-                const SizedBox(height: 10),
-                ReelForm(
-                  bearingsController: _getOrCreateController(
-                    'reelBearings',
-                    state.reelBearings,
-                  ),
-                  ratioAController: _getOrCreateController(
-                    'reelRatioA',
-                    _parseRatio(state.reelRatio).$1,
-                  ),
-                  ratioBController: _getOrCreateController(
-                    'reelRatioB',
-                    _parseRatio(state.reelRatio).$2,
-                  ),
-                  capacityNumberController: _getOrCreateController(
-                    'reelCapacityNumber',
-                    _parseCapacity(state.reelCapacity).$1,
-                  ),
-                  capacityLengthController: _getOrCreateController(
-                    'reelCapacityLength',
-                    _parseCapacity(state.reelCapacity).$2,
-                  ),
-                  weightController: _getOrCreateController(
-                    'reelWeight',
-                    state.reelWeight,
-                  ),
-                  weightUnit: state.reelWeightUnit,
-                  onWeightUnitChanged: notifier.updateReelWeightUnit,
-                  brakeType: state.reelBrakeType,
-                  onBrakeTypeChanged: notifier.updateReelBrakeType,
-                ),
-              ]),
-              _buildCard([
-                _buildSectionTitle(strings.line),
-                const SizedBox(height: 12),
-                _buildTextField(
-                  strings.brandAndName,
-                  'reelLine',
-                  state.reelLine,
-                  notifier.updateReelLine,
-                ),
                 const SizedBox(height: 10),
                 _buildExpandedRow([
                   _buildTextField(
-                    strings.lineNumber,
-                    'reelLineNumber',
-                    state.reelLineNumber,
-                    notifier.updateReelLineNumber,
+                    strings.price,
+                    'price',
+                    _controllers['price']?.text ?? state.price,
+                    notifier.updatePrice,
+                    keyboardType:
+                        const TextInputType.numberWithOptions(decimal: true),
                   ),
-                  _buildTextField(
-                    strings.lineLength,
-                    'reelLineLength',
-                    state.reelLineLength,
-                    notifier.updateReelLineLength,
-                    suffix: lineLengthSymbol,
+                  _buildDatePicker(
+                    strings.purchaseDate,
+                    _controllers['purchaseDate']?.text ?? state.purchaseDate,
+                    notifier.updatePurchaseDate,
+                    strings,
                   ),
                 ]),
-                const SizedBox(height: 10),
-                _buildDatePicker(
-                  strings.lineDate,
-                  state.reelLineDate,
-                  notifier.updateReelLineDate,
-                  strings,
+                const SizedBox(height: 8),
+                SwitchListTile(
+                  title: Text(
+                    strings.setDefault,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  subtitle: Text(
+                    strings.autoAssociate,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  value: state.isDefault,
+                  onChanged: notifier.updateIsDefault,
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
                 ),
               ]),
-            ],
-            if (widget.type == 'lure')
-              _buildCard([
-                _buildSectionTitle(strings.lureParameters),
-                const SizedBox(height: 12),
-                _buildAutocomplete(
-                  strings.type,
-                  state.lureType,
-                  notifier.updateLureType,
-                  strings.lureTypeOptions,
-                  strings.selectOrEnterType,
-                ),
-                const SizedBox(height: 10),
-                LureForm(
-                  weightController: _getOrCreateController(
-                    'lureWeight',
-                    state.lureWeight,
+              if (widget.type == 'rod')
+                _buildCard([
+                  _buildSectionTitle(strings.rodParameters),
+                  const SizedBox(height: 12),
+                  _buildExpandedRow([
+                    _buildAutocomplete(
+                      strings.handleType,
+                      state.categoryType1,
+                      notifier.updateCategoryType1,
+                      strings.rodHandleTypes,
+                      strings.handleTypeHint,
+                    ),
+                    _buildAutocomplete(
+                      strings.usageType,
+                      state.categoryType2,
+                      notifier.updateCategoryType2,
+                      strings.rodUsageTypes,
+                      strings.selectOrEnterUsage,
+                    ),
+                  ]),
+                  const SizedBox(height: 10),
+                  RodForm(
+                    lengthController: _getOrCreateController(
+                      'length',
+                      state.length,
+                    ),
+                    lengthUnit: state.lengthUnit,
+                    onLengthUnitChanged: notifier.updateLengthUnit,
+                    sectionsController: _getOrCreateController(
+                      'sections',
+                      state.sections,
+                    ),
+                    jointType: state.jointType,
+                    onJointTypeChanged: notifier.updateJointType,
+                    materialController: _getOrCreateController(
+                      'material',
+                      state.material,
+                    ),
+                    hardness: state.hardness,
+                    onHardnessChanged: notifier.updateHardness,
+                    action: state.rodAction,
+                    onActionChanged: notifier.updateRodAction,
+                    weightRangeMinController: _getOrCreateController(
+                      'weightRangeMin',
+                      _parseWeightRange(state.weightRange).$1,
+                    ),
+                    weightRangeMaxController: _getOrCreateController(
+                      'weightRangeMax',
+                      _parseWeightRange(state.weightRange).$2,
+                    ),
                   ),
-                  weightUnit: state.lureWeightUnit,
-                  onWeightUnitChanged: notifier.updateLureWeightUnit,
-                  sizeController: _getOrCreateController(
-                    'lureSize',
-                    state.lureSize,
+                ]),
+              if (widget.type == 'reel') ...[
+                _buildCard([
+                  _buildSectionTitle(strings.reelParameters),
+                  const SizedBox(height: 12),
+                  _buildExpandedRow([
+                    _buildAutocomplete(
+                      strings.reelType,
+                      state.categoryType1,
+                      notifier.updateCategoryType1,
+                      strings.reelTypes,
+                      strings.reelTypeHint,
+                    ),
+                    _buildAutocomplete(
+                      strings.usageType,
+                      state.categoryType2,
+                      notifier.updateCategoryType2,
+                      strings.reelUsageTypes,
+                      strings.reelUsageHint,
+                    ),
+                  ]),
+                  const SizedBox(height: 10),
+                  ReelForm(
+                    bearingsController: _getOrCreateController(
+                      'reelBearings',
+                      state.reelBearings,
+                    ),
+                    ratioAController: _getOrCreateController(
+                      'reelRatioA',
+                      _parseRatio(state.reelRatio).$1,
+                    ),
+                    ratioBController: _getOrCreateController(
+                      'reelRatioB',
+                      _parseRatio(state.reelRatio).$2,
+                    ),
+                    capacityNumberController: _getOrCreateController(
+                      'reelCapacityNumber',
+                      _parseCapacity(state.reelCapacity).$1,
+                    ),
+                    capacityLengthController: _getOrCreateController(
+                      'reelCapacityLength',
+                      _parseCapacity(state.reelCapacity).$2,
+                    ),
+                    weightController: _getOrCreateController(
+                      'reelWeight',
+                      state.reelWeight,
+                    ),
+                    weightUnit: state.reelWeightUnit,
+                    onWeightUnitChanged: notifier.updateReelWeightUnit,
+                    brakeType: state.reelBrakeType,
+                    onBrakeTypeChanged: notifier.updateReelBrakeType,
                   ),
-                  sizeUnit: state.lureSizeUnit,
-                  onSizeUnitChanged: notifier.updateLureSizeUnit,
-                  colorController: _getOrCreateController(
-                    'lureColor',
-                    state.lureColor,
+                ]),
+                _buildCard([
+                  _buildSectionTitle(strings.line),
+                  const SizedBox(height: 12),
+                  _buildTextField(
+                    strings.brandAndName,
+                    'reelLine',
+                    state.reelLine,
+                    notifier.updateReelLine,
                   ),
-                  quantityController: _getOrCreateController(
-                    'lureQuantity',
-                    state.lureQuantity,
+                  const SizedBox(height: 10),
+                  _buildExpandedRow([
+                    _buildTextField(
+                      strings.lineNumber,
+                      'reelLineNumber',
+                      state.reelLineNumber,
+                      notifier.updateReelLineNumber,
+                    ),
+                    _buildTextField(
+                      strings.lineLength,
+                      'reelLineLength',
+                      state.reelLineLength,
+                      notifier.updateReelLineLength,
+                      suffix: lineLengthSymbol,
+                    ),
+                  ]),
+                  const SizedBox(height: 10),
+                  _buildDatePicker(
+                    strings.lineDate,
+                    state.reelLineDate,
+                    notifier.updateReelLineDate,
+                    strings,
                   ),
-                  quantityUnit: state.lureQuantityUnit,
-                  onQuantityUnitChanged: notifier.updateLureQuantityUnit,
-                ),
-              ]),
+                ]),
+              ],
+              if (widget.type == 'lure')
+                _buildCard([
+                  _buildSectionTitle(strings.lureParameters),
+                  const SizedBox(height: 12),
+                  _buildAutocomplete(
+                    strings.type,
+                    state.lureType,
+                    notifier.updateLureType,
+                    strings.lureTypeOptions,
+                    strings.selectOrEnterType,
+                  ),
+                  const SizedBox(height: 10),
+                  LureForm(
+                    weightController: _getOrCreateController(
+                      'lureWeight',
+                      state.lureWeight,
+                    ),
+                    weightUnit: state.lureWeightUnit,
+                    onWeightUnitChanged: notifier.updateLureWeightUnit,
+                    sizeController: _getOrCreateController(
+                      'lureSize',
+                      state.lureSize,
+                    ),
+                    sizeUnit: state.lureSizeUnit,
+                    onSizeUnitChanged: notifier.updateLureSizeUnit,
+                    colorController: _getOrCreateController(
+                      'lureColor',
+                      state.lureColor,
+                    ),
+                    quantityController: _getOrCreateController(
+                      'lureQuantity',
+                      state.lureQuantity,
+                    ),
+                    quantityUnit: state.lureQuantityUnit,
+                    onQuantityUnitChanged: notifier.updateLureQuantityUnit,
+                  ),
+                ]),
             ],
           ),
         ),
@@ -523,6 +553,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       },
     );
   }
+
   Widget _buildDatePicker(
     String label,
     String value,
