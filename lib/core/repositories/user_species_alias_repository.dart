@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
+import '../database/database_provider.dart';
 import '../exceptions/species_alias_exception.dart';
 import '../models/user_species_alias.dart';
-import '../services/database_service.dart';
 
 /// 用户鱼种别名仓储层
 ///
@@ -34,7 +34,7 @@ class SqliteUserSpeciesAliasRepository implements UserSpeciesAliasRepository {
   Future<Database> get _database async {
     final testDb = _testDb;
     if (testDb != null) return await testDb;
-    return await DatabaseService.database;
+    return await DatabaseProvider.instance.database;
   }
 
   /// 无参构造函数（使用默认 DatabaseService）

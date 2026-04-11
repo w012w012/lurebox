@@ -30,7 +30,7 @@ import '../services/fish_recognition_service.dart';
 // ===== 核心依赖 =====
 
 final databaseProvider = Provider<DatabaseProvider>((ref) {
-  return DatabaseProvider();
+  return DatabaseProvider.instance;
 });
 
 // ===== Repository 层 =====
