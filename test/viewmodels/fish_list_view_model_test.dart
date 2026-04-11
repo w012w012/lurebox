@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
-import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/models/paginated_result.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 import 'package:lurebox/core/repositories/species_history_repository.dart';
@@ -124,13 +123,6 @@ void main() {
 
     group('loadCatches', () {
       test('loads catches successfully with pagination', () async {
-        // testCatches sorted by catch_time DESC: [3, 2, 1] because 3 is newest
-        final sortedTestCatches = [
-          _createFishCatch(id: 3, species: 'Bass', length: 35.0, catchTime: DateTime(2024, 1, 3)),
-          _createFishCatch(id: 2, species: 'Trout', length: 25.0, catchTime: DateTime(2024, 1, 2)),
-          _createFishCatch(id: 1, species: 'Bass', length: 30.0, catchTime: DateTime(2024, 1, 1)),
-        ];
-
         final paginatedResult = PaginatedResult(
           items: testCatches,
           totalCount: 3,

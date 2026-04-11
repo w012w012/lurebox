@@ -200,6 +200,112 @@ void main() {
         expect(repository, equals(mockRepository));
         container.dispose();
       });
+
+      test('can override locationRepositoryProvider with mock', () {
+        final mockRepository = MockLocationRepository();
+        final container = ProviderContainer(
+          overrides: [
+            locationRepositoryProvider.overrideWithValue(mockRepository),
+          ],
+        );
+
+        final repository = container.read(locationRepositoryProvider);
+        expect(repository, equals(mockRepository));
+        container.dispose();
+      });
+
+      test('can override statsRepositoryProvider with mock', () {
+        final mockRepository = MockStatsRepository();
+        final container = ProviderContainer(
+          overrides: [
+            statsRepositoryProvider.overrideWithValue(mockRepository),
+          ],
+        );
+
+        final repository = container.read(statsRepositoryProvider);
+        expect(repository, equals(mockRepository));
+        container.dispose();
+      });
+
+      test('can override speciesHistoryRepositoryProvider with mock', () {
+        final mockRepository = MockSpeciesHistoryRepository();
+        final container = ProviderContainer(
+          overrides: [
+            speciesHistoryRepositoryProvider.overrideWithValue(mockRepository),
+          ],
+        );
+
+        final repository = container.read(speciesHistoryRepositoryProvider);
+        expect(repository, equals(mockRepository));
+        container.dispose();
+      });
+
+      test('can override userSpeciesAliasRepositoryProvider with mock', () {
+        final mockRepository = MockUserSpeciesAliasRepository();
+        final container = ProviderContainer(
+          overrides: [
+            userSpeciesAliasRepositoryProvider.overrideWithValue(mockRepository),
+          ],
+        );
+
+        final repository = container.read(userSpeciesAliasRepositoryProvider);
+        expect(repository, equals(mockRepository));
+        container.dispose();
+      });
+    });
+
+    group('Service Provider Overrides', () {
+      test('can override fishCatchServiceProvider with mock', () {
+        final mockService = MockFishCatchService();
+        final container = ProviderContainer(
+          overrides: [
+            fishCatchServiceProvider.overrideWithValue(mockService),
+          ],
+        );
+
+        final service = container.read(fishCatchServiceProvider);
+        expect(service, equals(mockService));
+        container.dispose();
+      });
+
+      test('can override settingsServiceProvider with mock', () {
+        final mockService = MockSettingsService();
+        final container = ProviderContainer(
+          overrides: [
+            settingsServiceProvider.overrideWithValue(mockService),
+          ],
+        );
+
+        final service = container.read(settingsServiceProvider);
+        expect(service, equals(mockService));
+        container.dispose();
+      });
+
+      test('can override achievementServiceProvider with mock', () {
+        final mockService = MockAchievementService();
+        final container = ProviderContainer(
+          overrides: [
+            achievementServiceProvider.overrideWithValue(mockService),
+          ],
+        );
+
+        final service = container.read(achievementServiceProvider);
+        expect(service, equals(mockService));
+        container.dispose();
+      });
+
+      test('can override locationServiceProvider with mock', () {
+        final mockService = MockLocationService();
+        final container = ProviderContainer(
+          overrides: [
+            locationServiceProvider.overrideWithValue(mockService),
+          ],
+        );
+
+        final service = container.read(locationServiceProvider);
+        expect(service, equals(mockService));
+        container.dispose();
+      });
     });
   });
 }
@@ -210,3 +316,29 @@ class MockFishCatchRepository extends Mock implements FishCatchRepository {}
 class MockEquipmentRepository extends Mock implements EquipmentRepository {}
 
 class MockSettingsRepository extends Mock implements SettingsRepository {}
+
+class MockLocationRepository extends Mock implements LocationRepository {}
+
+class MockStatsRepository extends Mock implements StatsRepository {}
+
+class MockSpeciesHistoryRepository extends Mock
+    implements SpeciesHistoryRepository {}
+
+class MockUserSpeciesAliasRepository extends Mock
+    implements UserSpeciesAliasRepository {}
+
+class MockBackupConfigRepository extends Mock
+    implements BackupConfigRepository {}
+
+class MockFishSpeciesMatcher extends Mock implements FishSpeciesMatcher {}
+
+class MockSpeciesManagementService extends Mock
+    implements SpeciesManagementService {}
+
+class MockFishCatchService extends Mock implements FishCatchService {}
+
+class MockSettingsService extends Mock implements SettingsService {}
+
+class MockAchievementService extends Mock implements AchievementService {}
+
+class MockLocationService extends Mock implements LocationService {}

@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:lurebox/core/repositories/settings_repository.dart';
 import 'package:lurebox/core/repositories/settings_repository_impl.dart';
 import 'package:sqflite/sqflite.dart';
 

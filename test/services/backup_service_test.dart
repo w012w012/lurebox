@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
@@ -47,7 +46,7 @@ class MockDb extends Mock implements Database {
     Future<T> Function(Transaction txn) action, {
     bool? exclusive,
   }) async {
-    return action(_MockTransaction());
+    return action(_MockTransaction(this));
   }
 
   @override
@@ -110,6 +109,10 @@ class MockDb extends Mock implements Database {
 }
 
 class _MockTransaction implements Transaction {
+  final MockDb _mockDb;
+
+  _MockTransaction(this._mockDb);
+
   @override
   Future<int> insert(
     String table,
@@ -120,12 +123,11 @@ class _MockTransaction implements Transaction {
     return 1;
   }
 
-  @override
   Future<T> transaction<T>(
     Future<T> Function(Transaction txn) action, {
     bool? exclusive,
   }) async {
-    return action(this);
+    return action(_MockTransaction(_mockDb));
   }
 
   @override
@@ -179,9 +181,6 @@ void main() {
         mockDatabase.addQueryResult('equipments', []);
         mockDatabase.addQueryResult('species_history', []);
         mockDatabase.addQueryResult('settings', []);
-
-        // Mock path_provider
-        final tempDir = Directory.systemTemp.createTempSync();
 
         // Act
         final filePath = await backupService.exportToJson();

@@ -355,12 +355,26 @@ void main() {
 
         // Assert - no exception means success
       });
+
+      test('handles empty list without throwing', () async {
+        // Arrange & Act
+        await service.mergeLocations([], '新地点');
+
+        // Assert - no exception means success
+      });
     });
 
     group('renameLocation', () {
       test('updates location name without throwing', () async {
         // Arrange & Act
         await service.renameLocation('旧名称', '新名称');
+
+        // Assert - no exception means success
+      });
+
+      test('handles rename to empty string without throwing', () async {
+        // Arrange & Act
+        await service.renameLocation('旧名称', '');
 
         // Assert - no exception means success
       });
@@ -417,6 +431,55 @@ void main() {
         // Assert - identical strings return false in _isSimilarLocation
         expect(result, isEmpty);
       });
+
+      test('groups locations that become identical after number removal', () {
+        // Arrange - "1号地点" and "2号地点" both become "号地点" after removing numbers
+        final locations = ['1号地点', '2号地点'];
+
+        // Act
+        final result = service.findSimilarLocations(locations);
+
+        // Assert - these should be grouped because cleaned strings are identical
+        expect(result.length, equals(1));
+        expect(result[0], containsAll(['1号地点', '2号地点']));
+      });
+
+      test('does not group locations with low similarity', () {
+        // Arrange - very different locations
+        final locations = ['西湖', '钱塘江', '千岛湖'];
+
+        // Act
+        final result = service.findSimilarLocations(locations);
+
+        // Assert
+        expect(result, isEmpty);
+      });
+
+      test('handles locations with numbers correctly', () {
+        // Arrange - numbers should be removed before comparison
+        final locations = ['钓点1号', '钓点2号', '其他钓点'];
+
+        // Act
+        final result = service.findSimilarLocations(locations);
+
+        // Assert - 1号 and 2号 both become "号" after removing numbers
+        // They should be grouped together
+        expect(result.length, equals(1));
+        expect(result[0], equals(['钓点1号', '钓点2号']));
+      });
+
+      test('returns all groups when multiple similarity groups exist', () {
+        // Arrange - create two distinct groups using number removal
+        // "1号北京" and "2号北京" become "号北京" - similar
+        // "1号上海" and "2号上海" become "号上海" - similar
+        final locations = ['1号北京', '2号北京', '1号上海', '2号上海'];
+
+        // Act
+        final result = service.findSimilarLocations(locations);
+
+        // Assert - should have two groups
+        expect(result.length, equals(2));
+      });
     });
 
     group('getBestLocationName', () {
@@ -434,6 +497,32 @@ void main() {
 
         // Assert
         expect(result, equals(''));
+      });
+
+      test('returns last of equal-length locations', () {
+        // Act
+        final result = service.getBestLocationName(['等长1', '等长2', '等长3']);
+
+        // Assert - reduce returns the last element when accumulator always picks b
+        // The implementation does: a.length > b.length ? a : b
+        // When lengths are equal, it picks b (the current/last element)
+        expect(result, equals('等长3'));
+      });
+
+      test('returns correct name for single location', () {
+        // Act
+        final result = service.getBestLocationName(['唯一地点']);
+
+        // Assert
+        expect(result, equals('唯一地点'));
+      });
+
+      test('handles unicode location names correctly', () {
+        // Act
+        final result = service.getBestLocationName(['东京', '纽约', '北京时间']);
+
+        // Assert - longest by character count
+        expect(result, equals('北京时间'));
       });
     });
   });

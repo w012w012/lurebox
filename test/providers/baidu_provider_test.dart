@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
-import 'package:lurebox/core/services/fish_recognition_service.dart';
 import 'package:lurebox/core/services/providers/baidu_provider.dart';
 import 'package:lurebox/core/services/providers/openai_compatible_provider.dart';
 
@@ -15,7 +14,6 @@ class FakeUri extends Fake implements Uri {}
 void main() {
   late BaiduFishRecognitionProvider provider;
   late MockHttpClient mockHttpClient;
-  late AiProviderConfig testConfig;
 
   setUpAll(() {
     registerFallbackValue(FakeUri());
@@ -24,11 +22,6 @@ void main() {
   setUp(() {
     mockHttpClient = MockHttpClient();
     provider = BaiduFishRecognitionProvider();
-    testConfig = const AiProviderConfig(
-      provider: AiRecognitionProvider.baidu,
-      apiKey: 'test-baidu-api-key',
-      modelName: 'ernie-vl-72b',
-    );
   });
 
   group('BaiduFishRecognitionProvider', () {
@@ -101,15 +94,11 @@ void main() {
           ],
         }, 200);
 
-        Uri? capturedUri;
         when(() => mockHttpClient.post(
               any(),
               headers: any(named: 'headers'),
               body: any(named: 'body'),
-            )).thenAnswer((invocation) async {
-          capturedUri = invocation.positionalArguments[0] as Uri;
-          return mockResponse;
-        });
+            )).thenAnswer((_) async => mockResponse);
 
         // Note: Can't actually call identifySpecies without HTTP injection,
         // but we verify URL building works correctly
@@ -121,10 +110,6 @@ void main() {
       });
 
       test('uses ERNIE model when config.modelName is not provided', () {
-        final config = const AiProviderConfig(
-          provider: AiRecognitionProvider.baidu,
-          apiKey: 'test-key',
-        );
         // Provider should use defaultModel when config.modelName is null/empty
         expect(provider.defaultModel, equals('ernie-vl-72b'));
       });

@@ -6,7 +6,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
 import 'package:lurebox/core/services/fish_recognition_service.dart';
 import 'package:lurebox/core/services/providers/gemini_provider.dart';
-import 'package:lurebox/core/services/providers/fish_recognition_shared.dart';
 
 /// Creates an HTTP response with proper UTF-8 encoding for Chinese characters
 http.Response _createUtf8Response(String body, int statusCode) {
