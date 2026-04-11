@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.lurebox.lurebox"
     compileSdk = 35
-    ndkVersion = "25.1.8937393"
+    ndkVersion = "26.1.10909125"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
