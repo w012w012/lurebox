@@ -7,7 +7,6 @@ import 'core/models/app_settings.dart';
 import 'core/providers/app_settings_provider.dart';
 import 'core/providers/language_provider.dart';
 import 'core/database/database_provider.dart';
-import 'core/services/database_service.dart';
 import 'core/router/app_router.dart';
 
 /// LureBox (路亚鱼护) 应用入口
@@ -34,9 +33,6 @@ void main() async {
     debugPrint('Flutter Error: ${details.exceptionAsString()}');
   };
 
-  // DatabaseService 预热（兼容旧逻辑）
-  await DatabaseService.database;
-  // DatabaseProvider 确保新逻辑一致
   await DatabaseProvider.instance.database;
 
   runApp(const ProviderScope(child: LuYuHuApp()));
