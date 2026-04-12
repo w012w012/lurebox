@@ -307,6 +307,33 @@ class _FishListPageState extends ConsumerState<FishListPage>
       );
     }
 
+    // Empty state check
+    if (state.filteredCatches.isEmpty && !state.isLoading) {
+      final hasFilters = state.hasFilters;
+      if (hasFilters) {
+        // Has filters but no results
+        return EmptyView(
+          message: strings.noMatchFound,
+          icon: Icons.search_off,
+          action: PremiumButton(
+            text: strings.clearFilters,
+            onPressed: () =>
+                ref.read(fishListViewModelProvider.notifier).clearFilters(),
+          ),
+        );
+      } else {
+        // No catches at all
+        return EmptyView(
+          message: strings.noFishFound,
+          icon: Icons.photo_camera_outlined,
+          action: PremiumButton(
+            text: strings.recordCatch,
+            onPressed: () => context.push('/camera'),
+          ),
+        );
+      }
+    }
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final isTablet = constraints.maxWidth >= 600;

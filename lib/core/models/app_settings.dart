@@ -124,22 +124,27 @@ class AppSettings {
   final UnitSettings units;
   final DarkMode darkMode;
   final AppLanguage language;
+  final bool hasCompletedOnboarding;
 
   const AppSettings({
     this.units = const UnitSettings(),
     this.darkMode = DarkMode.system,
     this.language = AppLanguage.chinese,
+    this.hasCompletedOnboarding = false,
   });
 
   AppSettings copyWith({
     UnitSettings? units,
     DarkMode? darkMode,
     AppLanguage? language,
+    bool? hasCompletedOnboarding,
   }) {
     return AppSettings(
       units: units ?? this.units,
       darkMode: darkMode ?? this.darkMode,
       language: language ?? this.language,
+      hasCompletedOnboarding:
+          hasCompletedOnboarding ?? this.hasCompletedOnboarding,
     );
   }
 
@@ -147,6 +152,7 @@ class AppSettings {
         'units': units.toJson(),
         'darkMode': darkMode.name,
         'language': language.name,
+        'hasCompletedOnboarding': hasCompletedOnboarding,
       };
 
   factory AppSettings.fromJson(Map<String, dynamic> json) {
@@ -162,6 +168,7 @@ class AppSettings {
         (e) => e.name == json['language'],
         orElse: () => AppLanguage.chinese,
       ),
+      hasCompletedOnboarding: json['hasCompletedOnboarding'] as bool? ?? false,
     );
   }
 
