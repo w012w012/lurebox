@@ -13,7 +13,6 @@ export 'models/fish_filter.dart';
 export 'models/fishing_location.dart';
 export 'models/location_models.dart';
 export 'models/paginated_result.dart';
-export 'models/rig_config.dart';
 export 'models/species_history.dart';
 export 'models/stats_models.dart';
 export 'models/watermark_settings.dart';

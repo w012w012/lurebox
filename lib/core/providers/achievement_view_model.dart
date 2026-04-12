@@ -107,21 +107,13 @@ class AchievementViewModel extends StateNotifier<AchievementState> {
   }
 
   bool isUnlocked(String id) {
-    final achievement = state.achievements.firstWhere(
-      (a) => a.id == id,
-      orElse: () => const Achievement(
-        id: '',
-        title: '',
-        description: '',
-        icon: '',
-        level: AchievementLevel.bronze,
-        category: '',
-        target: 0,
-        current: 0,
-        progress: 0,
-      ),
-    );
-    return achievement.isUnlocked;
+    try {
+      final achievement = state.achievements.firstWhere((a) => a.id == id);
+      return achievement.isUnlocked;
+    } catch (_) {
+      // Achievement not found
+      return false;
+    }
   }
 }
 

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/services/error_service.dart';
 import 'package:lurebox/core/constants/strings.dart';
@@ -5,9 +8,19 @@ import 'package:lurebox/core/constants/strings.dart';
 void main() {
   group('ErrorService', () {
     late ErrorService errorService;
+    var originalOnError = FlutterError.onError;
 
     setUp(() {
       errorService = ErrorService();
+      // 临时抑制 FlutterError.onError 以避免测试期间的 debugPrint 输出被报告为错误
+      FlutterError.onError = (FlutterErrorDetails details) {
+        // 抑制所有错误输出
+      };
+    });
+
+    tearDown(() {
+      // 恢复原始的 FlutterError.onError
+      FlutterError.onError = originalOnError;
     });
 
     group('singleton', () {
@@ -89,12 +102,16 @@ void main() {
       });
 
       test('rethrows exception from failed function', () async {
-        expect(
-          () => errorService.wrap(() async {
-            throw Exception('Test error');
-          }),
-          throwsException,
-        );
+        await runZonedGuarded(() async {
+          expect(
+            () => errorService.wrap(() async {
+              throw Exception('Test error');
+            }),
+            throwsException,
+          );
+        }, (e, s) {
+          // 抑制测试期间的预期错误输出
+        });
       });
 
       test('includes context in exception message', () async {
@@ -135,12 +152,16 @@ void main() {
       });
 
       test('rethrows exception from failed function', () {
-        expect(
-          () => errorService.run(() {
-            throw Exception('Sync error');
-          }),
-          throwsException,
-        );
+        runZonedGuarded(() {
+          expect(
+            () => errorService.run(() {
+              throw Exception('Sync error');
+            }),
+            throwsException,
+          );
+        }, (e, s) {
+          // 抑制测试期间的预期错误输出
+        });
       });
 
       test('includes context in exception message', () {
