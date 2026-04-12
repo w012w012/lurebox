@@ -18,11 +18,11 @@ import '../../core/providers/app_settings_provider.dart';
 import '../../core/utils/file_utils.dart';
 import '../../core/utils/unit_converter.dart';
 import '../../widgets/common/premium_card.dart';
-import '../../widgets/stats/catch_trend_chart.dart';
-import '../../widgets/stats/species_distribution_chart.dart';
-import '../../widgets/stats/monthly_stats_card.dart';
-import '../../widgets/stats/location_stats_card.dart';
-import '../../widgets/stats/stats_summary_card.dart';
+import 'widgets/catch_trend_chart.dart';
+import 'widgets/species_distribution_chart.dart';
+import 'widgets/monthly_stats_card.dart';
+import 'widgets/location_stats_card.dart';
+import 'widgets/stats_summary_card.dart';
 
 class StatsDetailPage extends ConsumerStatefulWidget {
   final String title;

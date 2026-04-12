@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
 import 'package:lurebox/core/services/fish_recognition_service.dart';
-import 'package:lurebox/core/services/providers/minimax_provider.dart';
+import 'package:lurebox/core/services/adapters/minimax_provider.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
 
@@ -31,7 +31,7 @@ void main() {
   });
 
   // Helper to create a UTF-8 encoded HTTP response
-  http.Response _createUtf8Response(Map<String, dynamic> json, int statusCode) {
+  http.Response createUtf8Response(Map<String, dynamic> json, int statusCode) {
     return http.Response.bytes(
       utf8.encode(jsonEncode(json)),
       statusCode,
@@ -44,7 +44,7 @@ void main() {
       test('returns FishRecognitionResult on successful识别', () async {
         // Arrange
         final testImage = File('test/fixtures/test_fish.jpg');
-        final mockResponse = _createUtf8Response({
+        final mockResponse = createUtf8Response({
           'base_resp': {'status_code': 0, 'status_msg': ''},
           'choices': [
             {
@@ -77,7 +77,7 @@ void main() {
       test('uses MiniMax text/chatcompletion_v2 API endpoint', () async {
         // Arrange
         final testImage = File('test/fixtures/test_fish.jpg');
-        final mockResponse = _createUtf8Response({
+        final mockResponse = createUtf8Response({
           'base_resp': {'status_code': 0, 'status_msg': ''},
           'choices': [
             {
@@ -111,7 +111,7 @@ void main() {
       test('constructs request with correct MiniMax API format', () async {
         // Arrange
         final testImage = File('test/fixtures/test_fish.jpg');
-        final mockResponse = _createUtf8Response({
+        final mockResponse = createUtf8Response({
           'base_resp': {'status_code': 0, 'status_msg': ''},
           'choices': [
             {
@@ -132,9 +132,10 @@ void main() {
               headers: any(named: 'headers'),
               body: any(named: 'body'),
             )).thenAnswer((invocation) async {
-          capturedHeaders = invocation.namedArguments[Symbol('headers')]
+          capturedHeaders = invocation.namedArguments[const Symbol('headers')]
               as Map<String, String>?;
-          capturedBody = invocation.namedArguments[Symbol('body')] as String?;
+          capturedBody =
+              invocation.namedArguments[const Symbol('body')] as String?;
           return mockResponse;
         });
 
@@ -181,7 +182,7 @@ void main() {
       test('parses response with alternatives correctly', () async {
         // Arrange
         final testImage = File('test/fixtures/test_fish.jpg');
-        final mockResponse = _createUtf8Response({
+        final mockResponse = createUtf8Response({
           'base_resp': {'status_code': 0, 'status_msg': ''},
           'choices': [
             {
@@ -216,7 +217,7 @@ void main() {
       test('throws FishRecognitionException on API error status', () async {
         // Arrange
         final testImage = File('test/fixtures/test_fish.jpg');
-        final mockResponse = _createUtf8Response({
+        final mockResponse = createUtf8Response({
           'base_resp': {'status_code': 1003, 'status_msg': 'invalid api_key'},
         }, 200);
 
@@ -240,7 +241,7 @@ void main() {
       test('throws FishRecognitionException on rate limit', () async {
         // Arrange
         final testImage = File('test/fixtures/test_fish.jpg');
-        final mockResponse = _createUtf8Response({
+        final mockResponse = createUtf8Response({
           'base_resp': {
             'status_code': 1004,
             'status_msg': 'rate limit exceeded'
@@ -267,7 +268,7 @@ void main() {
       test('handles response with markdown code blocks', () async {
         // Arrange
         final testImage = File('test/fixtures/test_fish.jpg');
-        final mockResponse = _createUtf8Response({
+        final mockResponse = createUtf8Response({
           'base_resp': {'status_code': 0, 'status_msg': ''},
           'choices': [
             {
@@ -300,7 +301,7 @@ void main() {
           baseUrl: 'https://custom-api.example.com',
         );
         final testImage = File('test/fixtures/test_fish.jpg');
-        final mockResponse = _createUtf8Response({
+        final mockResponse = createUtf8Response({
           'base_resp': {'status_code': 0, 'status_msg': ''},
           'choices': [
             {

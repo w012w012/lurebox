@@ -24,7 +24,7 @@ void main() {
     });
 
     test('creates LocationWithStats with null lastCatchTime', () {
-      final instance = LocationWithStats(
+      const instance = LocationWithStats(
         name: 'River',
         latitude: 36.0,
         longitude: 140.0,
@@ -103,7 +103,7 @@ void main() {
     });
 
     test('toMap handles null lastCatchTime', () {
-      final instance = LocationWithStats(
+      const instance = LocationWithStats(
         name: 'River',
         latitude: 36.0,
         longitude: 140.0,
@@ -156,7 +156,7 @@ void main() {
     });
 
     test('different name is not equal', () {
-      final other = LocationWithStats(
+      const other = LocationWithStats(
         name: 'Different Lake',
         latitude: 35.0,
         longitude: 139.0,
@@ -167,7 +167,7 @@ void main() {
     });
 
     test('different latitude is not equal', () {
-      final other = LocationWithStats(
+      const other = LocationWithStats(
         name: 'Test Lake',
         latitude: 36.0,
         longitude: 139.0,
@@ -178,7 +178,7 @@ void main() {
     });
 
     test('different longitude is not equal', () {
-      final other = LocationWithStats(
+      const other = LocationWithStats(
         name: 'Test Lake',
         latitude: 35.0,
         longitude: 140.0,

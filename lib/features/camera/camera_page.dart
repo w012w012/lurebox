@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../core/constants/strings.dart';
+import '../../core/models/app_settings.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
 import '../../core/utils/file_utils.dart';
@@ -17,14 +18,14 @@ import '../../core/camera/camera_state.dart';
 
 import '../../widgets/common/image_cache_helper.dart';
 import '../../widgets/common/premium_button.dart';
-import '../../widgets/catch/auxiliary_info_row.dart';
-import '../../widgets/catch/species_input_card.dart';
-import '../../widgets/catch/length_input_field.dart';
-import '../../widgets/catch/weight_input_field.dart';
-import '../../widgets/catch/fate_selector_card.dart';
-import '../../widgets/catch/equipment_rig_card.dart';
-import '../../widgets/catch/equipment_selection_sheet.dart';
-import '../../widgets/camera/camera_view_widget.dart';
+import '../catch/widgets/auxiliary_info_row.dart';
+import '../catch/widgets/species_input_card.dart';
+import '../catch/widgets/length_input_field.dart';
+import '../catch/widgets/weight_input_field.dart';
+import '../catch/widgets/fate_selector_card.dart';
+import '../catch/widgets/equipment_rig_card.dart';
+import '../catch/widgets/equipment_selection_sheet.dart';
+import 'widgets/camera_view_widget.dart';
 
 class CameraPage extends ConsumerStatefulWidget {
   const CameraPage({super.key});
@@ -45,6 +46,18 @@ class _CameraPageState extends ConsumerState<CameraPage> {
       _initialize();
     });
     _lengthController.addListener(_onLengthChanged);
+
+    // Listen to settings changes for unit updates
+    ref.listen<UnitSettings>(
+      appSettingsProvider.select((s) => s.units),
+      (prev, next) {
+        final state = ref.read(cameraViewModelProvider);
+        if (state.lengthUnit != next.fishLengthUnit ||
+            state.weightUnit != next.fishWeightUnit) {
+          ref.read(cameraViewModelProvider.notifier).initializeUnits(next);
+        }
+      },
+    );
   }
 
   Future<void> _initialize() async {
@@ -105,16 +118,6 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     final state = ref.watch(cameraViewModelProvider);
     final vm = ref.read(cameraViewModelProvider.notifier);
     final strings = ref.watch(currentStringsProvider);
-    final appSettings = ref.watch(appSettingsProvider);
-
-    final settingsUnits = appSettings.units;
-
-    if (state.lengthUnit != settingsUnits.fishLengthUnit ||
-        state.weightUnit != settingsUnits.fishWeightUnit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        vm.initializeUnits(settingsUnits);
-      });
-    }
 
     if (state.captureState == CameraCaptureState.pictureTaken) {
       return _buildFormView(state, vm, strings);

@@ -1,17 +1,17 @@
 import 'dart:convert';
 
 import '../services/fish_recognition_service.dart';
-import '../services/providers/gemini_provider.dart';
-import '../services/providers/openai_provider.dart';
-import '../services/providers/claude_provider.dart';
-import '../services/providers/minimax_provider.dart';
-import '../services/providers/siliconflow_provider.dart';
-import '../services/providers/deepseek_provider.dart';
-import '../services/providers/baidu_provider.dart';
-import '../services/providers/aliyun_provider.dart';
-import '../services/providers/tencent_provider.dart';
-import '../services/providers/zhipu_provider.dart';
-import '../services/providers/custom_provider.dart';
+import '../services/adapters/gemini_provider.dart';
+import '../services/adapters/openai_provider.dart';
+import '../services/adapters/claude_provider.dart';
+import '../services/adapters/minimax_provider.dart';
+import '../services/adapters/siliconflow_provider.dart';
+import '../services/adapters/deepseek_provider.dart';
+import '../services/adapters/baidu_provider.dart';
+import '../services/adapters/aliyun_provider.dart';
+import '../services/adapters/tencent_provider.dart';
+import '../services/adapters/zhipu_provider.dart';
+import '../services/adapters/custom_provider.dart';
 
 /// AI 识别设置数据模型
 ///

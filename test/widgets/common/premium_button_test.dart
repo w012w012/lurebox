@@ -55,7 +55,7 @@ void main() {
       testWidgets('renders full width when isFullWidth is true',
           (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
+          const MaterialApp(
             home: Scaffold(
               body: PremiumButton(
                 text: 'Test Button',

@@ -11,11 +11,11 @@ import '../../core/providers/settings_view_model.dart';
 import '../../core/widgets/error_view.dart';
 import '../../widgets/common/premium_card.dart';
 import '../../widgets/common/settings_tile.dart';
-import '../../widgets/settings/settings_backup_section.dart';
-import '../../widgets/settings/settings_appearance_section.dart';
-import '../../widgets/settings/settings_units_section.dart';
-import '../../widgets/settings/settings_about_section.dart';
-import '../../widgets/settings/settings_stats_card.dart';
+import 'widgets/settings_backup_section.dart';
+import 'widgets/settings_appearance_section.dart';
+import 'widgets/settings_units_section.dart';
+import 'widgets/settings_about_section.dart';
+import 'widgets/settings_stats_card.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});

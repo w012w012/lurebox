@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:lurebox/core/models/stats_models.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
 import 'package:lurebox/core/providers/home_view_model.dart';
 
@@ -375,17 +374,17 @@ void main() {
     // ============================================================
     group('HomeState copyWith', () {
       test('copyWith creates new instance with updated fields', () {
-        final state = HomeState(
+        const state = HomeState(
           isLoading: true,
-          todayStats: const CatchStats(total: 5, release: 3, keep: 2),
-          todaySpecies: const {'Bass': 3},
-          monthStats: const CatchStats(total: 20, release: 15, keep: 5),
-          monthSpecies: const {'Bass': 10},
-          yearStats: const CatchStats(total: 100, release: 70, keep: 30),
-          yearSpecies: const {'Bass': 50},
-          allStats: const CatchStats(total: 500, release: 350, keep: 150),
-          allSpecies: const {'Bass': 200},
-          top3Fishes: const [
+          todayStats: CatchStats(total: 5, release: 3, keep: 2),
+          todaySpecies: {'Bass': 3},
+          monthStats: CatchStats(total: 20, release: 15, keep: 5),
+          monthSpecies: {'Bass': 10},
+          yearStats: CatchStats(total: 100, release: 70, keep: 30),
+          yearSpecies: {'Bass': 50},
+          allStats: CatchStats(total: 500, release: 350, keep: 150),
+          allSpecies: {'Bass': 200},
+          top3Fishes: [
             {'species': 'Bass', 'length': 45.0}
           ],
         );

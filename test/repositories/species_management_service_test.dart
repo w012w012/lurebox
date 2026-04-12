@@ -77,7 +77,7 @@ void main() {
             .thenAnswer((_) async => null);
 
         when(() => mockMatcher.findSpeciesByName(oldName)).thenReturn(
-          FishSpecies(
+          const FishSpecies(
             id: speciesId,
             standardName: 'Bass',
             category: FishCategory.freshwaterLure,
@@ -146,7 +146,7 @@ void main() {
         when(() => mockAliasRepo.findByAlias(nameC))
             .thenAnswer((_) async => null);
         when(() => mockMatcher.findSpeciesByName(nameB)).thenReturn(
-          FishSpecies(
+          const FishSpecies(
             id: speciesId,
             standardName: 'Known Fish',
             category: FishCategory.freshwaterLure,
@@ -214,7 +214,7 @@ void main() {
         when(() => mockAliasRepo.findByAlias(any()))
             .thenAnswer((_) async => null);
         when(() => mockMatcher.findSpeciesByName('BASS')).thenReturn(
-          FishSpecies(
+          const FishSpecies(
             id: 'bass-001',
             standardName: 'Bass',
             category: FishCategory.freshwaterLure,

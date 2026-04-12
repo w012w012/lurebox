@@ -21,8 +21,8 @@ import '../../widgets/common/premium_navigation_bar.dart';
 import '../../core/constants/strings.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/fish_detail_view_model.dart';
-import '../../widgets/fish_detail/fish_edit_page.dart';
-import '../../widgets/settings/settings_units_section.dart';
+import '../../features/fish_detail/widgets/fish_edit_page.dart';
+import '../../features/settings/widgets/settings_units_section.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();

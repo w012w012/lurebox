@@ -10,9 +10,9 @@ import '../../core/utils/unit_converter.dart';
 import '../../widgets/common/premium_button.dart';
 import '../../widgets/common/premium_card.dart';
 import '../../widgets/common/premium_input.dart';
-import '../../widgets/equipment/rod_form.dart';
-import '../../widgets/equipment/reel_form.dart';
-import '../../widgets/equipment/lure_form.dart';
+import 'widgets/rod_form.dart';
+import 'widgets/reel_form.dart';
+import 'widgets/lure_form.dart';
 
 class EquipmentEditPage extends ConsumerStatefulWidget {
   final String type;

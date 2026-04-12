@@ -6,8 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
 import 'package:lurebox/core/services/fish_recognition_service.dart';
-import 'package:lurebox/core/services/providers/openai_compatible_provider.dart';
-import 'package:lurebox/core/services/providers/fish_recognition_shared.dart';
+import 'package:lurebox/core/services/adapters/openai_compatible_provider.dart';
+import 'package:lurebox/core/services/adapters/fish_recognition_shared.dart';
 
 /// Mock HTTP Client for testing
 class MockHttpClient extends Mock implements http.Client {}
@@ -62,11 +62,11 @@ class TestOpenAICompatibleProvider extends OpenAICompatibleProvider {
   final UrlPathStrategy? testUrlPathStrategy;
 
   TestOpenAICompatibleProvider({
-    http.Client? client,
+    super.client,
     this.testDefaultBaseUrl = 'https://api.test.com',
     this.testDefaultModel = 'test-model',
     this.testUrlPathStrategy,
-  }) : super(client: client);
+  });
 
   @override
   String get defaultBaseUrl => testDefaultBaseUrl;
@@ -92,10 +92,10 @@ class TestOpenAICompatibleProviderWithDefaults
   final String testDefaultModel;
 
   TestOpenAICompatibleProviderWithDefaults({
-    http.Client? client,
+    super.client,
     this.testDefaultBaseUrl = 'https://api.test.com',
     this.testDefaultModel = 'test-model',
-  }) : super(client: client);
+  });
 
   @override
   String get defaultBaseUrl => testDefaultBaseUrl;
@@ -505,7 +505,8 @@ void main() {
             headers: any(named: 'headers'),
             body: any(named: 'body'),
           )).thenAnswer((invocation) async {
-        capturedBody = invocation.namedArguments[Symbol('body')] as String?;
+        capturedBody =
+            invocation.namedArguments[const Symbol('body')] as String?;
         return mockResponse;
       });
 
@@ -560,7 +561,7 @@ void main() {
             headers: any(named: 'headers'),
             body: any(named: 'body'),
           )).thenAnswer((invocation) async {
-        capturedHeaders = invocation.namedArguments[Symbol('headers')]
+        capturedHeaders = invocation.namedArguments[const Symbol('headers')]
             as Map<String, String>?;
         return mockResponse;
       });
@@ -625,7 +626,7 @@ void main() {
     test('handles response with markdown code blocks', () async {
       // Arrange
       final testImage = File('test/fixtures/test_fish.jpg');
-      final contentWithMarkdown = '''```json
+      const contentWithMarkdown = '''```json
 {"primarySpecies":{"chineseName":"鲈鱼","scientificName":"Lateolabrax japonicus","confidence":85},"confidence":85,"alternatives":[],"notes":""}
 ```''';
 

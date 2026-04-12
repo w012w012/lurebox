@@ -10,8 +10,8 @@ import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
 import 'package:lurebox/core/services/settings_service.dart';
 import 'package:lurebox/features/fish_list/fish_list_page.dart';
-import 'package:lurebox/widgets/fish_list/fish_filter_panel.dart';
-import 'package:lurebox/widgets/fish_list/fish_list_item.dart';
+import 'package:lurebox/features/fish_list/widgets/fish_filter_panel.dart';
+import 'package:lurebox/features/fish_list/widgets/fish_list_item.dart';
 import '../helpers/test_helpers.dart';
 
 void main() {
@@ -36,7 +36,7 @@ void main() {
   });
 
   /// Mock SettingsService for testing - bypasses database
-  final mockSettingsService = const MockSettingsService();
+  const mockSettingsService = MockSettingsService();
 
   Widget createWidgetUnderTest(FishListState state) {
     final mockVm = _MockFishListViewModel(state);
@@ -289,7 +289,7 @@ class MockSettingsService implements SettingsService {
 // Simple mock implementation extending StateNotifier
 class _MockFishListViewModel extends StateNotifier<FishListState>
     implements FishListViewModel {
-  _MockFishListViewModel(FishListState state) : super(state);
+  _MockFishListViewModel(super.state);
 
   @override
   Future<void> loadCatches({bool reset = false, UnitSettings? units}) async {}

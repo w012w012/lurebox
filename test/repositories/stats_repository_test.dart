@@ -1,9 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:lurebox/core/models/stats_models.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
 import 'package:lurebox/core/repositories/stats_repository_impl.dart';
-import 'package:sqflite/sqflite.dart';
 
 /// Test file for SqliteStatsRepository
 ///
@@ -178,11 +176,11 @@ void main() {
         todayStats: CatchStats(total: 5, release: 3, keep: 2),
         todaySpecies: todaySpecies,
         monthStats: CatchStats(total: 50, release: 35, keep: 15),
-        monthSpecies: const {'Bass': 30, 'Trout': 20},
+        monthSpecies: {'Bass': 30, 'Trout': 20},
         yearStats: CatchStats(total: 200, release: 140, keep: 60),
-        yearSpecies: const {'Bass': 120, 'Trout': 80},
+        yearSpecies: {'Bass': 120, 'Trout': 80},
         allStats: CatchStats(total: 500, release: 350, keep: 150),
-        allSpecies: const {'Bass': 300, 'Trout': 200},
+        allSpecies: {'Bass': 300, 'Trout': 200},
         top3Longest: [
           {'id': 1, 'length': 50.0},
           {'id': 2, 'length': 45.0},

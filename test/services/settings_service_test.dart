@@ -23,7 +23,7 @@ void main() {
     group('WatermarkSettings', () {
       test('saveWatermarkSettings calls repository.set with encoded JSON',
           () async {
-        final settings = const WatermarkSettings(
+        const settings = WatermarkSettings(
           enabled: true,
           style: WatermarkStyle.minimal,
           blurRadius: 15.0,
@@ -44,7 +44,7 @@ void main() {
       });
 
       test('getWatermarkSettings decodes JSON from repository', () async {
-        final settings = const WatermarkSettings(
+        const settings = WatermarkSettings(
           enabled: false,
           style: WatermarkStyle.minimal,
           blurRadius: 20.0,
@@ -97,7 +97,7 @@ void main() {
 
     group('AppSettings', () {
       test('saveAppSettings calls repository.set with encoded JSON', () async {
-        final settings = const AppSettings(
+        const settings = AppSettings(
           units: UnitSettings(
             fishLengthUnit: 'inch',
             fishWeightUnit: 'lb',
@@ -115,7 +115,7 @@ void main() {
       });
 
       test('getAppSettings decodes JSON from repository', () async {
-        final settings = const AppSettings(
+        const settings = AppSettings(
           units: UnitSettings(
             fishLengthUnit: 'm',
             fishWeightUnit: 'kg',
@@ -163,7 +163,7 @@ void main() {
     group('AiRecognitionSettings', () {
       test('saveAiRecognitionSettings calls repository.set with encoded JSON',
           () async {
-        final settings = const AiRecognitionSettings(
+        const settings = AiRecognitionSettings(
           currentProvider: AiRecognitionProvider.openai,
           autoRecognize: false,
           timeout: Duration(seconds: 30),
@@ -178,7 +178,7 @@ void main() {
       });
 
       test('getAiRecognitionSettings decodes JSON from repository', () async {
-        final settings = const AiRecognitionSettings(
+        const settings = AiRecognitionSettings(
           currentProvider: AiRecognitionProvider.minimax,
           autoRecognize: true,
           timeout: Duration(seconds: 15),

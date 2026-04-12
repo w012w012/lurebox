@@ -18,7 +18,7 @@ void main() {
     });
 
     test('creates with custom values', () {
-      final settings = WatermarkSettings(
+      const settings = WatermarkSettings(
         enabled: false,
         style: WatermarkStyle.minimal,
         infoTypes: [WatermarkInfoType.species, WatermarkInfoType.length],
@@ -149,7 +149,7 @@ void main() {
       });
 
       test('round-trip serialization preserves data', () {
-        final original = WatermarkSettings(
+        const original = WatermarkSettings(
           enabled: false,
           style: WatermarkStyle.minimal,
           infoTypes: [WatermarkInfoType.weather, WatermarkInfoType.pressure],

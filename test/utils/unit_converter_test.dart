@@ -724,7 +724,7 @@ void main() {
 
     test('decimal precision in conversions', () {
       // Round-trip conversion should be stable
-      final original = 75.5;
+      const original = 75.5;
       final inInches = UnitConverter.convertLength(original, 'cm', 'inch');
       final backToCm = UnitConverter.convertLength(inInches, 'inch', 'cm');
       expect(backToCm, closeTo(original, 0.0001));
@@ -732,7 +732,7 @@ void main() {
 
     test('temperature round-trip precision', () {
       // Round-trip conversion should be stable
-      final original = 25.0;
+      const original = 25.0;
       final inF = UnitConverter.convertTemperature(original, 'C', 'F');
       final backToC = UnitConverter.convertTemperature(inF, 'F', 'C');
       expect(backToC, closeTo(original, 0.0001));
@@ -740,7 +740,7 @@ void main() {
 
     test('weight round-trip precision', () {
       // Round-trip conversion should be stable
-      final original = 75.5;
+      const original = 75.5;
       final inLb = UnitConverter.convertWeight(original, 'kg', 'lb');
       final backToKg = UnitConverter.convertWeight(inLb, 'lb', 'kg');
       expect(backToKg, closeTo(original, 0.0001));
@@ -748,7 +748,7 @@ void main() {
 
     test('distance round-trip precision', () {
       // Round-trip conversion should be stable
-      final original = 42.195;
+      const original = 42.195;
       final inKm = UnitConverter.convertDistance(original, 'km', 'mile');
       final backToKm = UnitConverter.convertDistance(inKm, 'mile', 'km');
       expect(backToKm, closeTo(original, 0.0001));

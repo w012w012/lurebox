@@ -3,7 +3,6 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/repositories/equipment_repository_impl.dart';
 import '../helpers/test_helpers.dart';
-import 'package:sqflite/sqflite.dart';
 
 void main() {
   late Database db;

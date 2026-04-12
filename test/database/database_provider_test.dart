@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:sqflite/sqflite.dart';
 
 void setUpAll() {
   sqfliteFfiInit();
@@ -13,13 +12,13 @@ void main() {
 
   group('DatabaseProvider', () {
     /// Creates a file-based database path for testing
-    String _createTempDbPath(String name) {
+    String createTempDbPath(String name) {
       final tempDir = Directory.systemTemp;
       return '${tempDir.path}/lurebox_test_$name${DateTime.now().millisecondsSinceEpoch}.db';
     }
 
     /// Helper to delete temp database
-    Future<void> _deleteDb(String dbPath) async {
+    Future<void> deleteDb(String dbPath) async {
       final file = File(dbPath);
       if (await file.exists()) {
         await file.delete();
@@ -28,7 +27,7 @@ void main() {
 
     group('Schema Creation (v22)', () {
       test('creates all required tables on fresh initialization', () async {
-        final dbPath = _createTempDbPath('schema_v22');
+        final dbPath = createTempDbPath('schema_v22');
 
         try {
           final freshDb = await openDatabase(
@@ -208,14 +207,14 @@ void main() {
             await freshDb.close();
           }
         } finally {
-          await _deleteDb(dbPath);
+          await deleteDb(dbPath);
         }
       });
     });
 
     group('Migration Tests', () {
       test('migrates v1 to v2 - adds lure_quantity column', () async {
-        final dbPath = _createTempDbPath('migrate_v1_v2');
+        final dbPath = createTempDbPath('migrate_v1_v2');
 
         try {
           // Create v1 schema
@@ -269,12 +268,12 @@ void main() {
             await db2.close();
           }
         } finally {
-          await _deleteDb(dbPath);
+          await deleteDb(dbPath);
         }
       });
 
       test('migrates v2 to v3 - adds lure_quantity_unit column', () async {
-        final dbPath = _createTempDbPath('migrate_v2_v3');
+        final dbPath = createTempDbPath('migrate_v2_v3');
 
         try {
           // First create v1 schema
@@ -328,12 +327,12 @@ void main() {
             await db.close();
           }
         } finally {
-          await _deleteDb(dbPath);
+          await deleteDb(dbPath);
         }
       });
 
       test('migrates v3 to v4 - adds rod_power and rod_action', () async {
-        final dbPath = _createTempDbPath('migrate_v3_v4');
+        final dbPath = createTempDbPath('migrate_v3_v4');
 
         try {
           // First create v1 schema
@@ -393,13 +392,13 @@ void main() {
             await db.close();
           }
         } finally {
-          await _deleteDb(dbPath);
+          await deleteDb(dbPath);
         }
       });
 
       test('migrates v6 to v7 - adds watermarked_image_path to fish_catches',
           () async {
-        final dbPath = _createTempDbPath('migrate_v6_v7');
+        final dbPath = createTempDbPath('migrate_v6_v7');
 
         try {
           // Create v1 schema
@@ -450,13 +449,13 @@ void main() {
             await db.close();
           }
         } finally {
-          await _deleteDb(dbPath);
+          await deleteDb(dbPath);
         }
       });
 
       test('migrates v7 to v8 - adds location fields to fish_catches',
           () async {
-        final dbPath = _createTempDbPath('migrate_v7_v8');
+        final dbPath = createTempDbPath('migrate_v7_v8');
 
         try {
           // Create v1 schema
@@ -521,14 +520,14 @@ void main() {
             await db.close();
           }
         } finally {
-          await _deleteDb(dbPath);
+          await deleteDb(dbPath);
         }
       });
 
       test(
           'migrates v10 to v11 - creates cloud_configs and backup_history tables',
           () async {
-        final dbPath = _createTempDbPath('migrate_v10_v11');
+        final dbPath = createTempDbPath('migrate_v10_v11');
 
         try {
           // Create v1 schema
@@ -609,14 +608,14 @@ void main() {
             await db.close();
           }
         } finally {
-          await _deleteDb(dbPath);
+          await deleteDb(dbPath);
         }
       });
 
       test(
           'migrates v16 to v17 - creates fish_species and user_species_alias tables',
           () async {
-        final dbPath = _createTempDbPath('migrate_v16_v17');
+        final dbPath = createTempDbPath('migrate_v16_v17');
 
         try {
           // Create v1 schema
@@ -701,12 +700,12 @@ void main() {
             await db.close();
           }
         } finally {
-          await _deleteDb(dbPath);
+          await deleteDb(dbPath);
         }
       });
 
       test('migrates v20 to v21 - adds catch_time indexes', () async {
-        final dbPath = _createTempDbPath('migrate_v20_v21');
+        final dbPath = createTempDbPath('migrate_v20_v21');
 
         try {
           // Create v1 schema
@@ -760,12 +759,12 @@ void main() {
             await db.close();
           }
         } finally {
-          await _deleteDb(dbPath);
+          await deleteDb(dbPath);
         }
       });
 
       test('migrates v21 to v22 - adds equipment indexes', () async {
-        final dbPath = _createTempDbPath('migrate_v21_v22');
+        final dbPath = createTempDbPath('migrate_v21_v22');
 
         try {
           // Create v1 schema
@@ -825,12 +824,12 @@ void main() {
             await db.close();
           }
         } finally {
-          await _deleteDb(dbPath);
+          await deleteDb(dbPath);
         }
       });
 
       test('full migration from v1 to v22 works correctly', () async {
-        final dbPath = _createTempDbPath('migrate_v1_v22_full');
+        final dbPath = createTempDbPath('migrate_v1_v22_full');
 
         try {
           // Start with v1 schema
@@ -1193,14 +1192,14 @@ void main() {
             await db.close();
           }
         } finally {
-          await _deleteDb(dbPath);
+          await deleteDb(dbPath);
         }
       });
     });
 
     group('_addColumnIfNotExists', () {
       test('adds column when it does not exist', () async {
-        final dbPath = _createTempDbPath('add_column_test');
+        final dbPath = createTempDbPath('add_column_test');
 
         try {
           final db = await openDatabase(
@@ -1242,7 +1241,7 @@ void main() {
 
           await db.close();
         } finally {
-          await _deleteDb(dbPath);
+          await deleteDb(dbPath);
         }
       });
     });

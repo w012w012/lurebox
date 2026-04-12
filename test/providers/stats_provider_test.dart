@@ -7,7 +7,6 @@ import 'package:lurebox/core/services/fish_catch_service.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 import 'package:lurebox/core/repositories/species_history_repository.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
-import 'package:lurebox/core/models/paginated_result.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:mocktail/mocktail.dart';
 

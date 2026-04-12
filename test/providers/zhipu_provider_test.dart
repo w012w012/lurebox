@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lurebox/core/services/providers/zhipu_provider.dart';
-import 'package:lurebox/core/services/providers/openai_compatible_provider.dart';
+import 'package:lurebox/core/services/adapters/zhipu_provider.dart';
+import 'package:lurebox/core/services/adapters/openai_compatible_provider.dart';
 
 void main() {
   group('ZhipuFishRecognitionProvider', () {
@@ -35,7 +35,7 @@ void main() {
       });
 
       test('buildUrl uses custom baseUrl when provided', () {
-        final customUrl = 'https://custom.api.com/endpoint';
+        const customUrl = 'https://custom.api.com/endpoint';
         final url = provider.buildUrl(customUrl);
         expect(url.toString(), equals(customUrl));
       });

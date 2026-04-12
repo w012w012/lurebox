@@ -12,8 +12,8 @@ import '../../core/services/fish_recognition_service.dart';
 import '../../core/models/fish_catch.dart';
 import '../../widgets/common/premium_card.dart';
 import '../../widgets/common/premium_button.dart';
-import '../../widgets/settings/pending_queue_widget.dart';
-import '../../widgets/settings/species_management_helpers.dart';
+import 'widgets/pending_queue_widget.dart';
+import 'widgets/species_management_helpers.dart';
 
 /// 品种管理页面 — 待识别列表 + 品种列表 + 批量识别
 class SpeciesManagementPage extends ConsumerStatefulWidget {
