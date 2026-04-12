@@ -117,12 +117,6 @@ class DatabaseService {
         'length_unit': "TEXT DEFAULT 'cm'",
         'weight_unit': "TEXT DEFAULT 'kg'",
         'pending_recognition': 'INTEGER DEFAULT 0',
-        'rig_type': 'TEXT',
-        'sinker_weight': 'TEXT',
-        'sinker_position': 'TEXT',
-        'hook_type': 'TEXT',
-        'hook_size': 'TEXT',
-        'hook_weight': 'TEXT',
       };
 
       for (final entry in requiredColumns.entries) {

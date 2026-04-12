@@ -60,13 +60,15 @@ void main() {
           };
 
           when(() => mockHttpClient.post(
-                any(),
-                headers: any(named: 'headers'),
-                body: any(named: 'body'),
-              )).thenAnswer((_) async =>
-              _createUtf8Response(jsonEncode(responseJson), 200));
+                    any(),
+                    headers: any(named: 'headers'),
+                    body: any(named: 'body'),
+                  ))
+              .thenAnswer((_) async =>
+                  _createUtf8Response(jsonEncode(responseJson), 200));
 
-          final provider = ClaudeFishRecognitionProvider(client: mockHttpClient);
+          final provider =
+              ClaudeFishRecognitionProvider(client: mockHttpClient);
 
           // Act
           final result = await provider.identifySpecies(tempFile, config);
@@ -101,13 +103,15 @@ void main() {
           };
 
           when(() => mockHttpClient.post(
-                any(),
-                headers: any(named: 'headers'),
-                body: any(named: 'body'),
-              )).thenAnswer((_) async =>
-              _createUtf8Response(jsonEncode(responseJson), 200));
+                    any(),
+                    headers: any(named: 'headers'),
+                    body: any(named: 'body'),
+                  ))
+              .thenAnswer((_) async =>
+                  _createUtf8Response(jsonEncode(responseJson), 200));
 
-          final provider = ClaudeFishRecognitionProvider(client: mockHttpClient);
+          final provider =
+              ClaudeFishRecognitionProvider(client: mockHttpClient);
 
           // Act
           await provider.identifySpecies(tempFile, config);
@@ -184,21 +188,23 @@ void main() {
           };
 
           when(() => mockHttpClient.post(
-                any(),
-                headers: any(named: 'headers'),
-                body: any(named: 'body'),
-              )).thenAnswer((_) async =>
-              _createUtf8Response(jsonEncode(responseJson), 200));
+                    any(),
+                    headers: any(named: 'headers'),
+                    body: any(named: 'body'),
+                  ))
+              .thenAnswer((_) async =>
+                  _createUtf8Response(jsonEncode(responseJson), 200));
 
-          final provider = ClaudeFishRecognitionProvider(client: mockHttpClient);
+          final provider =
+              ClaudeFishRecognitionProvider(client: mockHttpClient);
 
           // Act
           final result = await provider.identifySpecies(tempFile, config);
 
           // Assert
           expect(result.primarySpecies.chineseName, equals('翘嘴'));
-          expect(result.primarySpecies.scientificName,
-              equals('Culter alburnus'));
+          expect(
+              result.primarySpecies.scientificName, equals('Culter alburnus'));
           expect(result.confidence, equals(78));
           expect(result.alternatives.length, equals(1));
           expect(result.alternatives[0].chineseName, equals('鳜鱼'));
@@ -225,13 +231,15 @@ void main() {
           };
 
           when(() => mockHttpClient.post(
-                any(),
-                headers: any(named: 'headers'),
-                body: any(named: 'body'),
-              )).thenAnswer((_) async =>
-              _createUtf8Response(jsonEncode(responseJson), 401));
+                    any(),
+                    headers: any(named: 'headers'),
+                    body: any(named: 'body'),
+                  ))
+              .thenAnswer((_) async =>
+                  _createUtf8Response(jsonEncode(responseJson), 401));
 
-          final provider = ClaudeFishRecognitionProvider(client: mockHttpClient);
+          final provider =
+              ClaudeFishRecognitionProvider(client: mockHttpClient);
 
           // Act & Assert
           expect(
@@ -239,6 +247,8 @@ void main() {
             throwsA(isA<FishRecognitionException>()),
           );
         } finally {
+          // 添加延迟以释放文件句柄 (Windows 文件锁定问题)
+          await Future.delayed(Duration(milliseconds: 100));
           await tempFile.delete();
         }
       });
@@ -259,13 +269,15 @@ void main() {
           };
 
           when(() => mockHttpClient.post(
-                any(),
-                headers: any(named: 'headers'),
-                body: any(named: 'body'),
-              )).thenAnswer((_) async =>
-              _createUtf8Response(jsonEncode(responseJson), 429));
+                    any(),
+                    headers: any(named: 'headers'),
+                    body: any(named: 'body'),
+                  ))
+              .thenAnswer((_) async =>
+                  _createUtf8Response(jsonEncode(responseJson), 429));
 
-          final provider = ClaudeFishRecognitionProvider(client: mockHttpClient);
+          final provider =
+              ClaudeFishRecognitionProvider(client: mockHttpClient);
 
           // Act & Assert
           expect(
@@ -273,6 +285,8 @@ void main() {
             throwsA(isA<FishRecognitionException>()),
           );
         } finally {
+          // 添加延迟以释放文件句柄 (Windows 文件锁定问题)
+          await Future.delayed(Duration(milliseconds: 100));
           await tempFile.delete();
         }
       });
@@ -291,13 +305,15 @@ void main() {
           };
 
           when(() => mockHttpClient.post(
-                any(),
-                headers: any(named: 'headers'),
-                body: any(named: 'body'),
-              )).thenAnswer((_) async =>
-              _createUtf8Response(jsonEncode(responseJson), 200));
+                    any(),
+                    headers: any(named: 'headers'),
+                    body: any(named: 'body'),
+                  ))
+              .thenAnswer((_) async =>
+                  _createUtf8Response(jsonEncode(responseJson), 200));
 
-          final provider = ClaudeFishRecognitionProvider(client: mockHttpClient);
+          final provider =
+              ClaudeFishRecognitionProvider(client: mockHttpClient);
 
           // Act & Assert
           expect(
@@ -305,6 +321,8 @@ void main() {
             throwsA(isA<FishRecognitionException>()),
           );
         } finally {
+          // 添加延迟以释放文件句柄 (Windows 文件锁定问题)
+          await Future.delayed(Duration(milliseconds: 100));
           await tempFile.delete();
         }
       });
@@ -328,13 +346,15 @@ void main() {
           };
 
           when(() => mockHttpClient.post(
-                any(),
-                headers: any(named: 'headers'),
-                body: any(named: 'body'),
-              )).thenAnswer((_) async =>
-              _createUtf8Response(jsonEncode(responseJson), 200));
+                    any(),
+                    headers: any(named: 'headers'),
+                    body: any(named: 'body'),
+                  ))
+              .thenAnswer((_) async =>
+                  _createUtf8Response(jsonEncode(responseJson), 200));
 
-          final provider = ClaudeFishRecognitionProvider(client: mockHttpClient);
+          final provider =
+              ClaudeFishRecognitionProvider(client: mockHttpClient);
 
           // Act & Assert
           expect(
@@ -342,6 +362,8 @@ void main() {
             throwsA(isA<FishRecognitionException>()),
           );
         } finally {
+          // 添加延迟以释放文件句柄 (Windows 文件锁定问题)
+          await Future.delayed(Duration(milliseconds: 100));
           await tempFile.delete();
         }
       });
@@ -355,13 +377,14 @@ void main() {
 
         try {
           when(() => mockHttpClient.post(
-                any(),
-                headers: any(named: 'headers'),
-                body: any(named: 'body'),
-              )).thenAnswer(
-              (_) async => _createUtf8Response('Bad Request', 400));
+                    any(),
+                    headers: any(named: 'headers'),
+                    body: any(named: 'body'),
+                  ))
+              .thenAnswer((_) async => _createUtf8Response('Bad Request', 400));
 
-          final provider = ClaudeFishRecognitionProvider(client: mockHttpClient);
+          final provider =
+              ClaudeFishRecognitionProvider(client: mockHttpClient);
 
           // Act & Assert
           expect(
@@ -369,6 +392,8 @@ void main() {
             throwsA(isA<FishRecognitionException>()),
           );
         } finally {
+          // 添加延迟以释放文件句柄 (Windows 文件锁定问题)
+          await Future.delayed(Duration(milliseconds: 100));
           await tempFile.delete();
         }
       });
@@ -382,13 +407,15 @@ void main() {
 
         try {
           when(() => mockHttpClient.post(
-                any(),
-                headers: any(named: 'headers'),
-                body: any(named: 'body'),
-              )).thenAnswer(
-              (_) async => _createUtf8Response('Server Error', 500));
+                    any(),
+                    headers: any(named: 'headers'),
+                    body: any(named: 'body'),
+                  ))
+              .thenAnswer(
+                  (_) async => _createUtf8Response('Server Error', 500));
 
-          final provider = ClaudeFishRecognitionProvider(client: mockHttpClient);
+          final provider =
+              ClaudeFishRecognitionProvider(client: mockHttpClient);
 
           // Act & Assert
           expect(
@@ -396,6 +423,8 @@ void main() {
             throwsA(isA<FishRecognitionException>()),
           );
         } finally {
+          // 添加延迟以释放文件句柄 (Windows 文件锁定问题)
+          await Future.delayed(Duration(milliseconds: 100));
           await tempFile.delete();
         }
       });
@@ -427,13 +456,15 @@ void main() {
           };
 
           when(() => mockHttpClient.post(
-                any(),
-                headers: any(named: 'headers'),
-                body: any(named: 'body'),
-              )).thenAnswer((_) async =>
-              _createUtf8Response(jsonEncode(responseJson), 200));
+                    any(),
+                    headers: any(named: 'headers'),
+                    body: any(named: 'body'),
+                  ))
+              .thenAnswer((_) async =>
+                  _createUtf8Response(jsonEncode(responseJson), 200));
 
-          final provider = ClaudeFishRecognitionProvider(client: mockHttpClient);
+          final provider =
+              ClaudeFishRecognitionProvider(client: mockHttpClient);
 
           // Act
           await provider.identifySpecies(tempFile, customConfig);
@@ -480,13 +511,15 @@ void main() {
           };
 
           when(() => mockHttpClient.post(
-                any(),
-                headers: any(named: 'headers'),
-                body: any(named: 'body'),
-              )).thenAnswer((_) async =>
-              _createUtf8Response(jsonEncode(responseJson), 200));
+                    any(),
+                    headers: any(named: 'headers'),
+                    body: any(named: 'body'),
+                  ))
+              .thenAnswer((_) async =>
+                  _createUtf8Response(jsonEncode(responseJson), 200));
 
-          final provider = ClaudeFishRecognitionProvider(client: mockHttpClient);
+          final provider =
+              ClaudeFishRecognitionProvider(client: mockHttpClient);
 
           // Act
           await provider.identifySpecies(tempFile, configWithNullModel);
@@ -525,13 +558,15 @@ void main() {
           };
 
           when(() => mockHttpClient.post(
-                any(),
-                headers: any(named: 'headers'),
-                body: any(named: 'body'),
-              )).thenAnswer((_) async =>
-              _createUtf8Response(jsonEncode(responseJson), 200));
+                    any(),
+                    headers: any(named: 'headers'),
+                    body: any(named: 'body'),
+                  ))
+              .thenAnswer((_) async =>
+                  _createUtf8Response(jsonEncode(responseJson), 200));
 
-          final provider = ClaudeFishRecognitionProvider(client: mockHttpClient);
+          final provider =
+              ClaudeFishRecognitionProvider(client: mockHttpClient);
 
           // Act
           final result = await provider.identifySpecies(tempFile, config);
