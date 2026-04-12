@@ -184,7 +184,7 @@ void main() {
     group('Capture Button States', () {
       testWidgets('shows loading indicator when taking picture',
           (tester) async {
-        final loadingState = CameraState(
+        const loadingState = CameraState(
           captureState: CameraCaptureState.cameraReady,
           isCameraInitialized: true,
           isLoading: false,
@@ -201,7 +201,7 @@ void main() {
       testWidgets('capture button is disabled when taking picture',
           (tester) async {
         var tapCount = 0;
-        final loadingState = CameraState(
+        const loadingState = CameraState(
           captureState: CameraCaptureState.cameraReady,
           isCameraInitialized: true,
           isLoading: false,
@@ -241,7 +241,7 @@ void main() {
       testWidgets(
           'switch camera button is disabled when canSwitchCamera is false',
           (tester) async {
-        final noSwitchState = CameraState(
+        const noSwitchState = CameraState(
           captureState: CameraCaptureState.cameraReady,
           isCameraInitialized: true,
           isLoading: false,
@@ -307,7 +307,7 @@ void main() {
 
     group('Loading and Error States', () {
       testWidgets('shows loading view when isLoading is true', (tester) async {
-        final loadingState = CameraState(
+        const loadingState = CameraState(
           captureState: CameraCaptureState.initial,
           isCameraInitialized: false,
           isLoading: true,
@@ -324,7 +324,7 @@ void main() {
 
       testWidgets('shows error view when errorMessage is present',
           (tester) async {
-        final errorState = CameraState(
+        const errorState = CameraState(
           captureState: CameraCaptureState.initial,
           isCameraInitialized: false,
           isLoading: false,

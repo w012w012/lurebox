@@ -1,0 +1,145 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
+
+import '../../../core/constants/constants.dart';
+import '../../../core/constants/strings.dart';
+import '../../../core/camera/camera_state.dart';
+import '../../../core/camera/camera_view_model.dart';
+import '../../../core/providers/app_settings_provider.dart';
+import '../../../core/services/weather_service.dart';
+import '../../../core/utils/unit_converter.dart';
+
+/// An expanded info row displaying location, weather, and time.
+/// Each item is displayed in a card-like container with clear icon and text.
+class AuxiliaryInfoRow extends ConsumerWidget {
+  final CameraState state;
+  final CameraViewModel vm;
+  final AppStrings strings;
+  final VoidCallback? onEditLocation;
+  final VoidCallback? onEditTime;
+  final VoidCallback? onEditWeather;
+
+  const AuxiliaryInfoRow({
+    super.key,
+    required this.state,
+    required this.vm,
+    required this.strings,
+    this.onEditLocation,
+    this.onEditTime,
+    this.onEditWeather,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final displayUnits = ref.watch(appSettingsProvider).units;
+    final temperatureUnit = displayUnits.temperatureUnit;
+
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            // Location row
+            _buildInfoRow(
+              context: context,
+              icon: Icons.location_on,
+              label: strings.address,
+              text: state.locationName?.isNotEmpty == true
+                  ? state.locationName!
+                  : strings.tapToSet,
+              onTap: onEditLocation,
+            ),
+            const Divider(height: 16),
+            // Weather row
+            _buildInfoRow(
+              context: context,
+              icon: Icons.wb_sunny,
+              label: strings.weather,
+              text: _getWeatherText(strings, temperatureUnit),
+              onTap: onEditWeather,
+            ),
+            const Divider(height: 16),
+            // Time row
+            _buildInfoRow(
+              context: context,
+              icon: Icons.access_time,
+              label: strings.time,
+              text: state.catchTime != null
+                  ? DateFormat(DateFormats.dateTime).format(state.catchTime!)
+                  : strings.tapToSet,
+              onTap: onEditTime,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _getWeatherText(AppStrings strings, String temperatureUnit) {
+    final parts = <String>[];
+    if (state.weatherCode != null) {
+      final weatherDesc = getWeatherDescription(state.weatherCode);
+      if (weatherDesc.isNotEmpty) {
+        parts.add(weatherDesc);
+      }
+    }
+    if (state.airTemperature != null) {
+      parts.add(UnitConverter.formatTemperature(
+        state.airTemperature!,
+        temperatureUnit,
+      ));
+    }
+    if (parts.isEmpty) return strings.tapToSet;
+    return parts.join(' · ');
+  }
+
+  Widget _buildInfoRow({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required String text,
+    VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 20,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                text,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                textAlign: TextAlign.end,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(
+              Icons.chevron_right,
+              size: 20,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

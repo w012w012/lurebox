@@ -357,7 +357,7 @@ class TrendBarChart extends ConsumerWidget {
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
-                    tooltipBgColor: Theme.of(
+                    getTooltipColor: (touchedGroup) => Theme.of(
                       context,
                     ).colorScheme.inverseSurface,
                     tooltipRoundedRadius: AppTheme.radiusSm,

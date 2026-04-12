@@ -458,7 +458,7 @@ void main() {
     });
 
     test('copyWith updates specified fields', () {
-      final original = BackupExportOptions.defaultOptions;
+      const original = BackupExportOptions.defaultOptions;
       final updated = original.copyWith(includePhotos: false);
 
       expect(updated.includePhotos, false);
@@ -466,7 +466,7 @@ void main() {
     });
 
     test('copyWith preserves unchanged fields', () {
-      final original = BackupExportOptions(
+      const original = BackupExportOptions(
         includePhotos: true,
         createRecoveryPoint: true,
       );
@@ -477,7 +477,7 @@ void main() {
     });
 
     test('custom options can be created', () {
-      final custom = BackupExportOptions(
+      const custom = BackupExportOptions(
         includePhotos: false,
         createRecoveryPoint: true,
       );

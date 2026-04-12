@@ -31,7 +31,7 @@ void main() {
     late Achievement achievement;
 
     setUp(() {
-      achievement = Achievement(
+      achievement = const Achievement(
         id: 'catch_100',
         title: '百发百中',
         description: '累计捕获100尾鱼',
@@ -58,7 +58,7 @@ void main() {
     });
 
     test('isUnlocked returns true when current >= target', () {
-      final unlockedAchievement = Achievement(
+      const unlockedAchievement = Achievement(
         id: 'catch_100',
         title: 'Test',
         description: 'Test',
@@ -268,7 +268,7 @@ void main() {
 
   group('Achievement edge cases', () {
     test('handles zero target gracefully', () {
-      final achievement = Achievement(
+      const achievement = Achievement(
         id: 'test',
         title: 'Test',
         description: 'Test',
@@ -286,7 +286,7 @@ void main() {
     });
 
     test('handles very large numbers', () {
-      final achievement = Achievement(
+      const achievement = Achievement(
         id: 'test',
         title: 'Test',
         description: 'Test',

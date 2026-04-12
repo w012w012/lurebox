@@ -1,16 +1,16 @@
 import 'dart:io';
 import '../models/ai_recognition_settings.dart';
-import 'providers/gemini_provider.dart';
-import 'providers/openai_provider.dart';
-import 'providers/claude_provider.dart';
-import 'providers/minimax_provider.dart';
-import 'providers/siliconflow_provider.dart';
-import 'providers/deepseek_provider.dart';
-import 'providers/baidu_provider.dart';
-import 'providers/aliyun_provider.dart';
-import 'providers/tencent_provider.dart';
-import 'providers/zhipu_provider.dart';
-import 'providers/custom_provider.dart';
+import 'adapters/gemini_provider.dart';
+import 'adapters/openai_provider.dart';
+import 'adapters/claude_provider.dart';
+import 'adapters/minimax_provider.dart';
+import 'adapters/siliconflow_provider.dart';
+import 'adapters/deepseek_provider.dart';
+import 'adapters/baidu_provider.dart';
+import 'adapters/aliyun_provider.dart';
+import 'adapters/tencent_provider.dart';
+import 'adapters/zhipu_provider.dart';
+import 'adapters/custom_provider.dart';
 
 /// 鱼类识别结果
 class FishRecognitionResult {

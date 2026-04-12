@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lurebox/core/models/user_species_alias.dart';
 import 'package:lurebox/core/repositories/user_species_alias_repository.dart';
-import 'package:sqflite/sqflite.dart';
 
 void main() {
   late Database db;

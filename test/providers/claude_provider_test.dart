@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
 import 'package:lurebox/core/services/fish_recognition_service.dart';
-import 'package:lurebox/core/services/providers/claude_provider.dart';
+import 'package:lurebox/core/services/adapters/claude_provider.dart';
 
 /// Creates an HTTP response with proper UTF-8 encoding for Chinese characters
 http.Response _createUtf8Response(String body, int statusCode) {
@@ -248,7 +248,7 @@ void main() {
           );
         } finally {
           // 添加延迟以释放文件句柄 (Windows 文件锁定问题)
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future.delayed(const Duration(milliseconds: 100));
           await tempFile.delete();
         }
       });
@@ -286,7 +286,7 @@ void main() {
           );
         } finally {
           // 添加延迟以释放文件句柄 (Windows 文件锁定问题)
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future.delayed(const Duration(milliseconds: 100));
           await tempFile.delete();
         }
       });
@@ -322,7 +322,7 @@ void main() {
           );
         } finally {
           // 添加延迟以释放文件句柄 (Windows 文件锁定问题)
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future.delayed(const Duration(milliseconds: 100));
           await tempFile.delete();
         }
       });
@@ -363,7 +363,7 @@ void main() {
           );
         } finally {
           // 添加延迟以释放文件句柄 (Windows 文件锁定问题)
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future.delayed(const Duration(milliseconds: 100));
           await tempFile.delete();
         }
       });
@@ -393,7 +393,7 @@ void main() {
           );
         } finally {
           // 添加延迟以释放文件句柄 (Windows 文件锁定问题)
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future.delayed(const Duration(milliseconds: 100));
           await tempFile.delete();
         }
       });
@@ -424,7 +424,7 @@ void main() {
           );
         } finally {
           // 添加延迟以释放文件句柄 (Windows 文件锁定问题)
-          await Future.delayed(Duration(milliseconds: 100));
+          await Future.delayed(const Duration(milliseconds: 100));
           await tempFile.delete();
         }
       });
@@ -436,7 +436,7 @@ void main() {
             '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg');
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
-        final customConfig = const AiProviderConfig(
+        const customConfig = AiProviderConfig(
           provider: AiRecognitionProvider.claude,
           apiKey: 'test-api-key',
           baseUrl: 'https://custom.anthropic.com',
@@ -491,7 +491,7 @@ void main() {
             '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg');
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
-        final configWithNullModel = const AiProviderConfig(
+        const configWithNullModel = AiProviderConfig(
           provider: AiRecognitionProvider.claude,
           apiKey: 'test-api-key',
           baseUrl: 'https://api.anthropic.com',

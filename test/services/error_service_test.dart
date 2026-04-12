@@ -339,7 +339,7 @@ void main() {
     });
 
     group('getLocalizedMessage', () {
-      final strings = AppStrings.chinese;
+      const strings = AppStrings.chinese;
 
       test('returns correct message for each error type', () {
         expect(
@@ -426,7 +426,7 @@ void main() {
     });
 
     group('getUserMessage', () {
-      final strings = AppStrings.chinese;
+      const strings = AppStrings.chinese;
 
       test('classifies error and returns localized message', () {
         final message = ErrorService.getUserMessage(

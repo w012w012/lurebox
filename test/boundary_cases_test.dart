@@ -30,7 +30,7 @@ void main() {
 
     group('Pagination Boundaries', () {
       test('handles page=0', () {
-        final result = PaginatedResult<FishCatch>(
+        const result = PaginatedResult<FishCatch>(
           items: [],
           totalCount: 0,
           page: 0,
@@ -47,7 +47,7 @@ void main() {
       // - These are invalid inputs that users cannot produce through normal use
 
       test('handles pageSize=0', () {
-        final result = PaginatedResult<FishCatch>(
+        const result = PaginatedResult<FishCatch>(
           items: [],
           totalCount: 0,
           page: 1,
@@ -59,7 +59,7 @@ void main() {
       });
 
       test('handles very large page number', () {
-        final result = PaginatedResult<FishCatch>(
+        const result = PaginatedResult<FishCatch>(
           items: [],
           totalCount: 0,
           page: 999999,
@@ -100,7 +100,7 @@ void main() {
 
     group('Date Boundaries', () {
       test('handles null dates', () {
-        final filter = FishFilter(
+        const filter = FishFilter(
           customStartDate: null,
           customEndDate: null,
         );
@@ -318,7 +318,7 @@ void main() {
 
     group('Collection Boundaries', () {
       test('handles empty catches list', () {
-        final result = PaginatedResult<FishCatch>(
+        const result = PaginatedResult<FishCatch>(
           items: [],
           totalCount: 0,
           page: 1,
@@ -391,7 +391,7 @@ void main() {
         // Only these fields can be null: fateFilter, speciesFilter,
         // customStartDate, customEndDate, searchQuery
         // timeFilter and sortBy have defaults so they can't be null
-        final filter = FishFilter(
+        const filter = FishFilter(
           fateFilter: null,
           speciesFilter: null,
           customStartDate: null,
@@ -405,7 +405,7 @@ void main() {
       });
 
       test('filter copyWith preserves values', () {
-        final filter = FishFilter(
+        const filter = FishFilter(
           timeFilter: 'month',
           fateFilter: FishFateType.keep,
           sortBy: 'length',
@@ -428,11 +428,11 @@ void main() {
       });
 
       test('filter equality works correctly', () {
-        final filter1 = FishFilter(
+        const filter1 = FishFilter(
           timeFilter: 'month',
           fateFilter: FishFateType.release,
         );
-        final filter2 = FishFilter(
+        const filter2 = FishFilter(
           timeFilter: 'month',
           fateFilter: FishFateType.release,
         );
@@ -440,8 +440,8 @@ void main() {
       });
 
       test('filter inequality with different values', () {
-        final filter1 = FishFilter(timeFilter: 'today');
-        final filter2 = FishFilter(timeFilter: 'week');
+        const filter1 = FishFilter(timeFilter: 'today');
+        const filter2 = FishFilter(timeFilter: 'week');
         expect(filter1, isNot(equals(filter2)));
       });
     });

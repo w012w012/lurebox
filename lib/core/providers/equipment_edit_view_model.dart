@@ -413,24 +413,34 @@ class RodEditNotifier extends _BaseEquipmentEditNotifier {
     ));
   }
 
+  @override
   void updateCategoryType1(String value) =>
       _updateState(state.copyWith(categoryType1: value));
+  @override
   void updateCategoryType2(String value) =>
       _updateState(state.copyWith(categoryType2: value));
+  @override
   void updateLength(String value) =>
       _updateState(state.copyWith(length: value));
+  @override
   void updateLengthUnit(String value) =>
       _updateState(state.copyWith(lengthUnit: value));
+  @override
   void updateSections(String value) =>
       _updateState(state.copyWith(sections: value));
+  @override
   void updateJointType(String value) =>
       _updateState(state.copyWith(jointType: value));
+  @override
   void updateMaterial(String value) =>
       _updateState(state.copyWith(material: value));
+  @override
   void updateHardness(String value) =>
       _updateState(state.copyWith(hardness: value));
+  @override
   void updateRodAction(String value) =>
       _updateState(state.copyWith(rodAction: value));
+  @override
   void updateWeightRange(String value) =>
       _updateState(state.copyWith(weightRange: value));
 
@@ -509,30 +519,43 @@ class ReelEditNotifier extends _BaseEquipmentEditNotifier {
     ));
   }
 
+  @override
   void updateCategoryType1(String value) =>
       _updateState(state.copyWith(categoryType1: value));
+  @override
   void updateCategoryType2(String value) =>
       _updateState(state.copyWith(categoryType2: value));
+  @override
   void updateReelBearings(String value) =>
       _updateState(state.copyWith(reelBearings: value));
+  @override
   void updateReelRatio(String value) =>
       _updateState(state.copyWith(reelRatio: value));
+  @override
   void updateReelCapacity(String value) =>
       _updateState(state.copyWith(reelCapacity: value));
+  @override
   void updateReelBrakeType(String value) =>
       _updateState(state.copyWith(reelBrakeType: value));
+  @override
   void updateReelWeight(String value) =>
       _updateState(state.copyWith(reelWeight: value));
+  @override
   void updateReelWeightUnit(String value) =>
       _updateState(state.copyWith(reelWeightUnit: value));
+  @override
   void updateReelLine(String value) =>
       _updateState(state.copyWith(reelLine: value));
+  @override
   void updateReelLineNumber(String value) =>
       _updateState(state.copyWith(reelLineNumber: value));
+  @override
   void updateReelLineLength(String value) =>
       _updateState(state.copyWith(reelLineLength: value));
+  @override
   void updateReelLineLengthUnit(String value) =>
       _updateState(state.copyWith(reelLineLengthUnit: value));
+  @override
   void updateReelLineDate(String value) =>
       _updateState(state.copyWith(reelLineDate: value));
 
@@ -599,20 +622,28 @@ class LureEditNotifier extends _BaseEquipmentEditNotifier {
     ));
   }
 
+  @override
   void updateLureType(String value) =>
       _updateState(state.copyWith(lureType: value));
+  @override
   void updateLureWeight(String value) =>
       _updateState(state.copyWith(lureWeight: value));
+  @override
   void updateLureWeightUnit(String value) =>
       _updateState(state.copyWith(lureWeightUnit: value));
+  @override
   void updateLureSize(String value) =>
       _updateState(state.copyWith(lureSize: value));
+  @override
   void updateLureSizeUnit(String value) =>
       _updateState(state.copyWith(lureSizeUnit: value));
+  @override
   void updateLureColor(String value) =>
       _updateState(state.copyWith(lureColor: value));
+  @override
   void updateLureQuantity(String value) =>
       _updateState(state.copyWith(lureQuantity: value));
+  @override
   void updateLureQuantityUnit(String? value) =>
       _updateState(state.copyWith(lureQuantityUnit: value ?? ''));
 

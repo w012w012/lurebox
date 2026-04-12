@@ -13,12 +13,12 @@ import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
 import '../../core/providers/watermark_provider.dart';
 import '../../core/utils/unit_converter.dart';
-import '../../features/common/watermarked_image.dart';
+import '../common/watermarked_image.dart';
 import '../../widgets/common/premium_button.dart';
 import '../../widgets/common/premium_card.dart';
-import '../../widgets/fish_detail/fish_action_buttons.dart';
-import '../../widgets/fish_detail/fish_info_card.dart';
-import '../../widgets/fish_detail/fish_image_gallery.dart';
+import 'widgets/fish_action_buttons.dart';
+import 'widgets/fish_info_card.dart';
+import 'widgets/fish_image_gallery.dart';
 
 class FishDetailPage extends ConsumerStatefulWidget {
   final int fishId;
@@ -501,7 +501,9 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
 
       await Share.shareXFiles([
         XFile(tempFile.path),
-      ], text: '${fish['species']} - ${displayLength.toStringAsFixed(2)}${UnitConverter.getLengthSymbol(units.fishLengthUnit)}');
+      ],
+          text:
+              '${fish['species']} - ${displayLength.toStringAsFixed(2)}${UnitConverter.getLengthSymbol(units.fishLengthUnit)}');
 
       try {
         await tempFile.delete();

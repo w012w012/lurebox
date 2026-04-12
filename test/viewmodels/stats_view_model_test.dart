@@ -2,7 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
-import 'package:lurebox/core/models/paginated_result.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 import 'package:lurebox/core/repositories/species_history_repository.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
@@ -81,8 +80,8 @@ void main() {
           pageSize: any(named: 'pageSize'),
           orderBy: any(named: 'orderBy'),
         )).thenAnswer(
-      (_) async => PaginatedResult<FishCatch>(
-        items: const [],
+      (_) async => const PaginatedResult<FishCatch>(
+        items: [],
         totalCount: 0,
         page: 1,
         pageSize: 20,
@@ -98,8 +97,8 @@ void main() {
           species: any(named: 'species'),
           orderBy: any(named: 'orderBy'),
         )).thenAnswer(
-      (_) async => PaginatedResult<FishCatch>(
-        items: const [],
+      (_) async => const PaginatedResult<FishCatch>(
+        items: [],
         totalCount: 0,
         page: 1,
         pageSize: 20,

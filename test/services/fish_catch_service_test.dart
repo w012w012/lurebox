@@ -41,7 +41,7 @@ void main() {
     );
   });
 
-  FishCatch _createFishCatch({
+  FishCatch createFishCatch({
     int id = 1,
     String species = 'Bass',
     double length = 30.0,
@@ -74,7 +74,7 @@ void main() {
           'calls repository.create() and speciesHistoryRepo.incrementUseCount()',
           () async {
         // Arrange
-        final fish = _createFishCatch(species: 'Bass');
+        final fish = createFishCatch(species: 'Bass');
         when(() => mockRepository.create(any())).thenAnswer((_) async => 1);
         when(() => mockSpeciesHistoryRepo.incrementUseCount(any()))
             .thenAnswer((_) async {});
@@ -91,7 +91,7 @@ void main() {
 
       test('does not throw when repository.create() succeeds', () async {
         // Arrange
-        final fish = _createFishCatch(species: 'Trout');
+        final fish = createFishCatch(species: 'Trout');
         when(() => mockRepository.create(any())).thenAnswer((_) async => 2);
         when(() => mockSpeciesHistoryRepo.incrementUseCount(any()))
             .thenAnswer((_) async {});
@@ -105,7 +105,7 @@ void main() {
     group('delete', () {
       test('calls repository.delete() when fish exists', () async {
         // Arrange
-        final fish = _createFishCatch(id: 5, species: 'Bass');
+        final fish = createFishCatch(id: 5, species: 'Bass');
         when(() => mockRepository.getById(5)).thenAnswer((_) async => fish);
         when(() => mockRepository.delete(5)).thenAnswer((_) async {});
 
@@ -119,7 +119,7 @@ void main() {
 
       test('does not throw when image cleanup fails during delete', () async {
         // Arrange
-        final fish = _createFishCatch(id: 10, species: 'Bass');
+        final fish = createFishCatch(id: 10, species: 'Bass');
         when(() => mockRepository.getById(10)).thenAnswer((_) async => fish);
         when(() => mockRepository.delete(10)).thenAnswer((_) async {});
 
@@ -145,9 +145,9 @@ void main() {
     group('deleteMultiple', () {
       test('deletes multiple records', () async {
         // Arrange
-        final fish1 = _createFishCatch(id: 1, species: 'Bass');
-        final fish2 = _createFishCatch(id: 2, species: 'Trout');
-        final fish3 = _createFishCatch(id: 3, species: 'Pike');
+        final fish1 = createFishCatch(id: 1, species: 'Bass');
+        final fish2 = createFishCatch(id: 2, species: 'Trout');
+        final fish3 = createFishCatch(id: 3, species: 'Pike');
 
         when(() => mockRepository.getById(1)).thenAnswer((_) async => fish1);
         when(() => mockRepository.getById(2)).thenAnswer((_) async => fish2);
@@ -169,7 +169,7 @@ void main() {
         // Arrange
         when(() => mockRepository.getById(1)).thenAnswer((_) async => null);
         when(() => mockRepository.getById(2))
-            .thenAnswer((_) async => _createFishCatch(id: 2));
+            .thenAnswer((_) async => createFishCatch(id: 2));
         when(() => mockRepository.deleteMultiple([1, 2]))
             .thenAnswer((_) async {});
 
@@ -184,7 +184,7 @@ void main() {
     group('update', () {
       test('delegates to repository.update()', () async {
         // Arrange
-        final fish = _createFishCatch(id: 5, species: 'Bass');
+        final fish = createFishCatch(id: 5, species: 'Bass');
         when(() => mockRepository.update(any())).thenAnswer((_) async {});
 
         // Act
@@ -200,8 +200,8 @@ void main() {
         // Arrange
         final paginatedResult = PaginatedResult<FishCatch>(
           items: [
-            _createFishCatch(id: 1, species: 'Bass'),
-            _createFishCatch(id: 2, species: 'Trout'),
+            createFishCatch(id: 1, species: 'Bass'),
+            createFishCatch(id: 2, species: 'Trout'),
           ],
           totalCount: 2,
           page: 1,
@@ -244,7 +244,7 @@ void main() {
         // Arrange
         final startDate = DateTime(2024, 1, 1);
         final endDate = DateTime(2024, 12, 31);
-        final paginatedResult = PaginatedResult<FishCatch>(
+        const paginatedResult = PaginatedResult<FishCatch>(
           items: [],
           totalCount: 0,
           page: 2,
@@ -288,7 +288,7 @@ void main() {
 
     group('getById', () {
       test('returns fish when exists', () async {
-        final fish = _createFishCatch(id: 5, species: 'Bass');
+        final fish = createFishCatch(id: 5, species: 'Bass');
         when(() => mockRepository.getById(5)).thenAnswer((_) async => fish);
 
         final result = await service.getById(5);
@@ -310,8 +310,8 @@ void main() {
     group('getAll', () {
       test('returns all fish from repository', () async {
         final fishList = [
-          _createFishCatch(id: 1, species: 'Bass'),
-          _createFishCatch(id: 2, species: 'Trout'),
+          createFishCatch(id: 1, species: 'Bass'),
+          createFishCatch(id: 2, species: 'Trout'),
         ];
         when(() => mockRepository.getAll()).thenAnswer((_) async => fishList);
 
@@ -335,7 +335,7 @@ void main() {
       test('delegates to repository', () async {
         final start = DateTime(2024, 1, 1);
         final end = DateTime(2024, 12, 31);
-        final fishList = [_createFishCatch(id: 1)];
+        final fishList = [createFishCatch(id: 1)];
         when(() => mockRepository.getByDateRange(start, end))
             .thenAnswer((_) async => fishList);
 
@@ -349,8 +349,8 @@ void main() {
     group('getByFate', () {
       test('delegates to repository with release fate', () async {
         final fishList = [
-          _createFishCatch(id: 1, fate: FishFateType.release),
-          _createFishCatch(id: 2, fate: FishFateType.release),
+          createFishCatch(id: 1, fate: FishFateType.release),
+          createFishCatch(id: 2, fate: FishFateType.release),
         ];
         when(() => mockRepository.getByFate(FishFateType.release))
             .thenAnswer((_) async => fishList);
@@ -362,7 +362,7 @@ void main() {
       });
 
       test('delegates to repository with keep fate', () async {
-        final fishList = [_createFishCatch(id: 1, fate: FishFateType.keep)];
+        final fishList = [createFishCatch(id: 1, fate: FishFateType.keep)];
         when(() => mockRepository.getByFate(FishFateType.keep))
             .thenAnswer((_) async => fishList);
 
@@ -376,7 +376,7 @@ void main() {
     group('getPage', () {
       test('delegates to repository with default parameters', () async {
         final paginatedResult = PaginatedResult<FishCatch>(
-          items: [_createFishCatch(id: 1)],
+          items: [createFishCatch(id: 1)],
           totalCount: 1,
           page: 1,
           pageSize: 20,
@@ -399,7 +399,7 @@ void main() {
       });
 
       test('passes custom parameters to repository', () async {
-        final paginatedResult = PaginatedResult<FishCatch>(
+        const paginatedResult = PaginatedResult<FishCatch>(
           items: [],
           totalCount: 0,
           page: 2,
@@ -440,9 +440,9 @@ void main() {
     group('getTop3LongestCatches', () {
       test('delegates to stats repository', () async {
         final fishList = [
-          _createFishCatch(id: 1, length: 50.0),
-          _createFishCatch(id: 2, length: 45.0),
-          _createFishCatch(id: 3, length: 40.0),
+          createFishCatch(id: 1, length: 50.0),
+          createFishCatch(id: 2, length: 45.0),
+          createFishCatch(id: 3, length: 40.0),
         ];
         when(() => mockStatsRepo.getTop3LongestCatches())
             .thenAnswer((_) async => fishList);
@@ -501,7 +501,7 @@ void main() {
       test('builds combined stats map', () async {
         when(() => mockStatsRepo.getEquipmentCatchStats())
             .thenAnswer((_) async => {
-                  1: EquipmentCatchStats(
+                  1: const EquipmentCatchStats(
                     equipmentId: 1,
                     catchCount: 5,
                     avgLength: 30.0,
@@ -550,7 +550,7 @@ void main() {
       test('delegates to stats repository', () async {
         when(() => mockStatsRepo.getEquipmentCatchStats())
             .thenAnswer((_) async => {
-                  1: EquipmentCatchStats(
+                  1: const EquipmentCatchStats(
                     equipmentId: 1,
                     catchCount: 5,
                     avgLength: 30.0,
@@ -635,13 +635,13 @@ void main() {
 
     group('getFilteredPageByFilter', () {
       test('delegates to repository with FishFilter', () async {
-        final filter = FishFilter(
+        const filter = FishFilter(
           timeFilter: 'month',
           fateFilter: FishFateType.release,
           speciesFilter: 'Bass',
         );
         final paginatedResult = PaginatedResult<FishCatch>(
-          items: [_createFishCatch(id: 1, species: 'Bass')],
+          items: [createFishCatch(id: 1, species: 'Bass')],
           totalCount: 1,
           page: 1,
           pageSize: 20,

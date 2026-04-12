@@ -200,8 +200,8 @@ void main() {
             home: Scaffold(
               body: PremiumCardWithTitle(
                 title: 'Title',
-                child: Text('Content'),
                 trailing: Icon(Icons.arrow_forward),
+                child: Text('Content'),
               ),
             ),
           ),

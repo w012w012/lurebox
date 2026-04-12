@@ -1,18 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
 import 'package:lurebox/core/services/fish_recognition_service.dart';
-import 'package:lurebox/core/services/providers/openai_provider.dart';
-import 'package:lurebox/core/services/providers/openai_compatible_provider.dart';
-import 'package:lurebox/core/services/providers/gemini_provider.dart';
-import 'package:lurebox/core/services/providers/claude_provider.dart';
-import 'package:lurebox/core/services/providers/minimax_provider.dart';
-import 'package:lurebox/core/services/providers/siliconflow_provider.dart';
-import 'package:lurebox/core/services/providers/deepseek_provider.dart';
-import 'package:lurebox/core/services/providers/baidu_provider.dart';
-import 'package:lurebox/core/services/providers/aliyun_provider.dart';
-import 'package:lurebox/core/services/providers/tencent_provider.dart';
-import 'package:lurebox/core/services/providers/zhipu_provider.dart';
-import 'package:lurebox/core/services/providers/custom_provider.dart';
+import 'package:lurebox/core/services/adapters/openai_provider.dart';
+import 'package:lurebox/core/services/adapters/openai_compatible_provider.dart';
+import 'package:lurebox/core/services/adapters/gemini_provider.dart';
+import 'package:lurebox/core/services/adapters/claude_provider.dart';
+import 'package:lurebox/core/services/adapters/minimax_provider.dart';
+import 'package:lurebox/core/services/adapters/siliconflow_provider.dart';
+import 'package:lurebox/core/services/adapters/deepseek_provider.dart';
+import 'package:lurebox/core/services/adapters/baidu_provider.dart';
+import 'package:lurebox/core/services/adapters/aliyun_provider.dart';
+import 'package:lurebox/core/services/adapters/tencent_provider.dart';
+import 'package:lurebox/core/services/adapters/zhipu_provider.dart';
+import 'package:lurebox/core/services/adapters/custom_provider.dart';
 
 void main() {
   group('AiRecognitionProvider.fromConfig', () {

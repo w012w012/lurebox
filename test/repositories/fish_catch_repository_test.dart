@@ -4,7 +4,6 @@ import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository_impl.dart';
 import '../helpers/test_helpers.dart';
-import 'package:sqflite/sqflite.dart';
 
 void main() {
   late Database db;
@@ -802,7 +801,7 @@ void main() {
       await repository.create(fish1);
       await repository.create(fish2);
 
-      final filter = FishFilter(
+      const filter = FishFilter(
         fateFilter: FishFateType.release,
         sortBy: 'time',
         sortAsc: false,

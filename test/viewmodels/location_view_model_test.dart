@@ -17,7 +17,7 @@ void main() {
     mockService = MockLocationService();
   });
 
-  List<Map<String, dynamic>> _createLocations(List<String> names) {
+  List<Map<String, dynamic>> createLocations(List<String> names) {
     return names.map((name) {
       return {
         'location_name': name,
@@ -33,7 +33,7 @@ void main() {
     group('initial state', () {
       test('has correct default values', () {
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A']));
+            .thenAnswer((_) async => createLocations(['Lake A']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
 
         viewModel = LocationManagementViewModel(mockService);
@@ -50,7 +50,7 @@ void main() {
 
     group('loadData', () {
       test('loads locations successfully', () async {
-        final locations = _createLocations(['Lake A', 'Lake B', 'River C']);
+        final locations = createLocations(['Lake A', 'Lake B', 'River C']);
 
         when(() => mockService.getAllLocations())
             .thenAnswer((_) async => locations);
@@ -77,7 +77,7 @@ void main() {
       });
 
       test('groups similar locations', () async {
-        final locations = _createLocations(['Lake A', 'Lake B', 'Lake C']);
+        final locations = createLocations(['Lake A', 'Lake B', 'Lake C']);
 
         when(() => mockService.getAllLocations())
             .thenAnswer((_) async => locations);
@@ -101,7 +101,7 @@ void main() {
     group('toggleSelection', () {
       test('adds location to selection when not selected', () async {
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A']));
+            .thenAnswer((_) async => createLocations(['Lake A']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
 
         viewModel = LocationManagementViewModel(mockService);
@@ -114,7 +114,7 @@ void main() {
 
       test('removes location from selection when already selected', () async {
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A']));
+            .thenAnswer((_) async => createLocations(['Lake A']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
 
         viewModel = LocationManagementViewModel(mockService);
@@ -131,7 +131,7 @@ void main() {
     group('clearSelection', () {
       test('clears all selected locations', () async {
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A', 'Lake B']));
+            .thenAnswer((_) async => createLocations(['Lake A', 'Lake B']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
 
         viewModel = LocationManagementViewModel(mockService);
@@ -150,7 +150,7 @@ void main() {
     group('selectAll', () {
       test('selects all locations', () async {
         when(() => mockService.getAllLocations()).thenAnswer(
-            (_) async => _createLocations(['Lake A', 'Lake B', 'Lake C']));
+            (_) async => createLocations(['Lake A', 'Lake B', 'Lake C']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
 
         viewModel = LocationManagementViewModel(mockService);
@@ -168,7 +168,7 @@ void main() {
     group('setMergeTarget', () {
       test('sets merge target name', () async {
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A']));
+            .thenAnswer((_) async => createLocations(['Lake A']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
 
         viewModel = LocationManagementViewModel(mockService);
@@ -183,7 +183,7 @@ void main() {
     group('mergeLocations', () {
       test('returns false when fewer than 2 locations selected', () async {
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A', 'Lake B']));
+            .thenAnswer((_) async => createLocations(['Lake A', 'Lake B']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
 
         viewModel = LocationManagementViewModel(mockService);
@@ -198,7 +198,7 @@ void main() {
 
       test('merges locations successfully when 2+ selected', () async {
         when(() => mockService.getAllLocations()).thenAnswer(
-            (_) async => _createLocations(['Lake A', 'Lake B', 'Lake C']));
+            (_) async => createLocations(['Lake A', 'Lake B', 'Lake C']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
         when(() => mockService.mergeLocations(['Lake A', 'Lake B'], 'New Lake'))
             .thenAnswer((_) async {});
@@ -218,7 +218,7 @@ void main() {
 
       test('handles error during merge', () async {
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A', 'Lake B']));
+            .thenAnswer((_) async => createLocations(['Lake A', 'Lake B']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
         when(() => mockService.mergeLocations(any(), any()))
             .thenThrow(Exception('Merge failed'));
@@ -237,13 +237,13 @@ void main() {
 
     group('autoMergeGroup', () {
       test('returns false when group has fewer than 2 locations', () async {
-        final group = LocationGroup(
+        const group = LocationGroup(
           representative: 'Lake A',
           locations: ['Lake A'],
         );
 
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A']));
+            .thenAnswer((_) async => createLocations(['Lake A']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
 
         viewModel = LocationManagementViewModel(mockService);
@@ -255,13 +255,13 @@ void main() {
       });
 
       test('merges group successfully when 2+ locations', () async {
-        final group = LocationGroup(
+        const group = LocationGroup(
           representative: 'Lake A/B',
           locations: ['Lake A', 'Lake B'],
         );
 
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A', 'Lake B']));
+            .thenAnswer((_) async => createLocations(['Lake A', 'Lake B']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
         when(() => mockService.mergeLocations(['Lake A', 'Lake B'], 'Lake A/B'))
             .thenAnswer((_) async {});
@@ -278,7 +278,7 @@ void main() {
     group('renameLocation', () {
       test('returns false when oldName is empty', () async {
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A']));
+            .thenAnswer((_) async => createLocations(['Lake A']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
 
         viewModel = LocationManagementViewModel(mockService);
@@ -291,7 +291,7 @@ void main() {
 
       test('returns false when newName is empty', () async {
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A']));
+            .thenAnswer((_) async => createLocations(['Lake A']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
 
         viewModel = LocationManagementViewModel(mockService);
@@ -304,7 +304,7 @@ void main() {
 
       test('returns false when oldName equals newName', () async {
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A']));
+            .thenAnswer((_) async => createLocations(['Lake A']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
 
         viewModel = LocationManagementViewModel(mockService);
@@ -317,7 +317,7 @@ void main() {
 
       test('renames location successfully', () async {
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A']));
+            .thenAnswer((_) async => createLocations(['Lake A']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
         when(() => mockService.renameLocation('Lake A', 'New Lake'))
             .thenAnswer((_) async {});
@@ -334,7 +334,7 @@ void main() {
 
       test('handles error during rename', () async {
         when(() => mockService.getAllLocations())
-            .thenAnswer((_) async => _createLocations(['Lake A']));
+            .thenAnswer((_) async => createLocations(['Lake A']));
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
         when(() => mockService.renameLocation(any(), any()))
             .thenThrow(Exception('Rename failed'));
@@ -351,7 +351,7 @@ void main() {
 
     group('LocationGroup', () {
       test('creates LocationGroup with correct values', () {
-        final group = LocationGroup(
+        const group = LocationGroup(
           representative: 'Best Lake',
           locations: ['Lake A', 'Lake B', 'Lake C'],
         );

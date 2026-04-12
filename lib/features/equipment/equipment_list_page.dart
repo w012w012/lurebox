@@ -8,9 +8,9 @@ import '../../core/models/equipment.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/equipment_view_model.dart';
 import '../../widgets/common/premium_button.dart';
-import '../../widgets/equipment/equipment_type_tabs.dart';
-import '../../widgets/equipment/equipment_filter_bar.dart';
-import '../../widgets/equipment/premium_equipment_card.dart';
+import 'widgets/equipment_type_tabs.dart';
+import 'widgets/equipment_filter_bar.dart';
+import 'widgets/premium_equipment_card.dart';
 
 class EquipmentListPage extends ConsumerWidget {
   const EquipmentListPage({super.key});

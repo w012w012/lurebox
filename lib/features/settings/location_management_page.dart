@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/strings.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/location_view_model.dart';
-import '../../widgets/location/location_list_tile.dart';
-import '../../widgets/location/location_group_card.dart';
+import '../location/widgets/location_list_tile.dart';
+import '../location/widgets/location_group_card.dart';
 
 /// 钓点管理页面
 class LocationManagementPage extends ConsumerStatefulWidget {

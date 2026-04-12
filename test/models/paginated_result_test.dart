@@ -45,7 +45,7 @@ void main() {
     });
 
     test('works with different types', () {
-      final result = PaginatedResult<int>(
+      const result = PaginatedResult<int>(
         items: [1, 2, 3, 4, 5],
         totalCount: 50,
         page: 1,

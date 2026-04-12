@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
-import 'package:lurebox/core/services/providers/baidu_provider.dart';
-import 'package:lurebox/core/services/providers/openai_compatible_provider.dart';
+import 'package:lurebox/core/services/adapters/baidu_provider.dart';
+import 'package:lurebox/core/services/adapters/openai_compatible_provider.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
 
@@ -63,14 +63,14 @@ void main() {
     });
 
     group('identifySpecies', () {
-      File _createTempImageFile() {
+      File createTempImageFile() {
         final tempDir = Directory.systemTemp.createTempSync('baidu_test_');
         final imageFile = File('${tempDir.path}/test_image.jpg');
         imageFile.writeAsBytesSync([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10]);
         return imageFile;
       }
 
-      http.Response _createUtf8Response(
+      http.Response createUtf8Response(
         Map<String, dynamic> json,
         int statusCode,
       ) {
@@ -82,8 +82,8 @@ void main() {
       }
 
       test('sends request to Baidu ERNIE endpoint', () async {
-        final testImage = _createTempImageFile();
-        final mockResponse = _createUtf8Response({
+        final testImage = createTempImageFile();
+        final mockResponse = createUtf8Response({
           'choices': [
             {
               'message': {

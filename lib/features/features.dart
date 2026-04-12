@@ -5,7 +5,6 @@
 export 'achievement/achievement_page.dart';
 
 // Camera
-export 'camera/camera_controller.dart';
 export 'camera/camera_page.dart';
 export 'camera/equipment_selector.dart';
 
