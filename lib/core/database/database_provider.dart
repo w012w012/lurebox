@@ -451,23 +451,23 @@ CREATE TABLE user_species_alias (
     if (oldVersion < 21) {
       // 添加 catch_time 索引以优化按时间排序的查询
       await db.execute(
-        'CREATE INDEX idx_fish_catches_catch_time ON fish_catches(catch_time)',
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_catch_time ON fish_catches(catch_time)',
       );
       // 复合索引：时间 + 命运筛选
       await db.execute(
-        'CREATE INDEX idx_fish_catches_time_fate ON fish_catches(catch_time, fate)',
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_time_fate ON fish_catches(catch_time, fate)',
       );
     }
     if (oldVersion < 22) {
       // 装备表索引：按类型、分类、删除状态查询
       await db.execute(
-        'CREATE INDEX idx_equipments_type ON equipments(type)',
+        'CREATE INDEX IF NOT EXISTS idx_equipments_type ON equipments(type)',
       );
       await db.execute(
-        'CREATE INDEX idx_equipments_category ON equipments(category)',
+        'CREATE INDEX IF NOT EXISTS idx_equipments_category ON equipments(category)',
       );
       await db.execute(
-        'CREATE INDEX idx_equipments_is_deleted ON equipments(is_deleted)',
+        'CREATE INDEX IF NOT EXISTS idx_equipments_is_deleted ON equipments(is_deleted)',
       );
     }
   }
