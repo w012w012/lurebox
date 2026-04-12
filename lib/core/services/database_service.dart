@@ -5,6 +5,9 @@ import 'package:path/path.dart';
 
 export '../constants/constants.dart';
 
+// 遗留代码 - 此文件已弃用，所有功能已迁移到 DatabaseProvider (v22)
+// 保留此文件仅为兼容旧代码，未来版本将移除
+
 /// 数据库服务 - Lurebox 应用的核心数据持久化层
 ///
 /// 提供 SQLite 数据库的初始化、迁移和统计查询功能。
@@ -17,6 +20,12 @@ export '../constants/constants.dart';
 ///
 /// 使用单例模式，通过 [database] 访问器获取数据库实例。
 
+// 遗留代码 - 此文件已弃用，所有功能已迁移到 DatabaseProvider (v22)
+// 保留此文件仅为兼容旧代码，未来版本将移除
+
+@Deprecated('DatabaseService 是遗留兼容层，将在未来版本移除。'
+    '所有功能已迁移到 DatabaseProvider (v22)。'
+    '如需使用统计功能，请使用 StatsRepository 或 FishCatchService。')
 class DatabaseService {
   static Database? _database;
 

@@ -17,8 +17,12 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
   }
 
   Future<void> updateSettings(AppSettings settings) async {
-    state = settings;
-    await _service.saveAppSettings(settings);
+    try {
+      await _service.saveAppSettings(settings);
+      state = settings;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> updateUnits(UnitSettings units) async {

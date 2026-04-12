@@ -220,6 +220,14 @@ class DatabaseProvider {
     await db.execute(
       'CREATE INDEX idx_fish_catches_time_fate ON fish_catches(catch_time, fate)',
     );
+    // 品种筛选索引
+    await db.execute(
+      'CREATE INDEX idx_fish_catches_species ON fish_catches(species)',
+    );
+    // 待识别筛选索引
+    await db.execute(
+      'CREATE INDEX idx_fish_catches_pending ON fish_catches(pending_recognition)',
+    );
 
     // 装备表索引：按类型查询
     await db.execute(
@@ -232,6 +240,10 @@ class DatabaseProvider {
     // 装备表索引：按删除状态查询（软删除）
     await db.execute(
       'CREATE INDEX idx_equipments_is_deleted ON equipments(is_deleted)',
+    );
+    // 品种历史表索引：按名称查询
+    await db.execute(
+      'CREATE INDEX idx_species_history_name ON species_history(name)',
     );
   }
 

@@ -10,6 +10,7 @@ import '../../features/equipment/equipment_overview_page.dart';
 import '../../features/fish_detail/fish_detail_page.dart';
 import '../../features/fish_list/fish_list_page.dart';
 import '../../features/home/home_page.dart';
+import '../../features/onboarding/onboarding_page.dart';
 import '../../features/settings/ai_recognition_settings_page.dart';
 import '../../features/settings/export_backup_management_page.dart';
 import '../../features/settings/location_management_page.dart';
@@ -20,6 +21,7 @@ import '../../features/stats/stats_detail_page.dart';
 import '../../widgets/common/premium_navigation_bar.dart';
 import '../../core/constants/strings.dart';
 import '../../core/providers/language_provider.dart';
+import '../../core/providers/onboarding_provider.dart';
 import '../../core/providers/fish_detail_view_model.dart';
 import '../../features/fish_detail/widgets/fish_edit_page.dart';
 import '../../features/settings/widgets/settings_units_section.dart';
@@ -28,10 +30,30 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final routerProvider = Provider<GoRouter>((ref) {
+  final onboardingCompleted = ref.watch(onboardingCompletedProvider);
+
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: '/',
+    initialLocation: onboardingCompleted ? '/' : '/onboarding',
+    redirect: (context, state) {
+      // Already on onboarding page - don't redirect
+      if (state.matchedLocation == '/onboarding') {
+        return null;
+      }
+
+      // If not completed, redirect to onboarding
+      if (!onboardingCompleted) {
+        return '/onboarding';
+      }
+
+      return null;
+    },
     routes: [
+      GoRoute(
+        path: '/onboarding',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const OnboardingPage(),
+      ),
       GoRoute(
         path: '/fish/:id',
         parentNavigatorKey: _rootNavigatorKey,
