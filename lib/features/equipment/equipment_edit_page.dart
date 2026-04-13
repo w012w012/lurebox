@@ -6,7 +6,6 @@ import '../../core/di/di.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
 import '../../core/providers/equipment_edit_view_model.dart';
-import '../../core/providers/equipment_edit_state.dart';
 import '../../core/utils/unit_converter.dart';
 import '../../widgets/common/premium_button.dart';
 import '../../widgets/common/premium_card.dart';
@@ -182,7 +181,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                   dense: true,
                 ),
               ]),
-              if (state is RodEditState)
+              if (state.type == 'rod')
                 _buildCard([
                   _buildSectionTitle(strings.rodParameters),
                   const SizedBox(height: 12),
@@ -206,35 +205,35 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                   RodForm(
                     lengthController: _getOrCreateController(
                       'length',
-                      (state as RodEditState).length,
+                      state.length,
                     ),
-                    lengthUnit: (state as RodEditState).lengthUnit,
+                    lengthUnit: state.lengthUnit,
                     onLengthUnitChanged: notifier.updateLengthUnit,
                     sectionsController: _getOrCreateController(
                       'sections',
-                      (state as RodEditState).sections,
+                      state.sections,
                     ),
-                    jointType: (state as RodEditState).jointType,
+                    jointType: state.jointType,
                     onJointTypeChanged: notifier.updateJointType,
                     materialController: _getOrCreateController(
                       'material',
-                      (state as RodEditState).material,
+                      state.material,
                     ),
-                    hardness: (state as RodEditState).hardness,
+                    hardness: state.hardness,
                     onHardnessChanged: notifier.updateHardness,
-                    action: (state as RodEditState).rodAction,
+                    action: state.rodAction,
                     onActionChanged: notifier.updateRodAction,
                     weightRangeMinController: _getOrCreateController(
                       'weightRangeMin',
-                      _parseWeightRange((state as RodEditState).weightRange).$1,
+                      _parseWeightRange(state.weightRange).$1,
                     ),
                     weightRangeMaxController: _getOrCreateController(
                       'weightRangeMax',
-                      _parseWeightRange((state as RodEditState).weightRange).$2,
+                      _parseWeightRange(state.weightRange).$2,
                     ),
                   ),
                 ])
-              else if (state is ReelEditState) ...[
+              else if (state.type == 'reel') ...[
                 _buildCard([
                   _buildSectionTitle(strings.reelParameters),
                   const SizedBox(height: 12),
@@ -258,31 +257,31 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                   ReelForm(
                     bearingsController: _getOrCreateController(
                       'reelBearings',
-                      (state as ReelEditState).reelBearings,
+                      state.reelBearings,
                     ),
                     ratioAController: _getOrCreateController(
                       'reelRatioA',
-                      _parseRatio((state as ReelEditState).reelRatio).$1,
+                      _parseRatio(state.reelRatio).$1,
                     ),
                     ratioBController: _getOrCreateController(
                       'reelRatioB',
-                      _parseRatio((state as ReelEditState).reelRatio).$2,
+                      _parseRatio(state.reelRatio).$2,
                     ),
                     capacityNumberController: _getOrCreateController(
                       'reelCapacityNumber',
-                      _parseCapacity((state as ReelEditState).reelCapacity).$1,
+                      _parseCapacity(state.reelCapacity).$1,
                     ),
                     capacityLengthController: _getOrCreateController(
                       'reelCapacityLength',
-                      _parseCapacity((state as ReelEditState).reelCapacity).$2,
+                      _parseCapacity(state.reelCapacity).$2,
                     ),
                     weightController: _getOrCreateController(
                       'reelWeight',
-                      (state as ReelEditState).reelWeight,
+                      state.reelWeight,
                     ),
-                    weightUnit: (state as ReelEditState).reelWeightUnit,
+                    weightUnit: state.reelWeightUnit,
                     onWeightUnitChanged: notifier.updateReelWeightUnit,
-                    brakeType: (state as ReelEditState).reelBrakeType,
+                    brakeType: state.reelBrakeType,
                     onBrakeTypeChanged: notifier.updateReelBrakeType,
                   ),
                 ]),
@@ -292,7 +291,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                   _buildTextField(
                     strings.brandAndName,
                     'reelLine',
-                    (state as ReelEditState).reelLine,
+                    state.reelLine,
                     notifier.updateReelLine,
                   ),
                   const SizedBox(height: 10),
@@ -300,13 +299,13 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                     _buildTextField(
                       strings.lineNumber,
                       'reelLineNumber',
-                      (state as ReelEditState).reelLineNumber,
+                      state.reelLineNumber,
                       notifier.updateReelLineNumber,
                     ),
                     _buildTextField(
                       strings.lineLength,
                       'reelLineLength',
-                      (state as ReelEditState).reelLineLength,
+                      state.reelLineLength,
                       notifier.updateReelLineLength,
                       suffix: lineLengthSymbol,
                     ),
@@ -314,18 +313,18 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                   const SizedBox(height: 10),
                   _buildDatePicker(
                     strings.lineDate,
-                    (state as ReelEditState).reelLineDate,
+                    state.reelLineDate,
                     notifier.updateReelLineDate,
                     strings,
                   ),
                 ]),
-              ] else if (state is LureEditState)
+              ] else if (state.type == 'lure')
                 _buildCard([
                   _buildSectionTitle(strings.lureParameters),
                   const SizedBox(height: 12),
                   _buildAutocomplete(
                     strings.type,
-                    (state as LureEditState).lureType,
+                    state.lureType,
                     notifier.updateLureType,
                     strings.lureTypeOptions,
                     strings.selectOrEnterType,
@@ -334,25 +333,25 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                   LureForm(
                     weightController: _getOrCreateController(
                       'lureWeight',
-                      (state as LureEditState).lureWeight,
+                      state.lureWeight,
                     ),
-                    weightUnit: (state as LureEditState).lureWeightUnit,
+                    weightUnit: state.lureWeightUnit,
                     onWeightUnitChanged: notifier.updateLureWeightUnit,
                     sizeController: _getOrCreateController(
                       'lureSize',
-                      (state as LureEditState).lureSize,
+                      state.lureSize,
                     ),
-                    sizeUnit: (state as LureEditState).lureSizeUnit,
+                    sizeUnit: state.lureSizeUnit,
                     onSizeUnitChanged: notifier.updateLureSizeUnit,
                     colorController: _getOrCreateController(
                       'lureColor',
-                      (state as LureEditState).lureColor,
+                      state.lureColor,
                     ),
                     quantityController: _getOrCreateController(
                       'lureQuantity',
-                      (state as LureEditState).lureQuantity,
+                      state.lureQuantity,
                     ),
-                    quantityUnit: (state as LureEditState).lureQuantityUnit,
+                    quantityUnit: state.lureQuantityUnit,
                     onQuantityUnitChanged: notifier.updateLureQuantityUnit,
                   ),
                 ]),
