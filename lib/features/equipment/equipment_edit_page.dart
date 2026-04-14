@@ -479,10 +479,34 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     EquipmentEditViewModel notifier,
   ) async {
     // 先同步 controller 的值到 state
+    // 特殊处理：合并分字段为单个字段
+    // 鱼竿 - 适合饵重
+    final weightRangeMin = _controllers['weightRangeMin']?.text ?? '';
+    final weightRangeMax = _controllers['weightRangeMax']?.text ?? '';
+    notifier.updateWeightRange('$weightRangeMin-$weightRangeMax');
+
+    // 鱼线轮 - 齿轮比
+    final reelRatioA = _controllers['reelRatioA']?.text ?? '';
+    final reelRatioB = _controllers['reelRatioB']?.text ?? '';
+    notifier.updateReelRatio('$reelRatioA:$reelRatioB');
+
+    // 鱼线轮 - 线容量
+    final reelCapacityNumber = _controllers['reelCapacityNumber']?.text ?? '';
+    final reelCapacityLength = _controllers['reelCapacityLength']?.text ?? '';
+    notifier.updateReelCapacity('$reelCapacityNumber-$reelCapacityLength');
+
     for (final entry in _controllers.entries) {
       final field = entry.key;
       final value = entry.value.text;
       switch (field) {
+        case 'weightRangeMin':
+        case 'weightRangeMax':
+        case 'reelRatioA':
+        case 'reelRatioB':
+        case 'reelCapacityNumber':
+        case 'reelCapacityLength':
+          // 已在上方特殊处理，跳过
+          break;
         case 'brand':
           notifier.updateBrand(value);
           break;
