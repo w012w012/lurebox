@@ -46,11 +46,11 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     if (widget.equipmentId != null && !_isLoadingEquipment) {
       // Edit mode - load equipment data
       _loadEquipmentData();
-    } else if (widget.equipmentId == null) {
-      // Add mode - reset provider state to clear any stale data from edit mode
-      ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
     }
+    // Note: Reset in add mode is handled in build() to ensure it runs
   }
+
+  int? _lastEquipmentId; // DEBUG: track equipmentId changes
 
   Future<void> _loadEquipmentData() async {
     if (widget.equipmentId == null || _isLoadingEquipment) return;
@@ -185,6 +185,20 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
           ),
         ),
       );
+    }
+
+    // In add mode (equipmentId is null), always reset state to clear any stale data
+    // This ensures the form is always blank when adding
+    if (widget.equipmentId == null) {
+      // DEBUG: track equipmentId changes
+      if (_lastEquipmentId != null && _lastEquipmentId != widget.equipmentId) {
+        // We transitioned from edit to add - force reset
+        _lastEquipmentId = widget.equipmentId;
+      }
+      // Reset provider state to ensure blank form
+      ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
+    } else {
+      _lastEquipmentId = widget.equipmentId;
     }
 
     final strings = ref.watch(currentStringsProvider);
