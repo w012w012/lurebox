@@ -239,6 +239,8 @@ class _BaseEquipmentEditNotifier {
     // Guard against null - can happen on first build before data is loaded
     if (equipment == null) return;
 
+    debugPrint('[loadDataFromMap] START - equipment.length: ${equipment['length']}');
+
     // Load common fields from equipment map
     final brandValue = _getValue(equipment, 'brand')?.toString() ?? '';
     final modelValue = _getValue(equipment, 'model')?.toString() ?? '';
@@ -250,6 +252,8 @@ class _BaseEquipmentEditNotifier {
     // Load type-specific fields first
     _loadData(equipment);
 
+    debugPrint('[loadDataFromMap] AFTER _loadData - _state.length: ${_state.length}');
+
     // Then overlay basic fields
     _state = _state.withUpdates(
       equipment: equipment,
@@ -259,6 +263,8 @@ class _BaseEquipmentEditNotifier {
       purchaseDate: purchaseDateValue,
       isDefault: isDefaultValue == 1,
     );
+
+    debugPrint('[loadDataFromMap] AFTER withUpdates - _state.length: ${_state.length}');
   }
 
   void _loadData(Map<String, dynamic> e) {
@@ -408,6 +414,9 @@ class RodEditNotifier extends _BaseEquipmentEditNotifier {
     String categoryType1 = '';
     String categoryType2 = '';
 
+    debugPrint('[_loadData Rod] e.keys: ${e.keys.toList()}');
+    debugPrint('[_loadData Rod] length value: ${_getValue(e, 'length')}');
+
     final category = _getValue(e, 'category')?.toString();
     if (category != null && category.contains('|')) {
       final parts = category.split('|');
@@ -430,6 +439,8 @@ class RodEditNotifier extends _BaseEquipmentEditNotifier {
       rodAction: _getValue(e, 'rod_action')?.toString() ?? '',
       weightRange: _getValue(e, 'weight_range')?.toString() ?? '',
     ));
+
+    debugPrint('[_loadData Rod] after copyWith, rodState.length: ${rodState.length}');
   }
 
   @override
