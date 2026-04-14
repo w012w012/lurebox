@@ -411,8 +411,8 @@ class RodEditNotifier extends _BaseEquipmentEditNotifier {
     String categoryType1 = '';
     String categoryType2 = '';
 
-    debugPrint('[_loadData Rod] e.keys: ${e.keys.toList()}');
-    debugPrint('[_loadData Rod] length value: ${_getValue(e, 'length')}');
+    debugPrint('[_loadData Rod] e.length: ${e['length']}');
+    debugPrint('[_loadData Rod] _getValue length: ${_getValue(e, 'length')}');
 
     final category = _getValue(e, 'category')?.toString();
     if (category != null && category.contains('|')) {
@@ -424,10 +424,13 @@ class RodEditNotifier extends _BaseEquipmentEditNotifier {
       categoryType2 = category ?? '';
     }
 
+    final lengthValue = _getValue(e, 'length')?.toString() ?? '';
+    debugPrint('[_loadData Rod] lengthValue to set: $lengthValue');
+
     _updateState(rodState.copyWith(
       categoryType1: categoryType1,
       categoryType2: categoryType2,
-      length: _getValue(e, 'length')?.toString() ?? '',
+      length: lengthValue,
       lengthUnit: _getValue(e, 'length_unit')?.toString() ?? 'm',
       sections: _getValue(e, 'sections')?.toString() ?? '',
       jointType: _getValue(e, 'joint_type')?.toString() ?? '',
