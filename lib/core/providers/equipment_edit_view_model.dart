@@ -354,7 +354,7 @@ class _BaseEquipmentEditNotifier {
       _buildTypeSpecificData(data);
 
       int equipmentId;
-      if (_state.equipment != null) {
+      if (_state.equipment != null && _state.equipment!['id'] != null) {
         equipmentId = _state.equipment!['id'] as int;
         final equipment = Equipment.fromMap({
           ...data,
