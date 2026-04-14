@@ -48,7 +48,12 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       final equipment = await service.getById(widget.equipmentId!);
 
       // Equipment not found - just return, don't show error for edit
-      if (equipment == null) return;
+      if (equipment == null) {
+        debugPrint('[_loadEquipmentData] equipment not found for id: ${widget.equipmentId}');
+        return;
+      }
+
+      debugPrint('[_loadEquipmentData] loaded equipment - brand: ${equipment.brand}, model: ${equipment.model}, length: ${equipment.length}');
 
       final equipmentMap = equipment.toMap();
       _params = (type: widget.type, equipment: equipmentMap);
@@ -57,6 +62,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       ref
           .read(equipmentEditViewModelProvider(_params!).notifier)
           .loadDataFromMap(equipmentMap);
+
+      debugPrint('[_loadEquipmentData] state after load - type: ${widget.type}');
 
       // Create/update controllers with loaded values
       _getOrCreateController('brand', equipment.brand ?? '');
@@ -67,6 +74,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
       // Sync type-specific controllers from equipment map (controllers may have been created with empty values on first build)
       _syncTypeSpecificControllers(equipmentMap);
+
+      debugPrint('[_loadEquipmentData] controller length text: ${_controllers['length']?.text}');
 
       if (mounted) {
         setState(() {
