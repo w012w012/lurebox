@@ -29,6 +29,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   Map<String, dynamic>? _loadedEquipment;
   bool _loadDataFromMapCalled = false; // DEBUG flag
   bool _loadDataFromMapCompleted = false; // DEBUG flag - did it complete without error
+  String _stateAfterLoadLength = 'NOT_CALLED'; // DEBUG flag
 
   ({String type, Map<String, dynamic>? equipment}) _params = (type: '', equipment: null);
   bool _isLoadingEquipment = false;
@@ -78,6 +79,11 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
           .loadDataFromMap(equipmentMap);
 
       _loadDataFromMapCalled = true; // DEBUG flag
+      // Immediately check state after loadDataFromMap
+      final stateAfterLoad = ref.read(equipmentEditViewModelProvider(_params));
+      _stateAfterLoadLength = stateAfterLoad.length; // DEBUG: store for display
+      debugPrint('[_loadEquipmentData] immediate state check - length: ${stateAfterLoad.length}');
+
       _loadDataFromMapCompleted = true; // DEBUG flag - set after loadDataFromMap completes
 
       debugPrint('[_loadEquipmentData] AFTER loadDataFromMap - calling setState to update _isLoading=false');
@@ -192,6 +198,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
         '_isLoadingEquipment=$_isLoadingEquipment '
         '_loadDataFromMapCalled=$_loadDataFromMapCalled '
         '_loadDataFromMapCompleted=$_loadDataFromMapCompleted '
+        '_stateAfterLoadLength=$_stateAfterLoadLength '
         '_params.type=${_params.type} '
         '_params.equipment=${_params.equipment?['id']} '
         '_loadedEquipment.length=${_loadedEquipment?['length']} '
