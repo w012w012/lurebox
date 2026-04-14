@@ -197,6 +197,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       }
       // Reset provider state to ensure blank form
       ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
+      // Also clear controllers in add mode to ensure blank form
+      _controllers.clear();
     } else {
       _lastEquipmentId = widget.equipmentId;
     }
