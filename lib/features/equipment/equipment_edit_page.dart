@@ -187,21 +187,14 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       );
     }
 
-    // In add mode (equipmentId is null), always reset state to clear any stale data
-    // This ensures the form is always blank when adding
-    if (widget.equipmentId == null) {
-      // DEBUG: track equipmentId changes
-      if (_lastEquipmentId != null && _lastEquipmentId != widget.equipmentId) {
-        // We transitioned from edit to add - force reset
-        _lastEquipmentId = widget.equipmentId;
-      }
-      // Reset provider state to ensure blank form
+    // In add mode (equipmentId is null), only reset ONCE when transitioning from edit to add
+    // We track _lastEquipmentId to detect this transition
+    if (widget.equipmentId == null && _lastEquipmentId != null) {
+      // Transitioning from edit/add to add mode - reset once
       ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
-      // Also clear controllers in add mode to ensure blank form
       _controllers.clear();
-    } else {
-      _lastEquipmentId = widget.equipmentId;
     }
+    _lastEquipmentId = widget.equipmentId;
 
     final strings = ref.watch(currentStringsProvider);
     final displayUnits = ref.watch(appSettingsProvider).units;
