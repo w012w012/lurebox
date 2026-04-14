@@ -33,21 +33,31 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
   bool _isLoadingEquipment = false;
 
-  // _params is now computed dynamically to always match widget.type
+  // _params is computed dynamically to always match widget.type
   ({String type, Map<String, dynamic>? equipment}) get _params =>
       (type: widget.type, equipment: null);
 
   @override
+  void initState() {
+    super.initState();
+    // Always reset to blank form in add mode on first build
+    if (widget.equipmentId == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
+          for (final controller in _controllers.values) {
+            controller.text = '';
+          }
+        }
+      });
+    }
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Always reset form state when in add mode - _params is computed fresh each time
-    if (widget.equipmentId == null) {
-      ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
-      for (final controller in _controllers.values) {
-        controller.text = '';
-      }
-    } else if (!_isLoadingEquipment) {
-      // Edit mode - load equipment data
+    // Edit mode - load equipment data
+    if (widget.equipmentId != null && !_isLoadingEquipment) {
       _loadEquipmentData();
     }
   }
