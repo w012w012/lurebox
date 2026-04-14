@@ -54,6 +54,18 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   }
 
   @override
+  void didUpdateWidget(covariant EquipmentEditPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Detect transition from edit to add mode (equipmentId changed from value to null)
+    if (oldWidget.equipmentId != null && widget.equipmentId == null) {
+      ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
+      for (final controller in _controllers.values) {
+        controller.text = '';
+      }
+    }
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Edit mode - load equipment data
