@@ -50,7 +50,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     // Note: Reset in add mode is handled in build() to ensure it runs
   }
 
-  int? _lastEquipmentId; // DEBUG: track equipmentId changes
+  int? _lastEquipmentId; // Track equipmentId to detect transitions to add mode
+  bool _wasInAddMode = false; // Track if we were previously in add mode
 
   Future<void> _loadEquipmentData() async {
     if (widget.equipmentId == null || _isLoadingEquipment) return;
@@ -129,8 +130,9 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   TextEditingController _getOrCreateController(String field, String value) {
     final controller = _controllers.putIfAbsent(
         field, () => TextEditingController(text: value));
-    // Update controller text if value changed (handles case where controller was created before data loaded)
-    if (controller.text != value) {
+    // Only update controller text if value is not empty AND different
+    // This preserves user input in add mode when state might be empty
+    if (value.isNotEmpty && controller.text != value) {
       controller.text = value;
     }
     return controller;
@@ -187,13 +189,15 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       );
     }
 
-    // In add mode (equipmentId is null), only reset ONCE when transitioning from edit to add
-    // We track _lastEquipmentId to detect this transition
-    if (widget.equipmentId == null && _lastEquipmentId != null) {
-      // Transitioning from edit/add to add mode - reset once
+    // In add mode (equipmentId is null), reset state to ensure blank form
+    // Only reset when first entering add mode (not on every rebuild)
+    final isInAddMode = widget.equipmentId == null;
+    if (isInAddMode && !_wasInAddMode) {
+      // First time entering add mode - reset state and controllers
       ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
       _controllers.clear();
     }
+    _wasInAddMode = isInAddMode;
     _lastEquipmentId = widget.equipmentId;
 
     final strings = ref.watch(currentStringsProvider);
