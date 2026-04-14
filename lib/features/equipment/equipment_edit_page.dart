@@ -33,6 +33,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
   ({String type, Map<String, dynamic>? equipment}) _params = (type: '', equipment: null);
   bool _isLoadingEquipment = false;
+  int? _previousEquipmentId; // Track previous equipmentId to detect transitions
+  bool _needsFormReset = false; // Track if we need to reset form to blank
 
   @override
   void initState() {
@@ -43,14 +45,18 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    // Detect transition from edit to add mode
+    if (widget.equipmentId == null && _previousEquipmentId != null) {
+      // Transitioned to add mode - need to reset form
+      _needsFormReset = true;
+    }
     if (widget.equipmentId != null && !_isLoadingEquipment) {
       // Edit mode - load equipment data
       _loadEquipmentData();
+      _needsFormReset = false; // Clear reset flag after loading
     }
-    // Note: Reset in add mode is handled in build() to ensure it runs
+    _previousEquipmentId = widget.equipmentId;
   }
-
-  int? _lastEquipmentId; // Track previous equipmentId to detect transitions to add mode
 
   Future<void> _loadEquipmentData() async {
     if (widget.equipmentId == null || _isLoadingEquipment) return;
@@ -172,9 +178,6 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Detect transition to add mode: was editing (last had value) but now adding (current is null)
-    final transitioningToAddMode = widget.equipmentId == null && _lastEquipmentId != null;
-
     // DEBUG: Show loading state
     if (_isLoadingEquipment && widget.equipmentId != null) {
       return Scaffold(
@@ -191,17 +194,14 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       );
     }
 
-    // In add mode (equipmentId is null), reset state to ensure blank form
-    // Only reset when first transitioning to add mode (not on every rebuild)
-    if (transitioningToAddMode) {
-      // First time entering add mode - reset state
+    // In add mode, reset form if needed (when transitioning from edit mode)
+    if (_needsFormReset && widget.equipmentId == null) {
       ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
-      // Also reset all existing controllers to empty to ensure blank form
       for (final controller in _controllers.values) {
         controller.text = '';
       }
+      _needsFormReset = false;
     }
-    _lastEquipmentId = widget.equipmentId;
 
     final strings = ref.watch(currentStringsProvider);
     final displayUnits = ref.watch(appSettingsProvider).units;
