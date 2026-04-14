@@ -178,8 +178,16 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     final state = ref.watch(equipmentEditViewModelProvider(params));
     final notifier = ref.read(equipmentEditViewModelProvider(params).notifier);
 
-    // DEBUG: Show state values on screen
-    final debugInfo = 'equipmentId=${widget.equipmentId} _isLoading=$_isLoading _isLoadingEquipment=$_isLoadingEquipment _params.type=${_params.type} _params.equipment=${_params.equipment?['id']} state.type=${state.type} len=${state.length} sec=${state.sections}';
+    // DEBUG: Show ALL values on screen
+    final debugInfo = 'equipmentId=${widget.equipmentId} '
+        '_isLoading=$_isLoading '
+        '_isLoadingEquipment=$_isLoadingEquipment '
+        '_params.type=${_params.type} '
+        '_params.equipment=${_params.equipment?['id']} '
+        '_loadedEquipment.length=${_loadedEquipment?['length']} '
+        'state.type=${state.type} '
+        'state.length=${state.length} '
+        'state.sections=${state.sections}';
 
     return Scaffold(
       appBar: AppBar(
@@ -211,7 +219,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                 padding: const EdgeInsets.all(12),
                 margin: const EdgeInsets.only(bottom: 8),
                 child: Text(
-                  'DEBUG:\nequipmentId=${widget.equipmentId}\n_isLoading=$_isLoading\n_isLoadingEquipment=$_isLoadingEquipment\n_params.type=${_params.type}\n_params.equipment.id=${_params.equipment?['id']}\nstate.type=${state.type}\nstate.length=${state.length}\nstate.sections=${state.sections}',
+                  'DEBUG: $debugInfo',
                   style: const TextStyle(color: Colors.black, fontSize: 12),
                 ),
               ),
