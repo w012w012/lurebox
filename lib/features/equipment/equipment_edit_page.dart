@@ -65,6 +65,10 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       final equipmentMap = equipment.toMap();
       _loadedEquipment = equipmentMap;
 
+      // DEBUG: show what's in equipmentMap
+      debugPrint('[_loadEquipmentData] equipmentMap keys: ${equipmentMap.keys.toList()}');
+      debugPrint('[_loadEquipmentData] length from equipmentMap: ${equipmentMap['length']}');
+
       // Update ViewModel with loaded data - _params is stable (only type changes)
       ref
           .read(equipmentEditViewModelProvider(_params).notifier)
@@ -83,6 +87,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       _syncTypeSpecificControllers(equipmentMap);
 
       debugPrint('[_loadEquipmentData] controller length text: ${_controllers['length']?.text}');
+      debugPrint('[_loadEquipmentData] AFTER loadDataFromMap, _loadedEquipment[length]=${_loadedEquipment?['length']}');
 
       if (mounted) {
         setState(() {
