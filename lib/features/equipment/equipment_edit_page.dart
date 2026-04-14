@@ -32,6 +32,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   String _stateAfterLoadLength = 'NOT_CALLED'; // DEBUG flag
 
   bool _isLoadingEquipment = false;
+  bool _didResetForAddMode = false; // Track if we've reset for add mode this session
 
   // _params is computed dynamically to always match widget.type
   ({String type, Map<String, dynamic>? equipment}) get _params =>
@@ -40,29 +41,6 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   @override
   void initState() {
     super.initState();
-    // Always reset to blank form in add mode on first build
-    if (widget.equipmentId == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
-          for (final controller in _controllers.values) {
-            controller.text = '';
-          }
-        }
-      });
-    }
-  }
-
-  @override
-  void didUpdateWidget(covariant EquipmentEditPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // Detect transition from edit to add mode (equipmentId changed from value to null)
-    if (oldWidget.equipmentId != null && widget.equipmentId == null) {
-      ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
-      for (final controller in _controllers.values) {
-        controller.text = '';
-      }
-    }
   }
 
   @override
@@ -71,6 +49,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     // Edit mode - load equipment data
     if (widget.equipmentId != null && !_isLoadingEquipment) {
       _loadEquipmentData();
+      _didResetForAddMode = false; // Clear flag when entering edit mode
     }
   }
 
@@ -194,6 +173,14 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Synchronously reset form in add mode BEFORE reading state
+    // This prevents stale data from showing when navigating from edit→add
+    if (widget.equipmentId == null && !_didResetForAddMode) {
+      ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
+      _controllers.clear();
+      _didResetForAddMode = true;
+    }
+
     // DEBUG: Show loading state
     if (_isLoadingEquipment && widget.equipmentId != null) {
       return Scaffold(
