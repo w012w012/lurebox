@@ -253,9 +253,6 @@ class _BaseEquipmentEditNotifier {
     // Load type-specific fields first
     _loadData(equipment);
 
-    debugPrint(
-        '[loadDataFromMap] AFTER _loadData - _state.length: ${_state.length}');
-
     // Then overlay basic fields
     _state = _state.withUpdates(
       equipment: equipment,
@@ -265,9 +262,6 @@ class _BaseEquipmentEditNotifier {
       purchaseDate: purchaseDateValue,
       isDefault: isDefaultValue == 1,
     );
-
-    debugPrint(
-        '[loadDataFromMap] AFTER withUpdates - _state.length: ${_state.length}');
   }
 
   void _loadData(Map<String, dynamic> e) {
