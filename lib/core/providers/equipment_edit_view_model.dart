@@ -926,7 +926,7 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
 // Provider
 // =============================================================================
 
-final equipmentEditViewModelProvider = StateNotifierProvider.autoDispose.family<
+final equipmentEditViewModelProvider = StateNotifierProvider.family<
     EquipmentEditViewModel,
     EquipmentEditState,
     ({String type, Map<String, dynamic>? equipment})>(
