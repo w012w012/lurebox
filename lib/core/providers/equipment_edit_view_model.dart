@@ -236,6 +236,9 @@ class _BaseEquipmentEditNotifier {
   }
 
   void loadDataFromMap(Map<String, dynamic> equipment) {
+    // Guard against null - can happen on first build before data is loaded
+    if (equipment == null) return;
+
     // Load common fields from equipment map
     final brandValue = _getValue(equipment, 'brand')?.toString() ?? '';
     final modelValue = _getValue(equipment, 'model')?.toString() ?? '';
