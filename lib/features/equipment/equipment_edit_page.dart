@@ -181,7 +181,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                   dense: true,
                 ),
               ]),
-              if (state.type == 'rod')
+              if (widget.type == 'rod')
                 _buildCard([
                   _buildSectionTitle(strings.rodParameters),
                   const SizedBox(height: 12),
@@ -233,7 +233,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                     ),
                   ),
                 ])
-              else if (state.type == 'reel') ...[
+              else if (widget.type == 'reel') ...[
                 _buildCard([
                   _buildSectionTitle(strings.reelParameters),
                   const SizedBox(height: 12),
@@ -318,7 +318,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                     strings,
                   ),
                 ]),
-              ] else if (state.type == 'lure')
+              ] else if (widget.type == 'lure')
                 _buildCard([
                   _buildSectionTitle(strings.lureParameters),
                   const SizedBox(height: 12),
