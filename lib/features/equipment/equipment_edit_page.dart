@@ -43,9 +43,12 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Only load if we have an equipmentId and haven't started loading yet
     if (widget.equipmentId != null && !_isLoadingEquipment) {
+      // Edit mode - load equipment data
       _loadEquipmentData();
+    } else if (widget.equipmentId == null) {
+      // Add mode - reset provider state to clear any stale data from edit mode
+      ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
     }
   }
 
