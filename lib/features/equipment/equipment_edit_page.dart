@@ -70,9 +70,12 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       debugPrint('[_loadEquipmentData] length from equipmentMap: ${equipmentMap['length']}');
 
       // Update ViewModel with loaded data - _params is stable (only type changes)
+      // This should update state.length to 1.98
       ref
           .read(equipmentEditViewModelProvider(_params).notifier)
           .loadDataFromMap(equipmentMap);
+
+      debugPrint('[_loadEquipmentData] AFTER loadDataFromMap - calling setState to update _isLoading=false');
 
       debugPrint('[_loadEquipmentData] state after load - type: ${widget.type}');
 
