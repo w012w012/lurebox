@@ -27,6 +27,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   final Map<String, TextEditingController> _controllers = {};
   bool _isLoading = true;
   Map<String, dynamic>? _loadedEquipment;
+  bool _loadDataFromMapCalled = false; // DEBUG flag
 
   ({String type, Map<String, dynamic>? equipment}) _params = (type: '', equipment: null);
   bool _isLoadingEquipment = false;
@@ -74,6 +75,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       ref
           .read(equipmentEditViewModelProvider(_params).notifier)
           .loadDataFromMap(equipmentMap);
+
+      _loadDataFromMapCalled = true; // DEBUG flag
 
       debugPrint('[_loadEquipmentData] AFTER loadDataFromMap - calling setState to update _isLoading=false');
 
@@ -185,6 +188,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     final debugInfo = 'equipmentId=${widget.equipmentId} '
         '_isLoading=$_isLoading '
         '_isLoadingEquipment=$_isLoadingEquipment '
+        '_loadDataFromMapCalled=$_loadDataFromMapCalled '
         '_params.type=${_params.type} '
         '_params.equipment=${_params.equipment?['id']} '
         '_loadedEquipment.length=${_loadedEquipment?['length']} '
