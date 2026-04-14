@@ -763,6 +763,11 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
     state = _delegate.state.toEquipmentEditState();
   }
 
+  void resetState() {
+    // Re-create the delegate with empty state for add mode
+    _delegate.loadDataFromMap({});
+  }
+
   // Rod-specific update methods
   void updateCategoryType1(String value) {
     _delegate.updateCategoryType1(value);
