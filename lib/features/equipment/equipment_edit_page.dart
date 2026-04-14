@@ -31,31 +31,25 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   bool _loadDataFromMapCompleted = false; // DEBUG flag - did it complete without error
   String _stateAfterLoadLength = 'NOT_CALLED'; // DEBUG flag
 
-  ({String type, Map<String, dynamic>? equipment}) _params = (type: '', equipment: null);
   bool _isLoadingEquipment = false;
-  int? _previousEquipmentId; // Track previous equipmentId to detect transitions
-  bool _needsFormReset = false; // Track if we need to reset form to blank
 
-  @override
-  void initState() {
-    super.initState();
-    _params = (type: widget.type, equipment: null);
-  }
+  // _params is now computed dynamically to always match widget.type
+  ({String type, Map<String, dynamic>? equipment}) get _params =>
+      (type: widget.type, equipment: null);
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Detect transition from edit to add mode
-    if (widget.equipmentId == null && _previousEquipmentId != null) {
-      // Transitioned to add mode - need to reset form
-      _needsFormReset = true;
-    }
-    if (widget.equipmentId != null && !_isLoadingEquipment) {
+    // Always reset form state when in add mode - _params is computed fresh each time
+    if (widget.equipmentId == null) {
+      ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
+      for (final controller in _controllers.values) {
+        controller.text = '';
+      }
+    } else if (!_isLoadingEquipment) {
       // Edit mode - load equipment data
       _loadEquipmentData();
-      _needsFormReset = false; // Clear reset flag after loading
     }
-    _previousEquipmentId = widget.equipmentId;
   }
 
   Future<void> _loadEquipmentData() async {
@@ -192,15 +186,6 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
           ),
         ),
       );
-    }
-
-    // In add mode, reset form if needed (when transitioning from edit mode)
-    if (_needsFormReset && widget.equipmentId == null) {
-      ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
-      for (final controller in _controllers.values) {
-        controller.text = '';
-      }
-      _needsFormReset = false;
     }
 
     final strings = ref.watch(currentStringsProvider);
