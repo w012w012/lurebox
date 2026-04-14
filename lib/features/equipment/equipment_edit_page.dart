@@ -50,8 +50,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     // Note: Reset in add mode is handled in build() to ensure it runs
   }
 
-  int? _lastEquipmentId; // Track equipmentId to detect transitions to add mode
-  bool _wasInAddMode = false; // Track if we were previously in add mode
+  int? _lastEquipmentId; // Track previous equipmentId to detect transitions to add mode
 
   Future<void> _loadEquipmentData() async {
     if (widget.equipmentId == null || _isLoadingEquipment) return;
@@ -173,9 +172,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Always reset add mode flag at start of build to detect transitions correctly
-    // This is needed because initState() might not run if widget is reused
-    _wasInAddMode = widget.equipmentId == null;
+    // Detect transition to add mode: was editing (last had value) but now adding (current is null)
+    final transitioningToAddMode = widget.equipmentId == null && _lastEquipmentId != null;
 
     // DEBUG: Show loading state
     if (_isLoadingEquipment && widget.equipmentId != null) {
@@ -194,9 +192,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     }
 
     // In add mode (equipmentId is null), reset state to ensure blank form
-    // Only reset when first entering add mode (not on every rebuild)
-    final isInAddMode = widget.equipmentId == null;
-    if (isInAddMode && !_wasInAddMode) {
+    // Only reset when first transitioning to add mode (not on every rebuild)
+    if (transitioningToAddMode) {
       // First time entering add mode - reset state
       ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
       // Also reset all existing controllers to empty to ensure blank form
