@@ -173,7 +173,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     final notifier = ref.read(equipmentEditViewModelProvider(params).notifier);
 
     // DEBUG: Show state values on screen
-    final debugInfo = 'type=${state.type} len=${state.length} sec=${state.sections} cat1=${state.categoryType1}';
+    final debugInfo = 'equipmentId=${widget.equipmentId} _isLoading=$_isLoading _params.type=${_params.type} _params.equipment=${_params.equipment?['id']} state.type=${state.type} len=${state.length} sec=${state.sections}';
 
     return Scaffold(
       appBar: AppBar(
@@ -205,8 +205,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                 padding: const EdgeInsets.all(12),
                 margin: const EdgeInsets.only(bottom: 8),
                 child: Text(
-                  'DEBUG: $debugInfo',
-                  style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+                  'DEBUG:\nequipmentId=${widget.equipmentId}\n_isLoading=$_isLoading\n_params.type=${_params.type}\n_params.equipment.id=${_params.equipment?['id']}\nstate.type=${state.type}\nstate.length=${state.length}\nstate.sections=${state.sections}',
+                  style: const TextStyle(color: Colors.black, fontSize: 12),
                 ),
               ),
               _buildCard([
