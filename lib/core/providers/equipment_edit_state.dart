@@ -164,6 +164,14 @@ class RodEditState extends EquipmentEditStateBase {
     bool? isDefault,
     String? categoryType1,
     String? categoryType2,
+    String? length,
+    String? lengthUnit,
+    String? sections,
+    String? jointType,
+    String? material,
+    String? hardness,
+    String? rodAction,
+    String? weightRange,
   }) {
     return copyWith(
       type: type,
@@ -177,6 +185,14 @@ class RodEditState extends EquipmentEditStateBase {
       isDefault: isDefault,
       categoryType1: categoryType1,
       categoryType2: categoryType2,
+      length: length ?? this.length,
+      lengthUnit: lengthUnit ?? this.lengthUnit,
+      sections: sections ?? this.sections,
+      jointType: jointType ?? this.jointType,
+      material: material ?? this.material,
+      hardness: hardness ?? this.hardness,
+      rodAction: rodAction ?? this.rodAction,
+      weightRange: weightRange ?? this.weightRange,
     );
   }
 }
@@ -311,6 +327,17 @@ class ReelEditState extends EquipmentEditStateBase {
     bool? isDefault,
     String? categoryType1,
     String? categoryType2,
+    String? reelBearings,
+    String? reelRatio,
+    String? reelCapacity,
+    String? reelBrakeType,
+    String? reelWeight,
+    String? reelWeightUnit,
+    String? reelLine,
+    String? reelLineNumber,
+    String? reelLineLength,
+    String? reelLineLengthUnit,
+    String? reelLineDate,
   }) {
     return copyWith(
       type: type,
@@ -324,6 +351,17 @@ class ReelEditState extends EquipmentEditStateBase {
       isDefault: isDefault,
       categoryType1: categoryType1,
       categoryType2: categoryType2,
+      reelBearings: reelBearings ?? this.reelBearings,
+      reelRatio: reelRatio ?? this.reelRatio,
+      reelCapacity: reelCapacity ?? this.reelCapacity,
+      reelBrakeType: reelBrakeType ?? this.reelBrakeType,
+      reelWeight: reelWeight ?? this.reelWeight,
+      reelWeightUnit: reelWeightUnit ?? this.reelWeightUnit,
+      reelLine: reelLine ?? this.reelLine,
+      reelLineNumber: reelLineNumber ?? this.reelLineNumber,
+      reelLineLength: reelLineLength ?? this.reelLineLength,
+      reelLineLengthUnit: reelLineLengthUnit ?? this.reelLineLengthUnit,
+      reelLineDate: reelLineDate ?? this.reelLineDate,
     );
   }
 }
@@ -443,6 +481,14 @@ class LureEditState extends EquipmentEditStateBase {
     bool? isDefault,
     String? categoryType1,
     String? categoryType2,
+    String? lureType,
+    String? lureWeight,
+    String? lureWeightUnit,
+    String? lureSize,
+    String? lureSizeUnit,
+    String? lureColor,
+    String? lureQuantity,
+    String? lureQuantityUnit,
   }) {
     return copyWith(
       type: type,
@@ -456,6 +502,14 @@ class LureEditState extends EquipmentEditStateBase {
       isDefault: isDefault,
       categoryType1: categoryType1,
       categoryType2: categoryType2,
+      lureType: lureType ?? this.lureType,
+      lureWeight: lureWeight ?? this.lureWeight,
+      lureWeightUnit: lureWeightUnit ?? this.lureWeightUnit,
+      lureSize: lureSize ?? this.lureSize,
+      lureSizeUnit: lureSizeUnit ?? this.lureSizeUnit,
+      lureColor: lureColor ?? this.lureColor,
+      lureQuantity: lureQuantity ?? this.lureQuantity,
+      lureQuantityUnit: lureQuantityUnit ?? this.lureQuantityUnit,
     );
   }
 }
