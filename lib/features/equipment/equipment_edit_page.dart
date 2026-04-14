@@ -148,6 +148,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('[DEBUG] build() called - _isLoading: $_isLoading, equipmentId: ${widget.equipmentId}, widget.type: ${widget.type}');
     if (_isLoading && widget.equipmentId != null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -159,6 +160,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     final params = _params;
     final state = ref.watch(equipmentEditViewModelProvider(params));
     final notifier = ref.read(equipmentEditViewModelProvider(params).notifier);
+    debugPrint('[DEBUG] state after watch - type: ${state.type}, length: ${state.length}, sections: ${state.sections}');
     return Scaffold(
       appBar: AppBar(
         title: Text(
