@@ -65,6 +65,9 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       _getOrCreateController('purchaseDate',
           equipment.purchaseDate?.toIso8601String().split('T').first ?? '');
 
+      // Sync type-specific controllers from equipment map (controllers may have been created with empty values on first build)
+      _syncTypeSpecificControllers(equipmentMap);
+
       if (mounted) {
         setState(() {
           _loadedEquipment = equipmentMap;
@@ -93,6 +96,39 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       controller.text = value;
     }
     return controller;
+  }
+
+  void _syncTypeSpecificControllers(Map<String, dynamic> equipment) {
+    // Sync rod/reel/lure controllers from equipment map in case they were created with empty values on first build
+    switch (widget.type) {
+      case 'rod':
+        _getOrCreateController('length', equipment['length']?.toString() ?? '');
+        _getOrCreateController('sections', equipment['sections']?.toString() ?? '');
+        _getOrCreateController('material', equipment['material']?.toString() ?? '');
+        final wr = equipment['weight_range']?.toString() ?? '';
+        _getOrCreateController('weightRangeMin', _parseWeightRange(wr).$1);
+        _getOrCreateController('weightRangeMax', _parseWeightRange(wr).$2);
+        break;
+      case 'reel':
+        _getOrCreateController('reelBearings', equipment['reel_bearings']?.toString() ?? '');
+        final ratio = equipment['reel_ratio']?.toString() ?? '';
+        _getOrCreateController('reelRatioA', _parseRatio(ratio).$1);
+        _getOrCreateController('reelRatioB', _parseRatio(ratio).$2);
+        final cap = equipment['reel_capacity']?.toString() ?? '';
+        _getOrCreateController('reelCapacityNumber', _parseCapacity(cap).$1);
+        _getOrCreateController('reelCapacityLength', _parseCapacity(cap).$2);
+        _getOrCreateController('reelWeight', equipment['reel_weight']?.toString() ?? '');
+        _getOrCreateController('reelLine', equipment['reel_line']?.toString() ?? '');
+        _getOrCreateController('reelLineNumber', equipment['reel_line_number']?.toString() ?? '');
+        _getOrCreateController('reelLineLength', equipment['reel_line_length']?.toString() ?? '');
+        break;
+      case 'lure':
+        _getOrCreateController('lureWeight', equipment['lure_weight']?.toString() ?? '');
+        _getOrCreateController('lureSize', equipment['lure_size']?.toString() ?? '');
+        _getOrCreateController('lureColor', equipment['lure_color']?.toString() ?? '');
+        _getOrCreateController('lureQuantity', equipment['lure_quantity']?.toString() ?? '');
+        break;
+    }
   }
 
   @override
