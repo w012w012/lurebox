@@ -148,9 +148,20 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('[DEBUG] build() called - _isLoading: $_isLoading, equipmentId: ${widget.equipmentId}, widget.type: ${widget.type}');
+    // DEBUG: Show loading state
     if (_isLoading && widget.equipmentId != null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text('Loading... _isLoading=$_isLoading equipmentId=${widget.equipmentId} widget.type=${widget.type} _params.type=${_params.type}'),
+            ],
+          ),
+        ),
+      );
     }
 
     final strings = ref.watch(currentStringsProvider);
@@ -160,7 +171,10 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     final params = _params;
     final state = ref.watch(equipmentEditViewModelProvider(params));
     final notifier = ref.read(equipmentEditViewModelProvider(params).notifier);
-    debugPrint('[DEBUG] state after watch - type: ${state.type}, length: ${state.length}, sections: ${state.sections}');
+
+    // DEBUG: Show state values on screen
+    final debugInfo = 'type=${state.type} len=${state.length} sec=${state.sections} cat1=${state.categoryType1}';
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -184,6 +198,17 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             children: [
+              // DEBUG: Show state values
+              Container(
+                width: double.infinity,
+                color: Colors.orange,
+                padding: const EdgeInsets.all(12),
+                margin: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  'DEBUG: $debugInfo',
+                  style: const TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+              ),
               _buildCard([
                 _buildSectionTitle(strings.basicInfo),
                 const SizedBox(height: 12),
