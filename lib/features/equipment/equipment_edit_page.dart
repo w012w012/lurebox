@@ -28,8 +28,14 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   bool _isLoading = true;
   Map<String, dynamic>? _loadedEquipment;
 
-  ({String type, Map<String, dynamic>? equipment})? _params;
+  ({String type, Map<String, dynamic>? equipment}) _params = (type: '', equipment: null);
   bool _isLoadingEquipment = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _params = (type: widget.type, equipment: null);
+  }
 
   @override
   void didChangeDependencies() {
@@ -60,7 +66,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
       // Update ViewModel FIRST - this populates the state
       ref
-          .read(equipmentEditViewModelProvider(_params!).notifier)
+          .read(equipmentEditViewModelProvider(_params).notifier)
           .loadDataFromMap(equipmentMap);
 
       debugPrint('[_loadEquipmentData] state after load - type: ${widget.type}');
@@ -150,7 +156,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     final displayUnits = ref.watch(appSettingsProvider).units;
     final lineLengthSymbol =
         UnitConverter.getLengthSymbol(displayUnits.lineLengthUnit);
-    final params = _params ?? (type: widget.type, equipment: _loadedEquipment);
+    final params = _params;
     final state = ref.watch(equipmentEditViewModelProvider(params));
     final notifier = ref.read(equipmentEditViewModelProvider(params).notifier);
     return Scaffold(
