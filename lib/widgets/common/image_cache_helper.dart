@@ -10,7 +10,10 @@ class ImageCacheHelper {
   static final LRUMap<String, ImageProvider> _memoryCache = LRUMap(
     maxSize: _calculateCacheSize(),
   );
-  static final Map<String, ImageProvider> _thumbnailCache = {};
+  // 缩略图缓存使用 LRU 策略，防止无限增长
+  static final LRUMap<String, ImageProvider> _thumbnailCache = LRUMap(
+    maxSize: 200,
+  );
 
   // 根据设备内存动态计算缓存大小
   static int _calculateCacheSize() {
@@ -297,6 +300,16 @@ class LRUMap<K, V> {
   bool containsKey(K key) => _map.containsKey(key);
 
   void remove(K key) => _map.remove(key);
+
+  void removeWhere(bool Function(K key, V value) predicate) {
+    final keysToRemove = _map.entries
+        .where((e) => predicate(e.key, e.value))
+        .map((e) => e.key)
+        .toList();
+    for (final key in keysToRemove) {
+      _map.remove(key);
+    }
+  }
 
   void clear() => _map.clear();
 

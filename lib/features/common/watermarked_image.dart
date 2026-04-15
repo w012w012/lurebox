@@ -9,7 +9,7 @@ import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
 import '../../core/providers/watermark_provider.dart';
 import '../../core/utils/unit_converter.dart';
-import '../../core/services/weather_service.dart';
+import '../../core/services/weather_service.dart' show getLocalizedWeatherDescription;
 import '../../widgets/common/image_cache_helper.dart';
 
 /// 带水印的图片 Widget
@@ -391,7 +391,7 @@ class WatermarkPainter extends CustomPainter {
           break;
         case WatermarkInfoType.weather:
           if (weatherCode != null) {
-            final weatherDesc = getWeatherDescription(weatherCode);
+            final weatherDesc = getLocalizedWeatherDescription(weatherCode, strings);
             if (weatherDesc.isNotEmpty) {
               lines.add('${strings.weather}：$weatherDesc');
             }

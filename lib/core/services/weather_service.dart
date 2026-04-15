@@ -1,6 +1,8 @@
 import 'package:open_meteo/open_meteo.dart';
 
-/// 天气代码转中文描述
+import '../constants/strings.dart';
+
+/// 天气代码转中文描述（默认行为，兼容旧代码）
 /// 基于 WMO Weather interpretation codes (WW)
 /// 参考: https://open-meteo.com/en/docs
 String getWeatherDescription(int? code) {
@@ -51,6 +53,58 @@ String getWeatherDescription(int? code) {
       return '雷暴加冰雹';
     default:
       return '未知';
+  }
+}
+
+/// 根据语言环境返回天气描述
+String getLocalizedWeatherDescription(int? code, AppStrings strings) {
+  if (code == null) return '';
+  switch (code) {
+    case 0:
+      return strings.weatherClear;
+    case 1:
+      return strings.weatherMainlyClear;
+    case 2:
+      return strings.weatherPartlyCloudy;
+    case 3:
+      return strings.weatherOvercast;
+    case 45:
+    case 48:
+      return strings.weatherFog;
+    case 51:
+    case 53:
+    case 55:
+      return strings.weatherDrizzle;
+    case 56:
+    case 57:
+      return strings.weatherFreezingDrizzle;
+    case 61:
+    case 63:
+    case 65:
+      return strings.weatherRain;
+    case 66:
+    case 67:
+      return strings.weatherFreezingRain;
+    case 71:
+    case 73:
+    case 75:
+      return strings.weatherSnowFall;
+    case 77:
+      return strings.weatherSnowGrains;
+    case 80:
+    case 81:
+    case 82:
+      return strings.weatherRainShowers;
+    case 85:
+    case 86:
+      return strings.weatherSnowShowers;
+    case 95:
+      return strings.weatherThunderstorm;
+    case 96:
+    case 99:
+      return strings.weatherThunderstormHail;
+    default:
+      return strings.weatherUnknown;
   }
 }
 

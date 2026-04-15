@@ -9,6 +9,7 @@ import '../../../core/models/fish_catch.dart';
 import '../../../core/models/equipment.dart';
 import '../../../core/providers/app_settings_provider.dart';
 import '../../../core/utils/unit_converter.dart';
+import '../../../core/services/weather_service.dart' show getLocalizedWeatherDescription;
 
 class FishEditPage extends ConsumerStatefulWidget {
   final Map<String, dynamic> fish;
@@ -386,27 +387,27 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
     int? selectedWeatherCode = _weatherCode ?? 0;
 
     final weatherOptions = [
-      (0, '☀️ 晴'),
-      (1, '⛅ 多云'),
-      (2, '☁️ 阴'),
-      (3, '🌧️ 小雨'),
-      (4, '⛈️ 雷暴'),
-      (5, '❄️ 雪'),
-      (6, '🌫️ 雾'),
+      (0, widget.strings.weatherOption0),
+      (1, widget.strings.weatherOption1),
+      (2, widget.strings.weatherOption2),
+      (3, widget.strings.weatherOption3),
+      (4, widget.strings.weatherOption4),
+      (5, widget.strings.weatherOption5),
+      (6, widget.strings.weatherOption6),
     ];
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('修改天气信息'),
+          title: Text(widget.strings.modifyWeather),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
                 controller: tempController,
                 decoration: InputDecoration(
-                  labelText: '气温 ($tempSymbol)',
+                  labelText: '${widget.strings.airTemperature} ($tempSymbol)',
                   border: const OutlineInputBorder(),
                 ),
                 keyboardType:
@@ -415,9 +416,9 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
               const SizedBox(height: 12),
               TextField(
                 controller: pressureController,
-                decoration: const InputDecoration(
-                  labelText: '气压 (hPa)',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: '${widget.strings.pressure} (hPa)',
+                  border: const OutlineInputBorder(),
                 ),
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
@@ -425,9 +426,9 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
               const SizedBox(height: 12),
               DropdownButtonFormField<int>(
                 initialValue: selectedWeatherCode,
-                decoration: const InputDecoration(
-                  labelText: '天气状况',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: widget.strings.weather,
+                  border: const OutlineInputBorder(),
                 ),
                 items: weatherOptions
                     .map((opt) => DropdownMenuItem(
@@ -442,11 +443,11 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('取消'),
+              child: Text(widget.strings.cancel),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('确认'),
+              child: Text(widget.strings.confirm),
             ),
           ],
         ),
@@ -467,27 +468,28 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
   }
 
   String _getWeatherDisplayText(String temperatureUnit) {
+    final s = widget.strings;
     final parts = <String>[];
     if (_airTemperature != null) {
       parts.add(
-          '气温: ${UnitConverter.formatTemperature(_airTemperature!, temperatureUnit)}');
+          '${s.airTemperature}: ${UnitConverter.formatTemperature(_airTemperature!, temperatureUnit)}');
     }
     if (_pressure != null) {
-      parts.add('气压: ${_pressure!.toStringAsFixed(0)}hPa');
+      parts.add('${s.pressure}: ${_pressure!.toStringAsFixed(0)}hPa');
     }
-    final weatherMap = {
-      0: '晴',
-      1: '多云',
-      2: '阴',
-      3: '小雨',
-      4: '雷暴',
-      5: '雪',
-      6: '雾'
+    final simpleWeatherMap = <int, String>{
+      0: s.weatherOption0,
+      1: s.weatherOption1,
+      2: s.weatherOption2,
+      3: s.weatherOption3,
+      4: s.weatherOption4,
+      5: s.weatherOption5,
+      6: s.weatherOption6,
     };
-    if (_weatherCode != null && weatherMap.containsKey(_weatherCode)) {
-      parts.add('天气: ${weatherMap[_weatherCode]}');
+    if (_weatherCode != null && simpleWeatherMap.containsKey(_weatherCode)) {
+      parts.add('${s.weather}: ${simpleWeatherMap[_weatherCode]}');
     }
-    if (parts.isEmpty) return '未设置';
+    if (parts.isEmpty) return s.notSet;
     return parts.join(' | ');
   }
 
