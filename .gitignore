@@ -59,3 +59,16 @@ task_plan.md
 # Keystore files (NEVER commit these)
 *.jks
 *.keystore
+
+# Android build output (includes problems-report.html, etc.)
+android/build/
+
+# Android auto-generated debug manifest
+android/app/src/debug/
+
+# Claude Code project directory
+.opencode/
+
+# Local properties (contains secrets - keystore passwords)
+local.properties
+android/local.properties
