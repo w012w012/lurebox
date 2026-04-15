@@ -39,6 +39,14 @@ void main() {
         equals('"a, ""b""\nc"'),
       );
     });
+
+    test('returns empty string for empty string input', () {
+      expect(CsvExporter.escapeCsvField(''), equals(''));
+    });
+
+    test('handles double input without quotes', () {
+      expect(CsvExporter.escapeCsvField(3.14), equals('3.14'));
+    });
   });
 
     group('exportFishCatches', () {
