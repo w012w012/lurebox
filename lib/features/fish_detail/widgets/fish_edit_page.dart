@@ -9,7 +9,6 @@ import '../../../core/models/fish_catch.dart';
 import '../../../core/models/equipment.dart';
 import '../../../core/providers/app_settings_provider.dart';
 import '../../../core/utils/unit_converter.dart';
-import '../../../core/services/weather_service.dart' show getLocalizedWeatherDescription;
 
 class FishEditPage extends ConsumerStatefulWidget {
   final Map<String, dynamic> fish;
@@ -181,11 +180,11 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
           Card(
             child: ListTile(
               leading: const Icon(Icons.access_time),
-              title: const Text('钓获时间'),
+              title: Text(s.catchTime),
               subtitle: Text(
                 _catchTime != null
                     ? '${_catchTime!.year}-${_catchTime!.month.toString().padLeft(2, '0')}-${_catchTime!.day.toString().padLeft(2, '0')} ${_catchTime!.hour.toString().padLeft(2, '0')}:${_catchTime!.minute.toString().padLeft(2, '0')}'
-                    : '未设置',
+                    : s.notSet,
               ),
               trailing: IconButton(
                 icon: const Icon(Icons.edit, size: 20),
@@ -205,8 +204,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
                     children: [
                       const Icon(Icons.wb_sunny, size: 20),
                       const SizedBox(width: 8),
-                      const Text('天气信息',
-                          style: TextStyle(fontWeight: FontWeight.w500)),
+                      Text(s.weather, style: const TextStyle(fontWeight: FontWeight.w500)),
                       const Spacer(),
                       IconButton(
                         icon: const Icon(Icons.edit, size: 20),
