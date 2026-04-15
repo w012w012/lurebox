@@ -8,11 +8,43 @@ class PermissionResult {
   final bool permanentlyDenied;
   final String? errorMessage;
 
-  PermissionResult({
+  const PermissionResult({
     required this.granted,
     required this.permanentlyDenied,
     this.errorMessage,
   });
+}
+
+/// Abstracts the permission_handler and geolocator platform calls so
+/// [PermissionService] can be tested without device permissions.
+abstract class PermissionPlatform {
+  const PermissionPlatform();
+
+  Future<PermissionStatus> status(Permission permission);
+  Future<PermissionStatus> request(Permission permission);
+  Future<bool> isLocationServiceEnabled();
+  Future<void> openAppSettings();
+
+  static const PermissionPlatform real = _RealPermissionPlatform();
+}
+
+class _RealPermissionPlatform extends PermissionPlatform {
+  const _RealPermissionPlatform();
+
+  @override
+  Future<PermissionStatus> status(Permission permission) =>
+      permission.status;
+
+  @override
+  Future<PermissionStatus> request(Permission permission) =>
+      permission.request();
+
+  @override
+  Future<bool> isLocationServiceEnabled() =>
+      Geolocator.isLocationServiceEnabled();
+
+  @override
+  Future<void> openAppSettings() => openAppSettings();
 }
 
 /// 权限类型信息
@@ -36,7 +68,17 @@ class PermissionInfo {
 class PermissionService {
   static final PermissionService _instance = PermissionService._();
   factory PermissionService() => _instance;
-  PermissionService._();
+  PermissionService._([PermissionPlatform? platform])
+      : _platform = platform ?? PermissionPlatform.real;
+
+  PermissionPlatform _platform;
+
+  /// Allows test files in this package to inject a mock [PermissionPlatform].
+  /// Not called by production code.
+  // ignore: unused_element
+  void setPlatformForTesting(PermissionPlatform platform) {
+    _platform = platform;
+  }
 
   /// 相机权限信息
   static const cameraInfo = PermissionInfo(
@@ -74,9 +116,9 @@ class PermissionService {
   Future<PermissionResult> requestLocationPermission(
       BuildContext context) async {
     // 先检查位置服务是否开启
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    final serviceEnabled = await _platform.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      return PermissionResult(
+      return const PermissionResult(
         granted: false,
         permanentlyDenied: false,
         errorMessage: '请开启设备定位服务',
@@ -85,7 +127,7 @@ class PermissionService {
 
     // 检查 context 是否仍然有效（防止在异步操作后使用已卸载的 context）
     if (!context.mounted) {
-      return PermissionResult(
+      return const PermissionResult(
         granted: false,
         permanentlyDenied: false,
         errorMessage: '上下文已失效',
@@ -105,11 +147,11 @@ class PermissionService {
     BuildContext context,
     PermissionInfo info,
   ) async {
-    final status = await info.permission.status;
+    final status = await _platform.status(info.permission);
 
     // 已授权
     if (status.isGranted || status.isLimited) {
-      return PermissionResult(granted: true, permanentlyDenied: false);
+      return const PermissionResult(granted: true, permanentlyDenied: false);
     }
 
     // 永久拒绝 - 引导到设置
@@ -128,10 +170,10 @@ class PermissionService {
     if (context.mounted) {
       final shouldRequest = await _showEducationDialog(context, info);
       if (shouldRequest == true) {
-        final newStatus = await info.permission.request();
+        final newStatus = await _platform.request(info.permission);
 
         if (newStatus.isGranted || newStatus.isLimited) {
-          return PermissionResult(granted: true, permanentlyDenied: false);
+          return const PermissionResult(granted: true, permanentlyDenied: false);
         }
 
         if (newStatus.isPermanentlyDenied && context.mounted) {
@@ -233,7 +275,7 @@ class PermissionService {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              openAppSettings();
+              _platform.openAppSettings();
             },
             child: const Text('打开设置'),
           ),
@@ -244,18 +286,18 @@ class PermissionService {
 
   /// 检查权限状态
   Future<bool> isPermissionGranted(Permission permission) async {
-    final status = await permission.status;
+    final status = await _platform.status(permission);
     return status.isGranted || status.isLimited;
   }
 
   /// 检查权限是否永久拒绝
   Future<bool> isPermanentlyDenied(Permission permission) async {
-    final status = await permission.status;
+    final status = await _platform.status(permission);
     return status.isPermanentlyDenied;
   }
 
   /// 打开应用设置
   Future<void> openSettings() async {
-    await openAppSettings();
+    await _platform.openAppSettings();
   }
 }

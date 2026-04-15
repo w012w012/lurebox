@@ -13,7 +13,11 @@ import '../utils/unit_converter.dart';
 /// 气温(°C), 气压(hPa), 天气, 装备ID, 鱼竿ID, 鱼轮ID, 鱼饵ID,
 /// 图片路径, 水印图片路径, 创建时间, 更新时间, 捕获时间
 class CsvExporter {
-  static String _escapeCsvField(dynamic field) {
+  /// RFC 4180 compliant CSV field escaping.
+  ///
+  /// Handles: null → '', plain text → as-is,
+  /// fields containing comma/double-quote/newline → double-quote wrapped.
+  static String escapeCsvField(dynamic field) {
     if (field == null) return '';
     final str = field.toString();
     if (str.contains(',') || str.contains('"') || str.contains('\n')) {
@@ -123,27 +127,27 @@ class CsvExporter {
       final row = <String>[
         // 基本信息
         fish.id.toString(),
-        _escapeCsvField(displaySpecies),
+        escapeCsvField(displaySpecies),
         displayLength.toStringAsFixed(2),
-        _escapeCsvField(displayWeight?.toStringAsFixed(2) ?? ''),
-        _escapeCsvField(fish.fate.label),
+        escapeCsvField(displayWeight?.toStringAsFixed(2) ?? ''),
+        escapeCsvField(fish.fate.label),
         // 位置信息
-        _escapeCsvField(fish.locationName ?? ''),
-        _escapeCsvField(fish.longitude?.toString() ?? ''),
-        _escapeCsvField(fish.latitude?.toString() ?? ''),
+        escapeCsvField(fish.locationName ?? ''),
+        escapeCsvField(fish.longitude?.toString() ?? ''),
+        escapeCsvField(fish.latitude?.toString() ?? ''),
         // 天气信息
-        _escapeCsvField(displayTemp?.toStringAsFixed(1) ?? ''),
-        _escapeCsvField(fish.pressure?.toString() ?? ''),
-        _escapeCsvField(_getWeatherDescription(fish.weatherCode)),
+        escapeCsvField(displayTemp?.toStringAsFixed(1) ?? ''),
+        escapeCsvField(fish.pressure?.toString() ?? ''),
+        escapeCsvField(_getWeatherDescription(fish.weatherCode)),
         // 装备信息
-        _escapeCsvField(fish.equipmentId?.toString() ?? ''),
-        _escapeCsvField(fish.rodId?.toString() ?? ''),
-        _escapeCsvField(fish.reelId?.toString() ?? ''),
-        _escapeCsvField(fish.lureId?.toString() ?? ''),
+        escapeCsvField(fish.equipmentId?.toString() ?? ''),
+        escapeCsvField(fish.rodId?.toString() ?? ''),
+        escapeCsvField(fish.reelId?.toString() ?? ''),
+        escapeCsvField(fish.lureId?.toString() ?? ''),
         // 图片路径
         if (includeImagePaths) ...[
-          _escapeCsvField(fish.imagePath),
-          _escapeCsvField(fish.watermarkedImagePath ?? ''),
+          escapeCsvField(fish.imagePath),
+          escapeCsvField(fish.watermarkedImagePath ?? ''),
         ],
         // 时间戳
         fish.createdAt.toIso8601String(),

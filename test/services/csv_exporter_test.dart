@@ -4,18 +4,42 @@ import 'package:lurebox/core/services/csv_exporter.dart';
 
 void main() {
   group('CsvExporter', () {
-    group('_escapeCsvField', () {
-      test('returns empty string for null', () {
-        final result = CsvExporter.exportFishCatches(catches: []);
-        expect(result, isNotNull);
-      });
-
-      test('returns field as-is when no special characters', () {
-        const field = 'simple text';
-        // Access via export to test the full flow
-        expect(field.contains(','), isFalse);
-      });
+    group('CsvExporter.escapeCsvField', () {
+    test('returns empty string for null', () {
+      expect(CsvExporter.escapeCsvField(null), equals(''));
     });
+
+    test('returns field as-is when no special characters', () {
+      expect(CsvExporter.escapeCsvField('simple text'), equals('simple text'));
+    });
+
+    test('wraps field in quotes when it contains a comma', () {
+      expect(CsvExporter.escapeCsvField('a, b'), equals('"a, b"'));
+    });
+
+    test('wraps field in quotes and doubles embedded double quotes', () {
+      expect(CsvExporter.escapeCsvField('say "hello"'), equals('"say ""hello"""'));
+    });
+
+    test('wraps field in quotes when it contains a newline', () {
+      expect(CsvExporter.escapeCsvField('line1\nline2'), equals('"line1\nline2"'));
+    });
+
+    test('handles integer input', () {
+      expect(CsvExporter.escapeCsvField(42), equals('42'));
+    });
+
+    test('handles numeric string input', () {
+      expect(CsvExporter.escapeCsvField('30.5'), equals('30.5'));
+    });
+
+    test('handles comma, double quote, and newline together', () {
+      expect(
+        CsvExporter.escapeCsvField('a, "b"\nc'),
+        equals('"a, ""b""\nc"'),
+      );
+    });
+  });
 
     group('exportFishCatches', () {
       test('exports empty list with headers only', () async {
@@ -426,6 +450,130 @@ void main() {
           expect(csv, contains(entry.value),
               reason: 'Weather code ${entry.key} should map to ${entry.value}');
         }
+      });
+    });
+
+    group('unit conversion in exportFishCatches', () {
+      test('converts length from cm to m when lengthUnit is m', () async {
+        // Fish stored in cm, display in m
+        final catches = [
+          FishCatch(
+            id: 1,
+            imagePath: '/test/fish.jpg',
+            species: 'Bass',
+            length: 100, // 100 cm stored
+            lengthUnit: 'cm',
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 6, 15),
+            createdAt: DateTime(2024, 6, 15),
+            updatedAt: DateTime(2024, 6, 15),
+          ),
+        ];
+
+        final csv = await CsvExporter.exportFishCatches(
+          catches: catches,
+          lengthUnit: 'm',
+        );
+
+        // 100 cm → 1.00 m
+        expect(csv, contains('1.00'));
+        expect(csv, contains('长度(m)'));
+      });
+
+      test('converts weight from kg to lb when weightUnit is lb', () async {
+        final catches = [
+          FishCatch(
+            id: 1,
+            imagePath: '/test/fish.jpg',
+            species: 'Bass',
+            length: 30.0,
+            weight: 1.0, // 1 kg stored
+            weightUnit: 'kg',
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 6, 15),
+            createdAt: DateTime(2024, 6, 15),
+            updatedAt: DateTime(2024, 6, 15),
+          ),
+        ];
+
+        final csv = await CsvExporter.exportFishCatches(
+          catches: catches,
+          weightUnit: 'lb',
+        );
+
+        // 1 kg ≈ 2.20 lb
+        expect(csv, contains('2.20'));
+        expect(csv, contains('重量(lb)'));
+      });
+
+      test('converts temperature from C to F when temperatureUnit is F', () async {
+        final catches = [
+          FishCatch(
+            id: 1,
+            imagePath: '/test/fish.jpg',
+            species: 'Bass',
+            length: 30.0,
+            airTemperature: 20.0, // 20°C stored
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 6, 15),
+            createdAt: DateTime(2024, 6, 15),
+            updatedAt: DateTime(2024, 6, 15),
+          ),
+        ];
+
+        final csv = await CsvExporter.exportFishCatches(
+          catches: catches,
+          temperatureUnit: 'F',
+        );
+
+        // 20°C → 68°F
+        expect(csv, contains('68.0'));
+        expect(csv, contains('气温(°F)'));
+      });
+
+      test('uses chinese unit symbols when isChinese is true', () async {
+        final catches = [
+          FishCatch(
+            id: 1,
+            imagePath: '/test/fish.jpg',
+            species: 'Bass',
+            length: 30.0,
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 6, 15),
+            createdAt: DateTime(2024, 6, 15),
+            updatedAt: DateTime(2024, 6, 15),
+          ),
+        ];
+
+        final csv = await CsvExporter.exportFishCatches(
+          catches: catches,
+          isChinese: true,
+        );
+
+        expect(csv, contains('厘米'));
+        expect(csv, contains('千克'));
+      });
+
+      test('converts latitude and longitude correctly', () async {
+        final catches = [
+          FishCatch(
+            id: 1,
+            imagePath: '/test/fish.jpg',
+            species: 'Bass',
+            length: 30.0,
+            latitude: 30.123456,
+            longitude: 120.654321,
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 6, 15),
+            createdAt: DateTime(2024, 6, 15),
+            updatedAt: DateTime(2024, 6, 15),
+          ),
+        ];
+
+        final csv = await CsvExporter.exportFishCatches(catches: catches);
+
+        expect(csv, contains('30.123456'));
+        expect(csv, contains('120.654321'));
       });
     });
   });
