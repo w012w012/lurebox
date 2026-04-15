@@ -17,7 +17,8 @@ class FakeEquipmentRepository implements EquipmentRepository {
   @override
   Future<List<Equipment>> getAll({String? type}) async {
     return _store.values
-        .where((e) => !e.isDeleted && (type == null || e.type.name == _typeStr(type)))
+        .where((e) =>
+            !e.isDeleted && (type == null || e.type.name == _typeStr(type)))
         .toList();
   }
 
@@ -135,8 +136,8 @@ class FakeEquipmentRepository implements EquipmentRepository {
   @override
   Future<List<String>> getModelsByBrand(String brand) async {
     final models = <String>{};
-    for (final e in _store.values.where(
-        (e) => !e.isDeleted && e.brand == brand && e.model != null)) {
+    for (final e in _store.values
+        .where((e) => !e.isDeleted && e.brand == brand && e.model != null)) {
       models.add(e.model!);
     }
     return models.toList()..sort();
@@ -269,7 +270,8 @@ void main() {
   });
 
   group('EquipmentService.setDefaultEquipment', () {
-    test('sets new default and clears previous default for same type', () async {
+    test('sets new default and clears previous default for same type',
+        () async {
       await repository.create(_makeRod(id: 1, isDefault: true));
       await repository.create(_makeRod(id: 2));
 
@@ -355,8 +357,10 @@ void main() {
     });
 
     test('getModelsByBrand returns sorted models for brand', () async {
-      await repository.create(_makeRod(id: 0, brand: 'Shimano', model: 'Stradic'));
-      await repository.create(_makeRod(id: 0, brand: 'Shimano', model: 'Curado'));
+      await repository
+          .create(_makeRod(id: 0, brand: 'Shimano', model: 'Stradic'));
+      await repository
+          .create(_makeRod(id: 0, brand: 'Shimano', model: 'Curado'));
       await repository.create(_makeRod(id: 0, brand: 'Daiwa', model: 'BG'));
 
       final models = await service.getModelsByBrand('Shimano');
@@ -379,9 +383,10 @@ void main() {
 
 // ----- Test data helpers -----
 
-DateTime get _now => DateTime.now();
+late final _now = DateTime.now();
 
-Equipment _makeRod({int id = 1, String? brand, String? model, bool isDefault = false}) {
+Equipment _makeRod(
+    {int id = 1, String? brand, String? model, bool isDefault = false}) {
   return Equipment(
     id: id,
     type: EquipmentType.rod,

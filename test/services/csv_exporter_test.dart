@@ -5,49 +5,52 @@ import 'package:lurebox/core/services/csv_exporter.dart';
 void main() {
   group('CsvExporter', () {
     group('CsvExporter.escapeCsvField', () {
-    test('returns empty string for null', () {
-      expect(CsvExporter.escapeCsvField(null), equals(''));
-    });
+      test('returns empty string for null', () {
+        expect(CsvExporter.escapeCsvField(null), equals(''));
+      });
 
-    test('returns field as-is when no special characters', () {
-      expect(CsvExporter.escapeCsvField('simple text'), equals('simple text'));
-    });
+      test('returns field as-is when no special characters', () {
+        expect(
+            CsvExporter.escapeCsvField('simple text'), equals('simple text'));
+      });
 
-    test('wraps field in quotes when it contains a comma', () {
-      expect(CsvExporter.escapeCsvField('a, b'), equals('"a, b"'));
-    });
+      test('wraps field in quotes when it contains a comma', () {
+        expect(CsvExporter.escapeCsvField('a, b'), equals('"a, b"'));
+      });
 
-    test('wraps field in quotes and doubles embedded double quotes', () {
-      expect(CsvExporter.escapeCsvField('say "hello"'), equals('"say ""hello"""'));
-    });
+      test('wraps field in quotes and doubles embedded double quotes', () {
+        expect(CsvExporter.escapeCsvField('say "hello"'),
+            equals('"say ""hello"""'));
+      });
 
-    test('wraps field in quotes when it contains a newline', () {
-      expect(CsvExporter.escapeCsvField('line1\nline2'), equals('"line1\nline2"'));
-    });
+      test('wraps field in quotes when it contains a newline', () {
+        expect(CsvExporter.escapeCsvField('line1\nline2'),
+            equals('"line1\nline2"'));
+      });
 
-    test('handles integer input', () {
-      expect(CsvExporter.escapeCsvField(42), equals('42'));
-    });
+      test('handles integer input', () {
+        expect(CsvExporter.escapeCsvField(42), equals('42'));
+      });
 
-    test('handles numeric string input', () {
-      expect(CsvExporter.escapeCsvField('30.5'), equals('30.5'));
-    });
+      test('handles numeric string input', () {
+        expect(CsvExporter.escapeCsvField('30.5'), equals('30.5'));
+      });
 
-    test('handles comma, double quote, and newline together', () {
-      expect(
-        CsvExporter.escapeCsvField('a, "b"\nc'),
-        equals('"a, ""b""\nc"'),
-      );
-    });
+      test('handles comma, double quote, and newline together', () {
+        expect(
+          CsvExporter.escapeCsvField('a, "b"\nc'),
+          equals('"a, ""b""\nc"'),
+        );
+      });
 
-    test('returns empty string for empty string input', () {
-      expect(CsvExporter.escapeCsvField(''), equals(''));
-    });
+      test('returns empty string for empty string input', () {
+        expect(CsvExporter.escapeCsvField(''), equals(''));
+      });
 
-    test('handles double input without quotes', () {
-      expect(CsvExporter.escapeCsvField(3.14), equals('3.14'));
+      test('handles double input without quotes', () {
+        expect(CsvExporter.escapeCsvField(3.14), equals('3.14'));
+      });
     });
-  });
 
     group('exportFishCatches', () {
       test('exports empty list with headers only', () async {
@@ -514,7 +517,8 @@ void main() {
         expect(csv, contains('重量(lb)'));
       });
 
-      test('converts temperature from C to F when temperatureUnit is F', () async {
+      test('converts temperature from C to F when temperatureUnit is F',
+          () async {
         final catches = [
           FishCatch(
             id: 1,
