@@ -23,13 +23,24 @@ import 'error_service.dart';
 class EnhancedBackupService {
   final DatabaseProvider _dbProvider;
   final BackupConfigRepository _configRepo;
-  late final BackupService _backupService;
-  late final BackupZipService _backupZipService;
+  final BackupService _backupService;
+  final BackupZipService _backupZipService;
 
-  EnhancedBackupService(this._dbProvider, this._configRepo) {
-    _backupService = BackupService(_dbProvider);
-    _backupZipService = BackupZipService(_dbProvider);
-  }
+  /// Constructor for production use.
+  ///
+  /// Creates BackupService and BackupZipService internally.
+  EnhancedBackupService(this._dbProvider, this._configRepo)
+      : _backupService = BackupService(_dbProvider),
+        _backupZipService = BackupZipService(_dbProvider);
+
+  /// Constructor allowing injected services for testing.
+  @visibleForTesting
+  EnhancedBackupService.withServices(
+    this._dbProvider,
+    this._configRepo,
+    this._backupService,
+    this._backupZipService,
+  );
 
   // ========== 云配置管理 ==========
 

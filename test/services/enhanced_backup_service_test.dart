@@ -5,10 +5,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:lurebox/core/models/cloud_config.dart';
 import 'package:lurebox/core/models/backup_history.dart';
 import 'package:lurebox/core/repositories/backup_config_repository.dart';
 import 'package:lurebox/core/database/database_provider.dart';
+import 'package:lurebox/core/services/backup_zip_service.dart';
+import 'package:lurebox/core/services/backup_service.dart';
 import 'package:lurebox/core/services/enhanced_backup_service.dart';
 
 // Custom Mock Database implementing sqflite's Database interface
@@ -320,6 +323,51 @@ class FakeCloudConfig extends Fake implements CloudConfig {}
 
 class FakeBackupHistory extends Fake implements BackupHistory {}
 
+/// Minimal BackupService extension for testing — only implements what
+/// EnhancedBackupService.exportBackup calls.
+class _FakeBackupService extends BackupService {
+  _FakeBackupService() : super(_DummyDbProvider());
+
+  String? exportPath;
+  Exception? exportError;
+
+  @override
+  Future<String> exportToJson() async {
+    if (exportError != null) throw exportError!;
+    return exportPath ?? '/tmp/test_backup.json';
+  }
+}
+
+/// Minimal BackupZipService extension for testing — only implements what
+/// EnhancedBackupService.exportBackup calls.
+class _FakeBackupZipService extends BackupZipService {
+  _FakeBackupZipService() : super(_DummyDbProvider());
+
+  String? exportPath;
+  Exception? exportError;
+
+  @override
+  Future<XFile> exportToZip({
+    BackupExportOptions options = const BackupExportOptions(),
+  }) async {
+    if (exportError != null) throw exportError!;
+    final path = exportPath ?? '/tmp/test_backup.zip';
+    return XFile(path);
+  }
+}
+
+/// Minimal DatabaseProvider stub for the fake services.
+class _DummyDbProvider implements DatabaseProvider {
+  @override
+  Future<Database> get database => throw UnimplementedError();
+
+  @override
+  Future<void> close() async {}
+
+  @override
+  Future<void> resetForTesting() async {}
+}
+
 /// Wraps a real sqflite Database as a DatabaseProvider, for tests that
 /// require genuine transaction behavior (e.g. importFromJsonWithDeduplication).
 class _RealDbWrapper implements DatabaseProvider {
@@ -362,7 +410,7 @@ void main() {
 
     // Mock share_plus
     binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('plugins.flutter.io/share_plus'),
+      const MethodChannel('dev.fluttercommunity.plus/share'),
       (MethodCall methodCall) async {
         return null;
       },
@@ -1141,6 +1189,201 @@ void main() {
 
       await tempFile.delete();
       await tempDir.delete();
+    });
+  });
+
+  group('EnhancedBackupService - exportBackup', () {
+    // Uses real sqflite FFI for _getBackupStats queries, injects fake
+    // BackupService/BackupZipService to control export behavior.
+    late Database _realDb;
+    late _FakeBackupService _fakeBackupService;
+    late _FakeBackupZipService _fakeBackupZipService;
+
+    late MockBackupConfigRepository mockConfigRepo;
+
+    setUp(() async {
+      _realDb = await databaseFactoryFfi.openDatabase(
+        inMemoryDatabasePath,
+        options: OpenDatabaseOptions(version: 1, onCreate: (db, v) async {
+          await db.execute('''
+            CREATE TABLE fish_catches (
+              id INTEGER PRIMARY KEY,
+              species TEXT,
+              catch_time TEXT,
+              image_path TEXT,
+              created_at TEXT
+            )
+          ''');
+          await db.execute('''
+            CREATE TABLE equipments (
+              id INTEGER PRIMARY KEY,
+              type TEXT,
+              is_deleted INTEGER DEFAULT 0,
+              created_at TEXT
+            )
+          ''');
+        }),
+      );
+      _fakeBackupService = _FakeBackupService();
+      _fakeBackupZipService = _FakeBackupZipService();
+      mockConfigRepo = MockBackupConfigRepository();
+      when(() => mockConfigRepo.addBackupHistory(any()))
+          .thenAnswer((_) async => 1);
+      when(() => mockConfigRepo.cleanupOldBackupHistory(any()))
+          .thenAnswer((_) async => 0);
+    });
+
+    tearDown(() async {
+      await _realDb.close();
+    });
+
+    test('JSON export returns XFile, saves history, and calls cleanup',
+        () async {
+      final tempDir = Directory.systemTemp.createTempSync();
+      final jsonPath = '${tempDir.path}/test_export.json';
+      await File(jsonPath).writeAsString('{}');
+      _fakeBackupService.exportPath = jsonPath;
+
+      final service = EnhancedBackupService.withServices(
+        _RealDbWrapper(_realDb),
+        mockConfigRepo,
+        _fakeBackupService,
+        _fakeBackupZipService,
+      );
+
+      final result = await service.exportBackup(
+        BackupType.json,
+        shareAfterExport: false,
+      );
+
+      expect(result.path, equals(jsonPath));
+      verify(() => mockConfigRepo.addBackupHistory(any())).called(1);
+
+      await tempDir.delete(recursive: true);
+    });
+
+    test('ZIP full export returns XFile and saves history', () async {
+      final tempDir = Directory.systemTemp.createTempSync();
+      final zipPath = '${tempDir.path}/test_export.zip';
+      await File(zipPath).writeAsBytes([0x50, 0x4B, 0x03, 0x04]);
+      _fakeBackupZipService.exportPath = zipPath;
+
+      final service = EnhancedBackupService.withServices(
+        _RealDbWrapper(_realDb),
+        mockConfigRepo,
+        _fakeBackupService,
+        _fakeBackupZipService,
+      );
+
+      final result = await service.exportBackup(
+        BackupType.zipFull,
+        shareAfterExport: false,
+      );
+
+      expect(result.path, equals(zipPath));
+      verify(() => mockConfigRepo.addBackupHistory(any())).called(1);
+      // Stats queries hit the real in-memory DB
+      final stats = await _realDb.rawQuery('SELECT COUNT(*) FROM fish_catches');
+      expect(Sqflite.firstIntValue(stats), equals(0));
+
+      await tempDir.delete(recursive: true);
+    });
+
+    test('ZIP db-only export calls BackupZipService', () async {
+      final tempDir = Directory.systemTemp.createTempSync();
+      final zipPath = '${tempDir.path}/test_export.zip';
+      await File(zipPath).writeAsBytes([0x50, 0x4B, 0x03, 0x04]);
+      _fakeBackupZipService.exportPath = zipPath;
+
+      final service = EnhancedBackupService.withServices(
+        _RealDbWrapper(_realDb),
+        mockConfigRepo,
+        _fakeBackupService,
+        _fakeBackupZipService,
+      );
+
+      await service.exportBackup(
+        BackupType.zipDbOnly,
+        shareAfterExport: false,
+      );
+
+      verify(() => mockConfigRepo.addBackupHistory(any())).called(1);
+
+      await tempDir.delete(recursive: true);
+    });
+
+    test('throws when BackupService export fails', () async {
+      _fakeBackupService.exportError = Exception('Export failed');
+
+      final service = EnhancedBackupService.withServices(
+        _RealDbWrapper(_realDb),
+        mockConfigRepo,
+        _fakeBackupService,
+        _fakeBackupZipService,
+      );
+
+      await expectLater(
+        service.exportBackup(BackupType.json),
+        throwsA(isA<Exception>()),
+      );
+    });
+
+    test('cleanupOldBackupHistory is called after successful export', () async {
+      final tempDir = Directory.systemTemp.createTempSync();
+      final jsonPath = '${tempDir.path}/test_export.json';
+      await File(jsonPath).writeAsString('{}');
+      _fakeBackupService.exportPath = jsonPath;
+
+      final service = EnhancedBackupService.withServices(
+        _RealDbWrapper(_realDb),
+        mockConfigRepo,
+        _fakeBackupService,
+        _fakeBackupZipService,
+      );
+
+      await service.exportBackup(BackupType.json);
+
+      verifyInOrder([
+        () => mockConfigRepo.addBackupHistory(any()),
+        () => mockConfigRepo.cleanupOldBackupHistory(20),
+      ]);
+
+      await tempDir.delete(recursive: true);
+    });
+
+    test('backup history contains correct fish and equipment counts', () async {
+      await _realDb.insert('fish_catches', {'species': 'Bass'});
+      await _realDb.insert('equipments', {'type': 'rod', 'is_deleted': 0});
+
+      final tempDir = Directory.systemTemp.createTempSync();
+      final jsonPath = '${tempDir.path}/test_export.json';
+      await File(jsonPath).writeAsString('{}');
+      _fakeBackupService.exportPath = jsonPath;
+
+      // Re-stub with capture for this test (clears previous stub from setUp)
+      BackupHistory? capturedHistory;
+      when(() => mockConfigRepo.addBackupHistory(any())).thenAnswer((inv) async {
+        capturedHistory = inv.positionalArguments[0] as BackupHistory;
+        return 1;
+      });
+      when(() => mockConfigRepo.cleanupOldBackupHistory(any()))
+          .thenAnswer((_) async => 0);
+
+      final service = EnhancedBackupService.withServices(
+        _RealDbWrapper(_realDb),
+        mockConfigRepo,
+        _fakeBackupService,
+        _fakeBackupZipService,
+      );
+
+      await service.exportBackup(BackupType.json);
+
+      expect(capturedHistory, isNotNull);
+      expect(capturedHistory!.fishCount, equals(1));
+      expect(capturedHistory!.equipmentCount, equals(1));
+      expect(capturedHistory!.backupType, equals(BackupType.json));
+
+      await tempDir.delete(recursive: true);
     });
   });
 }
