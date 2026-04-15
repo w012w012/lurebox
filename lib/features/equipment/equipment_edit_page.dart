@@ -25,12 +25,7 @@ class EquipmentEditPage extends ConsumerStatefulWidget {
 class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
-  bool _isLoading = true;
   Map<String, dynamic>? _loadedEquipment;
-  bool _loadDataFromMapCalled = false; // DEBUG flag
-  bool _loadDataFromMapCompleted = false; // DEBUG flag - did it complete without error
-  String _stateAfterLoadLength = 'NOT_CALLED'; // DEBUG flag
-
   bool _isLoadingEquipment = false;
 
   // _params is computed dynamically to always match widget.type
@@ -55,37 +50,15 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       final equipment = await service.getById(widget.equipmentId!);
 
       // Equipment not found - just return, don't show error for edit
-      if (equipment == null) {
-        debugPrint('[_loadEquipmentData] equipment not found for id: ${widget.equipmentId}');
-        return;
-      }
-
-      debugPrint('[_loadEquipmentData] loaded equipment - brand: ${equipment.brand}, model: ${equipment.model}, length: ${equipment.length}');
+      if (equipment == null) return;
 
       final equipmentMap = equipment.toMap();
       _loadedEquipment = equipmentMap;
 
-      // DEBUG: show what's in equipmentMap
-      debugPrint('[_loadEquipmentData] equipmentMap keys: ${equipmentMap.keys.toList()}');
-      debugPrint('[_loadEquipmentData] length from equipmentMap: ${equipmentMap['length']}');
-
-      // Update ViewModel with loaded data - _params is stable (only type changes)
-      // This should update state.length to 1.98
+      // Update ViewModel with loaded data
       ref
           .read(equipmentEditViewModelProvider(_params).notifier)
           .loadDataFromMap(equipmentMap);
-
-      _loadDataFromMapCalled = true; // DEBUG flag
-      // Immediately check state after loadDataFromMap
-      final stateAfterLoad = ref.read(equipmentEditViewModelProvider(_params));
-      _stateAfterLoadLength = stateAfterLoad.length; // DEBUG: store for display
-      debugPrint('[_loadEquipmentData] immediate state check - length: ${stateAfterLoad.length}');
-
-      _loadDataFromMapCompleted = true; // DEBUG flag - set after loadDataFromMap completes
-
-      debugPrint('[_loadEquipmentData] AFTER loadDataFromMap - calling setState to update _isLoading=false');
-
-      debugPrint('[_loadEquipmentData] state after load - type: ${widget.type}');
 
       // Create/update controllers with loaded values
       _getOrCreateController('brand', equipment.brand ?? '');
@@ -94,17 +67,12 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       _getOrCreateController('purchaseDate',
           equipment.purchaseDate?.toIso8601String().split('T').first ?? '');
 
-      // Sync type-specific controllers from equipment map (controllers may have been created with empty values on first build)
+      // Sync type-specific controllers from equipment map
       _syncTypeSpecificControllers(equipmentMap);
-
-      debugPrint('[_loadEquipmentData] controller length text: ${_controllers['length']?.text}');
-      debugPrint('[_loadEquipmentData] AFTER loadDataFromMap, _loadedEquipment[length]=${_loadedEquipment?['length']}');
 
       if (mounted) {
         setState(() {
           _loadedEquipment = equipmentMap;
-          _isLoading = false;
-          // DON'T change _params - keep provider stable!
         });
       }
     } finally {
@@ -123,8 +91,6 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   TextEditingController _getOrCreateController(String field, String value) {
     final controller = _controllers.putIfAbsent(
         field, () => TextEditingController(text: value));
-    // Only update controller text if value is not empty AND different
-    // This preserves user input in add mode when state might be empty
     if (value.isNotEmpty && controller.text != value) {
       controller.text = value;
     }
@@ -132,7 +98,6 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   }
 
   void _syncTypeSpecificControllers(Map<String, dynamic> equipment) {
-    // Sync rod/reel/lure controllers from equipment map in case they were created with empty values on first build
     switch (widget.type) {
       case 'rod':
         _getOrCreateController('length', equipment['length']?.toString() ?? '');
@@ -174,7 +139,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     final state = ref.watch(equipmentEditViewModelProvider(params));
     final notifier = ref.read(equipmentEditViewModelProvider(params).notifier);
 
-    // Show loading indicator while fetching equipment data in edit mode
+    // Show loading indicator while fetching equipment data
     if (_isLoadingEquipment && widget.equipmentId != null) {
       return Scaffold(
         body: Center(
@@ -189,20 +154,6 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
         ),
       );
     }
-
-    // DEBUG: Show ALL values on screen
-    final debugInfo = 'equipmentId=${widget.equipmentId} '
-        '_isLoading=$_isLoading '
-        '_isLoadingEquipment=$_isLoadingEquipment '
-        '_loadDataFromMapCalled=$_loadDataFromMapCalled '
-        '_loadDataFromMapCompleted=$_loadDataFromMapCompleted '
-        '_stateAfterLoadLength=$_stateAfterLoadLength '
-        '_params.type=${_params.type} '
-        '_params.equipment=${_params.equipment?['id']} '
-        '_loadedEquipment.length=${_loadedEquipment?['length']} '
-        'state.type=${state.type} '
-        'state.length=${state.length} '
-        'state.sections=${state.sections}';
 
     return Scaffold(
       appBar: AppBar(
@@ -227,17 +178,6 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             children: [
-              // DEBUG: Show state values
-              Container(
-                width: double.infinity,
-                color: Colors.orange,
-                padding: const EdgeInsets.all(12),
-                margin: const EdgeInsets.only(bottom: 8),
-                child: Text(
-                  'DEBUG: $debugInfo',
-                  style: const TextStyle(color: Colors.black, fontSize: 12),
-                ),
-              ),
               _buildCard([
                 _buildSectionTitle(strings.basicInfo),
                 const SizedBox(height: 12),
