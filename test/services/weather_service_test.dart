@@ -63,6 +63,10 @@ void main() {
       expect(getWeatherDescription(71), equals('大雪'));
     });
 
+    test('returns 大雪 for code 73', () {
+      expect(getWeatherDescription(73), equals('大雪'));
+    });
+
     test('returns 大雪 for code 75', () {
       expect(getWeatherDescription(75), equals('大雪'));
     });
@@ -197,19 +201,15 @@ void main() {
       expect(data.weatherCode, equals(3));
     });
 
-    test('immutability - fields cannot be modified after creation', () {
+    test('fields are immutable after creation', () {
       const data = WeatherData(airTemperature: 25.0);
-      // This would not compile if we tried to assign: data.airTemperature = 30.0;
       expect(data.airTemperature, equals(25.0));
     });
   });
 
-  group('WeatherService - WeatherApiClient abstraction', () {
-    test('WeatherService accepts custom apiClient', () {
-      // This test verifies that the WeatherService constructor accepts
-      // an optional apiClient parameter for dependency injection
-      final service = WeatherService();
-      expect(service, isA<WeatherService>());
+  group('WeatherService - instantiation', () {
+    test('can be instantiated without arguments', () {
+      expect(WeatherService(), isA<WeatherService>());
     });
   });
 }
