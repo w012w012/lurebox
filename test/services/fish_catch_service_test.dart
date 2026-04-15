@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
@@ -51,10 +52,12 @@ void main() {
     String? locationName,
     double? latitude,
     double? longitude,
+    String? imagePath,
   }) {
     return FishCatch(
       id: id,
-      imagePath: '/test/fish_$id.jpg',
+      imagePath: imagePath ?? '/test/fish_$id.jpg',
+      watermarkedImagePath: null,
       species: species,
       length: length,
       weight: weight,
@@ -142,6 +145,125 @@ void main() {
       });
     });
 
+    group('delete — image file cleanup', () {
+      late Directory tempDir;
+
+      setUp(() async {
+        tempDir = await Directory.systemTemp.createTemp('lurebox_test_');
+      });
+
+      tearDown(() async {
+        if (await tempDir.exists()) {
+          await tempDir.delete(recursive: true);
+        }
+      });
+
+      test('deletes imagePath file when fish has a non-empty image path', () async {
+        // Arrange — create a real temp file
+        final imageFile = File('${tempDir.path}/fish_5.jpg');
+        await imageFile.writeAsString('fake image data');
+        expect(await imageFile.exists(), isTrue);
+
+        final fish = createFishCatch(
+          id: 5,
+          species: 'Bass',
+          imagePath: imageFile.path,
+        );
+        when(() => mockRepository.getById(5)).thenAnswer((_) async => fish);
+        when(() => mockRepository.delete(5)).thenAnswer((_) async {});
+
+        // Act
+        await service.delete(5);
+
+        // Assert — file should be gone
+        expect(await imageFile.exists(), isFalse);
+        verify(() => mockRepository.delete(5)).called(1);
+      });
+
+      test('deletes both imagePath and watermarkedImagePath when both exist', () async {
+        final imageFile = File('${tempDir.path}/fish_6.jpg');
+        final watermarkedFile = File('${tempDir.path}/fish_6_wm.jpg');
+        await imageFile.writeAsString('original');
+        await watermarkedFile.writeAsString('watermarked');
+        expect(await imageFile.exists(), isTrue);
+        expect(await watermarkedFile.exists(), isTrue);
+
+        final now = DateTime.now();
+        final fish = FishCatch(
+          id: 6,
+          imagePath: imageFile.path,
+          watermarkedImagePath: watermarkedFile.path,
+          species: 'Trout',
+          length: 30.0,
+          fate: FishFateType.release,
+          catchTime: now,
+          createdAt: now,
+          updatedAt: now,
+        );
+
+        when(() => mockRepository.getById(6)).thenAnswer((_) async => fish);
+        when(() => mockRepository.delete(6)).thenAnswer((_) async {});
+
+        await service.delete(6);
+
+        expect(await imageFile.exists(), isFalse);
+        expect(await watermarkedFile.exists(), isFalse);
+      });
+
+      test('skips deletion when imagePath is empty string', () async {
+        // FishCatch allows empty imagePath; _deleteImageFiles skips empty strings
+        final fish = createFishCatch(
+          id: 7,
+          species: 'Bass',
+          imagePath: '', // empty — no file to delete
+        );
+        when(() => mockRepository.getById(7)).thenAnswer((_) async => fish);
+        when(() => mockRepository.delete(7)).thenAnswer((_) async {});
+
+        // Should complete without error
+        await service.delete(7);
+
+        verify(() => mockRepository.delete(7)).called(1);
+      });
+
+      test('does not throw when image file does not exist on disk', () async {
+        // File referenced in imagePath doesn't exist — should not throw
+        final fish = createFishCatch(
+          id: 8,
+          species: 'Pike',
+          imagePath: '${tempDir.path}/nonexistent_8.jpg',
+        );
+        expect(await File(fish.imagePath).exists(), isFalse);
+
+        when(() => mockRepository.getById(8)).thenAnswer((_) async => fish);
+        when(() => mockRepository.delete(8)).thenAnswer((_) async {});
+
+        // Should not throw even though file doesn't exist
+        await service.delete(8);
+        verify(() => mockRepository.delete(8)).called(1);
+      });
+
+      test('deletes files before calling repository.delete()', () async {
+        // Verifies the order: file deletion happens first, then DB deletion
+        final imageFile = File('${tempDir.path}/fish_9.jpg');
+        await imageFile.writeAsString('data');
+
+        final fish = createFishCatch(id: 9, species: 'Bass', imagePath: imageFile.path);
+
+        bool repositoryDeleteCalled = false;
+        when(() => mockRepository.getById(9)).thenAnswer((_) async => fish);
+        when(() => mockRepository.delete(9)).thenAnswer((_) async {
+          // When repository.delete is called, the file should already be gone
+          repositoryDeleteCalled = true;
+          expect(await imageFile.exists(), isFalse,
+              reason: 'image should be deleted BEFORE repository.delete()');
+        });
+
+        await service.delete(9);
+        expect(repositoryDeleteCalled, isTrue);
+      });
+    });
+
     group('deleteMultiple', () {
       test('deletes multiple records', () async {
         // Arrange
@@ -178,6 +300,84 @@ void main() {
 
         // Assert
         verify(() => mockRepository.deleteMultiple([1, 2])).called(1);
+      });
+    });
+
+    group('deleteMultiple — image file cleanup', () {
+      late Directory tempDir;
+
+      setUp(() async {
+        tempDir = await Directory.systemTemp.createTemp('lurebox_test_multi_');
+      });
+
+      tearDown(() async {
+        if (await tempDir.exists()) {
+          await tempDir.delete(recursive: true);
+        }
+      });
+
+      test('deletes image files for all fish before deleting records', () async {
+        final file1 = File('${tempDir.path}/fish_1.jpg');
+        final file2 = File('${tempDir.path}/fish_2.jpg');
+        await file1.writeAsString('img1');
+        await file2.writeAsString('img2');
+        expect(await file1.exists(), isTrue);
+        expect(await file2.exists(), isTrue);
+
+        final now = DateTime.now();
+        final fish1 = FishCatch(
+          id: 1, imagePath: file1.path, species: 'Bass',
+          length: 30.0, fate: FishFateType.release,
+          catchTime: now, createdAt: now, updatedAt: now,
+        );
+        final fish2 = FishCatch(
+          id: 2, imagePath: file2.path, species: 'Trout',
+          length: 25.0, fate: FishFateType.release,
+          catchTime: now, createdAt: now, updatedAt: now,
+        );
+
+        when(() => mockRepository.getById(1)).thenAnswer((_) async => fish1);
+        when(() => mockRepository.getById(2)).thenAnswer((_) async => fish2);
+        when(() => mockRepository.deleteMultiple([1, 2]))
+            .thenAnswer((_) async {});
+
+        await service.deleteMultiple([1, 2]);
+
+        expect(await file1.exists(), isFalse);
+        expect(await file2.exists(), isFalse);
+        verify(() => mockRepository.deleteMultiple([1, 2])).called(1);
+      });
+
+      test('skips deletion for null fish without crashing', () async {
+        // getById returns null for id=3 — no file to delete, should not throw
+        when(() => mockRepository.getById(1))
+            .thenAnswer((_) async => createFishCatch(id: 1, species: 'Bass'));
+        when(() => mockRepository.getById(2))
+            .thenAnswer((_) async => createFishCatch(id: 2, species: 'Trout'));
+        when(() => mockRepository.getById(3)).thenAnswer((_) async => null);
+        when(() => mockRepository.deleteMultiple([1, 2, 3]))
+            .thenAnswer((_) async {});
+
+        await service.deleteMultiple([1, 2, 3]);
+
+        verify(() => mockRepository.deleteMultiple([1, 2, 3])).called(1);
+      });
+
+      test('deletes only files for non-null fish when one fish is missing', () async {
+        final file1 = File('${tempDir.path}/fish_4.jpg');
+        await file1.writeAsString('img4');
+
+        final fish1 = createFishCatch(id: 4, species: 'Bass', imagePath: file1.path);
+
+        when(() => mockRepository.getById(4)).thenAnswer((_) async => fish1);
+        when(() => mockRepository.getById(5)).thenAnswer((_) async => null);
+        when(() => mockRepository.deleteMultiple([4, 5]))
+            .thenAnswer((_) async {});
+
+        await service.deleteMultiple([4, 5]);
+
+        expect(await file1.exists(), isFalse);
+        verify(() => mockRepository.deleteMultiple([4, 5])).called(1);
       });
     });
 
