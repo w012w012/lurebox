@@ -1,5 +1,6 @@
 import '../models/fish_catch.dart';
 import '../utils/unit_converter.dart';
+import 'weather_service.dart' show getWeatherDescription;
 
 /// CSV 导出器 - 渔获数据转换为 CSV 格式
 ///
@@ -28,32 +29,7 @@ class CsvExporter {
 
   /// 获取天气描述
   static String _getWeatherDescription(int? weatherCode) {
-    if (weatherCode == null) return '';
-    // WMO Weather interpretation codes (WW)
-    final weatherMap = {
-      0: '晴',
-      1: '多云',
-      2: '多云',
-      3: '阴天',
-      45: '雾',
-      48: '雾凇',
-      51: '毛毛雨',
-      53: '中雨',
-      55: '大雨',
-      61: '小雨',
-      63: '中雨',
-      65: '大雨',
-      71: '小雪',
-      73: '中雪',
-      75: '大雪',
-      80: '阵雨',
-      81: '强阵雨',
-      82: '暴雨',
-      95: '雷雨',
-      96: '雷暴伴冰雹',
-      99: '雷暴伴大冰雹',
-    };
-    return weatherMap[weatherCode] ?? '未知';
+    return getWeatherDescription(weatherCode);
   }
 
   static Future<String> exportFishCatches({

@@ -3,6 +3,8 @@ import 'dart:convert';
 /// 水印样式枚举
 enum WatermarkStyle {
   minimal, // 简约左下
+  elegant, // 优雅右下
+  bold, // 大字居中
 }
 
 /// 水印信息类型枚举
@@ -30,6 +32,53 @@ enum WatermarkPosition {
   center, // 居中
 }
 
+/// 预设样式参数
+class WatermarkStylePreset {
+  final double blurRadius;
+  final double backgroundOpacity;
+  final int backgroundColor;
+  final double fontSize;
+  final int textColor;
+  final WatermarkPosition position;
+
+  const WatermarkStylePreset({
+    required this.blurRadius,
+    required this.backgroundOpacity,
+    required this.backgroundColor,
+    required this.fontSize,
+    required this.textColor,
+    required this.position,
+  });
+}
+
+/// 预设样式参数映射
+const watermarkStylePresets = {
+  WatermarkStyle.minimal: WatermarkStylePreset(
+    blurRadius: 10.0,
+    backgroundOpacity: 0.5,
+    backgroundColor: 0xFF000000,
+    fontSize: 14.0,
+    textColor: 0xFFFFFFFF,
+    position: WatermarkPosition.bottomLeft,
+  ),
+  WatermarkStyle.elegant: WatermarkStylePreset(
+    blurRadius: 16.0,
+    backgroundOpacity: 0.35,
+    backgroundColor: 0xFF1A1A2E,
+    fontSize: 12.0,
+    textColor: 0xFFE0E0E0,
+    position: WatermarkPosition.bottomRight,
+  ),
+  WatermarkStyle.bold: WatermarkStylePreset(
+    blurRadius: 6.0,
+    backgroundOpacity: 0.7,
+    backgroundColor: 0xFF000000,
+    fontSize: 20.0,
+    textColor: 0xFFFFFFFF,
+    position: WatermarkPosition.center,
+  ),
+};
+
 /// 水印设置
 class WatermarkSettings {
   final bool enabled;
@@ -42,6 +91,7 @@ class WatermarkSettings {
   final double fontSize; // 字体大小
   final int textColor; // 字体颜色（ARGB）
   final WatermarkPosition position; // 水印位置
+  final String? customText; // 自定义文字
 
   const WatermarkSettings({
     this.enabled = true,
@@ -61,6 +111,7 @@ class WatermarkSettings {
     this.fontSize = 14.0,
     this.textColor = 0xFFFFFFFF, // 白色
     this.position = WatermarkPosition.bottomLeft,
+    this.customText,
   });
 
   WatermarkSettings copyWith({
@@ -73,6 +124,7 @@ class WatermarkSettings {
     double? fontSize,
     int? textColor,
     WatermarkPosition? position,
+    String? customText,
   }) {
     return WatermarkSettings(
       enabled: enabled ?? this.enabled,
@@ -84,6 +136,7 @@ class WatermarkSettings {
       fontSize: fontSize ?? this.fontSize,
       textColor: textColor ?? this.textColor,
       position: position ?? this.position,
+      customText: customText ?? this.customText,
     );
   }
 
@@ -98,6 +151,7 @@ class WatermarkSettings {
       'fontSize': fontSize,
       'textColor': textColor,
       'position': position.name,
+      if (customText != null) 'customText': customText,
     };
   }
 
@@ -138,6 +192,7 @@ class WatermarkSettings {
         (e) => e.name == json['position'],
         orElse: () => WatermarkPosition.bottomLeft,
       ),
+      customText: json['customText'] as String?,
     );
   }
 

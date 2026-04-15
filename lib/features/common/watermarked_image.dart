@@ -409,6 +409,11 @@ class WatermarkPainter extends CustomPainter {
       }
     }
 
+    // 自定义文字（倒数第二行）
+    if (settings.customText != null && settings.customText!.isNotEmpty) {
+      lines.add(settings.customText!);
+    }
+
     // App名称放在最后
     if (settings.infoTypes.contains(WatermarkInfoType.appName)) {
       lines.add(strings.fromLureBox);
@@ -604,6 +609,23 @@ class WatermarkExporter {
     String? rodName,
     String? reelName,
     String? lureName,
+    String? rodBrand,
+    String? rodModel,
+    String? rodMaterial,
+    String? rodLength,
+    String? rodLengthUnit,
+    String? rodHardness,
+    String? rodAction,
+    String? reelBrand,
+    String? reelModel,
+    String? reelRatio,
+    String? lureBrand,
+    String? lureModel,
+    String? lureSize,
+    String? lureSizeUnit,
+    String? lureColor,
+    String? lureWeight,
+    String? lureWeightUnit,
     double? airTemperature,
     double? pressure,
     int? weatherCode,
@@ -643,6 +665,23 @@ class WatermarkExporter {
         rodName: rodName,
         reelName: reelName,
         lureName: lureName,
+        rodBrand: rodBrand,
+        rodModel: rodModel,
+        rodMaterial: rodMaterial,
+        rodLength: rodLength,
+        rodLengthUnit: rodLengthUnit,
+        rodHardness: rodHardness,
+        rodAction: rodAction,
+        reelBrand: reelBrand,
+        reelModel: reelModel,
+        reelRatio: reelRatio,
+        lureBrand: lureBrand,
+        lureModel: lureModel,
+        lureSize: lureSize,
+        lureSizeUnit: lureSizeUnit,
+        lureColor: lureColor,
+        lureWeight: lureWeight,
+        lureWeightUnit: lureWeightUnit,
         airTemperature: airTemperature,
         pressure: pressure,
         weatherCode: weatherCode,

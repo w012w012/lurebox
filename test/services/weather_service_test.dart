@@ -107,8 +107,8 @@ void main() {
       expect(getWeatherDescription(null), equals(''));
     });
 
-    test('returns empty string for unknown code', () {
-      expect(getWeatherDescription(999), equals(''));
+    test('returns 未知 for unknown code', () {
+      expect(getWeatherDescription(999), equals('未知'));
     });
   });
 
@@ -152,9 +152,9 @@ void main() {
       expect(data.weatherDescription, equals('晴'));
     });
 
-    test('weatherDescription returns empty string for unknown code', () {
+    test('weatherDescription returns 未知 for unknown code', () {
       const data = WeatherData(weatherCode: 999);
-      expect(data.weatherDescription, equals(''));
+      expect(data.weatherDescription, equals('未知'));
     });
 
     test('weatherDescription returns correct description for rain codes', () {

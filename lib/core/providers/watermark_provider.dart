@@ -26,7 +26,16 @@ class WatermarkSettingsNotifier extends StateNotifier<WatermarkSettings> {
   }
 
   Future<void> updateStyle(WatermarkStyle style) async {
-    final newSettings = state.copyWith(style: style);
+    final preset = watermarkStylePresets[style]!;
+    final newSettings = state.copyWith(
+      style: style,
+      blurRadius: preset.blurRadius,
+      backgroundOpacity: preset.backgroundOpacity,
+      backgroundColor: preset.backgroundColor,
+      fontSize: preset.fontSize,
+      textColor: preset.textColor,
+      position: preset.position,
+    );
     await updateSettings(newSettings);
   }
 
@@ -81,6 +90,11 @@ class WatermarkSettingsNotifier extends StateNotifier<WatermarkSettings> {
 
   Future<void> updatePosition(WatermarkPosition position) async {
     final newSettings = state.copyWith(position: position);
+    await updateSettings(newSettings);
+  }
+
+  Future<void> updateCustomText(String? customText) async {
+    final newSettings = state.copyWith(customText: customText);
     await updateSettings(newSettings);
   }
 }

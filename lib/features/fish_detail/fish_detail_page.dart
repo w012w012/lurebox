@@ -1,9 +1,6 @@
-import 'dart:io';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../core/constants/strings.dart';
@@ -427,18 +424,8 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
         ),
       );
 
-      final imageFile = File(imagePath);
-      final bytes = await imageFile.readAsBytes();
-      final codec = await ui.instantiateImageCodec(bytes);
-      final frame = await codec.getNextFrame();
-
-      final recorder = ui.PictureRecorder();
-      final canvas = Canvas(recorder);
-      final paint = Paint()..isAntiAlias = true;
-
-      canvas.drawImage(frame.image, Offset.zero, paint);
-
-      final watermarkPainter = WatermarkPainter(
+      final watermarkedPath = await WatermarkExporter.exportWatermarkedImage(
+        imagePath: fish['image_path'] as String,
         species: fish['species'] as String,
         length: fishLength,
         weight: fishWeight,
@@ -478,36 +465,23 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
         displayTemperatureUnit: units.temperatureUnit,
       );
 
-      watermarkPainter.paint(
-        canvas,
-        Size(frame.image.width.toDouble(), frame.image.height.toDouble()),
-      );
-
-      final picture = recorder.endRecording();
-      final watermarkedImage = await picture.toImage(
-        frame.image.width,
-        frame.image.height,
-      );
-      final byteData = await watermarkedImage.toByteData(
-        format: ui.ImageByteFormat.png,
-      );
-      final watermarkedBytes = byteData!.buffer.asUint8List();
-
-      final tempDir = await getTemporaryDirectory();
-      final tempFile = File(
-        '${tempDir.path}/lurebox_share_${DateTime.now().millisecondsSinceEpoch}.png',
-      );
-      await tempFile.writeAsBytes(watermarkedBytes);
+      if (watermarkedPath == null) {
+        if (context.mounted) {
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(strings.shareFailed)),
+          );
+        }
+        return;
+      }
 
       await Share.shareXFiles([
-        XFile(tempFile.path),
+        XFile(watermarkedPath),
       ],
           text:
               '${fish['species']} - ${displayLength.toStringAsFixed(2)}${UnitConverter.getLengthSymbol(units.fishLengthUnit)}');
 
-      try {
-        await tempFile.delete();
-      } catch (_) {}
+      await WatermarkExporter.deleteTempFile(watermarkedPath);
 
       if (context.mounted) Navigator.of(context).pop();
     } catch (e) {
