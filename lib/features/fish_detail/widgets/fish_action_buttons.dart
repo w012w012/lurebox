@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
 
 class FishActionButtons extends StatelessWidget {
@@ -8,6 +9,7 @@ class FishActionButtons extends StatelessWidget {
   final VoidCallback? onShare;
   final bool isDeleting;
   final bool isSharing;
+  final AppStrings strings;
 
   const FishActionButtons({
     super.key,
@@ -16,6 +18,7 @@ class FishActionButtons extends StatelessWidget {
     this.onShare,
     this.isDeleting = false,
     this.isSharing = false,
+    required this.strings,
   });
 
   @override
@@ -23,16 +26,16 @@ class FishActionButtons extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _ActionButton(icon: Icons.edit, label: '编辑', onPressed: onEdit),
+        _ActionButton(icon: Icons.edit, label: strings.edit, onPressed: onEdit),
         _ActionButton(
           icon: Icons.share,
-          label: '分享',
+          label: strings.share,
           onPressed: isSharing ? null : onShare,
           isLoading: isSharing,
         ),
         _ActionButton(
           icon: Icons.delete_outline,
-          label: '删除',
+          label: strings.delete,
           onPressed: isDeleting ? null : onDelete,
           isLoading: isDeleting,
           isDestructive: true,

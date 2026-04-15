@@ -8,7 +8,7 @@ import '../../../core/models/app_settings.dart';
 import '../../../core/models/fish_catch.dart';
 import '../../../core/providers/app_settings_provider.dart';
 import '../../../core/utils/unit_converter.dart';
-import '../../../core/services/weather_service.dart';
+import '../../../core/services/weather_service.dart' show getLocalizedWeatherDescription;
 
 String _buildRodDisplay(Map<String, dynamic>? rod, String displayUnit,
     {bool isChinese = true}) {
@@ -251,8 +251,8 @@ class FishInfoCard extends ConsumerWidget {
               if (weatherCode != null)
                 _InfoRow(
                   icon: Icons.wb_sunny,
-                  label: '天气',
-                  value: getWeatherDescription(weatherCode),
+                  label: strings.weather,
+                  value: getLocalizedWeatherDescription(weatherCode, strings),
                   iconColor: AppColors.accentLight,
                 ),
             ],

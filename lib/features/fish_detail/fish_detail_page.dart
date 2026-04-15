@@ -275,6 +275,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
             child: SafeArea(
               top: false,
               child: FishActionButtons(
+                strings: strings,
                 onEdit: () => _editFish(context, fish, strings),
                 onShare: () => _shareFish(
                   context,

@@ -465,6 +465,39 @@ class AppStrings {
   final String airTemperature;
   final String pressure;
 
+  // 天气描述（WMO 代码映射）
+  final String weatherClear;
+  final String weatherMainlyClear;
+  final String weatherPartlyCloudy;
+  final String weatherOvercast;
+  final String weatherFog;
+  final String weatherDrizzle;
+  final String weatherFreezingDrizzle;
+  final String weatherRain;
+  final String weatherFreezingRain;
+  final String weatherSnowFall;
+  final String weatherSnowGrains;
+  final String weatherRainShowers;
+  final String weatherSnowShowers;
+  final String weatherThunderstorm;
+  final String weatherThunderstormHail;
+  final String weatherUnknown;
+
+  // 天气选项（下拉选择器，简化代码）
+  final String weatherOption0;
+  final String weatherOption1;
+  final String weatherOption2;
+  final String weatherOption3;
+  final String weatherOption4;
+  final String weatherOption5;
+  final String weatherOption6;
+
+  // 相机/编辑页面
+  final String modifyCatchLocation;
+  final String locationName;
+  final String modifyWeather;
+  final String notSet;
+
   const AppStrings({
     required this.appName,
     required this.home,
@@ -909,6 +942,36 @@ class AppStrings {
     required this.goToSpeciesManagement,
     required this.airTemperature,
     required this.pressure,
+    // 天气描述
+    required this.weatherClear,
+    required this.weatherMainlyClear,
+    required this.weatherPartlyCloudy,
+    required this.weatherOvercast,
+    required this.weatherFog,
+    required this.weatherDrizzle,
+    required this.weatherFreezingDrizzle,
+    required this.weatherRain,
+    required this.weatherFreezingRain,
+    required this.weatherSnowFall,
+    required this.weatherSnowGrains,
+    required this.weatherRainShowers,
+    required this.weatherSnowShowers,
+    required this.weatherThunderstorm,
+    required this.weatherThunderstormHail,
+    required this.weatherUnknown,
+    // 天气选项
+    required this.weatherOption0,
+    required this.weatherOption1,
+    required this.weatherOption2,
+    required this.weatherOption3,
+    required this.weatherOption4,
+    required this.weatherOption5,
+    required this.weatherOption6,
+    // 相机/编辑页面
+    required this.modifyCatchLocation,
+    required this.locationName,
+    required this.modifyWeather,
+    required this.notSet,
   });
 
   static const chinese = AppStrings(
@@ -1365,6 +1428,36 @@ class AppStrings {
     goToSpeciesManagement: '点击前往品种管理',
     airTemperature: '气温',
     pressure: '气压',
+    // 天气描述（WMO）
+    weatherClear: '晴',
+    weatherMainlyClear: '晴间多云',
+    weatherPartlyCloudy: '多云',
+    weatherOvercast: '阴',
+    weatherFog: '雾',
+    weatherDrizzle: '小雨',
+    weatherFreezingDrizzle: '冻雨',
+    weatherRain: '中雨',
+    weatherFreezingRain: '雨夹雪',
+    weatherSnowFall: '大雪',
+    weatherSnowGrains: '雪粒',
+    weatherRainShowers: '暴雨',
+    weatherSnowShowers: '阵雪',
+    weatherThunderstorm: '雷暴',
+    weatherThunderstormHail: '雷暴加冰雹',
+    weatherUnknown: '未知',
+    // 天气选项
+    weatherOption0: '☀️ 晴',
+    weatherOption1: '⛅ 晴间多云',
+    weatherOption2: '☁️ 多云',
+    weatherOption3: '🌧️ 小雨',
+    weatherOption4: '⛈️ 雷暴',
+    weatherOption5: '❄️ 雪',
+    weatherOption6: '🌫️ 雾',
+    // 相机/编辑页面
+    modifyCatchLocation: '修改钓获地点',
+    locationName: '地点名称',
+    modifyWeather: '修改天气信息',
+    notSet: '未设置',
   );
 
   static const english = AppStrings(
@@ -1830,5 +1923,35 @@ class AppStrings {
     goToSpeciesManagement: 'Go to species management',
     airTemperature: 'Air Temp',
     pressure: 'Pressure',
+    // 天气描述（WMO）
+    weatherClear: 'Clear',
+    weatherMainlyClear: 'Mainly Clear',
+    weatherPartlyCloudy: 'Partly Cloudy',
+    weatherOvercast: 'Overcast',
+    weatherFog: 'Fog',
+    weatherDrizzle: 'Drizzle',
+    weatherFreezingDrizzle: 'Freezing Drizzle',
+    weatherRain: 'Rain',
+    weatherFreezingRain: 'Freezing Rain',
+    weatherSnowFall: 'Snowfall',
+    weatherSnowGrains: 'Snow Grains',
+    weatherRainShowers: 'Rain Showers',
+    weatherSnowShowers: 'Snow Showers',
+    weatherThunderstorm: 'Thunderstorm',
+    weatherThunderstormHail: 'Thunderstorm with Hail',
+    weatherUnknown: 'Unknown',
+    // 天气选项
+    weatherOption0: '☀️ Clear',
+    weatherOption1: '⛅ Mainly Clear',
+    weatherOption2: '☁️ Cloudy',
+    weatherOption3: '🌧️ Drizzle',
+    weatherOption4: '⛈️ Thunderstorm',
+    weatherOption5: '❄️ Snow',
+    weatherOption6: '🌫️ Fog',
+    // 相机/编辑页面
+    modifyCatchLocation: 'Modify Catch Location',
+    locationName: 'Location Name',
+    modifyWeather: 'Modify Weather',
+    notSet: 'Not Set',
   );
 }

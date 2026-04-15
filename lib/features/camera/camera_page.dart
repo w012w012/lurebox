@@ -248,9 +248,9 @@ class _CameraPageState extends ConsumerState<CameraPage> {
             state: state,
             vm: vm,
             strings: strings,
-            onEditLocation: () => _editLocation(state),
+            onEditLocation: () => _editLocation(state, strings),
             onEditTime: () => _editCatchTime(state),
-            onEditWeather: () => _editWeather(state),
+            onEditWeather: () => _editWeather(state, strings),
           ),
           const SizedBox(height: 24),
           _buildSaveButton(state, vm, strings),
@@ -285,9 +285,9 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                   state: state,
                   vm: vm,
                   strings: strings,
-                  onEditLocation: () => _editLocation(state),
+                  onEditLocation: () => _editLocation(state, strings),
                   onEditTime: () => _editCatchTime(state),
-                  onEditWeather: () => _editWeather(state),
+                  onEditWeather: () => _editWeather(state, strings),
                 ),
               ],
             ),
@@ -480,31 +480,31 @@ class _CameraPageState extends ConsumerState<CameraPage> {
 
   // ===== Edit Methods =====
 
-  Future<void> _editLocation(CameraState state) async {
+  Future<void> _editLocation(CameraState state, AppStrings strings) async {
     final controller = TextEditingController(text: state.locationName ?? '');
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('修改钓获地点'),
+        title: Text(strings.modifyCatchLocation),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: '地点名称',
-            border: OutlineInputBorder(),
+          decoration: InputDecoration(
+            labelText: strings.locationName,
+            border: const OutlineInputBorder(),
           ),
           autofocus: true,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
+            child: Text(strings.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               final name = controller.text.trim();
               if (name.isNotEmpty) Navigator.pop(context, name);
             },
-            child: const Text('确认'),
+            child: Text(strings.confirm),
           ),
         ],
       ),
@@ -546,7 +546,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     ref.read(cameraViewModelProvider.notifier).setCatchTime(newTime);
   }
 
-  Future<void> _editWeather(CameraState state) async {
+  Future<void> _editWeather(CameraState state, AppStrings strings) async {
     final temperatureUnit = ref.read(appSettingsProvider).units.temperatureUnit;
     final tempSymbol = UnitConverter.getTemperatureSymbol(temperatureUnit);
     final tempController = TextEditingController(
@@ -558,20 +558,20 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     int? selectedWeatherCode = state.weatherCode ?? 0;
 
     final weatherOptions = [
-      (0, '☀️ 晴'),
-      (1, '⛅ 多云'),
-      (2, '☁️ 阴'),
-      (3, '🌧️ 小雨'),
-      (4, '⛈️ 雷暴'),
-      (5, '❄️ 雪'),
-      (6, '🌫️ 雾'),
+      (0, strings.weatherOption0),
+      (1, strings.weatherOption1),
+      (2, strings.weatherOption2),
+      (3, strings.weatherOption3),
+      (4, strings.weatherOption4),
+      (5, strings.weatherOption5),
+      (6, strings.weatherOption6),
     ];
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          title: const Text('修改天气信息'),
+          title: Text(strings.modifyWeather),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -579,7 +579,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                 TextField(
                   controller: tempController,
                   decoration: InputDecoration(
-                    labelText: '气温 ($tempSymbol)',
+                    labelText: '${strings.airTemperature} ($tempSymbol)',
                     border: const OutlineInputBorder(),
                   ),
                   keyboardType:
@@ -588,9 +588,9 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                 const SizedBox(height: 12),
                 TextField(
                   controller: pressureController,
-                  decoration: const InputDecoration(
-                    labelText: '气压 (hPa)',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: '${strings.pressure} (hPa)',
+                    border: const OutlineInputBorder(),
                   ),
                   keyboardType:
                       const TextInputType.numberWithOptions(decimal: true),
@@ -598,9 +598,9 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                 const SizedBox(height: 12),
                 DropdownButtonFormField<int>(
                   initialValue: selectedWeatherCode,
-                  decoration: const InputDecoration(
-                    labelText: '天气状况',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: strings.weather,
+                    border: const OutlineInputBorder(),
                   ),
                   items: weatherOptions
                       .map((opt) => DropdownMenuItem(
@@ -616,11 +616,11 @@ class _CameraPageState extends ConsumerState<CameraPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('取消'),
+              child: Text(strings.cancel),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('确认'),
+              child: Text(strings.confirm),
             ),
           ],
         ),

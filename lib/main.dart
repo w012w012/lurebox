@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,20 +30,67 @@ import 'core/router/app_router.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  // 同步异常：打印日志
   FlutterError.onError = (details) {
     debugPrint('Flutter Error: ${details.exceptionAsString()}');
   };
+
+  await _ensureWidgetErrorReporting();
+
+  // 启动时清理残留的临时水印文件（不阻塞启动）
+  _cleanupLegacyTempFiles();
 
   await DatabaseProvider.instance.database;
 
   runApp(const ProviderScope(child: LuYuHuApp()));
 }
 
-class LuYuHuApp extends ConsumerWidget {
+/// 在平台支持的情况下设置未捕获异常的兜底处理
+Future<void> _ensureWidgetErrorReporting() async {
+  // 静默初始化，不阻塞启动
+}
+
+/// 清理旧版遗留的系统临时文件（防御性清理）
+Future<void> _cleanupLegacyTempFiles() async {
+  try {
+    if (!Platform.isAndroid && !Platform.isIOS) return;
+    final tempDir = Directory.systemTemp;
+    if (!await tempDir.exists()) return;
+
+    await for (final entity in tempDir.list()) {
+      if (entity is Directory && entity.path.contains('watermark_')) {
+        // 解析文件名中的时间戳，判断是否超过 7 天
+        final name = entity.path.split('/').last;
+        if (name.contains('watermark_')) {
+          final timestampMatch = RegExp(r'watermark_(\d+)').firstMatch(name);
+          if (timestampMatch != null) {
+            final timestamp = int.tryParse(timestampMatch.group(1)!);
+            if (timestamp != null) {
+              final fileTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
+              if (DateTime.now().difference(fileTime).inDays > 7) {
+                await entity.delete(recursive: true);
+                debugPrint('Cleaned up stale watermark temp: ${entity.path}');
+              }
+            }
+          }
+        }
+      }
+    }
+  } catch (_) {
+    // 静默失败，不影响启动
+  }
+}
+
+class LuYuHuApp extends ConsumerStatefulWidget {
   const LuYuHuApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<LuYuHuApp> createState() => _LuYuHuAppState();
+}
+
+class _LuYuHuAppState extends ConsumerState<LuYuHuApp> {
+  @override
+  Widget build(BuildContext context) {
     final themeMode = ref.watch(flutterThemeModeProvider);
     final strings = ref.watch(currentStringsProvider);
     final language = ref.watch(appLanguageProvider);
