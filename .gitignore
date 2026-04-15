@@ -55,3 +55,7 @@ pubspec.yaml.backup
 findings.md
 progress.md
 task_plan.md
+
+# Keystore files (NEVER commit these)
+*.jks
+*.keystore
