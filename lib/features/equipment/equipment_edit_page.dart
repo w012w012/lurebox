@@ -32,16 +32,10 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   String _stateAfterLoadLength = 'NOT_CALLED'; // DEBUG flag
 
   bool _isLoadingEquipment = false;
-  bool _didResetForAddMode = false; // Track if we've reset for add mode this session
 
   // _params is computed dynamically to always match widget.type
   ({String type, Map<String, dynamic>? equipment}) get _params =>
       (type: widget.type, equipment: null);
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void didChangeDependencies() {
@@ -49,7 +43,6 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     // Edit mode - load equipment data
     if (widget.equipmentId != null && !_isLoadingEquipment) {
       _loadEquipmentData();
-      _didResetForAddMode = false; // Clear flag when entering edit mode
     }
   }
 
@@ -173,15 +166,15 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Synchronously reset form in add mode BEFORE reading state
-    // This prevents stale data from showing when navigating from edit→add
-    if (widget.equipmentId == null && !_didResetForAddMode) {
-      ref.read(equipmentEditViewModelProvider(_params).notifier).resetState();
-      _controllers.clear();
-      _didResetForAddMode = true;
-    }
+    final strings = ref.watch(currentStringsProvider);
+    final displayUnits = ref.watch(appSettingsProvider).units;
+    final lineLengthSymbol =
+        UnitConverter.getLengthSymbol(displayUnits.lineLengthUnit);
+    final params = _params;
+    final state = ref.watch(equipmentEditViewModelProvider(params));
+    final notifier = ref.read(equipmentEditViewModelProvider(params).notifier);
 
-    // DEBUG: Show loading state
+    // Show loading indicator while fetching equipment data in edit mode
     if (_isLoadingEquipment && widget.equipmentId != null) {
       return Scaffold(
         body: Center(
@@ -190,20 +183,12 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
             children: [
               const CircularProgressIndicator(),
               const SizedBox(height: 16),
-              Text('Loading... _isLoading=$_isLoading _isLoadingEquipment=$_isLoadingEquipment equipmentId=${widget.equipmentId}'),
+              Text('Loading... equipmentId=${widget.equipmentId}'),
             ],
           ),
         ),
       );
     }
-
-    final strings = ref.watch(currentStringsProvider);
-    final displayUnits = ref.watch(appSettingsProvider).units;
-    final lineLengthSymbol =
-        UnitConverter.getLengthSymbol(displayUnits.lineLengthUnit);
-    final params = _params;
-    final state = ref.watch(equipmentEditViewModelProvider(params));
-    final notifier = ref.read(equipmentEditViewModelProvider(params).notifier);
 
     // DEBUG: Show ALL values on screen
     final debugInfo = 'equipmentId=${widget.equipmentId} '

@@ -932,10 +932,9 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
 // Provider
 // =============================================================================
 
-final equipmentEditViewModelProvider = StateNotifierProvider.family<
-    EquipmentEditViewModel,
-    EquipmentEditState,
-    ({String type, Map<String, dynamic>? equipment})>(
+final equipmentEditViewModelProvider = StateNotifierProvider.autoDispose
+    .family<EquipmentEditViewModel, EquipmentEditState,
+        ({String type, Map<String, dynamic>? equipment})>(
   (ref, params) => EquipmentEditViewModel(
     ref.read(equipmentServiceProvider),
     params.type,
