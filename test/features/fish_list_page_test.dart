@@ -178,13 +178,19 @@ void main() {
     });
 
     testWidgets('filter expanded shows filter panel', (tester) async {
-      const expandedFilterState = FishListState(
-        catches: [],
-        filteredCatches: [],
-        filter: FishFilter(timeFilter: 'all'),
+      // Filter panel lives in the mobile list view which only renders when there are catches
+      // (page shows EmptyView when filteredCatches is empty). Test with data present.
+      await tester.binding.setSurfaceSize(const Size(400, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      final catches = TestDataFactory.createFishCatches(1);
+      final expandedFilterState = FishListState(
+        catches: catches,
+        filteredCatches: catches,
+        filter: const FishFilter(timeFilter: 'all'),
         isLoading: false,
         errorMessage: null,
-        selectedIds: {},
+        selectedIds: const {},
         isSelectionMode: false,
         filterExpanded: true,
         hasMore: false,
