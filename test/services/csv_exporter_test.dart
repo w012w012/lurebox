@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/services/csv_exporter.dart';
+import 'package:lurebox/core/services/weather_service.dart';
 
 void main() {
   group('CsvExporter', () {
@@ -418,31 +419,13 @@ void main() {
 
     group('weather code mapping', () {
       test('maps WMO weather codes correctly', () async {
-        final testCases = {
-          0: '晴',
-          1: '多云',
-          2: '多云',
-          3: '阴天',
-          45: '雾',
-          48: '雾凇',
-          51: '毛毛雨',
-          53: '中雨',
-          55: '大雨',
-          61: '小雨',
-          63: '中雨',
-          65: '大雨',
-          71: '小雪',
-          73: '中雪',
-          75: '大雪',
-          80: '阵雨',
-          81: '强阵雨',
-          82: '暴雨',
-          95: '雷雨',
-          96: '雷暴伴冰雹',
-          99: '雷暴伴大冰雹',
-        };
+        final testCodes = [
+          0, 1, 2, 3, 45, 48, 51, 53, 55, 61, 63, 65, 71, 73, 75, 77, 80, 81,
+          82, 85, 86, 95, 96, 99,
+        ];
 
-        for (final entry in testCases.entries) {
+        for (final code in testCodes) {
+          final expected = getWeatherDescription(code);
           final catches = [
             FishCatch(
               id: 1,
@@ -451,16 +434,35 @@ void main() {
               length: 30.0,
               fate: FishFateType.release,
               catchTime: DateTime(2024, 1, 1),
-              weatherCode: entry.key,
+              weatherCode: code,
               createdAt: DateTime(2024, 1, 1),
               updatedAt: DateTime(2024, 1, 1),
             ),
           ];
 
           final csv = await CsvExporter.exportFishCatches(catches: catches);
-          expect(csv, contains(entry.value),
-              reason: 'Weather code ${entry.key} should map to ${entry.value}');
+          expect(csv, contains(expected),
+              reason: 'Weather code $code should map to $expected');
         }
+      });
+
+      test('maps unknown code to 未知', () async {
+        final catches = [
+          FishCatch(
+            id: 1,
+            imagePath: '/test/fish.jpg',
+            species: 'Test',
+            length: 30.0,
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 1, 1),
+            weatherCode: 999,
+            createdAt: DateTime(2024, 1, 1),
+            updatedAt: DateTime(2024, 1, 1),
+          ),
+        ];
+
+        final csv = await CsvExporter.exportFishCatches(catches: catches);
+        expect(csv, contains('未知'));
       });
     });
 

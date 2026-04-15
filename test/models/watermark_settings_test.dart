@@ -217,9 +217,18 @@ void main() {
   });
 
   group('WatermarkStyle', () {
-    test('only has minimal value', () {
-      expect(WatermarkStyle.values, hasLength(1));
-      expect(WatermarkStyle.values.first, equals(WatermarkStyle.minimal));
+    test('has minimal, elegant, and bold values', () {
+      expect(WatermarkStyle.values, hasLength(3));
+      expect(WatermarkStyle.values, contains(WatermarkStyle.minimal));
+      expect(WatermarkStyle.values, contains(WatermarkStyle.elegant));
+      expect(WatermarkStyle.values, contains(WatermarkStyle.bold));
+    });
+
+    test('has corresponding presets', () {
+      for (final style in WatermarkStyle.values) {
+        expect(watermarkStylePresets[style], isNotNull,
+            reason: 'Style $style should have a preset');
+      }
     });
   });
 

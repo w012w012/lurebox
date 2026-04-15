@@ -7,6 +7,7 @@ import '../../core/models/watermark_settings.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/watermark_provider.dart';
 import '../../widgets/common/premium_card.dart';
+import '../common/watermarked_image.dart';
 
 /// 水印设置页面
 class WatermarkSettingsPage extends ConsumerWidget {
@@ -28,7 +29,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
             const SizedBox(height: 16),
             _buildStyleSection(context, ref, settings, strings),
             const SizedBox(height: 16),
-            _buildPreviewInfo(context, strings),
+            _buildPreviewInfo(context, settings, strings),
           ],
         ],
       ),
@@ -220,6 +221,9 @@ class WatermarkSettingsPage extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16),
+          // 预设样式选择
+          _buildStyleSelector(context, ref, settings),
+          const SizedBox(height: 16),
           // 水印位置
           _buildPositionSelector(context, ref, settings),
           const SizedBox(height: 16),
@@ -268,8 +272,92 @@ class WatermarkSettingsPage extends ConsumerWidget {
           const SizedBox(height: 16),
           // 字体颜色
           _buildColorSelector(context, ref, settings),
+          const SizedBox(height: 12),
+          // 自定义文字
+          _CustomTextFieldBuilder(settings: settings),
         ],
       ),
+    );
+  }
+
+  Widget _buildStyleSelector(
+    BuildContext context,
+    WidgetRef ref,
+    WatermarkSettings settings,
+  ) {
+    final styles = [
+      (WatermarkStyle.minimal, '简约', '左下角简洁呈现'),
+      (WatermarkStyle.elegant, '优雅', '右下角深色磨砂'),
+      (WatermarkStyle.bold, '大字', '居中醒目高对比'),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '模板',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: styles.map((s) {
+            final isSelected = settings.style == s.$1;
+            return Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  ref
+                      .read(watermarkSettingsProvider.notifier)
+                      .updateStyle(s.$1);
+                },
+                child: Container(
+                  margin: EdgeInsets.only(
+                    right: s != styles.last ? 8 : 0,
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withValues(alpha: 0.15)
+                        : Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: isSelected
+                          ? Theme.of(context).colorScheme.primary
+                          : Colors.transparent,
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        s.$2,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
+                              color: isSelected
+                                  ? Theme.of(context).colorScheme.primary
+                                  : null,
+                            ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        s.$3,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: AppColors.secondaryLight,
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
@@ -460,7 +548,11 @@ class WatermarkSettingsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildPreviewInfo(BuildContext context, AppStrings strings) {
+  Widget _buildPreviewInfo(
+    BuildContext context,
+    WatermarkSettings settings,
+    AppStrings strings,
+  ) {
     return PremiumCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -478,36 +570,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '🐟 ${strings.species}',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                Text(
-                  '${strings.length}: 52.0cm',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                Text(
-                  '📍 ${strings.location}',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                Text(
-                  strings.fromLureBox,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.secondaryLight,
-                      ),
-                ),
-              ],
-            ),
-          ),
+          _LiveWatermarkPreview(settings: settings, strings: strings),
           const SizedBox(height: 8),
           Text(
             strings.watermarkPositionDesc,
@@ -518,6 +581,194 @@ class WatermarkSettingsPage extends ConsumerWidget {
         ],
       ),
     );
+  }
+}
+
+/// 管理 TextEditingController 生命周期的 StatefulWidget
+class _CustomTextFieldBuilder extends ConsumerStatefulWidget {
+  final WatermarkSettings settings;
+
+  const _CustomTextFieldBuilder({required this.settings});
+
+  @override
+  ConsumerState<_CustomTextFieldBuilder> createState() =>
+      _CustomTextFieldBuilderState();
+}
+
+class _CustomTextFieldBuilderState
+    extends ConsumerState<_CustomTextFieldBuilder> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller =
+        TextEditingController(text: widget.settings.customText ?? '');
+  }
+
+  @override
+  void didUpdateWidget(covariant _CustomTextFieldBuilder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 外部重置（如切换预设模板）时同步控制器
+    if (widget.settings.customText != oldWidget.settings.customText &&
+        _controller.text != (widget.settings.customText ?? '')) {
+      _controller.text = widget.settings.customText ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '自定义文字',
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          '显示在水印底部（如渔具店名、个人签名）',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppColors.secondaryLight,
+              ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          decoration: InputDecoration(
+            hintText: '选填，例如：杭州渔具店',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 10,
+            ),
+            isDense: true,
+          ),
+          controller: _controller,
+          onChanged: (value) {
+            ref
+                .read(watermarkSettingsProvider.notifier)
+                .updateCustomText(value.isEmpty ? null : value);
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _LiveWatermarkPreview extends StatelessWidget {
+  final WatermarkSettings settings;
+  final AppStrings strings;
+
+  const _LiveWatermarkPreview({
+    required this.settings,
+    required this.strings,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: CustomPaint(
+          painter: _WatermarkPreviewPainter(
+            settings: settings,
+            strings: strings,
+          ),
+          child: Container(),
+        ),
+      ),
+    );
+  }
+}
+
+/// 实时预览用的水印绘制器，直接渲染文字不依赖图片
+class _WatermarkPreviewPainter extends CustomPainter {
+  final WatermarkSettings settings;
+  final AppStrings strings;
+
+  _WatermarkPreviewPainter({
+    required this.settings,
+    required this.strings,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // 绘制渐变背景（模拟水面）
+    final bgPaint = Paint()
+      ..shader = const LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          Color(0xFF2E7D6A),
+          Color(0xFF1565C0),
+        ],
+      ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), bgPaint);
+
+    if (!settings.enabled) return;
+
+    final painter = _buildWatermarkPainter(size, strings);
+    painter.paint(canvas, size);
+  }
+
+  WatermarkPainter _buildWatermarkPainter(Size size, AppStrings strings) {
+    // 模拟的渔获数据
+    const species = '鳜鱼';
+    const length = 52.0;
+    const locationName = '杭州西湖';
+    const airTemperature = 25.0;
+    const pressure = 1013.0;
+    const weatherCode = 0;
+    const displayLength = 52.0;
+    const displayWeight = 1.2;
+    const displayLengthUnit = 'cm';
+    const displayWeightUnit = 'kg';
+    const displayTemperatureUnit = 'C';
+
+    // 根据预览尺寸缩放字号
+    final previewSettings = WatermarkSettings(
+      enabled: true,
+      style: settings.style,
+      infoTypes: settings.infoTypes,
+      blurRadius: settings.blurRadius,
+      backgroundOpacity: settings.backgroundOpacity,
+      backgroundColor: settings.backgroundColor,
+      fontSize: settings.fontSize * (size.width / 400).clamp(0.5, 1.5),
+      textColor: settings.textColor,
+      position: settings.position,
+      customText: settings.customText,
+    );
+
+    return WatermarkPainter(
+      species: species,
+      length: length,
+      locationName: locationName,
+      airTemperature: airTemperature,
+      pressure: pressure,
+      weatherCode: weatherCode,
+      settings: previewSettings,
+      strings: strings,
+      displayLength: displayLength,
+      displayWeight: displayWeight,
+      displayLengthUnit: displayLengthUnit,
+      displayWeightUnit: displayWeightUnit,
+      displayTemperatureUnit: displayTemperatureUnit,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _WatermarkPreviewPainter oldDelegate) {
+    return settings != oldDelegate.settings ||
+        strings != oldDelegate.strings;
   }
 }
 

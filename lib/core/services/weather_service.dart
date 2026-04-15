@@ -50,7 +50,7 @@ String getWeatherDescription(int? code) {
     case 99:
       return '雷暴加冰雹';
     default:
-      return '';
+      return '未知';
   }
 }
 
