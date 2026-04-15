@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lurebox/core/models/cloud_config.dart';
 import 'package:lurebox/core/models/backup_history.dart';
 import 'package:lurebox/core/repositories/backup_config_repository.dart';
@@ -20,19 +21,19 @@ class MockDb extends Mock implements Database {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> query(
+  Future<List<Map<String, Object?>>> query(
     String table, {
     bool? distinct,
     List<String>? columns,
     String? where,
-    List<dynamic>? whereArgs,
+    List<Object?>? whereArgs,
     String? groupBy,
     String? having,
     String? orderBy,
     int? limit,
     int? offset,
   }) async {
-    return _queryResults[table] ?? [];
+    return (_queryResults[table] ?? <Map<String, dynamic>>[]) as List<Map<String, Object?>>;
   }
 
   @override
@@ -60,7 +61,7 @@ class MockDb extends Mock implements Database {
   Future<int> delete(
     String table, {
     String? where,
-    List<dynamic>? whereArgs,
+    List<Object?>? whereArgs,
   }) async {
     return 1;
   }
@@ -79,15 +80,15 @@ class MockDb extends Mock implements Database {
   @override
   Future<List<Map<String, dynamic>>> rawQuery(
     String sql, [
-    List<dynamic>? arguments,
+    List<Object?>? arguments,
   ]) async {
-    return _queryResults[sql] ?? [];
+    return (_queryResults[sql] ?? <Map<String, dynamic>>[]) as List<Map<String, dynamic>>;
   }
 
   @override
   Future<int> rawUpdate(
     String sql, [
-    List<dynamic>? arguments,
+    List<Object?>? arguments,
   ]) async {
     return 1;
   }
@@ -95,7 +96,7 @@ class MockDb extends Mock implements Database {
   @override
   Future<int> rawInsert(
     String sql, [
-    List<dynamic>? arguments,
+    List<Object?>? arguments,
   ]) async {
     return 1;
   }
@@ -103,7 +104,7 @@ class MockDb extends Mock implements Database {
   @override
   Future<int> rawDelete(
     String sql, [
-    List<dynamic>? arguments,
+    List<Object?>? arguments,
   ]) async {
     return 1;
   }
@@ -122,6 +123,9 @@ class MockDb extends Mock implements Database {
 
 class _MockTransaction implements Transaction {
   @override
+  Database get database => throw UnimplementedError();
+
+  @override
   Future<int> insert(
     String table,
     Map<String, dynamic> values, {
@@ -131,7 +135,81 @@ class _MockTransaction implements Transaction {
     return 1;
   }
 
-  // 注意: 此方法不覆盖任何接口方法,只是模拟 Database 接口签名
+  @override
+  Future<List<Map<String, Object?>>> query(
+    String table, {
+    bool? distinct,
+    List<String>? columns,
+    String? where,
+    List<Object?>? whereArgs,
+    String? groupBy,
+    String? having,
+    String? orderBy,
+    int? limit,
+    int? offset,
+  }) async {
+    return [];
+  }
+
+  @override
+  Future<int> update(
+    String table,
+    Map<String, Object?> values, {
+    String? where,
+    List<Object?>? whereArgs,
+    ConflictAlgorithm? conflictAlgorithm,
+  }) async {
+    return 1;
+  }
+
+  @override
+  Future<int> delete(
+    String table, {
+    String? where,
+    List<Object?>? whereArgs,
+  }) async {
+    return 0;
+  }
+
+  @override
+  Future<int> rawUpdate(
+    String sql, [
+    List<Object?>? arguments,
+  ]) async {
+    return 0;
+  }
+
+  @override
+  Future<int> rawInsert(
+    String sql, [
+    List<Object?>? arguments,
+  ]) async {
+    return 1;
+  }
+
+  @override
+  Future<int> rawDelete(
+    String sql, [
+    List<Object?>? arguments,
+  ]) async {
+    return 0;
+  }
+
+  @override
+  Future<List<Map<String, Object?>>> rawQuery(
+    String sql, [
+    List<Object?>? arguments,
+  ]) async {
+    return [];
+  }
+
+  @override
+  Future<void> execute(
+    String sql, [
+    List<Object?>? arguments,
+  ]) async {}
+
+  @override
   Future<T> transaction<T>(
     Future<T> Function(Transaction txn) action, {
     bool? exclusive,
@@ -140,9 +218,87 @@ class _MockTransaction implements Transaction {
   }
 
   @override
-  dynamic noSuchMethod(Invocation invocation) {
-    return Future.value([]);
+  Batch batch() => _MockBatch();
+
+  @override
+  Future<QueryCursor> rawQueryCursor(String sql, List<Object?>? arguments,
+      {int? bufferSize}) async {
+    throw UnimplementedError();
   }
+
+  @override
+  Future<QueryCursor> queryCursor(String table,
+      {bool? distinct,
+      List<String>? columns,
+      String? where,
+      List<Object?>? whereArgs,
+      String? groupBy,
+      String? having,
+      String? orderBy,
+      int? limit,
+      int? offset,
+      int? bufferSize}) async {
+    throw UnimplementedError();
+  }
+}
+
+class _MockBatch implements Batch {
+  @override
+  Future<List<Object?>> commit({
+    bool? exclusive,
+    bool? noResult,
+    bool? continueOnError,
+  }) async {
+    return [];
+  }
+
+  @override
+  Future<List<Object?>> apply({bool? noResult, bool? continueOnError}) async {
+    return [];
+  }
+
+  @override
+  void rawInsert(String sql, [List<Object?>? arguments]) {}
+
+  @override
+  void insert(String table, Map<String, Object?> values,
+      {String? nullColumnHack, ConflictAlgorithm? conflictAlgorithm}) {}
+
+  @override
+  void rawUpdate(String sql, [List<Object?>? arguments]) {}
+
+  @override
+  void update(String table, Map<String, Object?> values,
+      {String? where,
+      List<Object?>? whereArgs,
+      ConflictAlgorithm? conflictAlgorithm}) {}
+
+  @override
+  void rawDelete(String sql, [List<Object?>? arguments]) {}
+
+  @override
+  void delete(String table, {String? where, List<Object?>? whereArgs}) {}
+
+  @override
+  void execute(String sql, [List<Object?>? arguments]) {}
+
+  @override
+  void query(String table,
+      {bool? distinct,
+      List<String>? columns,
+      String? where,
+      List<Object?>? whereArgs,
+      String? groupBy,
+      String? having,
+      String? orderBy,
+      int? limit,
+      int? offset}) {}
+
+  @override
+  void rawQuery(String sql, [List<Object?>? arguments]) {}
+
+  @override
+  void noSuchMethod(Invocation invocation) {}
 }
 
 // Mock DatabaseProvider
@@ -164,6 +320,22 @@ class FakeCloudConfig extends Fake implements CloudConfig {}
 
 class FakeBackupHistory extends Fake implements BackupHistory {}
 
+/// Wraps a real sqflite Database as a DatabaseProvider, for tests that
+/// require genuine transaction behavior (e.g. importFromJsonWithDeduplication).
+class _RealDbWrapper implements DatabaseProvider {
+  _RealDbWrapper(this.db);
+  final Database db;
+
+  @override
+  Future<Database> get database => Future.value(db);
+
+  @override
+  Future<void> close() async {}
+
+  @override
+  Future<void> resetForTesting() async {}
+}
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -173,6 +345,9 @@ void main() {
   late MockDb mockDatabase;
 
   setUpAll(() {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+
     // Mock path_provider platform channel
     final binding = TestWidgetsFlutterBinding.instance;
     binding.defaultBinaryMessenger.setMockMethodCallHandler(
@@ -631,7 +806,8 @@ void main() {
         final recoveryDir = Directory('${tempDir.path}/recovery');
         await recoveryDir.create();
 
-        // Create 5 files, should keep only 2
+        // Create 5 files (文件名含时间戳：1000~5000，越大越新）
+        // 用文件名排序：5000 > 4000 > 3000 > 2000 > 1000
         final files = <File>[];
         for (int i = 0; i < 5; i++) {
           final file =
@@ -654,15 +830,13 @@ void main() {
         // Act
         final result = await service.cleanupOldRecoveryPoints(keepCount: 2);
 
-        // Assert
-        expect(result, equals(3)); // 5 - 2 = 3 deleted
-        // First 2 newest should still exist
-        expect(await files[4].exists(), isTrue); // 5000
+        // Assert - 按文件名降序保留前2个（5000、4000），删除其余3个
+        expect(result, equals(3));
+        expect(await files[4].exists(), isTrue); // 5000 (最新)
         expect(await files[3].exists(), isTrue); // 4000
-        // Oldest 3 should be deleted
-        expect(await files[0].exists(), isFalse);
-        expect(await files[1].exists(), isFalse);
-        expect(await files[2].exists(), isFalse);
+        expect(await files[2].exists(), isFalse); // 3000
+        expect(await files[1].exists(), isFalse); // 2000
+        expect(await files[0].exists(), isFalse); // 1000 (最旧)
 
         // Cleanup
         await recoveryDir.delete(recursive: true);
@@ -754,103 +928,219 @@ void main() {
   });
 
   group('EnhancedBackupService - JSON Import with Deduplication', () {
-    group('importFromJsonWithDeduplication', () {
-      test('throws exception when file does not exist', () async {
-        // Arrange
-        const nonExistentPath = '/non/existent/path/backup.json';
+    // Uses a real in-memory sqflite database because
+    // importFromJsonWithDeduplication relies on db.transaction().
+    late Database _realDb;
+    late EnhancedBackupService _realDbService;
 
-        // Act & Assert
-        expect(
-          () => service.importFromJsonWithDeduplication(nonExistentPath),
-          throwsA(isA<Exception>()),
-        );
-      });
-
-      test('handles empty backup data', () async {
-        // Arrange
-        final emptyJson = jsonEncode({
-          'version': 1,
-          'exportTime': DateTime.now().toIso8601String(),
-          'fishCatches': <Map<String, dynamic>>[],
-          'equipments': <Map<String, dynamic>>[],
-          'speciesHistory': <Map<String, dynamic>>[],
-          'settings': <Map<String, dynamic>>[],
-        });
-
-        final tempDir = Directory.systemTemp.createTempSync();
-        final tempFile = File('${tempDir.path}/empty_backup.json');
-        await tempFile.writeAsString(emptyJson);
-
-        // Act
-        final result =
-            await service.importFromJsonWithDeduplication(tempFile.path);
-
-        // Assert
-        expect(result.importedCount, equals(0));
-        expect(result.skippedCount, equals(0));
-        expect(result.errorCount, equals(0));
-        expect(result.totalCount, equals(0));
-
-        // Cleanup
-        await tempFile.delete();
-        await tempDir.delete();
-      });
-
-      test('processes valid JSON with fish catches', () async {
-        // Arrange
-        final validJson = jsonEncode({
-          'version': 1,
-          'exportTime': DateTime.now().toIso8601String(),
-          'fishCatches': [
-            {
-              'id': 1,
-              'species': 'Bass',
-              'catch_time': 1234567890000,
-              'length': 30.0
-            },
-          ],
-          'equipments': <Map<String, dynamic>>[],
-          'speciesHistory': <Map<String, dynamic>>[],
-          'settings': <Map<String, dynamic>>[],
-        });
-
-        final tempDir = Directory.systemTemp.createTempSync();
-        final tempFile = File('${tempDir.path}/test_backup.json');
-        await tempFile.writeAsString(validJson);
-
-        // Act - Test basic flow
-        try {
-          await service.importFromJsonWithDeduplication(tempFile.path);
-        } catch (_) {
-          // In test environment, transaction behavior differs
-        }
-
-        // Cleanup
-        await tempFile.delete();
-        await tempDir.delete();
-      });
+    setUp(() async {
+      _realDb = await databaseFactoryFfi.openDatabase(
+        inMemoryDatabasePath,
+        options: OpenDatabaseOptions(
+          version: 1,
+          onCreate: (db, version) async {
+            await db.execute('''
+              CREATE TABLE fish_catches (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                image_path TEXT,
+                watermarked_image_path TEXT,
+                species TEXT NOT NULL,
+                length REAL NOT NULL,
+                length_unit TEXT DEFAULT 'cm',
+                weight REAL,
+                weight_unit TEXT DEFAULT 'kg',
+                fate INTEGER DEFAULT 0,
+                catch_time TEXT NOT NULL,
+                location_name TEXT,
+                latitude REAL,
+                longitude REAL,
+                notes TEXT,
+                equipment_id INTEGER,
+                rod_id INTEGER,
+                reel_id INTEGER,
+                lure_id INTEGER,
+                air_temperature REAL,
+                pressure REAL,
+                weather_code INTEGER,
+                pending_recognition INTEGER DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                rig_type TEXT,
+                sinker_weight TEXT,
+                sinker_position TEXT,
+                hook_type TEXT,
+                hook_size TEXT,
+                hook_weight TEXT
+              )
+            ''');
+            await db.execute('''
+              CREATE TABLE equipments (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                type TEXT NOT NULL,
+                brand TEXT,
+                model TEXT,
+                is_deleted INTEGER DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+              )
+            ''');
+            await db.execute('''
+              CREATE TABLE species_history (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT UNIQUE NOT NULL,
+                use_count INTEGER DEFAULT 1,
+                is_deleted INTEGER DEFAULT 0,
+                created_at TEXT NOT NULL
+              )
+            ''');
+            await db.execute('''
+              CREATE TABLE settings (
+                key TEXT PRIMARY KEY,
+                value TEXT
+              )
+            ''');
+          },
+        ),
+      );
+      _realDbService = EnhancedBackupService(
+        _RealDbWrapper(_realDb),
+        MockBackupConfigRepository(),
+      );
     });
 
-    test('ImportResultWithStats has correct computed properties', () async {
-      // Test with errors and skipped
-      const resultWithIssues = ImportResultWithStats(
-        importedCount: 5,
-        skippedCount: 3,
-        errorCount: 2,
-      );
+    tearDown(() async {
+      await _realDb.close();
+    });
 
-      expect(resultWithIssues.totalCount, equals(10));
-      expect(resultWithIssues.hasErrors, isTrue);
-      expect(resultWithIssues.hasSkipped, isTrue);
-
-      // Test with no errors
-      const resultNoErrors = ImportResultWithStats(
-        importedCount: 5,
-        skippedCount: 0,
-        errorCount: 0,
+    test('throws exception when file does not exist', () async {
+      await expectLater(
+        _realDbService.importFromJsonWithDeduplication(
+            '/non/existent/path/backup.json'),
+        throwsA(isA<Exception>()),
       );
-      expect(resultNoErrors.hasErrors, isFalse);
-      expect(resultNoErrors.hasSkipped, isFalse);
+    });
+
+    test('handles empty backup data', () async {
+      final emptyJson = jsonEncode({
+        'version': 1,
+        'exportTime': DateTime.now().toIso8601String(),
+        'fishCatches': <Map<String, dynamic>>[],
+        'equipments': <Map<String, dynamic>>[],
+        'speciesHistory': <Map<String, dynamic>>[],
+        'settings': <Map<String, dynamic>>[],
+      });
+
+      final tempDir = Directory.systemTemp.createTempSync();
+      final tempFile = File('${tempDir.path}/empty_backup.json');
+      await tempFile.writeAsString(emptyJson);
+
+      final result =
+          await _realDbService.importFromJsonWithDeduplication(tempFile.path);
+
+      expect(result.importedCount, equals(0));
+      expect(result.skippedCount, equals(0));
+      expect(result.errorCount, equals(0));
+
+      await tempFile.delete();
+      await tempDir.delete();
+    });
+
+    test('imports fish catches without deduplication', () async {
+      final validJson = jsonEncode({
+        'version': 1,
+        'exportTime': DateTime.now().toIso8601String(),
+        'fishCatches': [
+          {
+            'id': 1,
+            'species': 'Bass',
+            'catch_time': 1234567890000,
+            'length': 30.0,
+            'fate': 0,
+            'created_at': '2024-01-01T00:00:00.000',
+            'updated_at': '2024-01-01T00:00:00.000',
+          },
+          {
+            'id': 2,
+            'species': 'Trout',
+            'catch_time': 1234567891000,
+            'length': 25.0,
+            'fate': 1,
+            'created_at': '2024-01-01T00:00:00.000',
+            'updated_at': '2024-01-01T00:00:00.000',
+          },
+        ],
+        'equipments': <Map<String, dynamic>>[],
+        'speciesHistory': <Map<String, dynamic>>[],
+        'settings': <Map<String, dynamic>>[],
+      });
+
+      final tempDir = Directory.systemTemp.createTempSync();
+      final tempFile = File('${tempDir.path}/test_backup.json');
+      await tempFile.writeAsString(validJson);
+
+      final result =
+          await _realDbService.importFromJsonWithDeduplication(tempFile.path);
+
+      expect(result.importedCount, equals(2));
+      expect(result.skippedCount, equals(0));
+      expect(result.errorCount, equals(0));
+
+      // Verify data was actually inserted
+      final rows = await _realDb.query('fish_catches');
+      expect(rows.length, equals(2));
+
+      await tempFile.delete();
+      await tempDir.delete();
+    });
+
+    test('skips duplicate fish catches during import', () async {
+      // Pre-insert a fish catch that will conflict with the import
+      final now = DateTime.now().toIso8601String();
+      await _realDb.insert('fish_catches', {
+        'species': 'Bass',
+        'catch_time': 1234567890000,
+        'length': 30.0,
+        'fate': 0,
+        'created_at': now,
+        'updated_at': now,
+      });
+
+      final duplicateJson = jsonEncode({
+        'version': 1,
+        'exportTime': DateTime.now().toIso8601String(),
+        'fishCatches': [
+          {
+            'id': 99,
+            'species': 'Bass',
+            'catch_time': 1234567890000,
+            'length': 30.0,
+            'fate': 0,
+            'created_at': now,
+            'updated_at': now,
+          },
+        ],
+        'equipments': <Map<String, dynamic>>[],
+        'speciesHistory': <Map<String, dynamic>>[],
+        'settings': <Map<String, dynamic>>[],
+      });
+
+      final tempDir = Directory.systemTemp.createTempSync();
+      final tempFile = File('${tempDir.path}/dup_backup.json');
+      await tempFile.writeAsString(duplicateJson);
+
+      final result =
+          await _realDbService.importFromJsonWithDeduplication(tempFile.path);
+
+      // The duplicate (same catch_time + species) should be skipped
+      expect(result.importedCount, equals(0));
+      expect(result.skippedCount, equals(1));
+
+      // Only the pre-inserted record should remain
+      final rows = await _realDb.query('fish_catches');
+      expect(rows.length, equals(1));
+
+      await tempFile.delete();
+      await tempDir.delete();
     });
   });
 }

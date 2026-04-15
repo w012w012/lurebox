@@ -206,6 +206,9 @@ class EnhancedBackupService {
   // ========== 恢复点管理 ==========
 
   /// 清理过期恢复点（保留最近 N 个）
+  ///
+  /// 按文件名中的时间戳降序排列（文件名格式: lurebox_recovery_{timestamp}），
+  /// 删除最旧的 keepCount 个之后的文件。
   Future<int> cleanupOldRecoveryPoints({int keepCount = 2}) async {
     final appDir = await getApplicationDocumentsDirectory();
     final recoveryDir = Directory(p.join(appDir.path, 'recovery'));
@@ -222,18 +225,14 @@ class EnhancedBackupService {
 
     if (files.length <= keepCount) return 0;
 
-    // 获取文件修改时间并排序（最旧的在前）
-    final fileWithTime = <(File file, DateTime time)>[];
-    for (final file in files) {
-      fileWithTime.add((file, await file.lastModified()));
-    }
-    fileWithTime.sort((a, b) => a.$2.compareTo(b.$2));
+    // 按文件名降序排列（文件名含时间戳，越大越新）
+    files.sort((a, b) => p.basename(b.path).compareTo(p.basename(a.path)));
 
-    // 删除旧的恢复点
+    // 删除最旧的（排在后面的）
     int deletedCount = 0;
-    for (var i = 0; i < fileWithTime.length - keepCount; i++) {
+    for (var i = keepCount; i < files.length; i++) {
       try {
-        await fileWithTime[i].$1.delete();
+        await files[i].delete();
         deletedCount++;
       } catch (e) {
         debugPrint('Failed to delete recovery point: $e');
