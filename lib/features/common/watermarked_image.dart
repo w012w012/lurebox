@@ -298,9 +298,7 @@ class WatermarkPainter extends CustomPainter {
         case WatermarkInfoType.rod:
           if (rodBrand != null && rodBrand!.isNotEmpty) {
             final rodParts = <String>[];
-            if (rodBrand != null && rodBrand!.isNotEmpty) {
-              rodParts.add(rodBrand!);
-            }
+            rodParts.add(rodBrand!);
             if (rodModel != null && rodModel!.isNotEmpty) {
               rodParts.add(rodModel!);
             }
@@ -326,9 +324,7 @@ class WatermarkPainter extends CustomPainter {
         case WatermarkInfoType.reel:
           if (reelBrand != null && reelBrand!.isNotEmpty) {
             final reelParts = <String>[];
-            if (reelBrand != null && reelBrand!.isNotEmpty) {
-              reelParts.add(reelBrand!);
-            }
+            reelParts.add(reelBrand!);
             if (reelModel != null && reelModel!.isNotEmpty) {
               reelParts.add(reelModel!);
             }
@@ -345,9 +341,7 @@ class WatermarkPainter extends CustomPainter {
         case WatermarkInfoType.lure:
           if (lureBrand != null && lureBrand!.isNotEmpty) {
             final lureParts = <String>[];
-            if (lureBrand != null && lureBrand!.isNotEmpty) {
-              lureParts.add(lureBrand!);
-            }
+            lureParts.add(lureBrand!);
             if (lureModel != null && lureModel!.isNotEmpty) {
               lureParts.add(lureModel!);
             }
@@ -590,7 +584,8 @@ class WatermarkPainter extends CustomPainter {
         rodName != oldDelegate.rodName ||
         reelName != oldDelegate.reelName ||
         lureName != oldDelegate.lureName ||
-        strings != oldDelegate.strings;
+        strings != oldDelegate.strings ||
+        displayTemperatureUnit != oldDelegate.displayTemperatureUnit;
   }
 }
 
