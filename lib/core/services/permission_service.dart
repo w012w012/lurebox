@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:permission_handler/permission_handler.dart' as perm_handler;
 import 'package:geolocator/geolocator.dart';
 
 /// 权限请求结果
@@ -20,8 +20,8 @@ class PermissionResult {
 abstract class PermissionPlatform {
   const PermissionPlatform();
 
-  Future<PermissionStatus> status(Permission permission);
-  Future<PermissionStatus> request(Permission permission);
+  Future<perm_handler.PermissionStatus> status(perm_handler.Permission permission);
+  Future<perm_handler.PermissionStatus> request(perm_handler.Permission permission);
   Future<bool> isLocationServiceEnabled();
   Future<void> openAppSettings();
 
@@ -32,11 +32,11 @@ class _RealPermissionPlatform extends PermissionPlatform {
   const _RealPermissionPlatform();
 
   @override
-  Future<PermissionStatus> status(Permission permission) =>
+  Future<perm_handler.PermissionStatus> status(perm_handler.Permission permission) =>
       permission.status;
 
   @override
-  Future<PermissionStatus> request(Permission permission) =>
+  Future<perm_handler.PermissionStatus> request(perm_handler.Permission permission) =>
       permission.request();
 
   @override
@@ -44,12 +44,12 @@ class _RealPermissionPlatform extends PermissionPlatform {
       Geolocator.isLocationServiceEnabled();
 
   @override
-  Future<void> openAppSettings() => openAppSettings();
+  Future<void> openAppSettings() => perm_handler.openAppSettings();
 }
 
 /// 权限类型信息
 class PermissionInfo {
-  final Permission permission;
+  final perm_handler.Permission permission;
   final String title;
   final String description;
   final String benefit;
@@ -82,7 +82,7 @@ class PermissionService {
 
   /// 相机权限信息
   static const cameraInfo = PermissionInfo(
-    permission: Permission.camera,
+    permission: perm_handler.Permission.camera,
     title: '相机权限',
     description: 'LureBox 需要使用相机来拍摄您的渔获照片',
     benefit: '记录每次出钓的精彩瞬间',
@@ -91,7 +91,7 @@ class PermissionService {
 
   /// 位置权限信息
   static const locationInfo = PermissionInfo(
-    permission: Permission.locationWhenInUse,
+    permission: perm_handler.Permission.locationWhenInUse,
     title: '位置权限',
     description: 'LureBox 需要获取您的位置信息来记录钓点',
     benefit: '自动记录钓鱼地点，方便回顾和分享',
@@ -100,7 +100,7 @@ class PermissionService {
 
   /// 照片库权限信息
   static const photosInfo = PermissionInfo(
-    permission: Permission.photos,
+    permission: perm_handler.Permission.photos,
     title: '照片库权限',
     description: '允许访问您的照片库来保存和选择渔获照片',
     benefit: '将渔获照片保存到相册，或从相册选择照片',
@@ -285,13 +285,13 @@ class PermissionService {
   }
 
   /// 检查权限状态
-  Future<bool> isPermissionGranted(Permission permission) async {
+  Future<bool> isPermissionGranted(perm_handler.Permission permission) async {
     final status = await _platform.status(permission);
     return status.isGranted || status.isLimited;
   }
 
   /// 检查权限是否永久拒绝
-  Future<bool> isPermanentlyDenied(Permission permission) async {
+  Future<bool> isPermanentlyDenied(perm_handler.Permission permission) async {
     final status = await _platform.status(permission);
     return status.isPermanentlyDenied;
   }
