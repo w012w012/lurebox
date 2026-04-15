@@ -461,6 +461,10 @@ class AppStrings {
   final String pendingFishCountPattern;
   final String goToSpeciesManagement;
 
+  // 水印标签
+  final String airTemperature;
+  final String pressure;
+
   const AppStrings({
     required this.appName,
     required this.home,
@@ -903,6 +907,8 @@ class AppStrings {
     required this.lureUnit,
     required this.pendingFishCountPattern,
     required this.goToSpeciesManagement,
+    required this.airTemperature,
+    required this.pressure,
   });
 
   static const chinese = AppStrings(
@@ -1022,7 +1028,7 @@ class AppStrings {
     fishLure: '鱼饵',
     protectionEcology: '保护水生生态',
     reasonableRelease: '合理放流，留大放小，文明作钓',
-    fromLureBox: '--来自路亚鱼护',
+    fromLureBox: '\u200B来自路亚鱼护',
     yourFishingAssistant: '路亚鱼护 - 你的钓鱼好帮手',
     fishCountUnit: '条',
     hour: '时',
@@ -1357,6 +1363,8 @@ class AppStrings {
     customHookTypeHint: '输入自定义鱼钩类型',
     pendingFishCountPattern: '你有 %d 条鱼获待识别品种',
     goToSpeciesManagement: '点击前往品种管理',
+    airTemperature: '气温',
+    pressure: '气压',
   );
 
   static const english = AppStrings(
@@ -1477,7 +1485,7 @@ class AppStrings {
     protectionEcology: 'Protect Aquatic Ecology',
     reasonableRelease:
         'Release responsibly, keep big release small, fish ethically',
-    fromLureBox: '--From LureBox',
+    fromLureBox: '\u200BFrom LureBox',
     yourFishingAssistant: 'LureBox - Your Fishing Assistant',
     fishCountUnit: '',
     hour: ':00',
@@ -1820,5 +1828,7 @@ class AppStrings {
     pendingFishCountPattern:
         'You have %d fish catches pending species recognition',
     goToSpeciesManagement: 'Go to species management',
+    airTemperature: 'Air Temp',
+    pressure: 'Pressure',
   );
 }

@@ -380,20 +380,20 @@ class WatermarkPainter extends CustomPainter {
               displayTemperatureUnit,
             );
             lines.add(
-              '气温：${UnitConverter.formatTemperature(displayTemp, displayTemperatureUnit)}',
+              '${strings.airTemperature}：${UnitConverter.formatTemperature(displayTemp, displayTemperatureUnit)}',
             );
           }
           break;
         case WatermarkInfoType.pressure:
           if (pressure != null) {
-            lines.add('气压：${pressure!.toStringAsFixed(0)}hPa');
+            lines.add('${strings.pressure}：${pressure!.toStringAsFixed(0)}hPa');
           }
           break;
         case WatermarkInfoType.weather:
           if (weatherCode != null) {
             final weatherDesc = getWeatherDescription(weatherCode);
             if (weatherDesc.isNotEmpty) {
-              lines.add('天气：$weatherDesc');
+              lines.add('${strings.weather}：$weatherDesc');
             }
           }
           break;
@@ -533,7 +533,7 @@ class WatermarkPainter extends CustomPainter {
 
     for (int i = 0; i < drawLines.length; i++) {
       final line = drawLines[i];
-      final isAppName = line.startsWith('--');
+      final isAppName = line.startsWith('\u200B');
       final textPainter = TextPainter(
         text: TextSpan(
           text: line,
@@ -585,7 +585,9 @@ class WatermarkPainter extends CustomPainter {
         reelName != oldDelegate.reelName ||
         lureName != oldDelegate.lureName ||
         strings != oldDelegate.strings ||
-        displayTemperatureUnit != oldDelegate.displayTemperatureUnit;
+        displayTemperatureUnit != oldDelegate.displayTemperatureUnit ||
+        displayLengthUnit != oldDelegate.displayLengthUnit ||
+        displayWeightUnit != oldDelegate.displayWeightUnit;
   }
 }
 
