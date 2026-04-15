@@ -465,39 +465,30 @@ class BackupZipService {
 
   /// 复制照片到备份目录
   ///
-  /// 从数据库中读取所有照片路径，并复制到备份目录
+  /// 从数据库中读取所有照片路径（仅原图），并复制到备份目录。
+  /// 注意：水印图片（watermarked_image_path）不备份，因为它们是临时文件，
+  /// 且 WatermarkedImage Widget 会根据当前设置实时渲染水印。
   Future<int> _copyPhotosToBackup(String dbPath, String photosDir) async {
     final db = await openDatabase(dbPath, readOnly: true);
     int count = 0;
 
     try {
-      // 查询所有渔获记录的照片路径
+      // 查询所有渔获记录的照片路径（仅原图，不备份水印图片）
       final catches = await db.query(
         'fish_catches',
-        columns: ['image_path', 'watermarked_image_path'],
+        columns: ['image_path'],
       );
 
       final appDir = await getApplicationDocumentsDirectory();
       final Set<String> processedPaths = {};
 
       for (final fish in catches) {
-        // 处理 image_path
         final imagePath = fish['image_path'] as String?;
         if (imagePath != null &&
             imagePath.isNotEmpty &&
             !processedPaths.contains(imagePath)) {
           await _copyPhotoIfExists(imagePath, appDir.path, photosDir);
           processedPaths.add(imagePath);
-          count++;
-        }
-
-        // 处理 watermarked_image_path
-        final watermarkedPath = fish['watermarked_image_path'] as String?;
-        if (watermarkedPath != null &&
-            watermarkedPath.isNotEmpty &&
-            !processedPaths.contains(watermarkedPath)) {
-          await _copyPhotoIfExists(watermarkedPath, appDir.path, photosDir);
-          processedPaths.add(watermarkedPath);
           count++;
         }
       }
@@ -710,17 +701,47 @@ class BackupZipService {
           debugPrint('Recovery point created: $recoveryPath');
         }
 
-        // 6. 关闭当前数据库
+        // 6. 获取本应用的文档目录（用于规范化照片路径）
+        final appDir = await getApplicationDocumentsDirectory();
+
+        // 7. 规范化备份数据库中的图片路径为绝对路径
+        // 新格式（相对路径如 'photos/xxx.jpg'）和旧格式（绝对路径如 'Documents/xxx.jpg'）
+        // 都统一转换为 'Documents/photos/xxx.jpg'（绝对路径）
+        final tempDb = await openDatabase(dbPath);
+        try {
+          final catches = await tempDb.query(
+            'fish_catches',
+            columns: ['id', 'image_path'],
+          );
+          for (final fish in catches) {
+            final id = fish['id'] as int;
+            final imagePath = fish['image_path'] as String?;
+            if (imagePath != null && imagePath.isNotEmpty) {
+              final fileName = p.basename(imagePath);
+              // 统一存放到 Documents/photos/ 子目录下（绝对路径）
+              final newAbsolutePath = p.join(appDir.path, 'photos', fileName);
+              await tempDb.update(
+                'fish_catches',
+                {'image_path': newAbsolutePath},
+                where: 'id = ?',
+                whereArgs: [id],
+              );
+            }
+          }
+        } finally {
+          await tempDb.close();
+        }
+
+        // 8. 关闭当前数据库
         await _dbProvider.close();
 
-        // 7. 复制新数据库文件替换旧文件
-        await dbFile.copy(currentDbPath);
+        // 9. 复制规范化后的数据库文件替换旧文件
+        await File(dbPath).copy(currentDbPath);
         debugPrint('Database replaced: $currentDbPath');
 
-        // 8. 复制照片到应用文档目录
+        // 10. 复制照片到应用文档目录的 photos/ 子目录
         final photosDir = p.join(extractDir.path, 'photos');
         if (await Directory(photosDir).exists()) {
-          final appDir = await getApplicationDocumentsDirectory();
           final destPhotosDir = Directory(p.join(appDir.path, 'photos'));
           await destPhotosDir.create(recursive: true);
 
@@ -735,11 +756,10 @@ class BackupZipService {
           debugPrint('Photos imported from backup');
         }
 
-        // 9. 重新打开数据库
-        // 通过访问 database 属性触发重新初始化
+        // 11. 重新打开数据库
         await _dbProvider.database;
 
-        // 10. 清理临时文件
+        // 12. 清理临时文件
         await extractDir.delete(recursive: true);
 
         return ImportResult.successWithMetadata(metadata);

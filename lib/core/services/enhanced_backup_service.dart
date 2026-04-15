@@ -158,15 +158,14 @@ class EnhancedBackupService {
         ) ??
         0;
 
-    // 统计照片数量
+    // 统计照片数量（仅原图，不计入水印图片）
     final catches = await db.query(
       'fish_catches',
-      columns: ['image_path', 'watermarked_image_path'],
+      columns: ['image_path'],
     );
     int photoCount = 0;
     for (final fish in catches) {
       if (fish['image_path'] != null) photoCount++;
-      if (fish['watermarked_image_path'] != null) photoCount++;
     }
 
     return {
