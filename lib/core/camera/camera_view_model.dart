@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import '../models/fish_catch.dart';
 import '../models/equipment.dart';
 import '../models/app_settings.dart';
@@ -75,7 +78,16 @@ class CameraViewModel extends StateNotifier<CameraState> {
       return await error_service.ErrorService().wrap(() async {
         final path = await _cameraHelper.takePicture();
         if (path != null) {
-          setImagePath(path);
+          // 将临时目录中的照片移动到应用文档目录的 photos/ 子目录
+          final appDir = await getApplicationDocumentsDirectory();
+          final photosDir = Directory(p.join(appDir.path, 'photos'));
+          await photosDir.create(recursive: true);
+          final fileName = p.basename(path);
+          final newPath = p.join(photosDir.path, fileName);
+          await File(path).copy(newPath);
+          await File(path).delete(); // 删除临时文件
+          setImagePath(newPath); // newPath 是绝对路径
+          return newPath;
         }
         return path;
       }, context: '拍照');

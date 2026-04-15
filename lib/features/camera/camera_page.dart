@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
@@ -143,10 +144,12 @@ class _CameraPageState extends ConsumerState<CameraPage> {
 
     if (pickedFile != null) {
       final appDir = await getApplicationDocumentsDirectory();
+      final photosDir = Directory(p.join(appDir.path, 'photos'));
+      await photosDir.create(recursive: true);
       final fileName = FileUtils.generateTimestampFileName('jpg');
-      final newPath = '${appDir.path}/$fileName';
+      final newPath = p.join(photosDir.path, fileName);
       await File(pickedFile.path).copy(newPath);
-      vm.setImagePath(newPath);
+      vm.setImagePath(newPath); // 存绝对路径
     }
   }
 
