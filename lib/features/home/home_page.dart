@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/animation_constants.dart';
 import '../../core/design/theme/app_colors.dart';
+import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/home_view_model.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/pending_recognition_providers.dart';
@@ -75,14 +76,14 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
     _controllers = List.generate(
       _itemCount,
       (index) => AnimationController(
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 330),
         vsync: this,
       ),
     );
 
     _fadeAnimations = _controllers.map((controller) {
       return Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(parent: controller, curve: Curves.easeOut),
+        CurvedAnimation(parent: controller, curve: TeslaAnimation.teslaCurve),
       );
     }).toList();
 
@@ -91,7 +92,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
         begin: const Offset(0, 0.15),
         end: Offset.zero,
       ).animate(
-        CurvedAnimation(parent: controller, curve: Curves.easeOut),
+        CurvedAnimation(parent: controller, curve: TeslaAnimation.teslaCurve),
       );
     }).toList();
   }
@@ -267,17 +268,11 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
       return Container(
         height: 160,
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Theme.of(context).colorScheme.primaryContainer,
-              Theme.of(context).colorScheme.surface,
-            ],
-          ),
-          borderRadius: BorderRadius.circular(16),
+          color: TeslaColors.lightAsh,
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           border: Border.all(
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color: TeslaColors.cloudGray,
+            width: 1,
           ),
         ),
         child: Center(
@@ -317,17 +312,11 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Theme.of(context).colorScheme.primaryContainer,
-            Theme.of(context).colorScheme.surface,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
+        color: TeslaColors.white,
+        borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
         border: Border.all(
-          color: Theme.of(context).colorScheme.primaryContainer,
+          color: TeslaColors.cloudGray,
+          width: 1,
         ),
       ),
       child: Column(
@@ -426,23 +415,8 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: rank == 1
-                    ? [AppColors.gold, AppColors.gold]
-                    : rank == 2
-                        ? [AppColors.silver, AppColors.silver]
-                        : [AppColors.bronze, AppColors.bronze],
-              ),
+              color: mainColor,
               shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: mainColor.withValues(alpha: 0.4),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
             child: Center(
               child: rank == 1
@@ -519,14 +493,14 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                 icon: Icons.water_drop,
                 label: strings.release,
                 count: release,
-                color: AppColors.success,
+                color: TeslaColors.electricBlue,
               ),
               const SizedBox(width: 12),
               _StatBadge(
                 icon: Icons.restaurant,
                 label: strings.keep,
                 count: keep,
-                color: AppColors.warning,
+                color: TeslaColors.electricBlue,
               ),
             ],
           ),
@@ -553,7 +527,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
             children: [
               const Icon(
                 Icons.auto_awesome,
-                color: AppColors.warning,
+                color: TeslaColors.electricBlue,
                 size: 24,
               ),
               const SizedBox(width: 12),
