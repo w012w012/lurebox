@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/app_theme.dart';
 import '../../../core/design/theme/animation_constants.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../widgets/common/premium_card.dart';
 
 class LocationStatsCard extends StatefulWidget {
@@ -33,12 +33,12 @@ class _LocationStatsCardState extends State<LocationStatsCard>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AnimationConstants.pageTransitionDuration,
+      duration: TeslaAnimation.pageTransitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: AnimationConstants.defaultCurve,
+      curve: TeslaAnimation.teslaCurve,
     );
     _animationController.forward();
   }
@@ -62,8 +62,7 @@ class _LocationStatsCardState extends State<LocationStatsCard>
   Widget build(BuildContext context) {
     if (widget.locationAnalysis.isEmpty) return const SizedBox();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    const accentColor = TeslaColors.electricBlue;
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -97,18 +96,18 @@ class _LocationStatsCardState extends State<LocationStatsCard>
                 ),
               ],
             ),
-            const SizedBox(height: AppTheme.spacingMd),
+            const SizedBox(height: TeslaTheme.spacingMicro),
             ...widget.locationAnalysis.entries.map((locationEntry) {
               final location = locationEntry.key;
               final speciesMap = locationEntry.value;
               final total = speciesMap.values.fold(0, (a, b) => a + b);
 
               return Container(
-                margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-                padding: const EdgeInsets.all(AppTheme.spacingMd),
+                margin: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
+                padding: const EdgeInsets.all(TeslaTheme.spacingMicro),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surfaceContainerLow,
-                  borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
                   border: Border.all(
                     color: Theme.of(
                       context,
@@ -120,12 +119,12 @@ class _LocationStatsCardState extends State<LocationStatsCard>
                   children: [
                     Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.location_on,
                           size: 18,
                           color: accentColor,
                         ),
-                        const SizedBox(width: AppTheme.spacingXs),
+                        const SizedBox(width: TeslaTheme.spacingMicro),
                         Expanded(
                           child: Text(
                             widget.showDetails
@@ -151,20 +150,20 @@ class _LocationStatsCardState extends State<LocationStatsCard>
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppTheme.spacingSm),
+                    const SizedBox(height: TeslaTheme.spacingSm),
                     Wrap(
-                      spacing: AppTheme.spacingSm,
-                      runSpacing: AppTheme.spacingXs,
+                      spacing: TeslaTheme.spacingSm,
+                      runSpacing: TeslaTheme.spacingMicro,
                       children: speciesMap.entries.map((speciesEntry) {
                         return Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: AppTheme.spacingSm,
-                            vertical: AppTheme.spacingXs,
+                            horizontal: TeslaTheme.spacingSm,
+                            vertical: TeslaTheme.spacingMicro,
                           ),
                           decoration: BoxDecoration(
                             color: accentColor.withValues(alpha: 0.12),
                             borderRadius:
-                                BorderRadius.circular(AppTheme.radiusMd),
+                                BorderRadius.circular(TeslaTheme.radiusCard),
                           ),
                           child: Text(
                             widget.strings.speciesCountPattern

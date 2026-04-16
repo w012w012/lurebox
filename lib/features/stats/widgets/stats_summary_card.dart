@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/app_theme.dart';
 import '../../../core/design/theme/animation_constants.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/models/app_settings.dart';
 import '../../../core/providers/app_settings_provider.dart';
 import '../../../core/providers/language_provider.dart';
@@ -41,12 +41,12 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AnimationConstants.pageTransitionDuration,
+      duration: TeslaAnimation.pageTransitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: AnimationConstants.defaultCurve,
+      curve: TeslaAnimation.teslaCurve,
     );
     _animationController.forward();
   }
@@ -88,9 +88,9 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
                 ),
               ],
             ),
-            const SizedBox(height: AppTheme.spacingMd),
+            const SizedBox(height: TeslaTheme.spacingMicro),
             Container(
-              padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
+              padding: const EdgeInsets.symmetric(vertical: TeslaTheme.spacingSm),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
@@ -113,7 +113,7 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
                           ),
                     ),
                   ),
-                  const SizedBox(width: AppTheme.spacingSm),
+                  const SizedBox(width: TeslaTheme.spacingSm),
                   Expanded(
                     child: Text(
                       strings.quantity,
@@ -142,7 +142,7 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
             ...widget.speciesSummary.map(
               (item) => Container(
                 padding:
-                    const EdgeInsets.symmetric(vertical: AppTheme.spacingMd),
+                    const EdgeInsets.symmetric(vertical: TeslaTheme.spacingMicro),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
@@ -163,7 +163,7 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
                             ),
                       ),
                     ),
-                    const SizedBox(width: AppTheme.spacingSm),
+                    const SizedBox(width: TeslaTheme.spacingSm),
                     Expanded(
                       child: Text(
                         '${item['count']}${strings.fishCountUnit}',
@@ -216,12 +216,12 @@ class _EquipmentChartState extends State<EquipmentChart>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AnimationConstants.pageTransitionDuration,
+      duration: TeslaAnimation.pageTransitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: AnimationConstants.defaultCurve,
+      curve: TeslaAnimation.teslaCurve,
     );
     _animationController.forward();
   }
@@ -242,8 +242,8 @@ class _EquipmentChartState extends State<EquipmentChart>
       widget.color.withValues(alpha: 0.7),
       widget.color.withValues(alpha: 0.5),
       widget.color.withValues(alpha: 0.3),
-      AppColors.grey700,
-      AppColors.teal,
+      TeslaColors.pewter,
+      TeslaColors.electricBlue,
       Colors.indigo,
       Colors.brown,
     ];
@@ -256,7 +256,7 @@ class _EquipmentChartState extends State<EquipmentChart>
       opacity: _fadeAnimation,
       child: PremiumCard(
         variant: PremiumCardVariant.standard,
-        margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+        margin: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -266,13 +266,13 @@ class _EquipmentChartState extends State<EquipmentChart>
                     fontWeight: FontWeight.w600,
                   ),
             ),
-            const SizedBox(height: AppTheme.spacingMd),
+            const SizedBox(height: TeslaTheme.spacingMicro),
             ...sortedEntries.asMap().entries.map((entry) {
               final index = entry.key;
               final item = entry.value;
               final pct = (item.value / total * 100).toStringAsFixed(0);
               return Padding(
-                padding: const EdgeInsets.only(bottom: AppTheme.spacingXs),
+                padding: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
                 child: Row(
                   children: [
                     Container(
@@ -283,7 +283,7 @@ class _EquipmentChartState extends State<EquipmentChart>
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                    const SizedBox(width: AppTheme.spacingXs),
+                    const SizedBox(width: TeslaTheme.spacingMicro),
                     Expanded(
                       child: Text(
                         item.key,
@@ -291,7 +291,7 @@ class _EquipmentChartState extends State<EquipmentChart>
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: AppTheme.spacingXs),
+                    const SizedBox(width: TeslaTheme.spacingMicro),
                     Text(
                       '$pct%',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -300,7 +300,7 @@ class _EquipmentChartState extends State<EquipmentChart>
                                 Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                     ),
-                    const SizedBox(width: AppTheme.spacingXs),
+                    const SizedBox(width: TeslaTheme.spacingMicro),
                     Text(
                       '${item.value}条',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(

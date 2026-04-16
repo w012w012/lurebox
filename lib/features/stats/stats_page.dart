@@ -6,6 +6,7 @@ import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/design/theme/app_theme.dart';
 import '../../core/design/theme/animation_constants.dart';
+import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/stats_provider.dart';
 import '../../widgets/common/premium_card.dart';
@@ -34,8 +35,8 @@ class StatsPage extends ConsumerWidget {
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           padding: const EdgeInsets.symmetric(
-            horizontal: AppTheme.spacingLg,
-            vertical: AppTheme.spacingMd,
+            horizontal: TeslaTheme.spacingMd,
+            vertical: TeslaTheme.spacingMicro,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -63,7 +64,7 @@ class StatsPage extends ConsumerWidget {
                   },
                 ),
               ),
-              const SizedBox(height: AppTheme.spacingMd),
+              const SizedBox(height: TeslaTheme.spacingMd),
 
               // 本月渔获卡片
               _AnimatedStatCard(
@@ -84,7 +85,7 @@ class StatsPage extends ConsumerWidget {
                   },
                 ),
               ),
-              const SizedBox(height: AppTheme.spacingMd),
+              const SizedBox(height: TeslaTheme.spacingMd),
 
               // 本年渔获卡片
               _AnimatedStatCard(
@@ -105,7 +106,7 @@ class StatsPage extends ConsumerWidget {
                   },
                 ),
               ),
-              const SizedBox(height: AppTheme.spacingMd),
+              const SizedBox(height: TeslaTheme.spacingMd),
 
               // 全部渔获卡片
               _AnimatedStatCard(
@@ -126,7 +127,7 @@ class StatsPage extends ConsumerWidget {
                   },
                 ),
               ),
-              const SizedBox(height: AppTheme.spacingXl),
+              const SizedBox(height: TeslaTheme.spacingLg),
             ],
           ),
         ),
@@ -193,7 +194,7 @@ class _AnimatedStatCardState extends State<_AnimatedStatCard>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: AnimationConstants.pageTransitionDuration,
+      duration: TeslaAnimation.pageTransitionDuration,
       vsync: this,
     );
 
@@ -202,7 +203,7 @@ class _AnimatedStatCardState extends State<_AnimatedStatCard>
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: AnimationConstants.defaultCurve,
+      curve: TeslaAnimation.teslaCurve,
     ));
 
     _slideAnimation = Tween<Offset>(
@@ -210,12 +211,12 @@ class _AnimatedStatCardState extends State<_AnimatedStatCard>
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: AnimationConstants.defaultCurve,
+      curve: TeslaAnimation.teslaCurve,
     ));
 
     // Stagger the animation start
     Future.delayed(
-      AnimationConstants.staggerDelay * widget.index,
+      TeslaAnimation.transition * widget.index,
       () {
         if (mounted) {
           _controller.forward();
@@ -266,7 +267,7 @@ class _StatCardLoading extends StatelessWidget {
             height: 20,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              color: AppColors.accentLight,
+              color: TeslaColors.electricBlue,
             ),
           ),
         ],
@@ -294,7 +295,7 @@ class _StatCardError extends StatelessWidget {
                 ),
           ),
           const Spacer(),
-          const Icon(Icons.error_outline, color: AppColors.error),
+          const Icon(Icons.error_outline, color: TeslaColors.electricBlue),
         ],
       ),
     );
@@ -329,11 +330,10 @@ class _StatCardState extends State<_StatCard> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final releaseRate = widget.count > 0
         ? (widget.release / widget.count * 100).toStringAsFixed(0)
         : '0';
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    const accentColor = TeslaColors.electricBlue;
 
     return GestureDetector(
       onTapDown: (_) => setState(() => _isPressed = true),
@@ -341,9 +341,9 @@ class _StatCardState extends State<_StatCard> {
       onTapCancel: () => setState(() => _isPressed = false),
       onTap: widget.onTap,
       child: AnimatedScale(
-        scale: _isPressed ? AnimationConstants.touchScale : 1.0,
-        duration: AnimationConstants.touchFeedbackDuration,
-        curve: AnimationConstants.defaultCurve,
+        scale: _isPressed ? 0.98 : 1.0,
+        duration: TeslaAnimation.colorTransition,
+        curve: TeslaAnimation.teslaCurve,
         child: PremiumCard(
           variant: PremiumCardVariant.standard,
           padding: const EdgeInsets.all(AppTheme.spacingLg),
@@ -356,19 +356,17 @@ class _StatCardState extends State<_StatCard> {
                     widget.title,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w600,
-                          color: isDark
-                              ? AppColors.textPrimaryDark
-                              : AppColors.textPrimaryLight,
+                          color: TeslaColors.carbonDark,
                         ),
                   ),
                   const Spacer(),
-                  Icon(
+                  const Icon(
                     Icons.chevron_right,
                     color: accentColor,
                   ),
                 ],
               ),
-              const SizedBox(height: AppTheme.spacingLg),
+              const SizedBox(height: TeslaTheme.spacingLg),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -382,19 +380,19 @@ class _StatCardState extends State<_StatCard> {
                     icon: Icons.water_drop,
                     count: widget.release,
                     label: widget.strings.release,
-                    color: AppColors.release,
+                    color: TeslaColors.electricBlue,
                   ),
                   _StatItem(
                     icon: Icons.restaurant,
                     count: widget.keep,
                     label: widget.strings.keep,
-                    color: AppColors.keep,
+                    color: TeslaColors.electricBlue,
                   ),
                   _StatItem(
                     icon: Icons.percent,
                     count: int.parse(releaseRate),
                     label: widget.strings.releaseRate,
-                    color: AppColors.teal,
+                    color: TeslaColors.electricBlue,
                   ),
                 ],
               ),
@@ -427,11 +425,11 @@ class _StatItem extends StatelessWidget {
           padding: const EdgeInsets.all(AppTheme.spacingSm),
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+            borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
           ),
           child: Icon(icon, color: color, size: 20),
         ),
-        const SizedBox(height: AppTheme.spacingSm),
+        const SizedBox(height: TeslaTheme.spacingSm),
         Text(
           '$count',
           style: TextStyle(

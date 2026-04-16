@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/app_theme.dart';
 import '../../../core/design/theme/animation_constants.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/utils/unit_converter.dart';
 import '../../../widgets/common/premium_card.dart';
 
@@ -42,25 +42,25 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
   late final Animation<double> _fadeAnimation;
 
   static const _chartColors = [
-    AppColors.accentLight,
-    AppColors.teal,
-    AppColors.cyan,
-    AppColors.indigo,
-    AppColors.primaryLight,
-    AppColors.purple,
-    AppColors.pink,
+    TeslaColors.electricBlue,
+    TeslaColors.electricBlue,
+    TeslaColors.electricBlue,
+    TeslaColors.electricBlue,
+    TeslaColors.electricBlue,
+    TeslaColors.electricBlue,
+    TeslaColors.electricBlue,
   ];
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AnimationConstants.pageTransitionDuration,
+      duration: TeslaAnimation.pageTransitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: AnimationConstants.defaultCurve,
+      curve: TeslaAnimation.teslaCurve,
     );
     _animationController.forward();
   }
@@ -117,7 +117,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                       color: Theme.of(
                         context,
                       ).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -145,7 +145,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                   ),
               ],
             ),
-            const SizedBox(height: AppTheme.spacingMd),
+            const SizedBox(height: TeslaTheme.spacingMicro),
             ...sortedEntries.asMap().entries.map((entry) {
               final index = entry.key;
               final e = entry.value;
@@ -159,7 +159,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                   : (e.value / widget.totalCount * 100).toStringAsFixed(1);
               return Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
+                    const EdgeInsets.symmetric(vertical: TeslaTheme.spacingSm),
                 child: Column(
                   children: [
                     Row(
@@ -172,7 +172,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                        const SizedBox(width: AppTheme.spacingSm),
+                        const SizedBox(width: TeslaTheme.spacingSm),
                         Expanded(
                           child: Text(
                             e.key,
@@ -189,7 +189,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                                     ).colorScheme.onSurfaceVariant,
                                   ),
                         ),
-                        const SizedBox(width: AppTheme.spacingSm),
+                        const SizedBox(width: TeslaTheme.spacingSm),
                         Text(
                           '$value $unitLabel',
                           style:
@@ -199,7 +199,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppTheme.spacingXs),
+                    const SizedBox(height: TeslaTheme.spacingMicro),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(2),
                       child: LinearProgressIndicator(
@@ -241,19 +241,18 @@ class _ToggleOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    const accentColor = TeslaColors.electricBlue;
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingMd,
-          vertical: AppTheme.spacingXs,
+          horizontal: TeslaTheme.spacingMicro,
+          vertical: TeslaTheme.spacingMicro,
         ),
         decoration: BoxDecoration(
           color: isSelected ? accentColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
         ),
         child: Text(
           label,
