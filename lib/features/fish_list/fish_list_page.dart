@@ -196,19 +196,19 @@ class _FishListPageState extends ConsumerState<FishListPage>
     }
 
     final controller = AnimationController(
-      duration: const Duration(milliseconds: 350),
+      duration: const Duration(milliseconds: 330),
       vsync: this,
     );
 
     final delay = AnimationConstants.staggerDelay * index;
-    final delayFraction = delay.inMilliseconds / 350;
+    final delayFraction = delay.inMilliseconds / 330;
 
     final animation = CurvedAnimation(
       parent: controller,
       curve: Interval(
         delayFraction.clamp(0.0, 0.6),
         1.0,
-        curve: AnimationConstants.defaultCurve,
+        curve: TeslaAnimation.teslaCurve,
       ),
     );
 
@@ -230,7 +230,6 @@ class _FishListPageState extends ConsumerState<FishListPage>
     final strings = ref.watch(currentStringsProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
       appBar: _buildAppBar(state, strings),
       body: _buildBody(state, strings),
     );
@@ -238,19 +237,18 @@ class _FishListPageState extends ConsumerState<FishListPage>
 
   PreferredSizeWidget _buildAppBar(FishListState state, AppStrings strings) {
     return AppBar(
-      backgroundColor: AppColors.surfaceLight,
       title: state.isSelectionMode
           ? Text(
               '${strings.selected} ${state.selectedIds.length} ${strings.items}',
               style: const TextStyle(
-                color: AppColors.textPrimaryLight,
+                color: TeslaColors.carbonDark,
                 fontWeight: FontWeight.w600,
               ),
             )
           : const Text(
               '鱼获列表',
               style: TextStyle(
-                color: AppColors.textPrimaryLight,
+                color: TeslaColors.carbonDark,
                 fontWeight: FontWeight.w600,
                 letterSpacing: -0.3,
               ),
@@ -293,7 +291,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
     if (state.isLoading && state.filteredCatches.isEmpty) {
       return const Center(
         child: CircularProgressIndicator(
-          color: AppColors.accentLight,
+          color: TeslaColors.electricBlue,
         ),
       );
     }
@@ -469,7 +467,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
                   if (state.isLoading && state.filteredCatches.isNotEmpty) {
                     return const Center(
                       child: CircularProgressIndicator(
-                        color: AppColors.accentLight,
+                        color: TeslaColors.electricBlue,
                       ),
                     );
                   }
@@ -508,7 +506,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
           padding: EdgeInsets.all(16),
           child: Center(
             child: CircularProgressIndicator(
-              color: AppColors.accentLight,
+              color: TeslaColors.electricBlue,
             ),
           ),
         );
@@ -539,10 +537,10 @@ class _FishListPageState extends ConsumerState<FishListPage>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: AppColors.surfaceLight,
+        color: TeslaColors.white,
         border: Border(
           bottom: BorderSide(
-            color: AppColors.borderLight.withValues(alpha: 0.5),
+            color: TeslaColors.cloudGray.withValues(alpha: 0.5),
             width: 1,
           ),
         ),
@@ -552,7 +550,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
           const Icon(
             Icons.sort,
             size: 18,
-            color: AppColors.accentLight,
+            color: TeslaColors.electricBlue,
           ),
           const SizedBox(width: 8),
           _SortButton(
@@ -584,14 +582,14 @@ class _FishListPageState extends ConsumerState<FishListPage>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: AppColors.accentLight.withValues(alpha: 0.1),
+              color: TeslaColors.electricBlue.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
               '${strings.total} ${state.filteredCatches.length} ${strings.fishCountUnit}',
               style: const TextStyle(
                 fontSize: 12,
-                color: AppColors.accentLight,
+                color: TeslaColors.electricBlue,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -620,11 +618,11 @@ class _SortButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
+        duration: TeslaAnimation.colorTransition,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.accentLight.withValues(alpha: 0.12)
+              ? TeslaColors.electricBlue.withValues(alpha: 0.12)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(6),
         ),
@@ -636,8 +634,8 @@ class _SortButton extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 color: isSelected
-                    ? AppColors.accentLight
-                    : AppColors.textSecondaryLight,
+                    ? TeslaColors.electricBlue
+                    : TeslaColors.graphite,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
@@ -646,7 +644,7 @@ class _SortButton extends StatelessWidget {
               Icon(
                 isAsc ? Icons.arrow_upward : Icons.arrow_downward,
                 size: 12,
-                color: AppColors.accentLight,
+                color: TeslaColors.electricBlue,
               ),
             ],
           ],
