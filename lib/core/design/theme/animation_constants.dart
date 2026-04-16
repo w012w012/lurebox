@@ -19,3 +19,23 @@ class AnimationConstants {
   /// Default curve for animations.
   static const Curve defaultCurve = Curves.easeOut;
 }
+
+/// Tesla-inspired animation constants: 0.33s cubic-bezier transitions.
+class TeslaAnimation {
+  TeslaAnimation._();
+
+  /// Universal transition duration for all interactive state changes.
+  static const Duration transition = Duration(milliseconds: 330);
+
+  /// Cubic-bezier curve: cubic-bezier(0.16, 1, 0.3, 1)
+  static const Curve teslaCurve = Cubic(0.16, 1.0, 0.3, 1.0);
+
+  /// Color-only transition duration.
+  static const Duration colorTransition = Duration(milliseconds: 330);
+
+  /// Border/shadow animation duration.
+  static const Duration borderTransition = Duration(milliseconds: 250);
+
+  /// Page transition duration (Tesla-style).
+  static const Duration pageTransitionDuration = Duration(milliseconds: 330);
+}

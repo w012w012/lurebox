@@ -86,6 +86,62 @@ class AppColors {
     Color(0xFF5A67D8), // 靛蓝
   ];
 
+  // ─── Tesla Design System Colors ─────────────────────────────────────────────
+
+  /// Electric Blue (#3E6AE1): primary CTA only — never decorative.
+  static const Color teslaElectricBlue = Color(0xFF3E6AE1);
+
+  /// Pure White (#FFFFFF): dominant background, canvas for photography.
+  static const Color teslaWhite = Color(0xFFFFFFFF);
+
+  /// Light Ash (#F4F4F4): subtle alternate surface.
+  static const Color teslaLightAsh = Color(0xFFF4F4F4);
+
+  /// Carbon Dark (#171A20): dark surface, primary heading, nav text.
+  static const Color teslaCarbonDark = Color(0xFF171A20);
+
+  /// Graphite (#393C41): body text, secondary content.
+  static const Color teslaGraphite = Color(0xFF393C41);
+
+  /// Pewter (#5C5E62): tertiary text, sub-links.
+  static const Color teslaPewter = Color(0xFF5C5E62);
+
+  /// Silver Fog (#8E8E8E): placeholder text, disabled states.
+  static const Color teslaSilverFog = Color(0xFF8E8E8E);
+
+  /// Cloud Gray (#EEEEEE): light borders and dividers.
+  static const Color teslaCloudGray = Color(0xFFEEEEEE);
+
+  /// Pale Silver (#D0D1D2): subtle UI borders.
+  static const Color teslaPaleSilver = Color(0xFFD0D1D2);
+
+  /// Frosted Glass (#FFFFFF at 0.75 opacity): navigation backdrop.
+  static Color get teslaFrostedGlassWhite =>
+      const Color(0xFFFFFFFF).withValues(alpha: 0.75);
+
+  /// Frosted Glass for dark mode (#171A20 at 0.85 opacity).
+  static Color get teslaFrostedGlassDark =>
+      const Color(0xFF171A20).withValues(alpha: 0.85);
+
+  /// Overlay (#808080 at 0.65 opacity): modal overlays.
+  static Color get teslaOverlay =>
+      const Color(0xFF808080).withValues(alpha: 0.65);
+
+  // ─── Semantic mappings for Tesla theme ─────────────────────────────────────
+
+  /// Primary CTA background.
+  static const Color teslaCtaBackground = teslaElectricBlue;
+  /// Primary CTA text.
+  static const Color teslaCtaText = teslaWhite;
+  /// Light mode surface (white canvas).
+  static const Color teslaSurfaceLight = teslaWhite;
+  /// Dark mode surface (carbon dark).
+  static const Color teslaSurfaceDark = teslaCarbonDark;
+  /// Light mode background (white).
+  static const Color teslaBackgroundLight = teslaWhite;
+  /// Dark mode background (pure black for OLED).
+  static const Color teslaBackgroundDark = Color(0xFF000000);
+
   /// 创建完整的 ColorScheme
   static ColorScheme lightColorScheme() {
     return const ColorScheme.light(
@@ -147,4 +203,47 @@ class AppColors {
       inversePrimary: primaryLight,
     );
   }
+}
+
+/// Tesla design system colors: Electric Blue + neutral palette.
+/// No gradients, no decorative color usage.
+/// Reference: DESIGN.md Tesla Visual Theme.
+class TeslaColors {
+  TeslaColors._();
+
+  // Primary & Accent
+  static const Color electricBlue = Color(0xFF3E6AE1);
+  static const Color white = Color(0xFFFFFFFF);
+
+  // Surface & Background
+  static const Color lightAsh = Color(0xFFF4F4F4);
+  static const Color carbonDark = Color(0xFF171A20);
+
+  // Neutrals
+  static const Color graphite = Color(0xFF393C41);
+  static const Color pewter = Color(0xFF5C5E62);
+  static const Color silverFog = Color(0xFF8E8E8E);
+  static const Color cloudGray = Color(0xFFEEEEEE);
+  static const Color paleSilver = Color(0xFFD0D1D2);
+
+  // Frosted glass helpers
+  static Color get frostedGlassWhite =>
+      white.withValues(alpha: 0.75);
+  static Color get frostedGlassDark =>
+      carbonDark.withValues(alpha: 0.85);
+  static Color get overlay =>
+      const Color(0xFF808080).withValues(alpha: 0.65);
+
+  // Semantic aliases
+  static const Color ctaBackground = electricBlue;
+  static const Color ctaText = white;
+  static const Color surfaceLight = white;
+  static const Color surfaceDark = carbonDark;
+  static const Color backgroundLight = white;
+  static const Color backgroundDark = Color(0xFF000000);
+  static const Color headingText = carbonDark;
+  static const Color bodyText = graphite;
+  static const Color tertiaryText = pewter;
+  static const Color placeholder = silverFog;
+  static const Color divider = cloudGray;
 }
