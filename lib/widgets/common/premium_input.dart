@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_theme.dart';
 import '../../core/design/theme/app_colors.dart';
+import '../../core/design/theme/tesla_theme.dart';
 
 /// 高级极简输入框组件
 /// 提供统一的输入框样式，符合Premium Minimalist设计系统
@@ -76,7 +76,7 @@ class PremiumTextField extends StatelessWidget {
       inputFormatters: inputFormatters,
       focusNode: focusNode,
       style: TextStyle(
-        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+        color: isDark ? TeslaColors.white : TeslaColors.carbonDark,
         fontSize: 16,
       ),
       decoration: InputDecoration(
@@ -89,55 +89,55 @@ class PremiumTextField extends StatelessWidget {
         suffix: suffix,
         contentPadding: contentPadding ??
             const EdgeInsets.symmetric(
-              horizontal: AppTheme.spacingLg,
-              vertical: AppTheme.spacingMd,
+              horizontal: TeslaTheme.spacingMd,
+              vertical: TeslaTheme.spacingMicro,
             ),
-        filled: true,
-        fillColor: isDark ? AppColors.surfaceDark : AppColors.grey100,
+        filled: false,
+        fillColor: Colors.transparent,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide(
-            color: isDark ? AppColors.accentDark : AppColors.accentLight,
+            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
             width: 2,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: const BorderSide(color: AppColors.error, width: 1),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 1),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: const BorderSide(color: AppColors.error, width: 2),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 2),
         ),
         labelStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark
-              : AppColors.textSecondaryLight,
+              ? const Color(0xFF9A9A9A)
+              : TeslaColors.graphite,
           fontSize: 16,
         ),
         floatingLabelStyle: TextStyle(
-          color: isDark ? AppColors.accentDark : AppColors.accentLight,
+          color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
           fontSize: 16,
         ),
         hintStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark.withValues(alpha: 0.7)
-              : AppColors.textSecondaryLight.withValues(alpha: 0.7),
+              ? const Color(0xFF9A9A9A).withValues(alpha: 0.7)
+              : TeslaColors.graphite.withValues(alpha: 0.7),
           fontSize: 16,
         ),
-        errorStyle: const TextStyle(color: AppColors.error, fontSize: 12),
+        errorStyle: const TextStyle(color: TeslaColors.electricBlue, fontSize: 12),
         counterStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark
-              : AppColors.textSecondaryLight,
+              ? const Color(0xFF9A9A9A)
+              : TeslaColors.graphite,
           fontSize: 12,
         ),
       ),
@@ -181,7 +181,7 @@ class PremiumSearchField extends StatelessWidget {
       autofocus: autofocus,
       focusNode: focusNode,
       style: TextStyle(
-        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+        color: isDark ? TeslaColors.white : TeslaColors.carbonDark,
         fontSize: 16,
       ),
       decoration: InputDecoration(
@@ -190,16 +190,16 @@ class PremiumSearchField extends StatelessWidget {
             Icon(
               Icons.search_rounded,
               color: isDark
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondaryLight,
+                  ? const Color(0xFF9A9A9A)
+                  : TeslaColors.graphite,
             ),
         suffixIcon: controller != null && controller!.text.isNotEmpty
             ? IconButton(
                 icon: Icon(
                   Icons.clear_rounded,
                   color: isDark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondaryLight,
+                      ? const Color(0xFF9A9A9A)
+                      : TeslaColors.graphite,
                 ),
                 onPressed: () {
                   controller!.clear();
@@ -208,30 +208,30 @@ class PremiumSearchField extends StatelessWidget {
               )
             : null,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingLg,
-          vertical: AppTheme.spacingMd,
+          horizontal: TeslaTheme.spacingMd,
+          vertical: TeslaTheme.spacingMicro,
         ),
-        filled: true,
-        fillColor: isDark ? AppColors.surfaceDark : AppColors.grey100,
+        filled: false,
+        fillColor: Colors.transparent,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide(
-            color: isDark ? AppColors.accentDark : AppColors.accentLight,
+            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
             width: 2,
           ),
         ),
         hintStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark
-              : AppColors.textSecondaryLight,
+              ? const Color(0xFF9A9A9A)
+              : TeslaColors.graphite,
           fontSize: 16,
         ),
       ),
@@ -294,7 +294,7 @@ class PremiumNumberField extends StatelessWidget {
           _RangeTextInputFormatter(min: min, max: max),
       ],
       style: TextStyle(
-        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+        color: isDark ? TeslaColors.white : TeslaColors.carbonDark,
         fontSize: 16,
       ),
       decoration: InputDecoration(
@@ -304,60 +304,60 @@ class PremiumNumberField extends StatelessWidget {
         prefixText: prefixText,
         suffixText: suffixText,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingLg,
-          vertical: AppTheme.spacingMd,
+          horizontal: TeslaTheme.spacingMd,
+          vertical: TeslaTheme.spacingMicro,
         ),
-        filled: true,
-        fillColor: isDark ? AppColors.surfaceDark : AppColors.grey100,
+        filled: false,
+        fillColor: Colors.transparent,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide(
-            color: isDark ? AppColors.accentDark : AppColors.accentLight,
+            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
             width: 2,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: const BorderSide(color: AppColors.error, width: 1),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 1),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: const BorderSide(color: AppColors.error, width: 2),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 2),
         ),
         labelStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark
-              : AppColors.textSecondaryLight,
+              ? const Color(0xFF9A9A9A)
+              : TeslaColors.graphite,
           fontSize: 16,
         ),
         floatingLabelStyle: TextStyle(
-          color: isDark ? AppColors.accentDark : AppColors.accentLight,
+          color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
           fontSize: 16,
         ),
         hintStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark.withValues(alpha: 0.7)
-              : AppColors.textSecondaryLight.withValues(alpha: 0.7),
+              ? const Color(0xFF9A9A9A).withValues(alpha: 0.7)
+              : TeslaColors.graphite.withValues(alpha: 0.7),
           fontSize: 16,
         ),
         suffixStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark
-              : AppColors.textSecondaryLight,
+              ? const Color(0xFF9A9A9A)
+              : TeslaColors.graphite,
           fontSize: 16,
         ),
         prefixStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark
-              : AppColors.textSecondaryLight,
+              ? const Color(0xFF9A9A9A)
+              : TeslaColors.graphite,
           fontSize: 16,
         ),
       ),
@@ -448,7 +448,7 @@ class PremiumTextArea extends StatelessWidget {
       focusNode: focusNode,
       textAlignVertical: TextAlignVertical.top,
       style: TextStyle(
-        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+        color: isDark ? TeslaColors.white : TeslaColors.carbonDark,
         fontSize: 16,
       ),
       decoration: InputDecoration(
@@ -457,48 +457,48 @@ class PremiumTextArea extends StatelessWidget {
         errorText: errorText,
         alignLabelWithHint: true,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingLg,
-          vertical: AppTheme.spacingMd,
+          horizontal: TeslaTheme.spacingMd,
+          vertical: TeslaTheme.spacingMicro,
         ),
-        filled: true,
-        fillColor: isDark ? AppColors.surfaceDark : AppColors.grey100,
+        filled: false,
+        fillColor: Colors.transparent,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide(
-            color: isDark ? AppColors.accentDark : AppColors.accentLight,
+            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
             width: 2,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: const BorderSide(color: AppColors.error, width: 1),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 1),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: const BorderSide(color: AppColors.error, width: 2),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 2),
         ),
         labelStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark
-              : AppColors.textSecondaryLight,
+              ? const Color(0xFF9A9A9A)
+              : TeslaColors.graphite,
           fontSize: 16,
         ),
         floatingLabelStyle: TextStyle(
-          color: isDark ? AppColors.accentDark : AppColors.accentLight,
+          color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
           fontSize: 16,
         ),
         hintStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark.withValues(alpha: 0.7)
-              : AppColors.textSecondaryLight.withValues(alpha: 0.7),
+              ? const Color(0xFF9A9A9A).withValues(alpha: 0.7)
+              : TeslaColors.graphite.withValues(alpha: 0.7),
           fontSize: 16,
         ),
       ),
@@ -540,8 +540,8 @@ class PremiumDropdown<T> extends StatelessWidget {
             item.label,
             style: TextStyle(
               color: isDark
-                  ? AppColors.textPrimaryDark
-                  : AppColors.textPrimaryLight,
+                  ? TeslaColors.white
+                  : TeslaColors.carbonDark,
             ),
           ),
         );
@@ -550,10 +550,10 @@ class PremiumDropdown<T> extends StatelessWidget {
       icon: Icon(
         Icons.keyboard_arrow_down_rounded,
         color:
-            isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight,
+            isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
       ),
       style: TextStyle(
-        color: isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight,
+        color: isDark ? TeslaColors.white : TeslaColors.carbonDark,
         fontSize: 16,
       ),
       decoration: InputDecoration(
@@ -561,47 +561,47 @@ class PremiumDropdown<T> extends StatelessWidget {
         errorText: errorText,
         prefixIcon: prefixIcon,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingLg,
-          vertical: AppTheme.spacingMd,
+          horizontal: TeslaTheme.spacingMd,
+          vertical: TeslaTheme.spacingMicro,
         ),
-        filled: true,
-        fillColor: isDark ? AppColors.surfaceDark : AppColors.grey100,
+        filled: false,
+        fillColor: Colors.transparent,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           borderSide: BorderSide(
-            color: isDark ? AppColors.accentDark : AppColors.accentLight,
+            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
             width: 2,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: const BorderSide(color: AppColors.error, width: 1),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 1),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-          borderSide: const BorderSide(color: AppColors.error, width: 2),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 2),
         ),
         labelStyle: TextStyle(
           color: isDark
-              ? AppColors.textSecondaryDark
-              : AppColors.textSecondaryLight,
+              ? const Color(0xFF9A9A9A)
+              : TeslaColors.graphite,
           fontSize: 16,
         ),
         floatingLabelStyle: TextStyle(
-          color: isDark ? AppColors.accentDark : AppColors.accentLight,
+          color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
           fontSize: 16,
         ),
       ),
-      dropdownColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-      borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+      dropdownColor: isDark ? TeslaColors.carbonDark : TeslaColors.white,
+      borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
       elevation: 4,
     );
   }

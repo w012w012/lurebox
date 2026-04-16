@@ -21,13 +21,13 @@ class PremiumNavigationBar extends StatelessWidget {
     return NavigationBar(
       selectedIndex: selectedIndex,
       onDestinationSelected: onDestinationSelected,
-      backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
-      indicatorColor: isDark
-          ? AppColors.primaryDark.withValues(alpha: 0.12)
-          : AppColors.primaryLight.withValues(alpha: 0.12),
-      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      backgroundColor: isDark ? TeslaColors.carbonDark : TeslaColors.white,
+      indicatorColor:
+          TeslaColors.electricBlue.withValues(alpha: 0.12),
+      labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
       elevation: 0,
-      height: 65,
+      height: 80,
+      surfaceTintColor: Colors.transparent,
       destinations: destinations.map((dest) {
         return NavigationDestination(
           icon: Icon(dest.icon, size: 24),
