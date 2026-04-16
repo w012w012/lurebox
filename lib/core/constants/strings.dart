@@ -313,6 +313,11 @@ class AppStrings {
   final String selectWatermarkInfo;
   final String watermarkPreview;
   final String watermarkPositionDesc;
+  final String watermarkPositionTopLeft;
+  final String watermarkPositionTopRight;
+  final String watermarkPositionBottomLeft;
+  final String watermarkPositionBottomRight;
+  final String watermarkPositionCenter;
   final String rodDistribution;
   final String reelDistribution;
   final String lureDistribution;
@@ -810,6 +815,11 @@ class AppStrings {
     required this.selectWatermarkInfo,
     required this.watermarkPreview,
     required this.watermarkPositionDesc,
+    required this.watermarkPositionTopLeft,
+    required this.watermarkPositionTopRight,
+    required this.watermarkPositionBottomLeft,
+    required this.watermarkPositionBottomRight,
+    required this.watermarkPositionCenter,
     required this.rodDistribution,
     required this.reelDistribution,
     required this.lureDistribution,
@@ -1286,6 +1296,11 @@ class AppStrings {
     selectWatermarkInfo: '选择水印上显示的信息',
     watermarkPreview: '水印预览',
     watermarkPositionDesc: '水印显示在照片左下角，位置固定',
+    watermarkPositionTopLeft: '水印显示在照片左上角',
+    watermarkPositionTopRight: '水印显示在照片右上角',
+    watermarkPositionBottomLeft: '水印显示在照片左下角',
+    watermarkPositionBottomRight: '水印显示在照片右下角',
+    watermarkPositionCenter: '水印显示在照片居中位置',
     rodDistribution: '鱼竿分布',
     reelDistribution: '渔轮分布',
     lureDistribution: '鱼饵分布',
@@ -1773,6 +1788,11 @@ class AppStrings {
     selectWatermarkInfo: 'Select info to display on watermark',
     watermarkPreview: 'Watermark Preview',
     watermarkPositionDesc: 'Watermark is fixed at bottom-left of photo',
+    watermarkPositionTopLeft: 'Watermark is at top-left of photo',
+    watermarkPositionTopRight: 'Watermark is at top-right of photo',
+    watermarkPositionBottomLeft: 'Watermark is at bottom-left of photo',
+    watermarkPositionBottomRight: 'Watermark is at bottom-right of photo',
+    watermarkPositionCenter: 'Watermark is at center of photo',
     rodDistribution: 'Rod Distribution',
     reelDistribution: 'Reel Distribution',
     lureDistribution: 'Lure Distribution',
