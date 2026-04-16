@@ -43,7 +43,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
             strings.fishDetail,
             style: const TextStyle(
               color: TeslaColors.carbonDark,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
             ),
           ),
           backgroundColor: TeslaColors.white,
@@ -66,7 +66,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
             strings.fishDetail,
             style: const TextStyle(
               color: TeslaColors.carbonDark,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
             ),
           ),
           backgroundColor: TeslaColors.white,
@@ -119,7 +119,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
           strings.fishDetail,
           style: const TextStyle(
             color: TeslaColors.carbonDark,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           ),
         ),
         backgroundColor: TeslaColors.white,
@@ -305,7 +305,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
           strings.confirmDelete,
           style: const TextStyle(
             color: TeslaColors.carbonDark,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           ),
         ),
         content: Text(

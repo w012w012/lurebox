@@ -114,7 +114,7 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
                       Text(
                         widget.title,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: TeslaColors.carbonDark,
                             ),
                       ),
@@ -146,7 +146,7 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
                       Text(
                         '${widget.currentCount}/${widget.totalCount}',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: widget.isCompleted
                                   ? TeslaColors.electricBlue
                                   : TeslaColors.graphite,
@@ -212,8 +212,8 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
               return TweenAnimationBuilder<double>(
                 tween: Tween(begin: 0.0, end: 1.0),
                 duration: Duration(
-                  milliseconds: 300 +
-                      (index * TeslaAnimation.transition.inMilliseconds),
+                  milliseconds:
+                      TeslaAnimation.transition.inMilliseconds * (index + 1),
                 ),
                 curve: TeslaAnimation.teslaCurve,
                 builder: (context, value, child) {

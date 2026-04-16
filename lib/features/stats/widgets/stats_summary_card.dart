@@ -76,7 +76,7 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
                 Text(
                   strings.fishDetail,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                 ),
                 const Spacer(),
@@ -107,7 +107,7 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
                     child: Text(
                       strings.species,
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             color:
                                 Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
@@ -118,7 +118,7 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
                     child: Text(
                       strings.quantity,
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             color:
                                 Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
@@ -129,7 +129,7 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
                     child: Text(
                       strings.totalWeight,
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             color:
                                 Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
@@ -263,7 +263,7 @@ class _EquipmentChartState extends State<EquipmentChart>
             Text(
               widget.title,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                   ),
             ),
             const SizedBox(height: TeslaTheme.spacingMicro),
@@ -295,7 +295,7 @@ class _EquipmentChartState extends State<EquipmentChart>
                     Text(
                       '$pct%',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                             color:
                                 Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
@@ -304,7 +304,7 @@ class _EquipmentChartState extends State<EquipmentChart>
                     Text(
                       '${item.value}条',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                           ),
                     ),
                   ],

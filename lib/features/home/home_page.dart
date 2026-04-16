@@ -330,7 +330,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                 widget.strings.personalRecord,
                 style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
@@ -429,7 +429,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                       '$rank',
                       style: const TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: Colors.white,
                       ),
                     ),
@@ -439,7 +439,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
           Text(
             species,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                   color: textColor,
                 ),
             maxLines: 1,
@@ -449,7 +449,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
           Text(
             '${length.toStringAsFixed(1)}cm',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color: textColor,
                 ),
           ),

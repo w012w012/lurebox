@@ -142,7 +142,7 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
               Text(
                 '主要功能',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
               ),
               const SizedBox(height: TeslaTheme.spacingSm),

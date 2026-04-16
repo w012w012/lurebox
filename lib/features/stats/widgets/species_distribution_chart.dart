@@ -107,7 +107,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                 Text(
                   appStrings?.speciesDistribution ?? 'Species Distribution',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                 ),
                 const Spacer(),
@@ -183,7 +183,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                           '$percent%',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     color: Theme.of(
                                       context,
                                     ).colorScheme.onSurfaceVariant,
@@ -194,7 +194,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                           '$value $unitLabel',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                   ),
                         ),
                       ],

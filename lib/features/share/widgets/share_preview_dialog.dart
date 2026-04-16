@@ -51,7 +51,7 @@ class SharePreviewDialog extends StatelessWidget {
                     'Preview',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: TeslaColors.white,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                   ),
                   const SizedBox(height: 8),

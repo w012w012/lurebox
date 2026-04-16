@@ -219,7 +219,7 @@ class FishInfoCard extends ConsumerWidget {
                   '天气信息',
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                     color: TeslaColors.carbonDark,
                   ),
                 ),
@@ -260,7 +260,7 @@ class FishInfoCard extends ConsumerWidget {
                   strings.useEquipment,
                   style: const TextStyle(
                     fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                     color: TeslaColors.carbonDark,
                   ),
                 ),
@@ -329,7 +329,7 @@ class _InfoRow extends StatelessWidget {
           value,
           style: TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             color: valueColor ?? TeslaColors.carbonDark,
           ),
         ),

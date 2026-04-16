@@ -86,7 +86,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
                           ? '$brand $model'.trim()
                           : strings.unnamed,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                           ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -624,7 +624,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
           Text(
             '$quantity$unit',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color: TeslaColors.electricBlue,
                 ),
           ),

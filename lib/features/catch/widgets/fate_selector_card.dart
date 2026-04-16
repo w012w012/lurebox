@@ -46,7 +46,7 @@ class FateButton extends StatelessWidget {
             label,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
                   color: isSelected
                       ? color
                       : Theme.of(context).colorScheme.onSurfaceVariant,
