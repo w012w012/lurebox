@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/app_theme.dart';
 import '../../../core/design/theme/animation_constants.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../widgets/common/premium_card.dart';
 
@@ -37,7 +37,7 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AnimationConstants.pageTransitionDuration,
+      duration: TeslaAnimation.pageTransitionDuration,
       vsync: this,
     );
     _scaleAnimation = Tween<double>(
@@ -45,11 +45,11 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: AnimationConstants.defaultCurve,
+      curve: TeslaAnimation.teslaCurve,
     ));
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: AnimationConstants.defaultCurve,
+      curve: TeslaAnimation.teslaCurve,
     );
     _animationController.forward();
   }
@@ -63,8 +63,7 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
   @override
   Widget build(BuildContext context) {
     final strings = ref.watch(currentStringsProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    const accentColor = TeslaColors.electricBlue;
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -72,7 +71,7 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
         scale: _scaleAnimation,
         child: PremiumCard(
           variant: PremiumCardVariant.standard,
-          padding: const EdgeInsets.all(AppTheme.spacingXl),
+          padding: const EdgeInsets.all(TeslaTheme.spacingLg),
           child: Column(
             children: [
               Text(
@@ -81,24 +80,24 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
                       fontWeight: FontWeight.w600,
                     ),
               ),
-              const SizedBox(height: AppTheme.spacingMd),
+              const SizedBox(height: TeslaTheme.spacingMicro),
               Text(
                 '${widget.totalCount}',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 56,
                   fontWeight: FontWeight.bold,
                   color: accentColor,
                   height: 1.0,
                 ),
               ),
-              const SizedBox(height: AppTheme.spacingSm),
+              const SizedBox(height: TeslaTheme.spacingSm),
               Text(
                 '${widget.totalCount}${strings.fishCountUnit}',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
               ),
-              const SizedBox(height: AppTheme.spacingXl),
+              const SizedBox(height: TeslaTheme.spacingLg),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -106,19 +105,19 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
                     index: 0,
                     label: strings.release,
                     count: widget.releaseCount,
-                    color: AppColors.release,
+                    color: TeslaColors.electricBlue,
                   ),
                   _AnimatedStatItem(
                     index: 1,
                     label: strings.keep,
                     count: widget.keepCount,
-                    color: AppColors.keep,
+                    color: TeslaColors.electricBlue,
                   ),
                   _AnimatedStatItem(
                     index: 2,
                     label: strings.releaseRate,
                     count: widget.releaseRate.round(),
-                    color: AppColors.teal,
+                    color: TeslaColors.electricBlue,
                     isPercent: true,
                   ),
                 ],
@@ -159,17 +158,17 @@ class _AnimatedStatItemState extends State<_AnimatedStatItem>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: AnimationConstants.pageTransitionDuration,
+      duration: TeslaAnimation.pageTransitionDuration,
       vsync: this,
     );
     _animation = CurvedAnimation(
       parent: _controller,
-      curve: AnimationConstants.defaultCurve,
+      curve: TeslaAnimation.teslaCurve,
     );
 
     // Stagger the animation
     Future.delayed(
-      AnimationConstants.staggerDelay * widget.index,
+      TeslaAnimation.transition * widget.index,
       () {
         if (mounted) {
           _controller.forward();
@@ -191,10 +190,10 @@ class _AnimatedStatItemState extends State<_AnimatedStatItem>
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(AppTheme.spacingSm),
+            padding: const EdgeInsets.all(TeslaTheme.spacingSm),
             decoration: BoxDecoration(
               color: widget.color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
             ),
             child: Icon(
               widget.isPercent ? Icons.percent : Icons.set_meal,
@@ -202,7 +201,7 @@ class _AnimatedStatItemState extends State<_AnimatedStatItem>
               size: 20,
             ),
           ),
-          const SizedBox(height: AppTheme.spacingSm),
+          const SizedBox(height: TeslaTheme.spacingSm),
           Text(
             '${widget.count}${widget.isPercent ? '%' : ''}',
             style: TextStyle(

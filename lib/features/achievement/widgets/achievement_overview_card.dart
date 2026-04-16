@@ -55,7 +55,7 @@ class AchievementOverviewCard extends StatelessWidget {
                 '解锁进度',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: AppColors.surfaceLight,
+                      color: TeslaColors.white,
                     ),
               ),
             ],
@@ -70,7 +70,7 @@ class AchievementOverviewCard extends StatelessWidget {
           Text(
             '$unlockedCount / $totalCount 种鱼',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.surfaceLight.withValues(alpha: 0.9),
+                  color: TeslaColors.white.withValues(alpha: 0.9),
                 ),
           ),
           const SizedBox(height: 8),
@@ -80,7 +80,7 @@ class AchievementOverviewCard extends StatelessWidget {
             Text(
               '本月新增: +$monthlyNewCount 种',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.surfaceLight.withValues(alpha: 0.7),
+                    color: TeslaColors.white.withValues(alpha: 0.7),
                   ),
             ),
         ],
@@ -93,27 +93,23 @@ class AchievementOverviewCard extends StatelessWidget {
     double progress,
     int progressPercent,
   ) {
-    Color progressColor;
     Widget? trailingIcon;
 
     switch (status) {
       case AchievementProgressStatus.locked:
-        progressColor = AppColors.grey500;
         trailingIcon = const Icon(
           Icons.lock_outline,
-          color: AppColors.grey500,
+          color: TeslaColors.pewter,
           size: 16,
         );
         break;
       case AchievementProgressStatus.inProgress:
-        progressColor = AppColors.accentLight;
         trailingIcon = null;
         break;
       case AchievementProgressStatus.completed:
-        progressColor = AppColors.success;
         trailingIcon = const Icon(
           Icons.check_circle,
-          color: AppColors.success,
+          color: TeslaColors.electricBlue,
           size: 16,
         );
         break;
@@ -124,14 +120,14 @@ class AchievementOverviewCard extends StatelessWidget {
         Expanded(
           child: TweenAnimationBuilder<double>(
             tween: Tween(begin: 0, end: progress),
-            duration: AnimationConstants.pageTransitionDuration,
-            curve: AnimationConstants.defaultCurve,
+            duration: TeslaAnimation.pageTransitionDuration,
+            curve: TeslaAnimation.teslaCurve,
             builder: (context, value, child) {
               return Container(
                 height: 8,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4),
-                  color: AppColors.surfaceLight.withValues(alpha: 0.2),
+                  color: TeslaColors.white.withValues(alpha: 0.2),
                 ),
                 child: FractionallySizedBox(
                   alignment: Alignment.centerLeft,
@@ -139,17 +135,7 @@ class AchievementOverviewCard extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4),
-                      gradient: status == AchievementProgressStatus.inProgress
-                          ? LinearGradient(
-                              colors: [
-                                AppColors.accentLight,
-                                AppColors.accentLight.withValues(alpha: 0.8),
-                              ],
-                            )
-                          : null,
-                      color: status != AchievementProgressStatus.inProgress
-                          ? progressColor
-                          : null,
+                      color: TeslaColors.electricBlue,
                     ),
                   ),
                 ),
@@ -165,7 +151,7 @@ class AchievementOverviewCard extends StatelessWidget {
             '$progressPercent%',
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.surfaceLight,
+                  color: TeslaColors.white,
                 ),
           ),
       ],

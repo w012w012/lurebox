@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/app_theme.dart';
+import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/language_provider.dart';
 import '../../widgets/common/premium_card.dart';
 
@@ -34,7 +34,7 @@ class OverviewItem extends ConsumerWidget {
             color: color,
           ),
         ),
-        const SizedBox(height: AppTheme.spacingXs),
+        const SizedBox(height: TeslaTheme.spacingMicro),
         Text(
           label,
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -69,15 +69,15 @@ class EquipmentPieChart extends StatelessWidget {
       color.withValues(alpha: 0.7),
       color.withValues(alpha: 0.5),
       color.withValues(alpha: 0.3),
-      AppColors.grey700,
-      AppColors.teal,
-      AppColors.indigo,
-      AppColors.brown,
+      TeslaColors.pewter,
+      TeslaColors.electricBlue,
+      TeslaColors.electricBlue,
+      TeslaColors.electricBlue,
     ];
 
     return PremiumCard(
       variant: PremiumCardVariant.standard,
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+      margin: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -87,7 +87,7 @@ class EquipmentPieChart extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
           ),
-          const SizedBox(height: AppTheme.spacingMd),
+          const SizedBox(height: TeslaTheme.spacingMicro),
           Row(
             children: [
               SizedBox(
@@ -118,7 +118,7 @@ class EquipmentPieChart extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: AppTheme.spacingMd),
+              const SizedBox(width: TeslaTheme.spacingMicro),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +127,7 @@ class EquipmentPieChart extends StatelessWidget {
                     final entry = e.value;
                     return Padding(
                       padding:
-                          const EdgeInsets.only(bottom: AppTheme.spacingXs),
+                          const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
                       child: Row(
                         children: [
                           Container(
@@ -138,7 +138,7 @@ class EquipmentPieChart extends StatelessWidget {
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
-                          const SizedBox(width: AppTheme.spacingXs),
+                          const SizedBox(width: TeslaTheme.spacingMicro),
                           Expanded(
                             child: Text(
                               entry.key,
@@ -146,7 +146,7 @@ class EquipmentPieChart extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          const SizedBox(width: AppTheme.spacingXs),
+                          const SizedBox(width: TeslaTheme.spacingMicro),
                           Text(
                             '${entry.value}',
                             style:
@@ -180,13 +180,13 @@ class SpeciesPieChart extends ConsumerWidget {
   });
 
   static const _chartColors = [
-    AppColors.accentLight,
-    AppColors.teal,
-    AppColors.cyan,
-    AppColors.indigo,
-    AppColors.primaryLight,
-    AppColors.purple,
-    AppColors.pink,
+    TeslaColors.electricBlue,
+    TeslaColors.electricBlue,
+    TeslaColors.electricBlue,
+    TeslaColors.electricBlue,
+    TeslaColors.electricBlue,
+    TeslaColors.electricBlue,
+    TeslaColors.electricBlue,
   ];
 
   @override
@@ -205,7 +205,7 @@ class SpeciesPieChart extends ConsumerWidget {
                   fontWeight: FontWeight.w600,
                 ),
           ),
-          const SizedBox(height: AppTheme.spacingMd),
+          const SizedBox(height: TeslaTheme.spacingMicro),
           SizedBox(
             height: 200,
             child: PieChart(
@@ -234,10 +234,10 @@ class SpeciesPieChart extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: AppTheme.spacingMd),
+          const SizedBox(height: TeslaTheme.spacingMicro),
           ...speciesStats.entries.map(
             (e) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingXs),
+              padding: const EdgeInsets.symmetric(vertical: TeslaTheme.spacingMicro),
               child: Row(
                 children: [
                   Expanded(
@@ -284,8 +284,7 @@ class TrendBarChart extends ConsumerWidget {
     final strings = ref.watch(currentStringsProvider);
     if (trendData.isEmpty) return const SizedBox();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    const accentColor = TeslaColors.electricBlue;
 
     return PremiumCard(
       variant: PremiumCardVariant.standard,
@@ -308,7 +307,7 @@ class TrendBarChart extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color:
                         Theme.of(context).colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                    borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                   ),
                   child: DropdownButton<String>(
                     value: trendType,
@@ -342,7 +341,7 @@ class TrendBarChart extends ConsumerWidget {
                 ),
             ],
           ),
-          const SizedBox(height: AppTheme.spacingMd),
+          const SizedBox(height: TeslaTheme.spacingMicro),
           SizedBox(
             height: 180,
             child: BarChart(
@@ -360,10 +359,10 @@ class TrendBarChart extends ConsumerWidget {
                     getTooltipColor: (touchedGroup) => Theme.of(
                       context,
                     ).colorScheme.inverseSurface,
-                    tooltipRoundedRadius: AppTheme.radiusSm,
+                    tooltipRoundedRadius: TeslaTheme.radiusMicro,
                     tooltipPadding: const EdgeInsets.symmetric(
-                      horizontal: AppTheme.spacingSm,
-                      vertical: AppTheme.spacingXs,
+                      horizontal: TeslaTheme.spacingSm,
+                      vertical: TeslaTheme.spacingMicro,
                     ),
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       final keys = trendData.keys.toList();
@@ -395,7 +394,7 @@ class TrendBarChart extends ConsumerWidget {
                           if (value.toInt() % step == 0) {
                             return Padding(
                               padding: const EdgeInsets.only(
-                                  top: AppTheme.spacingXs),
+                                  top: TeslaTheme.spacingMicro),
                               child: Text(
                                 keys[value.toInt()],
                                 style: Theme.of(

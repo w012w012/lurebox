@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/app_theme.dart';
 import '../../../core/design/theme/animation_constants.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../widgets/common/premium_card.dart';
 
@@ -37,12 +37,12 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: AnimationConstants.pageTransitionDuration,
+      duration: TeslaAnimation.pageTransitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: AnimationConstants.defaultCurve,
+      curve: TeslaAnimation.teslaCurve,
     );
     _animationController.forward();
   }
@@ -58,8 +58,7 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
     final strings = ref.watch(currentStringsProvider);
     if (widget.trendData.isEmpty) return const SizedBox();
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    const accentColor = TeslaColors.electricBlue;
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -84,7 +83,7 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
                     decoration: BoxDecoration(
                       color:
                           Theme.of(context).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                     ),
                     child: DropdownButton<String>(
                       value: widget.trendType,
@@ -118,7 +117,7 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
                   ),
               ],
             ),
-            const SizedBox(height: AppTheme.spacingMd),
+            const SizedBox(height: TeslaTheme.spacingMicro),
             SizedBox(
               height: 180,
               child: BarChart(
@@ -138,10 +137,10 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
                       getTooltipColor: (touchedGroup) => Theme.of(
                         context,
                       ).colorScheme.inverseSurface,
-                      tooltipRoundedRadius: AppTheme.radiusSm,
+                      tooltipRoundedRadius: TeslaTheme.radiusMicro,
                       tooltipPadding: const EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacingSm,
-                        vertical: AppTheme.spacingXs,
+                        horizontal: TeslaTheme.spacingSm,
+                        vertical: TeslaTheme.spacingMicro,
                       ),
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
                         final keys = widget.trendData.keys.toList();
@@ -173,7 +172,7 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
                             if (value.toInt() % step == 0) {
                               return Padding(
                                 padding: const EdgeInsets.only(
-                                    top: AppTheme.spacingXs),
+                                    top: TeslaTheme.spacingMicro),
                                 child: Text(
                                   keys[value.toInt()],
                                   style: Theme.of(

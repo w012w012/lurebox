@@ -42,7 +42,7 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
     super.initState();
     _isExpanded = widget.initiallyExpanded;
     _rotationController = AnimationController(
-      duration: AnimationConstants.pageTransitionDuration,
+      duration: TeslaAnimation.pageTransitionDuration,
       vsync: this,
     );
     _rotationAnimation = Tween<double>(
@@ -50,7 +50,7 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
       end: 0.5,
     ).animate(CurvedAnimation(
       parent: _rotationController,
-      curve: AnimationConstants.defaultCurve,
+      curve: TeslaAnimation.teslaCurve,
     ));
 
     if (_isExpanded) {
@@ -94,7 +94,7 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
                   turns: _rotationAnimation,
                   child: const Icon(
                     Icons.expand_more,
-                    color: AppColors.textSecondaryLight,
+                    color: TeslaColors.graphite,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -115,13 +115,13 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
                         widget.title,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.bold,
-                              color: AppColors.textPrimaryLight,
+                              color: TeslaColors.carbonDark,
                             ),
                       ),
                       Text(
                         '${widget.children.length}个成就',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppColors.textSecondaryLight,
+                              color: TeslaColors.graphite,
                             ),
                       ),
                     ],
@@ -136,8 +136,8 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
                   ),
                   decoration: BoxDecoration(
                     color: widget.isCompleted
-                        ? AppColors.success.withValues(alpha: 0.1)
-                        : AppColors.grey200,
+                        ? TeslaColors.electricBlue.withValues(alpha: 0.1)
+                        : TeslaColors.cloudGray,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
@@ -148,8 +148,8 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: widget.isCompleted
-                                  ? AppColors.success
-                                  : AppColors.textSecondaryLight,
+                                  ? TeslaColors.electricBlue
+                                  : TeslaColors.graphite,
                             ),
                       ),
                       const SizedBox(width: 4),
@@ -157,7 +157,7 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
                         const Icon(
                           Icons.check_circle,
                           size: 14,
-                          color: AppColors.success,
+                          color: TeslaColors.electricBlue,
                         )
                       else
                         const Text(
@@ -178,7 +178,7 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
             crossFadeState: _isExpanded
                 ? CrossFadeState.showSecond
                 : CrossFadeState.showFirst,
-            duration: AnimationConstants.pageTransitionDuration,
+            duration: TeslaAnimation.pageTransitionDuration,
           ),
         ],
       ),
@@ -192,7 +192,7 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
         child: Text(
           '还需要 ${widget.totalCount - widget.currentCount} 种鱼',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.textSecondaryLight,
+                color: TeslaColors.graphite,
               ),
         ),
       );
@@ -213,9 +213,9 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
                 tween: Tween(begin: 0.0, end: 1.0),
                 duration: Duration(
                   milliseconds: 300 +
-                      (index * AnimationConstants.staggerDelay.inMilliseconds),
+                      (index * TeslaAnimation.transition.inMilliseconds),
                 ),
-                curve: AnimationConstants.defaultCurve,
+                curve: TeslaAnimation.teslaCurve,
                 builder: (context, value, child) {
                   return Opacity(
                     opacity: value,
@@ -263,7 +263,7 @@ class AchievementChildItem extends StatelessWidget {
         Icon(
           isCompleted ? Icons.check_circle : Icons.radio_button_unchecked,
           size: 16,
-          color: isCompleted ? AppColors.success : AppColors.grey400,
+          color: isCompleted ? TeslaColors.electricBlue : TeslaColors.paleSilver,
         ),
         const SizedBox(width: 8),
 
@@ -276,15 +276,15 @@ class AchievementChildItem extends StatelessWidget {
                 title,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: isCompleted
-                          ? AppColors.textPrimaryLight
-                          : AppColors.textSecondaryLight,
+                          ? TeslaColors.carbonDark
+                          : TeslaColors.graphite,
                     ),
               ),
               if (subtitle != null)
                 Text(
                   subtitle!,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.textSecondaryLight,
+                        color: TeslaColors.graphite,
                       ),
                 ),
             ],
@@ -296,8 +296,8 @@ class AchievementChildItem extends StatelessWidget {
           '$currentCount/$totalCount',
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: isCompleted
-                    ? AppColors.success
-                    : AppColors.textSecondaryLight,
+                    ? TeslaColors.electricBlue
+                    : TeslaColors.graphite,
               ),
         ),
       ],

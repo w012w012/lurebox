@@ -64,7 +64,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(Icons.error_outline,
-                    size: 64, color: AppColors.error),
+                    size: 64, color: TeslaColors.electricBlue),
                 const SizedBox(height: 16),
                 Text(
                   strings.error,
@@ -129,7 +129,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
               const Icon(
                 Icons.emoji_events_outlined,
                 size: 64,
-                color: AppColors.grey500,
+                color: TeslaColors.pewter,
               ),
               const SizedBox(height: 16),
               Text(
@@ -154,7 +154,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
         variant: PremiumCardVariant.elevated,
         padding: const EdgeInsets.all(20),
         showBorder: false,
-        backgroundColor: AppColors.primaryLight,
+        backgroundColor: TeslaColors.electricBlue,
         child: Row(
           children: [
             // 圆形进度指示器
@@ -167,9 +167,9 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                     value: progress / 100,
                     strokeWidth: 8,
                     backgroundColor:
-                        AppColors.surfaceLight.withValues(alpha: 0.2),
+                        TeslaColors.white.withValues(alpha: 0.2),
                     valueColor:
-                        const AlwaysStoppedAnimation<Color>(AppColors.gold),
+                        const AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)),
                   ),
                   Center(
                     child: Column(
@@ -180,14 +180,14 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
                                     fontWeight: FontWeight.bold,
-                                    color: AppColors.surfaceLight,
+                                    color: TeslaColors.white,
                                   ),
                         ),
                         Text(
                           '完成',
                           style:
                               Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: AppColors.surfaceLight,
+                                    color: TeslaColors.white,
                                   ),
                         ),
                       ],
@@ -206,7 +206,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                     '成就概览',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.surfaceLight,
+                          color: TeslaColors.white,
                         ),
                   ),
                   const SizedBox(height: 8),
@@ -217,7 +217,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                         '已解锁',
                         '$unlockedCount',
                         Icons.emoji_events,
-                        AppColors.gold,
+                        const Color(0xFFD4AF37),
                       ),
                       const SizedBox(width: 20),
                       _buildAchievementStatItem(
@@ -225,7 +225,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                         '总成就',
                         '$totalCount',
                         Icons.stars,
-                        AppColors.surfaceLight,
+                        TeslaColors.white,
                       ),
                     ],
                   ),
@@ -233,9 +233,9 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                   LinearProgressIndicator(
                     value: progress / 100,
                     backgroundColor:
-                        AppColors.surfaceLight.withValues(alpha: 0.2),
+                        TeslaColors.white.withValues(alpha: 0.2),
                     valueColor:
-                        const AlwaysStoppedAnimation<Color>(AppColors.gold),
+                        const AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)),
                     minHeight: 6,
                     borderRadius: BorderRadius.circular(3),
                   ),
@@ -272,7 +272,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
             Text(
               label,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: AppColors.surfaceLight,
+                    color: TeslaColors.white,
                   ),
             ),
           ],
@@ -298,7 +298,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                 const Icon(
                   Icons.emoji_events_outlined,
                   size: 64,
-                  color: AppColors.grey500,
+                  color: TeslaColors.pewter,
                 ),
                 const SizedBox(height: 16),
                 Text(

@@ -8,8 +8,8 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/app_theme.dart';
 import '../../core/design/theme/animation_constants.dart';
+import '../../core/design/theme/tesla_theme.dart';
 import '../../core/di/di.dart';
 import '../../core/models/app_settings.dart';
 import '../../core/models/fish_catch.dart';
@@ -69,12 +69,12 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
   void initState() {
     super.initState();
     _contentAnimationController = AnimationController(
-      duration: AnimationConstants.pageTransitionDuration,
+      duration: TeslaAnimation.pageTransitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _contentAnimationController,
-      curve: AnimationConstants.defaultCurve,
+      curve: TeslaAnimation.teslaCurve,
     );
     _loadDetail();
   }
@@ -385,14 +385,12 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: AppColors.accentLight,
+                        color: TeslaColors.electricBlue,
                       ),
                     )
-                  : Icon(
+                  : const Icon(
                       Icons.share,
-                      color: Theme.of(context).brightness == Brightness.dark
-                          ? AppColors.accentDark
-                          : AppColors.accentLight,
+                      color: TeslaColors.electricBlue,
                     ),
               onPressed: _shareStats,
               tooltip: strings.share,
@@ -402,7 +400,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(
-                color: AppColors.accentLight,
+                color: TeslaColors.electricBlue,
               ),
             )
           : FadeTransition(
@@ -411,7 +409,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                 children: [
                   SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(AppTheme.spacingLg),
+                    padding: const EdgeInsets.all(TeslaTheme.spacingMd),
                     child: _buildContent(
                       totalCount,
                       releaseCount,
@@ -428,13 +426,11 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                     child: RepaintBoundary(
                       key: _repaintBoundaryKey,
                       child: Material(
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? AppColors.surfaceDark
-                            : AppColors.surfaceLight,
+                        color: TeslaColors.white,
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width,
                           child: Padding(
-                            padding: const EdgeInsets.all(AppTheme.spacingLg),
+                            padding: const EdgeInsets.all(TeslaTheme.spacingMd),
                             child: _buildContent(
                               totalCount,
                               releaseCount,
@@ -474,7 +470,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
           keepCount: keepCount,
           releaseRate: releaseRate,
         ),
-        const SizedBox(height: AppTheme.spacingLg),
+        const SizedBox(height: TeslaTheme.spacingMd),
         if (_speciesStats.isNotEmpty) ...[
           SpeciesDistributionChart(
             speciesStats: _speciesStats,
@@ -487,7 +483,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
             weightUnit: weightUnit,
             isChinese: isChinese,
           ),
-          const SizedBox(height: AppTheme.spacingLg),
+          const SizedBox(height: TeslaTheme.spacingMd),
         ],
         if (_trendData.isNotEmpty) ...[
           CatchTrendChart(
@@ -497,7 +493,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
             trendType: _trendType,
             onTrendTypeChanged: _onTrendTypeChanged,
           ),
-          const SizedBox(height: AppTheme.spacingLg),
+          const SizedBox(height: TeslaTheme.spacingMd),
         ],
         if (_locationAnalysis.isNotEmpty) ...[
           LocationStatsCard(
@@ -510,7 +506,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
               });
             },
           ),
-          const SizedBox(height: AppTheme.spacingLg),
+          const SizedBox(height: TeslaTheme.spacingMd),
         ],
         if (_rodDistribution.isNotEmpty ||
             _reelDistribution.isNotEmpty ||
@@ -521,31 +517,31 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                   fontWeight: FontWeight.w600,
                 ),
           ),
-          const SizedBox(height: AppTheme.spacingMd),
+          const SizedBox(height: TeslaTheme.spacingMicro),
         ],
         if (_rodDistribution.isNotEmpty)
           EquipmentChart(
             title: strings.rodDistribution,
             data: _rodDistribution,
-            color: AppColors.accentLight,
+            color: TeslaColors.electricBlue,
           ),
         if (_reelDistribution.isNotEmpty)
           EquipmentChart(
             title: strings.reelDistribution,
             data: _reelDistribution,
-            color: AppColors.keep,
+            color: TeslaColors.electricBlue,
           ),
         if (_lureDistribution.isNotEmpty)
           EquipmentChart(
             title: strings.lureDistribution,
             data: _lureDistribution,
-            color: AppColors.purple,
+            color: TeslaColors.electricBlue,
           ),
         if (_catches.isEmpty)
           PremiumCard(
             variant: PremiumCardVariant.flat,
             child: Padding(
-              padding: const EdgeInsets.all(AppTheme.spacingXxl),
+              padding: const EdgeInsets.all(TeslaTheme.spacingXl),
               child: Center(
                 child: Column(
                   children: [
@@ -554,7 +550,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                       size: 60,
                       color: Theme.of(context).colorScheme.outline,
                     ),
-                    const SizedBox(height: AppTheme.spacingLg),
+                    const SizedBox(height: TeslaTheme.spacingMd),
                     Text(
                       strings.noData,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -567,31 +563,30 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
               ),
             ),
           ),
-        const SizedBox(height: AppTheme.spacingXl),
+        const SizedBox(height: TeslaTheme.spacingLg),
         _buildFooter(strings),
-        const SizedBox(height: AppTheme.spacingLg),
+        const SizedBox(height: TeslaTheme.spacingMd),
       ],
     );
   }
 
   Widget _buildFooter(AppStrings strings) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    const accentColor = TeslaColors.electricBlue;
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        vertical: AppTheme.spacingMd,
-        horizontal: AppTheme.spacingXl,
+        vertical: TeslaTheme.spacingMicro,
+        horizontal: TeslaTheme.spacingLg,
       ),
       decoration: BoxDecoration(
         color: accentColor,
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.set_meal, color: Colors.white, size: 20),
-          const SizedBox(width: AppTheme.spacingSm),
+          const SizedBox(width: TeslaTheme.spacingSm),
           Text(
             strings.appName,
             style: const TextStyle(
