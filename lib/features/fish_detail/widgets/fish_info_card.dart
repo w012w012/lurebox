@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../../core/constants/constants.dart';
 import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/models/app_settings.dart';
 import '../../../core/models/fish_catch.dart';
 import '../../../core/providers/app_settings_provider.dart';
@@ -144,20 +145,13 @@ class FishInfoCard extends ConsumerWidget {
         : null;
 
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.all(TeslaTheme.spacingMd),
       decoration: BoxDecoration(
-        color: AppColors.surfaceLight,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: TeslaColors.white,
+        borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(TeslaTheme.spacingMd),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -165,7 +159,7 @@ class FishInfoCard extends ConsumerWidget {
               icon: Icons.set_meal,
               label: strings.species,
               value: species,
-              iconColor: AppColors.accentLight,
+              iconColor: TeslaColors.electricBlue,
             ),
             _IOSDivider(),
             _InfoRow(
@@ -173,7 +167,7 @@ class FishInfoCard extends ConsumerWidget {
               label: strings.length,
               value:
                   '${displayLength.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.fishLengthUnit, isChinese: isChinese)}',
-              iconColor: AppColors.accentLight,
+              iconColor: TeslaColors.electricBlue,
             ),
             if (displayWeight != null) ...[
               _IOSDivider(),
@@ -182,7 +176,7 @@ class FishInfoCard extends ConsumerWidget {
                 label: strings.weight,
                 value:
                     '${displayWeight.toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(displayUnits.fishWeightUnit, isChinese: isChinese)}',
-                iconColor: AppColors.accentLight,
+                iconColor: TeslaColors.electricBlue,
               ),
             ],
             _IOSDivider(),
@@ -195,16 +189,16 @@ class FishInfoCard extends ConsumerWidget {
                   ? '🐟 ${strings.release}'
                   : '🍳 ${strings.keep}',
               valueColor: fate == FishFateType.release.value
-                  ? AppColors.release
-                  : AppColors.keep,
-              iconColor: AppColors.accentLight,
+                  ? TeslaColors.electricBlue
+                  : TeslaColors.electricBlue,
+              iconColor: TeslaColors.electricBlue,
             ),
             _IOSDivider(),
             _InfoRow(
               icon: Icons.access_time,
               label: strings.catchTime,
               value: DateFormat(DateFormats.dateTime).format(catchTime),
-              iconColor: AppColors.accentLight,
+              iconColor: TeslaColors.electricBlue,
             ),
             if (locationName != null && locationName!.isNotEmpty) ...[
               _IOSDivider(),
@@ -212,7 +206,7 @@ class FishInfoCard extends ConsumerWidget {
                 icon: Icons.location_on,
                 label: strings.catchLocation,
                 value: locationName!,
-                iconColor: AppColors.accentLight,
+                iconColor: TeslaColors.electricBlue,
               ),
             ],
             if (airTemperature != null ||
@@ -220,13 +214,13 @@ class FishInfoCard extends ConsumerWidget {
                 weatherCode != null) ...[
               _IOSDivider(),
               const Padding(
-                padding: EdgeInsets.only(bottom: 8),
+                padding: EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
                 child: Text(
                   '天气信息',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimaryLight,
+                    color: TeslaColors.carbonDark,
                   ),
                 ),
               ),
@@ -239,21 +233,21 @@ class FishInfoCard extends ConsumerWidget {
                     displayUnits.temperatureUnit,
                     isChinese: isChinese,
                   ),
-                  iconColor: AppColors.accentLight,
+                  iconColor: TeslaColors.electricBlue,
                 ),
               if (pressure != null)
                 _InfoRow(
                   icon: Icons.speed,
                   label: '气压',
                   value: '${pressure!.toStringAsFixed(0)}hPa',
-                  iconColor: AppColors.accentLight,
+                  iconColor: TeslaColors.electricBlue,
                 ),
               if (weatherCode != null)
                 _InfoRow(
                   icon: Icons.wb_sunny,
                   label: strings.weather,
                   value: getLocalizedWeatherDescription(weatherCode, strings),
-                  iconColor: AppColors.accentLight,
+                  iconColor: TeslaColors.electricBlue,
                 ),
             ],
             if (rodEquipment != null ||
@@ -261,13 +255,13 @@ class FishInfoCard extends ConsumerWidget {
                 lureEquipment != null) ...[
               _IOSDivider(),
               Padding(
-                padding: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
                 child: Text(
                   strings.useEquipment,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimaryLight,
+                    color: TeslaColors.carbonDark,
                   ),
                 ),
               ),
@@ -321,13 +315,13 @@ class _InfoRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: iconColor ?? AppColors.accentLight, size: 24),
+        Icon(icon, color: iconColor ?? TeslaColors.electricBlue, size: 24),
         const SizedBox(width: 12),
         Text(
           label,
           style: const TextStyle(
             fontSize: 14,
-            color: AppColors.textSecondaryLight,
+            color: TeslaColors.graphite,
           ),
         ),
         const Spacer(),
@@ -336,7 +330,7 @@ class _InfoRow extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: valueColor ?? AppColors.textPrimaryLight,
+            color: valueColor ?? TeslaColors.carbonDark,
           ),
         ),
       ],
@@ -348,8 +342,8 @@ class _IOSDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 12),
-      child: Divider(height: 1, color: AppColors.borderLight),
+      padding: EdgeInsets.symmetric(vertical: TeslaTheme.spacingSm),
+      child: Divider(height: 1, color: TeslaColors.cloudGray),
     );
   }
 }

@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers/language_provider.dart';
 import '../../../core/providers/app_settings_provider.dart';
-import '../../../core/design/theme/app_theme.dart';
 import '../../../core/design/theme/app_colors.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/utils/unit_converter.dart';
 import '../../../widgets/common/premium_card.dart';
 
@@ -66,14 +66,14 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
             children: [
               // 类型图标
               Container(
-                padding: const EdgeInsets.all(AppTheme.spacingSm),
+                padding: const EdgeInsets.all(TeslaTheme.spacingSm),
                 decoration: BoxDecoration(
                   color: typeInfo.color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                 ),
                 child: Icon(typeInfo.icon, color: typeInfo.color, size: 24),
               ),
-              const SizedBox(width: AppTheme.spacingMd),
+              const SizedBox(width: TeslaTheme.spacingMicro),
 
               // 标题区域
               Expanded(
@@ -95,12 +95,12 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
                     const SizedBox(height: 2),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacingSm,
+                        horizontal: TeslaTheme.spacingSm,
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
                         color: typeInfo.color.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                        borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                       ),
                       child: Text(
                         typeInfo.label,
@@ -121,12 +121,12 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
                   if (isDefault)
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacingSm,
+                        horizontal: TeslaTheme.spacingSm,
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.gold.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                        borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -153,17 +153,17 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
                     if (isDefault) const SizedBox(height: 4),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: AppTheme.spacingSm,
+                        horizontal: TeslaTheme.spacingSm,
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.success.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                        color: TeslaColors.electricBlue.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                       ),
                       child: Text(
                         '$total${strings.fishCountUnit}',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: AppColors.success,
+                              color: TeslaColors.electricBlue,
                             ),
                       ),
                     ),
@@ -211,7 +211,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
 
           // 分类标签（如果有）
           if (widget.equipment['category'] != null) ...[
-            const SizedBox(height: AppTheme.spacingSm),
+            const SizedBox(height: TeslaTheme.spacingSm),
             _buildCategoryChip(
               context,
               _getCategoryName(type, widget.equipment['category']),
@@ -220,22 +220,22 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
 
           // 展开的详细信息
           if (_expanded) ...[
-            const SizedBox(height: AppTheme.spacingMd),
+            const SizedBox(height: TeslaTheme.spacingMicro),
             const Divider(height: 1),
-            const SizedBox(height: AppTheme.spacingMd),
+            const SizedBox(height: TeslaTheme.spacingMicro),
 
             // 信息行
             ..._buildInfoRows(type, widget.equipment),
 
             // 统计信息
             if (total > 0) ...[
-              const SizedBox(height: AppTheme.spacingSm),
+              const SizedBox(height: TeslaTheme.spacingSm),
               _buildStatsSection(context, widget.stats),
             ],
 
             // 购买日期
             if (widget.equipment['purchase_date'] != null) ...[
-              const SizedBox(height: AppTheme.spacingSm),
+              const SizedBox(height: TeslaTheme.spacingSm),
               _buildPurchaseDate(context, widget.equipment['purchase_date']),
             ],
           ],
@@ -312,17 +312,17 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingSm,
+        horizontal: TeslaTheme.spacingSm,
         vertical: 2,
       ),
       decoration: BoxDecoration(
-        color: AppColors.accentLight.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        color: TeslaColors.electricBlue.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
       ),
       child: Text(
         category,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: isDark ? AppColors.accentDark : AppColors.accentLight,
+              color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
             ),
       ),
     );
@@ -333,23 +333,23 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     if (entries.isEmpty) return const SizedBox();
 
     return Wrap(
-      spacing: AppTheme.spacingSm,
+      spacing: TeslaTheme.spacingSm,
       runSpacing: 4,
       children: entries.map((e) {
         return Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: AppTheme.spacingSm,
+            horizontal: TeslaTheme.spacingSm,
             vertical: 2,
           ),
           decoration: BoxDecoration(
-            color: AppColors.success.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+            color: TeslaColors.electricBlue.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
           ),
           child: Text(
             '${e.key}: ${e.value}',
             style: Theme.of(
               context,
-            ).textTheme.labelSmall?.copyWith(color: AppColors.success),
+            ).textTheme.labelSmall?.copyWith(color: TeslaColors.electricBlue),
           ),
         );
       }).toList(),
@@ -364,7 +364,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
           size: 14,
           color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
-        const SizedBox(width: AppTheme.spacingSm),
+        const SizedBox(width: TeslaTheme.spacingSm),
         Text(date, style: Theme.of(context).textTheme.bodySmall),
       ],
     );
@@ -517,8 +517,8 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     if (items.isEmpty && reelLineItem == null) return [];
 
     final row = Wrap(
-      spacing: AppTheme.spacingMd,
-      runSpacing: AppTheme.spacingSm,
+      spacing: TeslaTheme.spacingMicro,
+      runSpacing: TeslaTheme.spacingSm,
       children: items.map((item) => _buildInfoItem(context, item)).toList(),
     );
 
@@ -528,7 +528,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       final unit = e['lure_quantity_unit'] as String? ?? '条';
       return [
         row,
-        const SizedBox(height: AppTheme.spacingSm),
+        const SizedBox(height: TeslaTheme.spacingSm),
         _buildQuantityBadge(context, quantity, unit),
       ];
     }
@@ -537,7 +537,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     if (type == 'reel' && reelLineItem != null) {
       return [
         row,
-        const SizedBox(height: AppTheme.spacingSm),
+        const SizedBox(height: TeslaTheme.spacingSm),
         _buildInfoItemFullWidth(context, reelLineItem),
       ];
     }
@@ -595,14 +595,14 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
   Widget _buildQuantityBadge(BuildContext context, int quantity, String unit) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingMd,
-        vertical: AppTheme.spacingSm,
+        horizontal: TeslaTheme.spacingMicro,
+        vertical: TeslaTheme.spacingSm,
       ),
       decoration: BoxDecoration(
-        color: AppColors.accentLight.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+        color: TeslaColors.electricBlue.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
         border: Border.all(
-          color: AppColors.accentLight.withValues(alpha: 0.3),
+          color: TeslaColors.electricBlue.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -612,20 +612,20 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
           const Icon(
             Icons.inventory_2_rounded,
             size: 18,
-            color: AppColors.accentLight,
+            color: TeslaColors.electricBlue,
           ),
-          const SizedBox(width: AppTheme.spacingSm),
+          const SizedBox(width: TeslaTheme.spacingSm),
           Text(
             '数量: ',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.accentLight,
+                  color: TeslaColors.electricBlue,
                 ),
           ),
           Text(
             '$quantity$unit',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.accentLight,
+                  color: TeslaColors.electricBlue,
                 ),
           ),
         ],
@@ -666,31 +666,31 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       case 'rod':
         return _EquipmentTypeInfo(
           icon: Icons.straighten_rounded,
-          color: AppColors.chartColors[0],
+          color: TeslaColors.electricBlue,
           label: strings.rod,
         );
       case 'reel':
         return _EquipmentTypeInfo(
           icon: Icons.settings_rounded,
-          color: AppColors.chartColors[1],
+          color: TeslaColors.electricBlue,
           label: strings.reel,
         );
       case 'lure':
         return _EquipmentTypeInfo(
           icon: Icons.phishing_rounded,
-          color: AppColors.chartColors[2],
+          color: TeslaColors.electricBlue,
           label: strings.lure,
         );
       case 'line':
         return _EquipmentTypeInfo(
           icon: Icons.timeline_rounded,
-          color: AppColors.chartColors[3],
+          color: TeslaColors.electricBlue,
           label: strings.line,
         );
       default:
         return _EquipmentTypeInfo(
           icon: Icons.hardware_rounded,
-          color: AppColors.secondaryLight,
+          color: TeslaColors.electricBlue,
           label: type,
         );
     }

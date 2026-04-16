@@ -649,8 +649,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(
                 color: Theme.of(context).brightness == Brightness.dark
-                    ? AppColors.borderDark
-                    : AppColors.borderLight,
+                    ? const Color(0xFF2A2D30)
+                    : TeslaColors.cloudGray,
               ),
             ),
             isDense: true,
@@ -778,7 +778,7 @@ class _DismissibleAutocompleteOptions<T> extends StatelessWidget {
           child: Material(
             elevation: 4,
             borderRadius: BorderRadius.circular(8),
-            color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+            color: isDark ? TeslaColors.carbonDark : TeslaColors.white,
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 200),
               child: ListView(
@@ -791,8 +791,8 @@ class _DismissibleAutocompleteOptions<T> extends StatelessWidget {
                       option.toString(),
                       style: TextStyle(
                         color: isDark
-                            ? AppColors.textPrimaryDark
-                            : AppColors.textPrimaryLight,
+                            ? TeslaColors.white
+                            : TeslaColors.carbonDark,
                       ),
                     ),
                     onTap: () {
