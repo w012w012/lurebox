@@ -409,9 +409,9 @@ void main() {
         find.byType(AnimatedContainer),
       );
 
-      // Duration should be 150ms
+      // Duration should be 330ms (Tesla design system)
       expect(animatedContainer.duration,
-          equals(const Duration(milliseconds: 150)));
+          equals(TeslaAnimation.transition));
     });
 
     testWidgets('PremiumButton animates scale on press',

@@ -157,7 +157,7 @@ void main() {
         ),
       );
 
-      expect(find.text('GENERAL'), findsOneWidget);
+      expect(find.text('General'), findsOneWidget);
     });
 
     testWidgets('displays action widget when provided',
