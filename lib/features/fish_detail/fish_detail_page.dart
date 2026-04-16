@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
+import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/fish_detail_view_model.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
@@ -36,22 +37,22 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
 
     if (state.isLoading) {
       return Scaffold(
-        backgroundColor: AppColors.backgroundLight,
+        backgroundColor: TeslaColors.white,
         appBar: AppBar(
           title: Text(
             strings.fishDetail,
             style: const TextStyle(
-              color: AppColors.textPrimaryLight,
+              color: TeslaColors.carbonDark,
               fontWeight: FontWeight.w600,
             ),
           ),
-          backgroundColor: AppColors.surfaceLight,
-          foregroundColor: AppColors.textPrimaryLight,
+          backgroundColor: TeslaColors.white,
+          foregroundColor: TeslaColors.carbonDark,
           elevation: 0,
         ),
         body: const Center(
           child: CircularProgressIndicator(
-            color: AppColors.accentLight,
+            color: TeslaColors.electricBlue,
           ),
         ),
       );
@@ -59,17 +60,17 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
 
     if (state.errorMessage != null || state.fish == null) {
       return Scaffold(
-        backgroundColor: AppColors.backgroundLight,
+        backgroundColor: TeslaColors.white,
         appBar: AppBar(
           title: Text(
             strings.fishDetail,
             style: const TextStyle(
-              color: AppColors.textPrimaryLight,
+              color: TeslaColors.carbonDark,
               fontWeight: FontWeight.w600,
             ),
           ),
-          backgroundColor: AppColors.surfaceLight,
-          foregroundColor: AppColors.textPrimaryLight,
+          backgroundColor: TeslaColors.white,
+          foregroundColor: TeslaColors.carbonDark,
           elevation: 0,
         ),
         body: Center(
@@ -79,13 +80,13 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
               const Icon(
                 Icons.error_outline,
                 size: 48,
-                color: AppColors.error,
+                color: TeslaColors.electricBlue,
               ),
               const SizedBox(height: 16),
               Text(
                 state.errorMessage ?? 'Fish not found',
                 style: const TextStyle(
-                  color: AppColors.textSecondaryLight,
+                  color: TeslaColors.graphite,
                   fontSize: 16,
                 ),
               ),
@@ -112,17 +113,17 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
         fish['weight_unit'] as String? ?? units.fishWeightUnit;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: TeslaColors.white,
       appBar: AppBar(
         title: Text(
           strings.fishDetail,
           style: const TextStyle(
-            color: AppColors.textPrimaryLight,
+            color: TeslaColors.carbonDark,
             fontWeight: FontWeight.w600,
           ),
         ),
-        backgroundColor: AppColors.surfaceLight,
-        foregroundColor: AppColors.textPrimaryLight,
+        backgroundColor: TeslaColors.white,
+        foregroundColor: TeslaColors.carbonDark,
         elevation: 0,
         scrolledUnderElevation: 0.5,
       ),
@@ -262,15 +263,8 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
             ),
           ),
           Container(
-            decoration: BoxDecoration(
-              color: AppColors.surfaceLight,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, -2),
-                ),
-              ],
+            decoration: const BoxDecoration(
+              color: TeslaColors.white,
             ),
             child: SafeArea(
               top: false,
@@ -310,19 +304,19 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
         title: Text(
           strings.confirmDelete,
           style: const TextStyle(
-            color: AppColors.textPrimaryLight,
+            color: TeslaColors.carbonDark,
             fontWeight: FontWeight.w600,
           ),
         ),
         content: Text(
           strings.confirmDeleteFish,
           style: const TextStyle(
-            color: AppColors.textSecondaryLight,
+            color: TeslaColors.graphite,
           ),
         ),
-        backgroundColor: AppColors.surfaceLight,
+        backgroundColor: TeslaColors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
         ),
         actions: [
           PremiumButton(
@@ -408,13 +402,13 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CircularProgressIndicator(
-                    color: AppColors.accentLight,
+                    color: TeslaColors.electricBlue,
                   ),
                   SizedBox(height: 16),
                   Text(
                     '正在分享...',
                     style: TextStyle(
-                      color: AppColors.textPrimaryLight,
+                      color: TeslaColors.carbonDark,
                       fontSize: 16,
                     ),
                   ),

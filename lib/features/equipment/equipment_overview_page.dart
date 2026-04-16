@@ -153,7 +153,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                       barRods: [
                         BarChartRodData(
                           toY: rodCount.toDouble(),
-                          color: AppColors.chartColors[0],
+                          color: TeslaColors.electricBlue,
                           width: 32,
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(6),
@@ -166,7 +166,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                       barRods: [
                         BarChartRodData(
                           toY: reelCount.toDouble(),
-                          color: AppColors.chartColors[3],
+                          color: TeslaColors.electricBlue,
                           width: 32,
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(6),
@@ -179,7 +179,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                       barRods: [
                         BarChartRodData(
                           toY: lureCount.toDouble(),
-                          color: AppColors.chartColors[2],
+                          color: TeslaColors.electricBlue,
                           width: 32,
                           borderRadius: const BorderRadius.vertical(
                             top: Radius.circular(6),
@@ -212,7 +212,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                         return BarTooltipItem(
                           '$label\n${rod.toY.toInt()}$unit',
                           const TextStyle(
-                            color: AppColors.surfaceLight,
+                            color: TeslaColors.white,
                             fontWeight: FontWeight.bold,
                           ),
                         );
@@ -322,7 +322,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
             Row(
               children: [
                 const Icon(Icons.emoji_events,
-                    color: AppColors.warning, size: 20),
+                    color: TeslaColors.electricBlue, size: 20),
                 const SizedBox(width: 8),
                 Text(
                   strings.equipmentCatchRanking,
@@ -368,7 +368,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                                   ? AppColors.silver
                                   : rank == 3
                                       ? AppColors.bronze
-                                      : AppColors.secondaryLight,
+                                      : TeslaColors.electricBlue,
                           shape: BoxShape.circle,
                         ),
                         child: Center(
@@ -377,7 +377,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                             style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: AppColors.surfaceLight,
+                              color: TeslaColors.white,
                             ),
                           ),
                         ),
@@ -459,7 +459,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('${strings.rod}分布', AppColors.chartColors[0]),
+        _buildSectionTitle('${strings.rod}分布', TeslaColors.electricBlue),
         const SizedBox(height: 12),
         _buildBarChart(
           _getDistribution(
@@ -467,7 +467,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
             (e) => e.brand?.isNotEmpty == true ? e.brand! : strings.unnamed,
           ),
           '${strings.brand}分布',
-          AppColors.chartColors[0],
+          TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildBarChart(
@@ -476,7 +476,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
             (e) => e.length?.isNotEmpty == true ? e.length! : strings.notFilled,
           ),
           '${strings.length}分布',
-          AppColors.chartColors[1],
+          TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildBarChart(
@@ -487,7 +487,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                 : strings.notFilled,
           ),
           '${strings.material}分布',
-          AppColors.chartColors[2],
+          TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildPieChart(
@@ -498,7 +498,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                 : strings.notFilled,
           ),
           '${strings.hardness}分布',
-          AppColors.chartColors[0],
+          TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildPieChart(
@@ -509,16 +509,16 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                 : strings.notFilled,
           ),
           '${strings.rodAction}分布',
-          AppColors.chartColors[2],
+          TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildPieChart(
           _getHandleTypeDistribution(rods, strings),
           '${strings.handleType}分布',
-          AppColors.accentLight,
+          TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
-        _buildPriceChart(rods, '鱼竿${strings.price}分布', AppColors.primaryLight),
+        _buildPriceChart(rods, '鱼竿${strings.price}分布', TeslaColors.electricBlue),
       ],
     );
   }
@@ -527,7 +527,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('${strings.reel}分布', AppColors.chartColors[3]),
+        _buildSectionTitle('${strings.reel}分布', TeslaColors.electricBlue),
         const SizedBox(height: 12),
         _buildBarChart(
           _getDistribution(
@@ -535,19 +535,19 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
             (e) => e.brand?.isNotEmpty == true ? e.brand! : strings.unnamed,
           ),
           '${strings.brand}分布',
-          AppColors.chartColors[3],
+          TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildPieChart(
           _getReelTypeDistribution(reels, strings),
           '${strings.reelType}分布',
-          AppColors.chartColors[3],
+          TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildPieChart(
           _getReelUsageDistribution(reels, strings),
           '${strings.usageType}分布',
-          AppColors.chartColors[7],
+          TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildBarChart(
@@ -558,7 +558,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                 : strings.notFilled,
           ),
           '${strings.reelRatio}分布',
-          AppColors.warning,
+          TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildPieChart(
@@ -569,13 +569,13 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                 : strings.notFilled,
           ),
           '${strings.reelBrakeType}分布',
-          AppColors.error,
+          TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildPriceChart(
           reels,
           '渔轮${strings.price}分布',
-          AppColors.secondaryLight,
+          TeslaColors.electricBlue,
         ),
       ],
     );
@@ -585,7 +585,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('${strings.lure}分布', AppColors.chartColors[2]),
+        _buildSectionTitle('${strings.lure}分布', TeslaColors.electricBlue),
         const SizedBox(height: 12),
         _buildBarChart(
           _getDistribution(
@@ -593,7 +593,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
             (e) => e.brand?.isNotEmpty == true ? e.brand! : strings.unnamed,
           ),
           '${strings.brand}分布',
-          AppColors.chartColors[2],
+          TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildPieChart(
@@ -604,7 +604,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                 : strings.notFilled,
           ),
           '${strings.lureType}分布',
-          AppColors.chartColors[2],
+          TeslaColors.electricBlue,
         ),
       ],
     );

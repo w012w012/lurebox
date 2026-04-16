@@ -42,7 +42,7 @@ class EquipmentListPage extends ConsumerWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error, size: 48, color: AppColors.error),
+                      const Icon(Icons.error, size: 48, color: TeslaColors.electricBlue),
                       const SizedBox(height: 16),
                       Text('Error: ${state.errorMessage}'),
                       const SizedBox(height: 16),

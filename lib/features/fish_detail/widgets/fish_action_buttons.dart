@@ -63,8 +63,8 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = isDestructive
-        ? AppColors.error
-        : (onPressed != null ? AppColors.accentLight : AppColors.grey500);
+        ? TeslaColors.electricBlue
+        : (onPressed != null ? TeslaColors.electricBlue : TeslaColors.pewter);
 
     return InkWell(
       onTap: onPressed,

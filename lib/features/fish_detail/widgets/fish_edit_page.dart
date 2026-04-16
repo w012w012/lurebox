@@ -230,7 +230,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
                 child: _fateOption(
                   '🐟 ${s.release}',
                   FishFateType.release.value,
-                  AppColors.release,
+                  TeslaColors.electricBlue,
                 ),
               ),
               const SizedBox(width: 12),
@@ -238,7 +238,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
                 child: _fateOption(
                   '🍳 ${s.keep}',
                   FishFateType.keep.value,
-                  AppColors.keep,
+                  TeslaColors.electricBlue,
                 ),
               ),
             ],
@@ -336,7 +336,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            color: isSelected ? color : AppColors.grey500,
+            color: isSelected ? color : TeslaColors.pewter,
           ),
         ),
       ),
