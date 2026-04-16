@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/app_theme.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/providers/app_settings_provider.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../widgets/common/premium_card.dart';
@@ -43,27 +43,26 @@ class SettingsUnitsSection extends ConsumerWidget {
     required Widget trailing,
     required VoidCallback onTap,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    final accentColor = TeslaColors.electricBlue;
 
     return InkWell(
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: AppTheme.spacingMd,
-          horizontal: AppTheme.spacingSm,
+          vertical: TeslaTheme.spacingMd,
+          horizontal: TeslaTheme.spacingSm,
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(AppTheme.spacingSm),
+              padding: const EdgeInsets.all(TeslaTheme.spacingSm),
               decoration: BoxDecoration(
                 color: accentColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
               ),
               child: Icon(icon, color: accentColor, size: 22),
             ),
-            const SizedBox(width: AppTheme.spacingMd),
+            const SizedBox(width: TeslaTheme.spacingMd),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,7 +104,7 @@ class UnitSettingsPage extends ConsumerWidget {
       appBar: AppBar(title: Text(strings.unitsSettings)),
       body: ListView(
         children: [
-          const SizedBox(height: 8),
+          const SizedBox(height: TeslaTheme.spacingSm),
           _buildUnitSection(
             context: context,
             title: strings.fishDetail,
@@ -276,7 +275,7 @@ class UnitSettingsPage extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: TeslaTheme.spacingLg),
         ],
       ),
     );
@@ -289,12 +288,15 @@ class UnitSettingsPage extends ConsumerWidget {
     required List<Widget> children,
   }) {
     return PremiumCard(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      margin: const EdgeInsets.symmetric(
+        horizontal: TeslaTheme.spacingMd,
+        vertical: TeslaTheme.spacingMicro,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, TeslaTheme.spacingSm),
             child: Row(
               children: [
                 Icon(
@@ -302,12 +304,12 @@ class UnitSettingsPage extends ConsumerWidget {
                   size: 20,
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: TeslaTheme.spacingSm),
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: AppColors.primaryLight,
+                        color: TeslaColors.electricBlue,
                       ),
                 ),
               ],
@@ -327,7 +329,7 @@ class UnitSettingsPage extends ConsumerWidget {
     required ValueChanged<String?> onChanged,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: TeslaTheme.spacingMicro),
       child: Row(
         children: [
           Expanded(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/app_theme.dart';
+import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/pending_recognition_providers.dart';
 import '../../core/providers/ai_recognition_provider.dart';
@@ -69,7 +69,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
     AppStrings strings,
   ) {
     return ListView(
-      padding: const EdgeInsets.all(AppTheme.spacingLg),
+      padding: const EdgeInsets.all(TeslaTheme.spacingLg),
       children: [
         PendingQueueWidget(
           pendingCatches: pendingCatches,
@@ -84,7 +84,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           onConfirmOption: _showConfirmDialog,
           onBatchRecognize: () => _batchRecognize(pendingCatches),
         ),
-        const SizedBox(height: AppTheme.spacingXl),
+        const SizedBox(height: TeslaTheme.spacingXl),
         _SpeciesListSection(
           onRename: _showRenameDialog,
           onDelete: _showDeleteDialog,
@@ -393,7 +393,7 @@ class _SpeciesListSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final speciesCountsAsync = ref.watch(speciesCountsProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    final accentColor = TeslaColors.electricBlue;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -401,7 +401,7 @@ class _SpeciesListSection extends ConsumerWidget {
         Row(
           children: [
             Icon(Icons.category, size: 20, color: accentColor),
-            const SizedBox(width: AppTheme.spacingSm),
+            const SizedBox(width: TeslaTheme.spacingSm),
             Text(
               '已保存品种',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -410,7 +410,7 @@ class _SpeciesListSection extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: AppTheme.spacingMd),
+        const SizedBox(height: TeslaTheme.spacingMd),
         speciesCountsAsync.when(
           data: (speciesCounts) {
             if (speciesCounts.isEmpty) {
@@ -442,7 +442,9 @@ class _SpeciesListSection extends ConsumerWidget {
                 itemCount: sortedSpecies.length,
                 separatorBuilder: (_, __) => Divider(
                   height: 1,
-                  color: isDark ? AppColors.borderDark : AppColors.borderLight,
+                  color: isDark
+                      ? const Color(0xFF2A2D30)
+                      : TeslaColors.cloudGray,
                 ),
                 itemBuilder: (context, index) {
                   final entry = sortedSpecies[index];
@@ -459,12 +461,12 @@ class _SpeciesListSection extends ConsumerWidget {
               ),
             );
           },
-          loading: () => const PremiumCard(
+          loading: () => PremiumCard(
             variant: PremiumCardVariant.flat,
             child: Center(
               child: Padding(
-                padding: EdgeInsets.all(AppTheme.spacingXl),
-                child: CircularProgressIndicator(),
+                padding: const EdgeInsets.all(TeslaTheme.spacingXl),
+                child: const CircularProgressIndicator(),
               ),
             ),
           ),
@@ -499,15 +501,14 @@ class _SpeciesListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    final accentColor = TeslaColors.electricBlue;
 
     return InkWell(
       onTap: () {}, // Placeholder for future expansion
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingMd,
-          vertical: AppTheme.spacingSm,
+          horizontal: TeslaTheme.spacingMd,
+          vertical: TeslaTheme.spacingSm,
         ),
         child: Row(
           children: [
@@ -516,7 +517,7 @@ class _SpeciesListItem extends StatelessWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: accentColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
               ),
               child: Center(
                 child: Text(
@@ -529,7 +530,7 @@ class _SpeciesListItem extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: AppTheme.spacingMd),
+            const SizedBox(width: TeslaTheme.spacingMd),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -559,7 +560,7 @@ class _SpeciesListItem extends StatelessWidget {
               onPressed: onDelete,
               variant: PremiumButtonVariant.text,
               size: 36,
-              color: AppColors.error,
+              color: TeslaColors.electricBlue,
             ),
           ],
         ),

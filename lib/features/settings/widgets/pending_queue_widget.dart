@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/app_theme.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/models/fish_catch.dart';
 import '../../../widgets/common/premium_card.dart';
 import '../../../widgets/common/premium_button.dart';
@@ -77,8 +77,7 @@ class PendingQueueWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    final accentColor = TeslaColors.electricBlue;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,47 +85,47 @@ class PendingQueueWidget extends StatelessWidget {
         Row(
           children: [
             Icon(Icons.list_alt, size: 20, color: accentColor),
-            const SizedBox(width: AppTheme.spacingSm),
+            const SizedBox(width: TeslaTheme.spacingSm),
             Text(
               '待识别列表',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
             ),
-            const SizedBox(width: AppTheme.spacingSm),
+            const SizedBox(width: TeslaTheme.spacingSm),
             Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingSm,
+                horizontal: TeslaTheme.spacingSm,
                 vertical: 2,
               ),
               decoration: BoxDecoration(
-                color: AppColors.warning.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                color: TeslaColors.electricBlue.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
               ),
               child: Text(
                 '${pendingCatches.length}条',
                 style: const TextStyle(
                   fontSize: 12,
-                  color: AppColors.warning,
+                  color: TeslaColors.electricBlue,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: AppTheme.spacingMd),
+        const SizedBox(height: TeslaTheme.spacingMd),
         if (pendingCatches.isEmpty)
           PremiumCard(
             variant: PremiumCardVariant.flat,
             child: Center(
               child: Column(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.check_circle,
                     size: 48,
-                    color: AppColors.success,
+                    color: TeslaColors.electricBlue,
                   ),
-                  const SizedBox(height: AppTheme.spacingSm),
+                  const SizedBox(height: TeslaTheme.spacingSm),
                   Text(
                     '暂无待识别鱼获',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -143,7 +142,9 @@ class PendingQueueWidget extends StatelessWidget {
               .map((fish) => _buildPendingItem(context, fish)),
           if (pendingCatches.length > 10)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
+              padding: const EdgeInsets.symmetric(
+                vertical: TeslaTheme.spacingSm,
+              ),
               child: Text(
                 '... 还有 ${pendingCatches.length - 10} 条',
                 textAlign: TextAlign.center,
@@ -152,7 +153,7 @@ class PendingQueueWidget extends StatelessWidget {
                     ),
               ),
             ),
-          const SizedBox(height: AppTheme.spacingMd),
+          const SizedBox(height: TeslaTheme.spacingMd),
           _buildBatchRecognizeButton(context, pendingCatches),
         ],
       ],
@@ -163,10 +164,10 @@ class PendingQueueWidget extends StatelessWidget {
     final recState =
         recognitionStates[fish.id] ?? const SingleRecognitionState();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    final accentColor = TeslaColors.electricBlue;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+      padding: const EdgeInsets.only(bottom: TeslaTheme.spacingSm),
       child: PremiumCard(
         variant: PremiumCardVariant.flat,
         onTap: () => _showPendingItemActions(fish),
@@ -176,7 +177,7 @@ class PendingQueueWidget extends StatelessWidget {
             Row(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                   child: SizedBox(
                     width: 50,
                     height: 50,
@@ -194,14 +195,14 @@ class PendingQueueWidget extends StatelessWidget {
                           Icons.image,
                           size: 24,
                           color: isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondaryLight,
+                              ? const Color(0xFF9A9A9A)
+                              : TeslaColors.graphite,
                         ),
                       ),
                     ),
                   ),
                 ),
-                const SizedBox(width: AppTheme.spacingMd),
+                const SizedBox(width: TeslaTheme.spacingMd),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,29 +224,29 @@ class PendingQueueWidget extends StatelessWidget {
                       recState.isRecognizing ? null : () => onRecognize(fish),
                   variant: PremiumButtonVariant.primary,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingMd,
-                    vertical: AppTheme.spacingSm,
+                    horizontal: TeslaTheme.spacingMd,
+                    vertical: TeslaTheme.spacingSm,
                   ),
                 ),
-                const SizedBox(width: AppTheme.spacingSm),
+                const SizedBox(width: TeslaTheme.spacingSm),
                 PremiumButton(
                   text: '手动',
                   onPressed: () => onManualIdentify(fish),
                   variant: PremiumButtonVariant.outline,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppTheme.spacingMd,
-                    vertical: AppTheme.spacingSm,
+                    horizontal: TeslaTheme.spacingMd,
+                    vertical: TeslaTheme.spacingSm,
                   ),
                 ),
               ],
             ),
             // 识别中进度条
             if (recState.isRecognizing) ...[
-              const SizedBox(height: AppTheme.spacingMd),
+              const SizedBox(height: TeslaTheme.spacingMd),
               LinearProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(accentColor),
               ),
-              const SizedBox(height: AppTheme.spacingXs),
+              const SizedBox(height: TeslaTheme.spacingMicro),
               Text(
                 '正在识别中...',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -255,18 +256,18 @@ class PendingQueueWidget extends StatelessWidget {
             ],
             // 识别结果选项
             if (recState.options.isNotEmpty) ...[
-              const SizedBox(height: AppTheme.spacingMd),
+              const SizedBox(height: TeslaTheme.spacingMd),
               ...recState.options.map(
                 (option) => _buildRecognitionOption(context, fish, option),
               ),
             ],
             // 错误信息
             if (recState.error != null) ...[
-              const SizedBox(height: AppTheme.spacingSm),
+              const SizedBox(height: TeslaTheme.spacingSm),
               Text(
                 recState.error!,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.error,
+                      color: TeslaColors.electricBlue,
                     ),
               ),
             ],
@@ -283,18 +284,18 @@ class PendingQueueWidget extends StatelessWidget {
   Widget _buildRecognitionOption(
       BuildContext context, FishCatch fish, AiRecognitionOption option) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+      padding: const EdgeInsets.only(bottom: TeslaTheme.spacingSm),
       child: InkWell(
         onTap: () => onConfirmOption(fish, option),
-        borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+        borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: AppTheme.spacingMd,
-            vertical: AppTheme.spacingSm,
+            horizontal: TeslaTheme.spacingMd,
+            vertical: TeslaTheme.spacingSm,
           ),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+            borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
             border: Border.all(
               color:
                   Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
@@ -324,13 +325,13 @@ class PendingQueueWidget extends StatelessWidget {
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppTheme.spacingSm,
+                  horizontal: TeslaTheme.spacingSm,
                   vertical: 2,
                 ),
                 decoration: BoxDecoration(
                   color: _getConfidenceColor(option.confidence)
                       .withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                 ),
                 child: Text(
                   '${(option.confidence * 100).toInt()}%',
@@ -349,9 +350,9 @@ class PendingQueueWidget extends StatelessWidget {
   }
 
   Color _getConfidenceColor(double confidence) {
-    if (confidence >= 0.6) return AppColors.success;
-    if (confidence >= 0.3) return AppColors.warning;
-    return AppColors.error;
+    if (confidence >= 0.6) return TeslaColors.electricBlue;
+    if (confidence >= 0.3) return TeslaColors.electricBlue;
+    return TeslaColors.electricBlue;
   }
 
   Widget _buildBatchRecognizeButton(
@@ -364,7 +365,7 @@ class PendingQueueWidget extends StatelessWidget {
             LinearProgressIndicator(
               value: batchTotal > 0 ? batchProgress / batchTotal : 0,
             ),
-            const SizedBox(height: AppTheme.spacingSm),
+            const SizedBox(height: TeslaTheme.spacingSm),
             Text(
               '识别中: $batchProgress/$batchTotal (成功: $batchSuccess, 失败: $batchFailed)',
               style: Theme.of(context).textTheme.bodySmall,

@@ -5,7 +5,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/app_theme.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../core/providers/settings_view_model.dart';
 import '../../../core/services/export_service.dart';
@@ -19,8 +19,7 @@ class SettingsBackupSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = ref.watch(currentStringsProvider);
     final settingsState = ref.watch(settingsViewModelProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    final accentColor = TeslaColors.electricBlue;
 
     return PremiumCard(
       child: Column(
@@ -30,21 +29,21 @@ class SettingsBackupSection extends ConsumerWidget {
             onTap: () => _showWebDAVDialog(context, ref, strings),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                vertical: AppTheme.spacingMd,
-                horizontal: AppTheme.spacingSm,
+                vertical: TeslaTheme.spacingMd,
+                horizontal: TeslaTheme.spacingSm,
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    padding: const EdgeInsets.all(TeslaTheme.spacingSm),
                     decoration: BoxDecoration(
                       color: accentColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                     ),
                     child:
                         Icon(Icons.cloud_upload, color: accentColor, size: 22),
                   ),
-                  const SizedBox(width: AppTheme.spacingMd),
+                  const SizedBox(width: TeslaTheme.spacingMd),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,23 +69,23 @@ class SettingsBackupSection extends ConsumerWidget {
             ),
           ),
           const Divider(height: 1),
-// Export CSV
+          // Export CSV
           InkWell(
             onTap: settingsState.isExporting
                 ? null
                 : () => _handleCsvExport(context, ref),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                vertical: AppTheme.spacingMd,
-                horizontal: AppTheme.spacingSm,
+                vertical: TeslaTheme.spacingMd,
+                horizontal: TeslaTheme.spacingSm,
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    padding: const EdgeInsets.all(TeslaTheme.spacingSm),
                     decoration: BoxDecoration(
                       color: accentColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                     ),
                     child: Icon(
                       settingsState.isExporting
@@ -96,7 +95,7 @@ class SettingsBackupSection extends ConsumerWidget {
                       size: 22,
                     ),
                   ),
-                  const SizedBox(width: AppTheme.spacingMd),
+                  const SizedBox(width: TeslaTheme.spacingMd),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,23 +127,23 @@ class SettingsBackupSection extends ConsumerWidget {
               ),
             ),
           ),
-// ZIP Full Backup
+          // ZIP Full Backup
           InkWell(
             onTap: settingsState.isCreatingZipBackup
                 ? null
                 : () => _showFullBackupDialog(context, ref, strings),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                vertical: AppTheme.spacingMd,
-                horizontal: AppTheme.spacingSm,
+                vertical: TeslaTheme.spacingMd,
+                horizontal: TeslaTheme.spacingSm,
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    padding: const EdgeInsets.all(TeslaTheme.spacingSm),
                     decoration: BoxDecoration(
                       color: accentColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                     ),
                     child: Icon(
                       settingsState.isCreatingZipBackup
@@ -154,7 +153,7 @@ class SettingsBackupSection extends ConsumerWidget {
                       size: 22,
                     ),
                   ),
-                  const SizedBox(width: AppTheme.spacingMd),
+                  const SizedBox(width: TeslaTheme.spacingMd),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,16 +193,16 @@ class SettingsBackupSection extends ConsumerWidget {
                 : () => _handleZipRestore(context, ref, strings),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                vertical: AppTheme.spacingMd,
-                horizontal: AppTheme.spacingSm,
+                vertical: TeslaTheme.spacingMd,
+                horizontal: TeslaTheme.spacingSm,
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    padding: const EdgeInsets.all(TeslaTheme.spacingSm),
                     decoration: BoxDecoration(
                       color: accentColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                     ),
                     child: Icon(
                       settingsState.isRestoringZipBackup
@@ -213,7 +212,7 @@ class SettingsBackupSection extends ConsumerWidget {
                       size: 22,
                     ),
                   ),
-                  const SizedBox(width: AppTheme.spacingMd),
+                  const SizedBox(width: TeslaTheme.spacingMd),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,16 +250,16 @@ class SettingsBackupSection extends ConsumerWidget {
             onTap: () => context.push('/settings/export-backup'),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                vertical: AppTheme.spacingMd,
-                horizontal: AppTheme.spacingSm,
+                vertical: TeslaTheme.spacingMd,
+                horizontal: TeslaTheme.spacingSm,
               ),
               child: Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(AppTheme.spacingSm),
+                    padding: const EdgeInsets.all(TeslaTheme.spacingSm),
                     decoration: BoxDecoration(
                       color: accentColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                     ),
                     child: Icon(
                       Icons.folder_open,
@@ -268,7 +267,7 @@ class SettingsBackupSection extends ConsumerWidget {
                       size: 22,
                     ),
                   ),
-                  const SizedBox(width: AppTheme.spacingMd),
+                  const SizedBox(width: TeslaTheme.spacingMd),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -371,7 +370,7 @@ class SettingsBackupSection extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             CircularProgressIndicator(),
-            SizedBox(height: 16),
+            SizedBox(height: TeslaTheme.spacingMd),
             Text('备份正在后台运行，请稍候...'),
           ],
         ),

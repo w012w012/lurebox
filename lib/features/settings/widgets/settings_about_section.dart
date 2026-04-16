@@ -4,7 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/app_theme.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../widgets/common/premium_button.dart';
 import '../../../widgets/common/premium_card.dart';
@@ -65,7 +65,7 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
-                  ?.copyWith(color: AppColors.secondaryLight),
+                  ?.copyWith(color: TeslaColors.graphite),
             ),
             onTap: null,
           ),
@@ -81,25 +81,24 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
     required Widget trailing,
     VoidCallback? onTap,
   }) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    final accentColor = TeslaColors.electricBlue;
 
     final child = Padding(
       padding: const EdgeInsets.symmetric(
-        vertical: AppTheme.spacingMd,
-        horizontal: AppTheme.spacingSm,
+        vertical: TeslaTheme.spacingMd,
+        horizontal: TeslaTheme.spacingSm,
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(AppTheme.spacingSm),
+            padding: const EdgeInsets.all(TeslaTheme.spacingSm),
             decoration: BoxDecoration(
               color: accentColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
             ),
             child: Icon(icon, color: accentColor, size: 22),
           ),
-          const SizedBox(width: AppTheme.spacingMd),
+          const SizedBox(width: TeslaTheme.spacingMd),
           Expanded(
               child: Text(title,
                   style: Theme.of(context)
@@ -124,7 +123,7 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
         title: Row(
           children: [
             Icon(Icons.set_meal, color: Theme.of(context).colorScheme.primary),
-            const SizedBox(width: 8),
+            const SizedBox(width: TeslaTheme.spacingSm),
             Text(strings.appName),
           ],
         ),
@@ -139,14 +138,14 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
                       fontWeight: FontWeight.w500,
                     ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: TeslaTheme.spacingMd),
               Text(
                 '主要功能',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: TeslaTheme.spacingSm),
               _buildFeatureItem('🐟', '渔获记录', '拍照记录、GPS定位、天气信息'),
               _buildFeatureItem('🎣', '装备管理', '鱼竿、渔轮、鱼饵全面管理'),
               _buildFeatureItem('📊', '数据统计', '趋势分析、物种分布、装备使用'),
@@ -155,11 +154,11 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
               _buildFeatureItem('📤', '数据导出', '支持CSV、PDF导出与分享'),
               _buildFeatureItem('☁️', '云备份', 'WebDAV同步，数据安全无忧'),
               _buildFeatureItem('🏆', '成就系统', '解锁成就，记录钓鱼里程碑'),
-              const SizedBox(height: 16),
+              const SizedBox(height: TeslaTheme.spacingMd),
               Text(
                 '© 2026 LureBox 路亚鱼护',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.secondaryLight,
+                      color: TeslaColors.graphite,
                     ),
               ),
             ],
@@ -178,12 +177,12 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
 
   Widget _buildFeatureItem(String emoji, String title, String description) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: TeslaTheme.spacingMicro),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(emoji, style: const TextStyle(fontSize: 16)),
-          const SizedBox(width: 8),
+          const SizedBox(width: TeslaTheme.spacingSm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,9 +193,9 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
                 ),
                 Text(
                   description,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: AppColors.secondaryLight,
+                    color: TeslaColors.graphite,
                   ),
                 ),
               ],

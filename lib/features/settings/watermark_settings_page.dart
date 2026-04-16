@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
+import '../../core/design/theme/tesla_theme.dart';
 import '../../core/models/watermark_settings.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/watermark_provider.dart';
@@ -23,12 +24,12 @@ class WatermarkSettingsPage extends ConsumerWidget {
       body: ListView(
         children: [
           _buildEnableSwitch(context, ref, settings, strings),
-          const SizedBox(height: 8),
+          const SizedBox(height: TeslaTheme.spacingMicro),
           if (settings.enabled) ...[
             _buildInfoSection(context, ref, settings, strings),
-            const SizedBox(height: 16),
+            const SizedBox(height: TeslaTheme.spacingMd),
             _buildStyleSection(context, ref, settings, strings),
-            const SizedBox(height: 16),
+            const SizedBox(height: TeslaTheme.spacingMd),
             _buildPreviewInfo(context, settings, strings),
           ],
         ],
@@ -53,7 +54,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.onSurfaceVariant,
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: TeslaTheme.spacingMd),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +114,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                 Icons.info_outline,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: TeslaTheme.spacingSm),
               Text(
                 strings.displayInfo,
                 style: Theme.of(
@@ -122,21 +123,21 @@ class WatermarkSettingsPage extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: TeslaTheme.spacingSm),
           Text(
             strings.selectWatermarkInfo,
             style: Theme.of(
               context,
-            ).textTheme.bodySmall?.copyWith(color: AppColors.secondaryLight),
+            ).textTheme.bodySmall?.copyWith(color: TeslaColors.graphite),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: TeslaTheme.spacingSm),
           Text(
             '长按拖拽可排序',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                 ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: TeslaTheme.spacingSm),
           ReorderableListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -169,9 +170,9 @@ class WatermarkSettingsPage extends ConsumerWidget {
               '未启用',
               style: Theme.of(
                 context,
-              ).textTheme.bodySmall?.copyWith(color: AppColors.secondaryLight),
+              ).textTheme.bodySmall?.copyWith(color: TeslaColors.graphite),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: TeslaTheme.spacingSm),
             ...unselectedTypes.map((typeInfo) {
               return _WatermarkInfoTile(
                 key: ValueKey(typeInfo.type),
@@ -208,7 +209,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                 Icons.style,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: TeslaTheme.spacingSm),
               Text(
                 '水印样式',
                 style: Theme.of(
@@ -217,13 +218,13 @@ class WatermarkSettingsPage extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: TeslaTheme.spacingMd),
           // 预设样式选择
           _buildStyleSelector(context, ref, settings),
-          const SizedBox(height: 16),
+          const SizedBox(height: TeslaTheme.spacingMd),
           // 水印位置
           _buildPositionSelector(context, ref, settings),
-          const SizedBox(height: 16),
+          const SizedBox(height: TeslaTheme.spacingMd),
           // 背景圆角程度
           _buildSliderSetting(
             context: context,
@@ -237,7 +238,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                   .updateBlurRadius(value);
             },
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: TeslaTheme.spacingSm),
           // 背景透明度
           _buildSliderSetting(
             context: context,
@@ -252,7 +253,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
             },
             valueFormatter: (v) => '${v.toInt()}%',
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: TeslaTheme.spacingSm),
           // 字体大小
           _buildSliderSetting(
             context: context,
@@ -266,10 +267,10 @@ class WatermarkSettingsPage extends ConsumerWidget {
                   .updateFontSize(value);
             },
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: TeslaTheme.spacingMd),
           // 字体颜色
           _buildColorSelector(context, ref, settings),
-          const SizedBox(height: 12),
+          const SizedBox(height: TeslaTheme.spacingSm),
           // 自定义文字
           _CustomTextFieldBuilder(settings: settings),
         ],
@@ -295,7 +296,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
           '模板',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: TeslaTheme.spacingSm),
         Row(
           children: styles.map((s) {
             final isSelected = settings.style == s.$1;
@@ -308,7 +309,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                 },
                 child: Container(
                   margin: EdgeInsets.only(
-                    right: s != styles.last ? 8 : 0,
+                    right: s != styles.last ? TeslaTheme.spacingSm : 0,
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
@@ -320,7 +321,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                         : Theme.of(context)
                             .colorScheme
                             .surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                     border: Border.all(
                       color: isSelected
                           ? Theme.of(context).colorScheme.primary
@@ -344,7 +345,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                       Text(
                         s.$3,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: AppColors.secondaryLight,
+                              color: TeslaColors.graphite,
                             ),
                       ),
                     ],
@@ -381,10 +382,10 @@ class WatermarkSettingsPage extends ConsumerWidget {
           '字体颜色',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: TeslaTheme.spacingSm),
         Wrap(
-          spacing: 8,
-          runSpacing: 8,
+          spacing: TeslaTheme.spacingSm,
+          runSpacing: TeslaTheme.spacingSm,
           children: colors.map((color) {
             final isSelected = settings.textColor == color.$1;
             return GestureDetector(
@@ -398,7 +399,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   color: Color(color.$1),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                   border: Border.all(
                     color: isSelected
                         ? Theme.of(context).colorScheme.primary
@@ -446,7 +447,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
           '水印位置',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: TeslaTheme.spacingSm),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: positions.map((pos) {
@@ -458,7 +459,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                     .updatePosition(pos.$1);
               },
               child: Container(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(TeslaTheme.spacingSm),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? Theme.of(context)
@@ -466,7 +467,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                           .primary
                           .withValues(alpha: 0.2)
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                   border: Border.all(
                     color: isSelected
                         ? Theme.of(context).colorScheme.primary
@@ -557,7 +558,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
           Row(
             children: [
               Icon(Icons.preview, color: Theme.of(context).colorScheme.primary),
-              const SizedBox(width: 8),
+              const SizedBox(width: TeslaTheme.spacingSm),
               Text(
                 strings.watermarkPreview,
                 style: Theme.of(
@@ -566,14 +567,14 @@ class WatermarkSettingsPage extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: TeslaTheme.spacingSm),
           _LiveWatermarkPreview(settings: settings, strings: strings),
-          const SizedBox(height: 8),
+          const SizedBox(height: TeslaTheme.spacingSm),
           Text(
             _getPositionDesc(settings.position, strings),
             style: Theme.of(
               context,
-            ).textTheme.bodySmall?.copyWith(color: AppColors.secondaryLight),
+            ).textTheme.bodySmall?.copyWith(color: TeslaColors.graphite),
           ),
         ],
       ),
@@ -638,22 +639,22 @@ class _CustomTextFieldBuilderState
           '自定义文字',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: TeslaTheme.spacingMicro),
         Text(
           '显示在水印底部（如个人签名）',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.secondaryLight,
+                color: TeslaColors.graphite,
               ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: TeslaTheme.spacingSm),
         TextField(
           decoration: InputDecoration(
             hintText: '选填，例如：个性签名',
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
             ),
             contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
+              horizontal: TeslaTheme.spacingSm,
               vertical: 10,
             ),
             isDense: true,
@@ -682,7 +683,7 @@ class _LiveWatermarkPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
       child: AspectRatio(
         aspectRatio: 16 / 9,
         child: CustomPaint(
@@ -805,7 +806,7 @@ class _WatermarkInfoTile extends StatelessWidget {
                 context,
               ).colorScheme.primaryContainer.withValues(alpha: 0.3)
             : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
         border: Border.all(
           color: isSelected
               ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
@@ -814,17 +815,17 @@ class _WatermarkInfoTile extends StatelessWidget {
       ),
       child: ListTile(
         leading: isSelected
-            ? const Icon(Icons.drag_handle, color: AppColors.secondaryLight)
+            ? Icon(Icons.drag_handle, color: TeslaColors.graphite)
             : Checkbox(value: false, onChanged: (_) => onToggle?.call()),
         title: Row(
           children: [
             Text(typeInfo.icon),
-            const SizedBox(width: 8),
+            const SizedBox(width: TeslaTheme.spacingSm),
             Expanded(
               child: Text(
                 typeInfo.name,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: isSelected ? null : AppColors.secondaryLight,
+                      color: isSelected ? null : TeslaColors.graphite,
                     ),
               ),
             ),
@@ -832,13 +833,13 @@ class _WatermarkInfoTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppColors.secondaryLight.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(4),
+                  color: TeslaColors.graphite.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                 ),
                 child: Text(
                   strings.defaultLabel,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppColors.secondaryLight,
+                        color: TeslaColors.graphite,
                       ),
                 ),
               ),
@@ -849,7 +850,7 @@ class _WatermarkInfoTile extends StatelessWidget {
                 icon: Icon(
                   Icons.remove_circle_outline,
                   color: isRequired
-                      ? AppColors.secondaryLight
+                      ? TeslaColors.graphite
                       : Theme.of(context).colorScheme.error,
                 ),
                 onPressed: isRequired ? null : onToggle,

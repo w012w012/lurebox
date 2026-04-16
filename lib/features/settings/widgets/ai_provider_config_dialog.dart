@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/models/ai_recognition_settings.dart';
 
 /// AI 提供商配置对话框
@@ -66,7 +67,7 @@ class _AiProviderConfigDialogState
       title: Row(
         children: [
           Icon(_getProviderIcon(widget.provider), color: colorScheme.primary),
-          const SizedBox(width: 12),
+          const SizedBox(width: TeslaTheme.spacingSm),
           Text('配置 ${widget.provider.displayName}'),
         ],
       ),
@@ -84,7 +85,7 @@ class _AiProviderConfigDialogState
                       color: colorScheme.onSurfaceVariant,
                     ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: TeslaTheme.spacingLg),
 
               // API Key
               TextFormField(
@@ -113,7 +114,7 @@ class _AiProviderConfigDialogState
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: TeslaTheme.spacingMd),
 
               // Base URL（可选）
               TextFormField(
@@ -140,7 +141,7 @@ class _AiProviderConfigDialogState
                       }
                     : null,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: TeslaTheme.spacingMd),
 
               // Model Name（可选）
               TextFormField(
@@ -154,17 +155,17 @@ class _AiProviderConfigDialogState
                 ),
                 textInputAction: TextInputAction.done,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: TeslaTheme.spacingLg),
 
               // 连接测试结果
               if (_testResult != null) ...[
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(TeslaTheme.spacingSm),
                   decoration: BoxDecoration(
                     color: _isTestSuccess
                         ? colorScheme.primaryContainer
                         : colorScheme.errorContainer,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                   ),
                   child: Row(
                     children: [
@@ -174,7 +175,7 @@ class _AiProviderConfigDialogState
                             ? colorScheme.primary
                             : colorScheme.error,
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: TeslaTheme.spacingSm),
                       Expanded(
                         child: Text(
                           _testResult!,
@@ -188,7 +189,7 @@ class _AiProviderConfigDialogState
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: TeslaTheme.spacingMd),
               ],
 
               // 测试连接按钮
