@@ -556,7 +556,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
         text,
         style: Theme.of(
           context,
-        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
       );
   Widget _buildExpandedRow(List<Widget> children) => Row(
         children: [

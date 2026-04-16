@@ -221,7 +221,7 @@ class PremiumStatCard extends StatelessWidget {
                       style: Theme.of(context)
                           .textTheme
                           .headlineSmall
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                          ?.copyWith(fontWeight: FontWeight.w500),
                     ),
                     if (unit != null) ...[
                       const SizedBox(width: 4),

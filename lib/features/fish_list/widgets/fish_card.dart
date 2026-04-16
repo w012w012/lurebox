@@ -125,7 +125,7 @@ class FishCard extends StatelessWidget {
       children: [
         Text(
           species,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 4),
         Row(
@@ -195,7 +195,7 @@ class FishCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               color: isRelease ? AppColors.release : AppColors.keep,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

@@ -77,7 +77,7 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
               Text(
                 widget.title,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                     ),
               ),
               const SizedBox(height: TeslaTheme.spacingMicro),
@@ -85,7 +85,7 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
                 '${widget.totalCount}',
                 style: const TextStyle(
                   fontSize: 56,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color: accentColor,
                   height: 1.0,
                 ),
@@ -206,7 +206,7 @@ class _AnimatedStatItemState extends State<_AnimatedStatItem>
             '${widget.count}${widget.isPercent ? '%' : ''}',
             style: TextStyle(
               fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               color: widget.color,
             ),
           ),

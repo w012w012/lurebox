@@ -398,7 +398,7 @@ class SettingsPage extends ConsumerWidget {
           Text(
             strings.protectionEcology,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color: TeslaColors.electricBlue,
                 ),
           ),

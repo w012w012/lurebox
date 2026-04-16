@@ -179,7 +179,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                           '$progress%',
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     color: TeslaColors.white,
                                   ),
                         ),
@@ -205,7 +205,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                   Text(
                     '成就概览',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           color: TeslaColors.white,
                         ),
                   ),
@@ -265,7 +265,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
             Text(
               value,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     color: color,
                   ),
             ),

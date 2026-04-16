@@ -30,7 +30,7 @@ class OverviewItem extends ConsumerWidget {
           '$count${isPercent ? '%' : ''}',
           style: TextStyle(
             fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: color,
           ),
         ),
@@ -84,7 +84,7 @@ class EquipmentPieChart extends StatelessWidget {
           Text(
             title,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
           ),
           const SizedBox(height: TeslaTheme.spacingMicro),
@@ -110,7 +110,7 @@ class EquipmentPieChart extends StatelessWidget {
                         titleStyle: const TextStyle(
                           fontSize: 10,
                           color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                         radius: 35,
                       );
@@ -151,7 +151,7 @@ class EquipmentPieChart extends StatelessWidget {
                             '${entry.value}',
                             style:
                                 Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w500,
                                     ),
                           ),
                         ],
@@ -202,7 +202,7 @@ class SpeciesPieChart extends ConsumerWidget {
           Text(
             strings.speciesDistribution,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
           ),
           const SizedBox(height: TeslaTheme.spacingMicro),
@@ -227,7 +227,7 @@ class SpeciesPieChart extends ConsumerWidget {
                     titleStyle: const TextStyle(
                       fontSize: 10,
                       color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
                   );
                 }).toList(),
@@ -249,7 +249,7 @@ class SpeciesPieChart extends ConsumerWidget {
                   Text(
                     '${e.value}${strings.fishCountUnit}',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                   ),
                 ],
@@ -296,7 +296,7 @@ class TrendBarChart extends ConsumerWidget {
               Text(
                 trendTitle,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                     ),
               ),
               const Spacer(),

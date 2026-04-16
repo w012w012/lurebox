@@ -242,14 +242,14 @@ class _FishListPageState extends ConsumerState<FishListPage>
               '${strings.selected} ${state.selectedIds.length} ${strings.items}',
               style: const TextStyle(
                 color: TeslaColors.carbonDark,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
               ),
             )
           : const Text(
               '鱼获列表',
               style: TextStyle(
                 color: TeslaColors.carbonDark,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
                 letterSpacing: -0.3,
               ),
             ),
@@ -636,7 +636,7 @@ class _SortButton extends StatelessWidget {
                 color: isSelected
                     ? TeslaColors.electricBlue
                     : TeslaColors.graphite,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
               ),
             ),
             if (isSelected) ...[

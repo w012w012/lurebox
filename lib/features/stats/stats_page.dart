@@ -258,7 +258,7 @@ class _StatCardLoading extends StatelessWidget {
           Text(
             title,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
           ),
           const Spacer(),
@@ -291,7 +291,7 @@ class _StatCardError extends StatelessWidget {
           Text(
             title,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
           ),
           const Spacer(),
@@ -355,7 +355,7 @@ class _StatCardState extends State<_StatCard> {
                   Text(
                     widget.title,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                           color: TeslaColors.carbonDark,
                         ),
                   ),
@@ -434,7 +434,7 @@ class _StatItem extends StatelessWidget {
           '$count',
           style: TextStyle(
             fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w500,
             color: color,
           ),
         ),

@@ -54,7 +54,7 @@ class AchievementOverviewCard extends StatelessWidget {
               Text(
                 '解锁进度',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                       color: TeslaColors.white,
                     ),
               ),
@@ -150,7 +150,7 @@ class AchievementOverviewCard extends StatelessWidget {
           Text(
             '$progressPercent%',
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color: TeslaColors.white,
                 ),
           ),
