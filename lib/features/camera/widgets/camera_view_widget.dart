@@ -6,6 +6,7 @@ import '../../../core/constants/strings.dart';
 import '../../../core/camera/camera_state.dart';
 import '../../../core/camera/camera_view_model.dart';
 import '../../../core/design/theme/app_colors.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../widgets/common/premium_button.dart';
 
 /// Camera view widget - displays camera preview with capture controls.
@@ -50,7 +51,7 @@ class CameraViewWidget extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
         child: CameraPreview(vm.cameraHelper.cameraController!),
       ),
     );
@@ -103,22 +104,14 @@ class CameraViewWidget extends ConsumerWidget {
 
   Widget _buildCameraControls(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
-    final surfaceColor =
-        isDark ? AppColors.surfaceDark : AppColors.surfaceLight;
+    final accentColor = TeslaColors.electricBlue;
+    final surfaceColor = isDark ? TeslaColors.carbonDark : TeslaColors.white;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
       ),
       child: SafeArea(
         top: false,
@@ -156,7 +149,7 @@ class CameraViewWidget extends ConsumerWidget {
                         ? Padding(
                             padding: const EdgeInsets.all(15),
                             child: CircularProgressIndicator(
-                              color: surfaceColor,
+                              color: TeslaColors.white,
                               strokeWidth: 2,
                             ),
                           )

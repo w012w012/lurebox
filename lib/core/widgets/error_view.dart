@@ -27,7 +27,7 @@ class ErrorView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon ?? Icons.error_outline, size: 64, color: AppColors.error),
+            Icon(icon ?? Icons.error_outline, size: 64, color: TeslaColors.electricBlue),
             const SizedBox(height: 16),
             Text(
               title ?? strings.error,

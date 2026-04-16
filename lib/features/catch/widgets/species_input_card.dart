@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
 import '../../../core/camera/camera_state.dart';
 import '../../../core/camera/camera_view_model.dart';
+import '../../../core/design/theme/app_colors.dart';
 import '../../../widgets/common/premium_input.dart';
 
 /// Species input card with text field, pending recognition toggle, and history chips.
@@ -64,10 +64,10 @@ class SpeciesInputCard extends ConsumerWidget {
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   backgroundColor: state.pendingRecognition
-                      ? AppColors.warning.withValues(alpha: 0.3)
+                      ? TeslaColors.electricBlue.withValues(alpha: 0.3)
                       : Theme.of(context).colorScheme.secondary,
                   foregroundColor: state.pendingRecognition
-                      ? AppColors.warning
+                      ? TeslaColors.electricBlue
                       : Theme.of(context).colorScheme.onSecondary,
                 ),
                 child: Text(

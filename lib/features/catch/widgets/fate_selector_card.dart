@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
 import '../../../core/models/fish_catch.dart';
 import '../../../core/camera/camera_state.dart';
 import '../../../core/camera/camera_view_model.dart';
+import '../../../core/design/theme/app_colors.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 
 /// A reusable fate selection button component.
 class FateButton extends StatelessWidget {
@@ -35,7 +36,7 @@ class FateButton extends StatelessWidget {
             color: isSelected
                 ? color.withValues(alpha: 0.2)
                 : Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
             border: Border.all(
               color: isSelected ? color : Theme.of(context).colorScheme.outline,
               width: isSelected ? 2 : 1,
@@ -83,7 +84,7 @@ class FateSelectorCard extends StatelessWidget {
               child: FateButton(
                 label: '🐟 ${strings.release}',
                 isSelected: state.fate == FishFateType.release,
-                color: AppColors.success,
+                color: TeslaColors.electricBlue,
                 onTap: () => vm.setFate(FishFateType.release),
               ),
             ),
@@ -92,7 +93,7 @@ class FateSelectorCard extends StatelessWidget {
               child: FateButton(
                 label: '🍳 ${strings.keep}',
                 isSelected: state.fate == FishFateType.keep,
-                color: AppColors.warning,
+                color: TeslaColors.electricBlue,
                 onTap: () => vm.setFate(FishFateType.keep),
               ),
             ),

@@ -74,7 +74,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                   height: 8,
                   decoration: BoxDecoration(
                     color: _currentPage == index
-                        ? AppColors.primaryLight
+                        ? TeslaColors.electricBlue
                         : Colors.grey,
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -108,7 +108,7 @@ class _WelcomePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.water_drop,
-              size: 100, color: AppColors.primaryLight),
+              size: 100, color: TeslaColors.electricBlue),
           const SizedBox(height: 24),
           Text('欢迎使用路亚鱼护', style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
@@ -166,7 +166,7 @@ class _FeatureCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 48, color: AppColors.primaryLight),
+            Icon(icon, size: 48, color: TeslaColors.electricBlue),
             const SizedBox(height: 8),
             Text(title, style: Theme.of(context).textTheme.titleMedium),
             Text(desc,
@@ -238,7 +238,7 @@ class _PermissionCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, color: AppColors.primaryLight, size: 32),
+                Icon(icon, color: TeslaColors.electricBlue, size: 32),
                 const SizedBox(width: 12),
                 Text(title, style: Theme.of(context).textTheme.titleMedium),
               ],
@@ -284,8 +284,8 @@ class _CompletePage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.check_circle,
-              size: 100, color: AppColors.primaryLight),
+          Icon(Icons.check_circle,
+              size: 100, color: TeslaColors.electricBlue),
           const SizedBox(height: 24),
           Text('准备就绪!', style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
