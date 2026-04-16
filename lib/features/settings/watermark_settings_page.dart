@@ -148,21 +148,18 @@ class WatermarkSettingsPage extends ConsumerWidget {
             },
             itemBuilder: (context, index) {
               final typeInfo = orderedTypes[index];
-              final isRequired = typeInfo.type == WatermarkInfoType.appName;
 
               return _WatermarkInfoTile(
                 key: ValueKey(typeInfo.type),
                 typeInfo: typeInfo,
-                isRequired: isRequired,
+                isRequired: false,
                 isSelected: true,
                 strings: strings,
-                onToggle: isRequired
-                    ? null
-                    : () {
-                        ref
-                            .read(watermarkSettingsProvider.notifier)
-                            .toggleInfoType(typeInfo.type);
-                      },
+                onToggle: () {
+                  ref
+                      .read(watermarkSettingsProvider.notifier)
+                      .toggleInfoType(typeInfo.type);
+                },
               );
             },
           ),
@@ -573,7 +570,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
           _LiveWatermarkPreview(settings: settings, strings: strings),
           const SizedBox(height: 8),
           Text(
-            strings.watermarkPositionDesc,
+            _getPositionDesc(settings.position, strings),
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: AppColors.secondaryLight),
@@ -581,6 +578,16 @@ class WatermarkSettingsPage extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  String _getPositionDesc(WatermarkPosition position, AppStrings strings) {
+    return switch (position) {
+      WatermarkPosition.topLeft => strings.watermarkPositionTopLeft,
+      WatermarkPosition.topRight => strings.watermarkPositionTopRight,
+      WatermarkPosition.bottomLeft => strings.watermarkPositionBottomLeft,
+      WatermarkPosition.bottomRight => strings.watermarkPositionBottomRight,
+      WatermarkPosition.center => strings.watermarkPositionCenter,
+    };
   }
 }
 
@@ -633,7 +640,7 @@ class _CustomTextFieldBuilderState
         ),
         const SizedBox(height: 4),
         Text(
-          '显示在水印底部（如渔具店名、个人签名）',
+          '显示在水印底部（如个人签名）',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: AppColors.secondaryLight,
               ),
@@ -641,7 +648,7 @@ class _CustomTextFieldBuilderState
         const SizedBox(height: 8),
         TextField(
           decoration: InputDecoration(
-            hintText: '选填，例如：杭州渔具店',
+            hintText: '选填，例如：个性签名',
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
             ),
