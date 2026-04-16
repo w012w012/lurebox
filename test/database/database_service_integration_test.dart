@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:lurebox/core/database/database.dart' as db_helper;
 
 /// Integration tests for database schema and queries.
 ///
@@ -446,6 +447,14 @@ void main() {
         // Assert - should be limited to 10
         expect(results.length, equals(10));
       });
+    });
+  });
+
+  group('DatabaseHelper - currentTimestamp', () {
+    test('currentTimestamp returns ISO 8601 parseable string', () {
+      final timestamp = db_helper.DatabaseHelper.currentTimestamp();
+      expect(timestamp, isNotEmpty);
+      expect(() => DateTime.parse(timestamp), returnsNormally);
     });
   });
 }

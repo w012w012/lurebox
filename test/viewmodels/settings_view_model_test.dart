@@ -281,29 +281,36 @@ void main() {
     // clearExportPath Tests
     // ============================================================
     group('clearExportPath', () {
-      test('clearExportPath calls copyWith with exportPath', () {
-        // Note: Due to copyWith implementation using ?? operator,
-        // passing null does NOT clear the value (it keeps the old value).
-        // This test documents the current behavior, not the intended behavior.
-        // The clearExportPath() method is effectively broken because
-        // copyWith(exportPath: null) keeps the old exportPath value.
+      test('clearExportPath sets exportPath to null', () {
         const exportPath = '/path/to/export.json';
         when(() => mockBackupService.exportToJson())
             .thenAnswer((_) async => exportPath);
 
         // Set export path
         viewModel.state = viewModel.state.copyWith(exportPath: exportPath);
+        expect(viewModel.state.exportPath, exportPath);
 
-        // Try to clear - this won't work due to copyWith ?? issue
+        // Clear - now correctly sets to null
+        viewModel.clearExportPath();
+        expect(viewModel.state.exportPath, isNull);
+      });
+
+      test('clearExportPath does not affect other state fields', () {
+        const exportPath = '/path/to/export.json';
+        viewModel.state = viewModel.state.copyWith(
+          exportPath: exportPath,
+          totalCount: 42,
+          errorMessage: 'some error',
+        );
+
         viewModel.clearExportPath();
 
-        // Current behavior: exportPath is NOT null (bug in copyWith)
-        // The clearExportPath method is broken because copyWith uses ??
-        expect(viewModel.state.exportPath, exportPath);
+        expect(viewModel.state.exportPath, isNull);
+        expect(viewModel.state.totalCount, 42);
+        expect(viewModel.state.errorMessage, 'some error');
       });
 
       test('setError can be used to verify state updates work', () {
-        // This test verifies that direct state updates DO work
         viewModel.setError('Test error', detail: 'Test detail');
         expect(viewModel.state.errorMessage, 'Test error');
         expect(viewModel.state.errorDetail, 'Test detail');

@@ -18,9 +18,9 @@ import 'share_template.dart';
 class ShareCardService {
   static Future<Uint8List?> captureWidget(GlobalKey key) async {
     try {
-      final boundary =
-          key.currentContext?.findRenderObject() as RenderRepaintBoundary?;
-      if (boundary == null) return null;
+      final renderObj = key.currentContext?.findRenderObject();
+      if (renderObj is! RenderRepaintBoundary) return null;
+      final boundary = renderObj;
 
       final image = await boundary.toImage(pixelRatio: 3.0);
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
@@ -72,9 +72,10 @@ class ShareCardService {
   static Future<Uint8List?> generateShareCard({
     required GlobalKey repaintBoundaryKey,
   }) async {
-    final boundary = repaintBoundaryKey.currentContext?.findRenderObject()
-        as RenderRepaintBoundary?;
-    if (boundary == null) return null;
+    final renderObj =
+        repaintBoundaryKey.currentContext?.findRenderObject();
+    if (renderObj is! RenderRepaintBoundary) return null;
+    final boundary = renderObj;
 
     final image = await boundary.toImage(pixelRatio: 2.0);
     final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
