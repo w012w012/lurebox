@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/app_theme.dart';
+import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/watermark_provider.dart';
 import '../../core/providers/settings_view_model.dart';
@@ -77,7 +77,7 @@ class SettingsPage extends ConsumerWidget {
 
     return ListView(
       children: [
-        const SizedBox(height: AppTheme.spacingMd),
+        const SizedBox(height: TeslaTheme.spacingMd),
 
         // Location Management
         SettingsTile(
@@ -87,7 +87,7 @@ class SettingsPage extends ConsumerWidget {
           showChevron: true,
           onTap: () => context.push('/settings/locations'),
         ),
-        const SizedBox(height: AppTheme.spacingSm),
+        const SizedBox(height: TeslaTheme.spacingSm),
 
         // Species Management
         SettingsTile(
@@ -97,7 +97,7 @@ class SettingsPage extends ConsumerWidget {
           showChevron: true,
           onTap: () => context.push('/species'),
         ),
-        const SizedBox(height: AppTheme.spacingSm),
+        const SizedBox(height: TeslaTheme.spacingSm),
 
         // Watermark Settings
         SettingsTile(
@@ -108,14 +108,14 @@ class SettingsPage extends ConsumerWidget {
           trailing: Icon(
             Icons.chevron_right,
             color: watermarkSettings.enabled
-                ? AppColors.success
+                ? TeslaColors.electricBlue
                 : isDark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondaryLight,
+                    ? const Color(0xFF9A9A9A)
+                    : TeslaColors.graphite,
           ),
           onTap: () => context.push('/settings/watermark'),
         ),
-        const SizedBox(height: AppTheme.spacingSm),
+        const SizedBox(height: TeslaTheme.spacingSm),
 
         // AI Recognition Settings
         SettingsTile(
@@ -125,30 +125,30 @@ class SettingsPage extends ConsumerWidget {
           showChevron: true,
           onTap: () => context.push('/settings/ai'),
         ),
-        const SizedBox(height: AppTheme.spacingSm),
+        const SizedBox(height: TeslaTheme.spacingSm),
 
         // Units Settings - use existing section
         const SettingsUnitsSection(),
-        const SizedBox(height: AppTheme.spacingSm),
+        const SizedBox(height: TeslaTheme.spacingSm),
 
         // Appearance Settings - use existing section
         const SettingsAppearanceSection(),
-        const SizedBox(height: AppTheme.spacingSm),
+        const SizedBox(height: TeslaTheme.spacingSm),
 
         // Backup Settings - use existing section
         const SettingsBackupSection(),
-        const SizedBox(height: AppTheme.spacingSm),
+        const SizedBox(height: TeslaTheme.spacingSm),
 
         // About Section - use existing section
         const SettingsAboutSection(),
-        const SizedBox(height: AppTheme.spacingLg),
+        const SizedBox(height: TeslaTheme.spacingLg),
 
         // Stats Card
         const SettingsStatsCard(),
-        const SizedBox(height: AppTheme.spacingXl),
+        const SizedBox(height: TeslaTheme.spacingXl),
 
         _buildFooter(context, strings),
-        const SizedBox(height: AppTheme.spacingXxl),
+        const SizedBox(height: TeslaTheme.spacingXl),
       ],
     );
   }
@@ -160,7 +160,7 @@ class SettingsPage extends ConsumerWidget {
     dynamic watermarkSettings,
   ) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(TeslaTheme.spacingLg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -169,40 +169,40 @@ class SettingsPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(child: _buildLocationCard(context, strings)),
-              const SizedBox(width: 16),
+              const SizedBox(width: TeslaTheme.spacingMd),
               Expanded(child: _buildSpeciesCard(context, strings)),
-              const SizedBox(width: 16),
+              const SizedBox(width: TeslaTheme.spacingMd),
               Expanded(
                   child:
                       _buildWatermarkCard(context, strings, watermarkSettings)),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: TeslaTheme.spacingMd),
           // Second row: AI Recognition
           _buildAiRecognitionCard(context, strings),
-          const SizedBox(height: 16),
+          const SizedBox(height: TeslaTheme.spacingMd),
           // Third row: Units and Appearance in parallel
           const Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(child: SettingsUnitsSection()),
-              SizedBox(width: 16),
+              SizedBox(width: TeslaTheme.spacingMd),
               Expanded(child: SettingsAppearanceSection()),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: TeslaTheme.spacingMd),
           // Fourth row: Backup and About
           const Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(child: SettingsBackupSection()),
-              SizedBox(width: 16),
+              SizedBox(width: TeslaTheme.spacingMd),
               Expanded(child: SettingsAboutSection()),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: TeslaTheme.spacingLg),
           Center(child: _buildFooter(context, strings)),
-          const SizedBox(height: 32),
+          const SizedBox(height: TeslaTheme.spacingXl),
         ],
       ),
     );
@@ -222,9 +222,9 @@ class SettingsPage extends ConsumerWidget {
         children: [
           Icon(
             Icons.branding_watermark,
-            color: isDark ? AppColors.accentDark : AppColors.accentLight,
+            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: TeslaTheme.spacingMd),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -242,10 +242,10 @@ class SettingsPage extends ConsumerWidget {
                       : strings.disabled,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: watermarkSettings.enabled
-                            ? AppColors.success
+                            ? TeslaColors.electricBlue
                             : isDark
-                                ? AppColors.textSecondaryDark
-                                : AppColors.textSecondaryLight,
+                                ? const Color(0xFF9A9A9A)
+                                : TeslaColors.graphite,
                       ),
                 ),
               ],
@@ -270,9 +270,9 @@ class SettingsPage extends ConsumerWidget {
         children: [
           Icon(
             Icons.auto_awesome,
-            color: isDark ? AppColors.accentDark : AppColors.accentLight,
+            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: TeslaTheme.spacingMd),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,8 +288,8 @@ class SettingsPage extends ConsumerWidget {
                   strings.aiConfigurationDesc,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondaryLight,
+                            ? const Color(0xFF9A9A9A)
+                            : TeslaColors.graphite,
                       ),
                 ),
               ],
@@ -311,9 +311,9 @@ class SettingsPage extends ConsumerWidget {
         children: [
           Icon(
             Icons.location_on,
-            color: isDark ? AppColors.accentDark : AppColors.accentLight,
+            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: TeslaTheme.spacingMd),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -329,8 +329,8 @@ class SettingsPage extends ConsumerWidget {
                   strings.locationManagementDesc,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondaryLight,
+                            ? const Color(0xFF9A9A9A)
+                            : TeslaColors.graphite,
                       ),
                 ),
               ],
@@ -352,9 +352,9 @@ class SettingsPage extends ConsumerWidget {
         children: [
           Icon(
             Icons.category,
-            color: isDark ? AppColors.accentDark : AppColors.accentLight,
+            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: TeslaTheme.spacingMd),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -370,8 +370,8 @@ class SettingsPage extends ConsumerWidget {
                   strings.speciesManagementDesc,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondaryLight,
+                            ? const Color(0xFF9A9A9A)
+                            : TeslaColors.graphite,
                       ),
                 ),
               ],
@@ -386,25 +386,29 @@ class SettingsPage extends ConsumerWidget {
   Widget _buildFooter(BuildContext context, AppStrings strings) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32),
+      padding: const EdgeInsets.symmetric(horizontal: TeslaTheme.spacingXl),
       child: Column(
         children: [
-          const Icon(Icons.eco, size: 48, color: AppColors.success),
-          const SizedBox(height: 12),
+          Icon(
+            Icons.eco,
+            size: 48,
+            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
+          ),
+          const SizedBox(height: TeslaTheme.spacingSm),
           Text(
             strings.protectionEcology,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: AppColors.success,
+                  color: TeslaColors.electricBlue,
                 ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: TeslaTheme.spacingMicro),
           Text(
             strings.reasonableRelease,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: isDark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondaryLight,
+                      ? const Color(0xFF9A9A9A)
+                      : TeslaColors.graphite,
                 ),
             textAlign: TextAlign.center,
           ),

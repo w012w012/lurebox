@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/strings.dart';
+import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/location_view_model.dart';
 import '../location/widgets/location_list_tile.dart';
@@ -58,7 +59,7 @@ class _LocationManagementPageState
               : _buildContent(state, viewModel),
       bottomNavigationBar: state.selectedLocations.length >= 2
           ? Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(TeslaTheme.spacingMd),
               child: Row(
                 children: [
                   Expanded(
@@ -75,7 +76,7 @@ class _LocationManagementPageState
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: TeslaTheme.spacingSm),
                   ElevatedButton(
                     onPressed: state.isMerging
                         ? null
@@ -103,17 +104,17 @@ class _LocationManagementPageState
       children: [
         // 搜索框
         Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(TeslaTheme.spacingSm),
           child: TextField(
             decoration: InputDecoration(
               hintText: '搜索钓点',
               prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
               ),
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 8,
+                horizontal: TeslaTheme.spacingSm,
+                vertical: TeslaTheme.spacingSm,
               ),
             ),
             onChanged: (value) => setState(() => _searchQuery = value),
@@ -163,9 +164,12 @@ class _LocationManagementPageState
     );
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12),
+      margin: const EdgeInsets.symmetric(
+        horizontal: TeslaTheme.spacingSm,
+        vertical: TeslaTheme.spacingMicro,
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(TeslaTheme.spacingMd),
         child: Row(
           children: [
             Expanded(
@@ -178,7 +182,7 @@ class _LocationManagementPageState
                           color: Theme.of(context).colorScheme.primary,
                         ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: TeslaTheme.spacingMicro),
                   const Text('钓点数量'),
                 ],
               ),
@@ -194,7 +198,7 @@ class _LocationManagementPageState
                           color: Theme.of(context).colorScheme.primary,
                         ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: TeslaTheme.spacingMicro),
                   const Text('总渔获数'),
                 ],
               ),
@@ -223,7 +227,12 @@ class _LocationManagementPageState
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(12, 16, 12, 8),
+          padding: const EdgeInsets.fromLTRB(
+            TeslaTheme.spacingSm,
+            TeslaTheme.spacingMd,
+            TeslaTheme.spacingSm,
+            TeslaTheme.spacingSm,
+          ),
           child: Row(
             children: [
               Icon(
@@ -231,7 +240,7 @@ class _LocationManagementPageState
                 size: 20,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: TeslaTheme.spacingSm),
               Text(
                 '智能合并建议',
                 style: Theme.of(
@@ -262,9 +271,9 @@ class _LocationManagementPageState
             size: 64,
             color: Theme.of(context).colorScheme.outline,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: TeslaTheme.spacingMd),
           Text('暂无钓点记录', style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 8),
+          const SizedBox(height: TeslaTheme.spacingSm),
           Text(
             '开始记录您的钓鱼活动吧',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(

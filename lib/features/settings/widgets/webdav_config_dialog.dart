@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/strings.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/di/di.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../core/providers/settings_view_model.dart';
@@ -50,7 +51,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
       title: Row(
         children: [
           Icon(Icons.cloud_sync, color: colorScheme.primary),
-          const SizedBox(width: 12),
+          const SizedBox(width: TeslaTheme.spacingSm),
           const Text('WebDAV 备份'),
         ],
       ),
@@ -68,7 +69,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                       color: colorScheme.onSurfaceVariant,
                     ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: TeslaTheme.spacingLg),
 
               // 服务器 URL
               TextFormField(
@@ -93,7 +94,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: TeslaTheme.spacingMd),
 
               // 用户名
               TextFormField(
@@ -112,7 +113,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: TeslaTheme.spacingMd),
 
               // 密码
               TextFormField(
@@ -143,17 +144,17 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                   return null;
                 },
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: TeslaTheme.spacingLg),
 
               // 连接测试结果
               if (_testResult != null) ...[
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(TeslaTheme.spacingSm),
                   decoration: BoxDecoration(
                     color: _isTestSuccess
                         ? colorScheme.primaryContainer
                         : colorScheme.errorContainer,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                   ),
                   child: Row(
                     children: [
@@ -163,7 +164,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                             ? colorScheme.primary
                             : colorScheme.error,
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: TeslaTheme.spacingSm),
                       Expanded(
                         child: Text(
                           _testResult!,
@@ -177,7 +178,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: TeslaTheme.spacingMd),
               ],
 
               // 按钮行

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/app_theme.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/models/app_settings.dart';
 import '../../../core/providers/app_settings_provider.dart';
 import '../../../core/providers/language_provider.dart';
@@ -20,8 +20,8 @@ class SettingsAppearanceSection extends ConsumerWidget {
 
     return PremiumCard(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingLg,
-        vertical: AppTheme.spacingMd,
+        horizontal: TeslaTheme.spacingLg,
+        vertical: TeslaTheme.spacingMd,
       ),
       child: Column(
         children: [
@@ -108,26 +108,26 @@ class SettingsAppearanceSection extends ConsumerWidget {
     required Widget trailing,
     VoidCallback? onTap,
   }) {
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    final accentColor = TeslaColors.electricBlue;
 
     return InkWell(
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: AppTheme.spacingMd,
-          horizontal: AppTheme.spacingSm,
+          vertical: TeslaTheme.spacingMd,
+          horizontal: TeslaTheme.spacingSm,
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(AppTheme.spacingSm),
+              padding: const EdgeInsets.all(TeslaTheme.spacingSm),
               decoration: BoxDecoration(
                 color: accentColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+                borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
               ),
               child: Icon(icon, color: accentColor, size: 22),
             ),
-            const SizedBox(width: AppTheme.spacingMd),
+            const SizedBox(width: TeslaTheme.spacingMd),
             Expanded(
               child: Text(
                 title,
@@ -135,8 +135,8 @@ class SettingsAppearanceSection extends ConsumerWidget {
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                   color: isDark
-                      ? AppColors.textPrimaryDark
-                      : AppColors.textPrimaryLight,
+                      ? TeslaColors.white
+                      : TeslaColors.carbonDark,
                 ),
               ),
             ),

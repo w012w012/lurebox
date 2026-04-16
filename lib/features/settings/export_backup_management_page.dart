@@ -7,7 +7,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/app_theme.dart';
+import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/di/di.dart';
 
@@ -135,7 +135,7 @@ class _ExportBackupManagementPageState
             onPressed: () => Navigator.pop(context, true),
             child: Text(
               strings.delete,
-              style: const TextStyle(color: AppColors.error),
+              style: const TextStyle(color: TeslaColors.electricBlue),
             ),
           ),
         ],
@@ -271,11 +271,11 @@ class _ExportBackupManagementPageState
                   const Icon(
                     Icons.error_outline,
                     size: 64,
-                    color: AppColors.error,
+                    color: TeslaColors.electricBlue,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: TeslaTheme.spacingMd),
                   Text(strings.error),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: TeslaTheme.spacingMd),
                   ElevatedButton(
                     onPressed: _refreshFiles,
                     child: Text(strings.retry),
@@ -296,16 +296,16 @@ class _ExportBackupManagementPageState
                     Icons.folder_open,
                     size: 64,
                     color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
+                        ? const Color(0xFF9A9A9A)
+                        : TeslaColors.graphite,
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: TeslaTheme.spacingMd),
                   Text(
                     strings.noData,
                     style: TextStyle(
                       color: isDark
-                          ? AppColors.textSecondaryDark
-                          : AppColors.textSecondaryLight,
+                          ? const Color(0xFF9A9A9A)
+                          : TeslaColors.graphite,
                     ),
                   ),
                 ],
@@ -316,7 +316,7 @@ class _ExportBackupManagementPageState
           return RefreshIndicator(
             onRefresh: () async => _refreshFiles(),
             child: ListView.builder(
-              padding: const EdgeInsets.all(AppTheme.spacingMd),
+              padding: const EdgeInsets.all(TeslaTheme.spacingMd),
               itemCount: files.length,
               itemBuilder: (context, index) {
                 final file = files[index];
@@ -343,23 +343,23 @@ class _ExportBackupManagementPageState
 
     if (file.isBackup) {
       icon = Icons.backup;
-      iconColor = AppColors.primaryLight;
+      iconColor = TeslaColors.electricBlue;
       fileTypeLabel = '完整备份';
     } else if (file.fileType == FileType.csvExport) {
       icon = Icons.table_chart;
-      iconColor = AppColors.success;
+      iconColor = TeslaColors.electricBlue;
       fileTypeLabel = 'CSV 导出';
     } else {
       icon = Icons.code;
-      iconColor = AppColors.accentLight;
+      iconColor = TeslaColors.electricBlue;
       fileTypeLabel = 'JSON 导出';
     }
 
     return Card(
-      margin: const EdgeInsets.only(bottom: AppTheme.spacingSm),
+      margin: const EdgeInsets.only(bottom: TeslaTheme.spacingSm),
       child: ListTile(
         leading: Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(TeslaTheme.spacingSm),
           decoration: BoxDecoration(
             color: iconColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
@@ -381,7 +381,7 @@ class _ExportBackupManagementPageState
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: iconColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(4),
+                    borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                   ),
                   child: Text(
                     fileTypeLabel,
@@ -392,13 +392,13 @@ class _ExportBackupManagementPageState
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: TeslaTheme.spacingSm),
                 Text(
                   dateFormat.format(file.modified),
                   style: TextStyle(
                     color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondaryLight,
+                        ? const Color(0xFF9A9A9A)
+                        : TeslaColors.graphite,
                     fontSize: 12,
                   ),
                 ),
@@ -409,8 +409,8 @@ class _ExportBackupManagementPageState
               file.formattedSize,
               style: TextStyle(
                 color: isDark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondaryLight,
+                    ? const Color(0xFF9A9A9A)
+                    : TeslaColors.graphite,
                 fontSize: 12,
               ),
             ),

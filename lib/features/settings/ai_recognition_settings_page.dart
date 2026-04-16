@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/design/theme/app_colors.dart';
+import '../../core/design/theme/tesla_theme.dart';
 import '../../core/models/ai_recognition_settings.dart';
 import '../../core/providers/ai_recognition_provider.dart';
 import '../../widgets/common/premium_card.dart';
@@ -20,7 +21,6 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final aiSettings = ref.watch(aiRecognitionSettingsProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -29,13 +29,15 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
       ),
       body: ListView(
         children: [
-          const SizedBox(height: 16),
+          const SizedBox(height: TeslaTheme.spacingMd),
           // 当前提供商选择
-          _buildCurrentProviderSection(context, ref, aiSettings, isDark),
-          const SizedBox(height: 24),
+          _buildCurrentProviderSection(context, ref, aiSettings),
+          const SizedBox(height: TeslaTheme.spacingLg),
           // 提供商列表
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(
+              horizontal: TeslaTheme.spacingMd,
+            ),
             child: Text(
               'AI 提供商',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -43,17 +45,16 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
                   ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: TeslaTheme.spacingSm),
           ...AiRecognitionProvider.values.map(
             (provider) => _buildProviderCard(
               context,
               ref,
               provider,
               aiSettings,
-              isDark,
             ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: TeslaTheme.spacingXl),
         ],
       ),
     );
@@ -63,10 +64,11 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     AiRecognitionSettings aiSettings,
-    bool isDark,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(
+        horizontal: TeslaTheme.spacingMd,
+      ),
       child: PremiumCard(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +79,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
                     fontWeight: FontWeight.w500,
                   ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: TeslaTheme.spacingSm),
             DropdownButtonFormField<AiRecognitionProvider>(
               initialValue: aiSettings.currentProvider,
               decoration: const InputDecoration(
@@ -110,22 +112,25 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
     WidgetRef ref,
     AiRecognitionProvider provider,
     AiRecognitionSettings aiSettings,
-    bool isDark,
   ) {
     final config = aiSettings.providerConfigs[provider];
     final isConfigured = config != null && config.apiKey.isNotEmpty;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: TeslaTheme.spacingMd,
+        vertical: TeslaTheme.spacingMicro,
+      ),
       child: PremiumCard(
         onTap: () => _showConfigDialog(context, ref, provider, aiSettings),
         child: Row(
           children: [
             Icon(
               _getProviderIcon(provider),
-              color: isDark ? AppColors.accentDark : AppColors.accentLight,
+              color: TeslaColors.electricBlue,
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: TeslaTheme.spacingMd),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,10 +146,10 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
                     isConfigured ? '已配置' : '未配置',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: isConfigured
-                              ? AppColors.success
+                              ? TeslaColors.electricBlue
                               : isDark
-                                  ? AppColors.textSecondaryDark
-                                  : AppColors.textSecondaryLight,
+                                  ? const Color(0xFF9A9A9A)
+                                  : TeslaColors.graphite,
                         ),
                   ),
                 ],
