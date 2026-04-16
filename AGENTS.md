@@ -109,12 +109,27 @@ final homeViewModelProvider = StateNotifierProvider<HomeNotifier, HomeState>((re
 - Use `FlutterError.onError` in main.dart
 - Log errors with `debugPrint()` for debugging
 
-### Design System
-- Colors defined in `core/design/theme/app_colors.dart` with light/dark variants
-- Theme configuration in `core/design/theme/app_theme.dart`
-- Use `AppColors.primaryLight`, `AppColors.accentLight`, etc.
-- Status colors: `AppColors.release` (green), `AppColors.keep` (orange)
-- Chinese string constants in `core/constants/strings.dart` (`AppStrings` class)
+### Design System (Tesla-Inspired)
+Reference: `DESIGN.md` for full specification.
+
+**Core tokens** in `core/design/theme/`:
+- `TeslaColors` — Electric Blue (#3E6AE1), Carbon Dark (#171A20), Graphite (#393C41), etc.
+- `TeslaTheme` — light/dark ThemeData, 4px button radius, 12px card radius
+- `TeslaTokens` — spacing (8px base), radius, shadowNone
+- `TeslaTypography` — 14px body (w400), 14px UI (w500), 40px hero (w500)
+- `TeslaAnimation` — 330ms cubic-bezier(0.16, 1, 0.3, 1) transitions
+
+**Rules** (from DESIGN.md):
+- Electric Blue for CTAs only — never decorative
+- No gradients, no shadows on cards
+- Typography: w400 (body) / w500 (headings/UI) only — no bold
+- 4px radius buttons, 12px radius cards
+- frosted glass nav: `TeslaColors.frostedGlassWhite` / `frostedGlassDark`
+
+**Preserved** (not migrated, used for semantic meaning):
+- `AppColors.gold/silver/bronze` — trophy/achievement colors
+- `AppColors.release/keep` — fish fate status labels
+- Legacy `AppColors`/`AppTheme` for test compatibility
 
 ### Testing
 - Group tests with `group('Description', () { ... })`

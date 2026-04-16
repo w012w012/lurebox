@@ -114,7 +114,7 @@ flutter test --coverage
 - **状态管理**: Riverpod StateNotifierProvider 模式
 - **数据层**: Repository 抽象模式（接口 + 实现分离）
 - **AI 识别**: 可插拔 Provider 架构，12 种 AI 服务商支持
-- **主题**: 双主题支持（light/dark），中文/英文国际化
+- **主题**: Tesla -inspired 设计系统，Electric Blue (#3E6AE1) + Carbon Dark (#171A20)，详细规范见 `DESIGN.md`
 
 ## 许可证
 
