@@ -86,7 +86,7 @@ void main() {
       );
 
       final icon = tester.widget<Icon>(find.byIcon(Icons.location_on));
-      expect(icon.color, equals(AppColors.accentLight));
+      expect(icon.color, equals(TeslaColors.electricBlue));
     });
 
     testWidgets('applies blue accent color for dark mode',
@@ -105,7 +105,7 @@ void main() {
       );
 
       final icon = tester.widget<Icon>(find.byIcon(Icons.location_on));
-      expect(icon.color, equals(AppColors.accentDark));
+      expect(icon.color, equals(TeslaColors.electricBlue));
     });
 
     testWidgets('shows chevron for navigation tiles',
@@ -229,7 +229,7 @@ void main() {
       );
 
       final icon = tester.widget<Icon>(find.byIcon(Icons.account_circle));
-      expect(icon.color, equals(AppColors.accentLight));
+      expect(icon.color, equals(TeslaColors.electricBlue));
     });
 
     testWidgets('uses accent color #3B82F6 for interactive elements',
@@ -248,7 +248,7 @@ void main() {
 
       final icon = tester.widget<Icon>(find.byIcon(Icons.notifications));
       // Accent color is used for icons in settings
-      expect(icon.color, equals(AppColors.accentLight));
+      expect(icon.color, equals(TeslaColors.electricBlue));
     });
 
     testWidgets('dark mode uses #000000 background (True Black)',

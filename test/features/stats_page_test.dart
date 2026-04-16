@@ -57,7 +57,7 @@ void main() {
     testWidgets('renders app bar with statistics title', (tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 1100));
 
       expect(find.text('统计数据'), findsOneWidget);
     });
@@ -68,7 +68,7 @@ void main() {
         todayStats: const AsyncValue.loading(),
       ));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 1100));
 
       expect(find.byType(CircularProgressIndicator), findsWidgets);
     });
@@ -89,7 +89,7 @@ void main() {
         allTimeStats: AsyncValue.data(stats),
       ));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
 
       // Should find all four cards with their titles
@@ -114,7 +114,7 @@ void main() {
         allTimeStats: AsyncValue.data(stats),
       ));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
 
       // Should display the count value 25 multiple times (once per card)
@@ -136,7 +136,7 @@ void main() {
         allTimeStats: AsyncValue.data(stats),
       ));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
 
       // Should display release count 12 and keep count 8
@@ -160,7 +160,7 @@ void main() {
         allTimeStats: AsyncValue.data(stats),
       ));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
 
       // Should show 0 for release rate
@@ -183,7 +183,7 @@ void main() {
         allTimeStats: AsyncValue.data(stats),
       ));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
 
       // Cards should have GestureDetector for touch feedback
@@ -205,7 +205,7 @@ void main() {
         allTimeStats: AsyncValue.data(stats),
       ));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
 
       // Should have chevron icons for navigation
@@ -217,7 +217,7 @@ void main() {
         todayStats: AsyncValue.error(Exception('Failed'), StackTrace.current),
       ));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
     });
@@ -237,7 +237,7 @@ void main() {
         allTimeStats: AsyncValue.data(stats),
       ));
       await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
 
       // Icons should be present

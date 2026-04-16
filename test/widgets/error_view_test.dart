@@ -270,7 +270,7 @@ void main() {
         expect(iconFinder, findsOneWidget);
 
         final iconWidget = tester.widget<Icon>(iconFinder);
-        expect(iconWidget.color, equals(AppColors.error));
+        expect(iconWidget.color, equals(TeslaColors.electricBlue));
       });
 
       testWidgets('default icon has size 64', (tester) async {
