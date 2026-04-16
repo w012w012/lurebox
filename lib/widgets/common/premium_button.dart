@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../core/design/theme/app_theme.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/design/theme/animation_constants.dart';
+import '../../core/design/theme/tesla_theme.dart';
 
 /// 高级极简按钮组件
 /// 提供多种样式的按钮，符合Premium Minimalist设计系统
@@ -49,7 +49,7 @@ class _PremiumButtonState extends State<PremiumButton> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final effectiveBorderRadius = widget.borderRadius ?? AppTheme.radiusMd;
+    final effectiveBorderRadius = widget.borderRadius ?? TeslaTheme.radiusMicro;
 
     Widget button;
 
@@ -80,8 +80,8 @@ class _PremiumButtonState extends State<PremiumButton> {
       onTapCancel: widget.onPressed != null ? _handleTapCancel : null,
       child: AnimatedScale(
         scale: _isPressed ? AnimationConstants.touchScale : 1.0,
-        duration: AnimationConstants.touchFeedbackDuration,
-        curve: AnimationConstants.defaultCurve,
+        duration: TeslaAnimation.colorTransition,
+        curve: TeslaAnimation.teslaCurve,
         child: button,
       ),
     );
@@ -99,14 +99,14 @@ class _PremiumButtonState extends State<PremiumButton> {
         onPressed: widget.isLoading ? null : widget.onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor:
-              isDark ? AppColors.accentDark : AppColors.accentLight,
+              isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
           foregroundColor:
-              isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+              isDark ? TeslaColors.carbonDark : TeslaColors.white,
           elevation: 0,
           padding: widget.padding ??
               const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingXl,
-                vertical: AppTheme.spacingMd,
+                horizontal: TeslaTheme.spacingLg,
+                vertical: TeslaTheme.spacingMicro,
               ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
@@ -134,15 +134,15 @@ class _PremiumButtonState extends State<PremiumButton> {
         onPressed: widget.isLoading ? null : widget.onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: isDark
-              ? AppColors.accentDark.withValues(alpha: 0.12)
-              : AppColors.accentLight.withValues(alpha: 0.12),
+              ? TeslaColors.electricBlue.withValues(alpha: 0.12)
+              : TeslaColors.electricBlue.withValues(alpha: 0.12),
           foregroundColor:
-              isDark ? AppColors.accentDark : AppColors.accentLight,
+              isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
           elevation: 0,
           padding: widget.padding ??
               const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingXl,
-                vertical: AppTheme.spacingMd,
+                horizontal: TeslaTheme.spacingLg,
+                vertical: TeslaTheme.spacingMicro,
               ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
@@ -170,18 +170,18 @@ class _PremiumButtonState extends State<PremiumButton> {
         onPressed: widget.isLoading ? null : widget.onPressed,
         style: OutlinedButton.styleFrom(
           foregroundColor:
-              isDark ? AppColors.accentDark : AppColors.accentLight,
+              isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
           elevation: 0,
           padding: widget.padding ??
               const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingXl,
-                vertical: AppTheme.spacingMd,
+                horizontal: TeslaTheme.spacingLg,
+                vertical: TeslaTheme.spacingMicro,
               ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
           ),
           side: BorderSide(
-            color: isDark ? AppColors.accentDark : AppColors.accentLight,
+            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
             width: 1,
           ),
           textStyle: const TextStyle(
@@ -207,11 +207,11 @@ class _PremiumButtonState extends State<PremiumButton> {
         onPressed: widget.isLoading ? null : widget.onPressed,
         style: TextButton.styleFrom(
           foregroundColor:
-              isDark ? AppColors.accentDark : AppColors.accentLight,
+              isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
           padding: widget.padding ??
               const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingLg,
-                vertical: AppTheme.spacingSm,
+                horizontal: TeslaTheme.spacingMd,
+                vertical: TeslaTheme.spacingSm,
               ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
@@ -238,13 +238,13 @@ class _PremiumButtonState extends State<PremiumButton> {
       child: ElevatedButton(
         onPressed: widget.isLoading ? null : widget.onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.error,
+          backgroundColor: TeslaColors.electricBlue,
           foregroundColor: Colors.white,
           elevation: 0,
           padding: widget.padding ??
               const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingXl,
-                vertical: AppTheme.spacingMd,
+                horizontal: TeslaTheme.spacingLg,
+                vertical: TeslaTheme.spacingMicro,
               ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
@@ -271,13 +271,13 @@ class _PremiumButtonState extends State<PremiumButton> {
       child: ElevatedButton(
         onPressed: widget.isLoading ? null : widget.onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.success,
+          backgroundColor: const Color(0xFF3E6AE1),
           foregroundColor: Colors.white,
           elevation: 0,
           padding: widget.padding ??
               const EdgeInsets.symmetric(
-                horizontal: AppTheme.spacingXl,
-                vertical: AppTheme.spacingMd,
+                horizontal: TeslaTheme.spacingLg,
+                vertical: TeslaTheme.spacingMicro,
               ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(borderRadius),
@@ -310,7 +310,7 @@ class _PremiumButtonState extends State<PremiumButton> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(widget.icon, size: 20),
-          const SizedBox(width: AppTheme.spacingSm),
+          const SizedBox(width: TeslaTheme.spacingSm),
           Text(widget.text),
         ],
       );
@@ -357,7 +357,7 @@ class PremiumIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final iconColor =
-        color ?? (isDark ? AppColors.accentDark : AppColors.accentLight);
+        color ?? (isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue);
 
     Widget button;
 
@@ -371,14 +371,14 @@ class PremiumIconButton extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               color: backgroundColor ??
-                  (isDark ? AppColors.accentDark : AppColors.accentLight),
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                  (isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue),
+              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
             ),
             child: IconButton(
               onPressed: onPressed,
               icon: Icon(
                 icon,
-                color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+                color: isDark ? TeslaColors.carbonDark : TeslaColors.white,
               ),
               iconSize: size * 0.5,
               padding: EdgeInsets.zero,
@@ -396,15 +396,15 @@ class PremiumIconButton extends StatelessWidget {
             decoration: BoxDecoration(
               color: backgroundColor ??
                   (isDark
-                      ? AppColors.accentDark.withValues(alpha: 0.12)
-                      : AppColors.accentLight.withValues(alpha: 0.12)),
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+                      ? TeslaColors.electricBlue.withValues(alpha: 0.12)
+                      : TeslaColors.electricBlue.withValues(alpha: 0.12)),
+              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
             ),
             child: IconButton(
               onPressed: onPressed,
               icon: Icon(
                 icon,
-                color: isDark ? AppColors.accentDark : AppColors.accentLight,
+                color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
               ),
               iconSize: size * 0.5,
               padding: EdgeInsets.zero,
@@ -421,10 +421,10 @@ class PremiumIconButton extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               border: Border.all(
-                color: isDark ? AppColors.accentDark : AppColors.accentLight,
+                color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
                 width: 1,
               ),
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
             ),
             child: IconButton(
               onPressed: onPressed,
@@ -459,8 +459,8 @@ class PremiumIconButton extends StatelessWidget {
             width: size,
             height: size,
             decoration: BoxDecoration(
-              color: backgroundColor ?? AppColors.error,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              color: backgroundColor ?? TeslaColors.electricBlue,
+              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
             ),
             child: IconButton(
               onPressed: onPressed,
@@ -479,8 +479,8 @@ class PremiumIconButton extends StatelessWidget {
             width: size,
             height: size,
             decoration: BoxDecoration(
-              color: backgroundColor ?? AppColors.success,
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              color: backgroundColor ?? const Color(0xFF3E6AE1),
+              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
             ),
             child: IconButton(
               onPressed: onPressed,
@@ -532,13 +532,12 @@ class PremiumFAB extends StatelessWidget {
         tooltip: tooltip,
         mini: mini,
         backgroundColor: backgroundColor ??
-            (isDark ? AppColors.accentDark : AppColors.accentLight),
+            (isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue),
         foregroundColor: foregroundColor ??
-            (isDark ? AppColors.surfaceDark : AppColors.surfaceLight),
-        elevation: 2,
+            (isDark ? TeslaColors.carbonDark : TeslaColors.white),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
-            mini ? AppTheme.radiusMd : AppTheme.radiusLg,
+            mini ? TeslaTheme.radiusMicro : TeslaTheme.radiusCard,
           ),
         ),
         child: Icon(icon, size: mini ? 20 : 24),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/app_theme.dart';
 import '../../core/design/theme/animation_constants.dart';
+import '../../core/design/theme/tesla_theme.dart';
 import 'premium_card.dart';
 
 /// iOS-style Settings Tile widget.
@@ -51,11 +51,11 @@ class _SettingsTileState extends State<SettingsTile> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? AppColors.accentDark : AppColors.accentLight;
+    final accentColor = isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue;
     final textColor =
-        isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+        isDark ? TeslaColors.white : TeslaColors.carbonDark;
     final subtitleColor =
-        isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+        isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite;
 
     // Determine if chevron should be shown
     final shouldShowChevron =
@@ -65,10 +65,10 @@ class _SettingsTileState extends State<SettingsTile> {
       children: [
         // Icon container with blue accent
         Container(
-          padding: const EdgeInsets.all(AppTheme.spacingSm),
+          padding: const EdgeInsets.all(TeslaTheme.spacingSm),
           decoration: BoxDecoration(
             color: accentColor.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(AppTheme.radiusSm),
+            borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
           ),
           child: Icon(
             widget.icon,
@@ -76,7 +76,7 @@ class _SettingsTileState extends State<SettingsTile> {
             size: 22,
           ),
         ),
-        const SizedBox(width: AppTheme.spacingMd),
+        const SizedBox(width: TeslaTheme.spacingMicro),
 
         // Title and subtitle
         Expanded(
@@ -108,7 +108,7 @@ class _SettingsTileState extends State<SettingsTile> {
 
         // Trailing widget or chevron
         if (widget.trailing != null) ...[
-          const SizedBox(width: AppTheme.spacingSm),
+          const SizedBox(width: TeslaTheme.spacingSm),
           widget.trailing!,
         ] else if (shouldShowChevron) ...[
           Icon(
@@ -123,8 +123,8 @@ class _SettingsTileState extends State<SettingsTile> {
     // Wrap with animated scale for touch feedback
     tileContent = AnimatedScale(
       scale: _isPressed ? AnimationConstants.touchScale : 1.0,
-      duration: AnimationConstants.touchFeedbackDuration,
-      curve: AnimationConstants.defaultCurve,
+      duration: TeslaAnimation.colorTransition,
+      curve: TeslaAnimation.teslaCurve,
       child: tileContent,
     );
 
@@ -132,8 +132,8 @@ class _SettingsTileState extends State<SettingsTile> {
     tileContent = PremiumCard(
       variant: widget.variant,
       padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingLg,
-        vertical: AppTheme.spacingMd,
+        horizontal: TeslaTheme.spacingMd,
+        vertical: TeslaTheme.spacingMicro,
       ),
       onTap: widget.onTap,
       showBorder: true,
@@ -149,7 +149,7 @@ class _SettingsTileState extends State<SettingsTile> {
           onTapDown: (_) => setState(() => _isPressed = true),
           onTapUp: (_) => setState(() => _isPressed = false),
           onTapCancel: () => setState(() => _isPressed = false),
-          borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           splashColor: accentColor.withValues(alpha: 0.1),
           highlightColor: accentColor.withValues(alpha: 0.05),
           child: tileContent,
@@ -179,24 +179,24 @@ class SettingsSectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor =
-        isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+        isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite;
 
     return Padding(
       padding: const EdgeInsets.only(
-        left: AppTheme.spacingLg,
-        right: AppTheme.spacingLg,
-        top: AppTheme.spacingLg,
-        bottom: AppTheme.spacingSm,
+        left: TeslaTheme.spacingMd,
+        right: TeslaTheme.spacingMd,
+        top: TeslaTheme.spacingMd,
+        bottom: TeslaTheme.spacingSm,
       ),
       child: Row(
         children: [
           Text(
-            title.toUpperCase(),
+            title,
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
               color: textColor,
-              letterSpacing: 0.5,
+              letterSpacing: 0,
             ),
           ),
           if (action != null) ...[
@@ -216,13 +216,13 @@ class SettingsDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dividerColor = isDark ? AppColors.borderDark : AppColors.borderLight;
+    final dividerColor = isDark ? const Color(0xFF2A2D30) : TeslaColors.cloudGray;
 
     return Divider(
       height: 1,
       thickness: 1,
       color: dividerColor,
-      indent: AppTheme.spacingLg + 22 + AppTheme.spacingMd, // Icon area width
+      indent: TeslaTheme.spacingMd + 22 + TeslaTheme.spacingMicro, // Icon area width
     );
   }
 }
