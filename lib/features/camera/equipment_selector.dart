@@ -158,7 +158,7 @@ class EquipmentSelector extends ConsumerWidget {
                               tempSelectedReel = item;
                             });
                           },
-                          color: AppColors.keep,
+                          color: TeslaColors.electricBlue,
                           itemBuilder: (item) =>
                               '${item['brand'] ?? ''} ${item['model'] ?? ''}',
                           subtitleBuilder: (item) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/design/theme/app_colors.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/services/share_template.dart';
 import '../../../widgets/common/premium_button.dart';
 import 'share_card_widget.dart';
@@ -36,12 +37,8 @@ class SharePreviewDialog extends StatelessWidget {
       child: Container(
         constraints: const BoxConstraints(maxWidth: 450),
         decoration: BoxDecoration(
-          color: AppColors.surfaceDark,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: AppColors.accentLight.withValues(alpha: 0.3),
-            width: 1,
-          ),
+          color: TeslaColors.carbonDark,
+          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -53,7 +50,7 @@ class SharePreviewDialog extends StatelessWidget {
                   Text(
                     'Preview',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: AppColors.textPrimaryDark,
+                          color: TeslaColors.white,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -61,7 +58,7 @@ class SharePreviewDialog extends StatelessWidget {
                   Text(
                     _getTemplateDescription(config.template),
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textSecondaryDark,
+                          color: const Color(0xFF9A9A9A),
                         ),
                     textAlign: TextAlign.center,
                   ),
@@ -72,8 +69,8 @@ class SharePreviewDialog extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 24),
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.borderDark.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(16),
+                color: const Color(0xFF2A2D30).withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
               ),
               child: ShareCardWidget(config: config),
             ),
@@ -158,18 +155,18 @@ class SharePreviewDialog extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.accentLight.withValues(alpha: 0.2),
+        color: TeslaColors.electricBlue.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: AppColors.accentLight),
+          Icon(icon, size: 14, color: TeslaColors.electricBlue),
           const SizedBox(width: 6),
           Text(
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.accentLight,
+                  color: TeslaColors.electricBlue,
                   fontWeight: FontWeight.w500,
                 ),
           ),
