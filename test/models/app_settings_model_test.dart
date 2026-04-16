@@ -265,6 +265,46 @@ void main() {
         expect(decoded.darkMode, DarkMode.system);
         expect(decoded.language, AppLanguage.chinese);
       });
+
+      test('toJson includes hasCompletedOnboarding', () {
+        final withOnboarding = AppSettings(hasCompletedOnboarding: true);
+        final withoutOnboarding = AppSettings(hasCompletedOnboarding: false);
+
+        final jsonWith = withOnboarding.toJson();
+        final jsonWithout = withoutOnboarding.toJson();
+
+        expect(jsonWith['hasCompletedOnboarding'], isTrue);
+        expect(jsonWithout['hasCompletedOnboarding'], isFalse);
+      });
+
+      test('fromJson restores hasCompletedOnboarding', () {
+        final json = <String, dynamic>{
+          'hasCompletedOnboarding': true,
+        };
+
+        final settings = AppSettings.fromJson(json);
+        expect(settings.hasCompletedOnboarding, isTrue);
+      });
+
+      test('fromJson defaults hasCompletedOnboarding to false when null', () {
+        final json = <String, dynamic>{
+          'hasCompletedOnboarding': null,
+        };
+
+        final settings = AppSettings.fromJson(json);
+        expect(settings.hasCompletedOnboarding, isFalse);
+      });
+
+      test('toJson serializes darkMode and language as enum names', () {
+        final settings = AppSettings(
+          darkMode: DarkMode.light,
+          language: AppLanguage.english,
+        );
+
+        final json = settings.toJson();
+        expect(json['darkMode'], equals('light'));
+        expect(json['language'], equals('english'));
+      });
     });
 
     group('fromJson with missing fields', () {
@@ -499,6 +539,15 @@ void main() {
         expect(modified.darkMode, DarkMode.dark);
         expect(modified.language, AppLanguage.english);
         expect(modified.units.temperatureUnit, 'F');
+      });
+
+      test('copyWith updates hasCompletedOnboarding', () {
+        const original = AppSettings(hasCompletedOnboarding: false);
+
+        final modified = original.copyWith(hasCompletedOnboarding: true);
+
+        expect(modified.hasCompletedOnboarding, isTrue);
+        expect(original.hasCompletedOnboarding, isFalse);
       });
     });
 

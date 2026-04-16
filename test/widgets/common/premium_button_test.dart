@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
-import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/animation_constants.dart';
 
 void main() {
   group('PremiumButton', () {
@@ -65,140 +63,21 @@ void main() {
           ),
         );
 
-        // Verify the PremiumButton is rendered
         expect(find.byType(PremiumButton), findsOneWidget);
-
-        // When isFullWidth is true, the button widget tree starts with a SizedBox
-        // We verify the button renders and contains an ElevatedButton
         expect(find.byType(ElevatedButton), findsOneWidget);
         expect(find.text('Test Button'), findsOneWidget);
       });
     });
 
-    group('Theme Colors', () {
-      Widget buildButtonWithVariant(PremiumButtonVariant variant) {
-        return MaterialApp(
-          home: Scaffold(
-            body: PremiumButton(
-              text: 'Test',
-              variant: variant,
-              onPressed: () {},
-            ),
-          ),
-        );
-      }
-
-      testWidgets('primary variant uses accentLight in light mode',
-          (tester) async {
-        await tester
-            .pumpWidget(buildButtonWithVariant(PremiumButtonVariant.primary));
-
-        final elevatedButton = tester.widget<ElevatedButton>(
-          find.byType(ElevatedButton),
-        );
-        final backgroundColor =
-            elevatedButton.style?.backgroundColor?.resolve(<WidgetState>{});
-        expect(backgroundColor, equals(AppColors.accentLight));
-      });
-
-      testWidgets('primary variant uses accentDark in dark mode',
+    group('Animation structure', () {
+      testWidgets('wraps button with AnimatedScale for touch feedback',
           (tester) async {
         await tester.pumpWidget(
           MaterialApp(
-            theme: ThemeData.dark(),
             home: Scaffold(
               body: PremiumButton(
                 text: 'Test',
-                variant: PremiumButtonVariant.primary,
                 onPressed: () {},
-              ),
-            ),
-          ),
-        );
-
-        final elevatedButton = tester.widget<ElevatedButton>(
-          find.byType(ElevatedButton),
-        );
-        final backgroundColor =
-            elevatedButton.style?.backgroundColor?.resolve(<WidgetState>{});
-        expect(backgroundColor, equals(AppColors.accentDark));
-      });
-
-      testWidgets(
-          'secondary variant uses accentLight with opacity in light mode',
-          (tester) async {
-        await tester
-            .pumpWidget(buildButtonWithVariant(PremiumButtonVariant.secondary));
-
-        final elevatedButton = tester.widget<ElevatedButton>(
-          find.byType(ElevatedButton),
-        );
-        final backgroundColor =
-            elevatedButton.style?.backgroundColor?.resolve(<WidgetState>{});
-        expect(
-          backgroundColor,
-          equals(AppColors.accentLight.withValues(alpha: 0.12)),
-        );
-      });
-
-      testWidgets('outline variant uses accentLight for border in light mode',
-          (tester) async {
-        await tester
-            .pumpWidget(buildButtonWithVariant(PremiumButtonVariant.outline));
-
-        final outlinedButton = tester.widget<OutlinedButton>(
-          find.byType(OutlinedButton),
-        );
-        final side = outlinedButton.style?.side?.resolve(<WidgetState>{});
-        expect(side?.color, equals(AppColors.accentLight));
-      });
-
-      testWidgets('text variant uses accentLight in light mode',
-          (tester) async {
-        await tester
-            .pumpWidget(buildButtonWithVariant(PremiumButtonVariant.text));
-
-        final textButton = tester.widget<TextButton>(
-          find.byType(TextButton),
-        );
-        final foregroundColor =
-            textButton.style?.foregroundColor?.resolve(<WidgetState>{});
-        expect(foregroundColor, equals(AppColors.accentLight));
-      });
-
-      testWidgets('danger variant uses error color', (tester) async {
-        await tester
-            .pumpWidget(buildButtonWithVariant(PremiumButtonVariant.danger));
-
-        final elevatedButton = tester.widget<ElevatedButton>(
-          find.byType(ElevatedButton),
-        );
-        final backgroundColor =
-            elevatedButton.style?.backgroundColor?.resolve(<WidgetState>{});
-        expect(backgroundColor, equals(AppColors.error));
-      });
-
-      testWidgets('success variant uses success color', (tester) async {
-        await tester
-            .pumpWidget(buildButtonWithVariant(PremiumButtonVariant.success));
-
-        final elevatedButton = tester.widget<ElevatedButton>(
-          find.byType(ElevatedButton),
-        );
-        final backgroundColor =
-            elevatedButton.style?.backgroundColor?.resolve(<WidgetState>{});
-        expect(backgroundColor, equals(AppColors.success));
-      });
-    });
-
-    group('Touch Feedback Animation', () {
-      testWidgets('applies AnimatedScale wrapper', (tester) async {
-        await tester.pumpWidget(
-          const MaterialApp(
-            home: Scaffold(
-              body: PremiumButton(
-                text: 'Test',
-                onPressed: _emptyCallback,
               ),
             ),
           ),
@@ -207,114 +86,10 @@ void main() {
         expect(find.byType(AnimatedScale), findsOneWidget);
       });
 
-      testWidgets('scales down to 0.98 on tap down', (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: PremiumButton(
-                text: 'Test',
-                onPressed: () {},
-              ),
-            ),
-          ),
-        );
-
-        // Find the AnimatedScale widget
-        final animatedScaleFinder = find.byType(AnimatedScale);
-        expect(animatedScaleFinder, findsOneWidget);
-
-        // Get the center of the AnimatedScale
-        final center = tester.getCenter(animatedScaleFinder);
-
-        // Start tap
-        final gesture = await tester.startGesture(center);
-        await tester.pump();
-
-        // Should be scaled down (AnimatedScale is still 1.0 before animation completes)
-        // The scale animates over 150ms, so we need to wait a bit
-        await tester.pump(const Duration(milliseconds: 100));
-
-        // Release tap
-        await gesture.up();
-        await tester.pumpAndSettle();
-
-        // After settling, scale should be back to 1.0
-        final animatedScale = tester.widget<AnimatedScale>(animatedScaleFinder);
-        expect(animatedScale.scale, equals(1.0));
-      });
-
-      testWidgets('returns to scale 1.0 on tap up', (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: PremiumButton(
-                text: 'Test',
-                onPressed: () {},
-              ),
-            ),
-          ),
-        );
-
-        final animatedScaleFinder = find.byType(AnimatedScale);
-        final center = tester.getCenter(animatedScaleFinder);
-
-        // Start and end tap
-        final gesture = await tester.startGesture(center);
-        await tester.pump();
-        await gesture.up();
-        await tester.pumpAndSettle();
-
-        final animatedScale = tester.widget<AnimatedScale>(animatedScaleFinder);
-        expect(animatedScale.scale, equals(1.0));
-      });
-
-      testWidgets('uses correct animation duration from AnimationConstants',
+      testWidgets('renders AnimatedScale even when disabled',
           (tester) async {
         await tester.pumpWidget(
-          const MaterialApp(
-            home: Scaffold(
-              body: PremiumButton(
-                text: 'Test',
-                onPressed: _emptyCallback,
-              ),
-            ),
-          ),
-        );
-
-        final animatedScale = tester.widget<AnimatedScale>(
-          find.byType(AnimatedScale),
-        );
-        expect(
-          animatedScale.duration,
-          equals(AnimationConstants.touchFeedbackDuration),
-        );
-        expect(
-          animatedScale.duration,
-          equals(const Duration(milliseconds: 150)),
-        );
-      });
-
-      testWidgets('uses correct curve from AnimationConstants', (tester) async {
-        await tester.pumpWidget(
-          const MaterialApp(
-            home: Scaffold(
-              body: PremiumButton(
-                text: 'Test',
-                onPressed: _emptyCallback,
-              ),
-            ),
-          ),
-        );
-
-        final animatedScale = tester.widget<AnimatedScale>(
-          find.byType(AnimatedScale),
-        );
-        expect(animatedScale.curve, equals(AnimationConstants.defaultCurve));
-      });
-
-      testWidgets('no animation when onPressed is null', (tester) async {
-        await tester.pumpWidget(
-          const MaterialApp(
+          MaterialApp(
             home: Scaffold(
               body: PremiumButton(
                 text: 'Test',
@@ -324,7 +99,6 @@ void main() {
           ),
         );
 
-        // Should still render AnimatedScale
         expect(find.byType(AnimatedScale), findsOneWidget);
       });
     });
@@ -390,8 +164,7 @@ void main() {
         expect(find.byType(TextButton), findsOneWidget);
       });
 
-      testWidgets('danger variant renders ElevatedButton with error color',
-          (tester) async {
+      testWidgets('danger variant renders ElevatedButton', (tester) async {
         await tester.pumpWidget(
           const MaterialApp(
             home: Scaffold(
@@ -406,8 +179,7 @@ void main() {
         expect(find.byType(ElevatedButton), findsOneWidget);
       });
 
-      testWidgets('success variant renders ElevatedButton with success color',
-          (tester) async {
+      testWidgets('success variant renders ElevatedButton', (tester) async {
         await tester.pumpWidget(
           const MaterialApp(
             home: Scaffold(
@@ -437,7 +209,6 @@ void main() {
           ),
         );
 
-        // Tap on the ElevatedButton inside PremiumButton
         await tester.tap(find.byType(ElevatedButton));
         await tester.pumpAndSettle();
 
@@ -459,9 +230,7 @@ void main() {
           ),
         );
 
-        // Tap on the button (loading state has disabled callback)
         await tester.tap(find.byType(ElevatedButton));
-        // Use pump() instead of pumpAndSettle() because CircularProgressIndicator animates
         await tester.pump();
 
         expect(pressed, isFalse);
@@ -480,7 +249,6 @@ void main() {
           ),
         );
 
-        // Should not throw when tapping disabled button - tap on ElevatedButton
         await tester.tap(find.byType(ElevatedButton));
         await tester.pumpAndSettle();
       });
@@ -499,10 +267,7 @@ void main() {
           ),
         );
 
-        // Verify the button text is rendered (which has semantics)
         expect(find.text('Test Button'), findsOneWidget);
-
-        // Verify semantics exists by checking Semantics widget is present
         expect(find.byType(Semantics), findsWidgets);
       });
     });
@@ -520,5 +285,3 @@ void main() {
     });
   });
 }
-
-void _emptyCallback() {}

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/database/database_provider.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository.dart';
@@ -93,11 +94,19 @@ void main() {
         expect(repository, isA<SqliteLocationRepository>());
       });
 
-      test('backupConfigRepositoryProvider depends on databaseProvider', () {
-        // Skip this test as it requires async database initialization
-        // The backupConfigRepositoryProvider internally accesses databaseProvider.database
-        // which triggers actual SQLite initialization
-      }, skip: true);
+      test('backupConfigRepositoryProvider returns SqliteBackupConfigRepository', () async {
+        final mockDb = MockDb();
+        final testContainer = ProviderContainer(
+          overrides: [
+            databaseProvider.overrideWithValue(mockDb),
+          ],
+        );
+
+        final repository = testContainer.read(backupConfigRepositoryProvider);
+        expect(repository, isA<BackupConfigRepository>());
+        expect(repository, isA<SqliteBackupConfigRepository>());
+        testContainer.dispose();
+      });
 
       test('fishSpeciesMatcherProvider returns FishSpeciesMatcher instance',
           () {
@@ -343,3 +352,39 @@ class MockSettingsService extends Mock implements SettingsService {}
 class MockAchievementService extends Mock implements AchievementService {}
 
 class MockLocationService extends Mock implements LocationService {}
+
+class MockDb implements DatabaseProvider {
+  @override
+  final Future<Database> database;
+
+  MockDb() : database = _buildInMemoryDb();
+
+  @override
+  Future<void> close() async {}
+
+  @override
+  Future<void> resetForTesting() async {}
+
+  static Future<Database> _buildInMemoryDb() async {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+    return databaseFactoryFfi.openDatabase(
+      inMemoryDatabasePath,
+      options: OpenDatabaseOptions(
+        version: 1,
+        onCreate: (db, version) async {
+          await db.execute('''
+            CREATE TABLE cloud_configs (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              provider TEXT NOT NULL,
+              config TEXT NOT NULL,
+              is_active INTEGER DEFAULT 0,
+              created_at TEXT NOT NULL,
+              updated_at TEXT NOT NULL
+            )
+          ''');
+        },
+      ),
+    );
+  }
+}

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/services/weather_service.dart';
+import 'package:lurebox/core/constants/strings.dart';
 
 void main() {
   group('WeatherService - getWeatherDescription', () {
@@ -210,6 +211,82 @@ void main() {
   group('WeatherService - instantiation', () {
     test('can be instantiated without arguments', () {
       expect(WeatherService(), isA<WeatherService>());
+    });
+  });
+
+  group('WeatherService - getLocalizedWeatherDescription', () {
+    const chinese = AppStrings.chinese;
+    const english = AppStrings.english;
+
+    test('returns empty string for null code', () {
+      expect(getLocalizedWeatherDescription(null, chinese), equals(''));
+    });
+
+    test('returns weatherClear for code 0', () {
+      expect(getLocalizedWeatherDescription(0, chinese), equals(chinese.weatherClear));
+      expect(getLocalizedWeatherDescription(0, english), equals(english.weatherClear));
+    });
+
+    test('returns correct localized strings for clear/cloudy codes', () {
+      expect(getLocalizedWeatherDescription(1, chinese), equals(chinese.weatherMainlyClear));
+      expect(getLocalizedWeatherDescription(2, chinese), equals(chinese.weatherPartlyCloudy));
+      expect(getLocalizedWeatherDescription(3, chinese), equals(chinese.weatherOvercast));
+    });
+
+    test('returns correct localized strings for fog codes', () {
+      expect(getLocalizedWeatherDescription(45, chinese), equals(chinese.weatherFog));
+      expect(getLocalizedWeatherDescription(48, chinese), equals(chinese.weatherFog));
+    });
+
+    test('returns correct localized strings for drizzle codes', () {
+      expect(getLocalizedWeatherDescription(51, chinese), equals(chinese.weatherDrizzle));
+      expect(getLocalizedWeatherDescription(53, chinese), equals(chinese.weatherDrizzle));
+      expect(getLocalizedWeatherDescription(55, chinese), equals(chinese.weatherDrizzle));
+    });
+
+    test('returns correct localized strings for freezing drizzle codes', () {
+      expect(getLocalizedWeatherDescription(56, chinese), equals(chinese.weatherFreezingDrizzle));
+      expect(getLocalizedWeatherDescription(57, chinese), equals(chinese.weatherFreezingDrizzle));
+    });
+
+    test('returns correct localized strings for rain codes', () {
+      expect(getLocalizedWeatherDescription(61, chinese), equals(chinese.weatherRain));
+      expect(getLocalizedWeatherDescription(63, chinese), equals(chinese.weatherRain));
+      expect(getLocalizedWeatherDescription(65, chinese), equals(chinese.weatherRain));
+    });
+
+    test('returns correct localized strings for freezing rain codes', () {
+      expect(getLocalizedWeatherDescription(66, chinese), equals(chinese.weatherFreezingRain));
+      expect(getLocalizedWeatherDescription(67, chinese), equals(chinese.weatherFreezingRain));
+    });
+
+    test('returns correct localized strings for snow codes', () {
+      expect(getLocalizedWeatherDescription(71, chinese), equals(chinese.weatherSnowFall));
+      expect(getLocalizedWeatherDescription(73, chinese), equals(chinese.weatherSnowFall));
+      expect(getLocalizedWeatherDescription(75, chinese), equals(chinese.weatherSnowFall));
+      expect(getLocalizedWeatherDescription(77, chinese), equals(chinese.weatherSnowGrains));
+    });
+
+    test('returns correct localized strings for shower codes', () {
+      expect(getLocalizedWeatherDescription(80, chinese), equals(chinese.weatherRainShowers));
+      expect(getLocalizedWeatherDescription(81, chinese), equals(chinese.weatherRainShowers));
+      expect(getLocalizedWeatherDescription(82, chinese), equals(chinese.weatherRainShowers));
+      expect(getLocalizedWeatherDescription(85, chinese), equals(chinese.weatherSnowShowers));
+      expect(getLocalizedWeatherDescription(86, chinese), equals(chinese.weatherSnowShowers));
+    });
+
+    test('returns correct localized strings for thunderstorm codes', () {
+      expect(getLocalizedWeatherDescription(95, chinese), equals(chinese.weatherThunderstorm));
+      expect(getLocalizedWeatherDescription(96, chinese), equals(chinese.weatherThunderstormHail));
+      expect(getLocalizedWeatherDescription(99, chinese), equals(chinese.weatherThunderstormHail));
+    });
+
+    test('returns weatherUnknown for unrecognized code', () {
+      expect(getLocalizedWeatherDescription(999, chinese), equals(chinese.weatherUnknown));
+    });
+
+    test('chinese and english strings differ for known codes', () {
+      expect(chinese.weatherClear, isNot(equals(english.weatherClear)));
     });
   });
 }
