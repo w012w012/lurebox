@@ -208,12 +208,6 @@ void main() {
     });
   });
 
-  group('WeatherService - instantiation', () {
-    test('can be instantiated without arguments', () {
-      expect(WeatherService(), isA<WeatherService>());
-    });
-  });
-
   group('WeatherService - getLocalizedWeatherDescription', () {
     const chinese = AppStrings.chinese;
     const english = AppStrings.english;

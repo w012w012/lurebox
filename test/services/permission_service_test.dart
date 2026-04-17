@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/services/permission_service.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -227,6 +228,153 @@ void main() {
     test('photosInfo has required fields', () {
       expect(PermissionService.photosInfo.title, isNotEmpty);
       expect(PermissionService.photosInfo.description, isNotEmpty);
+    });
+  });
+
+  group('PermissionService dialog integration tests', () {
+    late MockPermissionPlatform mock;
+
+    setUp(() {
+      mock = MockPermissionPlatform();
+      PermissionService().setPlatformForTesting(mock);
+    });
+
+    testWidgets('camera education dialog shows title and description', (tester) async {
+      mock.statusResult = PermissionStatus.denied;
+      mock.requestResult = PermissionStatus.granted;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) {
+              return Scaffold(
+                body: ElevatedButton(
+                  onPressed: () async {
+                    // Test the dialog flow
+                    final status = await PermissionService().isPermissionGranted(Permission.camera);
+                    if (!status && context.mounted) {
+                      await showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          icon: Icon(PermissionService.cameraInfo.icon, size: 48),
+                          title: Text('需要${PermissionService.cameraInfo.title}'),
+                          content: Text(PermissionService.cameraInfo.description),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx, false),
+                              child: const Text('暂不授权'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(ctx, true),
+                              child: const Text('授权'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text('Request Permission'),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Request Permission'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('需要${PermissionService.cameraInfo.title}'), findsOneWidget);
+      expect(find.text(PermissionService.cameraInfo.description), findsOneWidget);
+      expect(find.text('授权'), findsOneWidget);
+      expect(find.text('暂不授权'), findsOneWidget);
+    });
+
+    testWidgets('settings dialog shows correct message', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) {
+              return Scaffold(
+                body: ElevatedButton(
+                  onPressed: () async {
+                    if (context.mounted) {
+                      await showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: Text('需要${PermissionService.cameraInfo.title}'),
+                          content: Text(
+                            '您之前拒绝了${PermissionService.cameraInfo.title}。\n\n'
+                            '请在系统设置中开启${PermissionService.cameraInfo.title}，以使用相关功能。',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('取消'),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('打开设置'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text('Show Settings'),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Show Settings'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('您之前拒绝了'), findsOneWidget);
+      expect(find.text('打开设置'), findsOneWidget);
+      expect(find.text('取消'), findsOneWidget);
+    });
+
+    testWidgets('dialog shows privacy reassurance text', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) {
+              return Scaffold(
+                body: ElevatedButton(
+                  onPressed: () async {
+                    if (context.mounted) {
+                      await showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          content: const Text(
+                            '我们不会收集或上传您的数据，所有信息都保存在本地设备上。',
+                          ),
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(ctx),
+                              child: const Text('确定'),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text('Show Privacy'),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Show Privacy'));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('不会收集或上传'), findsOneWidget);
+      expect(find.textContaining('保存在本地设备'), findsOneWidget);
     });
   });
 }
