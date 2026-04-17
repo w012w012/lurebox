@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:sqflite/sqflite.dart' hide DatabaseException;
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lurebox/core/services/location_service.dart';
 import 'package:lurebox/core/database/database_provider.dart';
 
-// Custom Mock Database that implements sqflite's Database interface for testing
+// Custom Mock Database for query-based tests
 class MockDb extends Mock implements Database {
   final Map<String, List<Map<String, dynamic>>> _queryResults = {};
 
@@ -197,7 +197,6 @@ class _MockTransaction implements Transaction {
   @override
   Future<void> execute(String sql, [List<Object?>? arguments]) async {}
 
-  // Use noSuchMethod for remaining methods that aren't explicitly implemented
   @override
   dynamic noSuchMethod(Invocation invocation) {
     final methodName = invocation.memberName.toString();
@@ -224,7 +223,7 @@ class _MockQueryCursor implements QueryCursor {
   dynamic noSuchMethod(Invocation invocation) => null;
 }
 
-// Mock DatabaseProvider for testing
+// Mock DatabaseProvider for query-based tests
 class MockDatabaseProvider extends Mock implements DatabaseProvider {
   final MockDb mockDb;
 
@@ -234,296 +233,472 @@ class MockDatabaseProvider extends Mock implements DatabaseProvider {
   Future<Database> get database => Future.value(mockDb);
 }
 
-void main() {
-  late LocationService service;
-  late MockDatabaseProvider mockDbProvider;
-  late MockDb mockDatabase;
+// Real DatabaseProvider for integration tests
+class RealDatabaseProvider implements DatabaseProvider {
+  final Database _db;
 
-  setUp(() {
-    mockDatabase = MockDb();
-    mockDbProvider = MockDatabaseProvider(mockDatabase);
-    service = LocationService(mockDbProvider);
+  RealDatabaseProvider(this._db);
+
+  @override
+  Future<Database> get database => Future.value(_db);
+
+  @override
+  Future<void> close() async {}
+
+  @override
+  Future<void> resetForTesting() async {}
+}
+
+void main() {
+  // Initialize FFI for desktop testing
+  setUpAll(() {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
   });
 
-  group('LocationService', () {
-    group('getAllLocations', () {
-      test('returns location data from rawQuery', () async {
-        // Arrange
-        final locationData = [
-          {
-            'location_name': '西湖',
-            'fish_count': 5,
-            'first_time': '2024-01-01T10:00:00.000',
-            'last_time': '2024-06-15T14:30:00.000',
-          },
-          {
-            'location_name': '钱塘江',
-            'fish_count': 3,
-            'first_time': '2024-02-01T08:00:00.000',
-            'last_time': '2024-05-20T16:00:00.000',
-          },
-        ];
-        mockDatabase.addQueryResult(
-          '''
-      SELECT DISTINCT location_name, COUNT(*) as fish_count,
-      MIN(catch_time) as first_time, MAX(catch_time) as last_time
-      FROM fish_catches
-      WHERE location_name IS NOT NULL AND location_name != ''
-      GROUP BY location_name
-      ORDER BY fish_count DESC
-    ''',
-          locationData,
-        );
+  group('LocationService - query operations (mocked)', () {
+    late LocationService service;
+    late MockDatabaseProvider mockDbProvider;
+    late MockDb mockDatabase;
 
-        // Act
-        final result = await service.getAllLocations();
-
-        // Assert
-        expect(result, equals(locationData));
-        expect(result.length, equals(2));
-        expect(result[0]['location_name'], equals('西湖'));
-        expect(result[0]['fish_count'], equals(5));
-      });
-
-      test('returns empty list when no locations', () async {
-        // Arrange
-        mockDatabase.addQueryResult(
-          '''
-      SELECT DISTINCT location_name, COUNT(*) as fish_count,
-      MIN(catch_time) as first_time, MAX(catch_time) as last_time
-      FROM fish_catches
-      WHERE location_name IS NOT NULL AND location_name != ''
-      GROUP BY location_name
-      ORDER BY fish_count DESC
-    ''',
-          [],
-        );
-
-        // Act
-        final result = await service.getAllLocations();
-
-        // Assert
-        expect(result, isEmpty);
-      });
+    setUp(() {
+      mockDatabase = MockDb();
+      mockDbProvider = MockDatabaseProvider(mockDatabase);
+      service = LocationService(mockDbProvider);
     });
 
-    group('getFishCountByLocation', () {
-      test('returns fish count for given location', () async {
-        // Arrange
-        mockDatabase.addQueryResult(
-          'SELECT COUNT(*) as count FROM fish_catches WHERE location_name = ?',
-          [
-            {'count': 10}
-          ],
-        );
+    test('getAllLocations returns location data from rawQuery', () async {
+      final locationData = [
+        {
+          'location_name': '西湖',
+          'fish_count': 5,
+          'first_time': '2024-01-01T10:00:00.000',
+          'last_time': '2024-06-15T14:30:00.000',
+        },
+        {
+          'location_name': '钱塘江',
+          'fish_count': 3,
+          'first_time': '2024-02-01T08:00:00.000',
+          'last_time': '2024-05-20T16:00:00.000',
+        },
+      ];
+      mockDatabase.addQueryResult(
+        '''
+      SELECT DISTINCT location_name, COUNT(*) as fish_count,
+      MIN(catch_time) as first_time, MAX(catch_time) as last_time
+      FROM fish_catches
+      WHERE location_name IS NOT NULL AND location_name != ''
+      GROUP BY location_name
+      ORDER BY fish_count DESC
+    ''',
+        locationData,
+      );
 
-        // Act
-        final result = await service.getFishCountByLocation('西湖');
+      final result = await service.getAllLocations();
 
-        // Assert
-        expect(result, equals(10));
-      });
+      expect(result, equals(locationData));
+      expect(result.length, equals(2));
+      expect(result[0]['location_name'], equals('西湖'));
+      expect(result[0]['fish_count'], equals(5));
+    });
 
-      test('returns 0 when location not found', () async {
-        // Arrange
-        mockDatabase.addQueryResult(
-          'SELECT COUNT(*) as count FROM fish_catches WHERE location_name = ?',
-          [
-            {'count': 0}
-          ],
-        );
+    test('getAllLocations returns empty list when no locations', () async {
+      mockDatabase.addQueryResult(
+        '''
+      SELECT DISTINCT location_name, COUNT(*) as fish_count,
+      MIN(catch_time) as first_time, MAX(catch_time) as last_time
+      FROM fish_catches
+      WHERE location_name IS NOT NULL AND location_name != ''
+      GROUP BY location_name
+      ORDER BY fish_count DESC
+    ''',
+        [],
+      );
 
-        // Act
-        final result = await service.getFishCountByLocation('未知地点');
+      final result = await service.getAllLocations();
 
-        // Assert
-        expect(result, equals(0));
-      });
+      expect(result, isEmpty);
+    });
+
+    test('getFishCountByLocation returns fish count for given location', () async {
+      mockDatabase.addQueryResult(
+        'SELECT COUNT(*) as count FROM fish_catches WHERE location_name = ?',
+        [{'count': 10}],
+      );
+
+      final result = await service.getFishCountByLocation('西湖');
+
+      expect(result, equals(10));
+    });
+
+    test('getFishCountByLocation returns 0 when location not found', () async {
+      mockDatabase.addQueryResult(
+        'SELECT COUNT(*) as count FROM fish_catches WHERE location_name = ?',
+        [{'count': 0}],
+      );
+
+      final result = await service.getFishCountByLocation('未知地点');
+
+      expect(result, equals(0));
+    });
+  });
+
+  group('LocationService - mutation operations (integration)', () {
+    late LocationService service;
+    late Database db;
+
+    setUp(() async {
+      db = await databaseFactoryFfi.openDatabase(
+        inMemoryDatabasePath,
+        options: OpenDatabaseOptions(
+          version: 1,
+          onCreate: (db, version) async {
+            await db.execute('''
+              CREATE TABLE fish_catches (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                species TEXT NOT NULL,
+                length REAL NOT NULL,
+                catch_time TEXT NOT NULL,
+                location_name TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+              )
+            ''');
+          },
+        ),
+      );
+      final provider = RealDatabaseProvider(db);
+      service = LocationService(provider);
+    });
+
+    tearDown(() async {
+      await db.close();
     });
 
     group('mergeLocations', () {
-      test('handles multiple locations without throwing', () async {
-        // Arrange & Act - mergeLocations should complete without error
+      test('updates all source locations to target location', () async {
+        await db.insert('fish_catches', {
+          'species': 'TestFish',
+          'length': 30.0,
+          'catch_time': DateTime.now().toIso8601String(),
+          'location_name': '旧地点1',
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+        await db.insert('fish_catches', {
+          'species': 'TestFish',
+          'length': 25.0,
+          'catch_time': DateTime.now().toIso8601String(),
+          'location_name': '旧地点2',
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+
         await service.mergeLocations(['旧地点1', '旧地点2'], '新地点');
 
-        // Assert - no exception means success
+        final results = await db.query(
+          'fish_catches',
+          columns: ['location_name'],
+        );
+        final locationNames = results.map((r) => r['location_name'] as String).toList();
+
+        expect(locationNames, equals(['新地点', '新地点']));
+        expect(locationNames, isNot(contains('旧地点1')));
+        expect(locationNames, isNot(contains('旧地点2')));
       });
 
-      test('handles single location without throwing', () async {
-        // Arrange & Act
-        await service.mergeLocations(['唯一地点'], '新地点');
+      test('updates only specified source locations', () async {
+        await db.insert('fish_catches', {
+          'species': 'TestFish',
+          'length': 30.0,
+          'catch_time': DateTime.now().toIso8601String(),
+          'location_name': '要被合并的地点',
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+        await db.insert('fish_catches', {
+          'species': 'TestFish',
+          'length': 25.0,
+          'catch_time': DateTime.now().toIso8601String(),
+          'location_name': '保留的地点',
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        });
 
-        // Assert - no exception means success
+        await service.mergeLocations(['要被合并的地点'], '新地点');
+
+        final results = await db.query(
+          'fish_catches',
+          columns: ['location_name'],
+          orderBy: 'location_name ASC',
+        );
+        final locationNames = results.map((r) => r['location_name'] as String).toList();
+
+        expect(locationNames, equals(['保留的地点', '新地点']));
       });
 
-      test('handles empty list without throwing', () async {
-        // Arrange & Act
+      test('handles empty list without error', () async {
+        await db.insert('fish_catches', {
+          'species': 'TestFish',
+          'length': 30.0,
+          'catch_time': DateTime.now().toIso8601String(),
+          'location_name': '存在的地点',
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+
         await service.mergeLocations([], '新地点');
 
-        // Assert - no exception means success
+        final results = await db.query('fish_catches');
+        expect(results.length, equals(1));
+        expect(results.first['location_name'], equals('存在的地点'));
+      });
+
+      test('handles non-existent source location without error', () async {
+        await db.insert('fish_catches', {
+          'species': 'TestFish',
+          'length': 30.0,
+          'catch_time': DateTime.now().toIso8601String(),
+          'location_name': '存在的地点',
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+
+        // Merging with non-existent location does nothing - no new records created
+        await service.mergeLocations(['不存在的地点'], '新地点');
+
+        final results = await db.query(
+          'fish_catches',
+          columns: ['location_name'],
+        );
+        final locationNames = results.map((r) => r['location_name'] as String).toList();
+
+        // Only the existing location remains - mergeLocations only updates existing records
+        expect(locationNames, equals(['存在的地点']));
       });
     });
 
     group('renameLocation', () {
-      test('updates location name without throwing', () async {
-        // Arrange & Act
+      test('updates location name correctly', () async {
+        await db.insert('fish_catches', {
+          'species': 'TestFish',
+          'length': 30.0,
+          'catch_time': DateTime.now().toIso8601String(),
+          'location_name': '旧名称',
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+
         await service.renameLocation('旧名称', '新名称');
 
-        // Assert - no exception means success
+        final results = await db.query(
+          'fish_catches',
+          columns: ['location_name'],
+        );
+        final locationNames = results.map((r) => r['location_name'] as String).toList();
+
+        expect(locationNames, equals(['新名称']));
+        expect(locationNames, isNot(contains('旧名称')));
       });
 
-      test('handles rename to empty string without throwing', () async {
-        // Arrange & Act
-        await service.renameLocation('旧名称', '');
+      test('updates multiple catches at same location', () async {
+        await db.insert('fish_catches', {
+          'species': 'TestFish1',
+          'length': 30.0,
+          'catch_time': DateTime.now().toIso8601String(),
+          'location_name': '批量重命名地点',
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+        await db.insert('fish_catches', {
+          'species': 'TestFish2',
+          'length': 25.0,
+          'catch_time': DateTime.now().toIso8601String(),
+          'location_name': '批量重命名地点',
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        });
 
-        // Assert - no exception means success
+        await service.renameLocation('批量重命名地点', '新名称');
+
+        final results = await db.query(
+          'fish_catches',
+          columns: ['location_name'],
+        );
+        final locationNames = results.map((r) => r['location_name'] as String).toList();
+
+        expect(locationNames, equals(['新名称', '新名称']));
       });
+
+      test('handles rename to empty string', () async {
+        await db.insert('fish_catches', {
+          'species': 'TestFish',
+          'length': 30.0,
+          'catch_time': DateTime.now().toIso8601String(),
+          'location_name': '待清空地点',
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+
+        await service.renameLocation('待清空地点', '');
+
+        final results = await db.query(
+          'fish_catches',
+          columns: ['location_name'],
+        );
+        final locationNames = results.map((r) => r['location_name'] as String?).toList();
+
+        expect(locationNames, equals(['']));
+      });
+
+      test('does not affect other locations when renaming', () async {
+        await db.insert('fish_catches', {
+          'species': 'TestFish',
+          'length': 30.0,
+          'catch_time': DateTime.now().toIso8601String(),
+          'location_name': '要被重命名的地点',
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+        await db.insert('fish_catches', {
+          'species': 'TestFish',
+          'length': 25.0,
+          'catch_time': DateTime.now().toIso8601String(),
+          'location_name': '保留地点',
+          'created_at': DateTime.now().toIso8601String(),
+          'updated_at': DateTime.now().toIso8601String(),
+        });
+
+        await service.renameLocation('要被重命名的地点', '新名称');
+
+        final results = await db.query(
+          'fish_catches',
+          columns: ['location_name'],
+          orderBy: 'species ASC',
+        );
+        final locationNames = results.map((r) => r['location_name'] as String).toList();
+
+        expect(locationNames, equals(['新名称', '保留地点']));
+      });
+    });
+  });
+
+  group('LocationService - pure functions (unit tests)', () {
+    late LocationService service;
+
+    setUp(() {
+      // Use a dummy provider for pure function tests
+      service = LocationService(_DummyDatabaseProvider());
     });
 
     group('findSimilarLocations', () {
       test('returns empty list for no similar locations', () {
-        // Arrange
         final locations = ['西湖', '钱塘江', '千岛湖'];
-
-        // Act
         final result = service.findSimilarLocations(locations);
-
-        // Assert
         expect(result, isEmpty);
       });
 
-      test('groups similar locations together', () {
-        // Arrange - "1号地点" and "2号地点" should be similar after removing numbers
-        final locations = ['地点A', '1号地点A', '2号地点A', '地点B'];
-
-        // Act
-        final result = service.findSimilarLocations(locations);
-
-        // Assert - after cleaning numbers, '1号地点A' and '2号地点A' become '号地点A' which is similar
-        // Note: the algorithm removes numbers and checks similarity > 0.7
-        // Since '号地点A' vs '号地点A' is identical (similarity = 1.0), they should be grouped
-        expect(result, isA<List<List<String>>>());
-      });
-
       test('returns empty list for empty input', () {
-        // Act
         final result = service.findSimilarLocations([]);
-
-        // Assert
         expect(result, isEmpty);
       });
 
       test('returns empty list for single location', () {
-        // Act
         final result = service.findSimilarLocations(['唯一地点']);
-
-        // Assert
         expect(result, isEmpty);
       });
 
       test('does not group identical locations', () {
-        // Arrange - same location appears multiple times but should not self-group
         final locations = ['测试地点', '测试地点', '测试地点'];
-
-        // Act
         final result = service.findSimilarLocations(locations);
-
-        // Assert - identical strings return false in _isSimilarLocation
         expect(result, isEmpty);
       });
 
       test('groups locations that become identical after number removal', () {
-        // Arrange - "1号地点" and "2号地点" both become "号地点" after removing numbers
         final locations = ['1号地点', '2号地点'];
-
-        // Act
         final result = service.findSimilarLocations(locations);
-
-        // Assert - these should be grouped because cleaned strings are identical
         expect(result.length, equals(1));
         expect(result[0], containsAll(['1号地点', '2号地点']));
       });
 
       test('does not group locations with low similarity', () {
-        // Arrange - very different locations
         final locations = ['西湖', '钱塘江', '千岛湖'];
-
-        // Act
         final result = service.findSimilarLocations(locations);
-
-        // Assert
         expect(result, isEmpty);
       });
 
-      test('handles locations with numbers correctly', () {
-        // Arrange - numbers should be removed before comparison
+      test('groups locations with same base name but different numbers', () {
         final locations = ['钓点1号', '钓点2号', '其他钓点'];
-
-        // Act
         final result = service.findSimilarLocations(locations);
-
-        // Assert - 1号 and 2号 both become "号" after removing numbers
-        // They should be grouped together
         expect(result.length, equals(1));
-        expect(result[0], equals(['钓点1号', '钓点2号']));
+        expect(result[0], containsAll(['钓点1号', '钓点2号']));
       });
 
-      test('returns all groups when multiple similarity groups exist', () {
-        // Arrange - create two distinct groups using number removal
-        // "1号北京" and "2号北京" become "号北京" - similar
-        // "1号上海" and "2号上海" become "号上海" - similar
+      test('returns multiple groups for distinct similarity clusters', () {
         final locations = ['1号北京', '2号北京', '1号上海', '2号上海'];
-
-        // Act
         final result = service.findSimilarLocations(locations);
-
-        // Assert - should have two groups
         expect(result.length, equals(2));
+      });
+
+      test('groups locations with high similarity score', () {
+        // '钓点1号' and '钓点2号' become '钓点号' and '钓点号' after removing numbers
+        // which are identical (similarity = 1.0)
+        final locations = ['钓点1号', '钓点2号'];
+        final result = service.findSimilarLocations(locations);
+        expect(result.length, equals(1));
+        expect(result[0], containsAll(['钓点1号', '钓点2号']));
       });
     });
 
     group('getBestLocationName', () {
       test('returns longest location name', () {
-        // Act
-        final result = service.getBestLocationName(['短', '中等长度地点', '最长的地点名称']);
-
-        // Assert
+        final result = service.getBestLocationName(
+          ['短', '中等长度地点', '最长的地点名称'],
+        );
         expect(result, equals('最长的地点名称'));
       });
 
       test('returns empty string for empty list', () {
-        // Act
         final result = service.getBestLocationName([]);
-
-        // Assert
         expect(result, equals(''));
       });
 
       test('returns last of equal-length locations', () {
-        // Act
         final result = service.getBestLocationName(['等长1', '等长2', '等长3']);
-
-        // Assert - reduce returns the last element when accumulator always picks b
-        // The implementation does: a.length > b.length ? a : b
-        // When lengths are equal, it picks b (the current/last element)
         expect(result, equals('等长3'));
       });
 
       test('returns correct name for single location', () {
-        // Act
         final result = service.getBestLocationName(['唯一地点']);
-
-        // Assert
         expect(result, equals('唯一地点'));
       });
 
       test('handles unicode location names correctly', () {
-        // Act
         final result = service.getBestLocationName(['东京', '纽约', '北京时间']);
-
-        // Assert - longest by character count
         expect(result, equals('北京时间'));
       });
     });
   });
+}
+
+/// Dummy provider for pure function tests
+class _DummyDatabaseProvider implements DatabaseProvider {
+  Database? _db;
+
+  @override
+  Future<Database> get database async {
+    _db ??= await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
+    return _db!;
+  }
+
+  @override
+  Future<void> close() async {
+    await _db?.close();
+    _db = null;
+  }
+
+  @override
+  Future<void> resetForTesting() async {
+    await close();
+  }
 }

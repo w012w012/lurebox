@@ -23,6 +23,19 @@ void main() {
 
       const allReleased = CatchStats(total: 5, release: 5, keep: 0);
       expect(allReleased.releaseRate, equals(1.0));
+
+      const allKept = CatchStats(total: 5, release: 0, keep: 5);
+      expect(allKept.releaseRate, equals(0.0));
+    });
+
+    test('round-trip: fromMap -> toMap preserves data', () {
+      const original = CatchStats(total: 15, release: 10, keep: 5);
+      final map = original.toMap();
+      final restored = CatchStats.fromMap(map);
+
+      expect(restored.total, equals(original.total));
+      expect(restored.release, equals(original.release));
+      expect(restored.keep, equals(original.keep));
     });
 
     test('fromMap creates CatchStats from map', () {
@@ -60,6 +73,20 @@ void main() {
       expect(copy.release, equals(15));
       expect(copy.keep, equals(3));
     });
+
+    test('equality: two CatchStats with same values are equal', () {
+      const stats1 = CatchStats(total: 10, release: 5, keep: 5);
+      const stats2 = CatchStats(total: 10, release: 5, keep: 5);
+
+      expect(stats1, equals(stats2));
+    });
+
+    test('equality: two CatchStats with different values are not equal', () {
+      const stats1 = CatchStats(total: 10, release: 5, keep: 5);
+      const stats2 = CatchStats(total: 10, release: 6, keep: 4);
+
+      expect(stats1, isNot(equals(stats2)));
+    });
   });
 
   group('EquipmentCatchStats', () {
@@ -77,6 +104,24 @@ void main() {
       expect(stats.avgLength, equals(30.5));
       expect(stats.avgWeight, equals(2.3));
       expect(stats.releaseCount, equals(7));
+    });
+
+    test('round-trip: fromMap -> toMap preserves data', () {
+      const original = EquipmentCatchStats(
+        equipmentId: 5,
+        catchCount: 25,
+        avgLength: 35.5,
+        avgWeight: 3.2,
+        releaseCount: 18,
+      );
+      final map = original.toMap();
+      final restored = EquipmentCatchStats.fromMap(map);
+
+      expect(restored.equipmentId, equals(original.equipmentId));
+      expect(restored.catchCount, equals(original.catchCount));
+      expect(restored.avgLength, equals(original.avgLength));
+      expect(restored.avgWeight, equals(original.avgWeight));
+      expect(restored.releaseCount, equals(original.releaseCount));
     });
 
     test('fromMap creates EquipmentCatchStats from map', () {
@@ -110,6 +155,55 @@ void main() {
       expect(map['catch_count'], equals(10));
       expect(map['release_count'], equals(7));
     });
+
+    test('copyWith creates modified copy', () {
+      const original = EquipmentCatchStats(
+        equipmentId: 1,
+        catchCount: 10,
+        avgLength: 30.0,
+        avgWeight: 2.0,
+        releaseCount: 5,
+      );
+
+      final copy = original.copyWith(catchCount: 20, releaseCount: 15);
+
+      expect(copy.equipmentId, equals(1));
+      expect(copy.catchCount, equals(20));
+      expect(copy.avgLength, equals(30.0));
+      expect(copy.avgWeight, equals(2.0));
+      expect(copy.releaseCount, equals(15));
+    });
+
+    test('fromMap handles null optional fields', () {
+      final map = {
+        'equipment_id': 1,
+        'catch_count': 5,
+      };
+
+      final result = EquipmentCatchStats.fromMap(map);
+
+      expect(result.avgLength, isNull);
+      expect(result.avgWeight, isNull);
+    });
+
+    test('equality: two EquipmentCatchStats with same values are equal', () {
+      const stats1 = EquipmentCatchStats(
+        equipmentId: 1,
+        catchCount: 10,
+        avgLength: 30.0,
+        avgWeight: 2.0,
+        releaseCount: 5,
+      );
+      const stats2 = EquipmentCatchStats(
+        equipmentId: 1,
+        catchCount: 10,
+        avgLength: 30.0,
+        avgWeight: 2.0,
+        releaseCount: 5,
+      );
+
+      expect(stats1, equals(stats2));
+    });
   });
 
   group('DashboardData', () {
@@ -142,6 +236,86 @@ void main() {
       expect(dashboard.allStats.total, equals(500));
       expect(dashboard.top3Longest.length, equals(3));
     });
+
+    test('aggregates species counts correctly across time periods', () {
+      const dashboard = DashboardData(
+        todayStats: CatchStats(total: 2, release: 1, keep: 1),
+        todaySpecies: const {'Bass': 2},
+        monthStats: CatchStats(total: 20, release: 15, keep: 5),
+        monthSpecies: const {'Bass': 15, 'Trout': 5},
+        yearStats: CatchStats(total: 100, release: 80, keep: 20),
+        yearSpecies: const {'Bass': 60, 'Trout': 30, 'Carp': 10},
+        allStats: CatchStats(total: 500, release: 350, keep: 150),
+        allSpecies: const {'Bass': 200, 'Trout': 150, 'Carp': 100, 'Pike': 50},
+        top3Longest: const [],
+      );
+
+      // Verify species counts increase over time periods
+      expect(dashboard.todaySpecies.length, lessThan(dashboard.monthSpecies.length));
+      expect(dashboard.monthSpecies.length, lessThan(dashboard.yearSpecies.length));
+      expect(dashboard.yearSpecies.length, lessThan(dashboard.allSpecies.length));
+    });
+
+    test('calculates release rates for all time periods', () {
+      const dashboard = DashboardData(
+        todayStats: CatchStats(total: 4, release: 3, keep: 1),
+        todaySpecies: const {'Bass': 4},
+        monthStats: CatchStats(total: 20, release: 10, keep: 10),
+        monthSpecies: const {'Bass': 20},
+        yearStats: CatchStats(total: 100, release: 70, keep: 30),
+        yearSpecies: const {'Bass': 100},
+        allStats: CatchStats(total: 200, release: 100, keep: 100),
+        allSpecies: const {'Bass': 200},
+        top3Longest: const [],
+      );
+
+      expect(dashboard.todayStats.releaseRate, equals(0.75));
+      expect(dashboard.monthStats.releaseRate, equals(0.5));
+      expect(dashboard.yearStats.releaseRate, equals(0.7));
+      expect(dashboard.allStats.releaseRate, equals(0.5));
+    });
+
+    test('handles empty top3Longest list', () {
+      const dashboard = DashboardData(
+        todayStats: CatchStats(total: 0, release: 0, keep: 0),
+        todaySpecies: const {},
+        monthStats: CatchStats(total: 0, release: 0, keep: 0),
+        monthSpecies: const {},
+        yearStats: CatchStats(total: 0, release: 0, keep: 0),
+        yearSpecies: const {},
+        allStats: CatchStats(total: 0, release: 0, keep: 0),
+        allSpecies: const {},
+        top3Longest: const [],
+      );
+
+      expect(dashboard.top3Longest, isEmpty);
+    });
+
+    test('top3Longest contains id and length for each entry', () {
+      const top3Longest = [
+        {'id': 1, 'length': 50.0},
+        {'id': 2, 'length': 45.0},
+        {'id': 3, 'length': 40.0},
+      ];
+      const dashboard = DashboardData(
+        todayStats: CatchStats(total: 3, release: 2, keep: 1),
+        todaySpecies: const {'Bass': 3},
+        monthStats: CatchStats(total: 3, release: 2, keep: 1),
+        monthSpecies: const {'Bass': 3},
+        yearStats: CatchStats(total: 3, release: 2, keep: 1),
+        yearSpecies: const {'Bass': 3},
+        allStats: CatchStats(total: 3, release: 2, keep: 1),
+        allSpecies: const {'Bass': 3},
+        top3Longest: top3Longest,
+      );
+
+      for (final entry in dashboard.top3Longest) {
+        expect(entry.containsKey('id'), isTrue);
+        expect(entry.containsKey('length'), isTrue);
+        expect(entry['id'], isA<int>());
+        expect(entry['length'], isA<double>());
+      }
+    });
   });
 
   group('AchievementMetrics', () {
@@ -151,6 +325,13 @@ void main() {
       expect(metrics.totalCatches, equals(0));
       expect(metrics.maxLength, equals(0.0));
       expect(metrics.speciesCount, equals(0));
+      expect(metrics.equipmentCount, equals(0));
+      expect(metrics.locationCount, equals(0));
+      expect(metrics.releaseCount, equals(0));
+      expect(metrics.releaseRate, equals(0.0));
+      expect(metrics.consecutiveDays, equals(0));
+      expect(metrics.equipmentFull, isFalse);
+      expect(metrics.newRecord, isFalse);
     });
 
     test('creates AchievementMetrics with custom values', () {
@@ -183,6 +364,78 @@ void main() {
       expect(copy.totalCatches, equals(100));
       expect(copy.maxLength, equals(30.0));
       expect(copy.speciesCount, equals(5));
+    });
+
+    test('copyWith preserves unmodified fields', () {
+      const original = AchievementMetrics(
+        totalCatches: 50,
+        maxLength: 25.0,
+        speciesCount: 5,
+        equipmentCount: 3,
+        locationCount: 2,
+        releaseCount: 30,
+        releaseRate: 0.6,
+        consecutiveDays: 5,
+        morningCatches: 10,
+        nightCatches: 8,
+      );
+
+      final copy = original.copyWith(totalCatches: 100);
+
+      expect(copy.totalCatches, equals(100));
+      expect(copy.maxLength, equals(25.0));
+      expect(copy.speciesCount, equals(5));
+      expect(copy.equipmentCount, equals(3));
+      expect(copy.locationCount, equals(2));
+      expect(copy.releaseCount, equals(30));
+      expect(copy.releaseRate, equals(0.6));
+      expect(copy.consecutiveDays, equals(5));
+      expect(copy.morningCatches, equals(10));
+      expect(copy.nightCatches, equals(8));
+    });
+
+    test('handles achievement flags correctly', () {
+      const metrics = AchievementMetrics(
+        equipmentFull: true,
+        newRecord: true,
+      );
+
+      expect(metrics.equipmentFull, isTrue);
+      expect(metrics.newRecord, isTrue);
+    });
+
+    test('handles count-based achievements', () {
+      const metrics = AchievementMetrics(
+        totalCatches: 1000,
+        speciesCount: 50,
+        photoCount: 200,
+        shareCount: 50,
+      );
+
+      expect(metrics.totalCatches, equals(1000));
+      expect(metrics.speciesCount, equals(50));
+      expect(metrics.photoCount, equals(200));
+      expect(metrics.shareCount, equals(50));
+    });
+
+    test('handles weight and length achievements', () {
+      const metrics = AchievementMetrics(
+        maxLength: 120.5,
+        totalWeight: 500.0,
+      );
+
+      expect(metrics.maxLength, equals(120.5));
+      expect(metrics.totalWeight, equals(500.0));
+    });
+
+    test('handles combo achievements', () {
+      const metrics = AchievementMetrics(
+        equipmentComboMax: 5,
+        equipmentFull: true,
+      );
+
+      expect(metrics.equipmentComboMax, equals(5));
+      expect(metrics.equipmentFull, isTrue);
     });
   });
 }

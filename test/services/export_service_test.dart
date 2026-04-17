@@ -335,7 +335,7 @@ void main() {
     });
 
     group('includeLocation parameter', () {
-      test('includeLocation=false still exports all fields', () async {
+      test('includeLocation=false still exports location fields in CSV', () async {
         final List<FishCatch> catches = [
           TestDataFactory.createFishCatch(
             id: 1,
@@ -353,8 +353,9 @@ void main() {
         );
 
         final content = await File(file.path).readAsString();
-        // CSV exporter still writes location fields regardless
+        // CSV format always includes location columns for reference
         expect(content, contains('品种'));
+        expect(content, contains('Bass'));
       });
 
       test('includeLocation=true exports with location data', () async {
