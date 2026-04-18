@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/design/theme/app_colors.dart';
 import '../../../core/design/theme/animation_constants.dart';
+import '../../../core/providers/language_provider.dart';
 import '../../../widgets/common/premium_card.dart';
 
 /// Collapsible achievement card with expand/collapse functionality.
 /// Displays category title, count, icon, and expandable child items.
-class AchievementCollapseCard extends StatefulWidget {
+class AchievementCollapseCard extends ConsumerStatefulWidget {
   final String title;
   final int currentCount;
   final int totalCount;
@@ -27,11 +29,12 @@ class AchievementCollapseCard extends StatefulWidget {
   });
 
   @override
-  State<AchievementCollapseCard> createState() =>
+  ConsumerState<AchievementCollapseCard> createState() =>
       _AchievementCollapseCardState();
 }
 
-class _AchievementCollapseCardState extends State<AchievementCollapseCard>
+class _AchievementCollapseCardState
+    extends ConsumerState<AchievementCollapseCard>
     with SingleTickerProviderStateMixin {
   late bool _isExpanded;
   late AnimationController _rotationController;
@@ -77,6 +80,7 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
 
   @override
   Widget build(BuildContext context) {
+    final strings = ref.watch(currentStringsProvider);
     return PremiumCard(
       variant: PremiumCardVariant.elevated,
       padding: EdgeInsets.zero,
@@ -119,7 +123,7 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
                             ),
                       ),
                       Text(
-                        '${widget.children.length}个成就',
+                        '${widget.children.length}${strings.achievementUnit}',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: TeslaColors.graphite,
                             ),
@@ -186,11 +190,13 @@ class _AchievementCollapseCardState extends State<AchievementCollapseCard>
   }
 
   Widget _buildExpandedContent(BuildContext context) {
+    final strings = ref.watch(currentStringsProvider);
     if (widget.children.isEmpty) {
+      final remaining = widget.totalCount - widget.currentCount;
       return Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: Text(
-          '还需要 ${widget.totalCount - widget.currentCount} 种鱼',
+          strings.remainingAchievements.replaceAll(r'$count', '$remaining'),
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: TeslaColors.graphite,
               ),
