@@ -14,7 +14,7 @@ import '../../features/onboarding/onboarding_page.dart';
 import '../../features/settings/ai_recognition_settings_page.dart';
 import '../../features/settings/export_backup_management_page.dart';
 import '../../features/settings/location_management_page.dart';
-import '../../features/settings/settings_page.dart';
+import '../../features/me/me_page.dart';
 import '../../features/settings/species_management_page.dart';
 import '../../features/settings/watermark_settings_page.dart';
 import '../../features/stats/stats_detail_page.dart';
@@ -153,12 +153,12 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const HomePage(),
           ),
           GoRoute(
-            path: '/equipment',
-            builder: (context, state) => const EquipmentListPage(),
+            path: '/me',
+            builder: (context, state) => const MePage(),
           ),
           GoRoute(
-            path: '/settings',
-            builder: (context, state) => const SettingsPage(),
+            path: '/equipment',
+            builder: (context, state) => const EquipmentListPage(),
           ),
         ],
       ),
@@ -202,9 +202,9 @@ class MainShell extends ConsumerWidget {
             label: strings.equipment,
           ),
           PremiumNavigationDestination(
-            icon: Icons.settings_outlined,
-            selectedIcon: Icons.settings,
-            label: strings.settings,
+            icon: Icons.person_outline,
+            selectedIcon: Icons.person,
+            label: strings.me,
           ),
         ],
         showCenterFab: true,
@@ -215,12 +215,12 @@ class MainShell extends ConsumerWidget {
 
   int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    // 5 tabs + FAB gap at index 2: 0=achievements, 1=home, 2=FAB, 3=fish, 4=equipment, 5=settings
+    // 5 tabs + FAB gap at index 2: 0=achievements, 1=home, 2=FAB, 3=fish, 4=equipment, 5=me
     if (location.startsWith('/achievements')) return 0;
     if (location == '/') return 1;
     if (location.startsWith('/fish')) return 3;
     if (location.startsWith('/equipment')) return 4;
-    if (location.startsWith('/settings')) return 5;
+    if (location.startsWith('/me')) return 5;
     return 1;
   }
 
@@ -240,7 +240,7 @@ class MainShell extends ConsumerWidget {
         context.go('/equipment');
         break;
       case 5:
-        context.go('/settings');
+        context.go('/me');
         break;
     }
   }
