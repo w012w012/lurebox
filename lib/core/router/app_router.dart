@@ -192,11 +192,6 @@ class MainShell extends ConsumerWidget {
             label: strings.fishList,
           ),
           PremiumNavigationDestination(
-            icon: Icons.home_outlined,
-            selectedIcon: Icons.home,
-            label: strings.home,
-          ),
-          PremiumNavigationDestination(
             icon: Icons.hardware_outlined,
             selectedIcon: Icons.hardware,
             label: strings.equipment,
@@ -207,12 +202,15 @@ class MainShell extends ConsumerWidget {
             label: strings.settings,
           ),
         ],
+        showCenterFab: true,
+        onCenterFabPressed: () => context.push('/camera'),
       ),
     );
   }
 
   int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
+    // 4 tabs: 0=achievements, 1=fish, 2=[FAB], 3=equipment, 4=settings
     if (location.startsWith('/achievements')) return 0;
     if (location.startsWith('/fish')) return 1;
     if (location == '/') return 2;
@@ -222,15 +220,13 @@ class MainShell extends ConsumerWidget {
   }
 
   void _onItemTapped(int index, BuildContext context) {
+    // index 2 是 FAB，不导航
     switch (index) {
       case 0:
         context.go('/achievements');
         break;
       case 1:
         context.go('/fish');
-        break;
-      case 2:
-        context.go('/');
         break;
       case 3:
         context.go('/equipment');

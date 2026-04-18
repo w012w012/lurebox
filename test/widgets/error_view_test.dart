@@ -623,7 +623,7 @@ void main() {
         expect(paddingFinder, findsOneWidget);
 
         final paddingWidget = tester.widget<Padding>(paddingFinder.first);
-        expect(paddingWidget.padding, const EdgeInsets.all(24));
+        expect(paddingWidget.padding, const EdgeInsets.all(32));
       });
 
       testWidgets('message is text aligned center', (tester) async {
@@ -666,21 +666,19 @@ void main() {
 
         final iconFinder = find.byIcon(Icons.inbox_outlined);
         final iconWidget = tester.widget<Icon>(iconFinder);
-        expect(iconWidget.size, equals(64));
+        expect(iconWidget.size, equals(72));
       });
     });
 
     group('Action Widget', () {
-      testWidgets('displays action widget when provided', (tester) async {
+      testWidgets('displays action button when provided', (tester) async {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: EmptyView(
+              body: AppEmptyState(
                 message: 'No items',
-                action: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Add Item'),
-                ),
+                actionLabel: 'Add Item',
+                onAction: () {},
               ),
             ),
           ),
@@ -688,7 +686,7 @@ void main() {
 
         expect(find.text('No items'), findsOneWidget);
         expect(find.text('Add Item'), findsOneWidget);
-        expect(find.byType(ElevatedButton), findsOneWidget);
+        expect(find.byType(PremiumButton), findsOneWidget);
       });
 
       testWidgets('does not display SizedBox when action is null',
@@ -696,7 +694,7 @@ void main() {
         await tester.pumpWidget(
           const MaterialApp(
             home: Scaffold(
-              body: EmptyView(message: 'No items'),
+              body: AppEmptyState(message: 'No items'),
             ),
           ),
         );
@@ -712,20 +710,18 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: EmptyView(
+              body: AppEmptyState(
                 message: 'No items',
-                action: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Add Item'),
-                ),
+                actionLabel: 'Add Item',
+                onAction: () {},
               ),
             ),
           ),
         );
 
-        // Verify that SizedBox with height 24 exists (action widget spacing)
+        // Verify that SizedBox with height 32 exists (action widget spacing)
         final sizedBoxFinder = find.byWidgetPredicate(
-          (widget) => widget is SizedBox && widget.height == 24,
+          (widget) => widget is SizedBox && widget.height == 32,
         );
         expect(sizedBoxFinder, findsOneWidget);
       });
@@ -735,18 +731,16 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              body: EmptyView(
+              body: AppEmptyState(
                 message: 'No items',
-                action: ElevatedButton(
-                  onPressed: () => actionPressed = true,
-                  child: const Text('Add Item'),
-                ),
+                actionLabel: 'Add Item',
+                onAction: () => actionPressed = true,
               ),
             ),
           ),
         );
 
-        await tester.tap(find.byType(ElevatedButton));
+        await tester.tap(find.byType(PremiumButton));
         await tester.pumpAndSettle();
 
         expect(actionPressed, isTrue);

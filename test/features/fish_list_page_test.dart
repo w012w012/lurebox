@@ -177,12 +177,9 @@ void main() {
       expect(find.byType(FishListPage), findsOneWidget);
     });
 
-    testWidgets('filter expanded shows filter panel', (tester) async {
-      // Filter panel lives in the mobile list view which only renders when there are catches
-      // (page shows EmptyView when filteredCatches is empty). Test with data present.
-      await tester.binding.setSurfaceSize(const Size(400, 800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-
+    testWidgets('filter collapsed shows filter trigger bar', (tester) async {
+      // Filter panel is now shown in a bottom sheet, not inline.
+      // FishFilterCollapsed is always shown as the trigger.
       final catches = TestDataFactory.createFishCatches(1);
       final expandedFilterState = FishListState(
         catches: catches,
@@ -196,10 +193,16 @@ void main() {
         hasMore: false,
       );
 
+      await tester.binding.setSurfaceSize(const Size(400, 800));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
       await tester.pumpWidget(createWidgetUnderTest(expandedFilterState));
       await tester.pump();
 
-      expect(find.byType(FishFilterPanel), findsOneWidget);
+      // FishFilterCollapsed is always present as the trigger bar
+      expect(find.byType(FishFilterCollapsed), findsOneWidget);
+      // FishFilterPanel is NOT inline anymore (it's in the bottom sheet)
+      expect(find.byType(FishFilterPanel), findsNothing);
     });
 
     testWidgets('fish items have staggered animation wrappers', (tester) async {

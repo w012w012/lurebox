@@ -4,6 +4,7 @@ import '../../core/constants/strings.dart';
 import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/location_view_model.dart';
+import '../../widgets/common/app_snack_bar.dart';
 import '../location/widgets/location_list_tile.dart';
 import '../location/widgets/location_group_card.dart';
 
@@ -325,11 +326,8 @@ class _LocationManagementPageState
     if (result != null && context.mounted) {
       final success = await viewModel.renameLocation(oldName, result);
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(success ? '修改成功' : '修改失败'),
-        ),
-      );
+      AppSnackBar.showInfo(
+          context, success ? '修改成功' : '修改失败');
     }
     controller.dispose();
   }
@@ -365,8 +363,8 @@ class _LocationManagementPageState
     if (confirmed == true) {
       final success = await viewModel.mergeLocations(targetName);
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(success ? '合并成功' : '合并失败')));
+      AppSnackBar.showInfo(
+          context, success ? '合并成功' : '合并失败');
     }
   }
 
@@ -397,8 +395,8 @@ class _LocationManagementPageState
     if (confirmed == true) {
       final success = await viewModel.autoMergeGroup(group);
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(success ? '合并成功' : '合并失败')));
+      AppSnackBar.showInfo(
+          context, success ? '合并成功' : '合并失败');
     }
   }
 }

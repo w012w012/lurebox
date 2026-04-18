@@ -10,6 +10,7 @@ import '../../core/utils/unit_converter.dart';
 import '../../widgets/common/premium_button.dart';
 import '../../widgets/common/premium_card.dart';
 import '../../widgets/common/premium_input.dart';
+import '../../widgets/common/app_snack_bar.dart';
 import 'widgets/rod_form.dart';
 import 'widgets/reel_form.dart';
 import 'widgets/lure_form.dart';
@@ -522,7 +523,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
     final err = notifier.validatePrice(strings);
     if (err != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err)));
+      AppSnackBar.showError(context, err);
       return;
     }
     final ok = await notifier.save();
@@ -536,9 +537,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
         )),
       );
       if (s.errorMessage != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${strings.saveFailed}: ${s.errorMessage}')),
-        );
+        AppSnackBar.showError(context, strings.saveFailed, debugError: s.errorMessage);
       }
     }
   }

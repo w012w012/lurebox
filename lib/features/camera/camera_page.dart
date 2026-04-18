@@ -19,6 +19,7 @@ import '../../core/camera/camera_state.dart';
 
 import '../../widgets/common/image_cache_helper.dart';
 import '../../widgets/common/premium_button.dart';
+import '../../widgets/common/app_snack_bar.dart';
 import '../catch/widgets/auxiliary_info_row.dart';
 import '../catch/widgets/species_input_card.dart';
 import '../catch/widgets/length_input_field.dart';
@@ -156,9 +157,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
   Future<void> _takePicture(CameraViewModel vm, AppStrings strings) async {
     final path = await vm.takePicture();
     if (path == null && mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(strings.cameraNotReady)));
+      AppSnackBar.showError(context, strings.cameraNotReady);
     }
   }
 
@@ -407,23 +406,17 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     AppStrings strings,
   ) async {
     if (state.imagePath == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(strings.takePhotoFirst)));
+      AppSnackBar.showError(context, strings.takePhotoFirst);
       return;
     }
 
     if (state.species.isEmpty && !state.pendingRecognition) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(strings.enterSpecies)));
+      AppSnackBar.showError(context, strings.enterSpecies);
       return;
     }
 
     if (state.length <= 0) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(strings.enterValidLength)));
+      AppSnackBar.showError(context, strings.enterValidLength);
       return;
     }
 
@@ -460,20 +453,21 @@ class _CameraPageState extends ConsumerState<CameraPage> {
               'imagePath: ${state.imagePath != null ? "已设置" : "未设置"}\n'
               'species: "${state.species}" (empty: ${state.species.isEmpty})\n'
               'length: ${state.length}';
-          ScaffoldMessenger.of(
+          AppSnackBar.showError(
             context,
-          ).showSnackBar(SnackBar(
-            content: Text(debugInfo),
-            duration: const Duration(seconds: 15),
-          ));
+            '保存失败，请检查输入',
+            debugError: debugInfo,
+          );
         }
       }
-    } catch (e) {
+    } on Exception catch (e) {
       vm.resetCaptureStateToForm();
       if (mounted) {
-        ScaffoldMessenger.of(
+        AppSnackBar.showError(
           context,
-        ).showSnackBar(SnackBar(content: Text('保存失败: $e')));
+          '保存失败，请重试',
+          debugError: e,
+        );
       }
     }
   }

@@ -10,6 +10,7 @@ import '../../core/design/theme/app_colors.dart';
 import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/di/di.dart';
+import '../../widgets/common/app_snack_bar.dart';
 
 /// 文件类型枚举
 enum FileType {
@@ -147,16 +148,12 @@ class _ExportBackupManagementPageState
         final fileToDelete = File(file.path);
         await fileToDelete.delete();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('删除成功')),
-          );
+          AppSnackBar.showSuccess(context, '删除成功');
           _refreshFiles();
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(strings.errorFileDelete)),
-          );
+          AppSnackBar.showError(context, strings.errorFileDelete);
         }
       }
     }
@@ -172,9 +169,7 @@ class _ExportBackupManagementPageState
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('分享失败: $e')),
-        );
+        AppSnackBar.showError(context, '分享失败', debugError: e);
       }
     }
   }
@@ -207,9 +202,7 @@ class _ExportBackupManagementPageState
 
     try {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('正在恢复备份...')),
-        );
+        AppSnackBar.showInfo(context, '正在恢复备份...');
       }
 
       final backupZipService = ref.read(backupZipServiceProvider);
@@ -218,30 +211,16 @@ class _ExportBackupManagementPageState
       if (!mounted) return;
 
       if (result.isSuccess) {
-        final metadata = result.metadata;
-        String message = '恢复成功';
-        if (metadata != null) {
-          message = '恢复成功\n'
-              '渔获: ${metadata.fishCatchesCount} 条\n'
-              '装备: ${metadata.equipmentCount} 件\n'
-              '照片: ${metadata.photoCount} 张';
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
-        );
+        AppSnackBar.showSuccess(context, '恢复成功');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('恢复失败: ${result.errorMessage ?? "未知错误"}'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
+        AppSnackBar.showError(
+          context,
+          '恢复失败: ${result.errorMessage ?? "未知错误"}',
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('恢复失败: $e')),
-        );
+        AppSnackBar.showError(context, '恢复失败', debugError: e);
       }
     }
   }
