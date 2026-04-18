@@ -152,20 +152,20 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
         routes: [
           GoRoute(
-            path: '/fish',
-            builder: (context, state) => const FishListPage(),
-          ),
-          GoRoute(
             path: '/',
             builder: (context, state) => const HomePage(),
           ),
           GoRoute(
-            path: '/me',
-            builder: (context, state) => const MePage(),
+            path: '/fish',
+            builder: (context, state) => const FishListPage(),
           ),
           GoRoute(
             path: '/equipment',
             builder: (context, state) => const EquipmentListPage(),
+          ),
+          GoRoute(
+            path: '/me',
+            builder: (context, state) => const MePage(),
           ),
         ],
       ),
@@ -217,11 +217,12 @@ class MainShell extends ConsumerWidget {
 
   int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    // 4 tabs + FAB gap at index 1: 0=home, 1=FAB, 2=fish, 3=equipment, 4=me
+    // Nav bar: 0=home, 1=FAB gap, 2=equipment, 3=me
+    // Actual tab indices: home=0, fish=1, equipment=2, me=3
     if (location == '/') return 0;
-    if (location.startsWith('/fish')) return 2;
-    if (location.startsWith('/equipment')) return 3;
-    if (location.startsWith('/me')) return 4;
+    if (location.startsWith('/fish')) return 1;
+    if (location.startsWith('/equipment')) return 2;
+    if (location.startsWith('/me')) return 3;
     return 0;
   }
 
@@ -232,12 +233,9 @@ class MainShell extends ConsumerWidget {
         context.go('/');
         break;
       case 2:
-        context.go('/fish');
-        break;
-      case 3:
         context.go('/equipment');
         break;
-      case 4:
+      case 3:
         context.go('/me');
         break;
     }
