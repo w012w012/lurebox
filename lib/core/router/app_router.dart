@@ -187,6 +187,11 @@ class MainShell extends ConsumerWidget {
             label: strings.achievement,
           ),
           PremiumNavigationDestination(
+            icon: Icons.home_outlined,
+            selectedIcon: Icons.home,
+            label: strings.home,
+          ),
+          PremiumNavigationDestination(
             icon: Icons.list_alt_outlined,
             selectedIcon: Icons.list_alt,
             label: strings.fishList,
@@ -210,13 +215,13 @@ class MainShell extends ConsumerWidget {
 
   int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    // 4 tabs: 0=achievements, 1=fish, 2=[FAB], 3=equipment, 4=settings
+    // 5 tabs + FAB gap at index 2: 0=achievements, 1=home, 2=FAB, 3=fish, 4=equipment, 5=settings
     if (location.startsWith('/achievements')) return 0;
-    if (location.startsWith('/fish')) return 1;
-    if (location == '/') return 2;
-    if (location.startsWith('/equipment')) return 3;
-    if (location.startsWith('/settings')) return 4;
-    return 2;
+    if (location == '/') return 1;
+    if (location.startsWith('/fish')) return 3;
+    if (location.startsWith('/equipment')) return 4;
+    if (location.startsWith('/settings')) return 5;
+    return 1;
   }
 
   void _onItemTapped(int index, BuildContext context) {
@@ -226,12 +231,15 @@ class MainShell extends ConsumerWidget {
         context.go('/achievements');
         break;
       case 1:
-        context.go('/fish');
+        context.go('/');
         break;
       case 3:
-        context.go('/equipment');
+        context.go('/fish');
         break;
       case 4:
+        context.go('/equipment');
+        break;
+      case 5:
         context.go('/settings');
         break;
     }
