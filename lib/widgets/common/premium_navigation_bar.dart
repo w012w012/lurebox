@@ -78,8 +78,9 @@ class PremiumNavigationBar extends StatelessWidget {
 
   /// FAB 模式：4 个 Tab 分列两侧，中间显示 FAB
   Widget _buildWithCenterFab(BuildContext context, bool isDark) {
-    // showCenterFab=true 时，destinations 只有 4 项：
-    // index 0: achievements, index 1: fish, index 2: [FAB], index 3: equipment, index 4: settings
+    // showCenterFab=true 时，destinations 4 项：
+    // index 0: home, index 1: fish, index 2: equipment, index 3: me
+    // FAB 居中在 index 1 和 index 2 之间
     final tabs = destinations; // 4 items
 
     return Stack(
@@ -89,7 +90,7 @@ class PremiumNavigationBar extends StatelessWidget {
         Positioned.fill(
           child: Row(
             children: [
-              // Tab 0: achievements
+              // Tab 0: home
               _NavTab(
                 isSelected: selectedIndex == 0,
                 onTap: () => onDestinationSelected(0),
@@ -109,19 +110,19 @@ class PremiumNavigationBar extends StatelessWidget {
               ),
               // 中心 FAB 占位（不响应 Tab 切换）
               const Expanded(child: SizedBox()),
-              // Tab 3: equipment
+              // Tab 2: equipment
               _NavTab(
-                isSelected: selectedIndex == 3,
-                onTap: () => onDestinationSelected(3),
+                isSelected: selectedIndex == 2,
+                onTap: () => onDestinationSelected(2),
                 icon: tabs[2].icon,
                 selectedIcon: tabs[2].selectedIcon,
                 label: tabs[2].label,
                 isDark: isDark,
               ),
-              // Tab 4: settings
+              // Tab 3: me
               _NavTab(
-                isSelected: selectedIndex == 4,
-                onTap: () => onDestinationSelected(4),
+                isSelected: selectedIndex == 3,
+                onTap: () => onDestinationSelected(3),
                 icon: tabs[3].icon,
                 selectedIcon: tabs[3].selectedIcon,
                 label: tabs[3].label,
@@ -130,11 +131,11 @@ class PremiumNavigationBar extends StatelessWidget {
             ],
           ),
         ),
-        // 居中 FAB：向上突出 28px
+        // 居中 FAB：向上突出 36px，更大更醒目
         Positioned(
           left: 0,
           right: 0,
-          top: -28,
+          top: -36,
           child: Center(child: _buildCenterFab(context)),
         ),
       ],
@@ -148,15 +149,21 @@ class PremiumNavigationBar extends StatelessWidget {
       child: GestureDetector(
         onTap: onCenterFabPressed ?? () => _defaultFabAction(context),
         child: Container(
-          width: 56,
-          height: 56,
+          width: 64,
+          height: 64,
           decoration: BoxDecoration(
             color: TeslaColors.electricBlue,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: TeslaColors.electricBlue.withValues(alpha: 0.4),
-                blurRadius: 12,
+                color: TeslaColors.electricBlue.withValues(alpha: 0.5),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+              BoxShadow(
+                color: TeslaColors.electricBlue.withValues(alpha: 0.25),
+                blurRadius: 24,
+                spreadRadius: 2,
                 offset: const Offset(0, 4),
               ),
             ],
@@ -164,7 +171,7 @@ class PremiumNavigationBar extends StatelessWidget {
           child: const Icon(
             Icons.camera_alt,
             color: Colors.white,
-            size: 26,
+            size: 30,
           ),
         ),
       ),

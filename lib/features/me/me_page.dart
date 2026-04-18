@@ -61,6 +61,16 @@ class _MePageState extends ConsumerState<MePage> {
           _buildStatsCard(context, strings, settingsState),
           const SizedBox(height: TeslaTheme.spacingSm),
 
+          // Achievements entry
+          SettingsTile(
+            icon: Icons.emoji_events,
+            title: strings.achievement,
+            subtitle: '查看你的钓鱼成就',
+            showChevron: true,
+            onTap: () => context.push('/achievements'),
+          ),
+          const SizedBox(height: TeslaTheme.spacingSm),
+
           // Data management section header
           _buildSectionHeader(context, strings.dataManagement),
           const SizedBox(height: TeslaTheme.spacingMicro),
