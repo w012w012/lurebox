@@ -10,11 +10,12 @@ import '../../features/equipment/equipment_overview_page.dart';
 import '../../features/fish_detail/fish_detail_page.dart';
 import '../../features/fish_list/fish_list_page.dart';
 import '../../features/home/home_page.dart';
+import '../../features/me/me_page.dart';
 import '../../features/onboarding/onboarding_page.dart';
 import '../../features/settings/ai_recognition_settings_page.dart';
 import '../../features/settings/export_backup_management_page.dart';
 import '../../features/settings/location_management_page.dart';
-import '../../features/me/me_page.dart';
+import '../../features/settings/settings_page.dart';
 import '../../features/settings/species_management_page.dart';
 import '../../features/settings/watermark_settings_page.dart';
 import '../../features/stats/stats_detail_page.dart';
@@ -74,6 +75,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/camera',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const CameraPage(),
+      ),
+      GoRoute(
+        path: '/achievements',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AchievementPage(),
+      ),
+      GoRoute(
+        path: '/settings',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SettingsPage(),
       ),
       GoRoute(
         path: '/species',
@@ -141,10 +152,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
         routes: [
           GoRoute(
-            path: '/achievements',
-            builder: (context, state) => const AchievementPage(),
-          ),
-          GoRoute(
             path: '/fish',
             builder: (context, state) => const FishListPage(),
           ),
@@ -182,11 +189,6 @@ class MainShell extends ConsumerWidget {
         onDestinationSelected: (index) => _onItemTapped(index, context),
         destinations: [
           PremiumNavigationDestination(
-            icon: Icons.emoji_events_outlined,
-            selectedIcon: Icons.emoji_events,
-            label: strings.achievement,
-          ),
-          PremiumNavigationDestination(
             icon: Icons.home_outlined,
             selectedIcon: Icons.home,
             label: strings.home,
@@ -215,31 +217,27 @@ class MainShell extends ConsumerWidget {
 
   int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    // 5 tabs + FAB gap at index 2: 0=achievements, 1=home, 2=FAB, 3=fish, 4=equipment, 5=me
-    if (location.startsWith('/achievements')) return 0;
-    if (location == '/') return 1;
-    if (location.startsWith('/fish')) return 3;
-    if (location.startsWith('/equipment')) return 4;
-    if (location.startsWith('/me')) return 5;
-    return 1;
+    // 4 tabs + FAB gap at index 1: 0=home, 1=FAB, 2=fish, 3=equipment, 4=me
+    if (location == '/') return 0;
+    if (location.startsWith('/fish')) return 2;
+    if (location.startsWith('/equipment')) return 3;
+    if (location.startsWith('/me')) return 4;
+    return 0;
   }
 
   void _onItemTapped(int index, BuildContext context) {
-    // index 2 是 FAB，不导航
+    // index 1 是 FAB，不导航
     switch (index) {
       case 0:
-        context.go('/achievements');
-        break;
-      case 1:
         context.go('/');
         break;
-      case 3:
+      case 2:
         context.go('/fish');
         break;
-      case 4:
+      case 3:
         context.go('/equipment');
         break;
-      case 5:
+      case 4:
         context.go('/me');
         break;
     }
