@@ -5,7 +5,11 @@ class AppStrings {
   final String fishList;
   final String equipment;
   final String achievement;
+  final String me;
   final String settings;
+  final String dataManagement;
+  final String appearanceSettings;
+  final String appearanceSettingsDesc;
   final String fishCount;
   final String release;
   final String keep;
@@ -60,6 +64,7 @@ class AppStrings {
   final String darkMode;
   final String language;
   final String watermarkSettings;
+  final String watermarkSettingsDesc;
   final String watermarkEnabled;
   final String watermarkDisabled;
   final String displayInfo;
@@ -511,7 +516,11 @@ class AppStrings {
     required this.fishList,
     required this.equipment,
     required this.achievement,
+    required this.me,
     required this.settings,
+    required this.dataManagement,
+    required this.appearanceSettings,
+    required this.appearanceSettingsDesc,
     required this.fishCount,
     required this.release,
     required this.keep,
@@ -566,6 +575,7 @@ class AppStrings {
     required this.darkMode,
     required this.language,
     required this.watermarkSettings,
+    required this.watermarkSettingsDesc,
     required this.watermarkEnabled,
     required this.watermarkDisabled,
     required this.displayInfo,
@@ -994,7 +1004,11 @@ class AppStrings {
     fishList: '鱼护',
     equipment: '装备',
     achievement: '成就',
+    me: '我的',
     settings: '设置',
+    dataManagement: '数据管理',
+    appearanceSettings: '外观与语言',
+    appearanceSettingsDesc: '深色模式、语言',
     fishCount: '渔获总数',
     release: '放流',
     keep: '保留',
@@ -1049,6 +1063,7 @@ class AppStrings {
     darkMode: '深色模式',
     language: '语言',
     watermarkSettings: '水印设置',
+    watermarkSettingsDesc: '自定义水印样式',
     watermarkEnabled: '水印已开启',
     watermarkDisabled: '水印已关闭',
     displayInfo: '显示信息',
@@ -1487,7 +1502,11 @@ class AppStrings {
     fishList: 'Fish List',
     equipment: 'Equipment',
     achievement: 'Achievement',
+    me: 'Me',
     settings: 'Settings',
+    dataManagement: 'Data Management',
+    appearanceSettings: 'Appearance',
+    appearanceSettingsDesc: 'Dark mode, language',
     fishCount: 'Total Catch',
     release: 'Release',
     keep: 'Keep',
@@ -1542,6 +1561,7 @@ class AppStrings {
     darkMode: 'Dark Mode',
     language: 'Language',
     watermarkSettings: 'Watermark Settings',
+    watermarkSettingsDesc: 'Custom watermark style',
     watermarkEnabled: 'Watermark Enabled',
     watermarkDisabled: 'Watermark Disabled',
     displayInfo: 'Display Info',
