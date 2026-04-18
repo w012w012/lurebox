@@ -65,7 +65,7 @@ class _MePageState extends ConsumerState<MePage> {
           SettingsTile(
             icon: Icons.emoji_events,
             title: strings.achievement,
-            subtitle: '查看你的钓鱼成就',
+            subtitle: strings.viewAchievements,
             showChevron: true,
             onTap: () => context.push('/achievements'),
           ),

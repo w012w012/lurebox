@@ -5,6 +5,7 @@ class AppStrings {
   final String fishList;
   final String equipment;
   final String achievement;
+  final String viewAchievements;
   final String me;
   final String settings;
   final String dataManagement;
@@ -220,6 +221,8 @@ class AppStrings {
   final String achievementOverview;
   final String unlocked;
   final String totalAchievements;
+  final String achievementUnit;
+  final String remainingAchievements;
   final String noAchievements;
   final String achieved;
   final String editEquipment;
@@ -516,6 +519,7 @@ class AppStrings {
     required this.fishList,
     required this.equipment,
     required this.achievement,
+    required this.viewAchievements,
     required this.me,
     required this.settings,
     required this.dataManagement,
@@ -729,6 +733,8 @@ class AppStrings {
     required this.achievementOverview,
     required this.unlocked,
     required this.totalAchievements,
+    required this.achievementUnit,
+    required this.remainingAchievements,
     required this.noAchievements,
     required this.achieved,
     required this.editEquipment,
@@ -1004,6 +1010,7 @@ class AppStrings {
     fishList: '鱼护',
     equipment: '装备',
     achievement: '成就',
+    viewAchievements: '查看你的钓鱼成就',
     me: '我的',
     settings: '设置',
     dataManagement: '数据管理',
@@ -1217,6 +1224,8 @@ class AppStrings {
     achievementOverview: '成就总览',
     unlocked: '已解锁',
     totalAchievements: '总成就',
+    achievementUnit: '个成就',
+    remainingAchievements: '还需要 \$count 项成就',
     noAchievements: '暂无成就',
     achieved: '已达成',
     editEquipment: '编辑装备',
@@ -1502,6 +1511,7 @@ class AppStrings {
     fishList: 'Fish List',
     equipment: 'Equipment',
     achievement: 'Achievement',
+    viewAchievements: 'View your fishing achievements',
     me: 'Me',
     settings: 'Settings',
     dataManagement: 'Data Management',
@@ -1716,6 +1726,8 @@ class AppStrings {
     achievementOverview: 'Achievement Overview',
     unlocked: 'Unlocked',
     totalAchievements: 'Total Achievements',
+    achievementUnit: ' achievements',
+    remainingAchievements: 'Need \$count more achievements',
     noAchievements: 'No achievements',
     achieved: 'Achieved',
     editEquipment: 'Edit Equipment',

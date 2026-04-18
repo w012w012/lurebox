@@ -38,7 +38,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('成就'),
+        title: Text(strings.achievement),
         centerTitle: true,
       ),
       body: achievementsAsync.when(
@@ -184,7 +184,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                                   ),
                         ),
                         Text(
-                          '完成',
+                          strings.completion,
                           style:
                               Theme.of(context).textTheme.labelSmall?.copyWith(
                                     color: TeslaColors.white,
@@ -203,7 +203,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '成就概览',
+                    strings.achievementOverview,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w500,
                           color: TeslaColors.white,
@@ -214,7 +214,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                     children: [
                       _buildAchievementStatItem(
                         context,
-                        '已解锁',
+                        strings.unlocked,
                         '$unlockedCount',
                         Icons.emoji_events,
                         const Color(0xFFD4AF37),
@@ -222,7 +222,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                       const SizedBox(width: 20),
                       _buildAchievementStatItem(
                         context,
-                        '总成就',
+                        strings.totalAchievements,
                         '$totalCount',
                         Icons.stars,
                         TeslaColors.white,
@@ -367,14 +367,20 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
 
   String _getCategoryIcon(String category) {
     switch (category) {
-      case '数量':
+      case '数量类':
         return '🐟';
-      case '尺寸':
+      case '尺寸类':
         return '📏';
-      case '品种':
+      case '品种类':
         return '🪣';
-      case '地点':
+      case '地点类':
         return '📍';
+      case '装备类':
+        return '🎣';
+      case '环保类':
+        return '🌿';
+      case '特殊成就':
+        return '🏆';
       default:
         return '🏆';
     }
