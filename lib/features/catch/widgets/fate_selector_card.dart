@@ -84,7 +84,7 @@ class FateSelectorCard extends StatelessWidget {
               child: FateButton(
                 label: '🐟 ${strings.release}',
                 isSelected: state.fate == FishFateType.release,
-                color: TeslaColors.electricBlue,
+                color: AppColors.release,
                 onTap: () => vm.setFate(FishFateType.release),
               ),
             ),
@@ -93,7 +93,7 @@ class FateSelectorCard extends StatelessWidget {
               child: FateButton(
                 label: '🍳 ${strings.keep}',
                 isSelected: state.fate == FishFateType.keep,
-                color: TeslaColors.electricBlue,
+                color: AppColors.keep,
                 onTap: () => vm.setFate(FishFateType.keep),
               ),
             ),

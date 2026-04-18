@@ -11,6 +11,7 @@ import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
 import '../../core/providers/watermark_provider.dart';
 import '../../core/utils/unit_converter.dart';
+import '../../widgets/common/app_snack_bar.dart';
 import '../common/watermarked_image.dart';
 import '../../widgets/common/premium_button.dart';
 import '../../widgets/common/premium_card.dart';
@@ -362,9 +363,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
       final imagePath = fish['image_path'] as String?;
       if (imagePath == null || imagePath.isEmpty) {
         if (context.mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(strings.takePhotoFirst)));
+          AppSnackBar.showError(context, strings.takePhotoFirst);
         }
         return;
       }
@@ -463,9 +462,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
       if (watermarkedPath == null) {
         if (context.mounted) {
           Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(strings.shareFailed)),
-          );
+          AppSnackBar.showError(context, strings.shareFailed);
         }
         return;
       }
@@ -483,9 +480,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
       debugPrint('分享失败: $e');
       if (context.mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('${strings.shareFailed}: $e')));
+        AppSnackBar.showError(context, strings.shareFailed, debugError: e);
       }
     } finally {
       ref

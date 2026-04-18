@@ -144,6 +144,8 @@ class AppStrings {
   final String clearFilters;
   final String filterActive;
   final String expandFilter;
+  final String filter;
+  final String done;
   final String noFishFound;
   final String noMatchFound;
   final String cameraNotReady;
@@ -646,6 +648,8 @@ class AppStrings {
     required this.clearFilters,
     required this.filterActive,
     required this.expandFilter,
+    required this.filter,
+    required this.done,
     required this.noFishFound,
     required this.noMatchFound,
     required this.cameraNotReady,
@@ -1127,6 +1131,8 @@ class AppStrings {
     clearFilters: '清除筛选',
     filterActive: '筛选条件已生效，点击展开修改',
     expandFilter: '点击展开筛选',
+    filter: '筛选',
+    done: '完成',
     noFishFound: '没有找到鱼获',
     noMatchFound: '未找到匹配的鱼获',
     cameraNotReady: '相机未就绪',
@@ -1619,6 +1625,8 @@ class AppStrings {
     clearFilters: 'Clear Filters',
     filterActive: 'Filters active, tap to modify',
     expandFilter: 'Tap to expand filters',
+    filter: 'Filter',
+    done: 'Done',
     noFishFound: 'No fish found',
     noMatchFound: 'No matching fish found',
     cameraNotReady: 'Camera not ready',

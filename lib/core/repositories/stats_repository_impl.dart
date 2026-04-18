@@ -383,6 +383,7 @@ class SqliteStatsRepository implements StatsRepository {
           yearEnd: yearEnd,
         ),
         getTop3LongestCatches(),
+        getDailyCatchCount(startDate: monthStart, endDate: todayEnd),
       ]);
 
       final catchStats = results[0] as Map<String, CatchStats>;
@@ -399,6 +400,7 @@ class SqliteStatsRepository implements StatsRepository {
         allSpecies: speciesStats['all'] ?? {},
         top3Longest:
             (results[2] as List<FishCatch>).map((f) => f.toMap()).toList(),
+        monthTrend: results[3] as List<Map<String, dynamic>>,
       );
     } catch (e) {
       throw DatabaseException('Failed to get dashboard data: $e');
@@ -683,12 +685,44 @@ GROUP BY eq_id, species
       final db = await DatabaseProvider.instance.database;
       final results = await db.rawQuery('''
         SELECT COUNT(*) as count FROM $_tableName
-        WHERE equipment_id IS NOT NULL 
+        WHERE equipment_id IS NOT NULL
            OR (rod_id IS NOT NULL AND reel_id IS NOT NULL AND lure_id IS NOT NULL)
       ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
       throw DatabaseException('Failed to get equipment full status: $e');
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getDailyCatchCount({
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async {
+    try {
+      final db = await DatabaseProvider.instance.database;
+      final results = await db.rawQuery('''
+        SELECT
+          DATE(catch_time) as date,
+          COUNT(*) as count,
+          SUM(CASE WHEN fate = 0 THEN 1 ELSE 0 END) as release,
+          SUM(CASE WHEN fate = 1 THEN 1 ELSE 0 END) as keep
+        FROM $_tableName
+        WHERE catch_time >= ? AND catch_time < ?
+        GROUP BY DATE(catch_time)
+        ORDER BY date ASC
+      ''', [startDate.toIso8601String(), endDate.toIso8601String()]);
+
+      return results.map((row) {
+        return {
+          'date': row['date'] as String,
+          'count': row['count'] as int? ?? 0,
+          'release': row['release'] as int? ?? 0,
+          'keep': row['keep'] as int? ?? 0,
+        };
+      }).toList();
+    } catch (e) {
+      throw DatabaseException('Failed to get daily catch count: $e');
     }
   }
 }

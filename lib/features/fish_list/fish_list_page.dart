@@ -310,24 +310,20 @@ class _FishListPageState extends ConsumerState<FishListPage>
       final hasFilters = state.hasFilters;
       if (hasFilters) {
         // Has filters but no results
-        return EmptyView(
+        return AppEmptyState(
           message: strings.noMatchFound,
           icon: Icons.search_off,
-          action: PremiumButton(
-            text: strings.clearFilters,
-            onPressed: () =>
-                ref.read(fishListViewModelProvider.notifier).clearFilters(),
-          ),
+          actionLabel: strings.clearFilters,
+          onAction: () =>
+              ref.read(fishListViewModelProvider.notifier).clearFilters(),
         );
       } else {
         // No catches at all
-        return EmptyView(
+        return AppEmptyState(
           message: strings.noFishFound,
           icon: Icons.photo_camera_outlined,
-          action: PremiumButton(
-            text: strings.recordCatch,
-            onPressed: () => context.push('/camera'),
-          ),
+          actionLabel: strings.recordCatch,
+          onAction: () => context.push('/camera'),
         );
       }
     }
@@ -354,41 +350,19 @@ class _FishListPageState extends ConsumerState<FishListPage>
   Widget _buildMobileListView(FishListState state, AppStrings strings) {
     return Column(
       children: [
-        // Filter panel and sort bar are built once outside the list
-        state.filterExpanded
-            ? FishFilterPanel(
-                strings: strings,
-                timeFilter: state.filter.timeFilter,
-                fateFilter: state.filter.fateFilter,
-                speciesFilter: state.filter.speciesFilter,
-                speciesList: state.uniqueSpecies,
-                customDateLabel: state.getCustomDateLabel(
-                  () => strings.custom,
-                ),
-                onShowDateRangePicker: _showDateRangePicker,
-                onTimeFilterChanged: (filter) => ref
-                    .read(fishListViewModelProvider.notifier)
-                    .setTimeFilter(filter),
-                onFateFilterChanged: (fate) => ref
-                    .read(fishListViewModelProvider.notifier)
-                    .setFateFilter(fate),
-                onSpeciesFilterChanged: (species) => ref
-                    .read(fishListViewModelProvider.notifier)
-                    .setSpeciesFilter(species),
-              )
-            : FishFilterCollapsed(
-                hasFilters: state.hasFilters,
-                filterLabel: strings.filterActive,
-                expandLabel: strings.expandFilter,
-                onTap: () => ref
-                    .read(fishListViewModelProvider.notifier)
-                    .toggleFilterExpanded(),
-                onClear: state.hasFilters
-                    ? () => ref
-                        .read(fishListViewModelProvider.notifier)
-                        .clearFilters()
-                    : null,
-              ),
+        // Filter trigger — opens bottom sheet
+        FishFilterCollapsed(
+          hasFilters: state.hasFilters,
+          filterLabel: strings.filterActive,
+          expandLabel: strings.expandFilter,
+          onTap: () {},
+          onClear: state.hasFilters
+              ? () => ref
+                  .read(fishListViewModelProvider.notifier)
+                  .clearFilters()
+              : null,
+          onShowSheet: () => _showFilterSheet(context, state, strings),
+        ),
         _buildSortBar(state, strings),
         Expanded(
           child: ListView.builder(
@@ -403,6 +377,26 @@ class _FishListPageState extends ConsumerState<FishListPage>
     );
   }
 
+  void _showFilterSheet(
+      BuildContext context, FishListState state, AppStrings strings) {
+    FishFilterPanel.show(
+      context: context,
+      strings: strings,
+      timeFilter: state.filter.timeFilter,
+      fateFilter: state.filter.fateFilter,
+      speciesFilter: state.filter.speciesFilter,
+      speciesList: state.uniqueSpecies,
+      customDateLabel: state.getCustomDateLabel(() => strings.custom),
+      onShowDateRangePicker: _showDateRangePicker,
+      onTimeFilterChanged: (filter) =>
+          ref.read(fishListViewModelProvider.notifier).setTimeFilter(filter),
+      onFateFilterChanged: (fate) =>
+          ref.read(fishListViewModelProvider.notifier).setFateFilter(fate),
+      onSpeciesFilterChanged: (species) =>
+          ref.read(fishListViewModelProvider.notifier).setSpeciesFilter(species),
+    );
+  }
+
   Widget _buildTabletGridView(
       BoxConstraints constraints, FishListState state, AppStrings strings) {
     final crossAxisCount = constraints.maxWidth >= 900 ? 3 : 2;
@@ -414,40 +408,18 @@ class _FishListPageState extends ConsumerState<FishListPage>
       controller: _scrollController,
       slivers: [
         SliverToBoxAdapter(
-          child: state.filterExpanded
-              ? FishFilterPanel(
-                  strings: strings,
-                  timeFilter: state.filter.timeFilter,
-                  fateFilter: state.filter.fateFilter,
-                  speciesFilter: state.filter.speciesFilter,
-                  speciesList: state.uniqueSpecies,
-                  customDateLabel: state.getCustomDateLabel(
-                    () => strings.custom,
-                  ),
-                  onShowDateRangePicker: _showDateRangePicker,
-                  onTimeFilterChanged: (filter) => ref
-                      .read(fishListViewModelProvider.notifier)
-                      .setTimeFilter(filter),
-                  onFateFilterChanged: (fate) => ref
-                      .read(fishListViewModelProvider.notifier)
-                      .setFateFilter(fate),
-                  onSpeciesFilterChanged: (species) => ref
-                      .read(fishListViewModelProvider.notifier)
-                      .setSpeciesFilter(species),
-                )
-              : FishFilterCollapsed(
-                  hasFilters: state.hasFilters,
-                  filterLabel: strings.filterActive,
-                  expandLabel: strings.expandFilter,
-                  onTap: () => ref
-                      .read(fishListViewModelProvider.notifier)
-                      .toggleFilterExpanded(),
-                  onClear: state.hasFilters
-                      ? () => ref
-                          .read(fishListViewModelProvider.notifier)
-                          .clearFilters()
-                      : null,
-                ),
+          child: FishFilterCollapsed(
+            hasFilters: state.hasFilters,
+            filterLabel: strings.filterActive,
+            expandLabel: strings.expandFilter,
+            onTap: () {},
+            onClear: state.hasFilters
+                ? () => ref
+                    .read(fishListViewModelProvider.notifier)
+                    .clearFilters()
+                : null,
+            onShowSheet: () => _showFilterSheet(context, state, strings),
+          ),
         ),
         SliverToBoxAdapter(
           child: _buildSortBar(state, strings),

@@ -77,6 +77,7 @@ class DashboardData {
   final CatchStats allStats;
   final Map<String, int> allSpecies;
   final List<Map<String, dynamic>> top3Longest;
+  final List<Map<String, dynamic>> monthTrend;
 
   const DashboardData({
     required this.todayStats,
@@ -88,6 +89,7 @@ class DashboardData {
     required this.allStats,
     required this.allSpecies,
     required this.top3Longest,
+    this.monthTrend = const [],
   });
 }
 

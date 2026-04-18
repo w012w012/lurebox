@@ -20,7 +20,7 @@ core/
 ├── design/         # Theme, colors (light/dark)
 ├── utils/          # Helpers, converters
 ├── exceptions/     # Custom exception types (SpeciesAliasException, etc.)
-└── widgets/        # Shared core widgets (ErrorView, ErrorToast)
+└── widgets/        # Shared core widgets (ErrorView, AppEmptyState, LoadingView)
 ```
 
 ## WHERE TO LOOK
@@ -61,6 +61,6 @@ flutter analyze
 ```
 
 ## NOTES
-- 95 Dart files, 109 exports via `core.dart` barrel
+- 199 Dart files in lib/, 109 exports via `core.dart` barrel
 - All features depend on this layer - changes here affect everything
 - `core/services/providers/` has 12 AI provider implementations
