@@ -217,8 +217,8 @@ class MainShell extends ConsumerWidget {
 
   int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    // Nav bar: 0=home, 1=FAB gap, 2=equipment, 3=me
-    // Actual tab indices: home=0, fish=1, equipment=2, me=3
+    // tabs[0]=home→Row[0], tabs[1]=fish→Row[1], tabs[2]=equipment→Row[3], tabs[3]=me→Row[4]
+    // selectedIndex 是 tabs 数组索引，不是 Row 物理位置
     if (location == '/') return 0;
     if (location.startsWith('/fish')) return 1;
     if (location.startsWith('/equipment')) return 2;
@@ -227,10 +227,13 @@ class MainShell extends ConsumerWidget {
   }
 
   void _onItemTapped(int index, BuildContext context) {
-    // index 1 是 FAB，不导航
+    // tabs[0]=home, tabs[1]=fish, tabs[2]=equipment, tabs[3]=me
     switch (index) {
       case 0:
         context.go('/');
+        break;
+      case 1:
+        context.go('/fish');
         break;
       case 2:
         context.go('/equipment');
