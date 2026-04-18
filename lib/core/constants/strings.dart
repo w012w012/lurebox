@@ -5,7 +5,12 @@ class AppStrings {
   final String fishList;
   final String equipment;
   final String achievement;
+  final String viewAchievements;
+  final String me;
   final String settings;
+  final String dataManagement;
+  final String appearanceSettings;
+  final String appearanceSettingsDesc;
   final String fishCount;
   final String release;
   final String keep;
@@ -60,6 +65,7 @@ class AppStrings {
   final String darkMode;
   final String language;
   final String watermarkSettings;
+  final String watermarkSettingsDesc;
   final String watermarkEnabled;
   final String watermarkDisabled;
   final String displayInfo;
@@ -144,6 +150,8 @@ class AppStrings {
   final String clearFilters;
   final String filterActive;
   final String expandFilter;
+  final String filter;
+  final String done;
   final String noFishFound;
   final String noMatchFound;
   final String cameraNotReady;
@@ -213,6 +221,8 @@ class AppStrings {
   final String achievementOverview;
   final String unlocked;
   final String totalAchievements;
+  final String achievementUnit;
+  final String remainingAchievements;
   final String noAchievements;
   final String achieved;
   final String editEquipment;
@@ -509,7 +519,12 @@ class AppStrings {
     required this.fishList,
     required this.equipment,
     required this.achievement,
+    required this.viewAchievements,
+    required this.me,
     required this.settings,
+    required this.dataManagement,
+    required this.appearanceSettings,
+    required this.appearanceSettingsDesc,
     required this.fishCount,
     required this.release,
     required this.keep,
@@ -564,6 +579,7 @@ class AppStrings {
     required this.darkMode,
     required this.language,
     required this.watermarkSettings,
+    required this.watermarkSettingsDesc,
     required this.watermarkEnabled,
     required this.watermarkDisabled,
     required this.displayInfo,
@@ -646,6 +662,8 @@ class AppStrings {
     required this.clearFilters,
     required this.filterActive,
     required this.expandFilter,
+    required this.filter,
+    required this.done,
     required this.noFishFound,
     required this.noMatchFound,
     required this.cameraNotReady,
@@ -715,6 +733,8 @@ class AppStrings {
     required this.achievementOverview,
     required this.unlocked,
     required this.totalAchievements,
+    required this.achievementUnit,
+    required this.remainingAchievements,
     required this.noAchievements,
     required this.achieved,
     required this.editEquipment,
@@ -990,7 +1010,12 @@ class AppStrings {
     fishList: '鱼护',
     equipment: '装备',
     achievement: '成就',
+    viewAchievements: '查看你的钓鱼成就',
+    me: '我的',
     settings: '设置',
+    dataManagement: '数据管理',
+    appearanceSettings: '外观与语言',
+    appearanceSettingsDesc: '深色模式、语言',
     fishCount: '渔获总数',
     release: '放流',
     keep: '保留',
@@ -1045,6 +1070,7 @@ class AppStrings {
     darkMode: '深色模式',
     language: '语言',
     watermarkSettings: '水印设置',
+    watermarkSettingsDesc: '自定义水印样式',
     watermarkEnabled: '水印已开启',
     watermarkDisabled: '水印已关闭',
     displayInfo: '显示信息',
@@ -1127,6 +1153,8 @@ class AppStrings {
     clearFilters: '清除筛选',
     filterActive: '筛选条件已生效，点击展开修改',
     expandFilter: '点击展开筛选',
+    filter: '筛选',
+    done: '完成',
     noFishFound: '没有找到鱼获',
     noMatchFound: '未找到匹配的鱼获',
     cameraNotReady: '相机未就绪',
@@ -1196,6 +1224,8 @@ class AppStrings {
     achievementOverview: '成就总览',
     unlocked: '已解锁',
     totalAchievements: '总成就',
+    achievementUnit: '个成就',
+    remainingAchievements: '还需要 \$count 项成就',
     noAchievements: '暂无成就',
     achieved: '已达成',
     editEquipment: '编辑装备',
@@ -1481,7 +1511,12 @@ class AppStrings {
     fishList: 'Fish List',
     equipment: 'Equipment',
     achievement: 'Achievement',
+    viewAchievements: 'View your fishing achievements',
+    me: 'Me',
     settings: 'Settings',
+    dataManagement: 'Data Management',
+    appearanceSettings: 'Appearance',
+    appearanceSettingsDesc: 'Dark mode, language',
     fishCount: 'Total Catch',
     release: 'Release',
     keep: 'Keep',
@@ -1536,6 +1571,7 @@ class AppStrings {
     darkMode: 'Dark Mode',
     language: 'Language',
     watermarkSettings: 'Watermark Settings',
+    watermarkSettingsDesc: 'Custom watermark style',
     watermarkEnabled: 'Watermark Enabled',
     watermarkDisabled: 'Watermark Disabled',
     displayInfo: 'Display Info',
@@ -1619,6 +1655,8 @@ class AppStrings {
     clearFilters: 'Clear Filters',
     filterActive: 'Filters active, tap to modify',
     expandFilter: 'Tap to expand filters',
+    filter: 'Filter',
+    done: 'Done',
     noFishFound: 'No fish found',
     noMatchFound: 'No matching fish found',
     cameraNotReady: 'Camera not ready',
@@ -1688,6 +1726,8 @@ class AppStrings {
     achievementOverview: 'Achievement Overview',
     unlocked: 'Unlocked',
     totalAchievements: 'Total Achievements',
+    achievementUnit: ' achievements',
+    remainingAchievements: 'Need \$count more achievements',
     noAchievements: 'No achievements',
     achieved: 'Achieved',
     editEquipment: 'Edit Equipment',

@@ -10,6 +10,7 @@ import '../../features/equipment/equipment_overview_page.dart';
 import '../../features/fish_detail/fish_detail_page.dart';
 import '../../features/fish_list/fish_list_page.dart';
 import '../../features/home/home_page.dart';
+import '../../features/me/me_page.dart';
 import '../../features/onboarding/onboarding_page.dart';
 import '../../features/settings/ai_recognition_settings_page.dart';
 import '../../features/settings/export_backup_management_page.dart';
@@ -74,6 +75,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/camera',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const CameraPage(),
+      ),
+      GoRoute(
+        path: '/achievements',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const AchievementPage(),
+      ),
+      GoRoute(
+        path: '/settings',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const SettingsPage(),
       ),
       GoRoute(
         path: '/species',
@@ -141,24 +152,20 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
         routes: [
           GoRoute(
-            path: '/achievements',
-            builder: (context, state) => const AchievementPage(),
+            path: '/',
+            builder: (context, state) => const HomePage(),
           ),
           GoRoute(
             path: '/fish',
             builder: (context, state) => const FishListPage(),
           ),
           GoRoute(
-            path: '/',
-            builder: (context, state) => const HomePage(),
-          ),
-          GoRoute(
             path: '/equipment',
             builder: (context, state) => const EquipmentListPage(),
           ),
           GoRoute(
-            path: '/settings',
-            builder: (context, state) => const SettingsPage(),
+            path: '/me',
+            builder: (context, state) => const MePage(),
           ),
         ],
       ),
@@ -182,9 +189,9 @@ class MainShell extends ConsumerWidget {
         onDestinationSelected: (index) => _onItemTapped(index, context),
         destinations: [
           PremiumNavigationDestination(
-            icon: Icons.emoji_events_outlined,
-            selectedIcon: Icons.emoji_events,
-            label: strings.achievement,
+            icon: Icons.home_outlined,
+            selectedIcon: Icons.home,
+            label: strings.home,
           ),
           PremiumNavigationDestination(
             icon: Icons.list_alt_outlined,
@@ -192,51 +199,44 @@ class MainShell extends ConsumerWidget {
             label: strings.fishList,
           ),
           PremiumNavigationDestination(
-            icon: Icons.home_outlined,
-            selectedIcon: Icons.home,
-            label: strings.home,
-          ),
-          PremiumNavigationDestination(
             icon: Icons.hardware_outlined,
             selectedIcon: Icons.hardware,
             label: strings.equipment,
           ),
           PremiumNavigationDestination(
-            icon: Icons.settings_outlined,
-            selectedIcon: Icons.settings,
-            label: strings.settings,
+            icon: Icons.person_outline,
+            selectedIcon: Icons.person,
+            label: strings.me,
           ),
         ],
+        showCenterFab: true,
+        onCenterFabPressed: () => context.push('/camera'),
       ),
     );
   }
 
   int _calculateSelectedIndex(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
-    if (location.startsWith('/achievements')) return 0;
+    // Nav bar: 0=home, 1=FAB gap, 2=equipment, 3=me
+    // Actual tab indices: home=0, fish=1, equipment=2, me=3
+    if (location == '/') return 0;
     if (location.startsWith('/fish')) return 1;
-    if (location == '/') return 2;
-    if (location.startsWith('/equipment')) return 3;
-    if (location.startsWith('/settings')) return 4;
-    return 2;
+    if (location.startsWith('/equipment')) return 2;
+    if (location.startsWith('/me')) return 3;
+    return 0;
   }
 
   void _onItemTapped(int index, BuildContext context) {
+    // index 1 是 FAB，不导航
     switch (index) {
       case 0:
-        context.go('/achievements');
-        break;
-      case 1:
-        context.go('/fish');
-        break;
-      case 2:
         context.go('/');
         break;
-      case 3:
+      case 2:
         context.go('/equipment');
         break;
-      case 4:
-        context.go('/settings');
+      case 3:
+        context.go('/me');
         break;
     }
   }

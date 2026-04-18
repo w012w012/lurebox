@@ -19,6 +19,7 @@ class HomeState {
   final Map<String, int> allSpecies;
 
   final List<Map<String, dynamic>> top3Fishes;
+  final List<Map<String, dynamic>> monthTrend;
 
   const HomeState({
     this.isLoading = true,
@@ -32,6 +33,7 @@ class HomeState {
     this.allStats = const CatchStats(total: 0, release: 0, keep: 0),
     this.allSpecies = const {},
     this.top3Fishes = const [],
+    this.monthTrend = const [],
   });
 
   int get todayCount => todayStats.total;
@@ -62,6 +64,7 @@ class HomeState {
     CatchStats? allStats,
     Map<String, int>? allSpecies,
     List<Map<String, dynamic>>? top3Fishes,
+    List<Map<String, dynamic>>? monthTrend,
   }) {
     return HomeState(
       isLoading: isLoading ?? this.isLoading,
@@ -75,6 +78,7 @@ class HomeState {
       allStats: allStats ?? this.allStats,
       allSpecies: allSpecies ?? this.allSpecies,
       top3Fishes: top3Fishes ?? this.top3Fishes,
+      monthTrend: monthTrend ?? this.monthTrend,
     );
   }
 }
@@ -107,6 +111,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
         allStats: dashboard.allStats,
         allSpecies: dashboard.allSpecies,
         top3Fishes: dashboard.top3Longest,
+        monthTrend: dashboard.monthTrend,
       );
     } catch (e) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());

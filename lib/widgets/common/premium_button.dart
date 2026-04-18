@@ -238,7 +238,7 @@ class _PremiumButtonState extends State<PremiumButton> {
       child: ElevatedButton(
         onPressed: widget.isLoading ? null : widget.onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: TeslaColors.electricBlue,
+          backgroundColor: TeslaColors.danger,
           foregroundColor: Colors.white,
           elevation: 0,
           padding: widget.padding ??
@@ -459,7 +459,7 @@ class PremiumIconButton extends StatelessWidget {
             width: size,
             height: size,
             decoration: BoxDecoration(
-              color: backgroundColor ?? TeslaColors.electricBlue,
+              color: backgroundColor ?? TeslaColors.danger,
               borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
             ),
             child: IconButton(

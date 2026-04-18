@@ -246,4 +246,21 @@ class TeslaColors {
   static const Color tertiaryText = pewter;
   static const Color placeholder = silverFog;
   static const Color divider = cloudGray;
+
+  // ─── Semantic Colors ─────────────────────────────────────────────────────────
+
+  /// Release / catch-and-release (环保放流)
+  static const Color release = electricBlue;
+
+  /// Kept catch (保留食用)
+  static const Color keep = Color(0xFFFF9800);
+
+  /// Danger / destructive action (删除等危险操作)
+  static const Color danger = Color(0xFFF44336);
+
+  /// Success (成功状态)
+  static const Color success = Color(0xFF4CAF50);
+
+  /// Warning (警告状态)
+  static const Color warning = Color(0xFFFFC107);
 }
