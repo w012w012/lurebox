@@ -10,7 +10,6 @@ import '../../core/providers/home_view_model.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/pending_recognition_providers.dart';
 import '../../core/widgets/error_view.dart';
-import '../../widgets/common/premium_button.dart';
 import '../../widgets/common/premium_card.dart';
 
 class HomePage extends ConsumerWidget {
@@ -27,22 +26,6 @@ class HomePage extends ConsumerWidget {
         centerTitle: true,
       ),
       body: _HomePageBody(state: homeState, strings: strings),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: PremiumButton(
-            text: strings.recordCatch,
-            icon: Icons.camera_alt,
-            variant: PremiumButtonVariant.primary,
-            isFullWidth: true,
-            onPressed: () async {
-              await context.push('/camera');
-              if (!context.mounted) return;
-              ref.read(homeViewModelProvider.notifier).refresh();
-            },
-          ),
-        ),
-      ),
     );
   }
 }
@@ -236,7 +219,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                   );
                 },
               )),
-          const SizedBox(height: 80),
+          const SizedBox(height: 24),
         ],
       ),
     );

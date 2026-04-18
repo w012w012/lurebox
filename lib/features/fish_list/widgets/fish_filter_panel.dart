@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/models/fish_catch.dart';
 import '../../../widgets/common/filter_chip.dart';
 
@@ -30,27 +31,58 @@ class FishFilterPanel extends StatelessWidget {
     required this.onSpeciesFilterChanged,
   });
 
+  /// Show the filter panel as a modal bottom sheet.
+  static void show({
+    required BuildContext context,
+    required AppStrings strings,
+    required String timeFilter,
+    required FishFateType? fateFilter,
+    required String? speciesFilter,
+    required List<String> speciesList,
+    required String customDateLabel,
+    required VoidCallback onShowDateRangePicker,
+    required ValueChanged<String> onTimeFilterChanged,
+    required ValueChanged<FishFateType?> onFateFilterChanged,
+    required ValueChanged<String?> onSpeciesFilterChanged,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _FilterBottomSheet(
+        strings: strings,
+        timeFilter: timeFilter,
+        fateFilter: fateFilter,
+        speciesFilter: speciesFilter,
+        speciesList: speciesList,
+        customDateLabel: customDateLabel,
+        onShowDateRangePicker: onShowDateRangePicker,
+        onTimeFilterChanged: onTimeFilterChanged,
+        onFateFilterChanged: onFateFilterChanged,
+        onSpeciesFilterChanged: onSpeciesFilterChanged,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.surfaceContainerHighest,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSectionTitle(context, strings.time),
-          const SizedBox(height: 6),
-          _buildTimeChips(),
-          const SizedBox(height: 12),
-          _buildSectionTitle(context, strings.fate),
-          const SizedBox(height: 6),
-          _buildFateChips(),
-          const SizedBox(height: 12),
-          _buildSectionTitle(context, strings.species),
-          const SizedBox(height: 6),
-          _buildSpeciesChips(),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildSectionTitle(context, strings.time),
+        const SizedBox(height: 6),
+        _buildTimeChips(),
+        const SizedBox(height: 12),
+        _buildSectionTitle(context, strings.fate),
+        const SizedBox(height: 6),
+        _buildFateChips(),
+        const SizedBox(height: 12),
+        _buildSectionTitle(context, strings.species),
+        const SizedBox(height: 6),
+        _buildSpeciesChips(),
+        const SizedBox(height: 16),
+      ],
     );
   }
 
@@ -171,6 +203,7 @@ class FishFilterCollapsed extends StatelessWidget {
   final String expandLabel;
   final VoidCallback onTap;
   final VoidCallback? onClear;
+  final VoidCallback? onShowSheet;
 
   const FishFilterCollapsed({
     super.key,
@@ -179,12 +212,13 @@ class FishFilterCollapsed extends StatelessWidget {
     required this.expandLabel,
     required this.onTap,
     this.onClear,
+    this.onShowSheet,
   });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: onShowSheet ?? onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Row(
@@ -219,6 +253,110 @@ class FishFilterCollapsed extends StatelessWidget {
               size: 20,
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Bottom sheet wrapper for FishFilterPanel — Tesla-style sheet.
+class _FilterBottomSheet extends StatelessWidget {
+  final AppStrings strings;
+  final String timeFilter;
+  final FishFateType? fateFilter;
+  final String? speciesFilter;
+  final List<String> speciesList;
+  final String customDateLabel;
+  final VoidCallback onShowDateRangePicker;
+  final ValueChanged<String> onTimeFilterChanged;
+  final ValueChanged<FishFateType?> onFateFilterChanged;
+  final ValueChanged<String?> onSpeciesFilterChanged;
+
+  const _FilterBottomSheet({
+    required this.strings,
+    required this.timeFilter,
+    this.fateFilter,
+    this.speciesFilter,
+    required this.speciesList,
+    required this.customDateLabel,
+    required this.onShowDateRangePicker,
+    required this.onTimeFilterChanged,
+    required this.onFateFilterChanged,
+    required this.onSpeciesFilterChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? TeslaColors.carbonDark : TeslaColors.white,
+        borderRadius: const BorderRadius.vertical(
+          top: Radius.circular(TeslaTheme.radiusCard),
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Drag handle
+            Padding(
+              padding: const EdgeInsets.only(top: 12),
+              child: Container(
+                width: 36,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF5C5E62) : TeslaColors.cloudGray,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            // Header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 8, 0),
+              child: Row(
+                children: [
+                  Text(
+                    strings.filter,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: Text(
+                      strings.done,
+                      style: const TextStyle(
+                        color: TeslaColors.electricBlue,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Filter content
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+              child: FishFilterPanel(
+                strings: strings,
+                timeFilter: timeFilter,
+                fateFilter: fateFilter,
+                speciesFilter: speciesFilter,
+                speciesList: speciesList,
+                customDateLabel: customDateLabel,
+                onShowDateRangePicker: onShowDateRangePicker,
+                onTimeFilterChanged: onTimeFilterChanged,
+                onFateFilterChanged: onFateFilterChanged,
+                onSpeciesFilterChanged: onSpeciesFilterChanged,
+              ),
+            ),
+            // Bottom padding
+            const SizedBox(height: 16),
           ],
         ),
       ),

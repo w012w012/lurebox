@@ -104,6 +104,7 @@ final homeViewModelProvider = StateNotifierProvider<HomeNotifier, HomeState>((re
 
 ### Error Handling
 - Use `ErrorView` widget for UI error states
+- Use `AppSnackBar.showSuccess/showError/showInfo` for toast messages — do NOT use raw `ScaffoldMessenger`
 - Services return `Future<T>` or `Future<T?>`
 - Database operations wrapped in try-catch
 - Use `FlutterError.onError` in main.dart
@@ -128,8 +129,13 @@ Reference: `DESIGN.md` for full specification.
 
 **Preserved** (not migrated, used for semantic meaning):
 - `AppColors.gold/silver/bronze` — trophy/achievement colors
-- `AppColors.release/keep` — fish fate status labels
+- `AppColors.release`/`AppColors.keep` — fish fate status labels (green/orange, NOT TeslaColors)
 - Legacy `AppColors`/`AppTheme` for test compatibility
+
+**Color class usage rule**:
+- `TeslaColors` — design tokens per TESLA spec (Electric Blue, Carbon Dark, Frosted Glass, etc.)
+- `AppColors` — semantic/functional colors (release=green, keep=orange, success, danger, warning)
+- Fate indicator components (selector, filter chips, list items) must use `AppColors.release/keep`, NOT `TeslaColors`
 
 ### Testing
 - Group tests with `group('Description', () { ... })`

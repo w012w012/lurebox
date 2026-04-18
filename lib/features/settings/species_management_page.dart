@@ -12,6 +12,7 @@ import '../../core/services/fish_recognition_service.dart';
 import '../../core/models/fish_catch.dart';
 import '../../widgets/common/premium_card.dart';
 import '../../widgets/common/premium_button.dart';
+import '../../widgets/common/app_snack_bar.dart';
 import 'widgets/pending_queue_widget.dart';
 import 'widgets/species_management_helpers.dart';
 
@@ -109,15 +110,11 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           _recognitionStates.remove(fish.id);
         });
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('已更新品种: $speciesName')),
-          );
+          AppSnackBar.showSuccess(context, '已更新品种: $speciesName');
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('更新失败: $e')),
-          );
+          AppSnackBar.showError(context, '更新失败', debugError: e);
         }
       }
     }
@@ -153,7 +150,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       }
 
       final settings = ref.read(aiRecognitionSettingsProvider);
-      final currentConfig = settings.providerConfigs[settings.currentProvider];
+      final currentConfig =
+          settings.providerConfigs[settings.currentProvider];
       if (currentConfig == null || currentConfig.apiKey.isEmpty) {
         setState(() {
           _recognitionStates[fish.id] = const SingleRecognitionState(
@@ -234,15 +232,11 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           _recognitionStates.remove(fish.id);
         });
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('已更新品种: $speciesName')),
-          );
+          AppSnackBar.showSuccess(context, '已更新品种: $speciesName');
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('更新失败: $e')),
-          );
+          AppSnackBar.showError(context, '更新失败', debugError: e);
         }
       }
     }
@@ -264,14 +258,10 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         ref.invalidate(pendingRecognitionCatchesProvider);
         setState(() {});
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('已将 "$oldName" 重命名为 "$result"')),
-        );
+        AppSnackBar.showSuccess(context, '已将 "$oldName" 重命名为 "$result"');
       } catch (e) {
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('重命名失败: $e')),
-        );
+        AppSnackBar.showError(context, '重命名失败', debugError: e);
       }
     }
   }
@@ -293,14 +283,11 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         ref.invalidate(pendingRecognitionCatchesProvider);
         setState(() {});
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('已删除品种 "$speciesName" ($count 条记录)')),
-        );
+        AppSnackBar.showSuccess(
+            context, '已删除品种 "$speciesName" ($count 条记录)');
       } catch (e) {
         if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('删除失败: $e')),
-        );
+        AppSnackBar.showError(context, '删除失败', debugError: e);
       }
     }
   }
@@ -360,12 +347,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       ref.invalidate(pendingRecognitionCatchesProvider);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('识别完成: $_batchSuccess 条成功, $_batchFailed 条失败'),
-            duration: const Duration(seconds: 5),
-          ),
-        );
+        AppSnackBar.showInfo(
+            context, '识别完成: $_batchSuccess 条成功, $_batchFailed 条失败');
       }
     } finally {
       setState(() => _isBatchRecognizing = false);

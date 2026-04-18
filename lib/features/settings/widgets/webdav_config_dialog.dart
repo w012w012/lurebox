@@ -6,6 +6,7 @@ import '../../../core/di/di.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../core/providers/settings_view_model.dart';
 import '../../../core/services/backup_service.dart';
+import '../../../widgets/common/app_snack_bar.dart';
 
 /// WebDAV 配置对话框
 ///
@@ -291,12 +292,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
 
       if (url != null) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('备份已上传到云端'),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-          ),
-        );
+        AppSnackBar.showSuccess(context, '备份已上传到云端');
       } else {
         setState(() {
           _isLoading = false;

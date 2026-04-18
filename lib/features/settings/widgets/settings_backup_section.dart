@@ -10,6 +10,7 @@ import '../../../core/providers/language_provider.dart';
 import '../../../core/providers/settings_view_model.dart';
 import '../../../core/services/export_service.dart';
 import '../../../widgets/common/premium_card.dart';
+import '../../../widgets/common/app_snack_bar.dart';
 import 'webdav_config_dialog.dart';
 
 class SettingsBackupSection extends ConsumerWidget {
@@ -310,9 +311,7 @@ class SettingsBackupSection extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('导出失败: $e')),
-        );
+        AppSnackBar.showError(context, '导出失败', debugError: e);
       }
     }
   }
@@ -388,23 +387,15 @@ class SettingsBackupSection extends ConsumerWidget {
 
       if (savedPath != null) {
         // 显示备份完成提示
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('备份已完成，请到"导出和备份管理"中查看'),
-            duration: Duration(seconds: 3),
-          ),
-        );
+        AppSnackBar.showSuccess(
+            context, '备份已完成，请到"导出和备份管理"中查看');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('备份失败')),
-        );
+        AppSnackBar.showError(context, '备份失败');
       }
     } catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭对话框
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('备份失败: $e')),
-        );
+        AppSnackBar.showError(context, '备份失败', debugError: e);
       }
     }
   }
@@ -454,22 +445,16 @@ class SettingsBackupSection extends ConsumerWidget {
               '装备: ${metadata.equipmentCount} 件\n'
               '照片: ${metadata.photoCount} 张';
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message)),
-        );
+        AppSnackBar.showSuccess(context, message);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('恢复失败: ${result.errorMessage ?? "未知错误"}'),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
+        AppSnackBar.showError(
+          context,
+          '恢复失败: ${result.errorMessage ?? "未知错误"}',
         );
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('恢复失败: $e')),
-        );
+        AppSnackBar.showError(context, '恢复失败', debugError: e);
       }
     }
   }

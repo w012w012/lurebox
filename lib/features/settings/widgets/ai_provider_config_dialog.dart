@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/models/ai_recognition_settings.dart';
+import '../../../widgets/common/app_snack_bar.dart';
 
 /// AI 提供商配置对话框
 ///
@@ -333,12 +334,7 @@ class _AiProviderConfigDialogState
 
     if (mounted) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('配置已保存'),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-        ),
-      );
+      AppSnackBar.showSuccess(context, '配置已保存');
     }
   }
 }

@@ -57,6 +57,11 @@ abstract class StatsRepository {
 
   Future<Map<int, Map<String, int>>> getAllEquipmentSpeciesStats();
 
+  Future<List<Map<String, dynamic>>> getDailyCatchCount({
+    required DateTime startDate,
+    required DateTime endDate,
+  });
+
   Future<Map<String, int>> getEquipmentDistribution(
     String type, {
     DateTime? startDate,
