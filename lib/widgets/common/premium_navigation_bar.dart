@@ -145,35 +145,38 @@ class PremiumNavigationBar extends StatelessWidget {
   Widget _buildCenterFab(BuildContext context) {
     return GestureDetector(
       onTap: onCenterFabPressed,
-      behavior: HitTestBehavior.translucent,
-      child: SizedBox(
-        width: 80,
-        height: 80,
-        child: Center(
-          child: Container(
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              color: TeslaColors.electricBlue,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: TeslaColors.electricBlue.withValues(alpha: 0.5),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-                BoxShadow(
-                  color: TeslaColors.electricBlue.withValues(alpha: 0.25),
-                  blurRadius: 28,
-                  spreadRadius: 4,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.camera_alt,
-              color: Colors.white,
-              size: 34,
+      behavior: HitTestBehavior.opaque,
+      child: Material(
+        color: Colors.transparent,
+        child: SizedBox(
+          width: 80,
+          height: 80,
+          child: Center(
+            child: Container(
+              width: 72,
+              height: 72,
+              decoration: BoxDecoration(
+                color: TeslaColors.electricBlue,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: TeslaColors.electricBlue.withValues(alpha: 0.5),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                  BoxShadow(
+                    color: TeslaColors.electricBlue.withValues(alpha: 0.25),
+                    blurRadius: 28,
+                    spreadRadius: 4,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.camera_alt,
+                color: Colors.white,
+                size: 34,
+              ),
             ),
           ),
         ),
