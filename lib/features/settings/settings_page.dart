@@ -6,13 +6,10 @@ import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/language_provider.dart';
-import '../../core/providers/watermark_provider.dart';
 import '../../core/providers/settings_view_model.dart';
 import '../../core/widgets/error_view.dart';
 import '../../widgets/common/premium_card.dart';
 import '../../widgets/common/settings_tile.dart';
-import 'widgets/settings_backup_section.dart';
-import 'widgets/settings_appearance_section.dart';
 import 'widgets/settings_units_section.dart';
 import 'widgets/settings_about_section.dart';
 import 'widgets/settings_stats_card.dart';
@@ -23,7 +20,6 @@ class SettingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = ref.watch(currentStringsProvider);
-    final watermarkSettings = ref.watch(watermarkSettingsProvider);
     final settingsState = ref.watch(settingsViewModelProvider);
 
     return Scaffold(
@@ -41,7 +37,7 @@ class SettingsPage extends ConsumerWidget {
                         .loadStats(),
                     strings: strings,
                   )
-                : _buildSettingsList(context, ref, strings, watermarkSettings),
+                : _buildSettingsList(context, ref, strings),
       ),
     );
   }
@@ -50,7 +46,6 @@ class SettingsPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     AppStrings strings,
-    dynamic watermarkSettings,
   ) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -58,11 +53,11 @@ class SettingsPage extends ConsumerWidget {
 
         // Tablet: use two-column layout with sections in groups
         if (isTablet) {
-          return _buildTabletSettings(context, ref, strings, watermarkSettings);
+          return _buildTabletSettings(context, ref, strings);
         }
 
         // Mobile: single column list with iOS-style tiles
-        return _buildMobileSettings(context, ref, strings, watermarkSettings);
+        return _buildMobileSettings(context, ref, strings);
       },
     );
   }
@@ -71,10 +66,7 @@ class SettingsPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     AppStrings strings,
-    dynamic watermarkSettings,
   ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return ListView(
       children: [
         const SizedBox(height: TeslaTheme.spacingMd),
@@ -99,24 +91,6 @@ class SettingsPage extends ConsumerWidget {
         ),
         const SizedBox(height: TeslaTheme.spacingSm),
 
-        // Watermark Settings
-        SettingsTile(
-          icon: Icons.branding_watermark,
-          title: strings.watermarkSettings,
-          subtitle:
-              watermarkSettings.enabled ? strings.enabled : strings.disabled,
-          trailing: Icon(
-            Icons.chevron_right,
-            color: watermarkSettings.enabled
-                ? TeslaColors.electricBlue
-                : isDark
-                    ? const Color(0xFF9A9A9A)
-                    : TeslaColors.graphite,
-          ),
-          onTap: () => context.push('/settings/watermark'),
-        ),
-        const SizedBox(height: TeslaTheme.spacingSm),
-
         // AI Recognition Settings
         SettingsTile(
           icon: Icons.auto_awesome,
@@ -129,14 +103,6 @@ class SettingsPage extends ConsumerWidget {
 
         // Units Settings - use existing section
         const SettingsUnitsSection(),
-        const SizedBox(height: TeslaTheme.spacingSm),
-
-        // Appearance Settings - use existing section
-        const SettingsAppearanceSection(),
-        const SizedBox(height: TeslaTheme.spacingSm),
-
-        // Backup Settings - use existing section
-        const SettingsBackupSection(),
         const SizedBox(height: TeslaTheme.spacingSm),
 
         // About Section - use existing section
@@ -157,14 +123,13 @@ class SettingsPage extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
     AppStrings strings,
-    dynamic watermarkSettings,
   ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(TeslaTheme.spacingLg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // First row: Location, Species, Watermark
+          // First row: Location, Species, AI Recognition
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -172,30 +137,15 @@ class SettingsPage extends ConsumerWidget {
               const SizedBox(width: TeslaTheme.spacingMd),
               Expanded(child: _buildSpeciesCard(context, strings)),
               const SizedBox(width: TeslaTheme.spacingMd),
-              Expanded(
-                  child:
-                      _buildWatermarkCard(context, strings, watermarkSettings)),
+              Expanded(child: _buildAiRecognitionCard(context, strings)),
             ],
           ),
           const SizedBox(height: TeslaTheme.spacingMd),
-          // Second row: AI Recognition
-          _buildAiRecognitionCard(context, strings),
-          const SizedBox(height: TeslaTheme.spacingMd),
-          // Third row: Units and Appearance in parallel
+          // Second row: Units and About in parallel
           const Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(child: SettingsUnitsSection()),
-              SizedBox(width: TeslaTheme.spacingMd),
-              Expanded(child: SettingsAppearanceSection()),
-            ],
-          ),
-          const SizedBox(height: TeslaTheme.spacingMd),
-          // Fourth row: Backup and About
-          const Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(child: SettingsBackupSection()),
               SizedBox(width: TeslaTheme.spacingMd),
               Expanded(child: SettingsAboutSection()),
             ],
@@ -203,55 +153,6 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: TeslaTheme.spacingLg),
           Center(child: _buildFooter(context, strings)),
           const SizedBox(height: TeslaTheme.spacingXl),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWatermarkCard(
-    BuildContext context,
-    AppStrings strings,
-    dynamic watermarkSettings,
-  ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return PremiumCard(
-      onTap: () {
-        context.push('/settings/watermark');
-      },
-      child: Row(
-        children: [
-          Icon(
-            Icons.branding_watermark,
-            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
-          ),
-          const SizedBox(width: TeslaTheme.spacingMd),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  strings.watermarkSettings,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  watermarkSettings.enabled
-                      ? strings.enabled
-                      : strings.disabled,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: watermarkSettings.enabled
-                            ? TeslaColors.electricBlue
-                            : isDark
-                                ? const Color(0xFF9A9A9A)
-                                : TeslaColors.graphite,
-                      ),
-                ),
-              ],
-            ),
-          ),
-          const Icon(Icons.chevron_right),
         ],
       ),
     );
