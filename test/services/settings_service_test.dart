@@ -167,8 +167,12 @@ void main() {
     });
 
     group('AiRecognitionSettings', () {
-      test('saveAiRecognitionSettings calls repository.set with encoded JSON',
+      test('saveAiRecognitionSettings writes API keys to secure storage and cleaned JSON to repository',
           () async {
+        final apiKeyStorage = InMemoryApiKeyStorage();
+        final service =
+            SettingsService(mockRepository, secureStorage: SecureStorageService(storage: apiKeyStorage));
+
         const settings = AiRecognitionSettings(
           currentProvider: AiRecognitionProvider.openai,
           autoRecognize: false,
@@ -176,12 +180,43 @@ void main() {
         );
 
         when(() => mockRepository.set(any(), any())).thenAnswer((_) async {});
-        when(() => mockRepository.get(any())).thenAnswer((_) async => null);
 
-        await settingsService.saveAiRecognitionSettings(settings);
+        await service.saveAiRecognitionSettings(settings);
 
-        verify(() => mockRepository.set(
-            'ai_recognition_settings', any())).called(1);
+        // Verify repository.set was called for cleaned JSON (no API keys)
+        verify(() => mockRepository.set('ai_recognition_settings', any()))
+            .called(1);
+        // Verify migration marker was set
+        verify(() => mockRepository.set('_ai_keys_migrated', 'true')).called(1);
+      });
+
+      test('saveAiRecognitionSettings with provider config writes API key to secure storage',
+          () async {
+        final apiKeyStorage = InMemoryApiKeyStorage();
+        final service =
+            SettingsService(mockRepository, secureStorage: SecureStorageService(storage: apiKeyStorage));
+
+        final settings = AiRecognitionSettings(
+          currentProvider: AiRecognitionProvider.openai,
+          autoRecognize: false,
+          timeout: const Duration(seconds: 30),
+          providerConfigs: {
+            AiRecognitionProvider.openai: AiProviderConfig(
+              provider: AiRecognitionProvider.openai,
+              apiKey: 'sk-from-settings',
+              baseUrl: null,
+              modelName: null,
+              enabled: true,
+            ),
+          },
+        );
+
+        when(() => mockRepository.set(any(), any())).thenAnswer((_) async {});
+
+        await service.saveAiRecognitionSettings(settings);
+
+        // API key should be saved to secure storage
+        expect(await apiKeyStorage.get('1'), equals('sk-from-settings'));
       });
 
       test('getAiRecognitionSettings decodes JSON from repository', () async {
@@ -250,6 +285,12 @@ void main() {
         when(() => mockRepository.get('_ai_keys_migrated'))
             .thenAnswer((_) async => null); // Not migrated yet
 
+        String? savedJson;
+        when(() => mockRepository.set('ai_recognition_settings', any()))
+            .thenAnswer((invocation) async {
+          savedJson = invocation.positionalArguments[1] as String;
+        });
+
         final result = await settingsService.getAiRecognitionSettings();
 
         // Verify API keys were migrated to secure storage
@@ -258,9 +299,79 @@ void main() {
         expect(
             await mockSecureStorage.get('1'), equals('sk-test-openai'));
 
-        // Verify settings were saved without API keys
-        verify(() => mockRepository.set('ai_recognition_settings', any()))
-            .called(greaterThan(0));
+        // Verify saved JSON has API keys removed
+        expect(savedJson, isNotNull);
+        expect(savedJson!.contains('sk-test-gemini'), isFalse);
+        expect(savedJson!.contains('sk-test-openai'), isFalse);
+        expect(savedJson!.contains('"apiKey"'), isFalse);
+        expect(savedJson!.contains('"currentProvider"'), isTrue); // other fields preserved
+      });
+
+      test('getAiRecognitionSettings re-runs migration on next call if cleaned JSON write fails',
+          () async {
+        const legacyJson = '''
+{
+  "currentProvider": 0,
+  "providerConfigs": {
+    "0": {"provider": 0, "apiKey": "sk-test-gemini", "baseUrl": null, "modelName": null, "enabled": true}
+  },
+  "autoRecognize": true,
+  "timeout": 10
+}
+''';
+
+        // First call: cleaned JSON write fails after keys are saved to secure storage
+        when(() => mockRepository.get('ai_recognition_settings'))
+            .thenAnswer((_) async => legacyJson);
+        when(() => mockRepository.get('_ai_keys_migrated'))
+            .thenAnswer((_) async => null);
+
+        // Simulate cleaned JSON write failure (but keys already saved to secure storage)
+        var callCount = 0;
+        when(() => mockRepository.set('ai_recognition_settings', any()))
+            .thenAnswer((_) async {
+          callCount++;
+          if (callCount == 1) {
+            throw Exception('DB write failed');
+          }
+        });
+        when(() => mockRepository.set('_ai_keys_migrated', any()))
+            .thenAnswer((_) async {});
+
+        // First call throws, but API keys should be in secure storage already
+        try {
+          await settingsService.getAiRecognitionSettings();
+        } catch (_) {}
+
+        // Keys should be migrated even though the save failed
+        expect(await mockSecureStorage.get('0'), equals('sk-test-gemini'));
+
+        // Second call: cleaned JSON write succeeds
+        when(() => mockRepository.set('ai_recognition_settings', any()))
+            .thenAnswer((_) async {});
+
+        final result = await settingsService.getAiRecognitionSettings();
+
+        // API keys should be readable from secure storage
+        expect(result.providerConfigs[AiRecognitionProvider.gemini]?.apiKey,
+            equals('sk-test-gemini'));
+      });
+
+      test('deleteAiRecognitionSettings clears all storage', () async {
+        // Pre-populate secure storage with API keys
+        await mockSecureStorage.save('0', 'sk-test-gemini');
+        await mockSecureStorage.save('1', 'sk-test-openai');
+
+        when(() => mockRepository.delete(any())).thenAnswer((_) async {});
+
+        await settingsService.deleteAiRecognitionSettings();
+
+        verify(() => mockRepository.delete('ai_recognition_settings')).called(1);
+        verify(() => mockRepository.delete('_ai_keys_migrated')).called(1);
+
+        // Secure storage should be cleared
+        expect(await mockSecureStorage.get('0'), isNull);
+        expect(await mockSecureStorage.get('1'), isNull);
       });
     });
   });
