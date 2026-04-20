@@ -78,9 +78,9 @@ class PremiumNavigationBar extends StatelessWidget {
   }
 
   /// FAB 模式：单行视觉，80px 高。
-  /// FAB（72px 圆）top:-24 → 圆心 y=12，底部 y=48 露出在背景上方 32px（上浮效果）。
-  /// 背景 y=48–80，tabs 在 y=48–80 区域内垂直居中（图标中心 y=64）。
-  /// FAB 触控区 y=-60 到 y=12 完整在 Stack 内。
+  /// FAB（72px 圆）top:-54 → 圆心 y=-18，底部 y=54 露出在背景上方约 36px。
+  /// 背景 y=18–50，tabs 在 y=18–50 区域内垂直居中。
+  /// FAB 触控区 y=-90 到 y=-18 完整在 Stack 内。
   Widget _buildFabNavBar(BuildContext context, bool isDark) {
     final tabs = destinations;
     final bgColor = isDark ? TeslaColors.carbonDark : TeslaColors.white;
@@ -103,30 +103,30 @@ class PremiumNavigationBar extends StatelessWidget {
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              // 背景（z=1）：y=48 到 y=80，遮住 FAB 底部超出部分
+              // 背景（z=1）：y=18 到 y=50，遮住 FAB 底部超出部分
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: 0,
+                bottom: 30,
                 height: 32,
                 child: Container(color: bgColor),
               ),
 
-              // FAB（z=2）：top:-24，72px 圆，底部 y=48 浮出背景上方 32px
-              // 触控区 y=-60 到 y=12 完整在 Stack 内
+              // FAB（z=2）：top:-54，72px 圆，底部 y=18 浮出背景上方 36px
+              // 触控区 y=-90 到 y=-18 完整在 Stack 内
               Positioned(
                 left: 0,
                 right: 0,
-                top: -24,
+                top: -54,
                 child: Center(child: _buildCenterFab(context)),
               ),
 
-              // Tab 行（z=0）：y=48 到 y=80，垂直居中
+              // Tab 行（z=0）：y=18 到 y=50，垂直居中
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: 0,
-                top: 48,
+                bottom: 30,
+                top: 18,
                 child: Center(
                   child: Row(
                     children: [
