@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../models/watermark_settings.dart';
 import '../models/app_settings.dart';
 import '../models/ai_recognition_settings.dart';
@@ -28,7 +29,11 @@ class SettingsService {
     }
     try {
       return WatermarkSettings.decode(value);
+    } on FormatException catch (e) {
+      debugPrint('[SettingsService] Failed to decode watermark settings: $e');
+      return const WatermarkSettings();
     } catch (e) {
+      debugPrint('[SettingsService] Unexpected error decoding watermark settings: $e');
       return const WatermarkSettings();
     }
   }
@@ -44,7 +49,11 @@ class SettingsService {
     }
     try {
       return AppSettings.decode(value);
+    } on FormatException catch (e) {
+      debugPrint('[SettingsService] Failed to decode app settings: $e');
+      return const AppSettings();
     } catch (e) {
+      debugPrint('[SettingsService] Unexpected error decoding app settings: $e');
       return const AppSettings();
     }
   }
@@ -60,7 +69,11 @@ class SettingsService {
     }
     try {
       return AiRecognitionSettings.decode(value);
+    } on FormatException catch (e) {
+      debugPrint('[SettingsService] Failed to decode AI recognition settings: $e');
+      return const AiRecognitionSettings();
     } catch (e) {
+      debugPrint('[SettingsService] Unexpected error decoding AI recognition settings: $e');
       return const AiRecognitionSettings();
     }
   }

@@ -134,24 +134,21 @@ class CameraHelper {
           }
         }
 
-        Position? position;
         try {
-          position = await Geolocator.getCurrentPosition(
+          final position = await Geolocator.getCurrentPosition(
             desiredAccuracy: LocationAccuracy.medium,
           ).timeout(
             const Duration(seconds: 10),
             onTimeout: () =>
                 throw const error_service.LocationException('定位超时'),
           );
+          _latitude = position.latitude;
+          _longitude = position.longitude;
           _position = position;
         } catch (e) {
           _locationName = '定位失败';
           return;
         }
-
-        _latitude = position.latitude;
-        _longitude = position.longitude;
-        _position = position;
 
         // 获取天气数据
         _weatherData = await _weatherService.getWeather(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/widgets/common/sort_button.dart';
-import 'package:lurebox/core/constants/strings.dart';
 
 void main() {
   group('AppSortButton', () {
