@@ -54,6 +54,7 @@ export 'services/fish_catch_service.dart';
 export 'services/fish_recognition_service.dart';
 export 'services/location_service.dart';
 export 'services/settings_service.dart';
+export 'services/secure_storage_service.dart';
 export 'services/share_card_service.dart';
 export 'services/share_template.dart';
 export 'services/weather_service.dart';

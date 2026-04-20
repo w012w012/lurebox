@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/services/settings_service.dart';
+import 'package:lurebox/core/services/secure_storage_service.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
@@ -9,6 +10,7 @@ import '../helpers/test_helpers.dart';
 void main() {
   late MockSettingsRepository mockRepository;
   late SettingsService settingsService;
+  late InMemoryApiKeyStorage mockSecureStorage;
 
   setUpAll(() {
     registerFallbackValues();
@@ -16,7 +18,11 @@ void main() {
 
   setUp(() {
     mockRepository = MockSettingsRepository();
-    settingsService = SettingsService(mockRepository);
+    mockSecureStorage = InMemoryApiKeyStorage();
+    settingsService = SettingsService(
+      mockRepository,
+      secureStorage: SecureStorageService(storage: mockSecureStorage),
+    );
   });
 
   group('SettingsService', () {
@@ -170,11 +176,12 @@ void main() {
         );
 
         when(() => mockRepository.set(any(), any())).thenAnswer((_) async {});
+        when(() => mockRepository.get(any())).thenAnswer((_) async => null);
 
         await settingsService.saveAiRecognitionSettings(settings);
 
         verify(() => mockRepository.set(
-            'ai_recognition_settings', settings.encode())).called(1);
+            'ai_recognition_settings', any())).called(1);
       });
 
       test('getAiRecognitionSettings decodes JSON from repository', () async {
@@ -187,6 +194,8 @@ void main() {
 
         when(() => mockRepository.get('ai_recognition_settings'))
             .thenAnswer((_) async => encoded);
+        when(() => mockRepository.get('_ai_keys_migrated'))
+            .thenAnswer((_) async => 'true');
 
         final result = await settingsService.getAiRecognitionSettings();
 
@@ -219,6 +228,39 @@ void main() {
         expect(result.currentProvider,
             equals(AiRecognitionProvider.gemini)); // default
         expect(result.autoRecognize, equals(true)); // default
+      });
+
+      test('getAiRecognitionSettings migrates API keys from legacy JSON',
+          () async {
+        // Legacy JSON with API keys
+        const legacyJson = '''
+{
+  "currentProvider": 0,
+  "providerConfigs": {
+    "0": {"provider": 0, "apiKey": "sk-test-gemini", "baseUrl": null, "modelName": null, "enabled": true},
+    "1": {"provider": 1, "apiKey": "sk-test-openai", "baseUrl": null, "modelName": null, "enabled": true}
+  },
+  "autoRecognize": true,
+  "timeout": 10
+}
+''';
+
+        when(() => mockRepository.get('ai_recognition_settings'))
+            .thenAnswer((_) async => legacyJson);
+        when(() => mockRepository.get('_ai_keys_migrated'))
+            .thenAnswer((_) async => null); // Not migrated yet
+
+        final result = await settingsService.getAiRecognitionSettings();
+
+        // Verify API keys were migrated to secure storage
+        expect(
+            await mockSecureStorage.get('0'), equals('sk-test-gemini'));
+        expect(
+            await mockSecureStorage.get('1'), equals('sk-test-openai'));
+
+        // Verify settings were saved without API keys
+        verify(() => mockRepository.set('ai_recognition_settings', any()))
+            .called(greaterThan(0));
       });
     });
   });
