@@ -50,7 +50,7 @@ Use helpers from `test/helpers/test_helpers.dart`:
 ## Anti-Patterns (THIS PROJECT)
 - No anti-pattern comments (`DO NOT`, `NEVER`, `ALWAYS`, `DEPRECATED`) found in code
 - **Architecture deviation**: Widgets exist in BOTH `lib/widgets/` AND nested in `lib/features/` - dual location creates confusion
-- **Architecture deviation**: AI providers in `core/services/providers/` (12 files) - non-standard location
+- **Architecture deviation**: AI providers in `core/services/adapters/` (12 files) - non-standard location
 - **Architecture deviation**: `core/camera/` separate from `features/camera/` - camera logic split
 
 ## Code Style
@@ -151,7 +151,7 @@ lib/
 ├── core/
 │   ├── models/           # Data models (17 models: FishCatch, Equipment, etc.)
 │   ├── providers/        # Riverpod providers & notifiers (19 files)
-│   ├── services/         # Business logic (17 services)
+│   ├── services/         # Business logic (18 services)
 │   ├── database/         # DatabaseProvider singleton
 │   ├── constants/        # AppStrings, achievements, price ranges
 │   ├── design/           # Theme, colors (light/dark), styles
