@@ -7,9 +7,7 @@ import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/language_provider.dart';
-import '../../core/providers/settings_view_model.dart';
 import '../../widgets/common/premium_card.dart';
-import '../../widgets/common/settings_tile.dart';
 
 class MePage extends ConsumerStatefulWidget {
   const MePage({super.key});
@@ -26,7 +24,6 @@ class _MePageState extends ConsumerState<MePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _loadAppVersion();
-      ref.read(settingsViewModelProvider.notifier).loadStats();
     });
   }
 
@@ -44,7 +41,6 @@ class _MePageState extends ConsumerState<MePage> {
   @override
   Widget build(BuildContext context) {
     final strings = ref.watch(currentStringsProvider);
-    final settingsState = ref.watch(settingsViewModelProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -57,95 +53,53 @@ class _MePageState extends ConsumerState<MePage> {
           vertical: TeslaTheme.spacingSm,
         ),
         children: [
-          // Stats summary
-          _buildStatsCard(context, strings, settingsState),
-          const SizedBox(height: TeslaTheme.spacingSm),
-
-          // Achievements entry
-          SettingsTile(
+          // 成就
+          _buildTile(
+            context: context,
             icon: Icons.emoji_events,
+            iconColor: const Color(0xFFD4AF37),
             title: strings.achievement,
             subtitle: strings.viewAchievements,
-            showChevron: true,
             onTap: () => context.push('/achievements'),
           ),
-          const SizedBox(height: TeslaTheme.spacingSm),
-
-          // Data management section header
-          _buildSectionHeader(context, strings.dataManagement),
           const SizedBox(height: TeslaTheme.spacingMicro),
 
           // 钓点管理
-          SettingsTile(
+          _buildTile(
+            context: context,
             icon: Icons.location_on,
             title: strings.locationManagement,
             subtitle: strings.locationManagementDesc,
-            showChevron: true,
             onTap: () => context.push('/settings/locations'),
           ),
           const SizedBox(height: TeslaTheme.spacingMicro),
 
           // 鱼种管理
-          SettingsTile(
+          _buildTile(
+            context: context,
             icon: Icons.category,
             title: strings.speciesManagement,
             subtitle: strings.speciesManagementDesc,
-            showChevron: true,
             onTap: () => context.push('/species'),
           ),
-          const SizedBox(height: TeslaTheme.spacingSm),
-
-          // Settings section header
-          _buildSectionHeader(context, strings.settings),
           const SizedBox(height: TeslaTheme.spacingMicro),
 
-          // All settings entries
-          SettingsTile(
-            icon: Icons.dark_mode,
-            title: strings.appearanceSettings,
+          // 设置
+          _buildTile(
+            context: context,
+            icon: Icons.settings,
+            title: strings.settings,
             subtitle: strings.appearanceSettingsDesc,
-            showChevron: true,
-            onTap: () => context.push('/settings'),
-          ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
-
-          SettingsTile(
-            icon: Icons.branding_watermark,
-            title: strings.watermarkSettings,
-            subtitle: strings.watermarkSettingsDesc,
-            showChevron: true,
-            onTap: () => context.push('/settings/watermark'),
-          ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
-
-          SettingsTile(
-            icon: Icons.auto_awesome,
-            title: strings.aiConfiguration,
-            subtitle: strings.aiConfigurationDesc,
-            showChevron: true,
-            onTap: () => context.push('/settings/ai'),
-          ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
-
-          SettingsTile(
-            icon: Icons.cloud_upload,
-            title: strings.webdavBackup,
-            subtitle: strings.syncToCloud,
-            showChevron: true,
-            onTap: () => context.push('/settings/export-backup'),
+            onTap: () => context.push('/me/settings'),
           ),
           const SizedBox(height: TeslaTheme.spacingSm),
 
-          // About section header
-          _buildSectionHeader(context, strings.about),
-          const SizedBox(height: TeslaTheme.spacingMicro),
-
-          // About LureBox
-          SettingsTile(
+          // 关于 LureBox
+          _buildTile(
+            context: context,
             icon: Icons.eco,
             title: 'LureBox',
             subtitle: 'v$_appVersion · 路亚鱼护',
-            showChevron: true,
             onTap: () => _showAboutDialog(context, strings),
           ),
 
@@ -155,70 +109,62 @@ class _MePageState extends ConsumerState<MePage> {
     );
   }
 
-  Widget _buildStatsCard(
-    BuildContext context,
-    AppStrings strings,
-    SettingsState state,
-  ) {
+  Widget _buildTile({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    Color? iconColor,
+  }) {
+    final accentColor = iconColor ?? TeslaColors.electricBlue;
+
     return PremiumCard(
       margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(TeslaTheme.spacingMd),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(TeslaTheme.spacingSm),
-              decoration: BoxDecoration(
-                color: TeslaColors.electricBlue.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: TeslaTheme.spacingMd,
+            horizontal: TeslaTheme.spacingSm,
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                ),
+                child: Icon(icon, color: accentColor, size: 22),
               ),
-              child: const Icon(
-                Icons.emoji_events,
-                color: TeslaColors.electricBlue,
-                size: 24,
+              const SizedBox(width: TeslaTheme.spacingMd),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w500,
+                          ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: TeslaTheme.spacingMd),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    strings.fishCount,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          fontWeight: FontWeight.w500,
-                        ),
-                  ),
-                  Text(
-                    '${state.totalCount} ${strings.fishCountUnit}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                  ),
-                ],
-              ),
-            ),
-            Text(
-              '${state.totalCount}',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    color: TeslaColors.electricBlue,
-                  ),
-            ),
-          ],
+              const Icon(Icons.chevron_right),
+            ],
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(BuildContext context, String title) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 4),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
       ),
     );
   }
@@ -229,8 +175,7 @@ class _MePageState extends ConsumerState<MePage> {
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.set_meal,
-                color: Theme.of(ctx).colorScheme.primary),
+            Icon(Icons.set_meal, color: Theme.of(ctx).colorScheme.primary),
             const SizedBox(width: TeslaTheme.spacingSm),
             Text(strings.appName),
           ],
@@ -241,14 +186,14 @@ class _MePageState extends ConsumerState<MePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '路亚钓鱼爱好者的专业鱼获记录工具',
+                strings.appDescription,
                 style: Theme.of(ctx).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
               ),
               const SizedBox(height: TeslaTheme.spacingMd),
               Text(
-                '主要功能',
+                strings.features,
                 style: Theme.of(ctx).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
