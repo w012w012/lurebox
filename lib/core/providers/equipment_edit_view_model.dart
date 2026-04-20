@@ -236,8 +236,7 @@ class _BaseEquipmentEditNotifier {
   }
 
   void loadDataFromMap(Map<String, dynamic> equipment) {
-    // Guard against null - can happen on first build before data is loaded
-    if (equipment == null) return;
+    // Note: equipment parameter is non-nullable, null check omitted
 
     debugPrint(
         '[loadDataFromMap] START - equipment.length: ${equipment['length']}');

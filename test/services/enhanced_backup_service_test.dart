@@ -85,7 +85,7 @@ class MockDb extends Mock implements Database {
     String sql, [
     List<Object?>? arguments,
   ]) async {
-    return (_queryResults[sql] ?? <Map<String, dynamic>>[]) as List<Map<String, dynamic>>;
+    return _queryResults[sql] ?? <Map<String, dynamic>>[];
   }
 
   @override
@@ -212,7 +212,6 @@ class _MockTransaction implements Transaction {
     List<Object?>? arguments,
   ]) async {}
 
-  @override
   Future<T> transaction<T>(
     Future<T> Function(Transaction txn) action, {
     bool? exclusive,
