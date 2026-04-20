@@ -143,7 +143,8 @@ class PremiumNavigationBar extends StatelessWidget {
   }
 
   Widget _buildCenterFab(BuildContext context) {
-    return IgnorePointer(
+    return GestureDetector(
+      onTap: onCenterFabPressed,
       child: Container(
         width: 72,
         height: 72,
@@ -164,26 +165,13 @@ class PremiumNavigationBar extends StatelessWidget {
             ),
           ],
         ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onCenterFabPressed ?? () => _defaultFabAction(context),
-            borderRadius: BorderRadius.circular(36),
-            child: const Icon(
-              Icons.camera_alt,
-              color: Colors.white,
-              size: 34,
-            ),
-          ),
+        child: const Icon(
+          Icons.camera_alt,
+          color: Colors.white,
+          size: 34,
         ),
       ),
     );
-  }
-
-  void _defaultFabAction(BuildContext context) {
-    // 默认通过 GoRouter 导航到相机
-    // MainShell 父级处理实际路由
-    // 此处通过 onCenterFabPressed 回调，由调用方注入导航逻辑
   }
 }
 
