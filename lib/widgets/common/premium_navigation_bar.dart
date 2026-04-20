@@ -31,6 +31,11 @@ class PremiumNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    // FAB 视觉上向上延伸 40px，因此整体高度 = 40（FAB 延伸区）+ 64（Tab 区）= 104
+    const fabLift = 40.0;
+    const tabAreaHeight = 64.0;
+    const totalHeight = fabLift + tabAreaHeight;
+
     return Container(
       decoration: BoxDecoration(
         color: isDark ? TeslaColors.carbonDark : TeslaColors.white,
@@ -45,9 +50,9 @@ class PremiumNavigationBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 64,
+          height: totalHeight,
           child: showCenterFab
-              ? _buildWithCenterFab(context, isDark)
+              ? _buildWithCenterFab(context, isDark, fabLift)
               : _buildStandard(context, isDark),
         ),
       ),
@@ -77,17 +82,23 @@ class PremiumNavigationBar extends StatelessWidget {
   }
 
   /// FAB 模式：4 个 Tab 分列两侧，中间显示 FAB
-  Widget _buildWithCenterFab(BuildContext context, bool isDark) {
+  Widget _buildWithCenterFab(BuildContext context, bool isDark, double fabLift) {
     // showCenterFab=true 时，destinations 4 项：
     // index 0: home, index 1: fish, index 2: equipment, index 3: me
-    // FAB 居中在 index 1 和 index 2 之间
+    // FAB 居中在 index 1 和 index 2 之间，位于 nav bar 顶部（向上延伸进 fabLift 区域）
+    // Tab 栏位于 nav bar 底部（tabAreaHeight 区域内）
     final tabs = destinations; // 4 items
+    const tabAreaHeight = 64.0;
 
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        // 4 个 Tab 均匀分布在可用空间
-        Positioned.fill(
+        // 4 个 Tab 均匀分布在底部 tabAreaHeight 区域内
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 0,
+          height: tabAreaHeight,
           child: Row(
             children: [
               // Tab 0: home
@@ -131,11 +142,14 @@ class PremiumNavigationBar extends StatelessWidget {
             ],
           ),
         ),
-        // 居中 FAB：向上突出 40px，更大更醒目
+        // FAB：放在顶部 fabLift 区域内（底部对齐 tabAreaHeight 的边界）
+        // _buildCenterFab 的 SizedBox(80x80) 在这里被 Center 居中，
+        // 即圆心在 fabLift 区域的垂直中点，圆形向上延伸出 nav bar
         Positioned(
           left: 0,
           right: 0,
-          top: -40,
+          bottom: tabAreaHeight,
+          height: fabLift,
           child: Center(child: _buildCenterFab(context)),
         ),
       ],
