@@ -11,6 +11,7 @@ import '../../features/fish_detail/fish_detail_page.dart';
 import '../../features/fish_list/fish_list_page.dart';
 import '../../features/home/home_page.dart';
 import '../../features/me/me_page.dart';
+import '../../features/me/me_settings_page.dart';
 import '../../features/onboarding/onboarding_page.dart';
 import '../../features/settings/ai_recognition_settings_page.dart';
 import '../../features/settings/export_backup_management_page.dart';
@@ -144,6 +145,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/settings/units',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const _UnitSettingsPageWrapper(),
+      ),
+      GoRoute(
+        path: '/me/settings',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const MeSettingsPage(),
       ),
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
