@@ -108,8 +108,8 @@ class PremiumNavigationBar extends StatelessWidget {
                 label: tabs[1].label,
                 isDark: isDark,
               ),
-              // 中心 FAB 占位（不响应 Tab 切换）
-              const Expanded(child: SizedBox()),
+              // 中心 FAB 占位：吸收该区域触控，防止两侧 Tab 的 InkWell 抢走 FAB 热区内的触摸事件
+              const Expanded(child: AbsorbPointer(child: SizedBox())),
               // Tab 2: equipment
               _NavTab(
                 isSelected: selectedIndex == 2,
@@ -145,30 +145,37 @@ class PremiumNavigationBar extends StatelessWidget {
   Widget _buildCenterFab(BuildContext context) {
     return GestureDetector(
       onTap: onCenterFabPressed,
-      child: Container(
-        width: 72,
-        height: 72,
-        decoration: BoxDecoration(
-          color: TeslaColors.electricBlue,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: TeslaColors.electricBlue.withValues(alpha: 0.5),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
+      behavior: HitTestBehavior.translucent,
+      child: SizedBox(
+        width: 80,
+        height: 80,
+        child: Center(
+          child: Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color: TeslaColors.electricBlue,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: TeslaColors.electricBlue.withValues(alpha: 0.5),
+                  blurRadius: 16,
+                  offset: const Offset(0, 6),
+                ),
+                BoxShadow(
+                  color: TeslaColors.electricBlue.withValues(alpha: 0.25),
+                  blurRadius: 28,
+                  spreadRadius: 4,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            BoxShadow(
-              color: TeslaColors.electricBlue.withValues(alpha: 0.25),
-              blurRadius: 28,
-              spreadRadius: 4,
-              offset: const Offset(0, 4),
+            child: const Icon(
+              Icons.camera_alt,
+              color: Colors.white,
+              size: 34,
             ),
-          ],
-        ),
-        child: const Icon(
-          Icons.camera_alt,
-          color: Colors.white,
-          size: 34,
+          ),
         ),
       ),
     );
