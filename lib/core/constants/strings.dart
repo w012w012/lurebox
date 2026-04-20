@@ -66,6 +66,18 @@ class AppStrings {
   final String language;
   final String watermarkSettings;
   final String watermarkSettingsDesc;
+  final String watermarkManagement;
+  final String watermarkManagementDesc;
+  final String backupAndExport;
+  final String backupAndExportDesc;
+  final String fileManagement;
+  final String fileManagementDesc;
+  final String exportCsv;
+  final String exportCsvDesc;
+  final String fullBackup;
+  final String fullBackupDesc;
+  final String restoreBackup;
+  final String restoreBackupDesc;
   final String watermarkEnabled;
   final String watermarkDisabled;
   final String displayInfo;
@@ -578,9 +590,21 @@ class AppStrings {
     required this.unit,
     required this.darkMode,
     required this.language,
-    required this.watermarkSettings,
-    required this.watermarkSettingsDesc,
-    required this.watermarkEnabled,
+  required this.watermarkSettings,
+  required this.watermarkSettingsDesc,
+  required this.watermarkManagement,
+  required this.watermarkManagementDesc,
+  required this.backupAndExport,
+  required this.backupAndExportDesc,
+  required this.fileManagement,
+  required this.fileManagementDesc,
+  required this.exportCsv,
+  required this.exportCsvDesc,
+  required this.fullBackup,
+  required this.fullBackupDesc,
+  required this.restoreBackup,
+  required this.restoreBackupDesc,
+  required this.watermarkEnabled,
     required this.watermarkDisabled,
     required this.displayInfo,
     required this.dataBackup,
@@ -1069,8 +1093,20 @@ class AppStrings {
     unit: '单位',
     darkMode: '深色模式',
     language: '语言',
-    watermarkSettings: '水印设置',
-    watermarkSettingsDesc: '自定义水印样式',
+  watermarkSettings: '水印设置',
+  watermarkSettingsDesc: '自定义水印样式',
+  watermarkManagement: '水印管理',
+  watermarkManagementDesc: '自定义水印样式',
+  backupAndExport: '备份和导出',
+  backupAndExportDesc: '数据备份与导出管理',
+  fileManagement: '文件管理',
+  fileManagementDesc: '查看和管理导出备份文件',
+  exportCsv: '导出 CSV',
+  exportCsvDesc: '导出渔获记录为 CSV 表格',
+  fullBackup: '完整备份',
+  fullBackupDesc: '导出包含数据库和照片的ZIP备份',
+  restoreBackup: '恢复备份',
+  restoreBackupDesc: '从ZIP备份文件恢复数据',
     watermarkEnabled: '水印已开启',
     watermarkDisabled: '水印已关闭',
     displayInfo: '显示信息',
@@ -1570,8 +1606,20 @@ class AppStrings {
     unit: 'Unit',
     darkMode: 'Dark Mode',
     language: 'Language',
-    watermarkSettings: 'Watermark Settings',
-    watermarkSettingsDesc: 'Custom watermark style',
+  watermarkSettings: 'Watermark Settings',
+  watermarkSettingsDesc: 'Custom watermark style',
+  watermarkManagement: 'Watermark Management',
+  watermarkManagementDesc: 'Custom watermark style',
+  backupAndExport: 'Backup & Export',
+  backupAndExportDesc: 'Data backup and export management',
+  fileManagement: 'File Management',
+  fileManagementDesc: 'View and manage export/backup files',
+  exportCsv: 'Export CSV',
+  exportCsvDesc: 'Export catch records as CSV spreadsheet',
+  fullBackup: 'Full Backup',
+  fullBackupDesc: 'Export ZIP backup with database and photos',
+  restoreBackup: 'Restore Backup',
+  restoreBackupDesc: 'Restore data from ZIP backup file',
     watermarkEnabled: 'Watermark Enabled',
     watermarkDisabled: 'Watermark Disabled',
     displayInfo: 'Display Info',

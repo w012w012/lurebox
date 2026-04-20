@@ -84,12 +84,32 @@ class _MePageState extends ConsumerState<MePage> {
           ),
           const SizedBox(height: TeslaTheme.spacingMicro),
 
+          // 水印管理
+          _buildTile(
+            context: context,
+            icon: Icons.branding_watermark,
+            title: strings.watermarkManagement,
+            subtitle: strings.watermarkManagementDesc,
+            onTap: () => context.push('/settings/watermark'),
+          ),
+          const SizedBox(height: TeslaTheme.spacingMicro),
+
+          // 备份和导出
+          _buildTile(
+            context: context,
+            icon: Icons.cloud_upload,
+            title: strings.backupAndExport,
+            subtitle: strings.backupAndExportDesc,
+            onTap: () => context.push('/me/backup-export'),
+          ),
+          const SizedBox(height: TeslaTheme.spacingMicro),
+
           // 设置
           _buildTile(
             context: context,
             icon: Icons.settings,
             title: strings.settings,
-            subtitle: strings.appearanceSettingsDesc,
+            subtitle: strings.darkMode,
             onTap: () => context.push('/me/settings'),
           ),
           const SizedBox(height: TeslaTheme.spacingSm),
