@@ -31,11 +31,54 @@ class PremiumNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // FAB 视觉上向上延伸 40px，因此整体高度 = 40（FAB 延伸区）+ 64（Tab 区）= 104
-    const fabLift = 40.0;
-    const tabAreaHeight = 64.0;
-    const totalHeight = fabLift + tabAreaHeight;
+    if (!showCenterFab) {
+      return _buildStandardNavBar(isDark);
+    }
 
+    // FAB 模式：结构为 Column，FAB 在上方的 padding 区域，nav bar 在下。
+    // FAB 的 Stack（含 top:-40）放在 Padding(top:40) 里，这样 FAB 视觉上
+    // 浮在 nav bar 上方，但不在 Scaffold body 内——彻底解决触控区与 body 重叠的问题。
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // FAB 区域：放在 SafeArea top padding 中，向上延伸进 safe area
+        SafeArea(
+          bottom: false,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 40),
+            child: SizedBox(
+              height: 64,
+              child: _buildFabRow(context, isDark),
+            ),
+          ),
+        ),
+        // Nav bar 本身（64px）
+        Container(
+          height: 64,
+          decoration: BoxDecoration(
+            color: isDark ? TeslaColors.carbonDark : TeslaColors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            top: false,
+            child: SizedBox(
+              height: 64,
+              child: _buildTabRowOnly(isDark),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// 标准模式
+  Widget _buildStandardNavBar(bool isDark) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? TeslaColors.carbonDark : TeslaColors.white,
@@ -50,58 +93,41 @@ class PremiumNavigationBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: totalHeight,
-          child: showCenterFab
-              ? _buildWithCenterFab(context, isDark, fabLift)
-              : _buildStandard(context, isDark),
+          height: 64,
+          child: NavigationBar(
+            selectedIndex: selectedIndex,
+            onDestinationSelected: onDestinationSelected,
+            backgroundColor: Colors.transparent,
+            indicatorColor:
+                TeslaColors.electricBlue.withValues(alpha: 0.12),
+            labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+            elevation: 0,
+            height: 64,
+            surfaceTintColor: Colors.transparent,
+            destinations: destinations.map((dest) {
+              return NavigationDestination(
+                icon: Icon(dest.icon, size: 24),
+                selectedIcon: Icon(dest.selectedIcon, size: 24),
+                label: dest.label,
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
   }
 
-  /// 标准模式：5 个 Tab 均分
-  Widget _buildStandard(BuildContext context, bool isDark) {
-    return NavigationBar(
-      selectedIndex: selectedIndex,
-      onDestinationSelected: onDestinationSelected,
-      backgroundColor: Colors.transparent,
-      indicatorColor:
-          TeslaColors.electricBlue.withValues(alpha: 0.12),
-      labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
-      elevation: 0,
-      height: 64,
-      surfaceTintColor: Colors.transparent,
-      destinations: destinations.map((dest) {
-        return NavigationDestination(
-          icon: Icon(dest.icon, size: 24),
-          selectedIcon: Icon(dest.selectedIcon, size: 24),
-          label: dest.label,
-        );
-      }).toList(),
-    );
-  }
-
-  /// FAB 模式：4 个 Tab 分列两侧，中间显示 FAB
-  Widget _buildWithCenterFab(BuildContext context, bool isDark, double fabLift) {
-    // showCenterFab=true 时，destinations 4 项：
-    // index 0: home, index 1: fish, index 2: equipment, index 3: me
-    // FAB 居中在 index 1 和 index 2 之间，位于 nav bar 顶部（向上延伸进 fabLift 区域）
-    // Tab 栏位于 nav bar 底部（tabAreaHeight 区域内）
-    final tabs = destinations; // 4 items
-    const tabAreaHeight = 64.0;
+  /// FAB 模式的整行（含 FAB + 左右 Tab）
+  Widget _buildFabRow(BuildContext context, bool isDark) {
+    final tabs = destinations;
 
     return Stack(
       clipBehavior: Clip.none,
       children: [
-        // 4 个 Tab 均匀分布在底部 tabAreaHeight 区域内
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          height: tabAreaHeight,
+        // 4 个 Tab 均匀分布
+        Positioned.fill(
           child: Row(
             children: [
-              // Tab 0: home
               _NavTab(
                 isSelected: selectedIndex == 0,
                 onTap: () => onDestinationSelected(0),
@@ -110,7 +136,6 @@ class PremiumNavigationBar extends StatelessWidget {
                 label: tabs[0].label,
                 isDark: isDark,
               ),
-              // Tab 1: fish
               _NavTab(
                 isSelected: selectedIndex == 1,
                 onTap: () => onDestinationSelected(1),
@@ -121,7 +146,6 @@ class PremiumNavigationBar extends StatelessWidget {
               ),
               // 中心 FAB 占位：吸收该区域触控，防止两侧 Tab 的 InkWell 抢走 FAB 热区内的触摸事件
               const Expanded(child: AbsorbPointer(child: SizedBox())),
-              // Tab 2: equipment
               _NavTab(
                 isSelected: selectedIndex == 2,
                 onTap: () => onDestinationSelected(2),
@@ -130,7 +154,6 @@ class PremiumNavigationBar extends StatelessWidget {
                 label: tabs[2].label,
                 isDark: isDark,
               ),
-              // Tab 3: me
               _NavTab(
                 isSelected: selectedIndex == 3,
                 onTap: () => onDestinationSelected(3),
@@ -142,15 +165,63 @@ class PremiumNavigationBar extends StatelessWidget {
             ],
           ),
         ),
-        // FAB：放在顶部 fabLift 区域内（底部对齐 tabAreaHeight 的边界）
-        // _buildCenterFab 的 SizedBox(80x80) 在这里被 Center 居中，
-        // 即圆心在 fabLift 区域的垂直中点，圆形向上延伸出 nav bar
+        // FAB：top:-40 向上延伸进上方的 Padding 区域（与 Scaffold body 完全不重叠）
         Positioned(
           left: 0,
           right: 0,
-          bottom: tabAreaHeight,
-          height: fabLift,
+          top: -40,
           child: Center(child: _buildCenterFab(context)),
+        ),
+      ],
+    );
+  }
+
+  /// FAB 模式下，nav bar 中间空白（无 FAB，只有 Tab）
+  Widget _buildTabRowOnly(bool isDark) {
+    final tabs = destinations;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Positioned.fill(
+          child: Row(
+            children: [
+              _NavTab(
+                isSelected: selectedIndex == 0,
+                onTap: () => onDestinationSelected(0),
+                icon: tabs[0].icon,
+                selectedIcon: tabs[0].selectedIcon,
+                label: tabs[0].label,
+                isDark: isDark,
+              ),
+              _NavTab(
+                isSelected: selectedIndex == 1,
+                onTap: () => onDestinationSelected(1),
+                icon: tabs[1].icon,
+                selectedIcon: tabs[1].selectedIcon,
+                label: tabs[1].label,
+                isDark: isDark,
+              ),
+              // 中间留空（FAB 在上方 Padding 区域渲染）
+              const Expanded(child: SizedBox()),
+              _NavTab(
+                isSelected: selectedIndex == 2,
+                onTap: () => onDestinationSelected(2),
+                icon: tabs[2].icon,
+                selectedIcon: tabs[2].selectedIcon,
+                label: tabs[2].label,
+                isDark: isDark,
+              ),
+              _NavTab(
+                isSelected: selectedIndex == 3,
+                onTap: () => onDestinationSelected(3),
+                icon: tabs[3].icon,
+                selectedIcon: tabs[3].selectedIcon,
+                label: tabs[3].label,
+                isDark: isDark,
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -199,7 +270,7 @@ class PremiumNavigationBar extends StatelessWidget {
   }
 }
 
-/// 单个导航 Tab（用于 FAB 模式下的精确布局控制）
+/// 单个导航 Tab
 class _NavTab extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
