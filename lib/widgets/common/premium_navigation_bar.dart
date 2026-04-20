@@ -77,91 +77,90 @@ class PremiumNavigationBar extends StatelessWidget {
     );
   }
 
-  /// FAB 模式：单行 64px，FAB 视觉上浮在中间，tabs 填满左右
+  /// FAB 模式：Column 结构，FAB 放在上方（40px），nav bar 在下方（64px），
+  /// 两者不共享 z-order，FAB 的触控区和 body 完全不重叠。
   Widget _buildFabNavBar(BuildContext context, bool isDark) {
     final tabs = destinations;
     final bgColor = isDark ? TeslaColors.carbonDark : TeslaColors.white;
 
-    // FAB 的 72px 圆形视觉顶部对齐导航栏顶部，bottom=40px 表示圆心在 (64-40)/2+36=58，
-    // 这使得圆形视觉上在导航栏上方 40px，与原始设计完全一致。
-    // 但由于 Stack height=64，FAB 的 bottom=-40+80=40 < 64，所以底部会被截断。
-    // 为避免截断，用 Container(height: 64) + FAB(top: -40) + 背景填满透明区域。
-    return Container(
-      decoration: BoxDecoration(
-        color: bgColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 64,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // FAB 区域：72px 高，使 72px 圆形完整放置，clipBehavior: Clip.none 允许向上溢出
+        // Positioned(top:-18) 使圆心在 y=18，上方 18px 露出导航栏外（视觉上浮效果）
+        // Clip.none 确保圆形向上溢出时不被裁剪，触摸事件在完整 80x80 区域响应
+        SizedBox(
+          height: 72,
           child: Stack(
             clipBehavior: Clip.none,
+            alignment: Alignment.topCenter,
             children: [
-              // 背景填满整行（包括 FAB 中间的透明区域，防止 FAB 底部半圆露出来）
-              Positioned.fill(child: Container(color: bgColor)),
-
-              // 4 个 Tab 均分，左右各两个，中间留空给 FAB
-              // tabs 占 64px 高度（无背景，背景由上面的 Container 提供）
-              Positioned.fill(
-                child: Row(
-                  children: [
-                    _NavTab(
-                      isSelected: selectedIndex == 0,
-                      onTap: () => onDestinationSelected(0),
-                      icon: tabs[0].icon,
-                      selectedIcon: tabs[0].selectedIcon,
-                      label: tabs[0].label,
-                      isDark: isDark,
-                    ),
-                    _NavTab(
-                      isSelected: selectedIndex == 1,
-                      onTap: () => onDestinationSelected(1),
-                      icon: tabs[1].icon,
-                      selectedIcon: tabs[1].selectedIcon,
-                      label: tabs[1].label,
-                      isDark: isDark,
-                    ),
-                    // FAB 区域占位，让 tabs 不占 FAB 中间的空间
-                    const Expanded(child: SizedBox()),
-                    _NavTab(
-                      isSelected: selectedIndex == 2,
-                      onTap: () => onDestinationSelected(2),
-                      icon: tabs[2].icon,
-                      selectedIcon: tabs[2].selectedIcon,
-                      label: tabs[2].label,
-                      isDark: isDark,
-                    ),
-                    _NavTab(
-                      isSelected: selectedIndex == 3,
-                      onTap: () => onDestinationSelected(3),
-                      icon: tabs[3].icon,
-                      selectedIcon: tabs[3].selectedIcon,
-                      label: tabs[3].label,
-                      isDark: isDark,
-                    ),
-                  ],
-                ),
-              ),
-
-              // FAB：top:-40 与原始设计一致，圆形视觉上浮在导航栏上方
-              // 由于整行背景是 bgColor（不透明），FAB 底部半圆会被背景遮挡，视觉干净
               Positioned(
-                left: 0,
-                right: 0,
-                top: -40,
-                child: Center(child: _buildCenterFab(context)),
+                top: -18,
+                child: _buildCenterFab(context),
               ),
             ],
           ),
         ),
-      ),
+        // Nav bar：64px，背景完整，左右 tab 均分，中间留透明间隙
+        Container(
+          height: 64,
+          decoration: BoxDecoration(
+            color: bgColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
+          child: SafeArea(
+            top: false,
+            child: SizedBox(
+              height: 64,
+              child: Row(
+                children: [
+                  _NavTab(
+                    isSelected: selectedIndex == 0,
+                    onTap: () => onDestinationSelected(0),
+                    icon: tabs[0].icon,
+                    selectedIcon: tabs[0].selectedIcon,
+                    label: tabs[0].label,
+                    isDark: isDark,
+                  ),
+                  _NavTab(
+                    isSelected: selectedIndex == 1,
+                    onTap: () => onDestinationSelected(1),
+                    icon: tabs[1].icon,
+                    selectedIcon: tabs[1].selectedIcon,
+                    label: tabs[1].label,
+                    isDark: isDark,
+                  ),
+                  // FAB 中间留空（40px FAB 圆心对齐此位置，视觉上浮效果）
+                  const Expanded(child: SizedBox()),
+                  _NavTab(
+                    isSelected: selectedIndex == 2,
+                    onTap: () => onDestinationSelected(2),
+                    icon: tabs[2].icon,
+                    selectedIcon: tabs[2].selectedIcon,
+                    label: tabs[2].label,
+                    isDark: isDark,
+                  ),
+                  _NavTab(
+                    isSelected: selectedIndex == 3,
+                    onTap: () => onDestinationSelected(3),
+                    icon: tabs[3].icon,
+                    selectedIcon: tabs[3].selectedIcon,
+                    label: tabs[3].label,
+                    isDark: isDark,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
