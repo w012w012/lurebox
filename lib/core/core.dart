@@ -45,7 +45,6 @@ export 'services/achievement_service.dart';
 export 'services/backup_service.dart';
 export 'services/backup_zip_service.dart';
 export 'services/csv_exporter.dart';
-export 'services/database_service.dart';
 export 'services/enhanced_backup_service.dart';
 export 'services/equipment_service.dart';
 export 'services/error_service.dart';
