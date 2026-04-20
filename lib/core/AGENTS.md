@@ -11,7 +11,7 @@ Central shared layer: models, providers, services, repositories, database. All f
 core/
 ├── models/          # 17 data models (FishCatch, Equipment, etc.)
 ├── providers/       # 19 Riverpod providers/notifiers
-├── services/       # 17 business logic services
+├── services/       # 18 business logic services (+ secure_storage_service)
 ├── repositories/   # Repository interfaces + implementations
 ├── database/       # DatabaseProvider singleton
 ├── router/         # GoRouter configuration
@@ -40,7 +40,7 @@ core/
 - **Provider naming**: `camelCaseProvider` suffix
 - **Service naming**: `CamelCaseService`
 - **Repository**: interface in `repositories/`, impl in `*_repository_impl.dart`
-- **AI providers**: 12 implementations in `services/providers/` (openai, claude, gemini, minimax, etc.)
+- **AI providers**: 12 implementations in `services/adapters/` (openai, claude, gemini, minimax, etc.)
 - **No anti-pattern comments** in code
 
 ## ANTI-PATTERNS (THIS LAYER)
@@ -63,4 +63,4 @@ flutter analyze
 ## NOTES
 - 199 Dart files in lib/, 109 exports via `core.dart` barrel
 - All features depend on this layer - changes here affect everything
-- `core/services/providers/` has 12 AI provider implementations
+- `core/services/adapters/` has 12 AI provider implementations
