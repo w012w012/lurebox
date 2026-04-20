@@ -79,7 +79,7 @@ class PremiumNavigationBar extends StatelessWidget {
 
   /// FAB 模式：单行视觉，80px 高。
   /// FAB（82px 圆）top:-14 → 圆心 y=28，底部 y=68 露出在背景上方约 18px。
-  /// 背景 y=50–80，tabs 在 y=50–80 区域内垂直居中。
+  /// 背景 y=25–80，tabs 在 y=25–55 区域内垂直居中。
   /// FAB 触控区 y=-50 到 y=32 完整在 Stack 内。
   Widget _buildFabNavBar(BuildContext context, bool isDark) {
     final tabs = destinations;
@@ -103,12 +103,12 @@ class PremiumNavigationBar extends StatelessWidget {
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              // 背景（z=1）：y=50 到 y=80，遮住 FAB 底部超出部分
+              // 背景（z=1）：y=25 到 y=80，遮住 FAB 底部超出部分
               Positioned(
                 left: 0,
                 right: 0,
                 bottom: 0,
-                height: 30,
+                height: 55,
                 child: Container(color: bgColor),
               ),
 
@@ -121,12 +121,12 @@ class PremiumNavigationBar extends StatelessWidget {
                 child: Center(child: _buildCenterFab(context)),
               ),
 
-              // Tab 行（z=0）：y=50 到 y=80，垂直居中
+              // Tab 行（z=0）：y=25 到 y=55，垂直居中
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: 0,
-                top: 50,
+                bottom: 25,
+                top: 25,
                 child: Center(
                   child: Row(
                     children: [
