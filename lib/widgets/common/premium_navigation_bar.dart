@@ -77,11 +77,10 @@ class PremiumNavigationBar extends StatelessWidget {
     );
   }
 
-  /// FAB 模式：单行视觉，Stack 高 104px（= FAB 圆半径 36 + 上浮 40 + Tab 高 28）
-  /// - FAB（z=2）：完全在 Stack 内，top:-18 → y=-18 到 y=62，圆形中心在 y=18
-  /// - 背景（z=1）：Positioned(bottom:0, height:64) → y=40 到 y=104
-  /// - 圆形在 y=18，底部 y=54 露出在背景上方（y=40），上方 y=-18 溢出进 safe-area
-  /// - FAB 整个 80x80 触控区在 Stack 内，无 hit-test 越界问题
+  /// FAB 模式：单行视觉，128px 高。
+  /// 上方 48px：FAB 圆（72px）居中，top:-14 → y=-14 到 y=58，视觉底部 y=58 露出在背景上方约 18px。
+  /// 下方 80px：背景 + tabs，tabs 垂直居中（图标中心在 y=76）。
+  /// FAB 触控区（y=-50 到 y=22）完整在 Stack 内，与 tabs（y=48+）无 z 序冲突。
   Widget _buildFabNavBar(BuildContext context, bool isDark) {
     final tabs = destinations;
     final bgColor = isDark ? TeslaColors.carbonDark : TeslaColors.white;
@@ -100,71 +99,73 @@ class PremiumNavigationBar extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: 104,
+          height: 128,
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              // 背景（z=1）：y=40 到 y=104，遮住 FAB 底部阴影区域
+              // 背景（z=1）：y=48 到 y=128，遮住 FAB 底部超出部分
               Positioned(
                 left: 0,
                 right: 0,
                 bottom: 0,
-                height: 64,
+                height: 80,
                 child: Container(color: bgColor),
               ),
 
-              // FAB（z=2）：top:-18 → y=-18 到 y=62，圆形视觉上浮在背景上方
-              // 触控区 y=-18 到 y=62 完全在 Stack 内（0 到 104），无越界
+              // FAB（z=2）：top:-14，72px 圆居中，视觉底部 y=58 浮在背景上方
+              // 触控区 y=-50 到 y=22 完整在 Stack 内
               Positioned(
                 left: 0,
                 right: 0,
-                top: -18,
+                top: -14,
                 child: Center(child: _buildCenterFab(context)),
               ),
 
-              // Tab 行（z=0）：y=40 到 y=104，底部与背景对齐
+              // Tab 行（z=0）：y=48 到 y=128，垂直居中
               Positioned(
                 left: 0,
                 right: 0,
                 bottom: 0,
-                height: 64,
-                child: Row(
-                  children: [
-                    _NavTab(
-                      isSelected: selectedIndex == 0,
-                      onTap: () => onDestinationSelected(0),
-                      icon: tabs[0].icon,
-                      selectedIcon: tabs[0].selectedIcon,
-                      label: tabs[0].label,
-                      isDark: isDark,
-                    ),
-                    _NavTab(
-                      isSelected: selectedIndex == 1,
-                      onTap: () => onDestinationSelected(1),
-                      icon: tabs[1].icon,
-                      selectedIcon: tabs[1].selectedIcon,
-                      label: tabs[1].label,
-                      isDark: isDark,
-                    ),
-                    // FAB 中间区域留透明，触摸穿透给 FAB
-                    const Expanded(child: SizedBox()),
-                    _NavTab(
-                      isSelected: selectedIndex == 2,
-                      onTap: () => onDestinationSelected(2),
-                      icon: tabs[2].icon,
-                      selectedIcon: tabs[2].selectedIcon,
-                      label: tabs[2].label,
-                      isDark: isDark,
-                    ),
-                    _NavTab(
-                      isSelected: selectedIndex == 3,
-                      onTap: () => onDestinationSelected(3),
-                      icon: tabs[3].icon,
-                      selectedIcon: tabs[3].selectedIcon,
-                      label: tabs[3].label,
-                      isDark: isDark,
-                    ),
-                  ],
+                top: 48,
+                child: Center(
+                  child: Row(
+                    children: [
+                      _NavTab(
+                        isSelected: selectedIndex == 0,
+                        onTap: () => onDestinationSelected(0),
+                        icon: tabs[0].icon,
+                        selectedIcon: tabs[0].selectedIcon,
+                        label: tabs[0].label,
+                        isDark: isDark,
+                      ),
+                      _NavTab(
+                        isSelected: selectedIndex == 1,
+                        onTap: () => onDestinationSelected(1),
+                        icon: tabs[1].icon,
+                        selectedIcon: tabs[1].selectedIcon,
+                        label: tabs[1].label,
+                        isDark: isDark,
+                      ),
+                      // FAB 中间区域留透明，触摸穿透给 FAB
+                      const Expanded(child: SizedBox()),
+                      _NavTab(
+                        isSelected: selectedIndex == 2,
+                        onTap: () => onDestinationSelected(2),
+                        icon: tabs[2].icon,
+                        selectedIcon: tabs[2].selectedIcon,
+                        label: tabs[2].label,
+                        isDark: isDark,
+                      ),
+                      _NavTab(
+                        isSelected: selectedIndex == 3,
+                        onTap: () => onDestinationSelected(3),
+                        icon: tabs[3].icon,
+                        selectedIcon: tabs[3].selectedIcon,
+                        label: tabs[3].label,
+                        isDark: isDark,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -182,7 +183,7 @@ class PremiumNavigationBar extends StatelessWidget {
         color: Colors.transparent,
         child: SizedBox(
           width: 80,
-          height: 80,
+          height: 72,
           child: Center(
             child: Container(
               width: 72,
@@ -193,13 +194,13 @@ class PremiumNavigationBar extends StatelessWidget {
                 boxShadow: [
                   BoxShadow(
                     color: TeslaColors.electricBlue.withValues(alpha: 0.5),
-                    blurRadius: 16,
+                    blurRadius: 20,
                     offset: const Offset(0, 6),
                   ),
                   BoxShadow(
                     color: TeslaColors.electricBlue.withValues(alpha: 0.25),
-                    blurRadius: 28,
-                    spreadRadius: 4,
+                    blurRadius: 36,
+                    spreadRadius: 6,
                     offset: const Offset(0, 4),
                   ),
                 ],
@@ -207,7 +208,7 @@ class PremiumNavigationBar extends StatelessWidget {
               child: const Icon(
                 Icons.camera_alt,
                 color: Colors.white,
-                size: 34,
+                size: 36,
               ),
             ),
           ),
