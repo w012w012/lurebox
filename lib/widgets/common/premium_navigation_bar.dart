@@ -77,90 +77,100 @@ class PremiumNavigationBar extends StatelessWidget {
     );
   }
 
-  /// FAB 模式：Column 结构，FAB 放在上方（40px），nav bar 在下方（64px），
-  /// 两者不共享 z-order，FAB 的触控区和 body 完全不重叠。
+  /// FAB 模式：单行视觉，Stack 高 104px（= FAB 圆半径 36 + 上浮 40 + Tab 高 28）
+  /// - FAB（z=2）：完全在 Stack 内，top:-18 → y=-18 到 y=62，圆形中心在 y=18
+  /// - 背景（z=1）：Positioned(bottom:0, height:64) → y=40 到 y=104
+  /// - 圆形在 y=18，底部 y=54 露出在背景上方（y=40），上方 y=-18 溢出进 safe-area
+  /// - FAB 整个 80x80 触控区在 Stack 内，无 hit-test 越界问题
   Widget _buildFabNavBar(BuildContext context, bool isDark) {
     final tabs = destinations;
     final bgColor = isDark ? TeslaColors.carbonDark : TeslaColors.white;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // FAB 区域：72px 高，使 72px 圆形完整放置，clipBehavior: Clip.none 允许向上溢出
-        // Positioned(top:-18) 使圆心在 y=18，上方 18px 露出导航栏外（视觉上浮效果）
-        // Clip.none 确保圆形向上溢出时不被裁剪，触摸事件在完整 80x80 区域响应
-        SizedBox(
-          height: 72,
+    return Container(
+      decoration: BoxDecoration(
+        color: bgColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 104,
           child: Stack(
             clipBehavior: Clip.none,
-            alignment: Alignment.topCenter,
             children: [
+              // 背景（z=1）：y=40 到 y=104，遮住 FAB 底部阴影区域
               Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 64,
+                child: Container(color: bgColor),
+              ),
+
+              // FAB（z=2）：top:-18 → y=-18 到 y=62，圆形视觉上浮在背景上方
+              // 触控区 y=-18 到 y=62 完全在 Stack 内（0 到 104），无越界
+              Positioned(
+                left: 0,
+                right: 0,
                 top: -18,
-                child: _buildCenterFab(context),
+                child: Center(child: _buildCenterFab(context)),
+              ),
+
+              // Tab 行（z=0）：y=40 到 y=104，底部与背景对齐
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 64,
+                child: Row(
+                  children: [
+                    _NavTab(
+                      isSelected: selectedIndex == 0,
+                      onTap: () => onDestinationSelected(0),
+                      icon: tabs[0].icon,
+                      selectedIcon: tabs[0].selectedIcon,
+                      label: tabs[0].label,
+                      isDark: isDark,
+                    ),
+                    _NavTab(
+                      isSelected: selectedIndex == 1,
+                      onTap: () => onDestinationSelected(1),
+                      icon: tabs[1].icon,
+                      selectedIcon: tabs[1].selectedIcon,
+                      label: tabs[1].label,
+                      isDark: isDark,
+                    ),
+                    // FAB 中间区域留透明，触摸穿透给 FAB
+                    const Expanded(child: SizedBox()),
+                    _NavTab(
+                      isSelected: selectedIndex == 2,
+                      onTap: () => onDestinationSelected(2),
+                      icon: tabs[2].icon,
+                      selectedIcon: tabs[2].selectedIcon,
+                      label: tabs[2].label,
+                      isDark: isDark,
+                    ),
+                    _NavTab(
+                      isSelected: selectedIndex == 3,
+                      onTap: () => onDestinationSelected(3),
+                      icon: tabs[3].icon,
+                      selectedIcon: tabs[3].selectedIcon,
+                      label: tabs[3].label,
+                      isDark: isDark,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
-        // Nav bar：64px，背景完整，左右 tab 均分，中间留透明间隙
-        Container(
-          height: 64,
-          decoration: BoxDecoration(
-            color: bgColor,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
-              ),
-            ],
-          ),
-          child: SafeArea(
-            top: false,
-            child: SizedBox(
-              height: 64,
-              child: Row(
-                children: [
-                  _NavTab(
-                    isSelected: selectedIndex == 0,
-                    onTap: () => onDestinationSelected(0),
-                    icon: tabs[0].icon,
-                    selectedIcon: tabs[0].selectedIcon,
-                    label: tabs[0].label,
-                    isDark: isDark,
-                  ),
-                  _NavTab(
-                    isSelected: selectedIndex == 1,
-                    onTap: () => onDestinationSelected(1),
-                    icon: tabs[1].icon,
-                    selectedIcon: tabs[1].selectedIcon,
-                    label: tabs[1].label,
-                    isDark: isDark,
-                  ),
-                  // FAB 中间留空（40px FAB 圆心对齐此位置，视觉上浮效果）
-                  const Expanded(child: SizedBox()),
-                  _NavTab(
-                    isSelected: selectedIndex == 2,
-                    onTap: () => onDestinationSelected(2),
-                    icon: tabs[2].icon,
-                    selectedIcon: tabs[2].selectedIcon,
-                    label: tabs[2].label,
-                    isDark: isDark,
-                  ),
-                  _NavTab(
-                    isSelected: selectedIndex == 3,
-                    onTap: () => onDestinationSelected(3),
-                    icon: tabs[3].icon,
-                    selectedIcon: tabs[3].selectedIcon,
-                    label: tabs[3].label,
-                    isDark: isDark,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
