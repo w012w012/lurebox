@@ -1,18 +1,13 @@
-import 'dart:convert' as convert;
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lurebox/core/services/secure_storage_service.dart';
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
 
 void main() {
-  // 初始化 Flutter binding（required for platform channels）
-  TestWidgetsFlutterBinding.ensureInitialized();
-
-  group('SecureStorageService JSON Migration Logic', () {
-    // 测试迁移逻辑的 JSON 处理部分
-    // 注意：实际的 SecureStorageService 需要平台 channel，完整集成测试需要
-    // integration_test 框架，这里测试 JSON 处理逻辑
-
-    test('migrates API keys from legacy JSON correctly', () async {
-      const legacyJson = '''
+  group('SecureStorageService', () {
+    group('migrateApiKeysFromJson', () {
+      test('extracts API keys and returns cleaned JSON without apiKey fields',
+          () async {
+        const legacyJson = '''
 {
   "currentProvider": 0,
   "providerConfigs": {
@@ -24,44 +19,28 @@ void main() {
 }
 ''';
 
-      // 模拟迁移逻辑
-      final json = convert.jsonDecode(legacyJson) as Map<String, dynamic>;
-      final configs = json['providerConfigs'] as Map<String, dynamic>;
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final cleanedJson = await service.migrateApiKeysFromJson(legacyJson);
 
-      final extractedKeys = <String, String>{};
-      for (final entry in configs.entries) {
-        final config = entry.value as Map<String, dynamic>;
-        if (config.containsKey('apiKey')) {
-          final apiKey = config['apiKey'] as String?;
-          if (apiKey != null && apiKey.isNotEmpty) {
-            extractedKeys[entry.key] = apiKey;
-          }
-        }
-      }
+        // API keys should be saved to secure storage
+        expect(await service.getProviderApiKey('0'), equals('sk-gemini-123'));
+        expect(await service.getProviderApiKey('1'), equals('sk-openai-456'));
 
-      // 验证提取的 keys
-      expect(extractedKeys['0'], equals('sk-gemini-123'));
-      expect(extractedKeys['1'], equals('sk-openai-456'));
-      expect(extractedKeys.length, equals(2));
+        // Cleaned JSON should not contain API keys
+        expect(cleanedJson.contains('sk-gemini-123'), isFalse);
+        expect(cleanedJson.contains('sk-openai-456'), isFalse);
+        expect(cleanedJson.contains('"apiKey"'), isFalse);
 
-      // 创建清理后的 JSON
-      final cleanedConfigs = <String, dynamic>{};
-      for (final entry in configs.entries) {
-        final config = Map<String, dynamic>.from(entry.value as Map);
-        config.remove('apiKey');
-        cleanedConfigs[entry.key] = config;
-      }
-      json['providerConfigs'] = cleanedConfigs;
-      final cleanedJson = convert.jsonEncode(json);
+        // Other fields should be preserved
+        expect(cleanedJson.contains('"currentProvider"'), isTrue);
+        expect(cleanedJson.contains('https://api.openai.com'), isTrue);
+        expect(cleanedJson.contains('gpt-4'), isTrue);
+        expect(cleanedJson.contains('"enabled":true'), isTrue);
+      });
 
-      // 验证清理后的 JSON 不含 API keys
-      expect(cleanedJson.contains('sk-gemini-123'), isFalse);
-      expect(cleanedJson.contains('sk-openai-456'), isFalse);
-      expect(cleanedJson.contains('"apiKey"'), isFalse);
-    });
-
-    test('handles empty providerConfigs gracefully', () {
-      const json = '''
+      test('handles empty providerConfigs gracefully', () async {
+        const json = '''
 {
   "currentProvider": 0,
   "providerConfigs": {},
@@ -70,25 +49,16 @@ void main() {
 }
 ''';
 
-      final parsed = convert.jsonDecode(json) as Map<String, dynamic>;
-      final configs = parsed['providerConfigs'] as Map<String, dynamic>;
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final cleanedJson = await service.migrateApiKeysFromJson(json);
 
-      final extractedKeys = <String, String>{};
-      for (final entry in configs.entries) {
-        final config = entry.value as Map<String, dynamic>;
-        if (config.containsKey('apiKey')) {
-          final apiKey = config['apiKey'] as String?;
-          if (apiKey != null && apiKey.isNotEmpty) {
-            extractedKeys[entry.key] = apiKey;
-          }
-        }
-      }
+        expect(await service.getProviderApiKey('0'), isNull);
+        expect(cleanedJson.contains('"providerConfigs"'), isTrue);
+      });
 
-      expect(extractedKeys.isEmpty, isTrue);
-    });
-
-    test('handles missing apiKey fields gracefully', () {
-      const json = '''
+      test('handles missing apiKey fields gracefully', () async {
+        const json = '''
 {
   "currentProvider": 0,
   "providerConfigs": {
@@ -99,25 +69,16 @@ void main() {
 }
 ''';
 
-      final parsed = convert.jsonDecode(json) as Map<String, dynamic>;
-      final configs = parsed['providerConfigs'] as Map<String, dynamic>;
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final cleanedJson = await service.migrateApiKeysFromJson(json);
 
-      final extractedKeys = <String, String>{};
-      for (final entry in configs.entries) {
-        final config = entry.value as Map<String, dynamic>;
-        if (config.containsKey('apiKey')) {
-          final apiKey = config['apiKey'] as String?;
-          if (apiKey != null && apiKey.isNotEmpty) {
-            extractedKeys[entry.key] = apiKey;
-          }
-        }
-      }
+        expect(await service.getProviderApiKey('0'), isNull);
+        expect(cleanedJson.contains('"apiKey"'), isFalse);
+      });
 
-      expect(extractedKeys.isEmpty, isTrue);
-    });
-
-    test('handles null apiKey gracefully', () {
-      const json = '''
+      test('handles null apiKey gracefully', () async {
+        const json = '''
 {
   "currentProvider": 0,
   "providerConfigs": {
@@ -128,25 +89,15 @@ void main() {
 }
 ''';
 
-      final parsed = convert.jsonDecode(json) as Map<String, dynamic>;
-      final configs = parsed['providerConfigs'] as Map<String, dynamic>;
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+        await service.migrateApiKeysFromJson(json);
 
-      final extractedKeys = <String, String>{};
-      for (final entry in configs.entries) {
-        final config = entry.value as Map<String, dynamic>;
-        if (config.containsKey('apiKey')) {
-          final apiKey = config['apiKey'] as String?;
-          if (apiKey != null && apiKey.isNotEmpty) {
-            extractedKeys[entry.key] = apiKey;
-          }
-        }
-      }
+        expect(await service.getProviderApiKey('0'), isNull);
+      });
 
-      expect(extractedKeys.isEmpty, isTrue);
-    });
-
-    test('handles empty apiKey gracefully', () {
-      const json = '''
+      test('handles empty apiKey gracefully', () async {
+        const json = '''
 {
   "currentProvider": 0,
   "providerConfigs": {
@@ -157,25 +108,15 @@ void main() {
 }
 ''';
 
-      final parsed = convert.jsonDecode(json) as Map<String, dynamic>;
-      final configs = parsed['providerConfigs'] as Map<String, dynamic>;
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+        await service.migrateApiKeysFromJson(json);
 
-      final extractedKeys = <String, String>{};
-      for (final entry in configs.entries) {
-        final config = entry.value as Map<String, dynamic>;
-        if (config.containsKey('apiKey')) {
-          final apiKey = config['apiKey'] as String?;
-          if (apiKey != null && apiKey.isNotEmpty) {
-            extractedKeys[entry.key] = apiKey;
-          }
-        }
-      }
+        expect(await service.getProviderApiKey('0'), isNull);
+      });
 
-      expect(extractedKeys.isEmpty, isTrue);
-    });
-
-    test('preserves other config fields during migration', () {
-      const json = '''
+      test('preserves other config fields during migration', () async {
+        const json = '''
 {
   "currentProvider": 0,
   "providerConfigs": {
@@ -192,57 +133,20 @@ void main() {
 }
 ''';
 
-      final parsed = convert.jsonDecode(json) as Map<String, dynamic>;
-      final configs = parsed['providerConfigs'] as Map<String, dynamic>;
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final cleanedJson = await service.migrateApiKeysFromJson(json);
 
-      // 提取 API key
-      final config = configs['0'] as Map<String, dynamic>;
-      final apiKey = config['apiKey'] as String?;
+        expect(await service.getProviderApiKey('0'), equals('sk-test-123'));
+        expect(cleanedJson.contains('sk-test-123'), isFalse);
+        expect(cleanedJson.contains('custom.api.com'), isTrue);
+        expect(cleanedJson.contains('custom-model'), isTrue);
+        expect(cleanedJson.contains('false'), isTrue);
+        expect(cleanedJson.contains('30'), isTrue);
+      });
 
-      // 验证 API key
-      expect(apiKey, equals('sk-test-123'));
-
-      // 清理 JSON
-      config.remove('apiKey');
-      configs['0'] = config;
-      parsed['providerConfigs'] = configs;
-      final cleanedJson = convert.jsonEncode(parsed);
-
-      // 验证清理后的 JSON 不包含 API key
-      expect(cleanedJson.contains('sk-test-123'), isFalse);
-      // 验证清理后的 JSON 包含其他字段
-      expect(cleanedJson.contains('custom.api.com'), isTrue);
-      expect(cleanedJson.contains('custom-model'), isTrue);
-      expect(cleanedJson.contains('false'), isTrue); // enabled: false
-      expect(cleanedJson.contains('30'), isTrue); // timeout: 30
-    });
-
-    test('handles invalid JSON gracefully', () {
-      const invalidJson = 'not valid json';
-
-      try {
-        convert.jsonDecode(invalidJson);
-        fail('Should throw exception');
-      } catch (e) {
-        // Expected behavior
-        expect(e is FormatException, isTrue);
-      }
-    });
-
-    test('handles empty string JSON gracefully', () {
-      const emptyJson = '';
-
-      try {
-        convert.jsonDecode(emptyJson);
-        fail('Should throw exception');
-      } catch (e) {
-        // Expected behavior
-        expect(e is FormatException, isTrue);
-      }
-    });
-
-    test('handles null value for providerConfigs gracefully', () {
-      const json = '''
+      test('handles null providerConfigs gracefully', () async {
+        const json = '''
 {
   "currentProvider": 0,
   "autoRecognize": true,
@@ -250,33 +154,162 @@ void main() {
 }
 ''';
 
-      final parsed = convert.jsonDecode(json) as Map<String, dynamic>;
-      final configs = parsed['providerConfigs'] as Map<String, dynamic>?;
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final cleanedJson = await service.migrateApiKeysFromJson(json);
 
-      expect(configs, isNull);
+        expect(cleanedJson, equals(json)); // unchanged
+        expect(await service.getProviderApiKey('0'), isNull);
+      });
 
-      // 当 configs 为 null 时，不应该崩溃
-      if (configs == null) {
-        // 这是预期行为 - 不处理
-        expect(true, isTrue);
-      }
+      test('returns original JSON when invalid', () async {
+        const invalidJson = 'not valid json';
+
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final result = await service.migrateApiKeysFromJson(invalidJson);
+
+        expect(result, equals(invalidJson));
+      });
+
+      test('returns original JSON when empty string', () async {
+        const emptyJson = '';
+
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final result = await service.migrateApiKeysFromJson(emptyJson);
+
+        expect(result, equals(emptyJson));
+      });
     });
-  });
 
-  group('SecureStorageService API Key Format Validation', () {
-    test('API key should not be empty', () {
-      const emptyKey = '';
-      expect(emptyKey.isEmpty, isTrue);
+    group('ApiKeyStorage implementations', () {
+      test('InMemoryApiKeyStorage saves and retrieves correctly', () async {
+        final storage = InMemoryApiKeyStorage();
+
+        await storage.save('openai', 'sk-test-openai');
+        expect(await storage.get('openai'), equals('sk-test-openai'));
+
+        await storage.save('gemini', 'sk-test-gemini');
+        expect(await storage.get('openai'), equals('sk-test-openai'));
+        expect(await storage.get('gemini'), equals('sk-test-gemini'));
+      });
+
+      test('InMemoryApiKeyStorage.has returns true for saved keys',
+          () async {
+        final storage = InMemoryApiKeyStorage();
+
+        expect(await storage.has('openai'), isFalse);
+        await storage.save('openai', 'sk-test');
+        expect(await storage.has('openai'), isTrue);
+      });
+
+      test('InMemoryApiKeyStorage.delete removes key', () async {
+        final storage = InMemoryApiKeyStorage();
+
+        await storage.save('openai', 'sk-test');
+        expect(await storage.has('openai'), isTrue);
+        await storage.delete('openai');
+        expect(await storage.has('openai'), isFalse);
+      });
+
+      test('InMemoryApiKeyStorage.deleteAll clears all', () async {
+        final storage = InMemoryApiKeyStorage();
+
+        await storage.save('openai', 'sk-test-1');
+        await storage.save('gemini', 'sk-test-2');
+        await storage.deleteAll();
+
+        expect(await storage.has('openai'), isFalse);
+        expect(await storage.has('gemini'), isFalse);
+      });
+
+      test('InMemoryApiKeyStorage ignores empty provider or key on save',
+          () async {
+        final storage = InMemoryApiKeyStorage();
+
+        await storage.save('', 'sk-test');
+        await storage.save('openai', '');
+        await storage.save('', '');
+
+        expect(await storage.get('openai'), isNull);
+        expect(await storage.has('openai'), isFalse);
+      });
     });
 
-    test('API key should not be whitespace only', () {
-      const whitespaceKey = '   ';
-      expect(whitespaceKey.trim().isEmpty, isTrue);
-    });
+    group('SecureStorageService saveProviderApiKey', () {
+      test('saves and retrieves provider API key', () async {
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
 
-    test('Provider key should not be empty', () {
-      const emptyProvider = '';
-      expect(emptyProvider.isEmpty, isTrue);
+        await service.saveProviderApiKey('openai', 'sk-test-123');
+        expect(
+            await service.getProviderApiKey('openai'), equals('sk-test-123'));
+      });
+
+      test('hasProviderApiKey returns true after save', () async {
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+
+        expect(
+            await service.hasProviderApiKey('openai'), isFalse);
+        await service.saveProviderApiKey('openai', 'sk-test');
+        expect(
+            await service.hasProviderApiKey('openai'), isTrue);
+      });
+
+      test('deleteProviderApiKey removes the key', () async {
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+
+        await service.saveProviderApiKey('openai', 'sk-test');
+        await service.deleteProviderApiKey('openai');
+        expect(
+            await service.hasProviderApiKey('openai'), isFalse);
+      });
+
+      test('deleteAllProviderApiKeys clears all keys', () async {
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+
+        await service.saveProviderApiKey('openai', 'sk-test-1');
+        await service.saveProviderApiKey('gemini', 'sk-test-2');
+        await service.deleteAllProviderApiKeys();
+
+        expect(
+            await service.hasProviderApiKey('openai'), isFalse);
+        expect(
+            await service.hasProviderApiKey('gemini'), isFalse);
+      });
+
+      test('saveAllProviderApiKeys saves multiple keys', () async {
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+
+        await service.saveAllProviderApiKeys({
+          'openai': 'sk-test-1',
+          'gemini': 'sk-test-2',
+        });
+
+        expect(
+            await service.getProviderApiKey('openai'), equals('sk-test-1'));
+        expect(
+            await service.getProviderApiKey('gemini'), equals('sk-test-2'));
+      });
+
+      test('getAllProviderApiKeys returns all saved keys', () async {
+        final service =
+            SecureStorageService(storage: InMemoryApiKeyStorage());
+
+        // Use numeric provider keys matching AiRecognitionProvider enum values
+        await service.saveProviderApiKey('0', 'sk-test-gemini');
+        await service.saveProviderApiKey('1', 'sk-test-openai');
+
+        final all = await service.getAllProviderApiKeys();
+
+        expect(all['0'], equals('sk-test-gemini'));
+        expect(all['1'], equals('sk-test-openai'));
+      });
     });
   });
 }
