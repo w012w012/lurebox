@@ -153,7 +153,6 @@ class WatermarkSettingsPage extends ConsumerWidget {
               return _WatermarkInfoTile(
                 key: ValueKey(typeInfo.type),
                 typeInfo: typeInfo,
-                isRequired: false,
                 isSelected: true,
                 strings: strings,
                 onToggle: () {
@@ -177,7 +176,6 @@ class WatermarkSettingsPage extends ConsumerWidget {
               return _WatermarkInfoTile(
                 key: ValueKey(typeInfo.type),
                 typeInfo: typeInfo,
-                isRequired: false,
                 isSelected: false,
                 strings: strings,
                 onToggle: () {
@@ -782,7 +780,6 @@ class _WatermarkPreviewPainter extends CustomPainter {
 
 class _WatermarkInfoTile extends StatelessWidget {
   final WatermarkInfoTypeInfo typeInfo;
-  final bool isRequired;
   final bool isSelected;
   final AppStrings strings;
   final VoidCallback? onToggle;
@@ -790,7 +787,6 @@ class _WatermarkInfoTile extends StatelessWidget {
   const _WatermarkInfoTile({
     super.key,
     required this.typeInfo,
-    required this.isRequired,
     required this.isSelected,
     required this.strings,
     this.onToggle,
@@ -815,7 +811,7 @@ class _WatermarkInfoTile extends StatelessWidget {
       ),
       child: ListTile(
         leading: isSelected
-            ? Icon(Icons.drag_handle, color: TeslaColors.graphite)
+            ? const Icon(Icons.drag_handle, color: TeslaColors.graphite)
             : Checkbox(value: false, onChanged: (_) => onToggle?.call()),
         title: Row(
           children: [
@@ -829,31 +825,15 @@ class _WatermarkInfoTile extends StatelessWidget {
                     ),
               ),
             ),
-            if (isRequired)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: TeslaColors.graphite.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
-                ),
-                child: Text(
-                  strings.defaultLabel,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: TeslaColors.graphite,
-                      ),
-                ),
-              ),
           ],
         ),
         trailing: isSelected
             ? IconButton(
                 icon: Icon(
                   Icons.remove_circle_outline,
-                  color: isRequired
-                      ? TeslaColors.graphite
-                      : Theme.of(context).colorScheme.error,
+                  color: Theme.of(context).colorScheme.error,
                 ),
-                onPressed: isRequired ? null : onToggle,
+                onPressed: onToggle,
               )
             : null,
         onTap: onToggle,

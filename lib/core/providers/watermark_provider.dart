@@ -42,9 +42,7 @@ class WatermarkSettingsNotifier extends StateNotifier<WatermarkSettings> {
   Future<void> toggleInfoType(WatermarkInfoType type) async {
     final List<WatermarkInfoType> newTypes = List.from(state.infoTypes);
     if (newTypes.contains(type)) {
-      if (type != WatermarkInfoType.appName) {
-        newTypes.remove(type);
-      }
+      newTypes.remove(type);
     } else {
       newTypes.add(type);
     }
