@@ -162,24 +162,28 @@ void main() {
         expect(await service.getProviderApiKey('0'), isNull);
       });
 
-      test('returns original JSON when invalid', () async {
+      test('throws when JSON is invalid', () async {
         const invalidJson = 'not valid json';
 
         final service =
             SecureStorageService(storage: InMemoryApiKeyStorage());
-        final result = await service.migrateApiKeysFromJson(invalidJson);
-
-        expect(result, equals(invalidJson));
+        // Rethrow ensures caller handles it — prevents infinite migration
+        // loop if the subsequent repository.set() would succeed.
+        expect(
+          () => service.migrateApiKeysFromJson(invalidJson),
+          throwsA(isA<FormatException>()),
+        );
       });
 
-      test('returns original JSON when empty string', () async {
+      test('throws when JSON is empty string', () async {
         const emptyJson = '';
 
         final service =
             SecureStorageService(storage: InMemoryApiKeyStorage());
-        final result = await service.migrateApiKeysFromJson(emptyJson);
-
-        expect(result, equals(emptyJson));
+        expect(
+          () => service.migrateApiKeysFromJson(emptyJson),
+          throwsA(isA<FormatException>()),
+        );
       });
     });
 

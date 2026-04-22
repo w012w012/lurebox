@@ -107,14 +107,13 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         return (start, end);
 
       case 'month':
-        final start = DateTime(now.year, now.month, 1);
-        final end = DateTime(now.year, now.month + 1, 1);
-        return (start, end);
+        // Explicit rollover to avoid relying on DateTime normalization
+        final nextMonth = now.month == 12 ? 1 : now.month + 1;
+        final nextYear = now.month == 12 ? now.year + 1 : now.year;
+        return (DateTime(now.year, now.month, 1), DateTime(nextYear, nextMonth, 1));
 
       case 'year':
-        final start = DateTime(now.year, 1, 1);
-        final end = DateTime(now.year + 1, 1, 1);
-        return (start, end);
+        return (DateTime(now.year, 1, 1), DateTime(now.year + 1, 1, 1));
 
       case 'custom':
         if (customStart == null || customEnd == null) return (null, null);

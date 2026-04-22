@@ -239,3 +239,18 @@ class LocationException extends AppException {
 class FileException extends AppException {
   const FileException(super.message, {super.originalError});
 }
+
+/// Settings 数据损坏异常
+///
+/// 当用户设置文件（WatermarkSettings / AppSettings / AiRecognitionSettings）
+/// 无法解析时抛出，而非静默回退到默认值导致用户偏好丢失。
+class SettingsCorruptedException extends AppException {
+  /// 原始的损坏数据（可用于诊断或备份）
+  final String? originalValue;
+
+  const SettingsCorruptedException(
+    super.message, {
+    this.originalValue,
+    super.originalError,
+  });
+}

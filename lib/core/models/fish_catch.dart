@@ -227,8 +227,10 @@ extension FishCatchListExtension on List<FishCatch> {
           final end = start.add(const Duration(days: 7));
           return fish.catchTime.isAfter(start) && fish.catchTime.isBefore(end);
         case 'month':
+          final nextMonth = now.month == 12 ? 1 : now.month + 1;
+          final nextYear = now.month == 12 ? now.year + 1 : now.year;
           final start = DateTime(now.year, now.month, 1);
-          final end = DateTime(now.year, now.month + 1, 1);
+          final end = DateTime(nextYear, nextMonth, 1);
           return fish.catchTime.isAfter(start) && fish.catchTime.isBefore(end);
         case 'year':
           final start = DateTime(now.year, 1, 1);

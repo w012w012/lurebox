@@ -237,7 +237,11 @@ class SecureStorageService {
       return convert.jsonEncode(json);
     } catch (e) {
       debugPrint('[SecureStorageService] Migration failed: $e');
-      return legacyJson;
+      // Rethrow so caller handles it. Do NOT return unchanged JSON,
+      // which would cause an infinite migration loop if the subsequent
+      // repository.set() succeeds — _needsMigration would still see
+      // '"apiKey"' in the saved JSON and re-trigger migration on next launch.
+      rethrow;
     }
   }
 }
