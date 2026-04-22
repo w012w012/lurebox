@@ -3,6 +3,7 @@ import '../models/watermark_settings.dart';
 import '../models/app_settings.dart';
 import '../models/ai_recognition_settings.dart';
 import '../repositories/settings_repository.dart';
+import 'error_service.dart';
 import 'secure_storage_service.dart';
 
 /// 设置服务 - 应用配置的持久化管理
@@ -40,11 +41,17 @@ class SettingsService {
     try {
       return WatermarkSettings.decode(value);
     } on FormatException catch (e) {
-      debugPrint('[SettingsService] Failed to decode watermark settings: $e');
-      return const WatermarkSettings();
+      throw SettingsCorruptedException(
+        'Watermark settings corrupted: $e',
+        originalValue: value,
+        originalError: e,
+      );
     } catch (e) {
-      debugPrint('[SettingsService] Unexpected error decoding watermark settings: $e');
-      return const WatermarkSettings();
+      throw SettingsCorruptedException(
+        'Unexpected error decoding watermark settings: $e',
+        originalValue: value,
+        originalError: e,
+      );
     }
   }
 
@@ -60,11 +67,17 @@ class SettingsService {
     try {
       return AppSettings.decode(value);
     } on FormatException catch (e) {
-      debugPrint('[SettingsService] Failed to decode app settings: $e');
-      return const AppSettings();
+      throw SettingsCorruptedException(
+        'App settings corrupted: $e',
+        originalValue: value,
+        originalError: e,
+      );
     } catch (e) {
-      debugPrint('[SettingsService] Unexpected error decoding app settings: $e');
-      return const AppSettings();
+      throw SettingsCorruptedException(
+        'Unexpected error decoding app settings: $e',
+        originalValue: value,
+        originalError: e,
+      );
     }
   }
 
@@ -96,27 +109,37 @@ class SettingsService {
       // 1. 检查是否需要迁移旧数据
       final needsMigration = await _needsMigration(value);
       if (needsMigration) {
-        // 执行迁移
-        final migratedJson = await _secureStorage.migrateApiKeysFromJson(value);
+        // 关键修复：先标记迁移开始，再执行可能失败的操作
+        await _repository.set('_ai_keys_migrated', 'in_progress');
+
+        final migratedJson =
+            await _secureStorage.migrateApiKeysFromJson(value);
         await _repository.set('ai_recognition_settings', migratedJson);
         await _repository.set('_ai_keys_migrated', 'true');
         debugPrint('[SettingsService] API keys migrated to secure storage');
-        value = migratedJson; // 使用迁移后的 JSON
+        value = migratedJson;
       }
 
       // 2. 解析设置
       final settings = AiRecognitionSettings.decode(value);
 
       // 3. 从安全存储加载 API keys
-      final settingsWithApiKeys = await _injectApiKeysFromSecureStorage(settings);
+      final settingsWithApiKeys =
+          await _injectApiKeysFromSecureStorage(settings);
 
       return settingsWithApiKeys;
     } on FormatException catch (e) {
-      debugPrint('[SettingsService] Failed to decode AI recognition settings: $e');
-      return const AiRecognitionSettings();
+      throw SettingsCorruptedException(
+        'AI recognition settings corrupted: $e',
+        originalValue: value,
+        originalError: e,
+      );
     } catch (e) {
-      debugPrint('[SettingsService] Unexpected error decoding AI recognition settings: $e');
-      return const AiRecognitionSettings();
+      throw SettingsCorruptedException(
+        'Unexpected error decoding AI recognition settings: $e',
+        originalValue: value,
+        originalError: e,
+      );
     }
   }
 

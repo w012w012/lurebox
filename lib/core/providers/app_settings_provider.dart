@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/app_settings.dart';
 import '../services/settings_service.dart';
+import '../services/error_service.dart';
 import '../di/di.dart';
 
 class AppSettingsNotifier extends StateNotifier<AppSettings> {
@@ -12,8 +14,15 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
   }
 
   Future<void> _loadSettings() async {
-    final settings = await _service.getAppSettings();
-    state = settings;
+    try {
+      final settings = await _service.getAppSettings();
+      state = settings;
+    } on SettingsCorruptedException catch (e) {
+      // 记录损坏状态但不崩溃：让应用以默认值启动
+      debugPrint('[AppSettingsNotifier] Settings corrupted, using defaults: $e');
+    } catch (e) {
+      debugPrint('[AppSettingsNotifier] Unexpected error loading settings: $e');
+    }
   }
 
   Future<void> updateSettings(AppSettings settings) async {

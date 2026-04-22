@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/services/settings_service.dart';
 import 'package:lurebox/core/services/secure_storage_service.dart';
+import 'package:lurebox/core/services/error_service.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
@@ -94,10 +95,11 @@ void main() {
         when(() => mockRepository.get('watermark_settings'))
             .thenAnswer((_) async => 'invalid json {');
 
-        final result = await settingsService.getWatermarkSettings();
-
-        expect(result.enabled, equals(true)); // default
-        expect(result.blurRadius, equals(10.0)); // default
+        // Now throws SettingsCorruptedException instead of silently returning defaults
+        expect(
+          () => settingsService.getWatermarkSettings(),
+          throwsA(isA<SettingsCorruptedException>()),
+        );
       });
     });
 
@@ -159,10 +161,11 @@ void main() {
         when(() => mockRepository.get('app_settings'))
             .thenAnswer((_) async => 'not valid json');
 
-        final result = await settingsService.getAppSettings();
-
-        expect(result.units.fishLengthUnit, equals('cm')); // default
-        expect(result.darkMode, equals(DarkMode.system)); // default
+        // Now throws SettingsCorruptedException instead of silently returning defaults
+        expect(
+          () => settingsService.getAppSettings(),
+          throwsA(isA<SettingsCorruptedException>()),
+        );
       });
     });
 
@@ -258,16 +261,17 @@ void main() {
         when(() => mockRepository.get('ai_recognition_settings'))
             .thenAnswer((_) async => 'corrupted json }}');
 
-        final result = await settingsService.getAiRecognitionSettings();
-
-        expect(result.currentProvider,
-            equals(AiRecognitionProvider.gemini)); // default
-        expect(result.autoRecognize, equals(true)); // default
+        // Now throws SettingsCorruptedException instead of silently returning defaults
+        expect(
+          () => settingsService.getAiRecognitionSettings(),
+          throwsA(isA<SettingsCorruptedException>()),
+        );
       });
 
       test('getAiRecognitionSettings migrates API keys from legacy JSON',
           () async {
         // Legacy JSON with API keys
+        // NOTE: timeout must be valid ISO8601 duration string (not int)
         const legacyJson = '''
 {
   "currentProvider": 0,
@@ -290,6 +294,8 @@ void main() {
             .thenAnswer((invocation) async {
           savedJson = invocation.positionalArguments[1] as String;
         });
+        when(() => mockRepository.set('_ai_keys_migrated', any()))
+            .thenAnswer((_) async {});
 
         final result = await settingsService.getAiRecognitionSettings();
 
@@ -338,17 +344,34 @@ void main() {
         when(() => mockRepository.set('_ai_keys_migrated', any()))
             .thenAnswer((_) async {});
 
-        // First call throws, but API keys should be in secure storage already
+        // First call throws (settings corruption), but API keys should be in secure storage
         try {
           await settingsService.getAiRecognitionSettings();
-        } catch (_) {}
+        } on SettingsCorruptedException catch (_) {}
 
         // Keys should be migrated even though the save failed
         expect(await mockSecureStorage.get('0'), equals('sk-test-gemini'));
 
-        // Second call: cleaned JSON write succeeds
+        // Second call: migration runs again (same legacy JSON since write failed)
+        // this time cleaned JSON write succeeds
+        var secondCallCount = 0;
+        when(() => mockRepository.set('ai_recognition_settings', any()))
+            .thenAnswer((_) async {
+          secondCallCount++;
+          if (secondCallCount == 1) {
+            throw Exception('DB write failed');
+          }
+        });
+
+        try {
+          await settingsService.getAiRecognitionSettings();
+        } on SettingsCorruptedException catch (_) {}
+
+        // Third call: migration completed, keys should be readable
         when(() => mockRepository.set('ai_recognition_settings', any()))
             .thenAnswer((_) async {});
+        when(() => mockRepository.get('_ai_keys_migrated'))
+            .thenAnswer((_) async => null); // reset for fresh test
 
         final result = await settingsService.getAiRecognitionSettings();
 

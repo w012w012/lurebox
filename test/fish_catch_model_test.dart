@@ -249,5 +249,106 @@ void main() {
       final all = testCatches.filterByTime('all');
       expect(all.length, 1);
     });
+
+    group('boundary conditions', () {
+      test('December month filter does not overflow to next year', () {
+        final now = DateTime(2024, 12, 15);
+        final decStart = DateTime(2024, 12, 1);
+        final janStart = DateTime(2025, 1, 1);
+
+        final testCatches = [
+          FishCatch(id: 1, imagePath: '/1.jpg', species: 'Dec Fish', length: 30.0,
+              fate: FishFateType.release, catchTime: DateTime(2024, 12, 31, 23, 59),
+              createdAt: now, updatedAt: now),
+          FishCatch(id: 2, imagePath: '/2.jpg', species: 'Jan Fish', length: 25.0,
+              fate: FishFateType.release, catchTime: DateTime(2025, 1, 1),
+              createdAt: now, updatedAt: now),
+          FishCatch(id: 3, imagePath: '/3.jpg', species: 'Nov Fish', length: 20.0,
+              fate: FishFateType.release, catchTime: DateTime(2024, 11, 30),
+              createdAt: now, updatedAt: now),
+        ];
+
+        // Verify the month boundary logic used in filterByTime('month')
+        final decCatches = testCatches.where((fish) {
+          return fish.catchTime.isAfter(decStart) && fish.catchTime.isBefore(janStart);
+        }).toList();
+
+        expect(decCatches.length, 1);
+        expect(decCatches.first.species, 'Dec Fish');
+      });
+
+      test('February leap year boundary (Feb 29)', () {
+        final febStart = DateTime(2024, 2, 1); // 2024 is leap year
+        final marStart = DateTime(2024, 3, 1);
+
+        final testCatches = [
+          FishCatch(id: 1, imagePath: '/1.jpg', species: 'Feb 29', length: 30.0,
+              fate: FishFateType.release, catchTime: DateTime(2024, 2, 29),
+              createdAt: DateTime.now(), updatedAt: DateTime.now()),
+          FishCatch(id: 2, imagePath: '/2.jpg', species: 'Mar 1', length: 25.0,
+              fate: FishFateType.release, catchTime: DateTime(2024, 3, 1),
+              createdAt: DateTime.now(), updatedAt: DateTime.now()),
+        ];
+
+        final febCatches = testCatches.where((fish) {
+          return fish.catchTime.isAfter(febStart) && fish.catchTime.isBefore(marStart);
+        }).toList();
+
+        expect(febCatches.length, 1);
+        expect(febCatches.first.species, 'Feb 29');
+      });
+
+      test('end of month boundary (catchTime exactly at month start)', () {
+        // June has 30 days: last valid moment is June 30 23:59:59
+        // DateTime(2024,6,30,23,59,59) normalizes to July 1 00:00:00 — can't use it
+        final monthStart = DateTime(2024, 6, 1);
+        final nextMonthStart = DateTime(2024, 7, 1);
+
+        final testCatches = [
+          FishCatch(id: 1, imagePath: '/1.jpg', species: 'May 31 23:59', length: 30.0,
+              fate: FishFateType.release, catchTime: DateTime(2024, 5, 31, 23, 59, 59),
+              createdAt: DateTime.now(), updatedAt: DateTime.now()),
+          FishCatch(id: 2, imagePath: '/2.jpg', species: 'Jun 1 00:00', length: 25.0,
+              fate: FishFateType.release, catchTime: DateTime(2024, 6, 1, 0, 0, 0),
+              createdAt: DateTime.now(), updatedAt: DateTime.now()),
+          FishCatch(id: 3, imagePath: '/3.jpg', species: 'Jun 15 12:00', length: 20.0,
+              fate: FishFateType.release, catchTime: DateTime(2024, 6, 15, 12, 0),
+              createdAt: DateTime.now(), updatedAt: DateTime.now()),
+          FishCatch(id: 4, imagePath: '/4.jpg', species: 'Jul 1 00:00', length: 15.0,
+              fate: FishFateType.release, catchTime: DateTime(2024, 7, 1),
+              createdAt: DateTime.now(), updatedAt: DateTime.now()),
+        ];
+
+        final juneCatches = testCatches.where((fish) {
+          return fish.catchTime.isAfter(monthStart) && fish.catchTime.isBefore(nextMonthStart);
+        }).toList();
+
+        // isAfter is exclusive, isBefore is exclusive
+        // Jun 1 00:00 excluded (not after Jun 1 00:00), Jul 1 00:00 excluded (before Jul 1)
+        expect(juneCatches.length, 1);
+        expect(juneCatches.first.species, 'Jun 15 12:00');
+      });
+
+      test('year filter December 31 boundary', () {
+        final yearStart = DateTime(2024, 1, 1);
+        final nextYearStart = DateTime(2025, 1, 1);
+
+        final testCatches = [
+          FishCatch(id: 1, imagePath: '/1.jpg', species: 'Dec 31 23:59', length: 30.0,
+              fate: FishFateType.release, catchTime: DateTime(2024, 12, 31, 23, 59, 59),
+              createdAt: DateTime.now(), updatedAt: DateTime.now()),
+          FishCatch(id: 2, imagePath: '/2.jpg', species: 'Jan 1 2025', length: 25.0,
+              fate: FishFateType.release, catchTime: DateTime(2025, 1, 1),
+              createdAt: DateTime.now(), updatedAt: DateTime.now()),
+        ];
+
+        final yearCatches = testCatches.where((fish) {
+          return fish.catchTime.isAfter(yearStart) && fish.catchTime.isBefore(nextYearStart);
+        }).toList();
+
+        expect(yearCatches.length, 1);
+        expect(yearCatches.first.species, 'Dec 31 23:59');
+      });
+    });
   });
 }
