@@ -297,7 +297,7 @@ void main() {
         when(() => mockRepository.set('_ai_keys_migrated', any()))
             .thenAnswer((_) async {});
 
-        final result = await settingsService.getAiRecognitionSettings();
+        await settingsService.getAiRecognitionSettings();
 
         // Verify API keys were migrated to secure storage
         expect(

@@ -27,7 +27,6 @@ export 'providers/equipment_edit_view_model.dart';
 export 'providers/equipment_providers.dart';
 export 'providers/equipment_view_model.dart';
 export 'providers/fish_detail_view_model.dart';
-export 'providers/fish_list_state.dart' hide FishListState;
 export 'providers/fish_list_view_model.dart';
 export 'providers/fish_providers.dart' hide top3LongestCatchesProvider;
 export 'providers/home_view_model.dart';

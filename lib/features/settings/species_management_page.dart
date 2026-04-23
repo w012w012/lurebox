@@ -7,7 +7,7 @@ import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/pending_recognition_providers.dart';
 import '../../core/providers/ai_recognition_provider.dart';
-import '../../core/di/di.dart' hide aiRecognitionSettingsProvider;
+import '../../core/di/di.dart';
 import '../../core/services/fish_recognition_service.dart';
 import '../../core/models/fish_catch.dart';
 import '../../widgets/common/premium_card.dart';

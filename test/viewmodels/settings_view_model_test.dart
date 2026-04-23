@@ -67,7 +67,7 @@ void main() {
         expect(viewModel.state.isLoading, false);
         expect(viewModel.state.errorMessage, isNull);
         expect(viewModel.state.totalCount, 0);
-        expect(viewModel.state.appVersion, '1.0.1');
+        expect(viewModel.state.appVersion, '1.0.5');
         expect(viewModel.state.isExporting, false);
         expect(viewModel.state.isImporting, false);
         expect(viewModel.state.isUploading, false);

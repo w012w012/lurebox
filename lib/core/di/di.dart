@@ -23,8 +23,6 @@ import '../services/backup_zip_service.dart';
 import '../services/fish_species_matcher.dart';
 import '../repositories/backup_config_repository.dart';
 import '../database/database_provider.dart';
-import '../models/ai_recognition_settings.dart';
-import '../providers/ai_recognition_provider.dart';
 import '../services/fish_recognition_service.dart';
 
 // ===== 核心依赖 =====
@@ -121,13 +119,6 @@ final backupConfigRepositoryProvider = Provider<BackupConfigRepository>((ref) {
     ref.watch(databaseProvider).database,
   );
 });
-
-// ===== AI Recognition Provider =====
-
-final aiRecognitionSettingsProvider =
-    StateNotifierProvider<AiRecognitionSettingsNotifier, AiRecognitionSettings>(
-  (ref) => AiRecognitionSettingsNotifier(ref.read(settingsServiceProvider)),
-);
 
 // ===== Fish Recognition Service =====
 
