@@ -230,7 +230,7 @@ extension FishCatchListExtension on List<FishCatch> {
           final nextMonth = now.month == 12 ? 1 : now.month + 1;
           final nextYear = now.month == 12 ? now.year + 1 : now.year;
           final start = DateTime(now.year, now.month, 1);
-          final end = DateTime(nextYear, nextMonth, 1);
+          final end = DateTime(nextYear, nextMonth, 1).add(const Duration(days: 1));
           return fish.catchTime.isAfter(start) && fish.catchTime.isBefore(end);
         case 'year':
           final start = DateTime(now.year, 1, 1);
@@ -273,9 +273,6 @@ extension FishCatchListExtension on List<FishCatch> {
   ) {
     final sorted = List<FishCatch>.from(this);
     sorted.sort((a, b) {
-      double? resultDouble;
-      DateTime? resultDateTime;
-
       switch (sortBy) {
         case 'length':
           final aLength = displayUnits != null
@@ -292,8 +289,8 @@ extension FishCatchListExtension on List<FishCatch> {
                   displayUnits.fishLengthUnit,
                 )
               : b.length;
-          resultDouble = aLength.compareTo(bLength).toDouble();
-          break;
+          final lengthResult = aLength.compareTo(bLength);
+          return ascending ? lengthResult : -lengthResult;
         case 'weight':
           final aWeight = displayUnits != null && a.weight != null
               ? UnitConverter.convertWeight(
@@ -309,30 +306,13 @@ extension FishCatchListExtension on List<FishCatch> {
                   displayUnits.fishWeightUnit,
                 )
               : (b.weight ?? 0);
-          resultDouble = aWeight.compareTo(bWeight).toDouble();
-          break;
+          final weightResult = aWeight.compareTo(bWeight);
+          return ascending ? weightResult : -weightResult;
         case 'time':
         default:
-          resultDateTime = a.catchTime.compareTo(b.catchTime) > 0
-              ? a.catchTime
-              : b.catchTime;
+          final timeResult = a.catchTime.compareTo(b.catchTime);
+          return ascending ? timeResult : -timeResult;
       }
-
-      if (resultDouble != null) {
-        // ascending: 升序 (从小到大), descending: 降序 (从大到小)
-        return ascending
-            ? resultDouble < 0
-                ? -1
-                : (resultDouble > 0 ? 1 : 0)
-            : resultDouble < 0
-                ? 1
-                : (resultDouble > 0 ? -1 : 0);
-      } else if (resultDateTime != null) {
-        final result = a.catchTime.compareTo(b.catchTime);
-        return ascending ? result : -result;
-      }
-
-      return 0;
     });
     return sorted;
   }

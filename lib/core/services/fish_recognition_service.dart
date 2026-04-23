@@ -74,9 +74,11 @@ class SpeciesInfo {
 
   factory SpeciesInfo.fromJson(Map<String, dynamic> json) {
     return SpeciesInfo(
-      chineseName: json['chineseName'] as String? ?? '',
+      chineseName: (json['chineseName'] as String?)?.isNotEmpty == true
+          ? json['chineseName'] as String
+          : '未知物种',
       scientificName: json['scientificName'] as String? ?? '',
-      confidence: json['confidence'] as int? ?? 0,
+      confidence: (json['confidence'] as int?)?.clamp(0, 100) ?? 0,
     );
   }
 

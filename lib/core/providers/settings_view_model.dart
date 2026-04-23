@@ -23,7 +23,7 @@ class SettingsState {
     this.isLoading = false,
     this.errorMessage,
     this.totalCount = 0,
-    this.appVersion = '1.0.1',
+    this.appVersion = '1.0.5',
     this.isExporting = false,
     this.isImporting = false,
     this.isUploading = false,

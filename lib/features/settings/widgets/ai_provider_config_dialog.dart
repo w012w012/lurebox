@@ -1,7 +1,11 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/models/ai_recognition_settings.dart';
+import '../../../core/services/fish_recognition_service.dart';
 import '../../../widgets/common/app_snack_bar.dart';
 
 /// AI 提供商配置对话框
@@ -286,7 +290,7 @@ class _AiProviderConfigDialogState
     }
   }
 
-  /// 测试连接
+  /// 测试连接 — 用 1x1 透明 JPEG 发送真实 API 请求验证 Key 有效性
   Future<void> _testConnection() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -295,17 +299,64 @@ class _AiProviderConfigDialogState
     setState(() {
       _isTesting = true;
       _testResult = null;
+      _isTestSuccess = false;
     });
 
-    // 模拟测试连接
-    await Future.delayed(const Duration(seconds: 1));
+    File? tempFile;
+    try {
+      // 创建最小 1x1 JPEG（绕过无图片时的前端校验）
+      // JPEG 文件头: SOI + APP0 + DQT + SOF0 + DHT + SOS + EOI
+      const minimalJpegBase64 =
+          '/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkS'
+          'EwsLxw8KCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUE'
+          'BQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAAB'
+          'AAEDASIAAhEBAxEB/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/xAAUAQEAAAAAAAAAAAAA'
+          '/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AJQAB/9k=';
+      final jpegBytes = base64Decode(minimalJpegBase64);
+      final tempDir = await getTemporaryDirectory();
+      tempFile = File('${tempDir.path}/test_conn.jpg');
+      await tempFile.writeAsBytes(jpegBytes);
 
-    if (mounted) {
-      setState(() {
-        _isTesting = false;
-        _isTestSuccess = true;
-        _testResult = '连接成功！API Key 有效。';
-      });
+      final apiKey = _apiKeyController.text.trim();
+      final baseUrl = _baseUrlController.text.trim();
+      final modelName = _modelNameController.text.trim();
+
+      final config = AiProviderConfig(
+        provider: widget.provider,
+        apiKey: apiKey,
+        baseUrl: baseUrl.isEmpty ? null : baseUrl,
+        modelName: modelName.isEmpty ? null : modelName,
+        enabled: true,
+      );
+
+      final settings = AiRecognitionSettings(
+        currentProvider: widget.provider,
+        providerConfigs: {widget.provider: config},
+        autoRecognize: false,
+      );
+
+      final service = FishRecognitionService();
+      await service.identifySpecies(tempFile, settings);
+
+      if (mounted) {
+        setState(() {
+          _isTesting = false;
+          _isTestSuccess = true;
+          _testResult = '连接成功！API Key 有效。';
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isTesting = false;
+          _isTestSuccess = false;
+          _testResult = '连接失败: ${e.toString()}';
+        });
+      }
+    } finally {
+      if (tempFile != null && await tempFile.exists()) {
+        await tempFile.delete();
+      }
     }
   }
 

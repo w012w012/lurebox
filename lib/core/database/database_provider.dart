@@ -10,7 +10,7 @@ class DatabaseProvider {
   static DatabaseProvider get instance => _instance ??= DatabaseProvider._();
 
   static const String _databaseName = 'lurebox.db';
-  static const int _databaseVersion = 22;
+  static const int _databaseVersion = 23;
 
   DatabaseProvider._();
 
@@ -107,7 +107,7 @@ class DatabaseProvider {
         weight REAL,
         weight_unit TEXT DEFAULT 'kg',
         fate INTEGER DEFAULT 0,
-        catch_time INTEGER NOT NULL,
+        catch_time TEXT NOT NULL,
         location_name TEXT,
         latitude REAL,
         longitude REAL,
@@ -480,6 +480,50 @@ CREATE TABLE user_species_alias (
       );
       await db.execute(
         'CREATE INDEX IF NOT EXISTS idx_equipments_is_deleted ON equipments(is_deleted)',
+      );
+    }
+    if (oldVersion < 23) {
+      // catch_time 历史上定义为 INTEGER 但实际存储 ISO8601 字符串
+      // 通过重建表修正类型声明
+      await db.execute('''
+        CREATE TABLE fish_catches_new (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          image_path TEXT,
+          watermarked_image_path TEXT,
+          species TEXT NOT NULL,
+          length REAL NOT NULL,
+          length_unit TEXT DEFAULT 'cm',
+          weight REAL,
+          weight_unit TEXT DEFAULT 'kg',
+          fate INTEGER DEFAULT 0,
+          catch_time TEXT NOT NULL,
+          location_name TEXT,
+          latitude REAL,
+          longitude REAL,
+          notes TEXT,
+          equipment_id INTEGER,
+          rod_id INTEGER,
+          reel_id INTEGER,
+          lure_id INTEGER,
+          air_temperature REAL,
+          pressure REAL,
+          weather_code INTEGER,
+          pending_recognition INTEGER DEFAULT 0,
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL
+        )
+      ''');
+      await db.execute(
+        'INSERT INTO fish_catches_new SELECT * FROM fish_catches',
+      );
+      await db.execute('DROP TABLE fish_catches');
+      await db.execute('ALTER TABLE fish_catches_new RENAME TO fish_catches');
+      // 重建索引
+      await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_time ON fish_catches(catch_time)',
+      );
+      await db.execute(
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_time_fate ON fish_catches(catch_time, fate)',
       );
     }
   }

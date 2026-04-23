@@ -116,26 +116,20 @@ class FishingLocation {
 
 extension FishingLocationListExtension on List<FishingLocation> {
   List<FishingLocation> sortedByFishCount() {
-    final sorted = List<FishingLocation>.from(this);
-    sorted.sort((a, b) => b.fishCount.compareTo(a.fishCount));
-    return sorted;
+    return [...this]..sort((a, b) => b.fishCount.compareTo(a.fishCount));
   }
 
   List<FishingLocation> sortedByName() {
-    final sorted = List<FishingLocation>.from(this);
-    sorted.sort((a, b) => a.name.compareTo(b.name));
-    return sorted;
+    return [...this]..sort((a, b) => a.name.compareTo(b.name));
   }
 
   List<FishingLocation> sortedByLastVisit() {
-    final sorted = List<FishingLocation>.from(this);
-    sorted.sort((a, b) {
+    return [...this]..sort((a, b) {
       if (a.lastVisit == null && b.lastVisit == null) return 0;
       if (a.lastVisit == null) return 1;
       if (b.lastVisit == null) return -1;
       return b.lastVisit!.compareTo(a.lastVisit!);
     });
-    return sorted;
   }
 
   FishingLocation? findByName(String name) {

@@ -43,13 +43,11 @@ class SettingsService {
     } on FormatException catch (e) {
       throw SettingsCorruptedException(
         'Watermark settings corrupted: $e',
-        originalValue: value,
         originalError: e,
       );
     } catch (e) {
       throw SettingsCorruptedException(
         'Unexpected error decoding watermark settings: $e',
-        originalValue: value,
         originalError: e,
       );
     }
@@ -69,13 +67,11 @@ class SettingsService {
     } on FormatException catch (e) {
       throw SettingsCorruptedException(
         'App settings corrupted: $e',
-        originalValue: value,
         originalError: e,
       );
     } catch (e) {
       throw SettingsCorruptedException(
         'Unexpected error decoding app settings: $e',
-        originalValue: value,
         originalError: e,
       );
     }
@@ -131,13 +127,11 @@ class SettingsService {
     } on FormatException catch (e) {
       throw SettingsCorruptedException(
         'AI recognition settings corrupted: $e',
-        originalValue: value,
         originalError: e,
       );
     } catch (e) {
       throw SettingsCorruptedException(
         'Unexpected error decoding AI recognition settings: $e',
-        originalValue: value,
         originalError: e,
       );
     }

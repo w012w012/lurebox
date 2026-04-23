@@ -3,7 +3,7 @@
 ## Project Overview
 LureBox (路亚鱼护) is a Flutter app for recording fishing catches. It uses Riverpod for state management and SQLite for local storage.
 
-**Environment**: Flutter 3.41.6+, Dart SDK ^3.11.4, version 1.0.4+4
+**Environment**: Flutter 3.41.6+, Dart SDK ^3.11.4, version 1.0.5+5
 
 ## Build & Run Commands
 ```bash

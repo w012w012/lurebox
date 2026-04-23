@@ -281,9 +281,6 @@ class CameraViewModel extends StateNotifier<CameraState> {
 
   Future<int?> saveFishCatch() async {
     if (!state.canSave) {
-      debugPrint('=== SAVE FISH CATCH: canSave returned false ===');
-      debugPrint(
-          'imagePath=${state.imagePath}, species=${state.species}, length=${state.length}');
       return null;
     }
 
@@ -320,14 +317,8 @@ class CameraViewModel extends StateNotifier<CameraState> {
           updatedAt: now,
         );
 
-        debugPrint('=== CREATING FISH CATCH ===');
-        debugPrint('Fish: ${fish.toMap()}');
-
         final fishId = await _fishCatchService.create(fish);
-        debugPrint('Fish created with ID: $fishId');
-
         await _fishCatchService.updateSpeciesHistory(state.species);
-        debugPrint('Species history updated');
 
         state = state.copyWith(
           captureState: CameraCaptureState.saved,
@@ -335,12 +326,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
         );
         return fishId;
       }, context: '保存鱼获');
-    } catch (e, stackTrace) {
-      debugPrint('=== SAVE FISH CATCH ERROR ===');
-      debugPrint('Error: $e');
-      debugPrint('Error type: ${e.runtimeType}');
-      debugPrint('Stack trace: $stackTrace');
-
+    } catch (e) {
       state = state.copyWith(
         captureState: CameraCaptureState.error,
         errorMessage: () => '保存失败: $e',

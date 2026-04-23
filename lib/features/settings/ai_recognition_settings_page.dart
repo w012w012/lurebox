@@ -81,7 +81,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
             ),
             const SizedBox(height: TeslaTheme.spacingSm),
             DropdownButtonFormField<AiRecognitionProvider>(
-              initialValue: aiSettings.currentProvider,
+              value: aiSettings.currentProvider,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 contentPadding:

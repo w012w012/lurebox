@@ -341,7 +341,7 @@ class BackupZipService {
         photoCount: photoCount,
         fishCatchesCount: stats['fishCatchesCount'] as int,
         equipmentCount: stats['equipmentCount'] as int,
-        appVersion: '1.0.3',
+        appVersion: '1.0.5',
       );
 
       final metadataJson =
@@ -417,7 +417,7 @@ class BackupZipService {
         photoCount: photoCount,
         fishCatchesCount: stats['fishCatchesCount'] as int,
         equipmentCount: stats['equipmentCount'] as int,
-        appVersion: '1.0.3',
+        appVersion: '1.0.5',
       );
 
       final metadataJson =
@@ -698,7 +698,6 @@ class BackupZipService {
             'lurebox_recovery_$timestamp.db',
           );
           await currentDbFile.copy(recoveryPath);
-          debugPrint('Recovery point created: $recoveryPath');
         }
 
         // 6. 获取本应用的文档目录（用于规范化照片路径）
@@ -735,9 +734,26 @@ class BackupZipService {
         // 8. 关闭当前数据库
         await _dbProvider.close();
 
-        // 9. 复制规范化后的数据库文件替换旧文件
-        await File(dbPath).copy(currentDbPath);
-        debugPrint('Database replaced: $currentDbPath');
+        // 9. 原子替换：用临时文件 + rename 确保失败时原 DB 不损坏
+        final tempDbPath = '$dbPath.in_progress';
+        try {
+          await File(dbPath).copy(tempDbPath);
+          // 验证临时文件完整性
+          final tempDb = await openDatabase(tempDbPath);
+          await tempDb.close();
+          // 原子性 rename：成功则替换，失败则原 DB 不受影响
+          final renamed = await File(tempDbPath).rename(currentDbPath);
+          if (!File(renamed.path).existsSync()) {
+            throw StateError('Database rename failed unexpectedly');
+          }
+        } catch (e) {
+          // 清理失败的临时文件
+          final tempFile = File(tempDbPath);
+          if (await tempFile.exists()) {
+            await tempFile.delete();
+          }
+          rethrow;
+        }
 
         // 10. 复制照片到应用文档目录的 photos/ 子目录
         final photosDir = p.join(extractDir.path, 'photos');
