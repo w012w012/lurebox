@@ -21,6 +21,7 @@ import '../services/location_service.dart';
 import '../services/backup_service.dart';
 import '../services/backup_zip_service.dart';
 import '../services/fish_species_matcher.dart';
+import '../services/secure_storage_service.dart';
 import '../repositories/backup_config_repository.dart';
 import '../database/database_provider.dart';
 import '../services/fish_recognition_service.dart';
@@ -114,9 +115,14 @@ final equipmentServiceProvider = Provider<EquipmentService>((ref) {
 
 // ===== Backup Config Repository =====
 
+final cloudPasswordStorageProvider = Provider<CloudPasswordStorage>((ref) {
+  return SecureCloudPasswordStorage();
+});
+
 final backupConfigRepositoryProvider = Provider<BackupConfigRepository>((ref) {
   return SqliteBackupConfigRepository(
     ref.watch(databaseProvider).database,
+    ref.watch(cloudPasswordStorageProvider),
   );
 });
 

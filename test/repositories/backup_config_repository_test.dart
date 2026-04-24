@@ -3,6 +3,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lurebox/core/models/cloud_config.dart';
 import 'package:lurebox/core/models/backup_history.dart';
 import 'package:lurebox/core/repositories/backup_config_repository.dart';
+import 'package:lurebox/core/services/secure_storage_service.dart';
 
 void main() {
   late Database db;
@@ -57,7 +58,10 @@ CREATE TABLE backup_history (
     late SqliteBackupConfigRepository repository;
 
     setUp(() {
-      repository = SqliteBackupConfigRepository(Future<Database>.value(db));
+      repository = SqliteBackupConfigRepository(
+        Future<Database>.value(db),
+        InMemoryCloudPasswordStorage(),
+      );
     });
 
     test('saveCloudConfig inserts a new config and returns id', () async {
@@ -255,13 +259,162 @@ CREATE TABLE backup_history (
       final configs = await repository.getAllCloudConfigs();
       expect(configs, isEmpty);
     });
+
+    test('password is stored in secure storage, not in DB', () async {
+      final passwordStorage = InMemoryCloudPasswordStorage();
+      final repo = SqliteBackupConfigRepository(
+        Future<Database>.value(db),
+        passwordStorage,
+      );
+
+      final now = DateTime.now();
+      final config = CloudConfig(
+        provider: CloudProvider.webdav,
+        serverUrl: 'https://example.com',
+        username: 'user',
+        password: 'super_secret',
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      );
+
+      final id = await repo.saveCloudConfig(config);
+
+      // Password should be in secure storage
+      expect(await passwordStorage.get(id), equals('super_secret'));
+
+      // DB row should have empty password
+      final dbRow = (await db.query(
+        'cloud_configs',
+        where: 'id = ?',
+        whereArgs: [id],
+      )).first;
+      expect(dbRow['password'], equals(''));
+    });
+
+    test('getAllCloudConfigs hydrates password from secure storage', () async {
+      final now = DateTime.now();
+      final config = CloudConfig(
+        provider: CloudProvider.webdav,
+        serverUrl: 'https://example.com',
+        username: 'user',
+        password: 'hydrated_pass',
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      );
+
+      await repository.saveCloudConfig(config);
+
+      final configs = await repository.getAllCloudConfigs();
+      expect(configs.first.password, equals('hydrated_pass'));
+    });
+
+    test('getActiveCloudConfig hydrates password from secure storage', () async {
+      final now = DateTime.now();
+      final config = CloudConfig(
+        provider: CloudProvider.webdav,
+        serverUrl: 'https://example.com',
+        username: 'user',
+        password: 'active_pass',
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      );
+
+      final id = await repository.saveCloudConfig(config);
+      await repository.setActiveCloudConfig(id);
+
+      final active = await repository.getActiveCloudConfig();
+      expect(active, isNotNull);
+      expect(active!.password, equals('active_pass'));
+    });
+
+    test('deleteCloudConfig also removes password from secure storage', () async {
+      final passwordStorage = InMemoryCloudPasswordStorage();
+      final repo = SqliteBackupConfigRepository(
+        Future<Database>.value(db),
+        passwordStorage,
+      );
+
+      final now = DateTime.now();
+      final config = CloudConfig(
+        provider: CloudProvider.webdav,
+        serverUrl: 'https://example.com',
+        username: 'user',
+        password: 'to_delete',
+        isActive: false,
+        createdAt: now,
+        updatedAt: now,
+      );
+
+      final id = await repo.saveCloudConfig(config);
+      expect(await passwordStorage.get(id), isNotNull);
+
+      await repo.deleteCloudConfig(id);
+      expect(await passwordStorage.get(id), isNull);
+    });
+
+    test('migrateExistingPasswords moves plaintext DB passwords to secure storage', () async {
+      final passwordStorage = InMemoryCloudPasswordStorage();
+      final repo = SqliteBackupConfigRepository(
+        Future<Database>.value(db),
+        passwordStorage,
+      );
+
+      // Insert a config with plaintext password directly into DB (simulating old schema)
+      await db.insert('cloud_configs', {
+        'provider': 'webdav',
+        'server_url': 'https://old.example.com',
+        'username': 'legacy_user',
+        'password': 'legacy_password',
+        'is_active': 1,
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
+
+      await repo.migrateExistingPasswords();
+
+      // Password should now be in secure storage
+      final stored = await passwordStorage.get(1);
+      expect(stored, equals('legacy_password'));
+
+      // DB password should be cleared
+      final dbRow = (await db.query('cloud_configs', where: 'id = ?', whereArgs: [1])).first;
+      expect(dbRow['password'], equals(''));
+    });
+
+    test('updateCloudConfig updates password in secure storage', () async {
+      final now = DateTime.now();
+      final config = CloudConfig(
+        provider: CloudProvider.webdav,
+        serverUrl: 'https://example.com',
+        username: 'user',
+        password: 'original_pass',
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+      );
+
+      final id = await repository.saveCloudConfig(config);
+      final saved = (await repository.getAllCloudConfigs()).first;
+
+      final updated = saved.copyWith(password: 'new_pass');
+      await repository.updateCloudConfig(updated);
+
+      final configs = await repository.getAllCloudConfigs();
+      expect(configs.first.password, equals('new_pass'));
+    });
   });
 
   group('BackupConfigRepository - BackupHistory', () {
     late SqliteBackupConfigRepository repository;
 
     setUp(() {
-      repository = SqliteBackupConfigRepository(Future<Database>.value(db));
+      repository = SqliteBackupConfigRepository(
+        Future<Database>.value(db),
+        InMemoryCloudPasswordStorage(),
+      );
     });
 
     test('addBackupHistory inserts a new history record', () async {

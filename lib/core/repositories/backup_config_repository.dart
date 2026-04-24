@@ -1,6 +1,8 @@
 import 'package:sqflite/sqflite.dart';
 import '../models/cloud_config.dart';
 import '../models/backup_history.dart';
+import '../services/secure_storage_service.dart';
+import '../services/app_logger.dart';
 
 /// 备份配置仓库接口
 abstract class BackupConfigRepository {
@@ -36,18 +38,25 @@ abstract class BackupConfigRepository {
 }
 
 /// SQLite 备份配置仓库实现
+///
+/// 密码由 [CloudPasswordStorage] 管理，不再持久化到 SQLite。
 class SqliteBackupConfigRepository implements BackupConfigRepository {
   final Future<Database> _dbFuture;
+  final CloudPasswordStorage _passwordStorage;
 
-  SqliteBackupConfigRepository(this._dbFuture);
+  SqliteBackupConfigRepository(this._dbFuture, this._passwordStorage);
 
   Future<Database> get _db async => await _dbFuture;
 
   @override
   Future<int> saveCloudConfig(CloudConfig config) async {
     final db = await _db;
-    final map = config.toMap()..remove('id');
-    return await db.insert('cloud_configs', map);
+    final map = config.toDbMap()..remove('id');
+    final id = await db.insert('cloud_configs', map);
+    if (config.password.isNotEmpty) {
+      await _passwordStorage.save(id, config.password);
+    }
+    return id;
   }
 
   @override
@@ -60,7 +69,7 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
       limit: 1,
     );
     if (results.isEmpty) return null;
-    return CloudConfig.fromMap(results.first);
+    return _hydratePassword(results.first);
   }
 
   @override
@@ -70,7 +79,7 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
       'cloud_configs',
       orderBy: 'updated_at DESC',
     );
-    return results.map((e) => CloudConfig.fromMap(e)).toList();
+    return Future.wait(results.map(_hydratePassword));
   }
 
   @override
@@ -79,17 +88,22 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
       throw ArgumentError('Cannot update config without id');
     }
     final db = await _db;
-    return await db.update(
+    await db.update(
       'cloud_configs',
-      config.toMap(),
+      config.toDbMap(),
       where: 'id = ?',
       whereArgs: [config.id],
     );
+    if (config.password.isNotEmpty) {
+      await _passwordStorage.save(config.id!, config.password);
+    }
+    return config.id!;
   }
 
   @override
   Future<int> deleteCloudConfig(int id) async {
     final db = await _db;
+    await _passwordStorage.delete(id);
     return await db.delete(
       'cloud_configs',
       where: 'id = ?',
@@ -165,5 +179,42 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
       where: 'id IN (${idsToDelete.map((_) => '?').join(',')})',
       whereArgs: idsToDelete,
     );
+  }
+
+  /// 从安全存储中读取密码并填充到 CloudConfig
+  Future<CloudConfig> _hydratePassword(Map<String, dynamic> row) async {
+    final config = CloudConfig.fromMap(row);
+    if (config.id == null) return config;
+    final storedPassword = await _passwordStorage.get(config.id!);
+    if (storedPassword != null && storedPassword.isNotEmpty) {
+      return config.copyWith(password: storedPassword);
+    }
+    return config;
+  }
+
+  /// 将旧版 DB 中的明文密码迁移到安全存储
+  ///
+  /// 调用时机：App 启动时执行一次。读取所有 DB 中仍有明文密码的配置，
+  /// 将密码迁移到 flutter_secure_storage，然后清空 DB 中的 password 字段。
+  Future<void> migrateExistingPasswords() async {
+    final db = await _db;
+    final results = await db.query('cloud_configs');
+    for (final row in results) {
+      final id = row['id'] as int?;
+      final dbPassword = row['password'] as String? ?? '';
+      if (id != null && dbPassword.isNotEmpty) {
+        await _passwordStorage.save(id, dbPassword);
+        await db.update(
+          'cloud_configs',
+          {'password': ''},
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+        AppLogger.i(
+          'BackupConfigRepository',
+          'Migrated password for cloud config $id to secure storage',
+        );
+      }
+    }
   }
 }
