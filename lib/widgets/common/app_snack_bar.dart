@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/design/theme/app_colors.dart';
+import '../../core/services/app_logger.dart';
 
 /// Global SnackBar utilities — replaces all ad-hoc ScaffoldMessenger calls.
 class AppSnackBar {
@@ -44,7 +45,7 @@ class AppSnackBar {
     Object? debugError,
   }) {
     if (debugError != null) {
-      debugPrint('[AppSnackBar] Error: $debugError');
+      AppLogger.w('AppSnackBar', 'Error: $debugError');
     }
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(

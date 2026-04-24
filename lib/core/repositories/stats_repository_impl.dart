@@ -1,14 +1,22 @@
-import '../database/database_provider.dart';
+import 'package:sqflite/sqflite.dart';
+import '../constants/time_constants.dart';
+import 'base_repository.dart';
 import '../models/fish_catch.dart';
-import '../services/error_service.dart';
 import 'stats_repository.dart';
 
 /// SQLite 实现 - 统计数据仓储层
 ///
 /// 使用 SQLite 数据库实现各类统计查询。
 
-class SqliteStatsRepository implements StatsRepository {
-  static const String _tableName = 'fish_catches';
+class SqliteStatsRepository extends BaseSqliteRepository
+    implements StatsRepository {
+  @override
+  String get tableName => 'fish_catches';
+
+  SqliteStatsRepository();
+
+  SqliteStatsRepository.withDatabase(Future<Database> testDb)
+      : super.withDatabase(testDb);
 
   @override
   Future<CatchStats> getCatchStats({
@@ -16,7 +24,7 @@ class SqliteStatsRepository implements StatsRepository {
     DateTime? endDate,
   }) async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
 
       String whereClause = '';
       List<dynamic> whereArgs = [];
@@ -29,9 +37,9 @@ class SqliteStatsRepository implements StatsRepository {
       final results = await db.rawQuery('''
         SELECT 
           COUNT(*) as total,
-          SUM(CASE WHEN fate = 0 THEN 1 ELSE 0 END) as release,
-          SUM(CASE WHEN fate = 1 THEN 1 ELSE 0 END) as keep
-        FROM $_tableName
+          SUM(CASE WHEN fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as release,
+          SUM(CASE WHEN fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as keep
+        FROM $tableName
         $whereClause
         ''', whereArgs);
 
@@ -41,7 +49,7 @@ class SqliteStatsRepository implements StatsRepository {
 
       return CatchStats.fromMap(results.first);
     } catch (e) {
-      throw DatabaseException('Failed to get catch stats: $e');
+      throwDbError('get catch stats', e);
     }
   }
 
@@ -52,7 +60,7 @@ class SqliteStatsRepository implements StatsRepository {
     int limit = 10,
   }) async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
 
       String whereClause = '';
       List<dynamic> whereArgs = [];
@@ -65,7 +73,7 @@ class SqliteStatsRepository implements StatsRepository {
       final results = await db.rawQuery(
         '''
         SELECT species, COUNT(*) as count
-        FROM $_tableName
+        FROM $tableName
         $whereClause
         GROUP BY species
         ORDER BY count DESC
@@ -84,126 +92,126 @@ class SqliteStatsRepository implements StatsRepository {
       }
       return stats;
     } catch (e) {
-      throw DatabaseException('Failed to get species stats: $e');
+      throwDbError('get species stats', e);
     }
   }
 
   @override
   Future<int> getTotalCatchCount() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $_tableName',
+        'SELECT COUNT(*) as count FROM $tableName',
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get total catch count: $e');
+      throwDbError('get total catch count', e);
     }
   }
 
   @override
   Future<int> getCatchesAboveLength(double minLength) async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $_tableName WHERE length >= ?',
+        'SELECT COUNT(*) as count FROM $tableName WHERE length >= ?',
         [minLength],
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get catches above length: $e');
+      throwDbError('get catches above length', e);
     }
   }
 
   @override
   Future<int> getDistinctSpeciesCount() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery(
-        'SELECT COUNT(DISTINCT species) as count FROM $_tableName',
+        'SELECT COUNT(DISTINCT species) as count FROM $tableName',
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get distinct species count: $e');
+      throwDbError('get distinct species count', e);
     }
   }
 
   @override
   Future<int> getEquipmentCount() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery('''
         SELECT COUNT(DISTINCT eq_id) as count FROM (
-          SELECT equipment_id as eq_id FROM $_tableName WHERE equipment_id IS NOT NULL
+          SELECT equipment_id as eq_id FROM $tableName WHERE equipment_id IS NOT NULL
           UNION
-          SELECT rod_id as eq_id FROM $_tableName WHERE rod_id IS NOT NULL
+          SELECT rod_id as eq_id FROM $tableName WHERE rod_id IS NOT NULL
           UNION
-          SELECT reel_id as eq_id FROM $_tableName WHERE reel_id IS NOT NULL
+          SELECT reel_id as eq_id FROM $tableName WHERE reel_id IS NOT NULL
           UNION
-          SELECT lure_id as eq_id FROM $_tableName WHERE lure_id IS NOT NULL
+          SELECT lure_id as eq_id FROM $tableName WHERE lure_id IS NOT NULL
         )
         ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get equipment count: $e');
+      throwDbError('get equipment count', e);
     }
   }
 
   @override
   Future<int> getLocationCount() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery('''
         SELECT COUNT(DISTINCT location_name) as count 
-        FROM $_tableName 
+        FROM $tableName 
         WHERE location_name IS NOT NULL AND location_name != ''
         ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get location count: $e');
+      throwDbError('get location count', e);
     }
   }
 
   @override
   Future<int> getReleaseCount() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $_tableName WHERE fate = 0',
+        'SELECT COUNT(*) as count FROM $tableName WHERE fate = ${FishFateType.release.value}',
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get release count: $e');
+      throwDbError('get release count', e);
     }
   }
 
   @override
   Future<double> getReleaseRate() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       // 优化：单次查询获取总数和放流数
       final results = await db.rawQuery('''
         SELECT
           COUNT(*) as total,
-          SUM(CASE WHEN fate = 0 THEN 1 ELSE 0 END) as release
-        FROM fish_catches
+          SUM(CASE WHEN fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as release
+        FROM $tableName
       ''');
       final total = results.first['total'] as int? ?? 0;
       if (total == 0) return 0.0;
       final release = results.first['release'] as int? ?? 0;
       return release / total;
     } catch (e) {
-      throw DatabaseException('Failed to get release rate: $e');
+      throwDbError('get release rate', e);
     }
   }
 
   @override
   Future<int> getConsecutiveDays() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery('''
         SELECT DATE(catch_time) as catch_date, COUNT(*) as count
-        FROM $_tableName
+        FROM $tableName
         GROUP BY catch_date
         ORDER BY catch_date DESC
       ''');
@@ -239,17 +247,17 @@ class SqliteStatsRepository implements StatsRepository {
 
       return consecutiveDays;
     } catch (e) {
-      throw DatabaseException('Failed to get consecutive days: $e');
+      throwDbError('get consecutive days', e);
     }
   }
 
   @override
   Future<int> getMonthlyMax() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery('''
         SELECT strftime('%Y-%m', catch_time) as month, COUNT(*) as count
-        FROM $_tableName
+        FROM $tableName
         GROUP BY month
         ORDER BY count DESC
         LIMIT 1
@@ -258,17 +266,17 @@ class SqliteStatsRepository implements StatsRepository {
       if (results.isEmpty) return 0;
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get monthly max: $e');
+      throwDbError('get monthly max', e);
     }
   }
 
   @override
   Future<int> getDailyMax() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery('''
         SELECT DATE(catch_time) as day, COUNT(*) as count
-        FROM $_tableName
+        FROM $tableName
         GROUP BY day
         ORDER BY count DESC
         LIMIT 1
@@ -277,76 +285,76 @@ class SqliteStatsRepository implements StatsRepository {
       if (results.isEmpty) return 0;
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get daily max: $e');
+      throwDbError('get daily max', e);
     }
   }
 
   @override
   Future<int> getMorningCatchCount() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery('''
-        SELECT COUNT(*) as count FROM $_tableName
-        WHERE strftime('%H', catch_time) >= '05' 
-          AND strftime('%H', catch_time) < '09'
+        SELECT COUNT(*) as count FROM $tableName
+        WHERE strftime('%H', catch_time) >= '${TimeConstants.morningStart}'
+          AND strftime('%H', catch_time) < '${TimeConstants.morningEnd}'
       ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get morning catch count: $e');
+      throwDbError('get morning catch count', e);
     }
   }
 
   @override
   Future<int> getNightCatchCount() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery('''
-        SELECT COUNT(*) as count FROM $_tableName
-        WHERE strftime('%H', catch_time) >= '20' 
-           OR strftime('%H', catch_time) < '05'
+        SELECT COUNT(*) as count FROM $tableName
+        WHERE strftime('%H', catch_time) >= '${TimeConstants.nightStart}'
+           OR strftime('%H', catch_time) < '${TimeConstants.nightEnd}'
       ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get night catch count: $e');
+      throwDbError('get night catch count', e);
     }
   }
 
   @override
   Future<int> getPhotoCount() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $_tableName WHERE image_path IS NOT NULL AND image_path != ""',
+        'SELECT COUNT(*) as count FROM $tableName WHERE image_path IS NOT NULL AND image_path != ""',
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get photo count: $e');
+      throwDbError('get photo count', e);
     }
   }
 
   @override
   Future<double> getTotalWeight() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery(
-        'SELECT SUM(weight) as total FROM $_tableName WHERE weight IS NOT NULL',
+        'SELECT SUM(weight) as total FROM $tableName WHERE weight IS NOT NULL',
       );
       return (results.first['total'] as num?)?.toDouble() ?? 0.0;
     } catch (e) {
-      throw DatabaseException('Failed to get total weight: $e');
+      throwDbError('get total weight', e);
     }
   }
 
   @override
   Future<double> getMaxLength() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery(
-        'SELECT MAX(length) as max_length FROM $_tableName WHERE length IS NOT NULL',
+        'SELECT MAX(length) as max_length FROM $tableName WHERE length IS NOT NULL',
       );
       return (results.first['max_length'] as num?)?.toDouble() ?? 0.0;
     } catch (e) {
-      throw DatabaseException('Failed to get max length: $e');
+      throwDbError('get max length', e);
     }
   }
 
@@ -403,7 +411,7 @@ class SqliteStatsRepository implements StatsRepository {
         monthTrend: results[3] as List<Map<String, dynamic>>,
       );
     } catch (e) {
-      throw DatabaseException('Failed to get dashboard data: $e');
+      throwDbError('get dashboard data', e);
     }
   }
 
@@ -416,22 +424,22 @@ class SqliteStatsRepository implements StatsRepository {
     required DateTime yearStart,
     required DateTime yearEnd,
   }) async {
-    final db = await DatabaseProvider.instance.database;
+    final db = await database;
     final results = await db.rawQuery('''
       SELECT
         COUNT(*) as all_total,
-        SUM(CASE WHEN fate = 0 THEN 1 ELSE 0 END) as all_release,
-        SUM(CASE WHEN fate = 1 THEN 1 ELSE 0 END) as all_keep,
+        SUM(CASE WHEN fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as all_release,
+        SUM(CASE WHEN fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as all_keep,
         SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as today_total,
-        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = 0 THEN 1 ELSE 0 END) as today_release,
-        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = 1 THEN 1 ELSE 0 END) as today_keep,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as today_release,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as today_keep,
         SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as month_total,
-        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = 0 THEN 1 ELSE 0 END) as month_release,
-        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = 1 THEN 1 ELSE 0 END) as month_keep,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as month_release,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as month_keep,
         SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as year_total,
-        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = 0 THEN 1 ELSE 0 END) as year_release,
-        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = 1 THEN 1 ELSE 0 END) as year_keep
-      FROM fish_catches
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as year_release,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as year_keep
+      FROM $tableName
     ''', [
       todayStart.toIso8601String(),
       todayEnd.toIso8601String(),
@@ -487,7 +495,7 @@ class SqliteStatsRepository implements StatsRepository {
     required DateTime yearStart,
     required DateTime yearEnd,
   }) async {
-    final db = await DatabaseProvider.instance.database;
+    final db = await database;
     final results = await db.rawQuery('''
       SELECT
         species,
@@ -495,7 +503,7 @@ class SqliteStatsRepository implements StatsRepository {
         SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as month_count,
         SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as year_count,
         COUNT(*) as all_count
-      FROM fish_catches
+      FROM $tableName
       GROUP BY species
       ORDER BY all_count DESC
       LIMIT 10
@@ -539,22 +547,22 @@ class SqliteStatsRepository implements StatsRepository {
   @override
   Future<Map<int, EquipmentCatchStats>> getEquipmentCatchStats() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery('''
 SELECT
   eq_id as equipment_id,
   COUNT(*) as catch_count,
   AVG(length) as avg_length,
   AVG(weight) as avg_weight,
-  SUM(CASE WHEN fate = 0 THEN 1 ELSE 0 END) as release_count
+  SUM(CASE WHEN fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as release_count
 FROM (
-  SELECT equipment_id as eq_id, species, length, weight, fate FROM $_tableName WHERE equipment_id IS NOT NULL
+  SELECT equipment_id as eq_id, species, length, weight, fate FROM $tableName WHERE equipment_id IS NOT NULL
   UNION ALL
-  SELECT rod_id as eq_id, species, length, weight, fate FROM $_tableName WHERE rod_id IS NOT NULL
+  SELECT rod_id as eq_id, species, length, weight, fate FROM $tableName WHERE rod_id IS NOT NULL
   UNION ALL
-  SELECT reel_id as eq_id, species, length, weight, fate FROM $_tableName WHERE reel_id IS NOT NULL
+  SELECT reel_id as eq_id, species, length, weight, fate FROM $tableName WHERE reel_id IS NOT NULL
   UNION ALL
-  SELECT lure_id as eq_id, species, length, weight, fate FROM $_tableName WHERE lure_id IS NOT NULL
+  SELECT lure_id as eq_id, species, length, weight, fate FROM $tableName WHERE lure_id IS NOT NULL
 )
 GROUP BY eq_id
 ''');
@@ -567,27 +575,27 @@ GROUP BY eq_id
       }
       return stats;
     } catch (e) {
-      throw DatabaseException('Failed to get equipment catch stats: $e');
+      throwDbError('get equipment catch stats', e);
     }
   }
 
   @override
   Future<Map<int, Map<String, int>>> getAllEquipmentSpeciesStats() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery('''
 SELECT
   eq_id as equipment_id,
   species,
   COUNT(*) as species_count
 FROM (
-  SELECT equipment_id as eq_id, species FROM $_tableName WHERE equipment_id IS NOT NULL
+  SELECT equipment_id as eq_id, species FROM $tableName WHERE equipment_id IS NOT NULL
   UNION ALL
-  SELECT rod_id as eq_id, species FROM $_tableName WHERE rod_id IS NOT NULL
+  SELECT rod_id as eq_id, species FROM $tableName WHERE rod_id IS NOT NULL
   UNION ALL
-  SELECT reel_id as eq_id, species FROM $_tableName WHERE reel_id IS NOT NULL
+  SELECT reel_id as eq_id, species FROM $tableName WHERE reel_id IS NOT NULL
   UNION ALL
-  SELECT lure_id as eq_id, species FROM $_tableName WHERE lure_id IS NOT NULL
+  SELECT lure_id as eq_id, species FROM $tableName WHERE lure_id IS NOT NULL
 )
 GROUP BY eq_id, species
 ''');
@@ -606,7 +614,7 @@ GROUP BY eq_id, species
       }
       return stats;
     } catch (e) {
-      throw DatabaseException('Failed to get equipment species stats: $e');
+      throwDbError('get equipment species stats', e);
     }
   }
 
@@ -617,7 +625,7 @@ GROUP BY eq_id, species
     DateTime? endDate,
   }) async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
 
       final typeToColumn = {
         'rod': 'rod_id',
@@ -636,7 +644,7 @@ GROUP BY eq_id, species
 
       final results = await db.rawQuery('''
         SELECT e.brand, e.model, e.lure_type, COUNT(*) as count
-        FROM $_tableName f
+        FROM $tableName f
         LEFT JOIN equipments e ON f.$column = e.id
         WHERE $whereClause
         GROUP BY f.$column
@@ -659,38 +667,38 @@ GROUP BY eq_id, species
       }
       return distribution;
     } catch (e) {
-      throw DatabaseException('Failed to get equipment distribution: $e');
+      throwDbError('get equipment distribution', e);
     }
   }
 
   @override
   Future<List<FishCatch>> getTop3LongestCatches() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         orderBy: 'length DESC',
         limit: 3,
       );
       return List<FishCatch>.from(
           results.map((map) => FishCatch.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
-      throw DatabaseException('Failed to get top 3 longest catches: $e');
+      throwDbError('get top 3 longest catches', e);
     }
   }
 
   @override
   Future<int> getEquipmentFullStatus() async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery('''
-        SELECT COUNT(*) as count FROM $_tableName
+        SELECT COUNT(*) as count FROM $tableName
         WHERE equipment_id IS NOT NULL
            OR (rod_id IS NOT NULL AND reel_id IS NOT NULL AND lure_id IS NOT NULL)
       ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get equipment full status: $e');
+      throwDbError('get equipment full status', e);
     }
   }
 
@@ -700,14 +708,14 @@ GROUP BY eq_id, species
     required DateTime endDate,
   }) async {
     try {
-      final db = await DatabaseProvider.instance.database;
+      final db = await database;
       final results = await db.rawQuery('''
         SELECT
           DATE(catch_time) as date,
           COUNT(*) as count,
-          SUM(CASE WHEN fate = 0 THEN 1 ELSE 0 END) as release,
-          SUM(CASE WHEN fate = 1 THEN 1 ELSE 0 END) as keep
-        FROM $_tableName
+          SUM(CASE WHEN fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as release,
+          SUM(CASE WHEN fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as keep
+        FROM $tableName
         WHERE catch_time >= ? AND catch_time < ?
         GROUP BY DATE(catch_time)
         ORDER BY date ASC
@@ -722,7 +730,7 @@ GROUP BY eq_id, species
         };
       }).toList();
     } catch (e) {
-      throw DatabaseException('Failed to get daily catch count: $e');
+      throwDbError('get daily catch count', e);
     }
   }
 }

@@ -1,7 +1,6 @@
-import 'package:sqflite/sqflite.dart' hide DatabaseException;
-import '../database/database_provider.dart';
+import '../constants/pagination_constants.dart';
 import '../models/equipment.dart';
-import '../services/error_service.dart';
+import 'base_repository.dart';
 import 'equipment_repository.dart';
 
 /// SQLite 实现 - 钓具/装备仓储层
@@ -9,31 +8,22 @@ import 'equipment_repository.dart';
 /// 使用 SQLite 数据库实现钓具装备的数据访问。
 /// 数据表名：equipments
 
-class SqliteEquipmentRepository implements EquipmentRepository {
-  static const String _tableName = 'equipments';
-
-  /// 可选的数据库实例（用于测试注入）
-  Future<Database>? _testDb;
-
-  /// 内部获取数据库实例
-  Future<Database> get _database async {
-    final testDb = _testDb;
-    if (testDb != null) return await testDb;
-    return await DatabaseProvider.instance.database;
-  }
+class SqliteEquipmentRepository extends BaseSqliteRepository
+    implements EquipmentRepository {
+  @override
+  String get tableName => 'equipments';
 
   /// 无参构造函数（使用默认 DatabaseService）
   SqliteEquipmentRepository();
 
   /// 带数据库的构造函数（用于测试）
-  SqliteEquipmentRepository.withDatabase(Future<Database> testDb) {
-    _testDb = testDb;
-  }
+  SqliteEquipmentRepository.withDatabase(super.testDb)
+      : super.withDatabase();
 
   @override
   Future<List<Equipment>> getAll({String? type}) async {
     try {
-      final db = await _database;
+      final db = await database;
       final whereClauses = <String>['is_deleted = 0'];
       final whereArgs = <dynamic>[];
       if (type != null) {
@@ -42,7 +32,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       }
       final where = whereClauses.join(' AND ');
       final results = await db.query(
-        _tableName,
+        tableName,
         where: where,
         whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
         orderBy: 'is_default DESC, created_at DESC',
@@ -50,16 +40,16 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       return List<Equipment>.from(
           results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
-      throw DatabaseException('Failed to get equipments: $e');
+      throwDbError('get equipments', e);
     }
   }
 
   @override
   Future<Equipment?> getById(int id) async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         where: 'is_deleted = 0 AND id = ?',
         whereArgs: [id],
         limit: 1,
@@ -67,16 +57,16 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       if (results.isEmpty) return null;
       return Equipment.fromMap(results.first);
     } catch (e) {
-      throw DatabaseException('Failed to get equipment by id: $e');
+      throwDbError('get equipment by id', e);
     }
   }
 
   @override
   Future<Equipment?> getDefaultEquipment(String type) async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         where: 'is_deleted = 0 AND type = ? AND is_default = 1',
         whereArgs: [type],
         limit: 1,
@@ -84,67 +74,67 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       if (results.isEmpty) return null;
       return Equipment.fromMap(results.first);
     } catch (e) {
-      throw DatabaseException('Failed to get default equipment: $e');
+      throwDbError('get default equipment', e);
     }
   }
 
   @override
   Future<int> create(Equipment equipment) async {
     try {
-      final db = await _database;
+      final db = await database;
       final map = equipment.toMap();
       map.remove('id');
       map['created_at'] = DateTime.now().toIso8601String();
       map['updated_at'] = DateTime.now().toIso8601String();
       map['is_deleted'] = 0;
       map['is_default'] = equipment.isDefault ? 1 : 0;
-      return await db.insert(_tableName, map);
+      return await db.insert(tableName, map);
     } catch (e) {
-      throw DatabaseException('Failed to create equipment: $e');
+      throwDbError('create equipment', e);
     }
   }
 
   @override
   Future<void> update(Equipment equipment) async {
     try {
-      final db = await _database;
+      final db = await database;
       final map = equipment.toMap();
       map['updated_at'] = DateTime.now().toIso8601String();
       await db.update(
-        _tableName,
+        tableName,
         map,
         where: 'id = ?',
         whereArgs: [equipment.id],
       );
     } catch (e) {
-      throw DatabaseException('Failed to update equipment: $e');
+      throwDbError('update equipment', e);
     }
   }
 
   @override
   Future<void> delete(int id) async {
     try {
-      final db = await _database;
+      final db = await database;
       await db.update(
-        _tableName,
+        tableName,
         {'is_deleted': 1, 'updated_at': DateTime.now().toIso8601String()},
         where: 'id = ?',
         whereArgs: [id],
       );
     } catch (e) {
-      throw DatabaseException('Failed to delete equipment: $e');
+      throwDbError('delete equipment', e);
     }
   }
 
   @override
   Future<PaginatedResult<Equipment>> getPage({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     String? type,
     String orderBy = 'is_default DESC, created_at DESC',
   }) async {
     try {
-      final db = await _database;
+      final db = await database;
       final offset = (page - 1) * pageSize;
 
       final whereClauses = <String>['is_deleted = 0'];
@@ -158,13 +148,13 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       final whereClause = whereClauses.join(' AND ');
 
       final countResult = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $_tableName WHERE $whereClause',
+        'SELECT COUNT(*) as count FROM $tableName WHERE $whereClause',
         whereArgs,
       );
       final totalCount = countResult.first['count'] as int;
 
       final results = await db.query(
-        _tableName,
+        tableName,
         where: whereClause,
         whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
         orderBy: orderBy,
@@ -184,14 +174,14 @@ class SqliteEquipmentRepository implements EquipmentRepository {
         hasMore: hasMore,
       );
     } catch (e) {
-      throw DatabaseException('Failed to get paginated equipments: $e');
+      throwDbError('get paginated equipments', e);
     }
   }
 
   @override
   Future<PaginatedResult<Equipment>> getFilteredPage({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     String? type,
     String? brand,
     String? model,
@@ -199,7 +189,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
     String orderBy = 'is_default DESC, created_at DESC',
   }) async {
     try {
-      final db = await _database;
+      final db = await database;
       final offset = (page - 1) * pageSize;
 
       final whereClauses = <String>['is_deleted = 0'];
@@ -225,13 +215,13 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       final whereClause = whereClauses.join(' AND ');
 
       final countResult = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $_tableName WHERE $whereClause',
+        'SELECT COUNT(*) as count FROM $tableName WHERE $whereClause',
         whereArgs,
       );
       final totalCount = countResult.first['count'] as int;
 
       final results = await db.query(
-        _tableName,
+        tableName,
         where: whereClause,
         whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
         orderBy: orderBy,
@@ -251,42 +241,41 @@ class SqliteEquipmentRepository implements EquipmentRepository {
         hasMore: hasMore,
       );
     } catch (e) {
-      throw DatabaseException(
-          'Failed to get filtered paginated equipments: $e');
+      throwDbError('get filtered paginated equipments', e);
     }
   }
 
   @override
   Future<void> setDefaultEquipment(int id, String type) async {
     try {
-      final db = await _database;
+      final db = await database;
       await db.transaction((txn) async {
         await txn.update(
-          _tableName,
+          tableName,
           {'is_default': 0, 'updated_at': DateTime.now().toIso8601String()},
           where: 'type = ?',
           whereArgs: [type],
         );
         await txn.update(
-          _tableName,
+          tableName,
           {'is_default': 1, 'updated_at': DateTime.now().toIso8601String()},
           where: 'id = ?',
           whereArgs: [id],
         );
       });
     } catch (e) {
-      throw DatabaseException('Failed to set default equipment: $e');
+      throwDbError('set default equipment', e);
     }
   }
 
   @override
   Future<Map<String, int>> getStats() async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.rawQuery('''
-        SELECT type, COUNT(*) as count 
-        FROM $_tableName 
-        WHERE is_deleted = 0 
+        SELECT type, COUNT(*) as count
+        FROM $tableName
+        WHERE is_deleted = 0
         GROUP BY type
       ''');
 
@@ -296,35 +285,35 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       }
       return stats;
     } catch (e) {
-      throw DatabaseException('Failed to get equipment stats: $e');
+      throwDbError('get equipment stats', e);
     }
   }
 
   @override
   Future<List<String>> getBrands() async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.rawQuery('''
-        SELECT DISTINCT brand 
-        FROM $_tableName 
+        SELECT DISTINCT brand
+        FROM $tableName
         WHERE is_deleted = 0 AND brand IS NOT NULL AND brand != ''
         ORDER BY brand
       ''');
 
       return results.map((row) => row['brand'] as String).toList();
     } catch (e) {
-      throw DatabaseException('Failed to get brands: $e');
+      throwDbError('get brands', e);
     }
   }
 
   @override
   Future<List<String>> getModelsByBrand(String brand) async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.rawQuery(
         '''
-        SELECT DISTINCT model 
-        FROM $_tableName 
+        SELECT DISTINCT model
+        FROM $tableName
         WHERE is_deleted = 0 AND brand = ? AND model IS NOT NULL AND model != ''
         ORDER BY model
       ''',
@@ -333,18 +322,18 @@ class SqliteEquipmentRepository implements EquipmentRepository {
 
       return results.map((row) => row['model'] as String).toList();
     } catch (e) {
-      throw DatabaseException('Failed to get models by brand: $e');
+      throwDbError('get models by brand', e);
     }
   }
 
   @override
   Future<Map<String, int>> getCategoryDistribution(String type) async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.rawQuery(
         '''
-        SELECT category, COUNT(*) as count 
-        FROM $_tableName 
+        SELECT category, COUNT(*) as count
+        FROM $tableName
         WHERE is_deleted = 0 AND type = ? AND category IS NOT NULL
         GROUP BY category
         ORDER BY count DESC
@@ -359,7 +348,7 @@ class SqliteEquipmentRepository implements EquipmentRepository {
       }
       return distribution;
     } catch (e) {
-      throw DatabaseException('Failed to get category distribution: $e');
+      throwDbError('get category distribution', e);
     }
   }
 }

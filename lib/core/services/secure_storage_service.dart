@@ -1,5 +1,5 @@
 import 'dart:convert' as convert;
-import 'package:flutter/foundation.dart';
+import 'app_logger.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../models/ai_recognition_settings.dart';
@@ -33,11 +33,11 @@ class SecureApiKeyStorage implements ApiKeyStorage {
   @override
   Future<void> save(String providerKey, String apiKey) async {
     if (providerKey.isEmpty || apiKey.isEmpty) {
-      debugPrint('[SecureApiKeyStorage] Skipping empty provider or API key');
+      AppLogger.i('SecureApiKeyStorage', 'Skipping empty provider or API key');
       return;
     }
     await _storage.write(key: _getKeyName(providerKey), value: apiKey);
-    debugPrint('[SecureApiKeyStorage] Saved API key for provider: $providerKey');
+    AppLogger.i('SecureApiKeyStorage', 'Saved API key for provider: $providerKey');
   }
 
   @override
@@ -50,7 +50,7 @@ class SecureApiKeyStorage implements ApiKeyStorage {
   Future<void> delete(String providerKey) async {
     if (providerKey.isEmpty) return;
     await _storage.delete(key: _getKeyName(providerKey));
-    debugPrint('[SecureApiKeyStorage] Deleted API key for provider: $providerKey');
+    AppLogger.i('SecureApiKeyStorage', 'Deleted API key for provider: $providerKey');
   }
 
   @override
@@ -67,7 +67,7 @@ class SecureApiKeyStorage implements ApiKeyStorage {
         await _storage.delete(key: key);
       }
     }
-    debugPrint('[SecureApiKeyStorage] Deleted all provider API keys');
+    AppLogger.i('SecureApiKeyStorage', 'Deleted all provider API keys');
   }
 
   String _getKeyName(String providerKey) => '$_keyPrefix$providerKey';
@@ -219,8 +219,8 @@ class SecureStorageService {
           final apiKey = config['apiKey'] as String?;
           if (apiKey != null && apiKey.isNotEmpty) {
             await saveProviderApiKey(entry.key, apiKey);
-            debugPrint(
-                '[SecureStorageService] Migrated API key for provider: ${entry.key}');
+            AppLogger.i(
+                'SecureStorageService', 'Migrated API key for provider: ${entry.key}');
           }
         }
       }
@@ -236,7 +236,7 @@ class SecureStorageService {
 
       return convert.jsonEncode(json);
     } catch (e) {
-      debugPrint('[SecureStorageService] Migration failed: $e');
+      AppLogger.e('SecureStorageService', 'Migration failed', e);
       // Rethrow so caller handles it. Do NOT return unchanged JSON,
       // which would cause an infinite migration loop if the subsequent
       // repository.set() succeeds — _needsMigration would still see

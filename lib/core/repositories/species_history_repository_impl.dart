@@ -1,33 +1,20 @@
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
-import '../database/database_provider.dart';
-import '../services/error_service.dart';
+import 'base_repository.dart';
 import 'species_history_repository.dart';
 
-/// SQLite 实现 - 物种历史记录仓储层
+/// SQLite implementation — species history repository.
 ///
-/// 使用 SQLite 数据库实现物种历史记录的数据访问。
-/// 数据表名：species_history
+/// Table: species_history
 
-class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
-  static const String _tableName = 'species_history';
+class SqliteSpeciesHistoryRepository extends BaseSqliteRepository
+    implements SpeciesHistoryRepository {
+  @override
+  String get tableName => 'species_history';
 
-  /// Optional database instance (for test injection)
-  Future<Database>? _testDb;
-
-  /// Internal database getter
-  Future<Database> get _database async {
-    final testDb = _testDb;
-    if (testDb != null) return await testDb;
-    return await DatabaseProvider.instance.database;
-  }
-
-  /// Default constructor (uses DatabaseService)
   SqliteSpeciesHistoryRepository();
 
-  /// Constructor with database injection (for testing)
-  SqliteSpeciesHistoryRepository.withDatabase(Future<Database> testDb) {
-    _testDb = testDb;
-  }
+  SqliteSpeciesHistoryRepository.withDatabase(Future<Database> testDb)
+      : super.withDatabase(testDb);
 
   @override
   Future<List<SpeciesHistory>> getAll({
@@ -35,9 +22,9 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
     bool includeDeleted = false,
   }) async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         where: includeDeleted ? null : 'is_deleted = ?',
         whereArgs: includeDeleted ? null : [0],
         orderBy: 'use_count DESC, created_at ASC',
@@ -46,41 +33,45 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
       return List<SpeciesHistory>.from(results
           .map((map) => SpeciesHistory.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
-      throw DatabaseException('Failed to get species history: $e');
+      throwDbError('get species history', e);
     }
   }
 
   @override
   Future<SpeciesHistory?> getByName(String name) async {
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) return null;
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         where: 'name = ?',
-        whereArgs: [name],
+        whereArgs: [trimmedName],
         limit: 1,
       );
       if (results.isEmpty) return null;
       return SpeciesHistory.fromMap(results.first);
     } catch (e) {
-      throw DatabaseException('Failed to get species history by name: $e');
+      throwDbError('get species history by name', e);
     }
   }
 
   @override
   Future<void> upsert(String name) async {
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) return;
     try {
-      final db = await _database;
+      final db = await database;
       await db.rawInsert(
-        '''INSERT INTO $_tableName (name, use_count, is_deleted, created_at)
+        '''INSERT INTO $tableName (name, use_count, is_deleted, created_at)
            VALUES (?, 1, 0, ?)
            ON CONFLICT(name) DO UPDATE SET
              use_count = use_count + 1,
              is_deleted = 0''',
-        [name, DateTime.now().toIso8601String()],
+        [trimmedName, DateTime.now().toIso8601String()],
       );
     } catch (e) {
-      throw DatabaseException('Failed to upsert species history: $e');
+      throwDbError('upsert species history', e);
     }
   }
 
@@ -91,61 +82,67 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
 
   @override
   Future<void> softDelete(String name) async {
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) return;
     try {
-      final db = await _database;
+      final db = await database;
       await db.update(
-        _tableName,
+        tableName,
         {'is_deleted': 1},
         where: 'name = ?',
-        whereArgs: [name],
+        whereArgs: [trimmedName],
       );
     } catch (e) {
-      throw DatabaseException('Failed to soft delete species history: $e');
+      throwDbError('soft delete species history', e);
     }
   }
 
   @override
   Future<void> restore(String name) async {
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) return;
     try {
-      final db = await _database;
+      final db = await database;
       await db.update(
-        _tableName,
+        tableName,
         {'is_deleted': 0},
         where: 'name = ?',
-        whereArgs: [name],
+        whereArgs: [trimmedName],
       );
     } catch (e) {
-      throw DatabaseException('Failed to restore species history: $e');
+      throwDbError('restore species history', e);
     }
   }
 
   @override
   Future<bool> exists(String name) async {
+    final trimmedName = name.trim();
+    if (trimmedName.isEmpty) return false;
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         where: 'name = ? AND is_deleted = ?',
-        whereArgs: [name, 0],
+        whereArgs: [trimmedName, 0],
         limit: 1,
       );
       return results.isNotEmpty;
     } catch (e) {
-      throw DatabaseException('Failed to check species history existence: $e');
+      throwDbError('check species history existence', e);
     }
   }
 
   @override
   Future<int> getCount() async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $_tableName WHERE is_deleted = ?',
+        'SELECT COUNT(*) as count FROM $tableName WHERE is_deleted = ?',
         [0],
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get species history count: $e');
+      throwDbError('get species history count', e);
     }
   }
 }

@@ -1,3 +1,4 @@
+import '../constants/pagination_constants.dart';
 import '../models/equipment.dart';
 import '../repositories/equipment_repository.dart';
 
@@ -42,7 +43,7 @@ class EquipmentService {
 
   Future<PaginatedResult<Equipment>> getPage({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     String? type,
     String orderBy = 'is_default DESC, created_at DESC',
   }) async {
@@ -56,7 +57,7 @@ class EquipmentService {
 
   Future<PaginatedResult<Equipment>> getFilteredPage({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     String? type,
     String? brand,
     String? model,

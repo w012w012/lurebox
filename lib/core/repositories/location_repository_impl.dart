@@ -1,49 +1,42 @@
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
-import '../database/database_provider.dart';
 import '../models/fish_catch.dart';
-import '../services/error_service.dart';
+import 'base_repository.dart';
 import 'location_repository.dart';
 
 /// SQLite 实现 - 钓点位置仓储层
 ///
 /// 使用 SQLite 数据库实现钓点位置的数据访问。
 
-class SqliteLocationRepository implements LocationRepository {
-  static const String _tableName = 'fish_catches';
+class SqliteLocationRepository extends BaseSqliteRepository
+    implements LocationRepository {
+  /// Approximate km per degree of latitude (varies ~110.57 at equator to ~111.70 at poles)
+  static const double _kmPerDegreeLatitude = 111.0;
 
-  /// 可选的数据库实例（用于测试注入）
-  Future<Database>? _testDb;
-
-  /// 内部获取数据库实例
-  Future<Database> get _database async {
-    final testDb = _testDb;
-    if (testDb != null) return await testDb;
-    return await DatabaseProvider.instance.database;
-  }
+  @override
+  String get tableName => 'fish_catches';
 
   /// 无参构造函数（使用默认 DatabaseService）
   SqliteLocationRepository();
 
   /// 带数据库的构造函数（用于测试）
-  SqliteLocationRepository.withDatabase(Future<Database> testDb) {
-    _testDb = testDb;
-  }
+  SqliteLocationRepository.withDatabase(Future<Database> testDb)
+      : super.withDatabase(testDb);
 
   @override
   Future<List<LocationWithStats>> getAllWithStats() async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.rawQuery('''
-        SELECT 
+        SELECT
           location_name,
           latitude,
           longitude,
           COUNT(*) as fish_count,
           MAX(catch_time) as last_catch_time
-        FROM $_tableName
-        WHERE location_name IS NOT NULL 
-          AND location_name != '' 
-          AND latitude IS NOT NULL 
+        FROM $tableName
+        WHERE location_name IS NOT NULL
+          AND location_name != ''
+          AND latitude IS NOT NULL
           AND longitude IS NOT NULL
         GROUP BY location_name, latitude, longitude
         ORDER BY fish_count DESC
@@ -51,7 +44,7 @@ class SqliteLocationRepository implements LocationRepository {
       return List<LocationWithStats>.from(results.map(
           (map) => LocationWithStats.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
-      throw DatabaseException('Failed to get all locations with stats: $e');
+      throwDbError('get all locations with stats', e);
     }
   }
 
@@ -62,10 +55,10 @@ class SqliteLocationRepository implements LocationRepository {
     double tolerance = 0.001,
   }) async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.rawQuery(
         '''
-        SELECT COUNT(*) as count FROM $_tableName
+        SELECT COUNT(*) as count FROM $tableName
         WHERE latitude >= ? AND latitude <= ?
           AND longitude >= ? AND longitude <= ?
         ''',
@@ -78,7 +71,7 @@ class SqliteLocationRepository implements LocationRepository {
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get fish count by coordinates: $e');
+      throwDbError('get fish count by coordinates', e);
     }
   }
 
@@ -89,20 +82,20 @@ class SqliteLocationRepository implements LocationRepository {
     required double radiusKm,
   }) async {
     try {
-      final db = await _database;
-      final radiusDeg = radiusKm / 111.0;
+      final db = await database;
+      final radiusDeg = radiusKm / _kmPerDegreeLatitude;
       final results = await db.rawQuery(
         '''
-        SELECT 
+        SELECT
           location_name,
           latitude,
           longitude,
           COUNT(*) as fish_count,
           MAX(catch_time) as last_catch_time
-        FROM $_tableName
-        WHERE location_name IS NOT NULL 
+        FROM $tableName
+        WHERE location_name IS NOT NULL
           AND location_name != ''
-          AND latitude IS NOT NULL 
+          AND latitude IS NOT NULL
           AND longitude IS NOT NULL
           AND latitude >= ? AND latitude <= ?
           AND longitude >= ? AND longitude <= ?
@@ -119,7 +112,7 @@ class SqliteLocationRepository implements LocationRepository {
       return List<LocationWithStats>.from(results.map(
           (map) => LocationWithStats.fromMap(map as Map<String, dynamic>)));
     } catch (e) {
-      throw DatabaseException('Failed to get nearby locations: $e');
+      throwDbError('get nearby locations', e);
     }
   }
 
@@ -129,10 +122,10 @@ class SqliteLocationRepository implements LocationRepository {
     required LocationWithStats target,
   }) async {
     try {
-      final db = await _database;
+      final db = await database;
       await db.transaction((txn) async {
         await txn.update(
-          _tableName,
+          tableName,
           {
             'location_name': target.name,
             'latitude': target.latitude,
@@ -143,27 +136,27 @@ class SqliteLocationRepository implements LocationRepository {
         );
       });
     } catch (e) {
-      throw DatabaseException('Failed to merge locations: $e');
+      throwDbError('merge locations', e);
     }
   }
 
   @override
   Future<LocationStats?> getStats(String locationName) async {
     try {
-      final db = await _database;
+      final db = await database;
 
       final basicStats = await db.rawQuery(
         '''
-        SELECT 
+        SELECT
           COUNT(*) as total_catches,
-          SUM(CASE WHEN fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as release_count,
-          SUM(CASE WHEN fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as keep_count,
+          SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as release_count,
+          SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as keep_count,
           AVG(length) as avg_length,
           AVG(weight) as avg_weight
-        FROM $_tableName
+        FROM $tableName
         WHERE location_name = ?
         ''',
-        [locationName],
+        [FishFateType.release.value, FishFateType.keep.value, locationName],
       );
 
       if (basicStats.isEmpty ||
@@ -174,7 +167,7 @@ class SqliteLocationRepository implements LocationRepository {
       final speciesResults = await db.rawQuery(
         '''
         SELECT species, COUNT(*) as count
-        FROM $_tableName
+        FROM $tableName
         WHERE location_name = ?
         GROUP BY species
         ORDER BY count DESC
@@ -201,22 +194,22 @@ class SqliteLocationRepository implements LocationRepository {
         avgWeight: stat['avg_weight'] as double?,
       );
     } catch (e) {
-      throw DatabaseException('Failed to get location stats: $e');
+      throwDbError('get location stats', e);
     }
   }
 
   @override
   Future<int> getLocationCount() async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.rawQuery('''
         SELECT COUNT(DISTINCT location_name) as count
-        FROM $_tableName
+        FROM $tableName
         WHERE location_name IS NOT NULL AND location_name != ''
       ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get location count: $e');
+      throwDbError('get location count', e);
     }
   }
 }

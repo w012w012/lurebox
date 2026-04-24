@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import '../../core/services/app_logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -104,7 +105,7 @@ class ImageCacheHelper {
         _memoryCache.put(key, provider);
       }
     } catch (e) {
-      debugPrint('Precache failed for $imagePath: $e');
+      AppLogger.w('ImageCacheHelper', 'Precache failed for $imagePath: $e');
     }
   }
 
@@ -164,16 +165,16 @@ class ImageCacheHelper {
             if (!_memoryCache.containsKey(key)) {
               await entity.delete();
               deletedCount++;
-              debugPrint('Deleted unused image: ${entity.path}');
+              AppLogger.i('ImageCacheHelper', 'Deleted unused image: ${entity.path}');
             }
           }
         }
       }
 
-      debugPrint('Cleaned up $deletedCount unused images');
+      AppLogger.i('ImageCacheHelper', 'Cleaned up $deletedCount unused images');
       return deletedCount;
     } catch (e) {
-      debugPrint('Image cleanup failed: $e');
+      AppLogger.e('ImageCacheHelper', 'Image cleanup failed: $e');
       return 0;
     }
   }

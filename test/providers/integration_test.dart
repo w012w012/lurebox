@@ -307,8 +307,8 @@ void main() {
               hasMore: false,
             ));
 
-        when(() => mockRepository.getById(any()))
-            .thenAnswer((_) async => fish1);
+        when(() => mockRepository.getByIds(any()))
+            .thenAnswer((_) async => [fish1]);
 
         when(() => mockRepository.deleteMultiple(any()))
             .thenAnswer((_) async {});
@@ -598,10 +598,11 @@ void main() {
       });
 
       test('deleteMultiple deletes from repository', () async {
-        when(() => mockRepository.getById(1))
-            .thenAnswer((_) async => TestDataFactory.createFishCatch(id: 1));
-        when(() => mockRepository.getById(2))
-            .thenAnswer((_) async => TestDataFactory.createFishCatch(id: 2));
+        when(() => mockRepository.getByIds([1, 2]))
+            .thenAnswer((_) async => [
+                  TestDataFactory.createFishCatch(id: 1),
+                  TestDataFactory.createFishCatch(id: 2),
+                ]);
         when(() => mockRepository.deleteMultiple([1, 2]))
             .thenAnswer((_) async {});
 

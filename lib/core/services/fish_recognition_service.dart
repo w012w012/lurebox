@@ -136,28 +136,24 @@ abstract class FishRecognitionProvider {
 ///
 /// 统一的鱼类识别服务接口，根据配置选择不同的 AI 提供商
 class FishRecognitionService {
-  late final GeminiFishRecognitionProvider _geminiProvider =
-      GeminiFishRecognitionProvider();
-  late final OpenAIFishRecognitionProvider _openaiProvider =
-      OpenAIFishRecognitionProvider();
-  late final ClaudeFishRecognitionProvider _claudeProvider =
-      ClaudeFishRecognitionProvider();
-  late final MiniMaxFishRecognitionProvider _minimaxProvider =
-      MiniMaxFishRecognitionProvider();
-  late final SiliconFlowFishRecognitionProvider _siliconflowProvider =
-      SiliconFlowFishRecognitionProvider();
-  late final DeepSeekFishRecognitionProvider _deepseekProvider =
-      DeepSeekFishRecognitionProvider();
-  late final BaiduFishRecognitionProvider _baiduProvider =
-      BaiduFishRecognitionProvider();
-  late final AliyunFishRecognitionProvider _aliyunProvider =
-      AliyunFishRecognitionProvider();
-  late final TencentFishRecognitionProvider _tencentProvider =
-      TencentFishRecognitionProvider();
-  late final ZhipuFishRecognitionProvider _zhipuProvider =
-      ZhipuFishRecognitionProvider();
-  late final CustomFishRecognitionProvider _customProvider =
-      CustomFishRecognitionProvider();
+  static const int _maxImageSizeBytes = 10 * 1024 * 1024; // 10MB
+  static const Set<String> _supportedExtensions = {'.jpg', '.jpeg', '.png', '.webp'};
+
+  /// Provider factory map — only the selected provider is instantiated
+  static final Map<AiRecognitionProvider, FishRecognitionProvider Function()>
+      _factories = {
+    AiRecognitionProvider.gemini: () => GeminiFishRecognitionProvider(),
+    AiRecognitionProvider.openai: () => OpenAIFishRecognitionProvider(),
+    AiRecognitionProvider.claude: () => ClaudeFishRecognitionProvider(),
+    AiRecognitionProvider.minimax: () => MiniMaxFishRecognitionProvider(),
+    AiRecognitionProvider.siliconflow: () => SiliconFlowFishRecognitionProvider(),
+    AiRecognitionProvider.deepseek: () => DeepSeekFishRecognitionProvider(),
+    AiRecognitionProvider.baidu: () => BaiduFishRecognitionProvider(),
+    AiRecognitionProvider.aliyun: () => AliyunFishRecognitionProvider(),
+    AiRecognitionProvider.tencent: () => TencentFishRecognitionProvider(),
+    AiRecognitionProvider.zhipu: () => ZhipuFishRecognitionProvider(),
+    AiRecognitionProvider.custom: () => CustomFishRecognitionProvider(),
+  };
 
   /// 识别鱼类物种
   ///
@@ -172,6 +168,29 @@ class FishRecognitionService {
     File image,
     AiRecognitionSettings settings,
   ) async {
+    if (!await image.exists()) {
+      throw const FishRecognitionException(
+        FishRecognitionErrorType.unknown,
+        '图片文件不存在',
+      );
+    }
+
+    final fileSize = await image.length();
+    if (fileSize > _maxImageSizeBytes) {
+      throw const FishRecognitionException(
+        FishRecognitionErrorType.unknown,
+        '图片大小超过10MB限制',
+      );
+    }
+
+    final ext = image.path.toLowerCase().split('.').last;
+    if (!_supportedExtensions.contains('.$ext')) {
+      throw const FishRecognitionException(
+        FishRecognitionErrorType.unknown,
+        '不支持的图片格式，请使用 JPG、PNG 或 WebP',
+      );
+    }
+
     final config = settings.providerConfigs[settings.currentProvider];
 
     if (config == null || config.apiKey.isEmpty) {
@@ -188,30 +207,15 @@ class FishRecognitionService {
       );
     }
 
-// 根据当前提供商选择对应的适配器
-    switch (settings.currentProvider) {
-      case AiRecognitionProvider.gemini:
-        return await _geminiProvider.identifySpecies(image, config);
-      case AiRecognitionProvider.openai:
-        return await _openaiProvider.identifySpecies(image, config);
-      case AiRecognitionProvider.claude:
-        return await _claudeProvider.identifySpecies(image, config);
-      case AiRecognitionProvider.minimax:
-        return await _minimaxProvider.identifySpecies(image, config);
-      case AiRecognitionProvider.siliconflow:
-        return await _siliconflowProvider.identifySpecies(image, config);
-      case AiRecognitionProvider.deepseek:
-        return await _deepseekProvider.identifySpecies(image, config);
-      case AiRecognitionProvider.baidu:
-        return await _baiduProvider.identifySpecies(image, config);
-      case AiRecognitionProvider.aliyun:
-        return await _aliyunProvider.identifySpecies(image, config);
-      case AiRecognitionProvider.tencent:
-        return await _tencentProvider.identifySpecies(image, config);
-      case AiRecognitionProvider.zhipu:
-        return await _zhipuProvider.identifySpecies(image, config);
-      case AiRecognitionProvider.custom:
-        return await _customProvider.identifySpecies(image, config);
+    final factory = _factories[settings.currentProvider];
+    if (factory == null) {
+      throw const FishRecognitionException(
+        FishRecognitionErrorType.unknown,
+        '未知的识别提供商',
+      );
     }
+
+    final provider = factory();
+    return await provider.identifySpecies(image, config);
   }
 }

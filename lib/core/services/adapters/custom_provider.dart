@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+import '../app_logger.dart';
 import 'package:http/http.dart' as http;
 import '../fish_recognition_service.dart';
 import '../../models/ai_recognition_settings.dart';
@@ -98,13 +98,13 @@ class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
       'response_format': {'type': 'json_object'},
     };
 
-    debugPrint('[CustomProvider] Model: ${config.modelName}');
-    debugPrint(
-        '[CustomProvider] Request body size: ${jsonEncode(requestBody).length} bytes');
+    AppLogger.i('CustomProvider', 'Model: ${config.modelName}');
+    AppLogger.i(
+        'CustomProvider', 'Request body size: ${jsonEncode(requestBody).length} bytes');
 
     // 构建请求 URL - 使用用户自定义的 Base URL
     final url = buildUrl(baseUrl);
-    debugPrint('[CustomProvider] URL: $url');
+    AppLogger.i('CustomProvider', 'URL: $url');
 
     try {
       // 发送请求，设置 10 秒超时

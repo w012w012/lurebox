@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import '../services/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../constants/strings.dart';
 import '../constants/price_ranges.dart';
@@ -6,190 +6,6 @@ import '../di/di.dart';
 import '../models/equipment.dart';
 import '../services/equipment_service.dart';
 import 'equipment_edit_state.dart';
-
-// =============================================================================
-// State Classes
-// =============================================================================
-
-/// Unified state for equipment editing - maintains backwards compatibility.
-/// Contains all fields for all equipment types.
-class EquipmentEditState {
-  final String type;
-  final Map<String, dynamic>? equipment;
-  final bool isSaving;
-  final String? errorMessage;
-
-  // Common fields
-  final String brand;
-  final String model;
-  final String price;
-  final String purchaseDate;
-  final bool isDefault;
-
-  // Category fields (used by rod and reel)
-  final String categoryType1;
-  final String categoryType2;
-
-  // Rod fields
-  final String length;
-  final String lengthUnit;
-  final String sections;
-  final String jointType;
-  final String material;
-  final String hardness;
-  final String rodAction;
-  final String weightRange;
-
-  // Reel fields
-  final String reelBearings;
-  final String reelRatio;
-  final String reelCapacity;
-  final String reelBrakeType;
-  final String reelWeight;
-  final String reelWeightUnit;
-
-  // Reel line fields
-  final String reelLine;
-  final String reelLineNumber;
-  final String reelLineLength;
-  final String reelLineLengthUnit;
-  final String reelLineDate;
-
-  // Lure fields
-  final String lureType;
-  final String lureWeight;
-  final String lureWeightUnit;
-  final String lureSize;
-  final String lureSizeUnit;
-  final String lureColor;
-  final String lureQuantity;
-  final String lureQuantityUnit;
-
-  const EquipmentEditState({
-    required this.type,
-    this.equipment,
-    this.isSaving = false,
-    this.errorMessage,
-    this.brand = '',
-    this.model = '',
-    this.price = '',
-    this.purchaseDate = '',
-    this.isDefault = false,
-    this.categoryType1 = '',
-    this.categoryType2 = '',
-    this.length = '',
-    this.lengthUnit = 'm',
-    this.sections = '',
-    this.jointType = '',
-    this.material = '',
-    this.hardness = '',
-    this.rodAction = '',
-    this.weightRange = '',
-    this.reelBearings = '',
-    this.reelRatio = '',
-    this.reelCapacity = '',
-    this.reelBrakeType = '',
-    this.reelWeight = '',
-    this.reelWeightUnit = 'g',
-    this.reelLine = '',
-    this.reelLineNumber = '',
-    this.reelLineLength = '',
-    this.reelLineLengthUnit = 'm',
-    this.reelLineDate = '',
-    this.lureType = '',
-    this.lureWeight = '',
-    this.lureWeightUnit = 'g',
-    this.lureSize = '',
-    this.lureSizeUnit = 'cm',
-    this.lureColor = '',
-    this.lureQuantity = '',
-    this.lureQuantityUnit = '',
-  });
-
-  bool get isEdit => equipment != null;
-
-  EquipmentEditState copyWith({
-    String? type,
-    Map<String, dynamic>? equipment,
-    bool? isSaving,
-    String? errorMessage,
-    String? brand,
-    String? model,
-    String? price,
-    String? purchaseDate,
-    bool? isDefault,
-    String? categoryType1,
-    String? categoryType2,
-    String? length,
-    String? lengthUnit,
-    String? sections,
-    String? jointType,
-    String? material,
-    String? hardness,
-    String? rodAction,
-    String? weightRange,
-    String? reelBearings,
-    String? reelRatio,
-    String? reelCapacity,
-    String? reelBrakeType,
-    String? reelWeight,
-    String? reelWeightUnit,
-    String? reelLine,
-    String? reelLineNumber,
-    String? reelLineLength,
-    String? reelLineLengthUnit,
-    String? reelLineDate,
-    String? lureType,
-    String? lureWeight,
-    String? lureWeightUnit,
-    String? lureSize,
-    String? lureSizeUnit,
-    String? lureColor,
-    String? lureQuantity,
-    String? lureQuantityUnit,
-  }) {
-    return EquipmentEditState(
-      type: type ?? this.type,
-      equipment: equipment ?? this.equipment,
-      isSaving: isSaving ?? this.isSaving,
-      errorMessage: errorMessage,
-      brand: brand ?? this.brand,
-      model: model ?? this.model,
-      price: price ?? this.price,
-      purchaseDate: purchaseDate ?? this.purchaseDate,
-      isDefault: isDefault ?? this.isDefault,
-      categoryType1: categoryType1 ?? this.categoryType1,
-      categoryType2: categoryType2 ?? this.categoryType2,
-      length: length ?? this.length,
-      lengthUnit: lengthUnit ?? this.lengthUnit,
-      sections: sections ?? this.sections,
-      jointType: jointType ?? this.jointType,
-      material: material ?? this.material,
-      hardness: hardness ?? this.hardness,
-      rodAction: rodAction ?? this.rodAction,
-      weightRange: weightRange ?? this.weightRange,
-      reelBearings: reelBearings ?? this.reelBearings,
-      reelRatio: reelRatio ?? this.reelRatio,
-      reelCapacity: reelCapacity ?? this.reelCapacity,
-      reelBrakeType: reelBrakeType ?? this.reelBrakeType,
-      reelWeight: reelWeight ?? this.reelWeight,
-      reelWeightUnit: reelWeightUnit ?? this.reelWeightUnit,
-      reelLine: reelLine ?? this.reelLine,
-      reelLineNumber: reelLineNumber ?? this.reelLineNumber,
-      reelLineLength: reelLineLength ?? this.reelLineLength,
-      reelLineLengthUnit: reelLineLengthUnit ?? this.reelLineLengthUnit,
-      reelLineDate: reelLineDate ?? this.reelLineDate,
-      lureType: lureType ?? this.lureType,
-      lureWeight: lureWeight ?? this.lureWeight,
-      lureWeightUnit: lureWeightUnit ?? this.lureWeightUnit,
-      lureSize: lureSize ?? this.lureSize,
-      lureSizeUnit: lureSizeUnit ?? this.lureSizeUnit,
-      lureColor: lureColor ?? this.lureColor,
-      lureQuantity: lureQuantity ?? this.lureQuantity,
-      lureQuantityUnit: lureQuantityUnit ?? this.lureQuantityUnit,
-    );
-  }
-}
 
 // =============================================================================
 // Base Notifier (Handles Shared Fields)
@@ -238,8 +54,8 @@ class _BaseEquipmentEditNotifier {
   void loadDataFromMap(Map<String, dynamic> equipment) {
     // Note: equipment parameter is non-nullable, null check omitted
 
-    debugPrint(
-        '[loadDataFromMap] START - equipment.length: ${equipment['length']}');
+    AppLogger.d(
+        'EquipmentEditViewModel', 'loadDataFromMap START - equipment.length: ${equipment['length']}');
 
     // Load common fields from equipment map
     final brandValue = _getValue(equipment, 'brand')?.toString() ?? '';
@@ -380,7 +196,7 @@ class _BaseEquipmentEditNotifier {
       _updateState(_state.withUpdates(isSaving: false));
       return true;
     } catch (e) {
-      debugPrint('保存装备失败: $e');
+      AppLogger.e('EquipmentEditViewModel', 'Failed to save equipment', e);
       _updateState(
           _state.withUpdates(isSaving: false, errorMessage: e.toString()));
       return false;
@@ -410,8 +226,8 @@ class RodEditNotifier extends _BaseEquipmentEditNotifier {
     String categoryType1 = '';
     String categoryType2 = '';
 
-    debugPrint('[_loadData Rod] e.length: ${e['length']}');
-    debugPrint('[_loadData Rod] _getValue length: ${_getValue(e, 'length')}');
+    AppLogger.d('EquipmentEditViewModel', '[_loadData Rod] e.length: ${e['length']}');
+    AppLogger.d('EquipmentEditViewModel', '[_loadData Rod] _getValue length: ${_getValue(e, 'length')}');
 
     final category = _getValue(e, 'category')?.toString();
     if (category != null && category.contains('|')) {
@@ -424,7 +240,7 @@ class RodEditNotifier extends _BaseEquipmentEditNotifier {
     }
 
     final lengthValue = _getValue(e, 'length')?.toString() ?? '';
-    debugPrint('[_loadData Rod] lengthValue to set: $lengthValue');
+    AppLogger.d('EquipmentEditViewModel', '[_loadData Rod] lengthValue to set: $lengthValue');
 
     _updateState(rodState.copyWith(
       categoryType1: categoryType1,
@@ -439,8 +255,8 @@ class RodEditNotifier extends _BaseEquipmentEditNotifier {
       weightRange: _getValue(e, 'weight_range')?.toString() ?? '',
     ));
 
-    debugPrint(
-        '[_loadData Rod] after copyWith, rodState.length: ${rodState.length}');
+    AppLogger.d(
+        'EquipmentEditViewModel', '[_loadData Rod] after copyWith, rodState.length: ${rodState.length}');
   }
 
   @override

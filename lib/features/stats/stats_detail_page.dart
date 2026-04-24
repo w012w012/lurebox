@@ -15,6 +15,7 @@ import '../../core/models/app_settings.dart';
 import '../../core/models/fish_catch.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
+import '../../core/services/app_logger.dart';
 import '../../core/utils/file_utils.dart';
 import '../../core/utils/unit_converter.dart';
 import '../../widgets/common/premium_card.dart';
@@ -346,7 +347,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
             '${widget.title} - ${strings.catchStatistics}\n${strings.fromLureBox}',
       );
     } catch (e) {
-      debugPrint('${strings.shareFailed}: $e');
+      AppLogger.e('StatsDetailPage', '${strings.shareFailed}: $e');
       if (mounted) {
         ScaffoldMessenger.of(
           context,

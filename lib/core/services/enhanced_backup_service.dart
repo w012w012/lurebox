@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'app_logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
@@ -202,7 +203,7 @@ class EnhancedBackupService {
         await file.delete();
       }
     } catch (e) {
-      debugPrint('Failed to delete backup file: $e');
+      AppLogger.e('EnhancedBackupService', 'Failed to delete backup file', e);
     }
 
     // 删除数据库记录
@@ -246,7 +247,7 @@ class EnhancedBackupService {
         await files[i].delete();
         deletedCount++;
       } catch (e) {
-        debugPrint('Failed to delete recovery point: $e');
+        AppLogger.e('EnhancedBackupService', 'Failed to delete recovery point', e);
       }
     }
 
@@ -354,7 +355,7 @@ class EnhancedBackupService {
             importedCount++;
           } catch (e) {
             errorCount++;
-            debugPrint('Failed to import fish catch: $e');
+            AppLogger.e('EnhancedBackupService', 'Failed to import fish catch', e);
           }
         }
       }
@@ -401,7 +402,7 @@ class EnhancedBackupService {
             await txn.insert('equipments', map);
           } catch (e) {
             errorCount++;
-            debugPrint('Failed to import equipment: $e');
+            AppLogger.e('EnhancedBackupService', 'Failed to import equipment', e);
           }
         }
       }
@@ -430,7 +431,7 @@ class EnhancedBackupService {
             await txn.insert('species_history', map);
           } catch (e) {
             errorCount++;
-            debugPrint('Failed to import species history: $e');
+            AppLogger.e('EnhancedBackupService', 'Failed to import species history', e);
           }
         }
       }
@@ -448,7 +449,7 @@ class EnhancedBackupService {
             );
           } catch (e) {
             errorCount++;
-            debugPrint('Failed to import setting: $e');
+            AppLogger.e('EnhancedBackupService', 'Failed to import setting', e);
           }
         }
       }

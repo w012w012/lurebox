@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
+import 'app_logger.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -359,7 +359,7 @@ class BackupZipService {
 
       return XFile(zipPath);
     } catch (e) {
-      debugPrint('Export to ZIP error: $e');
+      AppLogger.e('BackupZipService', 'Export to ZIP error', e);
       rethrow;
     }
   }
@@ -444,7 +444,7 @@ class BackupZipService {
       // 12. 返回文档目录中的 ZIP 文件路径
       return savedZipPath;
     } catch (e) {
-      debugPrint('Export to ZIP and save error: $e');
+      AppLogger.e('BackupZipService', 'Export to ZIP and save error', e);
       rethrow;
     }
   }
@@ -601,7 +601,7 @@ class BackupZipService {
 
       return importFromZipPath(zipPath);
     } catch (e) {
-      debugPrint('Import from ZIP error: $e');
+      AppLogger.e('BackupZipService', 'Import from ZIP error', e);
       return ImportResult.failure('Import failed: $e');
     }
   }
@@ -769,7 +769,7 @@ class BackupZipService {
               await entity.copy(destPath);
             }
           }
-          debugPrint('Photos imported from backup');
+          AppLogger.i('BackupZipService', 'Photos imported from backup');
         }
 
         // 11. 重新打开数据库
@@ -787,7 +787,7 @@ class BackupZipService {
         rethrow;
       }
     } catch (e) {
-      debugPrint('Import from ZIP error: $e');
+      AppLogger.e('BackupZipService', 'Import from ZIP error', e);
       return ImportResult.failure('Import failed: $e');
     }
   }

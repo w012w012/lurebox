@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'app_logger.dart';
 import '../models/watermark_settings.dart';
 import '../models/app_settings.dart';
 import '../models/ai_recognition_settings.dart';
@@ -112,7 +112,7 @@ class SettingsService {
             await _secureStorage.migrateApiKeysFromJson(value);
         await _repository.set('ai_recognition_settings', migratedJson);
         await _repository.set('_ai_keys_migrated', 'true');
-        debugPrint('[SettingsService] API keys migrated to secure storage');
+        AppLogger.i('SettingsService', 'API keys migrated to secure storage');
         value = migratedJson;
       }
 

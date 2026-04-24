@@ -1,40 +1,27 @@
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
-import '../database/database_provider.dart';
-import '../services/error_service.dart';
+import 'base_repository.dart';
 import 'settings_repository.dart';
 
-/// SQLite 实现 - 应用设置仓储层
+/// SQLite implementation — app settings repository (key-value store).
 ///
-/// 使用 SQLite 数据库实现应用设置的键值对存储。
-/// 数据表名：settings
+/// Table: settings
 
-class SqliteSettingsRepository implements SettingsRepository {
-  static const String _tableName = 'settings';
+class SqliteSettingsRepository extends BaseSqliteRepository
+    implements SettingsRepository {
+  @override
+  String get tableName => 'settings';
 
-  /// 可选的数据库实例（用于测试注入）
-  Future<Database>? _testDb;
-
-  /// 内部获取数据库实例
-  Future<Database> get _database async {
-    final testDb = _testDb;
-    if (testDb != null) return await testDb;
-    return await DatabaseProvider.instance.database;
-  }
-
-  /// 无参构造函数（使用默认 DatabaseService）
   SqliteSettingsRepository();
 
-  /// 带数据库的构造函数（用于测试）
-  SqliteSettingsRepository.withDatabase(Future<Database> testDb) {
-    _testDb = testDb;
-  }
+  SqliteSettingsRepository.withDatabase(Future<Database> testDb)
+      : super.withDatabase(testDb);
 
   @override
   Future<String?> get(String key) async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         where: 'key = ?',
         whereArgs: [key],
         limit: 1,
@@ -42,7 +29,7 @@ class SqliteSettingsRepository implements SettingsRepository {
       if (results.isEmpty) return null;
       return results.first['value'] as String?;
     } catch (e) {
-      throw DatabaseException('Failed to get setting: $e');
+      throwDbError('get setting', e);
     }
   }
 
@@ -55,9 +42,9 @@ class SqliteSettingsRepository implements SettingsRepository {
   @override
   Future<void> set(String key, String value) async {
     try {
-      final db = await _database;
+      final db = await database;
       await db.insert(
-          _tableName,
+          tableName,
           {
             'key': key,
             'value': value,
@@ -65,41 +52,41 @@ class SqliteSettingsRepository implements SettingsRepository {
           },
           conflictAlgorithm: ConflictAlgorithm.replace);
     } catch (e) {
-      throw DatabaseException('Failed to set setting: $e');
+      throwDbError('set setting', e);
     }
   }
 
   @override
   Future<void> delete(String key) async {
     try {
-      final db = await _database;
-      await db.delete(_tableName, where: 'key = ?', whereArgs: [key]);
+      final db = await database;
+      await db.delete(tableName, where: 'key = ?', whereArgs: [key]);
     } catch (e) {
-      throw DatabaseException('Failed to delete setting: $e');
+      throwDbError('delete setting', e);
     }
   }
 
   @override
   Future<bool> exists(String key) async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         where: 'key = ?',
         whereArgs: [key],
         limit: 1,
       );
       return results.isNotEmpty;
     } catch (e) {
-      throw DatabaseException('Failed to check setting existence: $e');
+      throwDbError('check setting existence', e);
     }
   }
 
   @override
   Future<Map<String, String>> getAll() async {
     try {
-      final db = await _database;
-      final results = await db.query(_tableName);
+      final db = await database;
+      final results = await db.query(tableName);
       final settings = <String, String>{};
       for (final row in results) {
         final key = row['key'] as String?;
@@ -110,18 +97,18 @@ class SqliteSettingsRepository implements SettingsRepository {
       }
       return settings;
     } catch (e) {
-      throw DatabaseException('Failed to get all settings: $e');
+      throwDbError('get all settings', e);
     }
   }
 
   @override
   Future<void> setAll(Map<String, String> settings) async {
     try {
-      final db = await _database;
+      final db = await database;
       await db.transaction((txn) async {
         for (final entry in settings.entries) {
           await txn.insert(
-              _tableName,
+              tableName,
               {
                 'key': entry.key,
                 'value': entry.value,
@@ -131,7 +118,7 @@ class SqliteSettingsRepository implements SettingsRepository {
         }
       });
     } catch (e) {
-      throw DatabaseException('Failed to set all settings: $e');
+      throwDbError('set all settings', e);
     }
   }
 

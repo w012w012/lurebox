@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'app_logger.dart';
 import '../constants/strings.dart';
 
 typedef ErrorCallback = void Function(Object error, StackTrace stack);
@@ -54,16 +54,13 @@ class ErrorService {
 
   void handleError(Object error, [StackTrace? stack]) {
     final trace = stack ?? StackTrace.current;
-    debugPrint('=== Error ===');
-    debugPrint('Error: $error');
-    debugPrint('StackTrace: $trace');
-    debugPrint('=============');
+    AppLogger.e('ErrorService', 'Unhandled error: $error', error);
 
     for (final handler in _handlers) {
       try {
         handler(error, trace);
       } catch (e) {
-        debugPrint('Error in error handler: $e');
+        AppLogger.e('ErrorService', 'Error in error handler', e);
       }
     }
   }

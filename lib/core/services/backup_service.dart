@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+import 'app_logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 import '../database/database_provider.dart';
@@ -158,7 +158,7 @@ class BackupService {
         throw DatabaseException('Upload failed: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('WebDAV upload error: $e');
+      AppLogger.e('BackupService', 'WebDAV upload error', e);
       rethrow;
     } finally {
       client?.close();
@@ -191,7 +191,7 @@ class BackupService {
 
       return response.statusCode == 207 || response.statusCode == 200;
     } catch (e) {
-      debugPrint('WebDAV test connection error: $e');
+      AppLogger.e('BackupService', 'WebDAV test connection error', e);
       return false;
     } finally {
       client?.close();
@@ -230,7 +230,7 @@ class BackupService {
 
       return null;
     } catch (e) {
-      debugPrint('WebDAV download error: $e');
+      AppLogger.e('BackupService', 'WebDAV download error', e);
       return null;
     } finally {
       client?.close();

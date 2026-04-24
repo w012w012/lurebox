@@ -1,3 +1,4 @@
+import '../constants/pagination_constants.dart';
 import '../models/fish_catch.dart';
 import '../models/fish_filter.dart';
 import '../models/paginated_result.dart';
@@ -20,16 +21,20 @@ abstract class FishCatchRepository {
   Future<void> update(FishCatch fish);
   Future<void> delete(int id);
   Future<void> deleteMultiple(List<int> ids);
+
+  /// 批量获取渔获记录
+  Future<List<FishCatch>> getByIds(List<int> ids);
+
   Future<List<FishCatch>> getByDateRange(DateTime start, DateTime end);
   Future<List<FishCatch>> getByFate(FishFateType fate);
   Future<PaginatedResult<FishCatch>> getPage({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     String orderBy = 'catch_time DESC',
   });
   Future<PaginatedResult<FishCatch>> getFilteredPage({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     DateTime? startDate,
     DateTime? endDate,
     FishFateType? fate,
@@ -74,7 +79,7 @@ abstract class FishCatchRepository {
   /// [filter] 包含所有过滤条件（timeFilter/fateFilter/speciesFilter/searchQuery/sortBy/sortAsc）
   Future<PaginatedResult<FishCatch>> getFilteredPageByFilter({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     required FishFilter filter,
   });
 

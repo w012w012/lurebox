@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:share_plus/share_plus.dart';
+import 'app_logger.dart';
 import 'share_template.dart';
 
 /// 分享卡片服务 - Widget 捕获与社交分享
@@ -26,7 +27,7 @@ class ShareCardService {
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       return byteData?.buffer.asUint8List();
     } catch (e) {
-      debugPrint('Error capturing widget: $e');
+      AppLogger.e('ShareCardService', 'Error capturing widget', e);
       return null;
     }
   }

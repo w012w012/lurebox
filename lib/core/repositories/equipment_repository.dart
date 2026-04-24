@@ -1,3 +1,4 @@
+import '../constants/pagination_constants.dart';
 import '../models/equipment.dart';
 import '../models/paginated_result.dart';
 
@@ -22,14 +23,14 @@ abstract class EquipmentRepository {
 
   Future<PaginatedResult<Equipment>> getPage({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     String? type,
     String orderBy = 'is_default DESC, created_at DESC',
   });
 
   Future<PaginatedResult<Equipment>> getFilteredPage({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     String? type,
     String? brand,
     String? model,
