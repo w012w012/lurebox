@@ -133,40 +133,44 @@ class AchievementService {
 
   Future<AchievementMetrics> _calculateMetrics() async {
     try {
-      final totalCatches = await _statsRepo.getTotalCatchCount();
-      final maxLength = await _statsRepo.getMaxLength();
-      final speciesCount = await _statsRepo.getDistinctSpeciesCount();
-      final locationCount = await _statsRepo.getLocationCount();
-      final releaseCount = await _statsRepo.getReleaseCount();
-      final releaseRate = await _statsRepo.getReleaseRate();
-      final consecutiveDays = await _statsRepo.getConsecutiveDays();
-      final monthlyMax = await _statsRepo.getMonthlyMax();
-      final dailyMax = await _statsRepo.getDailyMax();
-      final morningCatches = await _statsRepo.getMorningCatchCount();
-      final nightCatches = await _statsRepo.getNightCatchCount();
-      final photoCount = await _statsRepo.getPhotoCount();
-      final totalWeight = await _statsRepo.getTotalWeight();
-      final equipmentFull = await _getEquipmentFullStatus();
-      final equipmentCount = await _getEquipmentCount();
-      final equipmentComboMax = await _getEquipmentComboMax();
+      // 所有查询相互独立，并行执行以提升性能
+      final results = await Future.wait([
+        _statsRepo.getTotalCatchCount(),       // 0
+        _statsRepo.getMaxLength(),             // 1
+        _statsRepo.getDistinctSpeciesCount(),  // 2
+        _statsRepo.getLocationCount(),         // 3
+        _statsRepo.getReleaseCount(),          // 4
+        _statsRepo.getReleaseRate(),           // 5
+        _statsRepo.getConsecutiveDays(),       // 6
+        _statsRepo.getMonthlyMax(),            // 7
+        _statsRepo.getDailyMax(),              // 8
+        _statsRepo.getMorningCatchCount(),     // 9
+        _statsRepo.getNightCatchCount(),       // 10
+        _statsRepo.getPhotoCount(),            // 11
+        _statsRepo.getTotalWeight(),           // 12
+        _getEquipmentFullStatus(),             // 13
+        _getEquipmentCount(),                  // 14
+        _getEquipmentComboMax(),               // 15
+      ]);
 
+      final totalCatches = results[0] as int;
       return AchievementMetrics(
         totalCatches: totalCatches,
-        maxLength: maxLength,
-        speciesCount: speciesCount,
-        locationCount: locationCount,
-        releaseCount: releaseCount,
-        releaseRate: releaseRate,
-        consecutiveDays: consecutiveDays,
-        monthlyMax: monthlyMax,
-        dailyMax: dailyMax,
-        morningCatches: morningCatches,
-        nightCatches: nightCatches,
-        photoCount: photoCount,
-        totalWeight: totalWeight,
-        equipmentFull: equipmentFull,
-        equipmentCount: equipmentCount,
-        equipmentComboMax: equipmentComboMax,
+        maxLength: results[1] as double,
+        speciesCount: results[2] as int,
+        locationCount: results[3] as int,
+        releaseCount: results[4] as int,
+        releaseRate: results[5] as double,
+        consecutiveDays: results[6] as int,
+        monthlyMax: results[7] as int,
+        dailyMax: results[8] as int,
+        morningCatches: results[9] as int,
+        nightCatches: results[10] as int,
+        photoCount: results[11] as int,
+        totalWeight: results[12] as double,
+        equipmentFull: results[13] as bool,
+        equipmentCount: results[14] as int,
+        equipmentComboMax: results[15] as int,
         newRecord: totalCatches > 0,
       );
     } catch (e) {
