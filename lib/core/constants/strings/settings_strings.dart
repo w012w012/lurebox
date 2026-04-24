@@ -1,0 +1,35 @@
+/// 设置单位 (App settings, units, and management)
+mixin SettingsStringsMixin {
+  String get dataManagement;
+  String get appearanceSettings;
+  String get appearanceSettingsDesc;
+  String get unitSettings;
+  String get lengthUnit;
+  String get weightUnit;
+  String get unit;
+  String get darkMode;
+  String get language;
+  String get centimeter;
+  String get inch;
+  String get kilogram;
+  String get pound;
+  String get meter;
+  String get foot;
+  String get gram;
+  String get ounce;
+  String get kilometer;
+  String get mile;
+  String get celsius;
+  String get fahrenheit;
+  String get temperature;
+  String get millimeter;
+  String get unitsSettings;
+  String get followSystem;
+  String get simplifiedChinese;
+  String get locationManagement;
+  String get locationManagementDesc;
+  String get speciesManagement;
+  String get speciesManagementDesc;
+  String get aiConfiguration;
+  String get aiConfigurationDesc;
+}

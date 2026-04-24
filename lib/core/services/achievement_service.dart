@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'app_logger.dart';
 import '../constants/achievements.dart';
 import '../models/achievement.dart';
 import '../repositories/stats_repository.dart';
@@ -170,7 +170,7 @@ class AchievementService {
         newRecord: totalCatches > 0,
       );
     } catch (e) {
-      debugPrint('Failed to calculate metrics: $e');
+      AppLogger.e('AchievementService', 'Failed to calculate metrics', e);
       return const AchievementMetrics();
     }
   }

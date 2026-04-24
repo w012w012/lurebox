@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:image/image.dart' as img;
+import '../services/app_logger.dart';
 import '../services/error_service.dart';
 
 /// 图像压缩工具
@@ -81,13 +81,13 @@ class ImageCompressor {
       final outputFile = File(outputPath);
       await outputFile.writeAsBytes(compressedBytes);
 
-      debugPrint('Image compressed: $inputPath -> $outputPath '
+      AppLogger.i('ImageCompressor', 'Compressed: $inputPath -> $outputPath '
           '(${image.width}x${image.height} -> ${newWidth}x$newHeight), '
           'quality: $quality');
 
       return outputFile;
     } catch (e) {
-      debugPrint('Image compression failed: $e');
+      AppLogger.e('ImageCompressor', 'Compression failed', e);
       rethrow;
     }
   }
@@ -141,12 +141,12 @@ class ImageCompressor {
       final outputFile = File(outputPath);
       await outputFile.writeAsBytes(compressedBytes);
 
-      debugPrint('Thumbnail generated: $inputPath -> $outputPath '
+      AppLogger.i('ImageCompressor', 'Thumbnail: $inputPath -> $outputPath '
           '(${newWidth}x$newHeight)');
 
       return outputFile;
     } catch (e) {
-      debugPrint('Thumbnail generation failed: $e');
+      AppLogger.e('ImageCompressor', 'Thumbnail generation failed', e);
       rethrow;
     }
   }
@@ -174,15 +174,15 @@ class ImageCompressor {
           if (stat.modified.isBefore(cutoffDate)) {
             await entity.delete();
             deletedCount++;
-            debugPrint('Deleted old image: ${entity.path}');
+            AppLogger.d('ImageCompressor', 'Deleted old image: ${entity.path}');
           }
         }
       }
 
-      debugPrint('Cleaned up $deletedCount old images');
+      AppLogger.i('ImageCompressor', 'Cleaned up $deletedCount old images');
       return deletedCount;
     } catch (e) {
-      debugPrint('Image cleanup failed: $e');
+      AppLogger.e('ImageCompressor', 'Cleanup failed', e);
       return 0;
     }
   }

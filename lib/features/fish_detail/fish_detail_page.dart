@@ -10,6 +10,7 @@ import '../../core/providers/fish_detail_view_model.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
 import '../../core/providers/watermark_provider.dart';
+import '../../core/services/app_logger.dart';
 import '../../core/utils/unit_converter.dart';
 import '../../widgets/common/app_snack_bar.dart';
 import '../common/watermarked_image.dart';
@@ -477,7 +478,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
 
       if (context.mounted) Navigator.of(context).pop();
     } catch (e) {
-      debugPrint('分享失败: $e');
+      AppLogger.e('FishDetailPage', '分享失败: $e');
       if (context.mounted) {
         Navigator.of(context).pop();
         AppSnackBar.showError(context, strings.shareFailed, debugError: e);

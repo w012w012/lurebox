@@ -4,7 +4,8 @@
 enum FishCategory {
   freshwaterLure('淡水路亚', '淡水路亚鱼种'),
   freshwaterGeneral('淡水综合', '淡水综合鱼种'),
-  saltwaterLure('海水路亚', '海水路亚鱼种');
+  saltwaterLure('海水路亚', '海水路亚鱼种'),
+  saltwaterGeneral('海水综合', '海水综合鱼种');
 
   const FishCategory(this.label, this.description);
   final String label;
@@ -25,6 +26,8 @@ enum FishCategory {
         return 1;
       case FishCategory.saltwaterLure:
         return 2;
+      case FishCategory.saltwaterGeneral:
+        return 3;
     }
   }
 }

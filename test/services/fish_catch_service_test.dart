@@ -271,9 +271,8 @@ void main() {
         final fish2 = createFishCatch(id: 2, species: 'Trout');
         final fish3 = createFishCatch(id: 3, species: 'Pike');
 
-        when(() => mockRepository.getById(1)).thenAnswer((_) async => fish1);
-        when(() => mockRepository.getById(2)).thenAnswer((_) async => fish2);
-        when(() => mockRepository.getById(3)).thenAnswer((_) async => fish3);
+        when(() => mockRepository.getByIds([1, 2, 3]))
+            .thenAnswer((_) async => [fish1, fish2, fish3]);
         when(() => mockRepository.deleteMultiple([1, 2, 3]))
             .thenAnswer((_) async {});
 
@@ -281,25 +280,14 @@ void main() {
         await service.deleteMultiple([1, 2, 3]);
 
         // Assert
-        verify(() => mockRepository.getById(1)).called(1);
-        verify(() => mockRepository.getById(2)).called(1);
-        verify(() => mockRepository.getById(3)).called(1);
+        verify(() => mockRepository.getByIds([1, 2, 3])).called(1);
         verify(() => mockRepository.deleteMultiple([1, 2, 3])).called(1);
       });
 
-      test('handles null fish in deleteMultiple', () async {
-        // Arrange
-        when(() => mockRepository.getById(1)).thenAnswer((_) async => null);
-        when(() => mockRepository.getById(2))
-            .thenAnswer((_) async => createFishCatch(id: 2));
-        when(() => mockRepository.deleteMultiple([1, 2]))
-            .thenAnswer((_) async {});
-
-        // Act
-        await service.deleteMultiple([1, 2]);
-
-        // Assert
-        verify(() => mockRepository.deleteMultiple([1, 2])).called(1);
+      test('does nothing when ids is empty', () async {
+        await service.deleteMultiple([]);
+        verifyNever(() => mockRepository.getByIds(any()));
+        verifyNever(() => mockRepository.deleteMultiple(any()));
       });
     });
 
@@ -336,8 +324,8 @@ void main() {
           catchTime: now, createdAt: now, updatedAt: now,
         );
 
-        when(() => mockRepository.getById(1)).thenAnswer((_) async => fish1);
-        when(() => mockRepository.getById(2)).thenAnswer((_) async => fish2);
+        when(() => mockRepository.getByIds([1, 2]))
+            .thenAnswer((_) async => [fish1, fish2]);
         when(() => mockRepository.deleteMultiple([1, 2]))
             .thenAnswer((_) async {});
 
@@ -348,13 +336,13 @@ void main() {
         verify(() => mockRepository.deleteMultiple([1, 2])).called(1);
       });
 
-      test('skips deletion for null fish without crashing', () async {
-        // getById returns null for id=3 — no file to delete, should not throw
-        when(() => mockRepository.getById(1))
-            .thenAnswer((_) async => createFishCatch(id: 1, species: 'Bass'));
-        when(() => mockRepository.getById(2))
-            .thenAnswer((_) async => createFishCatch(id: 2, species: 'Trout'));
-        when(() => mockRepository.getById(3)).thenAnswer((_) async => null);
+      test('skips deletion for fish not returned by getByIds', () async {
+        // getByIds returns only fish that exist — fish 1 and 2, not 3
+        when(() => mockRepository.getByIds([1, 2, 3]))
+            .thenAnswer((_) async => [
+                  createFishCatch(id: 1, species: 'Bass'),
+                  createFishCatch(id: 2, species: 'Trout'),
+                ]);
         when(() => mockRepository.deleteMultiple([1, 2, 3]))
             .thenAnswer((_) async {});
 
@@ -363,14 +351,14 @@ void main() {
         verify(() => mockRepository.deleteMultiple([1, 2, 3])).called(1);
       });
 
-      test('deletes only files for non-null fish when one fish is missing', () async {
+      test('deletes only files for existing fish', () async {
         final file1 = File('${tempDir.path}/fish_4.jpg');
         await file1.writeAsString('img4');
 
         final fish1 = createFishCatch(id: 4, species: 'Bass', imagePath: file1.path);
 
-        when(() => mockRepository.getById(4)).thenAnswer((_) async => fish1);
-        when(() => mockRepository.getById(5)).thenAnswer((_) async => null);
+        when(() => mockRepository.getByIds([4, 5]))
+            .thenAnswer((_) async => [fish1]);
         when(() => mockRepository.deleteMultiple([4, 5]))
             .thenAnswer((_) async {});
 

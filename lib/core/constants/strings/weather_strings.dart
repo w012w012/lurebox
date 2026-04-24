@@ -1,0 +1,30 @@
+/// 天气相关 (Weather conditions and WMO codes)
+mixin WeatherStringsMixin {
+  String get weather;
+  String get tapToSet;
+  String get airTemperature;
+  String get pressure;
+  String get weatherClear;
+  String get weatherMainlyClear;
+  String get weatherPartlyCloudy;
+  String get weatherOvercast;
+  String get weatherFog;
+  String get weatherDrizzle;
+  String get weatherFreezingDrizzle;
+  String get weatherRain;
+  String get weatherFreezingRain;
+  String get weatherSnowFall;
+  String get weatherSnowGrains;
+  String get weatherRainShowers;
+  String get weatherSnowShowers;
+  String get weatherThunderstorm;
+  String get weatherThunderstormHail;
+  String get weatherUnknown;
+  String get weatherOption0;
+  String get weatherOption1;
+  String get weatherOption2;
+  String get weatherOption3;
+  String get weatherOption4;
+  String get weatherOption5;
+  String get weatherOption6;
+}

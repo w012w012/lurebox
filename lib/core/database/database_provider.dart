@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import '../services/app_logger.dart';
 
 /// 数据库提供者
 /// 负责数据库的初始化和连接管理
@@ -57,7 +57,7 @@ class DatabaseProvider {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, _databaseName);
 
-    debugPrint('Opening database: $path');
+    AppLogger.i('DatabaseProvider', 'Opening database: $path');
 
     return await openDatabase(
       path,
@@ -77,19 +77,19 @@ class DatabaseProvider {
 
   /// 数据库创建回调
   Future<void> _onCreate(Database db, int version) async {
-    debugPrint('Creating database version $version');
+    AppLogger.i('DatabaseProvider', 'Creating database version $version');
     await _createSchema(db);
   }
 
   /// 数据库升级回调
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    debugPrint('Upgrading database from $oldVersion to $newVersion');
+    AppLogger.i('DatabaseProvider', 'Upgrading database from $oldVersion to $newVersion');
     await _migrateDatabase(db, oldVersion, newVersion);
   }
 
   /// 数据库降级回调
   Future<void> _onDowngrade(Database db, int oldVersion, int newVersion) async {
-    debugPrint('Downgrading database from $oldVersion to $newVersion');
+    AppLogger.i('DatabaseProvider', 'Downgrading database from $oldVersion to $newVersion');
     // 降级时保留数据，不执行任何操作
   }
 
@@ -502,10 +502,10 @@ CREATE TABLE user_species_alias (
         await db.execute(
           'ALTER TABLE $table ADD COLUMN $column $type',
         );
-        debugPrint('Added column $column to $table');
+        AppLogger.i('DatabaseProvider', 'Added column $column to $table');
       }
     } catch (e) {
-      debugPrint('Warning: Failed to add column $column to $table: $e');
+      AppLogger.w('DatabaseProvider', 'Failed to add column $column to $table', e);
     }
   }
 

@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
-import '../database/database_provider.dart';
 import '../exceptions/species_alias_exception.dart';
 import '../models/user_species_alias.dart';
+import 'base_repository.dart';
 
 /// 用户鱼种别名仓储层
 ///
@@ -24,32 +24,23 @@ abstract class UserSpeciesAliasRepository {
 }
 
 /// SQLite 实现 - 用户鱼种别名仓储层
-class SqliteUserSpeciesAliasRepository implements UserSpeciesAliasRepository {
-  static const String _tableName = 'user_species_alias';
-
-  /// 可选的数据库实例（用于测试注入）
-  Future<Database>? _testDb;
-
-  /// 内部获取数据库实例
-  Future<Database> get _database async {
-    final testDb = _testDb;
-    if (testDb != null) return await testDb;
-    return await DatabaseProvider.instance.database;
-  }
+class SqliteUserSpeciesAliasRepository extends BaseSqliteRepository
+    implements UserSpeciesAliasRepository {
+  @override
+  String get tableName => 'user_species_alias';
 
   /// 无参构造函数（使用默认 DatabaseService）
   SqliteUserSpeciesAliasRepository();
 
   /// 带数据库的构造函数（用于测试）
-  SqliteUserSpeciesAliasRepository.withDatabase(Future<Database> testDb) {
-    _testDb = testDb;
-  }
+  SqliteUserSpeciesAliasRepository.withDatabase(Future<Database> testDb)
+      : super.withDatabase(testDb);
 
   @override
   Future<int> create(String userAlias, String speciesId) async {
     try {
-      final db = await _database;
-      return await db.insert(_tableName, {
+      final db = await database;
+      return await db.insert(tableName, {
         'user_alias': userAlias,
         'species_id': speciesId,
         'created_at': DateTime.now().millisecondsSinceEpoch,
@@ -66,9 +57,9 @@ class SqliteUserSpeciesAliasRepository implements UserSpeciesAliasRepository {
   @override
   Future<UserSpeciesAlias?> findByAlias(String userAlias) async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         where: 'user_alias = ?',
         whereArgs: [userAlias],
         limit: 1,
@@ -87,9 +78,9 @@ class SqliteUserSpeciesAliasRepository implements UserSpeciesAliasRepository {
   @override
   Future<List<UserSpeciesAlias>> findBySpeciesId(String speciesId) async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         where: 'species_id = ?',
         whereArgs: [speciesId],
         orderBy: 'created_at DESC',
@@ -107,9 +98,9 @@ class SqliteUserSpeciesAliasRepository implements UserSpeciesAliasRepository {
   @override
   Future<void> delete(int id) async {
     try {
-      final db = await _database;
+      final db = await database;
       await db.delete(
-        _tableName,
+        tableName,
         where: 'id = ?',
         whereArgs: [id],
       );
@@ -125,9 +116,9 @@ class SqliteUserSpeciesAliasRepository implements UserSpeciesAliasRepository {
   @override
   Future<List<UserSpeciesAlias>> getAll() async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         orderBy: 'created_at DESC',
       );
       return results.map((map) => UserSpeciesAlias.fromMap(map)).toList();

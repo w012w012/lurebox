@@ -5,6 +5,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
 import '../../../core/design/theme/tesla_theme.dart';
+import '../../../core/services/app_logger.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../widgets/common/premium_button.dart';
 import '../../../widgets/common/premium_card.dart';
@@ -37,7 +38,7 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
         });
       }
     } catch (e) {
-      debugPrint('获取版本失败: $e');
+      AppLogger.e('SettingsAboutSection', '获取版本失败: $e');
     }
   }
 

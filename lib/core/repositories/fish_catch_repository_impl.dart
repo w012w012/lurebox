@@ -1,7 +1,8 @@
-﻿import '../database/database_provider.dart';
+﻿import 'package:sqflite/sqflite.dart' hide DatabaseException;
+import '../constants/pagination_constants.dart';
 import '../models/fish_catch.dart';
 import '../models/fish_filter.dart';
-import '../services/error_service.dart';
+import 'base_repository.dart';
 import 'fish_catch_repository.dart';
 
 /// SQLite 瀹炵幇 - 娓旇幏璁板綍浠撳偍灞?
@@ -9,25 +10,15 @@ import 'fish_catch_repository.dart';
 /// 浣跨敤 SQLite 鏁版嵁搴撳疄鐜版笖鑾疯褰曠殑鏁版嵁璁块棶銆?
 /// 鏁版嵁琛ㄥ悕锛歠ish_catches
 
-class SqliteFishCatchRepository implements FishCatchRepository {
-  static const String _tableName = 'fish_catches';
+class SqliteFishCatchRepository extends BaseSqliteRepository
+    implements FishCatchRepository {
+  @override
+  String get tableName => 'fish_catches';
 
-  /// 鍙€夌殑鏁版嵁搴撳疄渚嬶紙鐢ㄤ簬娴嬭瘯娉ㄥ叆锛?
-  Future<dynamic>? _testDb;
-
-  /// 鍐呴儴鑾峰彇鏁版嵁搴撳疄渚?
-  Future<dynamic> get _database async {
-    if (_testDb != null) return await _testDb!;
-    return DatabaseProvider.instance.database;
-  }
-
-  /// 鏃犲弬鏋勯€犲嚱鏁帮紙浣跨敤榛樿 DatabaseService锛?
   SqliteFishCatchRepository();
 
-  /// 甯︽暟鎹簱鐨勬瀯閫犲嚱鏁帮紙鐢ㄤ簬娴嬭瘯锛?
-  SqliteFishCatchRepository.withDatabase(Future<dynamic> testDb) {
-    _testDb = testDb;
-  }
+  SqliteFishCatchRepository.withDatabase(Future<Database> testDb)
+      : super.withDatabase(testDb);
 
   /// SQL WHERE clause result
   ///
@@ -145,21 +136,21 @@ class SqliteFishCatchRepository implements FishCatchRepository {
   @override
   Future<List<FishCatch>> getAll() async {
     try {
-      final db = await _database;
-      final results = await db.query(_tableName, orderBy: 'catch_time DESC')
+      final db = await database;
+      final results = await db.query(tableName, orderBy: 'catch_time DESC')
           as List<Map<String, dynamic>>;
       return results.map((map) => FishCatch.fromMap(map)).toList();
     } catch (e) {
-      throw DatabaseException('Failed to get all fish catches: $e');
+      throwDbError('get all fish catches', e);
     }
   }
 
   @override
   Future<FishCatch?> getById(int id) async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         where: 'id = ?',
         whereArgs: [id],
         limit: 1,
@@ -167,43 +158,59 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       if (results.isEmpty) return null;
       return FishCatch.fromMap(results.first);
     } catch (e) {
-      throw DatabaseException('Failed to get fish catch by id: $e');
+      throwDbError('get fish catch by id', e);
+    }
+  }
+
+  @override
+  Future<List<FishCatch>> getByIds(List<int> ids) async {
+    if (ids.isEmpty) return [];
+    try {
+      final db = await database;
+      final placeholders = List.filled(ids.length, '?').join(',');
+      final results = await db.rawQuery(
+        'SELECT * FROM $tableName WHERE id IN ($placeholders)',
+        ids,
+      ) as List<Map<String, dynamic>>;
+      return results.map((map) => FishCatch.fromMap(map)).toList();
+    } catch (e) {
+      throwDbError('get fish catches by ids', e);
     }
   }
 
   @override
   Future<int> create(FishCatch fish) async {
     try {
-      final db = await _database;
+      final db = await database;
       final map = fish.toMap();
       map.remove('id');
       map['created_at'] = DateTime.now().toIso8601String();
       map['updated_at'] = DateTime.now().toIso8601String();
-      return await db.insert(_tableName, map);
+      return await db.insert(tableName, map);
     } catch (e) {
-      throw DatabaseException('Failed to create fish catch: $e');
+      throwDbError('create fish catch', e);
     }
   }
 
   @override
   Future<void> update(FishCatch fish) async {
     try {
-      final db = await _database;
+      final db = await database;
       final map = fish.toMap();
       map['updated_at'] = DateTime.now().toIso8601String();
-      await db.update(_tableName, map, where: 'id = ?', whereArgs: [fish.id]);
+      await db.update(tableName, map, where: 'id = ?', whereArgs: [fish.id]);
     } catch (e) {
-      throw DatabaseException('Failed to update fish catch: $e');
+      throwDbError('update fish catch', e);
     }
   }
 
   @override
   Future<void> delete(int id) async {
     try {
-      final db = await _database;
-      await db.delete(_tableName, where: 'id = ?', whereArgs: [id]);
+      final db = await database;
+      await db.delete(tableName, where: 'id = ?', whereArgs: [id]);
     } catch (e) {
-      throw DatabaseException('Failed to delete fish catch: $e');
+      throwDbError('delete fish catch', e);
     }
   }
 
@@ -211,63 +218,64 @@ class SqliteFishCatchRepository implements FishCatchRepository {
   Future<void> deleteMultiple(List<int> ids) async {
     if (ids.isEmpty) return;
     try {
-      final db = await _database;
+      final db = await database;
       final placeholders = List.filled(ids.length, '?').join(',');
       await db.delete(
-        _tableName,
+        tableName,
         where: 'id IN ($placeholders)',
         whereArgs: ids,
       );
     } catch (e) {
-      throw DatabaseException('Failed to delete multiple fish catches: $e');
+      throwDbError('delete multiple fish catches', e);
     }
   }
 
   @override
   Future<List<FishCatch>> getByDateRange(DateTime start, DateTime end) async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         where: 'catch_time >= ? AND catch_time < ?',
         whereArgs: [start.toIso8601String(), end.toIso8601String()],
         orderBy: 'catch_time DESC',
       ) as List<Map<String, dynamic>>;
       return List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
     } catch (e) {
-      throw DatabaseException('Failed to get fish catches by date range: $e');
+      throwDbError('get fish catches by date range', e);
     }
   }
 
   @override
   Future<List<FishCatch>> getByFate(FishFateType fate) async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         where: 'fate = ?',
         whereArgs: [fate.value],
         orderBy: 'catch_time DESC',
       ) as List<Map<String, dynamic>>;
       return List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
     } catch (e) {
-      throw DatabaseException('Failed to get fish catches by fate: $e');
+      throwDbError('get fish catches by fate', e);
     }
   }
 
   @override
   Future<PaginatedResult<FishCatch>> getPage({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     String orderBy = 'catch_time DESC',
   }) async {
+    pageSize = pageSize.clamp(1, PaginationConstants.maxPageSize);
     try {
-      final db = await _database;
+      final db = await database;
       final offset = (page - 1) * pageSize;
 
       // 浼樺寲锛氫娇鐢ㄥ崟娆℃煡璇㈣幏鍙栨暟鎹拰COUNT
       final results = await db.query(
-        _tableName,
+        tableName,
         orderBy: orderBy,
         limit: pageSize,
         offset: offset,
@@ -277,12 +285,12 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       int totalCount;
       if (page == 1) {
         final countResult = await db.rawQuery(
-          'SELECT COUNT(*) as count FROM $_tableName',
+          'SELECT COUNT(*) as count FROM $tableName',
         );
         totalCount = countResult.first['count'] as int? ?? 0;
       } else {
         // 瀵逛簬闈炵涓€椤碉紝涓嶆彁渚涘噯纭€绘暟锛堥渶瑕侀澶栨煡璇級
-        totalCount = -1; // -1 琛ㄧず鏈煡
+        totalCount = PaginationConstants.unknownTotalCount; // -1 琛ㄧず鏈煡
       }
 
       final items =
@@ -297,24 +305,25 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         hasMore: hasMore,
       );
     } catch (e) {
-      throw DatabaseException('Failed to get paginated fish catches: $e');
+      throwDbError('get paginated fish catches', e);
     }
   }
 
   @override
   Future<PaginatedResult<FishCatch>> getFilteredPage({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     DateTime? startDate,
     DateTime? endDate,
     FishFateType? fate,
     String? species,
     String orderBy = 'catch_time DESC',
   }) async {
+    pageSize = pageSize.clamp(1, PaginationConstants.maxPageSize);
     // NOTE: This method uses legacy parameter style. The FishFilter-based
     // migration was deferred - current implementation is functional.
     try {
-      final db = await _database;
+      final db = await database;
       final offset = (page - 1) * pageSize;
 
       final whereClauses = <String>[];
@@ -346,16 +355,16 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       int totalCount;
       if (page == 1) {
         final countQuery = whereClause != null
-            ? 'SELECT COUNT(*) as count FROM $_tableName WHERE $whereClause'
-            : 'SELECT COUNT(*) as count FROM $_tableName';
+            ? 'SELECT COUNT(*) as count FROM $tableName WHERE $whereClause'
+            : 'SELECT COUNT(*) as count FROM $tableName';
         final countResult = await db.rawQuery(countQuery, whereArgs);
         totalCount = countResult.first['count'] as int? ?? 0;
       } else {
-        totalCount = -1; // -1 琛ㄧず鏈煡锛岄渶瑕侀澶栨煡璇?
+        totalCount = PaginationConstants.unknownTotalCount; // -1 琛ㄧず鏈煡锛岄渶瑕侀澶栨煡璇?
       }
 
       final results = await db.query(
-        _tableName,
+        tableName,
         where: whereClause,
         whereArgs: whereArgs.isNotEmpty ? whereArgs : null,
         orderBy: orderBy,
@@ -374,8 +383,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         hasMore: hasMore,
       );
     } catch (e) {
-      throw DatabaseException(
-          'Failed to get filtered paginated fish catches: $e');
+      throwDbError('get filtered paginated fish catches', e);
     }
   }
 
@@ -387,11 +395,12 @@ class SqliteFishCatchRepository implements FishCatchRepository {
   @override
   Future<PaginatedResult<FishCatch>> getFilteredPageByFilter({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     required FishFilter filter,
   }) async {
+    pageSize = pageSize.clamp(1, PaginationConstants.maxPageSize);
     try {
-      final db = await _database;
+      final db = await database;
       final offset = (page - 1) * pageSize;
 
       // Build WHERE clause from FishFilter
@@ -399,16 +408,16 @@ class SqliteFishCatchRepository implements FishCatchRepository {
 
       // Query 1: Get total count with SAME filters
       final countQuery = whereClause.isNotEmpty
-          ? 'SELECT COUNT(*) as count FROM $_tableName WHERE $whereClause'
-          : 'SELECT COUNT(*) as count FROM $_tableName';
+          ? 'SELECT COUNT(*) as count FROM $tableName WHERE $whereClause'
+          : 'SELECT COUNT(*) as count FROM $tableName';
       final countResult = await db.rawQuery(countQuery, whereArgs);
       final totalCount = countResult.first['count'] as int? ?? 0;
 
       // Query 2: Get page data with filters + sort + pagination
       final sortClause = _buildSortClause(filter);
       final dataSql = whereClause.isNotEmpty
-          ? 'SELECT * FROM $_tableName WHERE $whereClause $sortClause LIMIT ? OFFSET ?'
-          : 'SELECT * FROM $_tableName $sortClause LIMIT ? OFFSET ?';
+          ? 'SELECT * FROM $tableName WHERE $whereClause $sortClause LIMIT ? OFFSET ?'
+          : 'SELECT * FROM $tableName $sortClause LIMIT ? OFFSET ?';
       final dataArgs = [...whereArgs, pageSize, offset];
       final results =
           await db.rawQuery(dataSql, dataArgs) as List<Map<String, dynamic>>;
@@ -427,47 +436,46 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         hasMore: hasMore,
       );
     } catch (e) {
-      throw DatabaseException(
-          'Failed to get filtered paginated fish catches: $e');
+      throwDbError('get filtered paginated fish catches', e);
     }
   }
 
   @override
   Future<List<FishCatch>> getPendingRecognitionCatches() async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.query(
-        _tableName,
+        tableName,
         where: 'pending_recognition = ?',
         whereArgs: [1],
         orderBy: 'catch_time DESC',
       ) as List<Map<String, dynamic>>;
       return results.map((map) => FishCatch.fromMap(map)).toList();
     } catch (e) {
-      throw DatabaseException('Failed to get pending recognition catches: $e');
+      throwDbError('get pending recognition catches', e);
     }
   }
 
   @override
   Future<int> getPendingRecognitionCount() async {
     try {
-      final db = await _database;
+      final db = await database;
       final result = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $_tableName WHERE pending_recognition = ?',
+        'SELECT COUNT(*) as count FROM $tableName WHERE pending_recognition = ?',
         [1],
       );
       return (result.first['count'] as int?) ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get pending recognition count: $e');
+      throwDbError('get pending recognition count', e);
     }
   }
 
   @override
   Future<void> updateSpecies(int id, String species) async {
     try {
-      final db = await _database;
+      final db = await database;
       await db.update(
-        _tableName,
+        tableName,
         {
           'species': species,
           'pending_recognition': 0,
@@ -477,7 +485,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         whereArgs: [id],
       );
     } catch (e) {
-      throw DatabaseException('Failed to update species: $e');
+      throwDbError('update species', e);
     }
   }
 
@@ -496,14 +504,14 @@ class SqliteFishCatchRepository implements FishCatchRepository {
     }
 
     try {
-      final db = await _database;
+      final db = await database;
       final now = DateTime.now().toIso8601String();
       final count = ids.length;
 
       // Build CASE WHEN SQL: single round-trip for N records
       // Pattern: UPDATE table SET col = CASE id WHEN ? THEN ? ... END WHERE id IN (?, ?, ...)
       final buffer = StringBuffer();
-      buffer.write('UPDATE $_tableName SET species = CASE id ');
+      buffer.write('UPDATE $tableName SET species = CASE id ');
 
       // Generate N WHEN ... THEN ... clauses (using ? placeholders)
       for (int i = 0; i < count; i++) {
@@ -537,16 +545,16 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       // Single SQL execution - single database round-trip
       await db.rawUpdate(buffer.toString(), args);
     } catch (e) {
-      throw DatabaseException('Failed to batch update species: $e');
+      throwDbError('batch update species', e);
     }
   }
 
   @override
   Future<Map<String, int>> getSpeciesCounts() async {
     try {
-      final db = await _database;
+      final db = await database;
       final results = await db.rawQuery(
-        'SELECT species, COUNT(*) as count FROM $_tableName GROUP BY species ORDER BY count DESC',
+        'SELECT species, COUNT(*) as count FROM $tableName GROUP BY species ORDER BY count DESC',
       );
       final Map<String, int> counts = {};
       for (final row in results) {
@@ -558,26 +566,26 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       }
       return counts;
     } catch (e) {
-      throw DatabaseException('Failed to get species counts: $e');
+      throwDbError('get species counts', e);
     }
   }
 
   @override
   Future<void> renameSpecies(String oldName, String newName) async {
     if (oldName.isEmpty || newName.isEmpty) {
-      throw const DatabaseException('Species names cannot be empty');
+      throwDbError('Species names cannot be empty', 'validation error');
     }
     try {
-      final db = await _database;
+      final db = await database;
       final now = DateTime.now().toIso8601String();
       await db.update(
-        _tableName,
+        tableName,
         {'species': newName, 'updated_at': now},
         where: 'species = ?',
         whereArgs: [oldName],
       );
     } catch (e) {
-      throw DatabaseException('Failed to rename species: $e');
+      throwDbError('rename species', e);
     }
   }
 
@@ -590,24 +598,24 @@ class SqliteFishCatchRepository implements FishCatchRepository {
   @override
   Future<void> deleteSpecies(String speciesName) async {
     if (speciesName.isEmpty) {
-      throw const DatabaseException('Species name cannot be empty');
+      throwDbError('Species name cannot be empty', 'validation error');
     }
     try {
-      final db = await _database;
+      final db = await database;
       await db.delete(
-        _tableName,
+        tableName,
         where: 'species = ?',
         whereArgs: [speciesName],
       );
     } catch (e) {
-      throw DatabaseException('Failed to delete species: $e');
+      throwDbError('delete species', e);
     }
   }
 
   @override
   Future<Map<String, Map<String, int>>> getSoftWormRigAnalytics() async {
     try {
-      final db = await _database;
+      final db = await database;
       // Use INNER JOIN since we only want catches with a lure of type '杞櫕'
       final results = await db.rawQuery('''
         SELECT
@@ -657,20 +665,20 @@ class SqliteFishCatchRepository implements FishCatchRepository {
         'hookWeight': hookWeightStats,
       };
     } catch (e) {
-      throw DatabaseException('Failed to get soft worm rig analytics: $e');
+      throwDbError('get soft worm rig analytics', e);
     }
   }
 
   @override
   Future<int> getCount() async {
     try {
-      final db = await _database;
+      final db = await database;
       final result = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $_tableName',
+        'SELECT COUNT(*) as count FROM $tableName',
       );
       return result.first['count'] as int? ?? 0;
     } catch (e) {
-      throw DatabaseException('Failed to get fish catch count: $e');
+      throwDbError('get fish catch count', e);
     }
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/design/theme/app_theme.dart';
+import 'core/services/app_logger.dart';
 import 'core/models/app_settings.dart';
 import 'core/providers/app_settings_provider.dart';
 import 'core/providers/language_provider.dart';
@@ -32,7 +33,7 @@ void main() async {
 
   // 同步异常：打印日志
   FlutterError.onError = (details) {
-    debugPrint('Flutter Error: ${details.exceptionAsString()}');
+    AppLogger.e('FlutterError', 'Flutter Error: ${details.exceptionAsString()}');
   };
 
   await _ensureWidgetErrorReporting();
@@ -69,7 +70,7 @@ Future<void> _cleanupLegacyTempFiles() async {
               final fileTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
               if (DateTime.now().difference(fileTime).inDays > 7) {
                 await entity.delete(recursive: true);
-                debugPrint('Cleaned up stale watermark temp: ${entity.path}');
+                AppLogger.i('Main', 'Cleaned up stale watermark temp: ${entity.path}');
               }
             }
           }

@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/providers/equipment_edit_state.dart';
 import 'package:lurebox/core/providers/equipment_edit_view_model.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
 

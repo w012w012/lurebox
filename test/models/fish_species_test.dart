@@ -8,12 +8,14 @@ void main() {
       expect(FishCategory.freshwaterLure.label, equals('淡水路亚'));
       expect(FishCategory.freshwaterGeneral.label, equals('淡水综合'));
       expect(FishCategory.saltwaterLure.label, equals('海水路亚'));
+      expect(FishCategory.saltwaterGeneral.label, equals('海水综合'));
     });
 
     test('fromValue returns correct category', () {
       expect(FishCategory.fromValue(0), equals(FishCategory.freshwaterLure));
       expect(FishCategory.fromValue(1), equals(FishCategory.freshwaterGeneral));
       expect(FishCategory.fromValue(2), equals(FishCategory.saltwaterLure));
+      expect(FishCategory.fromValue(3), equals(FishCategory.saltwaterGeneral));
     });
 
     test('fromValue returns default for invalid value', () {
@@ -24,6 +26,7 @@ void main() {
       expect(FishCategory.freshwaterLure.value, equals(0));
       expect(FishCategory.freshwaterGeneral.value, equals(1));
       expect(FishCategory.saltwaterLure.value, equals(2));
+      expect(FishCategory.saltwaterGeneral.value, equals(3));
     });
   });
 
@@ -234,17 +237,27 @@ void main() {
   group('FishGuideData', () {
     test('allSpecies returns combined list', () {
       final all = FishGuideData.allSpecies;
-      expect(all.length, greaterThanOrEqualTo(100));
+      expect(all.length, equals(100));
       expect(all, containsAll(FishGuideData.freshwaterLureSpecies));
+      expect(all, containsAll(FishGuideData.saltwaterLureSpecies));
       expect(all, containsAll(FishGuideData.freshwaterGeneralSpecies));
+      expect(all, containsAll(FishGuideData.saltwaterGeneralSpecies));
     });
 
-    test('freshwaterLureSpecies has 50 entries', () {
-      expect(FishGuideData.freshwaterLureSpecies.length, equals(50));
+    test('freshwaterLureSpecies has 34 entries', () {
+      expect(FishGuideData.freshwaterLureSpecies.length, equals(34));
     });
 
-    test('freshwaterGeneralSpecies has 50 entries', () {
-      expect(FishGuideData.freshwaterGeneralSpecies.length, equals(50));
+    test('saltwaterLureSpecies has 16 entries', () {
+      expect(FishGuideData.saltwaterLureSpecies.length, equals(16));
+    });
+
+    test('freshwaterGeneralSpecies has 33 entries', () {
+      expect(FishGuideData.freshwaterGeneralSpecies.length, equals(33));
+    });
+
+    test('saltwaterGeneralSpecies has 17 entries', () {
+      expect(FishGuideData.saltwaterGeneralSpecies.length, equals(17));
     });
 
     test('getById returns correct species', () {
@@ -261,10 +274,21 @@ void main() {
     test('getByCategory filters correctly', () {
       final lureSpecies =
           FishGuideData.getByCategory(FishCategory.freshwaterLure);
-      expect(lureSpecies.length, equals(50));
+      expect(lureSpecies.length, equals(34));
       expect(
           lureSpecies.every((s) => s.category == FishCategory.freshwaterLure),
           isTrue);
+
+      final saltwaterLure =
+          FishGuideData.getByCategory(FishCategory.saltwaterLure);
+      expect(saltwaterLure.length, equals(16));
+      expect(
+          saltwaterLure.every((s) => s.category == FishCategory.saltwaterLure),
+          isTrue);
+
+      final saltwaterGeneral =
+          FishGuideData.getByCategory(FishCategory.saltwaterGeneral);
+      expect(saltwaterGeneral.length, equals(17));
     });
 
     test('getByRarity filters correctly', () {
@@ -314,8 +338,8 @@ void main() {
       }
     });
 
-    test('f001-f050 are freshwater lure species', () {
-      for (int i = 1; i <= 50; i++) {
+    test('f001-f034 are freshwater lure species', () {
+      for (int i = 1; i <= 34; i++) {
         final id = 'f${i.toString().padLeft(3, '0')}';
         final species = FishGuideData.getById(id);
         expect(species, isNotNull, reason: 'Missing species: $id');
@@ -323,12 +347,24 @@ void main() {
       }
     });
 
-    test('g001-g050 are freshwater general species', () {
-      for (int i = 1; i <= 50; i++) {
-        final id = 'g${i.toString().padLeft(3, '0')}';
+    test('f035-f050 are saltwater lure species', () {
+      for (int i = 35; i <= 50; i++) {
+        final id = 'f${i.toString().padLeft(3, '0')}';
         final species = FishGuideData.getById(id);
         expect(species, isNotNull, reason: 'Missing species: $id');
-        expect(species!.category, equals(FishCategory.freshwaterGeneral));
+        expect(species!.category, equals(FishCategory.saltwaterLure));
+      }
+    });
+
+    test('all g-species have valid categories', () {
+      for (final species in FishGuideData.allSpecies.where(
+          (s) => s.id.startsWith('g'))) {
+        expect(
+          species.category == FishCategory.freshwaterGeneral ||
+              species.category == FishCategory.saltwaterGeneral,
+          isTrue,
+          reason: 'g-species ${species.id} has unexpected category',
+        );
       }
     });
 

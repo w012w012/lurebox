@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import '../../core/services/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/strings.dart';
@@ -707,7 +708,7 @@ class WatermarkExporter {
 
       return tempFile.path;
     } catch (e) {
-      debugPrint('导出水印图片失败: $e');
+      AppLogger.e('WatermarkExporter', '导出水印图片失败: $e');
       return null;
     }
   }
@@ -729,7 +730,7 @@ class WatermarkExporter {
         }
       }
     } catch (e) {
-      debugPrint('删除临时文件失败: $e');
+      AppLogger.w('WatermarkExporter', '删除临时文件失败: $e');
     }
   }
 }

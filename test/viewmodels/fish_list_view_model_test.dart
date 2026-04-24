@@ -539,6 +539,11 @@ void main() {
           pageSize: 20,
           hasMore: false,
         );
+        when(() => mockRepository.getByIds([1, 2]))
+            .thenAnswer((_) async => [
+                  _createFishCatch(id: 1, species: 'Bass', length: 30.0),
+                  _createFishCatch(id: 2, species: 'Trout', length: 25.0),
+                ]);
         when(() => mockRepository.deleteMultiple([1, 2]))
             .thenAnswer((_) async {});
         when(() => mockRepository.getPage(
@@ -567,6 +572,8 @@ void main() {
         viewModel.toggleSelectionMode();
         viewModel.toggleSelection(1);
 
+        when(() => mockRepository.getByIds([1]))
+            .thenAnswer((_) async => [_createFishCatch(id: 1, species: 'Bass', length: 30.0)]);
         when(() => mockRepository.deleteMultiple([1]))
             .thenThrow(Exception('Delete failed'));
 

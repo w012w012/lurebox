@@ -1,5 +1,6 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+import 'app_logger.dart';
+import '../constants/pagination_constants.dart';
 import '../models/fish_catch.dart';
 import '../models/fish_filter.dart';
 import '../repositories/fish_catch_repository.dart';
@@ -53,12 +54,9 @@ class FishCatchService {
   }
 
   Future<void> deleteMultiple(List<int> ids) async {
-    final fishList = await Future.wait(
-      ids.map((id) => _repository.getById(id)),
-    );
-    await Future.wait(
-      fishList.whereType<FishCatch>().map(_deleteImageFiles),
-    );
+    if (ids.isEmpty) return;
+    final fishList = await _repository.getByIds(ids);
+    await Future.wait(fishList.map(_deleteImageFiles));
     await _repository.deleteMultiple(ids);
   }
 
@@ -74,7 +72,7 @@ class FishCatchService {
 
   Future<PaginatedResult<FishCatch>> getPage({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     String orderBy = 'catch_time DESC',
   }) async {
     return await _repository.getPage(
@@ -86,7 +84,7 @@ class FishCatchService {
 
   Future<PaginatedResult<FishCatch>> getFilteredPage({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     DateTime? startDate,
     DateTime? endDate,
     FishFateType? fate,
@@ -109,7 +107,7 @@ class FishCatchService {
   /// Uses SQL-level filtering for all filter fields
   Future<PaginatedResult<FishCatch>> getFilteredPageByFilter({
     required int page,
-    int pageSize = 20,
+    int pageSize = PaginationConstants.defaultPageSize,
     required FishFilter filter,
   }) async {
     return await _repository.getFilteredPageByFilter(
@@ -209,10 +207,10 @@ class FishCatchService {
           final file = File(path);
           if (await file.exists()) {
             await file.delete();
-            debugPrint('已删除图片: $path');
+            AppLogger.i('FishCatchService', 'Deleted image: $path');
           }
         } catch (e) {
-          debugPrint('删除图片文件失败: $e');
+          AppLogger.e('FishCatchService', 'Failed to delete image file', e);
         }
       }
     }
