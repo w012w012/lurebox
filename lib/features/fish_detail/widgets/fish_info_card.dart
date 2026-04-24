@@ -183,7 +183,7 @@ class FishInfoCard extends ConsumerWidget {
             _InfoRow(
               icon: fate == FishFateType.release.value
                   ? Icons.water_drop
-                  : Icons.restaurant,
+                  : Icons.push_pin_outlined,
               label: strings.fate,
               value: fate == FishFateType.release.value
                   ? '🐟 ${strings.release}'
