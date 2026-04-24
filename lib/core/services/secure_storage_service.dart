@@ -106,6 +106,69 @@ class InMemoryApiKeyStorage implements ApiKeyStorage {
   }
 }
 
+// ===== Cloud Password Storage =====
+
+/// 云配置密码存储接口
+///
+/// 用于将 WebDAV/云存储密码从 SQLite 迁移到平台安全存储
+abstract interface class CloudPasswordStorage {
+  Future<void> save(int configId, String password);
+  Future<String?> get(int configId);
+  Future<void> delete(int configId);
+}
+
+/// 生产环境实现：使用 FlutterSecureStorage
+class SecureCloudPasswordStorage implements CloudPasswordStorage {
+  final FlutterSecureStorage _storage;
+
+  SecureCloudPasswordStorage({FlutterSecureStorage? storage})
+      : _storage = storage ??
+            const FlutterSecureStorage(
+              aOptions: AndroidOptions(
+                encryptedSharedPreferences: true,
+              ),
+              iOptions: IOSOptions(
+                accessibility: KeychainAccessibility.first_unlock_this_device,
+              ),
+            );
+
+  @override
+  Future<void> save(int configId, String password) async {
+    if (password.isEmpty) return;
+    await _storage.write(key: _keyFor(configId), value: password);
+  }
+
+  @override
+  Future<String?> get(int configId) async {
+    return await _storage.read(key: _keyFor(configId));
+  }
+
+  @override
+  Future<void> delete(int configId) async {
+    await _storage.delete(key: _keyFor(configId));
+  }
+
+  String _keyFor(int configId) => '$_keyPrefix$configId';
+  static const _keyPrefix = 'cloud_pwd_';
+}
+
+/// 内存实现：用于测试
+class InMemoryCloudPasswordStorage implements CloudPasswordStorage {
+  final Map<int, String> _storage = {};
+
+  @override
+  Future<void> save(int configId, String password) async {
+    if (password.isEmpty) return;
+    _storage[configId] = password;
+  }
+
+  @override
+  Future<String?> get(int configId) async => _storage[configId];
+
+  @override
+  Future<void> delete(int configId) async => _storage.remove(configId);
+}
+
 /// 安全存储服务 - 安全的敏感数据存储
 ///
 /// 使用平台安全存储（iOS Keychain, Android EncryptedSharedPreferences）

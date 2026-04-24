@@ -27,6 +27,7 @@ import 'package:lurebox/core/services/location_service.dart';
 import 'package:lurebox/core/services/backup_service.dart';
 import 'package:lurebox/core/services/backup_zip_service.dart';
 import 'package:lurebox/core/services/fish_species_matcher.dart';
+import 'package:lurebox/core/services/secure_storage_service.dart';
 
 void main() {
   group('DI Provider Wiring Tests', () {
@@ -99,6 +100,7 @@ void main() {
         final testContainer = ProviderContainer(
           overrides: [
             databaseProvider.overrideWithValue(mockDb),
+            cloudPasswordStorageProvider.overrideWithValue(InMemoryCloudPasswordStorage()),
           ],
         );
 

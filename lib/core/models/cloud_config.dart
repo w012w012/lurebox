@@ -25,20 +25,23 @@ class CloudConfig {
   });
 
   /// 从 Map 创建 CloudConfig
+  ///
+  /// [password] 字段在新架构中由安全存储管理，DB 中不再持久化密码。
+  /// 当 map 来自旧版 DB 时，password 可能仍有值；新版 DB 中为空字符串。
   factory CloudConfig.fromMap(Map<String, dynamic> map) {
     return CloudConfig(
       id: map['id'] as int?,
       provider: CloudProvider.fromString(map['provider'] as String),
       serverUrl: map['server_url'] as String,
       username: map['username'] as String,
-      password: map['password'] as String,
+      password: (map['password'] as String?) ?? '',
       isActive: (map['is_active'] as int) == 1,
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),
     );
   }
 
-  /// 转换为 Map
+  /// 转换为 Map（含密码，用于完整序列化）
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -46,6 +49,20 @@ class CloudConfig {
       'server_url': serverUrl,
       'username': username,
       'password': password,
+      'is_active': isActive ? 1 : 0,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+    };
+  }
+
+  /// 转换为 DB Map（不含密码，密码由安全存储管理）
+  Map<String, dynamic> toDbMap() {
+    return {
+      'id': id,
+      'provider': provider.value,
+      'server_url': serverUrl,
+      'username': username,
+      'password': '',
       'is_active': isActive ? 1 : 0,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
@@ -75,8 +92,8 @@ class CloudConfig {
     );
   }
 
-  /// 转换为 JSON 字符串（用于安全存储）
-  String toJson() => jsonEncode(toMap()..remove('password'));
+  /// 转换为 JSON 字符串（不含密码）
+  String toJson() => jsonEncode(toDbMap());
 
   @override
   bool operator ==(Object other) {
