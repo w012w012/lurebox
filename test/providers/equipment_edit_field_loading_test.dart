@@ -43,15 +43,16 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.brand, equals('Shimano'));
-      expect(vm.state.model, equals('Core'));
-      expect(vm.state.price, equals('299.99'));
-      expect(vm.state.length, equals('2.10'));
-      expect(vm.state.lengthUnit, equals('m'));
-      expect(vm.state.sections, equals('2'));
-      expect(vm.state.rodAction, equals('Fast'));
-      expect(vm.state.material, equals('Carbon'));
-      expect(vm.state.isDefault, isTrue);
+      final rodState = vm.state as RodEditState;
+      expect(rodState.brand, equals('Shimano'));
+      expect(rodState.model, equals('Core'));
+      expect(rodState.price, equals('299.99'));
+      expect(rodState.length, equals('2.10'));
+      expect(rodState.lengthUnit, equals('m'));
+      expect(rodState.sections, equals('2'));
+      expect(rodState.rodAction, equals('Fast'));
+      expect(rodState.material, equals('Carbon'));
+      expect(rodState.isDefault, isTrue);
     });
 
     test('loads fields from map with space-separated keys', () {
@@ -67,13 +68,14 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.brand, equals('Daiwa'));
-      expect(vm.state.model, equals('Exist'));
-      expect(vm.state.length, equals('2.13'));
-      expect(vm.state.lengthUnit, equals('ft'));
-      expect(vm.state.sections, equals('1'));
-      expect(vm.state.rodAction, equals('Medium'));
-      expect(vm.state.material, equals('Graphite'));
+      final rodState = vm.state as RodEditState;
+      expect(rodState.brand, equals('Daiwa'));
+      expect(rodState.model, equals('Exist'));
+      expect(rodState.length, equals('2.13'));
+      expect(rodState.lengthUnit, equals('ft'));
+      expect(rodState.sections, equals('1'));
+      expect(rodState.rodAction, equals('Medium'));
+      expect(rodState.material, equals('Graphite'));
     });
 
     test('underscore key takes priority over space key for same field', () {
@@ -86,7 +88,7 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.lengthUnit, equals('m'));
+      expect((vm.state as RodEditState).lengthUnit, equals('m'));
     });
 
     test('falls back to space key when underscore key absent', () {
@@ -97,7 +99,7 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.lengthUnit, equals('ft'));
+      expect((vm.state as RodEditState).lengthUnit, equals('ft'));
     });
 
     test('falls back to underscore key when space key absent', () {
@@ -108,7 +110,7 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.lengthUnit, equals('m'));
+      expect((vm.state as RodEditState).lengthUnit, equals('m'));
     });
 
     test('loads empty strings for missing fields', () {
@@ -116,10 +118,11 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.brand, equals(''));
-      expect(vm.state.model, equals(''));
-      expect(vm.state.price, equals(''));
-      expect(vm.state.length, equals(''));
+      final rodState = vm.state as RodEditState;
+      expect(rodState.brand, equals(''));
+      expect(rodState.model, equals(''));
+      expect(rodState.price, equals(''));
+      expect(rodState.length, equals(''));
     });
 
     test('handles compound underscore keys for rod-specific fields', () {
@@ -131,9 +134,10 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.jointType, equals('Two-Piece'));
-      expect(vm.state.weightRange, equals('10-40g'));
-      expect(vm.state.hardness, equals('Medium'));
+      final rodState = vm.state as RodEditState;
+      expect(rodState.jointType, equals('Two-Piece'));
+      expect(rodState.weightRange, equals('10-40g'));
+      expect(rodState.hardness, equals('Medium'));
     });
 
     test('handles compound space keys for rod-specific fields', () {
@@ -145,9 +149,10 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.jointType, equals('Two-Piece'));
-      expect(vm.state.weightRange, equals('10-40g'));
-      expect(vm.state.hardness, equals('Medium'));
+      final rodState = vm.state as RodEditState;
+      expect(rodState.jointType, equals('Two-Piece'));
+      expect(rodState.weightRange, equals('10-40g'));
+      expect(rodState.hardness, equals('Medium'));
     });
 
     test('loads category split from pipe-separated string', () {
@@ -220,13 +225,14 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.brand, equals('Shimano'));
-      expect(vm.state.reelBearings, equals('6+1'));
-      expect(vm.state.reelRatio, equals('5.2:1'));
-      expect(vm.state.reelCapacity, equals('150m/0.285mm'));
-      expect(vm.state.reelBrakeType, equals('Front'));
-      expect(vm.state.reelWeight, equals('195'));
-      expect(vm.state.reelWeightUnit, equals('g'));
+      final reelState = vm.state as ReelEditState;
+      expect(reelState.brand, equals('Shimano'));
+      expect(reelState.reelBearings, equals('6+1'));
+      expect(reelState.reelRatio, equals('5.2:1'));
+      expect(reelState.reelCapacity, equals('150m/0.285mm'));
+      expect(reelState.reelBrakeType, equals('Front'));
+      expect(reelState.reelWeight, equals('195'));
+      expect(reelState.reelWeightUnit, equals('g'));
     });
 
     test('loads reel-specific fields from space-separated map', () {
@@ -240,10 +246,11 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.brand, equals('Daiwa'));
-      expect(vm.state.reelBearings, equals('8+1'));
-      expect(vm.state.reelRatio, equals('6.4:1'));
-      expect(vm.state.reelBrakeType, equals('SVS'));
+      final reelState = vm.state as ReelEditState;
+      expect(reelState.brand, equals('Daiwa'));
+      expect(reelState.reelBearings, equals('8+1'));
+      expect(reelState.reelRatio, equals('6.4:1'));
+      expect(reelState.reelBrakeType, equals('SVS'));
     });
 
     test('loads reel line sub-fields from underscore-separated map', () {
@@ -257,11 +264,12 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.reelLine, equals('Power Pro'));
-      expect(vm.state.reelLineNumber, equals('30'));
-      expect(vm.state.reelLineLength, equals('150'));
-      expect(vm.state.reelLineLengthUnit, equals('m'));
-      expect(vm.state.reelLineDate, equals('2024-03-01'));
+      final reelState = vm.state as ReelEditState;
+      expect(reelState.reelLine, equals('Power Pro'));
+      expect(reelState.reelLineNumber, equals('30'));
+      expect(reelState.reelLineLength, equals('150'));
+      expect(reelState.reelLineLengthUnit, equals('m'));
+      expect(reelState.reelLineDate, equals('2024-03-01'));
     });
 
     test('loads reel line sub-fields from space-separated map', () {
@@ -275,11 +283,12 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.reelLine, equals('Power Pro'));
-      expect(vm.state.reelLineNumber, equals('30'));
-      expect(vm.state.reelLineLength, equals('150'));
-      expect(vm.state.reelLineLengthUnit, equals('m'));
-      expect(vm.state.reelLineDate, equals('2024-03-01'));
+      final reelState = vm.state as ReelEditState;
+      expect(reelState.reelLine, equals('Power Pro'));
+      expect(reelState.reelLineNumber, equals('30'));
+      expect(reelState.reelLineLength, equals('150'));
+      expect(reelState.reelLineLengthUnit, equals('m'));
+      expect(reelState.reelLineDate, equals('2024-03-01'));
     });
 
     test('reel weight unit defaults to g when not provided', () {
@@ -289,8 +298,9 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.reelWeight, equals('200'));
-      expect(vm.state.reelWeightUnit, equals('g'));
+      final reelState = vm.state as ReelEditState;
+      expect(reelState.reelWeight, equals('200'));
+      expect(reelState.reelWeightUnit, equals('g'));
     });
   });
 
@@ -317,13 +327,14 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.brand, equals('Rapala'));
-      expect(vm.state.lureType, equals('Sinking'));
-      expect(vm.state.lureWeight, equals('12'));
-      expect(vm.state.lureWeightUnit, equals('g'));
-      expect(vm.state.lureSize, equals('7cm'));
-      expect(vm.state.lureColor, equals('Rainbow Trout'));
-      expect(vm.state.lureQuantity, equals('3'));
+      final lureState = vm.state as LureEditState;
+      expect(lureState.brand, equals('Rapala'));
+      expect(lureState.lureType, equals('Sinking'));
+      expect(lureState.lureWeight, equals('12'));
+      expect(lureState.lureWeightUnit, equals('g'));
+      expect(lureState.lureSize, equals('7cm'));
+      expect(lureState.lureColor, equals('Rainbow Trout'));
+      expect(lureState.lureQuantity, equals('3'));
     });
 
     test('loads lure-specific fields from space-separated map', () {
@@ -339,11 +350,12 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.lureType, equals('Floating'));
-      expect(vm.state.lureWeight, equals('8'));
-      expect(vm.state.lureSize, equals('5cm'));
-      expect(vm.state.lureColor, equals('Ghost Shiner'));
-      expect(vm.state.lureQuantity, equals('5'));
+      final lureState = vm.state as LureEditState;
+      expect(lureState.lureType, equals('Floating'));
+      expect(lureState.lureWeight, equals('8'));
+      expect(lureState.lureSize, equals('5cm'));
+      expect(lureState.lureColor, equals('Ghost Shiner'));
+      expect(lureState.lureQuantity, equals('5'));
     });
 
     test('lure size and quantity units use defaults when not provided', () {
@@ -354,11 +366,9 @@ void main() {
 
       vm.loadDataFromMap(map);
 
-      expect(vm.state.lureSize, equals('10cm'));
-      // lureSizeUnit defaults to 'cm' in LureEditState; lureQuantityUnit
-      // defaults to '' in the unified EquipmentEditState (not 'pcs' — that
-      // default only lives in LureEditState.toEquipmentEditState())
-      expect(vm.state.lureSizeUnit, equals('cm'));
+      final lureState = vm.state as LureEditState;
+      expect(lureState.lureSize, equals('10cm'));
+      expect(lureState.lureSizeUnit, equals('cm'));
     });
   });
 

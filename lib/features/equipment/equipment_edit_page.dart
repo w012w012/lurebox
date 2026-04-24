@@ -5,6 +5,7 @@ import '../../core/design/theme/app_colors.dart';
 import '../../core/di/di.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
+import '../../core/providers/equipment_edit_state.dart';
 import '../../core/providers/equipment_edit_view_model.dart';
 import '../../core/utils/unit_converter.dart';
 import '../../widgets/common/premium_button.dart';
@@ -229,180 +230,206 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                   dense: true,
                 ),
               ]),
-              if (widget.type == 'rod')
-                _buildCard([
-                  _buildSectionTitle(strings.rodParameters),
-                  const SizedBox(height: 12),
-                  _buildExpandedRow([
-                    _buildAutocomplete(
-                      strings.handleType,
-                      state.categoryType1,
-                      notifier.updateCategoryType1,
-                      strings.rodHandleTypes,
-                      strings.handleTypeHint,
-                    ),
-                    _buildAutocomplete(
-                      strings.usageType,
-                      state.categoryType2,
-                      notifier.updateCategoryType2,
-                      strings.rodUsageTypes,
-                      strings.selectOrEnterUsage,
-                    ),
-                  ]),
-                  const SizedBox(height: 10),
-                  RodForm(
-                    lengthController: _getOrCreateController(
-                      'length',
-                      state.length,
-                    ),
-                    lengthUnit: state.lengthUnit,
-                    onLengthUnitChanged: notifier.updateLengthUnit,
-                    sectionsController: _getOrCreateController(
-                      'sections',
-                      state.sections,
-                    ),
-                    jointType: state.jointType,
-                    onJointTypeChanged: notifier.updateJointType,
-                    materialController: _getOrCreateController(
-                      'material',
-                      state.material,
-                    ),
-                    hardness: state.hardness,
-                    onHardnessChanged: notifier.updateHardness,
-                    action: state.rodAction,
-                    onActionChanged: notifier.updateRodAction,
-                    weightRangeMinController: _getOrCreateController(
-                      'weightRangeMin',
-                      _parseWeightRange(state.weightRange).$1,
-                    ),
-                    weightRangeMaxController: _getOrCreateController(
-                      'weightRangeMax',
-                      _parseWeightRange(state.weightRange).$2,
-                    ),
-                  ),
-                ])
-              else if (widget.type == 'reel') ...[
-                _buildCard([
-                  _buildSectionTitle(strings.reelParameters),
-                  const SizedBox(height: 12),
-                  _buildExpandedRow([
-                    _buildAutocomplete(
-                      strings.reelType,
-                      state.categoryType1,
-                      notifier.updateCategoryType1,
-                      strings.reelTypes,
-                      strings.reelTypeHint,
-                    ),
-                    _buildAutocomplete(
-                      strings.usageType,
-                      state.categoryType2,
-                      notifier.updateCategoryType2,
-                      strings.reelUsageTypes,
-                      strings.reelUsageHint,
-                    ),
-                  ]),
-                  const SizedBox(height: 10),
-                  ReelForm(
-                    bearingsController: _getOrCreateController(
-                      'reelBearings',
-                      state.reelBearings,
-                    ),
-                    ratioAController: _getOrCreateController(
-                      'reelRatioA',
-                      _parseRatio(state.reelRatio).$1,
-                    ),
-                    ratioBController: _getOrCreateController(
-                      'reelRatioB',
-                      _parseRatio(state.reelRatio).$2,
-                    ),
-                    capacityNumberController: _getOrCreateController(
-                      'reelCapacityNumber',
-                      _parseCapacity(state.reelCapacity).$1,
-                    ),
-                    capacityLengthController: _getOrCreateController(
-                      'reelCapacityLength',
-                      _parseCapacity(state.reelCapacity).$2,
-                    ),
-                    weightController: _getOrCreateController(
-                      'reelWeight',
-                      state.reelWeight,
-                    ),
-                    weightUnit: state.reelWeightUnit,
-                    onWeightUnitChanged: notifier.updateReelWeightUnit,
-                    brakeType: state.reelBrakeType,
-                    onBrakeTypeChanged: notifier.updateReelBrakeType,
-                  ),
-                ]),
-                _buildCard([
-                  _buildSectionTitle(strings.line),
-                  const SizedBox(height: 12),
-                  _buildTextField(
-                    strings.brandAndName,
-                    'reelLine',
-                    state.reelLine,
-                    notifier.updateReelLine,
-                  ),
-                  const SizedBox(height: 10),
-                  _buildExpandedRow([
-                    _buildTextField(
-                      strings.lineNumber,
-                      'reelLineNumber',
-                      state.reelLineNumber,
-                      notifier.updateReelLineNumber,
-                    ),
-                    _buildTextField(
-                      strings.lineLength,
-                      'reelLineLength',
-                      state.reelLineLength,
-                      notifier.updateReelLineLength,
-                      suffix: lineLengthSymbol,
-                    ),
-                  ]),
-                  const SizedBox(height: 10),
-                  _buildDatePicker(
-                    strings.lineDate,
-                    state.reelLineDate,
-                    notifier.updateReelLineDate,
-                    strings,
-                  ),
-                ]),
-              ] else if (widget.type == 'lure')
-                _buildCard([
-                  _buildSectionTitle(strings.lureParameters),
-                  const SizedBox(height: 12),
-                  _buildAutocomplete(
-                    strings.type,
-                    state.lureType,
-                    notifier.updateLureType,
-                    strings.lureTypeOptions,
-                    strings.selectOrEnterType,
-                  ),
-                  const SizedBox(height: 10),
-                  LureForm(
-                    weightController: _getOrCreateController(
-                      'lureWeight',
-                      state.lureWeight,
-                    ),
-                    weightUnit: state.lureWeightUnit,
-                    onWeightUnitChanged: notifier.updateLureWeightUnit,
-                    sizeController: _getOrCreateController(
-                      'lureSize',
-                      state.lureSize,
-                    ),
-                    sizeUnit: state.lureSizeUnit,
-                    onSizeUnitChanged: notifier.updateLureSizeUnit,
-                    colorController: _getOrCreateController(
-                      'lureColor',
-                      state.lureColor,
-                    ),
-                    quantityController: _getOrCreateController(
-                      'lureQuantity',
-                      state.lureQuantity,
-                    ),
-                    quantityUnit: state.lureQuantityUnit,
-                    onQuantityUnitChanged: notifier.updateLureQuantityUnit,
-                  ),
-                ]),
+              ...widget.type == 'rod'
+                  ? [
+                      () {
+                        final rodState = state as RodEditState;
+                        return _buildCard([
+                          _buildSectionTitle(strings.rodParameters),
+                          const SizedBox(height: 12),
+                          _buildExpandedRow([
+                            _buildAutocomplete(
+                              strings.handleType,
+                              state.categoryType1,
+                              notifier.updateCategoryType1,
+                              strings.rodHandleTypes,
+                              strings.handleTypeHint,
+                            ),
+                            _buildAutocomplete(
+                              strings.usageType,
+                              state.categoryType2,
+                              notifier.updateCategoryType2,
+                              strings.rodUsageTypes,
+                              strings.selectOrEnterUsage,
+                            ),
+                          ]),
+                          const SizedBox(height: 10),
+                          RodForm(
+                            lengthController: _getOrCreateController(
+                              'length',
+                              rodState.length,
+                            ),
+                            lengthUnit: rodState.lengthUnit,
+                            onLengthUnitChanged: notifier.updateLengthUnit,
+                            sectionsController: _getOrCreateController(
+                              'sections',
+                              rodState.sections,
+                            ),
+                            jointType: rodState.jointType,
+                            onJointTypeChanged: notifier.updateJointType,
+                            materialController: _getOrCreateController(
+                              'material',
+                              rodState.material,
+                            ),
+                            hardness: rodState.hardness,
+                            onHardnessChanged: notifier.updateHardness,
+                            action: rodState.rodAction,
+                            onActionChanged: notifier.updateRodAction,
+                            weightRangeMinController: _getOrCreateController(
+                              'weightRangeMin',
+                              _parseWeightRange(rodState.weightRange).$1,
+                            ),
+                            weightRangeMaxController: _getOrCreateController(
+                              'weightRangeMax',
+                              _parseWeightRange(rodState.weightRange).$2,
+                            ),
+                          ),
+                        ]);
+                      }(),
+                    ]
+                  : widget.type == 'reel'
+                      ? [
+                          () {
+                            final reelState = state as ReelEditState;
+                            return _buildCard([
+                              _buildSectionTitle(strings.reelParameters),
+                              const SizedBox(height: 12),
+                              _buildExpandedRow([
+                                _buildAutocomplete(
+                                  strings.reelType,
+                                  state.categoryType1,
+                                  notifier.updateCategoryType1,
+                                  strings.reelTypes,
+                                  strings.reelTypeHint,
+                                ),
+                                _buildAutocomplete(
+                                  strings.usageType,
+                                  state.categoryType2,
+                                  notifier.updateCategoryType2,
+                                  strings.reelUsageTypes,
+                                  strings.reelUsageHint,
+                                ),
+                              ]),
+                              const SizedBox(height: 10),
+                              ReelForm(
+                                bearingsController: _getOrCreateController(
+                                  'reelBearings',
+                                  reelState.reelBearings,
+                                ),
+                                ratioAController: _getOrCreateController(
+                                  'reelRatioA',
+                                  _parseRatio(reelState.reelRatio).$1,
+                                ),
+                                ratioBController: _getOrCreateController(
+                                  'reelRatioB',
+                                  _parseRatio(reelState.reelRatio).$2,
+                                ),
+                                capacityNumberController:
+                                    _getOrCreateController(
+                                  'reelCapacityNumber',
+                                  _parseCapacity(reelState.reelCapacity).$1,
+                                ),
+                                capacityLengthController:
+                                    _getOrCreateController(
+                                  'reelCapacityLength',
+                                  _parseCapacity(reelState.reelCapacity).$2,
+                                ),
+                                weightController: _getOrCreateController(
+                                  'reelWeight',
+                                  reelState.reelWeight,
+                                ),
+                                weightUnit: reelState.reelWeightUnit,
+                                onWeightUnitChanged:
+                                    notifier.updateReelWeightUnit,
+                                brakeType: reelState.reelBrakeType,
+                                onBrakeTypeChanged:
+                                    notifier.updateReelBrakeType,
+                              ),
+                            ]);
+                          }(),
+                          () {
+                            final reelState = state as ReelEditState;
+                            return _buildCard([
+                              _buildSectionTitle(strings.line),
+                              const SizedBox(height: 12),
+                              _buildTextField(
+                                strings.brandAndName,
+                                'reelLine',
+                                reelState.reelLine,
+                                notifier.updateReelLine,
+                              ),
+                              const SizedBox(height: 10),
+                              _buildExpandedRow([
+                                _buildTextField(
+                                  strings.lineNumber,
+                                  'reelLineNumber',
+                                  reelState.reelLineNumber,
+                                  notifier.updateReelLineNumber,
+                                ),
+                                _buildTextField(
+                                  strings.lineLength,
+                                  'reelLineLength',
+                                  reelState.reelLineLength,
+                                  notifier.updateReelLineLength,
+                                  suffix: lineLengthSymbol,
+                                ),
+                              ]),
+                              const SizedBox(height: 10),
+                              _buildDatePicker(
+                                strings.lineDate,
+                                reelState.reelLineDate,
+                                notifier.updateReelLineDate,
+                                strings,
+                              ),
+                            ]);
+                          }(),
+                        ]
+                      : widget.type == 'lure'
+                          ? [
+                              () {
+                                final lureState = state as LureEditState;
+                                return _buildCard([
+                                  _buildSectionTitle(strings.lureParameters),
+                                  const SizedBox(height: 12),
+                                  _buildAutocomplete(
+                                    strings.type,
+                                    lureState.lureType,
+                                    notifier.updateLureType,
+                                    strings.lureTypeOptions,
+                                    strings.selectOrEnterType,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  LureForm(
+                                    weightController: _getOrCreateController(
+                                      'lureWeight',
+                                      lureState.lureWeight,
+                                    ),
+                                    weightUnit: lureState.lureWeightUnit,
+                                    onWeightUnitChanged:
+                                        notifier.updateLureWeightUnit,
+                                    sizeController: _getOrCreateController(
+                                      'lureSize',
+                                      lureState.lureSize,
+                                    ),
+                                    sizeUnit: lureState.lureSizeUnit,
+                                    onSizeUnitChanged:
+                                        notifier.updateLureSizeUnit,
+                                    colorController: _getOrCreateController(
+                                      'lureColor',
+                                      lureState.lureColor,
+                                    ),
+                                    quantityController: _getOrCreateController(
+                                      'lureQuantity',
+                                      lureState.lureQuantity,
+                                    ),
+                                    quantityUnit: lureState.lureQuantityUnit,
+                                    onQuantityUnitChanged:
+                                        notifier.updateLureQuantityUnit,
+                                  ),
+                                ]);
+                              }(),
+                            ]
+                          : <Widget>[],
             ],
           ),
         ),
