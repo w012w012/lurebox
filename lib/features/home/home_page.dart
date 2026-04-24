@@ -66,7 +66,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
 
     _fadeAnimations = _controllers.map((controller) {
       return Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(parent: controller, curve: TeslaAnimation.teslaCurve),
+        CurvedAnimation(parent: controller, curve: TeslaTheme.transitionCurve),
       );
     }).toList();
 
@@ -75,7 +75,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
         begin: const Offset(0, 0.15),
         end: Offset.zero,
       ).animate(
-        CurvedAnimation(parent: controller, curve: TeslaAnimation.teslaCurve),
+        CurvedAnimation(parent: controller, curve: TeslaTheme.transitionCurve),
       );
     }).toList();
   }
@@ -289,7 +289,8 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
 
     final fishes = List<Map<String, dynamic>>.from(widget.state.top3Fishes);
     fishes.sort(
-      (a, b) => (b['length'] as double).compareTo(a['length'] as double),
+      (a, b) => ((b['length'] as double?) ?? 0.0)
+          .compareTo((a['length'] as double?) ?? 0.0),
     );
 
     return Container(

@@ -31,8 +31,145 @@ class PremiumButton extends StatefulWidget {
   State<PremiumButton> createState() => _PremiumButtonState();
 }
 
+class _ButtonColors {
+  const _ButtonColors({
+    required this.background,
+    required this.foreground,
+    this.borderColor,
+  });
+
+  final Color background;
+  final Color foreground;
+  final Color? borderColor;
+}
+
 class _PremiumButtonState extends State<PremiumButton> {
   bool _isPressed = false;
+
+  static const _textStyle = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    letterSpacing: 0.1,
+  );
+
+  static const _defaultPadding = EdgeInsets.symmetric(
+    horizontal: TeslaTheme.spacingLg,
+    vertical: TeslaTheme.spacingMicro,
+  );
+
+  static const _textPadding = EdgeInsets.symmetric(
+    horizontal: TeslaTheme.spacingMd,
+    vertical: TeslaTheme.spacingSm,
+  );
+
+  _ButtonColors _resolveColors() => switch (widget.variant) {
+        PremiumButtonVariant.primary => const _ButtonColors(
+            background: TeslaColors.electricBlue,
+            foreground: TeslaColors.white,
+          ),
+        PremiumButtonVariant.secondary => _ButtonColors(
+            background: TeslaColors.electricBlue.withValues(alpha: 0.12),
+            foreground: TeslaColors.electricBlue,
+          ),
+        PremiumButtonVariant.outline => const _ButtonColors(
+            background: Colors.transparent,
+            foreground: TeslaColors.electricBlue,
+            borderColor: TeslaColors.electricBlue,
+          ),
+        PremiumButtonVariant.text => const _ButtonColors(
+            background: Colors.transparent,
+            foreground: TeslaColors.electricBlue,
+          ),
+        PremiumButtonVariant.danger => const _ButtonColors(
+            background: TeslaColors.danger,
+            foreground: Colors.white,
+          ),
+        PremiumButtonVariant.success => const _ButtonColors(
+            background: Color(0xFF3E6AE1),
+            foreground: Colors.white,
+          ),
+      };
+
+  EdgeInsets get _effectivePadding =>
+      widget.padding ??
+      (widget.variant == PremiumButtonVariant.text ? _textPadding : _defaultPadding);
+
+  @override
+  Widget build(BuildContext context) {
+    final borderRadius = widget.borderRadius ?? TeslaTheme.radiusMicro;
+    final colors = _resolveColors();
+
+    Widget button;
+
+    if (widget.variant == PremiumButtonVariant.outline) {
+      button = Semantics(
+        button: true,
+        label: widget.text,
+        child: OutlinedButton(
+          onPressed: widget.isLoading ? null : widget.onPressed,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: colors.foreground,
+            elevation: 0,
+            padding: _effectivePadding,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+            ),
+            side: BorderSide(color: colors.borderColor!, width: 1),
+            textStyle: _textStyle,
+          ),
+          child: _buildButtonChild(),
+        ),
+      );
+    } else if (widget.variant == PremiumButtonVariant.text) {
+      button = Semantics(
+        button: true,
+        label: widget.text,
+        child: TextButton(
+          onPressed: widget.isLoading ? null : widget.onPressed,
+          style: TextButton.styleFrom(
+            foregroundColor: colors.foreground,
+            padding: _effectivePadding,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+            ),
+            textStyle: _textStyle,
+          ),
+          child: _buildButtonChild(),
+        ),
+      );
+    } else {
+      button = Semantics(
+        button: true,
+        label: widget.text,
+        child: ElevatedButton(
+          onPressed: widget.isLoading ? null : widget.onPressed,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: colors.background,
+            foregroundColor: colors.foreground,
+            elevation: 0,
+            padding: _effectivePadding,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+            ),
+            textStyle: _textStyle,
+          ),
+          child: _buildButtonChild(),
+        ),
+      );
+    }
+
+    return GestureDetector(
+      onTapDown: widget.onPressed != null ? _handleTapDown : null,
+      onTapUp: widget.onPressed != null ? _handleTapUp : null,
+      onTapCancel: widget.onPressed != null ? _handleTapCancel : null,
+      child: AnimatedScale(
+        scale: _isPressed ? AnimationConstants.touchScale : 1.0,
+        duration: TeslaTheme.transitionDuration,
+        curve: TeslaTheme.transitionCurve,
+        child: button,
+      ),
+    );
+  }
 
   void _handleTapDown(TapDownDetails details) {
     setState(() => _isPressed = true);
@@ -44,253 +181,6 @@ class _PremiumButtonState extends State<PremiumButton> {
 
   void _handleTapCancel() {
     setState(() => _isPressed = false);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final effectiveBorderRadius = widget.borderRadius ?? TeslaTheme.radiusMicro;
-
-    Widget button;
-
-    switch (widget.variant) {
-      case PremiumButtonVariant.primary:
-        button = _buildPrimaryButton(context, isDark, effectiveBorderRadius);
-        break;
-      case PremiumButtonVariant.secondary:
-        button = _buildSecondaryButton(context, isDark, effectiveBorderRadius);
-        break;
-      case PremiumButtonVariant.outline:
-        button = _buildOutlineButton(context, isDark, effectiveBorderRadius);
-        break;
-      case PremiumButtonVariant.text:
-        button = _buildTextButton(context, isDark, effectiveBorderRadius);
-        break;
-      case PremiumButtonVariant.danger:
-        button = _buildDangerButton(context, isDark, effectiveBorderRadius);
-        break;
-      case PremiumButtonVariant.success:
-        button = _buildSuccessButton(context, isDark, effectiveBorderRadius);
-        break;
-    }
-
-    return GestureDetector(
-      onTapDown: widget.onPressed != null ? _handleTapDown : null,
-      onTapUp: widget.onPressed != null ? _handleTapUp : null,
-      onTapCancel: widget.onPressed != null ? _handleTapCancel : null,
-      child: AnimatedScale(
-        scale: _isPressed ? AnimationConstants.touchScale : 1.0,
-        duration: TeslaAnimation.colorTransition,
-        curve: TeslaAnimation.teslaCurve,
-        child: button,
-      ),
-    );
-  }
-
-  Widget _buildPrimaryButton(
-    BuildContext context,
-    bool isDark,
-    double borderRadius,
-  ) {
-    return Semantics(
-      button: true,
-      label: widget.text,
-      child: ElevatedButton(
-        onPressed: widget.isLoading ? null : widget.onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor:
-              isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
-          foregroundColor:
-              isDark ? TeslaColors.carbonDark : TeslaColors.white,
-          elevation: 0,
-          padding: widget.padding ??
-              const EdgeInsets.symmetric(
-                horizontal: TeslaTheme.spacingLg,
-                vertical: TeslaTheme.spacingMicro,
-              ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.1,
-          ),
-        ),
-        child: _buildButtonChild(),
-      ),
-    );
-  }
-
-  Widget _buildSecondaryButton(
-    BuildContext context,
-    bool isDark,
-    double borderRadius,
-  ) {
-    return Semantics(
-      button: true,
-      label: widget.text,
-      child: ElevatedButton(
-        onPressed: widget.isLoading ? null : widget.onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isDark
-              ? TeslaColors.electricBlue.withValues(alpha: 0.12)
-              : TeslaColors.electricBlue.withValues(alpha: 0.12),
-          foregroundColor:
-              isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
-          elevation: 0,
-          padding: widget.padding ??
-              const EdgeInsets.symmetric(
-                horizontal: TeslaTheme.spacingLg,
-                vertical: TeslaTheme.spacingMicro,
-              ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.1,
-          ),
-        ),
-        child: _buildButtonChild(),
-      ),
-    );
-  }
-
-  Widget _buildOutlineButton(
-    BuildContext context,
-    bool isDark,
-    double borderRadius,
-  ) {
-    return Semantics(
-      button: true,
-      label: widget.text,
-      child: OutlinedButton(
-        onPressed: widget.isLoading ? null : widget.onPressed,
-        style: OutlinedButton.styleFrom(
-          foregroundColor:
-              isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
-          elevation: 0,
-          padding: widget.padding ??
-              const EdgeInsets.symmetric(
-                horizontal: TeslaTheme.spacingLg,
-                vertical: TeslaTheme.spacingMicro,
-              ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
-          side: BorderSide(
-            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
-            width: 1,
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.1,
-          ),
-        ),
-        child: _buildButtonChild(),
-      ),
-    );
-  }
-
-  Widget _buildTextButton(
-    BuildContext context,
-    bool isDark,
-    double borderRadius,
-  ) {
-    return Semantics(
-      button: true,
-      label: widget.text,
-      child: TextButton(
-        onPressed: widget.isLoading ? null : widget.onPressed,
-        style: TextButton.styleFrom(
-          foregroundColor:
-              isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
-          padding: widget.padding ??
-              const EdgeInsets.symmetric(
-                horizontal: TeslaTheme.spacingMd,
-                vertical: TeslaTheme.spacingSm,
-              ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.1,
-          ),
-        ),
-        child: _buildButtonChild(),
-      ),
-    );
-  }
-
-  Widget _buildDangerButton(
-    BuildContext context,
-    bool isDark,
-    double borderRadius,
-  ) {
-    return Semantics(
-      button: true,
-      label: widget.text,
-      child: ElevatedButton(
-        onPressed: widget.isLoading ? null : widget.onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: TeslaColors.danger,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          padding: widget.padding ??
-              const EdgeInsets.symmetric(
-                horizontal: TeslaTheme.spacingLg,
-                vertical: TeslaTheme.spacingMicro,
-              ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.1,
-          ),
-        ),
-        child: _buildButtonChild(),
-      ),
-    );
-  }
-
-  Widget _buildSuccessButton(
-    BuildContext context,
-    bool isDark,
-    double borderRadius,
-  ) {
-    return Semantics(
-      button: true,
-      label: widget.text,
-      child: ElevatedButton(
-        onPressed: widget.isLoading ? null : widget.onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF3E6AE1),
-          foregroundColor: Colors.white,
-          elevation: 0,
-          padding: widget.padding ??
-              const EdgeInsets.symmetric(
-                horizontal: TeslaTheme.spacingLg,
-                vertical: TeslaTheme.spacingMicro,
-              ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 0.1,
-          ),
-        ),
-        child: _buildButtonChild(),
-      ),
-    );
   }
 
   Widget _buildButtonChild() {
@@ -356,8 +246,7 @@ class PremiumIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final iconColor =
-        color ?? (isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue);
+    final iconColor = color ?? TeslaColors.electricBlue;
 
     Widget button;
 
@@ -370,8 +259,7 @@ class PremiumIconButton extends StatelessWidget {
             width: size,
             height: size,
             decoration: BoxDecoration(
-              color: backgroundColor ??
-                  (isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue),
+              color: backgroundColor ?? TeslaColors.electricBlue,
               borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
             ),
             child: IconButton(
@@ -395,16 +283,14 @@ class PremiumIconButton extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               color: backgroundColor ??
-                  (isDark
-                      ? TeslaColors.electricBlue.withValues(alpha: 0.12)
-                      : TeslaColors.electricBlue.withValues(alpha: 0.12)),
+                  TeslaColors.electricBlue.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
             ),
             child: IconButton(
               onPressed: onPressed,
               icon: Icon(
                 icon,
-                color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
+                color: TeslaColors.electricBlue,
               ),
               iconSize: size * 0.5,
               padding: EdgeInsets.zero,
@@ -421,7 +307,7 @@ class PremiumIconButton extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               border: Border.all(
-                color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
+                color: TeslaColors.electricBlue,
                 width: 1,
               ),
               borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
@@ -531,8 +417,7 @@ class PremiumFAB extends StatelessWidget {
         onPressed: onPressed,
         tooltip: tooltip,
         mini: mini,
-        backgroundColor: backgroundColor ??
-            (isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue),
+        backgroundColor: backgroundColor ?? TeslaColors.electricBlue,
         foregroundColor: foregroundColor ??
             (isDark ? TeslaColors.carbonDark : TeslaColors.white),
         shape: RoundedRectangleBorder(

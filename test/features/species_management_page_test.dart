@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/design/theme/animation_constants.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
@@ -411,7 +412,7 @@ void main() {
 
       // Duration should be 330ms (Tesla design system)
       expect(animatedContainer.duration,
-          equals(TeslaAnimation.transition));
+          equals(TeslaTheme.transitionDuration));
     });
 
     testWidgets('PremiumButton animates scale on press',

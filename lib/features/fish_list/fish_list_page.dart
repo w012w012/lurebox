@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/animation_constants.dart';
+import '../../core/design/theme/tesla_theme.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/models/fish_catch.dart';
 import '../../core/providers/app_settings_provider.dart';
@@ -208,7 +209,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
       curve: Interval(
         delayFraction.clamp(0.0, 0.6),
         1.0,
-        curve: TeslaAnimation.teslaCurve,
+        curve: TeslaTheme.transitionCurve,
       ),
     );
 
@@ -245,9 +246,9 @@ class _FishListPageState extends ConsumerState<FishListPage>
                 fontWeight: FontWeight.w500,
               ),
             )
-          : const Text(
-              '鱼获列表',
-              style: TextStyle(
+          : Text(
+              strings.fishListTitle,
+              style: const TextStyle(
                 color: TeslaColors.carbonDark,
                 fontWeight: FontWeight.w500,
                 letterSpacing: -0.3,
@@ -590,7 +591,7 @@ class _SortButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: TeslaAnimation.colorTransition,
+        duration: TeslaTheme.transitionDuration,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: isSelected
