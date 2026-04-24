@@ -339,7 +339,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: AchievementCollapseCard(
-                    title: category,
+                    title: _getCategoryDisplayName(category, strings),
                     currentCount: completedCount,
                     totalCount: categoryAchievements.length,
                     icon: _getCategoryIcon(category),
@@ -366,23 +366,30 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
   }
 
   String _getCategoryIcon(String category) {
-    switch (category) {
-      case '数量类':
-        return '🐟';
-      case '尺寸类':
-        return '📏';
-      case '品种类':
-        return '🪣';
-      case '地点类':
-        return '📍';
-      case '装备类':
-        return '🎣';
-      case '环保类':
-        return '🌿';
-      case '特殊成就':
-        return '🏆';
-      default:
-        return '🏆';
-    }
+    // Match against DB category values (stored as Chinese category keys)
+    return switch (category) {
+      '数量类' => '🐟',
+      '尺寸类' => '📏',
+      '品种类' => '🪣',
+      '地点类' => '📍',
+      '装备类' => '🎣',
+      '环保类' => '🌿',
+      '特殊成就' => '🏆',
+      _ => '🏆',
+    };
+  }
+
+  /// Translate DB category key to localized display name.
+  String _getCategoryDisplayName(String category, AppStrings strings) {
+    return switch (category) {
+      '数量类' => strings.categoryQuantity,
+      '尺寸类' => strings.categorySize,
+      '品种类' => strings.categorySpecies,
+      '地点类' => strings.categoryLocation,
+      '装备类' => strings.categoryEquipment,
+      '环保类' => strings.categoryEco,
+      '特殊成就' => strings.specialAchievement,
+      _ => category,
+    };
   }
 }

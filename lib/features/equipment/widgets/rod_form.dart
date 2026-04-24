@@ -78,11 +78,11 @@ class RodForm extends ConsumerWidget {
           label: strings.sections,
           value:
               sectionsController.text.isEmpty ? null : sectionsController.text,
-          items: const [
-            PremiumDropdownItem(value: '1节', label: '1节'),
-            PremiumDropdownItem(value: '2节', label: '2节'),
-            PremiumDropdownItem(value: '3节', label: '3节'),
-            PremiumDropdownItem(value: '多节', label: '多节'),
+          items: [
+            PremiumDropdownItem(value: '1节', label: strings.rodSection1),
+            PremiumDropdownItem(value: '2节', label: strings.rodSection2),
+            PremiumDropdownItem(value: '3节', label: strings.rodSection3),
+            PremiumDropdownItem(value: '多节', label: strings.rodSectionMulti),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -93,13 +93,13 @@ class RodForm extends ConsumerWidget {
         const SizedBox(height: 10),
         // 插节方式：预选词
         PremiumDropdown<String>(
-          label: '插节方式',
+          label: strings.jointMethod,
           value: jointType.isEmpty ? null : jointType,
-          items: const [
-            PremiumDropdownItem(value: '正并继', label: '正并继'),
-            PremiumDropdownItem(value: '逆并继', label: '逆并继'),
-            PremiumDropdownItem(value: '印龙继', label: '印龙继'),
-            PremiumDropdownItem(value: '伸缩', label: '伸缩'),
+          items: [
+            PremiumDropdownItem(value: '正并继', label: strings.jointTypeSpigot),
+            PremiumDropdownItem(value: '逆并继', label: strings.jointTypeReverseSpigot),
+            PremiumDropdownItem(value: '印龙继', label: strings.jointTypeDragonSpigot),
+            PremiumDropdownItem(value: '伸缩', label: strings.jointTypeTelescopic),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -140,15 +140,15 @@ class RodForm extends ConsumerWidget {
         PremiumDropdown<String>(
           label: strings.action,
           value: action.isEmpty ? null : action,
-          items: const [
-            PremiumDropdownItem(value: 'SS调（超慢调）', label: 'SS调（超慢调）'),
-            PremiumDropdownItem(value: 'S调（慢调）', label: 'S调（慢调）'),
-            PremiumDropdownItem(value: 'MR调（中慢调）', label: 'MR调（中慢调）'),
-            PremiumDropdownItem(value: 'R调（中调）', label: 'R调（中调）'),
-            PremiumDropdownItem(value: 'RF调（中快调）', label: 'RF调（中快调）'),
-            PremiumDropdownItem(value: 'F调（快调）', label: 'F调（快调）'),
-            PremiumDropdownItem(value: 'FF调（超快调）', label: 'FF调（超快调）'),
-            PremiumDropdownItem(value: 'XF调（极快调）', label: 'XF调（极快调）'),
+          items: [
+            PremiumDropdownItem(value: 'SS调（超慢调）', label: strings.rodActionSS),
+            PremiumDropdownItem(value: 'S调（慢调）', label: strings.rodActionS),
+            PremiumDropdownItem(value: 'MR调（中慢调）', label: strings.rodActionMR),
+            PremiumDropdownItem(value: 'R调（中调）', label: strings.rodActionR),
+            PremiumDropdownItem(value: 'RF调（中快调）', label: strings.rodActionRF),
+            PremiumDropdownItem(value: 'F调（快调）', label: strings.rodActionF),
+            PremiumDropdownItem(value: 'FF调（超快调）', label: strings.rodActionFF),
+            PremiumDropdownItem(value: 'XF调（极快调）', label: strings.rodActionXF),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -163,8 +163,8 @@ class RodForm extends ConsumerWidget {
             Expanded(
               child: PremiumTextField(
                 controller: weightRangeMinController,
-                label: '适合饵重',
-                hint: '最小值',
+                label: strings.baitWeightLabel,
+                hint: strings.minValue,
                 keyboardType: TextInputType.number,
               ),
             ),
@@ -176,7 +176,7 @@ class RodForm extends ConsumerWidget {
               child: PremiumTextField(
                 controller: weightRangeMaxController,
                 label: '',
-                hint: '最大值',
+                hint: strings.maxValue,
                 keyboardType: TextInputType.number,
               ),
             ),

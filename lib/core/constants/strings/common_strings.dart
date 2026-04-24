@@ -20,6 +20,10 @@ mixin CommonStringsMixin {
   String get noData;
   String get edit;
   String get share;
+  String get template;
+  String get showStats;
+  String get showHashtags;
+  String get showWatermark;
   String get delete;
   String get save;
   String get cancel;
@@ -75,4 +79,9 @@ mixin CommonStringsMixin {
   String get locationName;
   String get modifyWeather;
   String get notSet;
+  String get recognize;
+  String get notUsing;
+  String get sharing;
+  String get distribution;
+  String get fishListTitle;
 }

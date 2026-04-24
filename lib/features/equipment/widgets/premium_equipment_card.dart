@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/strings.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../core/providers/app_settings_provider.dart';
 import '../../../core/design/theme/app_colors.dart';
@@ -396,7 +397,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         items.add(_InfoItem(strings.sections, '${e['sections']}'));
       }
       if (e['joint_type'] != null) {
-        items.add(_InfoItem('插节方式', e['joint_type']));
+        items.add(_InfoItem(strings.cardJointMethod, e['joint_type']));
       }
       if (e['hardness'] != null) {
         items.add(_InfoItem(strings.hardness, e['hardness']));
@@ -497,7 +498,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         items.add(_InfoItem(strings.lureColor, e['lure_color']));
       }
       if (e['lure_action'] != null) {
-        items.add(_InfoItem('动作', e['lure_action']));
+        items.add(_InfoItem(strings.cardAction, e['lure_action']));
       }
     } else if (type == 'line') {
       if (e['line_type'] != null) {
@@ -507,10 +508,10 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         items.add(_InfoItem(strings.lineLength, e['line_length']));
       }
       if (e['line_strength'] != null) {
-        items.add(_InfoItem('强度', e['line_strength']));
+        items.add(_InfoItem(strings.cardStrength, e['line_strength']));
       }
       if (e['line_color'] != null) {
-        items.add(_InfoItem('颜色', e['line_color']));
+        items.add(_InfoItem(strings.cardColor, e['line_color']));
       }
     }
 
@@ -529,7 +530,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       return [
         row,
         const SizedBox(height: TeslaTheme.spacingSm),
-        _buildQuantityBadge(context, quantity, unit),
+        _buildQuantityBadge(context, quantity, unit, strings),
       ];
     }
 
@@ -592,7 +593,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     );
   }
 
-  Widget _buildQuantityBadge(BuildContext context, int quantity, String unit) {
+  Widget _buildQuantityBadge(BuildContext context, int quantity, String unit, AppStrings strings) {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: TeslaTheme.spacingMicro,
@@ -616,7 +617,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
           ),
           const SizedBox(width: TeslaTheme.spacingSm),
           Text(
-            '数量: ',
+            strings.quantityPrefix,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: TeslaColors.electricBlue,
                 ),
@@ -635,27 +636,28 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
 
   String _getCategoryName(String type, String category) {
     // 简化版本：直接返回分类名称
+    final strings = ref.read(currentStringsProvider);
     final categoryMap = {
       // 鱼竿类型
-      'spinning': '纺车竿',
-      'baitcasting': '水滴竿',
-      'fly': '飞蝇竿',
-      'trolling': '拖钓竿',
+      'spinning': strings.typeSpinningRod,
+      'baitcasting': strings.typeBaitcastingRod,
+      'fly': strings.typeFlyRod,
+      'trolling': strings.typeTrollingRod,
       // 渔轮类型
-      'spinning_reel': '纺车轮',
-      'baitcasting_reel': '水滴轮',
-      'fly_reel': '飞蝇轮',
-      'trolling_reel': '拖钓轮',
+      'spinning_reel': strings.typeSpinningReel,
+      'baitcasting_reel': strings.typeBaitcastingReel,
+      'fly_reel': strings.typeFlyReel,
+      'trolling_reel': strings.typeTrollingReel,
       // 假饵类型
-      'hard_bait': '硬饵',
-      'soft_bait': '软饵',
+      'hard_bait': strings.typeHardBait,
+      'soft_bait': strings.typeSoftBait,
       'spinner': '亮片',
-      'spoon': '汤匙',
-      'jig': '铅头钩',
+      'spoon': strings.typeSpoon,
+      'jig': strings.typeJigHead,
       // 鱼线类型
-      'monofilament': '尼龙线',
-      'braided': 'PE线',
-      'fluorocarbon': '碳线',
+      'monofilament': strings.typeNylonLine,
+      'braided': strings.typePELine,
+      'fluorocarbon': strings.typeFluorocarbonLine,
     };
     return categoryMap[category] ?? category;
   }

@@ -118,7 +118,7 @@ Reference: `DESIGN.md` for full specification.
 - `TeslaTheme` — light/dark ThemeData, 4px button radius, 12px card radius
 - `TeslaTokens` — spacing (8px base), radius, shadowNone
 - `TeslaTypography` — 14px body (w400), 14px UI (w500), 40px hero (w500)
-- `TeslaAnimation` — 330ms cubic-bezier(0.16, 1, 0.3, 1) transitions
+- `TeslaTheme.transitionDuration` / `TeslaTheme.transitionCurve` — 330ms cubic-bezier(0.16, 1, 0.3, 1) transitions
 
 **Rules** (from DESIGN.md):
 - Electric Blue for CTAs only — never decorative

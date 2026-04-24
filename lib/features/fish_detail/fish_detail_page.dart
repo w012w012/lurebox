@@ -36,23 +36,24 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
   Widget build(BuildContext context) {
     final state = ref.watch(fishDetailViewModelProvider(widget.fishId));
     final strings = ref.watch(currentStringsProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
     if (state.isLoading) {
       return Scaffold(
-        backgroundColor: TeslaColors.white,
+        backgroundColor: colorScheme.surface,
         appBar: AppBar(
           title: Text(
             strings.fishDetail,
-            style: const TextStyle(
-              color: TeslaColors.carbonDark,
+            style: TextStyle(
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.w500,
             ),
           ),
-          backgroundColor: TeslaColors.white,
-          foregroundColor: TeslaColors.carbonDark,
+          backgroundColor: colorScheme.surface,
+          foregroundColor: colorScheme.onSurface,
           elevation: 0,
         ),
-        body: const Center(
+        body: Center(
           child: CircularProgressIndicator(
             color: TeslaColors.electricBlue,
           ),
@@ -62,17 +63,17 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
 
     if (state.errorMessage != null || state.fish == null) {
       return Scaffold(
-        backgroundColor: TeslaColors.white,
+        backgroundColor: colorScheme.surface,
         appBar: AppBar(
           title: Text(
             strings.fishDetail,
-            style: const TextStyle(
-              color: TeslaColors.carbonDark,
+            style: TextStyle(
+              color: colorScheme.onSurface,
               fontWeight: FontWeight.w500,
             ),
           ),
-          backgroundColor: TeslaColors.white,
-          foregroundColor: TeslaColors.carbonDark,
+          backgroundColor: colorScheme.surface,
+          foregroundColor: colorScheme.onSurface,
           elevation: 0,
         ),
         body: Center(
@@ -87,8 +88,8 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
               const SizedBox(height: 16),
               Text(
                 state.errorMessage ?? 'Fish not found',
-                style: const TextStyle(
-                  color: TeslaColors.graphite,
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
                   fontSize: 16,
                 ),
               ),
@@ -115,17 +116,17 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
         fish['weight_unit'] as String? ?? units.fishWeightUnit;
 
     return Scaffold(
-      backgroundColor: TeslaColors.white,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(
           strings.fishDetail,
-          style: const TextStyle(
-            color: TeslaColors.carbonDark,
+          style: TextStyle(
+            color: colorScheme.onSurface,
             fontWeight: FontWeight.w500,
           ),
         ),
-        backgroundColor: TeslaColors.white,
-        foregroundColor: TeslaColors.carbonDark,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
         elevation: 0,
         scrolledUnderElevation: 0.5,
       ),
@@ -265,8 +266,8 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
             ),
           ),
           Container(
-            decoration: const BoxDecoration(
-              color: TeslaColors.white,
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
             ),
             child: SafeArea(
               top: false,
@@ -300,23 +301,24 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
     WidgetRef ref,
     AppStrings strings,
   ) async {
+    final dialogColorScheme = Theme.of(context).colorScheme;
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (_) => AlertDialog(
         title: Text(
           strings.confirmDelete,
-          style: const TextStyle(
-            color: TeslaColors.carbonDark,
+          style: TextStyle(
+            color: dialogColorScheme.onSurface,
             fontWeight: FontWeight.w500,
           ),
         ),
         content: Text(
           strings.confirmDeleteFish,
-          style: const TextStyle(
-            color: TeslaColors.graphite,
+          style: TextStyle(
+            color: dialogColorScheme.onSurfaceVariant,
           ),
         ),
-        backgroundColor: TeslaColors.white,
+        backgroundColor: dialogColorScheme.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
         ),
@@ -394,7 +396,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
       showDialog<void>(
         context: context,
         barrierDismissible: false,
-        builder: (ctx) => const Center(
+        builder: (ctx) => Center(
           child: PremiumCard(
             child: Padding(
               padding: EdgeInsets.all(24),
@@ -406,8 +408,8 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
                   ),
                   SizedBox(height: 16),
                   Text(
-                    '正在分享...',
-                    style: TextStyle(
+                    strings.sharing,
+                    style: const TextStyle(
                       color: TeslaColors.carbonDark,
                       fontSize: 16,
                     ),

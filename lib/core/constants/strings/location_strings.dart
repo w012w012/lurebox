@@ -18,4 +18,8 @@ mixin LocationStringsMixin {
   String get catchCount;
   String get hideLocation;
   String get showLocation;
+  String get similarLocationsLabel;
+  String get containsNSimilarLocations;
+  String get mergeButton;
+  String get fishCountSuffix;
 }

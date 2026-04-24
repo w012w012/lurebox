@@ -134,14 +134,14 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '路亚钓鱼爱好者的专业鱼获记录工具',
+                strings.appDescription,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
               ),
               const SizedBox(height: TeslaTheme.spacingMd),
               Text(
-                '主要功能',
+                strings.features,
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),

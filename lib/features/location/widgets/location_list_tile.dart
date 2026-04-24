@@ -8,6 +8,7 @@ class LocationListTile extends StatelessWidget {
   final DateTime? firstCatchTime;
   final DateTime? lastCatchTime;
   final bool isSelected;
+  final String? fishCountSuffix;
   final VoidCallback? onTap;
   final VoidCallback? onToggleSelect;
 
@@ -18,6 +19,7 @@ class LocationListTile extends StatelessWidget {
     this.firstCatchTime,
     this.lastCatchTime,
     this.isSelected = false,
+    this.fishCountSuffix,
     this.onTap,
     this.onToggleSelect,
   });
@@ -83,7 +85,7 @@ class LocationListTile extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '$fishCount 条',
+                          '$fishCount${fishCountSuffix ?? ' 条'}',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),

@@ -82,7 +82,7 @@ class ReelForm extends ConsumerWidget {
               child: PremiumTextField(
                 controller: capacityNumberController,
                 label: strings.reelCapacity,
-                hint: '线号',
+                hint: strings.lineLabel,
                 keyboardType: TextInputType.number,
               ),
             ),
@@ -94,7 +94,7 @@ class ReelForm extends ConsumerWidget {
               child: PremiumTextField(
                 controller: capacityLengthController,
                 label: '',
-                hint: '长度',
+                hint: strings.lineCapacity,
                 keyboardType: TextInputType.number,
               ),
             ),
@@ -110,12 +110,12 @@ class ReelForm extends ConsumerWidget {
         PremiumDropdown<String>(
           label: strings.reelBrakeType,
           value: brakeType.isEmpty ? null : brakeType,
-          items: const [
-            PremiumDropdownItem(value: '传统磁力刹车', label: '传统磁力刹车'),
-            PremiumDropdownItem(value: '离心刹车', label: '离心刹车'),
-            PremiumDropdownItem(value: 'DC刹车', label: 'DC刹车'),
-            PremiumDropdownItem(value: '浮动磁力刹车', label: '浮动磁力刹车'),
-            PremiumDropdownItem(value: '创新组合刹车', label: '创新组合刹车'),
+          items: [
+            PremiumDropdownItem(value: '传统磁力刹车', label: strings.brakeTypeTraditionalMagnetic),
+            PremiumDropdownItem(value: '离心刹车', label: strings.brakeTypeCentrifugal),
+            PremiumDropdownItem(value: 'DC刹车', label: strings.brakeTypeDC),
+            PremiumDropdownItem(value: '浮动磁力刹车', label: strings.brakeTypeFloatingMagnetic),
+            PremiumDropdownItem(value: '创新组合刹车', label: strings.brakeTypeInnovative),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -141,7 +141,7 @@ class ReelForm extends ConsumerWidget {
               child: UnitDropdown(
                 value: weightUnit,
                 options: const ['g', 'oz'],
-                label: '单位',
+                label: strings.unit,
                 onUnitChanged: onWeightUnitChanged,
               ),
             ),

@@ -147,7 +147,7 @@ class FishInfoCard extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.all(TeslaTheme.spacingMd),
       decoration: BoxDecoration(
-        color: TeslaColors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
       ),
       child: Padding(

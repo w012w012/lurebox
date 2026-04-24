@@ -459,7 +459,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
               'length: ${state.length}';
           AppSnackBar.showError(
             context,
-            '保存失败，请检查输入',
+            strings.saveFailedCheckInput,
             debugError: debugInfo,
           );
         }
@@ -469,7 +469,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
       if (mounted) {
         AppSnackBar.showError(
           context,
-          '保存失败，请重试',
+          strings.saveFailedRetry,
           debugError: e,
         );
       }

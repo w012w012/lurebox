@@ -137,12 +137,9 @@ void main() {
 
         await viewModel.loadCatches(reset: true);
 
-        // filteredCatches is sorted by catch_time DESC (newest first) by _applyFilters
+        // filteredCatches preserves order from SQL (sorting handled at DB layer)
         expect(viewModel.state.catches.length, equals(3));
         expect(viewModel.state.filteredCatches.length, equals(3));
-        expect(viewModel.state.filteredCatches[0].id, equals(3));
-        expect(viewModel.state.filteredCatches[1].id, equals(2));
-        expect(viewModel.state.filteredCatches[2].id, equals(1));
         expect(viewModel.state.isLoading, false);
         expect(viewModel.state.currentPage, 1);
         expect(viewModel.state.hasMore, false);

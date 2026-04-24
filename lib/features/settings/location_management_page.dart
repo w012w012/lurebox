@@ -43,13 +43,13 @@ class _LocationManagementPageState
             IconButton(
               icon: const Icon(Icons.clear_all),
               onPressed: () => viewModel.clearSelection(),
-              tooltip: '取消选择',
+              tooltip: strings.locationCancelSelect,
             ),
           if (state.selectedLocations.isEmpty)
             IconButton(
               icon: const Icon(Icons.select_all),
               onPressed: () => viewModel.selectAll(),
-              tooltip: '全选',
+              tooltip: strings.selectAll,
             ),
         ],
       ),
@@ -57,7 +57,7 @@ class _LocationManagementPageState
           ? const Center(child: CircularProgressIndicator())
           : state.locations.isEmpty
               ? _buildEmptyState(strings)
-              : _buildContent(state, viewModel),
+              : _buildContent(strings, state, viewModel),
       bottomNavigationBar: state.selectedLocations.length >= 2
           ? Padding(
               padding: const EdgeInsets.all(TeslaTheme.spacingMd),
@@ -66,9 +66,9 @@ class _LocationManagementPageState
                   Expanded(
                     child: TextField(
                       controller: _mergeTargetController,
-                      decoration: const InputDecoration(
-                        labelText: '合并到',
-                        hintText: '输入目标名称',
+                      decoration: InputDecoration(
+                        labelText: strings.locationMergeTo,
+                        hintText: strings.locationEnterTargetName,
                         border: OutlineInputBorder(),
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 12,
@@ -92,6 +92,7 @@ class _LocationManagementPageState
   }
 
   Widget _buildContent(
+    AppStrings strings,
     LocationManagementState state,
     LocationManagementViewModel viewModel,
   ) {
@@ -108,7 +109,7 @@ class _LocationManagementPageState
           padding: const EdgeInsets.all(TeslaTheme.spacingSm),
           child: TextField(
             decoration: InputDecoration(
-              hintText: '搜索钓点',
+              hintText: strings.locationSearchHint,
               prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
@@ -122,10 +123,10 @@ class _LocationManagementPageState
           ),
         ),
         // 统计信息
-        _buildStatsCard(state),
+        _buildStatsCard(strings, state),
         // 相似钓点分组
         if (state.locationGroups.isNotEmpty)
-          _buildSimilarGroupsSection(state, viewModel),
+          _buildSimilarGroupsSection(strings, state, viewModel),
         // 全部钓点列表
         Expanded(
           child: ListView.builder(
@@ -140,6 +141,7 @@ class _LocationManagementPageState
               return LocationListTile(
                 name: name,
                 fishCount: fishCount,
+                fishCountSuffix: strings.fishCountSuffix,
                 firstCatchTime: firstTimeStr != null
                     ? DateTime.tryParse(firstTimeStr)
                     : null,
@@ -157,7 +159,7 @@ class _LocationManagementPageState
     );
   }
 
-  Widget _buildStatsCard(LocationManagementState state) {
+  Widget _buildStatsCard(AppStrings strings, LocationManagementState state) {
     final totalLocations = state.locations.length;
     final totalFish = state.locations.fold<int>(
       0,
@@ -184,7 +186,7 @@ class _LocationManagementPageState
                         ),
                   ),
                   const SizedBox(height: TeslaTheme.spacingMicro),
-                  const Text('钓点数量'),
+                  Text(strings.locationCount),
                 ],
               ),
             ),
@@ -200,7 +202,7 @@ class _LocationManagementPageState
                         ),
                   ),
                   const SizedBox(height: TeslaTheme.spacingMicro),
-                  const Text('总渔获数'),
+                  Text(strings.locationTotalFishCount),
                 ],
               ),
             ),
@@ -211,6 +213,7 @@ class _LocationManagementPageState
   }
 
   Widget _buildSimilarGroupsSection(
+    AppStrings strings,
     LocationManagementState state,
     LocationManagementViewModel viewModel,
   ) {
@@ -243,7 +246,7 @@ class _LocationManagementPageState
               ),
               const SizedBox(width: TeslaTheme.spacingSm),
               Text(
-                '智能合并建议',
+                strings.locationSmartMergeSuggestion,
                 style: Theme.of(
                   context,
                 ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -255,6 +258,7 @@ class _LocationManagementPageState
           (group) => LocationGroupCard(
             group: group,
             locationFishCounts: locationFishCounts,
+            strings: strings,
             onAutoMerge: () => _confirmAutoMerge(viewModel, group),
           ),
         ),
@@ -273,10 +277,10 @@ class _LocationManagementPageState
             color: Theme.of(context).colorScheme.outline,
           ),
           const SizedBox(height: TeslaTheme.spacingMd),
-          Text('暂无钓点记录', style: Theme.of(context).textTheme.titleLarge),
+          Text(strings.noLocationRecords, style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: TeslaTheme.spacingSm),
           Text(
-            '开始记录您的钓鱼活动吧',
+            strings.locationStartFishing,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
@@ -291,16 +295,17 @@ class _LocationManagementPageState
     LocationManagementViewModel viewModel,
     String oldName,
   ) async {
+    final strings = ref.read(currentStringsProvider);
     final controller = TextEditingController(text: oldName);
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('修改钓点名称'),
+        title: Text(strings.locationEditName),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: '新名称',
-            hintText: '输入新的钓点名称',
+          decoration: InputDecoration(
+            labelText: strings.locationNewName,
+            hintText: strings.locationEnterNewName,
             border: OutlineInputBorder(),
           ),
           autofocus: true,
@@ -308,7 +313,7 @@ class _LocationManagementPageState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
+            child: Text(strings.cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -317,7 +322,7 @@ class _LocationManagementPageState
                 Navigator.pop(context, newName);
               }
             },
-            child: const Text('确认'),
+            child: Text(strings.confirm),
           ),
         ],
       ),
@@ -327,7 +332,7 @@ class _LocationManagementPageState
       final success = await viewModel.renameLocation(oldName, result);
       if (!context.mounted) return;
       AppSnackBar.showInfo(
-          context, success ? '修改成功' : '修改失败');
+          context, success ? strings.locationEditSuccess : strings.locationEditFailed);
     }
     controller.dispose();
   }
@@ -336,6 +341,7 @@ class _LocationManagementPageState
     LocationManagementViewModel viewModel,
     LocationManagementState state,
   ) async {
+    final strings = ref.read(currentStringsProvider);
     final targetName = _mergeTargetController.text.trim().isEmpty
         ? state.selectedLocations.first
         : _mergeTargetController.text.trim();
@@ -343,18 +349,18 @@ class _LocationManagementPageState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('确认合并'),
+        title: Text(strings.locationMergeConfirm),
         content: Text(
           '将 ${state.selectedLocations.length} 个钓点合并为 "$targetName"，合并后所有渔获记录将使用新名称。是否继续？',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: Text(strings.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('确认'),
+            child: Text(strings.confirm),
           ),
         ],
       ),
@@ -364,7 +370,7 @@ class _LocationManagementPageState
       final success = await viewModel.mergeLocations(targetName);
       if (!mounted) return;
       AppSnackBar.showInfo(
-          context, success ? '合并成功' : '合并失败');
+          context, success ? strings.mergeSuccess : strings.mergeFailed);
     }
   }
 
@@ -372,21 +378,22 @@ class _LocationManagementPageState
     LocationManagementViewModel viewModel,
     dynamic group,
   ) async {
+    final strings = ref.read(currentStringsProvider);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('确认自动合并'),
+        title: Text(strings.locationConfirmAutoMerge),
         content: Text(
           '将 ${group.locations.length} 个相似钓点合并为 "${group.representative}"。是否继续？',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: Text(strings.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('确认'),
+            child: Text(strings.confirm),
           ),
         ],
       ),
@@ -396,7 +403,7 @@ class _LocationManagementPageState
       final success = await viewModel.autoMergeGroup(group);
       if (!mounted) return;
       AppSnackBar.showInfo(
-          context, success ? '合并成功' : '合并失败');
+          context, success ? strings.mergeSuccess : strings.mergeFailed);
     }
   }
 }

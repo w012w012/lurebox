@@ -20,4 +20,21 @@ mixin ErrorStringsMixin {
   String get errorLoadFailed;
   String get errorDeleteFailed;
   String get errorUnknown;
+  String get errorDeviceLocationOff;
+  String get errorContextInvalid;
+  String get errorPermanentlyDenied;
+  String get errorDenied;
+  String get errorRejected;
+  String get permissionRequiredTitle;
+  String get permissionOpenSettings;
+  String get privacyNote;
+  String get permissionGrantLater;
+  String get permissionGrant;
+  String get unknownSpecies;
+  String get errorImageNotFound;
+  String get errorImageTooLarge;
+  String get errorUnsupportedFormat;
+  String get errorApiKeyNotConfigured;
+  String get errorProviderDisabled;
+  String get errorUnknownProvider;
 }

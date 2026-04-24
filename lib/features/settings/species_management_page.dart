@@ -84,6 +84,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           onManualIdentify: _manualIdentify,
           onConfirmOption: _showConfirmDialog,
           onBatchRecognize: () => _batchRecognize(pendingCatches),
+          strings: strings,
         ),
         const SizedBox(height: TeslaTheme.spacingXl),
         _SpeciesListSection(
@@ -95,9 +96,11 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
   }
 
   Future<void> _manualIdentify(FishCatch fish) async {
+    final strings = ref.read(currentStringsProvider);
     final speciesName = await SpeciesManagementDialogs.showManualIdentifyDialog(
       context,
       fish,
+      strings,
     );
 
     if (speciesName != null && speciesName.isNotEmpty && mounted) {
@@ -216,10 +219,12 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
 
   Future<void> _showConfirmDialog(
       FishCatch fish, AiRecognitionOption option) async {
+    final strings = ref.read(currentStringsProvider);
     final speciesName =
         await SpeciesManagementDialogs.showConfirmRecognitionDialog(
       context,
       option,
+      strings,
     );
 
     if (speciesName != null && mounted) {
@@ -243,9 +248,11 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
   }
 
   Future<void> _showRenameDialog(BuildContext context, String oldName) async {
+    final strings = ref.read(currentStringsProvider);
     final result = await SpeciesManagementDialogs.showRenameDialog(
       context,
       oldName,
+      strings,
     );
 
     if (result != null && context.mounted) {
@@ -268,10 +275,12 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
 
   Future<void> _showDeleteDialog(
       BuildContext context, String speciesName, int count) async {
+    final strings = ref.read(currentStringsProvider);
     final confirmed = await SpeciesManagementDialogs.showDeleteDialog(
       context,
       speciesName,
       count,
+      strings,
     );
 
     if (confirmed && context.mounted) {

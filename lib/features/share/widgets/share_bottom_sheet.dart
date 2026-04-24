@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
+import '../../../core/providers/language_provider.dart';
 import '../../../core/services/share_template.dart';
 import '../../../core/services/share_card_service.dart';
 import '../../../widgets/common/premium_button.dart';
 import 'share_card_widget.dart';
 
-class ShareBottomSheet extends StatefulWidget {
+class ShareBottomSheet extends ConsumerStatefulWidget {
   final Map<String, dynamic>? statsData;
   final VoidCallback? onShare;
 
@@ -26,10 +29,10 @@ class ShareBottomSheet extends StatefulWidget {
   }
 
   @override
-  State<ShareBottomSheet> createState() => _ShareBottomSheetState();
+  ConsumerState<ShareBottomSheet> createState() => _ShareBottomSheetState();
 }
 
-class _ShareBottomSheetState extends State<ShareBottomSheet> {
+class _ShareBottomSheetState extends ConsumerState<ShareBottomSheet> {
   late ShareCardConfig _config;
   final GlobalKey _previewKey = GlobalKey();
 
@@ -41,10 +44,13 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final strings = ref.watch(currentStringsProvider);
+
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.surfaceDark,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SafeArea(
         child: Padding(
@@ -58,16 +64,16 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: AppColors.borderDark.withValues(alpha: 0.5),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
               ),
               const SizedBox(height: 24),
               Text(
-                'Share',
+                strings.share,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: AppColors.textPrimaryDark,
+                      color: colorScheme.onSurface,
                       fontWeight: FontWeight.bold,
                     ),
                 textAlign: TextAlign.center,
@@ -88,14 +94,17 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
   }
 
   Widget _buildTemplateSelector() {
+    final colorScheme = Theme.of(context).colorScheme;
+    final strings = ref.watch(currentStringsProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Template',
+          strings.template,
           style: Theme.of(
             context,
-          ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondaryDark),
+          ).textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
         ),
         const SizedBox(height: 12),
         Row(
@@ -112,12 +121,12 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? AppColors.accentLight
-                          : AppColors.borderDark.withValues(alpha: 0.3),
+                          ? colorScheme.primary
+                          : colorScheme.outlineVariant.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: isSelected
-                            ? AppColors.accentLight
+                            ? colorScheme.primary
                             : Colors.transparent,
                         width: 2,
                       ),
@@ -127,8 +136,8 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
                           template.name.substring(1),
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: isSelected
-                                ? AppColors.surfaceLight
-                                : AppColors.textSecondaryDark,
+                                ? colorScheme.onPrimary
+                                : colorScheme.onSurfaceVariant,
                             fontWeight: isSelected
                                 ? FontWeight.bold
                                 : FontWeight.normal,
@@ -146,24 +155,26 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
   }
 
   Widget _buildOptions() {
+    final strings = ref.watch(currentStringsProvider);
+
     return Column(
       children: [
         _buildOptionSwitch(
-          'Show Stats',
+          strings.showStats,
           _config.showStats,
           (value) => setState(() {
             _config = _config.copyWith(showStats: value);
           }),
         ),
         _buildOptionSwitch(
-          'Show Hashtags',
+          strings.showHashtags,
           _config.showHashtags,
           (value) => setState(() {
             _config = _config.copyWith(showHashtags: value);
           }),
         ),
         _buildOptionSwitch(
-          'Show Watermark',
+          strings.showWatermark,
           _config.showWatermark,
           (value) => setState(() {
             _config = _config.copyWith(showWatermark: value);
@@ -178,6 +189,8 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
     bool value,
     ValueChanged<bool> onChanged,
   ) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -187,12 +200,12 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
             label,
             style: Theme.of(
               context,
-            ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondaryDark),
+            ).textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
           ),
           Switch(
             value: value,
             onChanged: onChanged,
-            activeThumbColor: AppColors.accentLight,
+            activeThumbColor: colorScheme.primary,
           ),
         ],
       ),
@@ -200,13 +213,15 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
   }
 
   Widget _buildPreview() {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Center(
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: AppColors.backgroundDark.withValues(alpha: 0.3),
+              color: colorScheme.shadow.withValues(alpha: 0.3),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -221,8 +236,10 @@ class _ShareBottomSheetState extends State<ShareBottomSheet> {
   }
 
   Widget _buildShareButton() {
+    final strings = ref.watch(currentStringsProvider);
+
     return PremiumButton(
-      text: 'Share',
+      text: strings.share,
       variant: PremiumButtonVariant.primary,
       isFullWidth: true,
       borderRadius: 12,

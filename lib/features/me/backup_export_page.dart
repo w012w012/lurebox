@@ -163,6 +163,7 @@ class BackupExportPage extends ConsumerWidget {
   }
 
   Future<void> _handleCsvExport(BuildContext context, WidgetRef ref) async {
+    final strings = ref.read(currentStringsProvider);
     final viewModel = ref.read(settingsViewModelProvider.notifier);
     try {
       final xFile = await viewModel.exportDataWithFormat(format: ExportFormat.csv);
@@ -171,7 +172,7 @@ class BackupExportPage extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        AppSnackBar.showError(context, '导出失败', debugError: e);
+        AppSnackBar.showError(context, strings.exportFailedMsg, debugError: e);
       }
     }
   }
@@ -180,9 +181,9 @@ class BackupExportPage extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('完整备份'),
-        content: const Text(
-          '将创建包含数据库和所有照片的完整备份。\n\n是否继续？',
+        title: Text(strings.fullBackupTitle),
+        content: Text(
+          strings.fullBackupCreateDesc,
         ),
         actions: [
           TextButton(
@@ -192,9 +193,9 @@ class BackupExportPage extends ConsumerWidget {
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
-              _handleFullBackup(context, ref, includePhotos: true);
+              _handleFullBackup(context, ref, strings, includePhotos: true);
             },
-            child: const Text('开始备份'),
+            child: Text(strings.startBackup),
           ),
         ],
       ),
@@ -203,7 +204,8 @@ class BackupExportPage extends ConsumerWidget {
 
   Future<void> _handleFullBackup(
     BuildContext context,
-    WidgetRef ref, {
+    WidgetRef ref,
+    AppStrings strings, {
     required bool includePhotos,
   }) async {
     final viewModel = ref.read(settingsViewModelProvider.notifier);
@@ -211,14 +213,14 @@ class BackupExportPage extends ConsumerWidget {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const AlertDialog(
-        title: Text('正在创建备份'),
+      builder: (context) => AlertDialog(
+        title: Text(strings.creatingBackup),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: TeslaTheme.spacingMd),
-            Text('备份正在后台运行，请稍候...'),
+            const CircularProgressIndicator(),
+            const SizedBox(height: TeslaTheme.spacingMd),
+            Text(strings.backupRunning),
           ],
         ),
       ),
@@ -232,14 +234,14 @@ class BackupExportPage extends ConsumerWidget {
       Navigator.of(context).pop();
 
       if (savedPath != null) {
-        AppSnackBar.showSuccess(context, '备份已完成，请到"导出和备份管理"中查看');
+        AppSnackBar.showSuccess(context, strings.backupComplete);
       } else {
-        AppSnackBar.showError(context, '备份失败');
+        AppSnackBar.showError(context, strings.backupFailed);
       }
     } catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop();
-        AppSnackBar.showError(context, '备份失败', debugError: e);
+        AppSnackBar.showError(context, strings.backupFailed, debugError: e);
       }
     }
   }
@@ -254,18 +256,18 @@ class BackupExportPage extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('恢复备份'),
-        content: const Text(
-          '恢复备份将覆盖当前所有数据。建议在恢复前导出一份当前数据的备份。\n\n是否继续？',
+        title: Text(strings.restoreTitle),
+        content: Text(
+          strings.restoreOverwriteWarning,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: Text(strings.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('继续'),
+            child: Text(strings.continueAction),
           ),
         ],
       ),
@@ -280,9 +282,9 @@ class BackupExportPage extends ConsumerWidget {
 
       if (result.isSuccess) {
         final metadata = result.metadata;
-        String message = '恢复成功';
+        String message = strings.restoreSuccessMsg;
         if (metadata != null) {
-          message = '恢复成功\n'
+          message = '${strings.restoreSuccessMsg}\n'
               '渔获: ${metadata.fishCatchesCount} 条\n'
               '装备: ${metadata.equipmentCount} 件\n'
               '照片: ${metadata.photoCount} 张';
@@ -291,12 +293,12 @@ class BackupExportPage extends ConsumerWidget {
       } else {
         AppSnackBar.showError(
           context,
-          '恢复失败: ${result.errorMessage ?? "未知错误"}',
+          '${strings.restoreFailedMsg}: ${result.errorMessage ?? "未知错误"}',
         );
       }
     } catch (e) {
       if (context.mounted) {
-        AppSnackBar.showError(context, '恢复失败', debugError: e);
+        AppSnackBar.showError(context, strings.restoreFailedMsg, debugError: e);
       }
     }
   }

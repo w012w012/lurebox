@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/models/ai_recognition_settings.dart';
+import '../../../core/providers/language_provider.dart';
 import '../../../core/services/fish_recognition_service.dart';
 import '../../../widgets/common/app_snack_bar.dart';
 
@@ -66,6 +67,7 @@ class _AiProviderConfigDialogState
 
   @override
   Widget build(BuildContext context) {
+    final strings = ref.watch(currentStringsProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
     return AlertDialog(
@@ -97,7 +99,7 @@ class _AiProviderConfigDialogState
                 controller: _apiKeyController,
                 decoration: InputDecoration(
                   labelText: 'API Key',
-                  hintText: '输入您的 API Key',
+                  hintText: strings.aiEnterApiKey,
                   prefixIcon: const Icon(Icons.key),
                   border: const OutlineInputBorder(),
                   suffixIcon: IconButton(
@@ -114,7 +116,7 @@ class _AiProviderConfigDialogState
                 obscureText: _obscureApiKey,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return '请输入 API Key';
+                    return strings.aiPleaseEnterApiKey;
                   }
                   return null;
                 },
@@ -126,8 +128,8 @@ class _AiProviderConfigDialogState
                 controller: _baseUrlController,
                 decoration: InputDecoration(
                   labelText: widget.provider == AiRecognitionProvider.custom
-                      ? 'Base URL（必填）'
-                      : 'Base URL（可选）',
+                      ? strings.aiBaseUrlRequired
+                      : strings.aiBaseUrlOptional,
                   hintText: 'https://api.example.com/v1',
                   prefixIcon: const Icon(Icons.link),
                   border: const OutlineInputBorder(),
@@ -140,7 +142,7 @@ class _AiProviderConfigDialogState
                 validator: widget.provider == AiRecognitionProvider.custom
                     ? (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return '自定义提供商必须填写 Base URL';
+                          return strings.aiCustomRequiresBaseUrl;
                         }
                         return null;
                       }
@@ -151,12 +153,12 @@ class _AiProviderConfigDialogState
               // Model Name（可选）
               TextFormField(
                 controller: _modelNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Model Name（可选）',
+                decoration: InputDecoration(
+                  labelText: strings.aiModelNameOptional,
                   hintText: 'gpt-4o-mini',
-                  prefixIcon: Icon(Icons.model_training),
-                  border: OutlineInputBorder(),
-                  helperText: '指定使用的模型名称',
+                  prefixIcon: const Icon(Icons.model_training),
+                  border: const OutlineInputBorder(),
+                  helperText: strings.aiSpecifyModelName,
                 ),
                 textInputAction: TextInputAction.done,
               ),
@@ -207,7 +209,7 @@ class _AiProviderConfigDialogState
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.network_check),
-                label: const Text('测试连接'),
+                label: Text(strings.aiTestConnection),
               ),
             ],
           ),
@@ -216,7 +218,7 @@ class _AiProviderConfigDialogState
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('取消'),
+          child: Text(strings.cancel),
         ),
         FilledButton.icon(
           onPressed: _isLoading ? null : _saveConfig,
@@ -230,7 +232,7 @@ class _AiProviderConfigDialogState
                   ),
                 )
               : const Icon(Icons.save, size: 18),
-          label: Text(_isLoading ? '保存中...' : '保存'),
+          label: Text(_isLoading ? strings.aiSaving : strings.save),
         ),
       ],
     );
@@ -342,7 +344,7 @@ class _AiProviderConfigDialogState
         setState(() {
           _isTesting = false;
           _isTestSuccess = true;
-          _testResult = '连接成功！API Key 有效。';
+          _testResult = ref.read(currentStringsProvider).aiConnectionSuccess;
         });
       }
     } catch (e) {
@@ -385,7 +387,7 @@ class _AiProviderConfigDialogState
 
     if (mounted) {
       Navigator.pop(context);
-      AppSnackBar.showSuccess(context, '配置已保存');
+      AppSnackBar.showSuccess(context, ref.read(currentStringsProvider).aiConfigSaved);
     }
   }
 }

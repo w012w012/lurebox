@@ -145,7 +145,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(fish: fish));
       await tester.pump();
 
-      expect(find.text('待识别'), findsOneWidget);
+      expect(find.text(defaultStrings.pendingRecognition), findsOneWidget);
       expect(find.text('⚠️'), findsOneWidget);
     });
 
@@ -156,7 +156,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(fish: fish));
       await tester.pump();
 
-      expect(find.text('待识别'), findsNothing);
+      expect(find.text(defaultStrings.pendingRecognition), findsNothing);
     });
 
     testWidgets(
@@ -170,7 +170,7 @@ void main() {
       ));
       await tester.pump();
 
-      expect(find.text('识别'), findsOneWidget);
+      expect(find.text(defaultStrings.recognize), findsOneWidget);
       expect(find.text('🤖'), findsOneWidget);
     });
 
@@ -185,7 +185,7 @@ void main() {
       ));
       await tester.pump();
 
-      expect(find.text('识别'), findsNothing);
+      expect(find.text(defaultStrings.recognize), findsNothing);
     });
 
     testWidgets(
@@ -199,7 +199,7 @@ void main() {
       ));
       await tester.pump();
 
-      expect(find.text('识别'), findsNothing);
+      expect(find.text(defaultStrings.recognize), findsNothing);
     });
 
     testWidgets('calls onQuickIdentify when quick identify button is tapped',
@@ -213,7 +213,7 @@ void main() {
       ));
       await tester.pump();
 
-      await tester.tap(find.text('识别'));
+      await tester.tap(find.text(defaultStrings.recognize));
       expect(quickIdentifyCalled, isTrue);
     });
   });

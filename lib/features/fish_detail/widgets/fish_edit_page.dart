@@ -8,6 +8,7 @@ import '../../../core/models/app_settings.dart';
 import '../../../core/models/fish_catch.dart';
 import '../../../core/models/equipment.dart';
 import '../../../core/providers/app_settings_provider.dart';
+import '../../../core/services/app_logger.dart';
 import '../../../core/utils/unit_converter.dart';
 
 class FishEditPage extends ConsumerStatefulWidget {
@@ -77,8 +78,8 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
           _lures = lures;
         });
       }
-    } catch (e) {
-      // Handle error silently
+    } catch (e, st) {
+      AppLogger.e('FishEditPage', 'Failed to load equipment', e);
     }
   }
 
@@ -287,7 +288,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
         border: const OutlineInputBorder(),
       ),
       items: [
-        const DropdownMenuItem<int?>(value: null, child: Text('不使用')),
+        DropdownMenuItem<int?>(value: null, child: Text(widget.strings.notUsing)),
         ...items.map(
           (e) =>
               DropdownMenuItem<int?>(value: e.id, child: Text(e.displayName)),

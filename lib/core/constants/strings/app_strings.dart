@@ -10,6 +10,7 @@ import 'settings_strings.dart';
 import 'error_strings.dart';
 import 'achievement_strings.dart';
 import 'location_strings.dart';
+import 'onboarding_strings.dart';
 
 import 'strings_base.dart';
 import 'zh_strings.dart';
@@ -28,7 +29,8 @@ class AppStrings extends StringsBase with
     SettingsStringsMixin,
     ErrorStringsMixin,
     AchievementStringsMixin,
-    LocationStringsMixin {
+    LocationStringsMixin,
+    OnboardingStringsMixin {
 
   final String appName;
   final String home;
@@ -79,6 +81,10 @@ class AppStrings extends StringsBase with
   final String recordCatch;
   final String edit;
   final String share;
+  final String template;
+  final String showStats;
+  final String showHashtags;
+  final String showWatermark;
   final String delete;
   final String save;
   final String cancel;
@@ -560,6 +566,234 @@ class AppStrings extends StringsBase with
   final String modifyWeather;
   final String notSet;
 
+  // Onboarding
+  final String onboardingSkip;
+  final String onboardingGetStarted;
+  final String onboardingNext;
+  final String onboardingWelcomeTitle;
+  final String onboardingWelcomeDesc;
+  final String onboardingFeaturesTitle;
+  final String onboardingFeatureCameraTitle;
+  final String onboardingFeatureCameraDesc;
+  final String onboardingFeatureEquipmentTitle;
+  final String onboardingFeatureEquipmentDesc;
+  final String onboardingFeatureStatsTitle;
+  final String onboardingFeatureStatsDesc;
+  final String onboardingFeatureBackupTitle;
+  final String onboardingFeatureBackupDesc;
+  final String onboardingPermissionsTitle;
+  final String onboardingPermissionCameraTitle;
+  final String onboardingPermissionCameraDesc;
+  final String onboardingPermissionCameraExample;
+  final String onboardingPermissionLocationTitle;
+  final String onboardingPermissionLocationDesc;
+  final String onboardingPermissionLocationExample;
+  final String onboardingPrivacyNote;
+  final String onboardingSettingsTitle;
+  final String onboardingSettingsDesc;
+  final String onboardingSettingsItems;
+  final String onboardingReadyTitle;
+  final String onboardingReadyDesc;
+
+  final String recognize;
+  final String notUsing;
+  final String sharing;
+  final String distribution;
+  final String fishListTitle;
+  final String locationCancelSelect;
+  final String locationMergeTo;
+  final String locationEnterTargetName;
+  final String locationCount;
+  final String locationTotalFishCount;
+  final String locationSmartMergeSuggestion;
+  final String locationStartFishing;
+  final String locationEditName;
+  final String locationNewName;
+  final String locationEnterNewName;
+  final String locationEditSuccess;
+  final String locationEditFailed;
+  final String locationMergeConfirm;
+  final String locationConfirmAutoMerge;
+  final String locationAutoMergeConfirm;
+  final String locationSearchHint;
+  final String speciesManualRecognition;
+  final String speciesAssignToCatches;
+  final String speciesNameLabel;
+  final String speciesConfirm;
+  final String speciesAiResult;
+  final String speciesConfidence;
+  final String speciesEditableName;
+  final String speciesRename;
+  final String speciesEnterNewName;
+  final String speciesConfirmDelete;
+  final String speciesDeleteConfirmMsg;
+  final String speciesUpdated;
+  final String speciesUpdateFailed;
+  final String speciesRenamed;
+  final String speciesRenameFailed;
+  final String speciesDeleted;
+  final String speciesDeleteFailed;
+  final String speciesNoRecords;
+  final String speciesRecognitionComplete;
+  final String speciesSaved;
+  final String speciesImageNotFound;
+  final String speciesConfigureApiKey;
+  final String speciesAiResultTitle;
+  final String speciesAlternative;
+  final String speciesNoResult;
+  final String speciesRecognitionFailed;
+  final String aiConfigTitle;
+  final String aiProviderLabel;
+  final String aiCurrentProvider;
+  final String aiConfigured;
+  final String aiNotConfigured;
+  final String aiConfigureProvider;
+  final String aiEnterApiKey;
+  final String aiPleaseEnterApiKey;
+  final String aiBaseUrlRequired;
+  final String aiBaseUrlOptional;
+  final String aiOpenaiEndpointRequired;
+  final String aiCustomRequiresBaseUrl;
+  final String aiModelNameOptional;
+  final String aiSpecifyModelName;
+  final String aiTestConnection;
+  final String aiSaving;
+  final String aiConnectionSuccess;
+  final String aiConnectionFailed;
+  final String aiConfigSaved;
+  final String pendingRecognitionList;
+  final String pendingNoFish;
+  final String pendingAiRecognition;
+  final String pendingManual;
+  final String pendingRecognizing;
+  final String pendingRecognitionProgress;
+  final String pendingBatchRecognition;
+  final String pendingFishCount;
+  final String deleteSuccess;
+  final String exportFailedMsg;
+  final String fullBackupTitle;
+  final String fullBackupCreateDesc;
+  final String startBackup;
+  final String creatingBackup;
+  final String backupRunning;
+  final String backupComplete;
+  final String backupFailed;
+  final String restoreTitle;
+  final String restoreOverwriteWarning;
+  final String continueAction;
+  final String restoreSuccessMsg;
+  final String restoreFailedMsg;
+  final String restoreDetailPattern;
+  final String csvExport;
+  final String jsonExport;
+  final String lureboxCompleteBackup;
+  final String lureboxDataExport;
+  final String uploadingToCloud;
+  final String backupUploaded;
+  final String uploadFailed;
+  final String testing;
+  final String webdavTitle;
+  final String webdavConfigureServer;
+  final String webdavSupportedUrl;
+  final String webdavPleaseEnterAddress;
+  final String webdavUrlMustStartHttp;
+  final String webdavPleaseEnterUsername;
+  final String webdavPleaseEnterPassword;
+  final String backupNow;
+  final String testFailed;
+  final String cameraInitTimeout;
+  final String speciesHistoryTimeout;
+  final String equipmentLoadTimeout;
+  final String locationFetchTimeout;
+  final String saveFailedCheckInput;
+  final String saveFailedRetry;
+  final String savedLabel;
+  final String notSavedLabel;
+  final String errorDeviceLocationOff;
+  final String errorContextInvalid;
+  final String errorPermanentlyDenied;
+  final String errorDenied;
+  final String errorRejected;
+  final String permissionRequiredTitle;
+  final String permissionOpenSettings;
+  final String privacyNote;
+  final String permissionGrantLater;
+  final String permissionGrant;
+  final String unknownSpecies;
+  final String errorImageNotFound;
+  final String errorImageTooLarge;
+  final String errorUnsupportedFormat;
+  final String errorApiKeyNotConfigured;
+  final String errorProviderDisabled;
+  final String errorUnknownProvider;
+  final String similarLocationsLabel;
+  final String containsNSimilarLocations;
+  final String mergeButton;
+  final String fishCountSuffix;
+  final String unlockProgress;
+  final String speciesCountPattern2;
+  final String monthlyNewSpecies;
+  final String categoryQuantity;
+  final String categorySize;
+  final String categorySpecies;
+  final String categoryLocation;
+  final String categoryEquipment;
+  final String categoryEco;
+  final String rodSection1;
+  final String rodSection2;
+  final String rodSection3;
+  final String rodSectionMulti;
+  final String jointMethod;
+  final String jointTypeSpigot;
+  final String jointTypeReverseSpigot;
+  final String jointTypeDragonSpigot;
+  final String jointTypeTelescopic;
+  final String rodActionSS;
+  final String rodActionS;
+  final String rodActionMR;
+  final String rodActionR;
+  final String rodActionRF;
+  final String rodActionF;
+  final String rodActionFF;
+  final String rodActionXF;
+  final String baitWeightLabel;
+  final String minValue;
+  final String maxValue;
+  final String lineLabel;
+  final String lineCapacity;
+  final String brakeTypeTraditionalMagnetic;
+  final String brakeTypeCentrifugal;
+  final String brakeTypeDC;
+  final String brakeTypeFloatingMagnetic;
+  final String brakeTypeInnovative;
+  final String quantityUnitPiece;
+  final String quantityUnitItem;
+  final String quantityUnitPack;
+  final String quantityUnitBox;
+  final String cardJointMethod;
+  final String cardAction;
+  final String cardStrength;
+  final String cardColor;
+  final String quantityPrefix;
+  final String typeSpinningRod;
+  final String typeBaitcastingRod;
+  final String typeFlyRod;
+  final String typeTrollingRod;
+  final String typeSpinningReel;
+  final String typeBaitcastingReel;
+  final String typeFlyReel;
+  final String typeTrollingReel;
+  final String typeHardBait;
+  final String typeSoftBait;
+  final String typeSpoon;
+  final String typeJigHead;
+  final String typeNylonLine;
+  final String typePELine;
+  final String typeFluorocarbonLine;
+  final String countSuffix;
+  final String distributionTitle;
+  final String priceDistribution;
+
   const AppStrings({
     required this.appName,
     required this.home,
@@ -610,6 +844,10 @@ class AppStrings extends StringsBase with
     required this.recordCatch,
     required this.edit,
     required this.share,
+    required this.template,
+    required this.showStats,
+    required this.showHashtags,
+    required this.showWatermark,
     required this.delete,
     required this.save,
     required this.cancel,
@@ -1089,7 +1327,232 @@ class AppStrings extends StringsBase with
     required this.modifyCatchLocation,
     required this.locationName,
     required this.modifyWeather,
-    required this.notSet
+    required this.notSet,
+    required this.onboardingSkip,
+    required this.onboardingGetStarted,
+    required this.onboardingNext,
+    required this.onboardingWelcomeTitle,
+    required this.onboardingWelcomeDesc,
+    required this.onboardingFeaturesTitle,
+    required this.onboardingFeatureCameraTitle,
+    required this.onboardingFeatureCameraDesc,
+    required this.onboardingFeatureEquipmentTitle,
+    required this.onboardingFeatureEquipmentDesc,
+    required this.onboardingFeatureStatsTitle,
+    required this.onboardingFeatureStatsDesc,
+    required this.onboardingFeatureBackupTitle,
+    required this.onboardingFeatureBackupDesc,
+    required this.onboardingPermissionsTitle,
+    required this.onboardingPermissionCameraTitle,
+    required this.onboardingPermissionCameraDesc,
+    required this.onboardingPermissionCameraExample,
+    required this.onboardingPermissionLocationTitle,
+    required this.onboardingPermissionLocationDesc,
+    required this.onboardingPermissionLocationExample,
+    required this.onboardingPrivacyNote,
+    required this.onboardingSettingsTitle,
+    required this.onboardingSettingsDesc,
+    required this.onboardingSettingsItems,
+    required this.onboardingReadyTitle,
+    required this.onboardingReadyDesc,
+    required this.recognize,
+    required this.notUsing,
+    required this.sharing,
+    required this.distribution,
+    required this.fishListTitle,
+    required this.locationCancelSelect,
+    required this.locationMergeTo,
+    required this.locationEnterTargetName,
+    required this.locationCount,
+    required this.locationTotalFishCount,
+    required this.locationSmartMergeSuggestion,
+    required this.locationStartFishing,
+    required this.locationEditName,
+    required this.locationNewName,
+    required this.locationEnterNewName,
+    required this.locationEditSuccess,
+    required this.locationEditFailed,
+    required this.locationMergeConfirm,
+    required this.locationConfirmAutoMerge,
+    required this.locationAutoMergeConfirm,
+    required this.locationSearchHint,
+    required this.speciesManualRecognition,
+    required this.speciesAssignToCatches,
+    required this.speciesNameLabel,
+    required this.speciesConfirm,
+    required this.speciesAiResult,
+    required this.speciesConfidence,
+    required this.speciesEditableName,
+    required this.speciesRename,
+    required this.speciesEnterNewName,
+    required this.speciesConfirmDelete,
+    required this.speciesDeleteConfirmMsg,
+    required this.speciesUpdated,
+    required this.speciesUpdateFailed,
+    required this.speciesRenamed,
+    required this.speciesRenameFailed,
+    required this.speciesDeleted,
+    required this.speciesDeleteFailed,
+    required this.speciesNoRecords,
+    required this.speciesRecognitionComplete,
+    required this.speciesSaved,
+    required this.speciesImageNotFound,
+    required this.speciesConfigureApiKey,
+    required this.speciesAiResultTitle,
+    required this.speciesAlternative,
+    required this.speciesNoResult,
+    required this.speciesRecognitionFailed,
+    required this.aiConfigTitle,
+    required this.aiProviderLabel,
+    required this.aiCurrentProvider,
+    required this.aiConfigured,
+    required this.aiNotConfigured,
+    required this.aiConfigureProvider,
+    required this.aiEnterApiKey,
+    required this.aiPleaseEnterApiKey,
+    required this.aiBaseUrlRequired,
+    required this.aiBaseUrlOptional,
+    required this.aiOpenaiEndpointRequired,
+    required this.aiCustomRequiresBaseUrl,
+    required this.aiModelNameOptional,
+    required this.aiSpecifyModelName,
+    required this.aiTestConnection,
+    required this.aiSaving,
+    required this.aiConnectionSuccess,
+    required this.aiConnectionFailed,
+    required this.aiConfigSaved,
+    required this.pendingRecognitionList,
+    required this.pendingNoFish,
+    required this.pendingAiRecognition,
+    required this.pendingManual,
+    required this.pendingRecognizing,
+    required this.pendingRecognitionProgress,
+    required this.pendingBatchRecognition,
+    required this.pendingFishCount,
+    required this.deleteSuccess,
+    required this.exportFailedMsg,
+    required this.fullBackupTitle,
+    required this.fullBackupCreateDesc,
+    required this.startBackup,
+    required this.creatingBackup,
+    required this.backupRunning,
+    required this.backupComplete,
+    required this.backupFailed,
+    required this.restoreTitle,
+    required this.restoreOverwriteWarning,
+    required this.continueAction,
+    required this.restoreSuccessMsg,
+    required this.restoreFailedMsg,
+    required this.restoreDetailPattern,
+    required this.csvExport,
+    required this.jsonExport,
+    required this.lureboxCompleteBackup,
+    required this.lureboxDataExport,
+    required this.uploadingToCloud,
+    required this.backupUploaded,
+    required this.uploadFailed,
+    required this.testing,
+    required this.webdavTitle,
+    required this.webdavConfigureServer,
+    required this.webdavSupportedUrl,
+    required this.webdavPleaseEnterAddress,
+    required this.webdavUrlMustStartHttp,
+    required this.webdavPleaseEnterUsername,
+    required this.webdavPleaseEnterPassword,
+    required this.backupNow,
+    required this.testFailed,
+    required this.cameraInitTimeout,
+    required this.speciesHistoryTimeout,
+    required this.equipmentLoadTimeout,
+    required this.locationFetchTimeout,
+    required this.saveFailedCheckInput,
+    required this.saveFailedRetry,
+    required this.savedLabel,
+    required this.notSavedLabel,
+    required this.errorDeviceLocationOff,
+    required this.errorContextInvalid,
+    required this.errorPermanentlyDenied,
+    required this.errorDenied,
+    required this.errorRejected,
+    required this.permissionRequiredTitle,
+    required this.permissionOpenSettings,
+    required this.privacyNote,
+    required this.permissionGrantLater,
+    required this.permissionGrant,
+    required this.unknownSpecies,
+    required this.errorImageNotFound,
+    required this.errorImageTooLarge,
+    required this.errorUnsupportedFormat,
+    required this.errorApiKeyNotConfigured,
+    required this.errorProviderDisabled,
+    required this.errorUnknownProvider,
+    required this.similarLocationsLabel,
+    required this.containsNSimilarLocations,
+    required this.mergeButton,
+    required this.fishCountSuffix,
+    required this.unlockProgress,
+    required this.speciesCountPattern2,
+    required this.monthlyNewSpecies,
+    required this.categoryQuantity,
+    required this.categorySize,
+    required this.categorySpecies,
+    required this.categoryLocation,
+    required this.categoryEquipment,
+    required this.categoryEco,
+    required this.rodSection1,
+    required this.rodSection2,
+    required this.rodSection3,
+    required this.rodSectionMulti,
+    required this.jointMethod,
+    required this.jointTypeSpigot,
+    required this.jointTypeReverseSpigot,
+    required this.jointTypeDragonSpigot,
+    required this.jointTypeTelescopic,
+    required this.rodActionSS,
+    required this.rodActionS,
+    required this.rodActionMR,
+    required this.rodActionR,
+    required this.rodActionRF,
+    required this.rodActionF,
+    required this.rodActionFF,
+    required this.rodActionXF,
+    required this.baitWeightLabel,
+    required this.minValue,
+    required this.maxValue,
+    required this.lineLabel,
+    required this.lineCapacity,
+    required this.brakeTypeTraditionalMagnetic,
+    required this.brakeTypeCentrifugal,
+    required this.brakeTypeDC,
+    required this.brakeTypeFloatingMagnetic,
+    required this.brakeTypeInnovative,
+    required this.quantityUnitPiece,
+    required this.quantityUnitItem,
+    required this.quantityUnitPack,
+    required this.quantityUnitBox,
+    required this.cardJointMethod,
+    required this.cardAction,
+    required this.cardStrength,
+    required this.cardColor,
+    required this.quantityPrefix,
+    required this.typeSpinningRod,
+    required this.typeBaitcastingRod,
+    required this.typeFlyRod,
+    required this.typeTrollingRod,
+    required this.typeSpinningReel,
+    required this.typeBaitcastingReel,
+    required this.typeFlyReel,
+    required this.typeTrollingReel,
+    required this.typeHardBait,
+    required this.typeSoftBait,
+    required this.typeSpoon,
+    required this.typeJigHead,
+    required this.typeNylonLine,
+    required this.typePELine,
+    required this.typeFluorocarbonLine,
+    required this.countSuffix,
+    required this.distributionTitle,
+    required this.priceDistribution,
   });
 
   static const chinese = chineseStrings;

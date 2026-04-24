@@ -53,7 +53,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
         children: [
           Icon(Icons.cloud_sync, color: colorScheme.primary),
           const SizedBox(width: TeslaTheme.spacingSm),
-          const Text('WebDAV 备份'),
+          Text(strings.webdavTitle),
         ],
       ),
       content: Form(
@@ -75,22 +75,22 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
               // 服务器 URL
               TextFormField(
                 controller: _urlController,
-                decoration: const InputDecoration(
-                  labelText: '服务器地址',
+                decoration: InputDecoration(
+                  labelText: strings.serverAddress,
                   hintText: 'https://dav.example.com',
-                  prefixIcon: Icon(Icons.link),
-                  border: OutlineInputBorder(),
-                  helperText: '支持 WebDAV 协议的 URL',
+                  prefixIcon: const Icon(Icons.link),
+                  border: const OutlineInputBorder(),
+                  helperText: strings.webdavSupportedUrl,
                 ),
                 keyboardType: TextInputType.url,
                 textInputAction: TextInputAction.next,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return '请输入服务器地址';
+                    return strings.webdavPleaseEnterAddress;
                   }
                   if (!value.startsWith('http://') &&
                       !value.startsWith('https://')) {
-                    return 'URL 必须以 http:// 或 https:// 开头';
+                    return strings.webdavUrlMustStartHttp;
                   }
                   return null;
                 },
@@ -100,8 +100,8 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
               // 用户名
               TextFormField(
                 controller: _usernameController,
-                decoration: const InputDecoration(
-                  labelText: '用户名',
+                decoration: InputDecoration(
+                  labelText: strings.username,
                   hintText: 'your-username',
                   prefixIcon: Icon(Icons.person),
                   border: OutlineInputBorder(),
@@ -109,7 +109,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                 textInputAction: TextInputAction.next,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return '请输入用户名';
+                    return strings.webdavPleaseEnterUsername;
                   }
                   return null;
                 },
@@ -120,7 +120,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
               TextFormField(
                 controller: _passwordController,
                 decoration: InputDecoration(
-                  labelText: '密码',
+                  labelText: strings.password,
                   hintText: 'your-password',
                   prefixIcon: const Icon(Icons.lock),
                   border: const OutlineInputBorder(),
@@ -140,7 +140,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                 obscureText: _obscurePassword,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return '请输入密码';
+                    return strings.webdavPleaseEnterPassword;
                   }
                   return null;
                 },
@@ -196,7 +196,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : const Icon(Icons.network_check),
-                      label: const Text('测试连接'),
+                      label: Text(strings.aiTestConnection),
                     ),
                   ),
                 ],
@@ -208,7 +208,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('取消'),
+          child: Text(strings.cancel),
         ),
         FilledButton.icon(
           onPressed: _isLoading ? null : () => _uploadToWebDAV(strings),
@@ -222,7 +222,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                   ),
                 )
               : const Icon(Icons.cloud_upload, size: 18),
-          label: Text(_isLoading ? '上传中...' : '立即备份'),
+          label: Text(_isLoading ? strings.uploadingToCloud : strings.backupNow),
         ),
       ],
     );
@@ -292,7 +292,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
 
       if (url != null) {
         Navigator.pop(context);
-        AppSnackBar.showSuccess(context, '备份已上传到云端');
+        AppSnackBar.showSuccess(context, ref.read(currentStringsProvider).backupUploaded);
       } else {
         setState(() {
           _isLoading = false;

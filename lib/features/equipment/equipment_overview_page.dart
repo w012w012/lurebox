@@ -13,6 +13,7 @@ import '../../core/constants/price_ranges.dart';
 import '../../core/models/equipment.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/equipment_view_model.dart';
+import '../../core/services/app_logger.dart';
 import '../../core/utils/file_utils.dart';
 import '../../widgets/common/distribution_chart.dart';
 import '../../widgets/common/premium_button.dart';
@@ -56,10 +57,12 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         XFile(file.path),
       ], text: '${strings.myEquipment} - ${strings.fromLureBox}');
     } catch (e) {
+      AppLogger.e('EquipmentOverview', 'Failed to share equipment overview', e);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('分享失败: $e')));
+        final strings = ref.read(currentStringsProvider);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(strings.shareFailed)),
+        );
       }
     } finally {
       if (mounted) setState(() => _isSharing = false);
@@ -459,14 +462,14 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('${strings.rod}分布', TeslaColors.electricBlue),
+        _buildSectionTitle('${strings.rod}${strings.distribution}', TeslaColors.electricBlue),
         const SizedBox(height: 12),
         _buildBarChart(
           _getDistribution(
             rods,
             (e) => e.brand?.isNotEmpty == true ? e.brand! : strings.unnamed,
           ),
-          '${strings.brand}分布',
+          '${strings.brand}${strings.distribution}',
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
@@ -475,7 +478,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
             rods,
             (e) => e.length?.isNotEmpty == true ? e.length! : strings.notFilled,
           ),
-          '${strings.length}分布',
+          '${strings.length}${strings.distribution}',
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
@@ -486,7 +489,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                 ? e.material!
                 : strings.notFilled,
           ),
-          '${strings.material}分布',
+          '${strings.material}${strings.distribution}',
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
@@ -497,7 +500,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                 ? e.hardness!
                 : strings.notFilled,
           ),
-          '${strings.hardness}分布',
+          '${strings.hardness}${strings.distribution}',
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
@@ -508,17 +511,17 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                 ? e.rodAction!
                 : strings.notFilled,
           ),
-          '${strings.rodAction}分布',
+          '${strings.rodAction}${strings.distribution}',
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildPieChart(
           _getHandleTypeDistribution(rods, strings),
-          '${strings.handleType}分布',
+          '${strings.handleType}${strings.distribution}',
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
-        _buildPriceChart(rods, '鱼竿${strings.price}分布', TeslaColors.electricBlue),
+        _buildPriceChart(rods, '${strings.rod}${strings.priceDistribution}', TeslaColors.electricBlue),
       ],
     );
   }
@@ -527,26 +530,26 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('${strings.reel}分布', TeslaColors.electricBlue),
+        _buildSectionTitle('${strings.reel}${strings.distribution}', TeslaColors.electricBlue),
         const SizedBox(height: 12),
         _buildBarChart(
           _getDistribution(
             reels,
             (e) => e.brand?.isNotEmpty == true ? e.brand! : strings.unnamed,
           ),
-          '${strings.brand}分布',
+          '${strings.brand}${strings.distribution}',
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildPieChart(
           _getReelTypeDistribution(reels, strings),
-          '${strings.reelType}分布',
+          '${strings.reelType}${strings.distribution}',
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildPieChart(
           _getReelUsageDistribution(reels, strings),
-          '${strings.usageType}分布',
+          '${strings.usageType}${strings.distribution}',
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
@@ -557,7 +560,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                 ? e.reelRatio!
                 : strings.notFilled,
           ),
-          '${strings.reelRatio}分布',
+          '${strings.reelRatio}${strings.distribution}',
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
@@ -568,13 +571,13 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                 ? e.reelBrakeType!
                 : strings.notFilled,
           ),
-          '${strings.reelBrakeType}分布',
+          '${strings.reelBrakeType}${strings.distribution}',
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
         _buildPriceChart(
           reels,
-          '渔轮${strings.price}分布',
+          '${strings.reel}${strings.priceDistribution}',
           TeslaColors.electricBlue,
         ),
       ],
@@ -585,14 +588,14 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('${strings.lure}分布', TeslaColors.electricBlue),
+        _buildSectionTitle('${strings.lure}${strings.distribution}', TeslaColors.electricBlue),
         const SizedBox(height: 12),
         _buildBarChart(
           _getDistribution(
             lures,
             (e) => e.brand?.isNotEmpty == true ? e.brand! : strings.unnamed,
           ),
-          '${strings.brand}分布',
+          '${strings.brand}${strings.distribution}',
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
@@ -603,7 +606,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                 ? e.lureType!
                 : strings.notFilled,
           ),
-          '${strings.lureType}分布',
+          '${strings.lureType}${strings.distribution}',
           TeslaColors.electricBlue,
         ),
       ],

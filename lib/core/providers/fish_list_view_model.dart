@@ -184,7 +184,7 @@ class FishListViewModel extends StateNotifier<FishListState> {
     return '$column ${sortAsc ? 'ASC' : 'DESC'}';
   }
 
-  // Apply all filters to a list of catches (used after pagination)
+  // Apply keyword search to catches (other filters handled at SQL layer)
   List<FishCatch> _applyFilters(
     List<FishCatch> catches,
     FishFilter filter,
@@ -196,26 +196,6 @@ class FishListViewModel extends StateNotifier<FishListState> {
       result = result.searchByKeyword(filter.searchQuery!);
     }
 
-    result = result.filterByTime(filter.timeFilter);
-
-    if (filter.timeFilter == 'custom' &&
-        filter.customStartDate != null &&
-        filter.customEndDate != null) {
-      result = result.where((fish) {
-        return !fish.catchTime.isBefore(filter.customStartDate!) &&
-            fish.catchTime.isBefore(filter.customEndDate!);
-      }).toList();
-    }
-
-    if (filter.fateFilter != null) {
-      result = result.filterByFate(filter.fateFilter);
-    }
-
-    if (filter.speciesFilter != null) {
-      result = result.filterBySpecies(filter.speciesFilter);
-    }
-
-    result = result.sortBy(filter.sortBy, filter.sortAsc, units);
     return result;
   }
 
