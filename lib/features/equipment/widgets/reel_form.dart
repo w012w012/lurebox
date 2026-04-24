@@ -111,11 +111,11 @@ class ReelForm extends ConsumerWidget {
           label: strings.reelBrakeType,
           value: brakeType.isEmpty ? null : brakeType,
           items: [
-            PremiumDropdownItem(value: '传统磁力刹车', label: strings.brakeTypeTraditionalMagnetic),
-            PremiumDropdownItem(value: '离心刹车', label: strings.brakeTypeCentrifugal),
-            PremiumDropdownItem(value: 'DC刹车', label: strings.brakeTypeDC),
-            PremiumDropdownItem(value: '浮动磁力刹车', label: strings.brakeTypeFloatingMagnetic),
-            PremiumDropdownItem(value: '创新组合刹车', label: strings.brakeTypeInnovative),
+            PremiumDropdownItem(value: 'traditional_magnetic', label: strings.brakeTypeTraditionalMagnetic),
+            PremiumDropdownItem(value: 'centrifugal', label: strings.brakeTypeCentrifugal),
+            PremiumDropdownItem(value: 'dc', label: strings.brakeTypeDC),
+            PremiumDropdownItem(value: 'floating_magnetic', label: strings.brakeTypeFloatingMagnetic),
+            PremiumDropdownItem(value: 'innovative', label: strings.brakeTypeInnovative),
           ],
           onChanged: (value) {
             if (value != null) {
