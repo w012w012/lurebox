@@ -79,10 +79,10 @@ class RodForm extends ConsumerWidget {
           value:
               sectionsController.text.isEmpty ? null : sectionsController.text,
           items: [
-            PremiumDropdownItem(value: '1节', label: strings.rodSection1),
-            PremiumDropdownItem(value: '2节', label: strings.rodSection2),
-            PremiumDropdownItem(value: '3节', label: strings.rodSection3),
-            PremiumDropdownItem(value: '多节', label: strings.rodSectionMulti),
+            PremiumDropdownItem(value: '1', label: strings.rodSection1),
+            PremiumDropdownItem(value: '2', label: strings.rodSection2),
+            PremiumDropdownItem(value: '3', label: strings.rodSection3),
+            PremiumDropdownItem(value: 'multi', label: strings.rodSectionMulti),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -96,10 +96,10 @@ class RodForm extends ConsumerWidget {
           label: strings.jointMethod,
           value: jointType.isEmpty ? null : jointType,
           items: [
-            PremiumDropdownItem(value: '正并继', label: strings.jointTypeSpigot),
-            PremiumDropdownItem(value: '逆并继', label: strings.jointTypeReverseSpigot),
-            PremiumDropdownItem(value: '印龙继', label: strings.jointTypeDragonSpigot),
-            PremiumDropdownItem(value: '伸缩', label: strings.jointTypeTelescopic),
+            PremiumDropdownItem(value: 'spigot', label: strings.jointTypeSpigot),
+            PremiumDropdownItem(value: 'reverse_spigot', label: strings.jointTypeReverseSpigot),
+            PremiumDropdownItem(value: 'dragon_spigot', label: strings.jointTypeDragonSpigot),
+            PremiumDropdownItem(value: 'telescopic', label: strings.jointTypeTelescopic),
           ],
           onChanged: (value) {
             if (value != null) {
@@ -141,14 +141,14 @@ class RodForm extends ConsumerWidget {
           label: strings.action,
           value: action.isEmpty ? null : action,
           items: [
-            PremiumDropdownItem(value: 'SS调（超慢调）', label: strings.rodActionSS),
-            PremiumDropdownItem(value: 'S调（慢调）', label: strings.rodActionS),
-            PremiumDropdownItem(value: 'MR调（中慢调）', label: strings.rodActionMR),
-            PremiumDropdownItem(value: 'R调（中调）', label: strings.rodActionR),
-            PremiumDropdownItem(value: 'RF调（中快调）', label: strings.rodActionRF),
-            PremiumDropdownItem(value: 'F调（快调）', label: strings.rodActionF),
-            PremiumDropdownItem(value: 'FF调（超快调）', label: strings.rodActionFF),
-            PremiumDropdownItem(value: 'XF调（极快调）', label: strings.rodActionXF),
+            PremiumDropdownItem(value: 'SS', label: strings.rodActionSS),
+            PremiumDropdownItem(value: 'S', label: strings.rodActionS),
+            PremiumDropdownItem(value: 'MR', label: strings.rodActionMR),
+            PremiumDropdownItem(value: 'R', label: strings.rodActionR),
+            PremiumDropdownItem(value: 'RF', label: strings.rodActionRF),
+            PremiumDropdownItem(value: 'F', label: strings.rodActionF),
+            PremiumDropdownItem(value: 'FF', label: strings.rodActionFF),
+            PremiumDropdownItem(value: 'XF', label: strings.rodActionXF),
           ],
           onChanged: (value) {
             if (value != null) {

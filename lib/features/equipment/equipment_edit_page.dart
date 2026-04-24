@@ -8,6 +8,7 @@ import '../../core/providers/app_settings_provider.dart';
 import '../../core/providers/equipment_edit_state.dart';
 import '../../core/providers/equipment_edit_view_model.dart';
 import '../../core/utils/unit_converter.dart';
+import '../../core/utils/legacy_value_migrator.dart';
 import '../../widgets/common/premium_button.dart';
 import '../../widgets/common/premium_card.dart';
 import '../../widgets/common/premium_input.dart';
@@ -54,7 +55,9 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       // Equipment not found - just return, don't show error for edit
       if (equipment == null) return;
 
-      final equipmentMap = equipment.toMap();
+      final equipmentMap = LegacyValueMigrator.migrateEquipmentMap(
+        equipment.toMap(),
+      );
       _loadedEquipment = equipmentMap;
 
       // Update ViewModel with loaded data
@@ -618,7 +621,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     List<String> options,
     String hint,
   ) {
-    final focusNode = FocusNode();
+    // 使用局部变量捕获 Autocomplete 提供的 FocusNode，避免每次 build 泄漏
+    FocusNode? capturedFocusNode;
 
     return Autocomplete<String>(
       optionsBuilder: (t) =>
@@ -626,7 +630,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       onSelected: callback,
       initialValue: TextEditingValue(text: value),
       fieldViewBuilder: (ctx, ctrl, fn, _) {
-        // Listen for focus changes to dismiss options on tap outside
+        capturedFocusNode = fn;
         return _DismissibleAutocompleteField(
           focusNode: fn,
           child: PremiumTextField(
@@ -644,7 +648,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
         return _DismissibleAutocompleteOptions(
           onSelected: onSelected,
           options: options,
-          focusNode: focusNode,
+          focusNode: capturedFocusNode!,
         );
       },
     );
