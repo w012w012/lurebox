@@ -1,7 +1,8 @@
 // No imports needed - pure Dart classes
 
-/// Base sealed class for equipment edit states
-sealed class EquipmentEditStateBase {
+/// Sealed class hierarchy for equipment edit states.
+/// Each equipment type (rod/reel/lure) has its own subclass with type-specific fields.
+sealed class EquipmentEditState {
   final String type;
   final Map<String, dynamic>? equipment;
   final bool isSaving;
@@ -14,7 +15,7 @@ sealed class EquipmentEditStateBase {
   final String categoryType1;
   final String categoryType2;
 
-  const EquipmentEditStateBase({
+  const EquipmentEditState({
     required this.type,
     this.equipment,
     this.isSaving = false,
@@ -28,11 +29,11 @@ sealed class EquipmentEditStateBase {
     this.categoryType2 = '',
   });
 
-  /// Convert to the legacy EquipmentEditState for backwards compatibility
-  EquipmentEditState toEquipmentEditState();
+  /// Whether this is an edit (vs create) operation.
+  bool get isEdit => equipment != null;
 
   /// Apply common field updates - each subclass provides its own copyWith
-  EquipmentEditStateBase withUpdates({
+  EquipmentEditState withUpdates({
     String? type,
     Map<String, dynamic>? equipment,
     bool? isSaving,
@@ -48,7 +49,7 @@ sealed class EquipmentEditStateBase {
 }
 
 /// Rod-specific edit state
-class RodEditState extends EquipmentEditStateBase {
+class RodEditState extends EquipmentEditState {
   final String length;
   final String lengthUnit;
   final String sections;
@@ -125,31 +126,6 @@ class RodEditState extends EquipmentEditStateBase {
   }
 
   @override
-  EquipmentEditState toEquipmentEditState() {
-    return EquipmentEditState(
-      type: type,
-      equipment: equipment,
-      isSaving: isSaving,
-      errorMessage: errorMessage,
-      brand: brand,
-      model: model,
-      price: price,
-      purchaseDate: purchaseDate,
-      isDefault: isDefault,
-      categoryType1: categoryType1,
-      categoryType2: categoryType2,
-      length: length,
-      lengthUnit: lengthUnit,
-      sections: sections,
-      jointType: jointType,
-      material: material,
-      hardness: hardness,
-      rodAction: rodAction,
-      weightRange: weightRange,
-    );
-  }
-
-  @override
   RodEditState withUpdates({
     String? type,
     Map<String, dynamic>? equipment,
@@ -196,7 +172,7 @@ class RodEditState extends EquipmentEditStateBase {
 }
 
 /// Reel-specific edit state
-class ReelEditState extends EquipmentEditStateBase {
+class ReelEditState extends EquipmentEditState {
   final String reelBearings;
   final String reelRatio;
   final String reelCapacity;
@@ -285,34 +261,6 @@ class ReelEditState extends EquipmentEditStateBase {
   }
 
   @override
-  EquipmentEditState toEquipmentEditState() {
-    return EquipmentEditState(
-      type: type,
-      equipment: equipment,
-      isSaving: isSaving,
-      errorMessage: errorMessage,
-      brand: brand,
-      model: model,
-      price: price,
-      purchaseDate: purchaseDate,
-      isDefault: isDefault,
-      categoryType1: categoryType1,
-      categoryType2: categoryType2,
-      reelBearings: reelBearings,
-      reelRatio: reelRatio,
-      reelCapacity: reelCapacity,
-      reelBrakeType: reelBrakeType,
-      reelWeight: reelWeight,
-      reelWeightUnit: reelWeightUnit,
-      reelLine: reelLine,
-      reelLineNumber: reelLineNumber,
-      reelLineLength: reelLineLength,
-      reelLineLengthUnit: reelLineLengthUnit,
-      reelLineDate: reelLineDate,
-    );
-  }
-
-  @override
   ReelEditState withUpdates({
     String? type,
     Map<String, dynamic>? equipment,
@@ -365,7 +313,7 @@ class ReelEditState extends EquipmentEditStateBase {
 }
 
 /// Lure-specific edit state
-class LureEditState extends EquipmentEditStateBase {
+class LureEditState extends EquipmentEditState {
   final String lureType;
   final String lureWeight;
   final String lureWeightUnit;
@@ -442,31 +390,6 @@ class LureEditState extends EquipmentEditStateBase {
   }
 
   @override
-  EquipmentEditState toEquipmentEditState() {
-    return EquipmentEditState(
-      type: type,
-      equipment: equipment,
-      isSaving: isSaving,
-      errorMessage: errorMessage,
-      brand: brand,
-      model: model,
-      price: price,
-      purchaseDate: purchaseDate,
-      isDefault: isDefault,
-      categoryType1: categoryType1,
-      categoryType2: categoryType2,
-      lureType: lureType,
-      lureWeight: lureWeight,
-      lureWeightUnit: lureWeightUnit,
-      lureSize: lureSize,
-      lureSizeUnit: lureSizeUnit,
-      lureColor: lureColor,
-      lureQuantity: lureQuantity,
-      lureQuantityUnit: lureQuantityUnit,
-    );
-  }
-
-  @override
   LureEditState withUpdates({
     String? type,
     Map<String, dynamic>? equipment,
@@ -500,190 +423,6 @@ class LureEditState extends EquipmentEditStateBase {
       isDefault: isDefault,
       categoryType1: categoryType1,
       categoryType2: categoryType2,
-      lureType: lureType ?? this.lureType,
-      lureWeight: lureWeight ?? this.lureWeight,
-      lureWeightUnit: lureWeightUnit ?? this.lureWeightUnit,
-      lureSize: lureSize ?? this.lureSize,
-      lureSizeUnit: lureSizeUnit ?? this.lureSizeUnit,
-      lureColor: lureColor ?? this.lureColor,
-      lureQuantity: lureQuantity ?? this.lureQuantity,
-      lureQuantityUnit: lureQuantityUnit ?? this.lureQuantityUnit,
-    );
-  }
-}
-
-// =============================================================================
-// Legacy Unified State (backwards compatibility)
-// =============================================================================
-
-/// Unified state for equipment editing - maintains backwards compatibility.
-/// Contains all fields for all equipment types.
-class EquipmentEditState {
-  final String type;
-  final Map<String, dynamic>? equipment;
-  final bool isSaving;
-  final String? errorMessage;
-
-  // Common fields
-  final String brand;
-  final String model;
-  final String price;
-  final String purchaseDate;
-  final bool isDefault;
-
-  // Category fields (used by rod and reel)
-  final String categoryType1;
-  final String categoryType2;
-
-  // Rod fields
-  final String length;
-  final String lengthUnit;
-  final String sections;
-  final String jointType;
-  final String material;
-  final String hardness;
-  final String rodAction;
-  final String weightRange;
-
-  // Reel fields
-  final String reelBearings;
-  final String reelRatio;
-  final String reelCapacity;
-  final String reelBrakeType;
-  final String reelWeight;
-  final String reelWeightUnit;
-
-  // Reel line fields
-  final String reelLine;
-  final String reelLineNumber;
-  final String reelLineLength;
-  final String reelLineLengthUnit;
-  final String reelLineDate;
-
-  // Lure fields
-  final String lureType;
-  final String lureWeight;
-  final String lureWeightUnit;
-  final String lureSize;
-  final String lureSizeUnit;
-  final String lureColor;
-  final String lureQuantity;
-  final String lureQuantityUnit;
-
-  const EquipmentEditState({
-    required this.type,
-    this.equipment,
-    this.isSaving = false,
-    this.errorMessage,
-    this.brand = '',
-    this.model = '',
-    this.price = '',
-    this.purchaseDate = '',
-    this.isDefault = false,
-    this.categoryType1 = '',
-    this.categoryType2 = '',
-    this.length = '',
-    this.lengthUnit = 'm',
-    this.sections = '',
-    this.jointType = '',
-    this.material = '',
-    this.hardness = '',
-    this.rodAction = '',
-    this.weightRange = '',
-    this.reelBearings = '',
-    this.reelRatio = '',
-    this.reelCapacity = '',
-    this.reelBrakeType = '',
-    this.reelWeight = '',
-    this.reelWeightUnit = 'g',
-    this.reelLine = '',
-    this.reelLineNumber = '',
-    this.reelLineLength = '',
-    this.reelLineLengthUnit = 'm',
-    this.reelLineDate = '',
-    this.lureType = '',
-    this.lureWeight = '',
-    this.lureWeightUnit = 'g',
-    this.lureSize = '',
-    this.lureSizeUnit = 'cm',
-    this.lureColor = '',
-    this.lureQuantity = '',
-    this.lureQuantityUnit = '',
-  });
-
-  bool get isEdit => equipment != null;
-
-  EquipmentEditState copyWith({
-    String? type,
-    Map<String, dynamic>? equipment,
-    bool? isSaving,
-    String? errorMessage,
-    String? brand,
-    String? model,
-    String? price,
-    String? purchaseDate,
-    bool? isDefault,
-    String? categoryType1,
-    String? categoryType2,
-    String? length,
-    String? lengthUnit,
-    String? sections,
-    String? jointType,
-    String? material,
-    String? hardness,
-    String? rodAction,
-    String? weightRange,
-    String? reelBearings,
-    String? reelRatio,
-    String? reelCapacity,
-    String? reelBrakeType,
-    String? reelWeight,
-    String? reelWeightUnit,
-    String? reelLine,
-    String? reelLineNumber,
-    String? reelLineLength,
-    String? reelLineLengthUnit,
-    String? reelLineDate,
-    String? lureType,
-    String? lureWeight,
-    String? lureWeightUnit,
-    String? lureSize,
-    String? lureSizeUnit,
-    String? lureColor,
-    String? lureQuantity,
-    String? lureQuantityUnit,
-  }) {
-    return EquipmentEditState(
-      type: type ?? this.type,
-      equipment: equipment ?? this.equipment,
-      isSaving: isSaving ?? this.isSaving,
-      errorMessage: errorMessage,
-      brand: brand ?? this.brand,
-      model: model ?? this.model,
-      price: price ?? this.price,
-      purchaseDate: purchaseDate ?? this.purchaseDate,
-      isDefault: isDefault ?? this.isDefault,
-      categoryType1: categoryType1 ?? this.categoryType1,
-      categoryType2: categoryType2 ?? this.categoryType2,
-      length: length ?? this.length,
-      lengthUnit: lengthUnit ?? this.lengthUnit,
-      sections: sections ?? this.sections,
-      jointType: jointType ?? this.jointType,
-      material: material ?? this.material,
-      hardness: hardness ?? this.hardness,
-      rodAction: rodAction ?? this.rodAction,
-      weightRange: weightRange ?? this.weightRange,
-      reelBearings: reelBearings ?? this.reelBearings,
-      reelRatio: reelRatio ?? this.reelRatio,
-      reelCapacity: reelCapacity ?? this.reelCapacity,
-      reelBrakeType: reelBrakeType ?? this.reelBrakeType,
-      reelWeight: reelWeight ?? this.reelWeight,
-      reelWeightUnit: reelWeightUnit ?? this.reelWeightUnit,
-      reelLine: reelLine ?? this.reelLine,
-      reelLineNumber: reelLineNumber ?? this.reelLineNumber,
-      reelLineLength: reelLineLength ?? this.reelLineLength,
-      reelLineLengthUnit: reelLineLengthUnit ?? this.reelLineLengthUnit,
-      reelLineDate: reelLineDate ?? this.reelLineDate,
       lureType: lureType ?? this.lureType,
       lureWeight: lureWeight ?? this.lureWeight,
       lureWeightUnit: lureWeightUnit ?? this.lureWeightUnit,

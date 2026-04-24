@@ -13,7 +13,7 @@ import 'equipment_edit_state.dart';
 
 class _BaseEquipmentEditNotifier {
   final EquipmentService _equipmentService;
-  EquipmentEditStateBase _state;
+  EquipmentEditState _state;
   final String type;
 
   _BaseEquipmentEditNotifier(
@@ -22,7 +22,7 @@ class _BaseEquipmentEditNotifier {
     Map<String, dynamic>? equipment,
   ]) : _state = _createInitialState(type, equipment);
 
-  static EquipmentEditStateBase _createInitialState(
+  static EquipmentEditState _createInitialState(
       String type, Map<String, dynamic>? equipment) {
     switch (type) {
       case 'rod':
@@ -36,9 +36,9 @@ class _BaseEquipmentEditNotifier {
     }
   }
 
-  EquipmentEditStateBase get state => _state;
+  EquipmentEditState get state => _state;
 
-  void _updateState(EquipmentEditStateBase newState) {
+  void _updateState(EquipmentEditState newState) {
     _state = newState;
   }
 
@@ -522,16 +522,26 @@ class LureEditNotifier extends _BaseEquipmentEditNotifier {
 /// Maintains the existing API for backwards compatibility.
 class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
   final EquipmentService _equipmentService;
-  late final _BaseEquipmentEditNotifier _delegate;
+  late _BaseEquipmentEditNotifier _delegate;
 
   EquipmentEditViewModel(
     this._equipmentService,
     String type,
     Map<String, dynamic>? equipment,
-  ) : super(EquipmentEditState(type: type, equipment: equipment)) {
+  ) : super(_buildInitial(type, equipment)) {
     _delegate = _createDelegate(type, equipment);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
+
+  static EquipmentEditState _buildInitial(
+    String type,
+    Map<String, dynamic>? equipment,
+  ) =>
+      switch (type) {
+        'reel' => ReelEditState(type: 'reel', equipment: equipment),
+        'lure' => LureEditState(type: 'lure', equipment: equipment),
+        _ => RodEditState(type: 'rod', equipment: equipment),
+      };
 
   _BaseEquipmentEditNotifier _createDelegate(
       String type, Map<String, dynamic>? equipment) {
@@ -549,187 +559,187 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
 
   void loadDataFromMap(Map<String, dynamic> equipment) {
     _delegate.loadDataFromMap(equipment);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   // Shared update methods
   void updateBrand(String value) {
     _delegate.updateBrand(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateModel(String value) {
     _delegate.updateModel(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updatePrice(String value) {
     _delegate.updatePrice(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updatePurchaseDate(String value) {
     _delegate.updatePurchaseDate(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateIsDefault(bool value) {
     _delegate.updateIsDefault(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void resetState() {
     // Re-create the delegate with fresh state for add mode
     _delegate = _createDelegate(state.type, null);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   // Rod-specific update methods
   void updateCategoryType1(String value) {
     _delegate.updateCategoryType1(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateCategoryType2(String value) {
     _delegate.updateCategoryType2(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateLength(String value) {
     _delegate.updateLength(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateLengthUnit(String value) {
     _delegate.updateLengthUnit(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateSections(String value) {
     _delegate.updateSections(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateJointType(String value) {
     _delegate.updateJointType(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateMaterial(String value) {
     _delegate.updateMaterial(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateHardness(String value) {
     _delegate.updateHardness(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateRodAction(String value) {
     _delegate.updateRodAction(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateWeightRange(String value) {
     _delegate.updateWeightRange(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   // Reel-specific update methods
   void updateReelBearings(String value) {
     _delegate.updateReelBearings(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateReelRatio(String value) {
     _delegate.updateReelRatio(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateReelCapacity(String value) {
     _delegate.updateReelCapacity(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateReelBrakeType(String value) {
     _delegate.updateReelBrakeType(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateReelWeight(String value) {
     _delegate.updateReelWeight(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateReelWeightUnit(String value) {
     _delegate.updateReelWeightUnit(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateReelLine(String value) {
     _delegate.updateReelLine(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateReelLineNumber(String value) {
     _delegate.updateReelLineNumber(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateReelLineLength(String value) {
     _delegate.updateReelLineLength(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateReelLineLengthUnit(String value) {
     _delegate.updateReelLineLengthUnit(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateReelLineDate(String value) {
     _delegate.updateReelLineDate(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   // Lure-specific update methods
   void updateLureType(String value) {
     _delegate.updateLureType(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateLureWeight(String value) {
     _delegate.updateLureWeight(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateLureWeightUnit(String value) {
     _delegate.updateLureWeightUnit(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateLureSize(String value) {
     _delegate.updateLureSize(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateLureSizeUnit(String value) {
     _delegate.updateLureSizeUnit(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateLureColor(String value) {
     _delegate.updateLureColor(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateLureQuantity(String value) {
     _delegate.updateLureQuantity(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   void updateLureQuantityUnit(String? value) {
     _delegate.updateLureQuantityUnit(value);
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
   }
 
   String? validatePrice(AppStrings strings) {
@@ -738,7 +748,7 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
 
   Future<bool> save() async {
     final result = await _delegate.save();
-    state = _delegate.state.toEquipmentEditState();
+    state = _delegate.state;
     return result;
   }
 }
