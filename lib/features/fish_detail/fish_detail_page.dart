@@ -100,10 +100,11 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
     }
 
     final fish = state.fish!;
-    final catchTime = DateTime.parse(fish['catch_time'] as String);
-    final rodName = state.rodEquipment?['model'] as String?;
-    final reelName = state.reelEquipment?['model'] as String?;
-    final lureName = state.lureEquipment?['model'] as String?;
+    final catchTime = DateTime.tryParse(_s(fish, 'catch_time') ?? '') ??
+        DateTime.now();
+    final rodName = _s(state.rodEquipment, 'model');
+    final reelName = _s(state.reelEquipment, 'model');
+    final lureName = _s(state.lureEquipment, 'model');
 
     // 获取用户设置的单位
     final appSettings = ref.watch(appSettingsProvider);
@@ -111,9 +112,9 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
 
     // 获取渔获记录时的单位（用于换算显示）
     final fishLengthUnit =
-        fish['length_unit'] as String? ?? units.fishLengthUnit;
+        _s(fish, 'length_unit') ?? units.fishLengthUnit;
     final fishWeightUnit =
-        fish['weight_unit'] as String? ?? units.fishWeightUnit;
+        _s(fish, 'weight_unit') ?? units.fishWeightUnit;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -150,115 +151,36 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
                         return AnimatedBuilder(
                           animation: animation,
                           builder: (context, child) {
-                            return FishImageGallery(
-                              imagePath: fish['image_path'] as String,
-                              species: fish['species'] as String,
-                              length: fish['length'] as double,
-                              weight: fish['weight'] as double?,
-                              lengthUnit: fishLengthUnit,
-                              weightUnit: fishWeightUnit,
-                              locationName: fish['location_name'] as String?,
-                              catchTime: catchTime,
-                              rodName: rodName,
-                              reelName: reelName,
-                              lureName: lureName,
-                              rodBrand: state.rodEquipment?['brand'] as String?,
-                              rodModel: state.rodEquipment?['model'] as String?,
-                              rodMaterial:
-                                  state.rodEquipment?['material'] as String?,
-                              rodLength:
-                                  state.rodEquipment?['length'] as String?,
-                              rodLengthUnit:
-                                  state.rodEquipment?['length_unit'] as String?,
-                              rodHardness:
-                                  state.rodEquipment?['hardness'] as String?,
-                              rodAction:
-                                  state.rodEquipment?['rod_action'] as String?,
-                              reelBrand:
-                                  state.reelEquipment?['brand'] as String?,
-                              reelModel:
-                                  state.reelEquipment?['model'] as String?,
-                              reelRatio:
-                                  state.reelEquipment?['reel_ratio'] as String?,
-                              lureBrand:
-                                  state.lureEquipment?['brand'] as String?,
-                              lureModel:
-                                  state.lureEquipment?['model'] as String?,
-                              lureSize:
-                                  state.lureEquipment?['lure_size'] as String?,
-                              lureSizeUnit: state
-                                  .lureEquipment?['lure_size_unit'] as String?,
-                              lureColor:
-                                  state.lureEquipment?['lure_color'] as String?,
-                              lureWeight: state.lureEquipment?['lure_weight']
-                                  as String?,
-                              lureWeightUnit:
-                                  state.lureEquipment?['lure_weight_unit']
-                                      as String?,
-                              airTemperature:
-                                  fish['air_temperature'] as double?,
-                              pressure: fish['pressure'] as double?,
-                              weatherCode: fish['weather_code'] as int?,
+                            return _buildFishImageGallery(
+                              fish, state, catchTime,
+                              fishLengthUnit, fishWeightUnit,
+                              rodName, reelName, lureName,
                             );
                           },
                         );
                       },
-                      child: FishImageGallery(
-                        imagePath: fish['image_path'] as String,
-                        species: fish['species'] as String,
-                        length: fish['length'] as double,
-                        weight: fish['weight'] as double?,
-                        lengthUnit: fishLengthUnit,
-                        weightUnit: fishWeightUnit,
-                        locationName: fish['location_name'] as String?,
-                        catchTime: catchTime,
-                        rodName: rodName,
-                        reelName: reelName,
-                        lureName: lureName,
-                        rodBrand: state.rodEquipment?['brand'] as String?,
-                        rodModel: state.rodEquipment?['model'] as String?,
-                        rodMaterial: state.rodEquipment?['material'] as String?,
-                        rodLength: state.rodEquipment?['length'] as String?,
-                        rodLengthUnit:
-                            state.rodEquipment?['length_unit'] as String?,
-                        rodHardness: state.rodEquipment?['hardness'] as String?,
-                        rodAction: state.rodEquipment?['rod_action'] as String?,
-                        reelBrand: state.reelEquipment?['brand'] as String?,
-                        reelModel: state.reelEquipment?['model'] as String?,
-                        reelRatio:
-                            state.reelEquipment?['reel_ratio'] as String?,
-                        lureBrand: state.lureEquipment?['brand'] as String?,
-                        lureModel: state.lureEquipment?['model'] as String?,
-                        lureSize: state.lureEquipment?['lure_size'] as String?,
-                        lureSizeUnit:
-                            state.lureEquipment?['lure_size_unit'] as String?,
-                        lureColor:
-                            state.lureEquipment?['lure_color'] as String?,
-                        lureWeight:
-                            state.lureEquipment?['lure_weight'] as String?,
-                        lureWeightUnit:
-                            state.lureEquipment?['lure_weight_unit'] as String?,
-                        airTemperature: fish['air_temperature'] as double?,
-                        pressure: fish['pressure'] as double?,
-                        weatherCode: fish['weather_code'] as int?,
+                      child: _buildFishImageGallery(
+                        fish, state, catchTime,
+                        fishLengthUnit, fishWeightUnit,
+                        rodName, reelName, lureName,
                       ),
                     ),
                   ),
                   FishInfoCard(
-                    species: fish['species'] as String,
-                    length: fish['length'] as double,
+                    species: _s(fish, 'species') ?? '',
+                    length: _d(fish, 'length') ?? 0,
                     lengthUnit: fishLengthUnit,
-                    weight: fish['weight'] as double?,
+                    weight: _d(fish, 'weight'),
                     weightUnit: fishWeightUnit,
-                    fate: fish['fate'] as int,
+                    fate: _i(fish, 'fate') ?? 0,
                     catchTime: catchTime,
-                    locationName: fish['location_name'] as String?,
+                    locationName: _s(fish, 'location_name'),
                     rodEquipment: state.rodEquipment,
                     reelEquipment: state.reelEquipment,
                     lureEquipment: state.lureEquipment,
-                    airTemperature: fish['air_temperature'] as double?,
-                    pressure: fish['pressure'] as double?,
-                    weatherCode: fish['weather_code'] as int?,
+                    airTemperature: _d(fish, 'air_temperature'),
+                    pressure: _d(fish, 'pressure'),
+                    weatherCode: _i(fish, 'weather_code'),
                     strings: strings,
                   ),
                 ],
@@ -293,6 +215,69 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
           ),
         ],
       ),
+    );
+  }
+
+  /// 安全访问 Map 值，避免 `as` 强制转换崩溃
+  static String? _s(Map<String, dynamic>? m, String k) =>
+      m?[k]?.toString();
+  static double? _d(Map<String, dynamic>? m, String k) {
+    final v = m?[k];
+    if (v is num) return v.toDouble();
+    return null;
+  }
+  static int? _i(Map<String, dynamic>? m, String k) {
+    final v = m?[k];
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    return null;
+  }
+
+  Widget _buildFishImageGallery(
+    Map<String, dynamic> fish,
+    FishDetailState state,
+    DateTime catchTime,
+    String fishLengthUnit,
+    String fishWeightUnit,
+    String? rodName,
+    String? reelName,
+    String? lureName,
+  ) {
+    final rod = state.rodEquipment;
+    final reel = state.reelEquipment;
+    final lure = state.lureEquipment;
+    return FishImageGallery(
+      imagePath: _s(fish, 'image_path') ?? '',
+      species: _s(fish, 'species') ?? '',
+      length: _d(fish, 'length') ?? 0,
+      weight: _d(fish, 'weight'),
+      lengthUnit: fishLengthUnit,
+      weightUnit: fishWeightUnit,
+      locationName: _s(fish, 'location_name'),
+      catchTime: catchTime,
+      rodName: rodName,
+      reelName: reelName,
+      lureName: lureName,
+      rodBrand: _s(rod, 'brand'),
+      rodModel: _s(rod, 'model'),
+      rodMaterial: _s(rod, 'material'),
+      rodLength: _s(rod, 'length'),
+      rodLengthUnit: _s(rod, 'length_unit'),
+      rodHardness: _s(rod, 'hardness'),
+      rodAction: _s(rod, 'rod_action'),
+      reelBrand: _s(reel, 'brand'),
+      reelModel: _s(reel, 'model'),
+      reelRatio: _s(reel, 'reel_ratio'),
+      lureBrand: _s(lure, 'brand'),
+      lureModel: _s(lure, 'model'),
+      lureSize: _s(lure, 'lure_size'),
+      lureSizeUnit: _s(lure, 'lure_size_unit'),
+      lureColor: _s(lure, 'lure_color'),
+      lureWeight: _s(lure, 'lure_weight'),
+      lureWeightUnit: _s(lure, 'lure_weight_unit'),
+      airTemperature: _d(fish, 'air_temperature'),
+      pressure: _d(fish, 'pressure'),
+      weatherCode: _i(fish, 'weather_code'),
     );
   }
 
