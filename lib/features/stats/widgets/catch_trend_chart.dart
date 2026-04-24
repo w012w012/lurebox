@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/animation_constants.dart';
 import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../widgets/common/premium_card.dart';
@@ -37,12 +36,12 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: TeslaAnimation.pageTransitionDuration,
+      duration: TeslaTheme.transitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: TeslaAnimation.teslaCurve,
+      curve: TeslaTheme.transitionCurve,
     );
     _animationController.forward();
   }

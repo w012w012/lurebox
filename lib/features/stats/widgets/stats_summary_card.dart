@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/animation_constants.dart';
 import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/models/app_settings.dart';
 import '../../../core/providers/app_settings_provider.dart';
@@ -41,12 +41,12 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: TeslaAnimation.pageTransitionDuration,
+      duration: TeslaTheme.transitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: TeslaAnimation.teslaCurve,
+      curve: TeslaTheme.transitionCurve,
     );
     _animationController.forward();
   }
@@ -195,12 +195,14 @@ class EquipmentChart extends StatefulWidget {
   final String title;
   final Map<String, int> data;
   final Color color;
+  final AppStrings? strings;
 
   const EquipmentChart({
     super.key,
     required this.title,
     required this.data,
     required this.color,
+    this.strings,
   });
 
   @override
@@ -216,12 +218,12 @@ class _EquipmentChartState extends State<EquipmentChart>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: TeslaAnimation.pageTransitionDuration,
+      duration: TeslaTheme.transitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: TeslaAnimation.teslaCurve,
+      curve: TeslaTheme.transitionCurve,
     );
     _animationController.forward();
   }
@@ -302,7 +304,7 @@ class _EquipmentChartState extends State<EquipmentChart>
                     ),
                     const SizedBox(width: TeslaTheme.spacingMicro),
                     Text(
-                      '${item.value}条',
+                      '${item.value}${widget.strings?.countSuffix ?? '条'}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.w500,
                           ),

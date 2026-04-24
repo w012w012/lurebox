@@ -123,8 +123,8 @@ class _SettingsTileState extends State<SettingsTile> {
     // Wrap with animated scale for touch feedback
     tileContent = AnimatedScale(
       scale: _isPressed ? AnimationConstants.touchScale : 1.0,
-      duration: TeslaAnimation.colorTransition,
-      curve: TeslaAnimation.teslaCurve,
+      duration: TeslaTheme.transitionDuration,
+      curve: TeslaTheme.transitionCurve,
       child: tileContent,
     );
 

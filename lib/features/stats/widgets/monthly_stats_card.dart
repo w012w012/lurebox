@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/animation_constants.dart';
 import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/providers/language_provider.dart';
 import '../../../widgets/common/premium_card.dart';
@@ -37,7 +36,7 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: TeslaAnimation.pageTransitionDuration,
+      duration: TeslaTheme.transitionDuration,
       vsync: this,
     );
     _scaleAnimation = Tween<double>(
@@ -45,11 +44,11 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _animationController,
-      curve: TeslaAnimation.teslaCurve,
+      curve: TeslaTheme.transitionCurve,
     ));
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: TeslaAnimation.teslaCurve,
+      curve: TeslaTheme.transitionCurve,
     );
     _animationController.forward();
   }
@@ -158,17 +157,17 @@ class _AnimatedStatItemState extends State<_AnimatedStatItem>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: TeslaAnimation.pageTransitionDuration,
+      duration: TeslaTheme.transitionDuration,
       vsync: this,
     );
     _animation = CurvedAnimation(
       parent: _controller,
-      curve: TeslaAnimation.teslaCurve,
+      curve: TeslaTheme.transitionCurve,
     );
 
     // Stagger the animation
     Future.delayed(
-      TeslaAnimation.transition * widget.index,
+      TeslaTheme.transitionDuration * widget.index,
       () {
         if (mounted) {
           _controller.forward();

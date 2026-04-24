@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/animation_constants.dart';
+import '../../../core/design/theme/tesla_theme.dart';
 import '../../../widgets/common/premium_card.dart';
 
 /// Progress status of the achievement
@@ -18,6 +19,7 @@ class AchievementOverviewCard extends StatelessWidget {
   final int totalCount;
   final int monthlyNewCount;
   final AchievementProgressStatus status;
+  final AppStrings? strings;
   final VoidCallback? onTap;
 
   const AchievementOverviewCard({
@@ -26,6 +28,7 @@ class AchievementOverviewCard extends StatelessWidget {
     required this.totalCount,
     required this.monthlyNewCount,
     this.status = AchievementProgressStatus.inProgress,
+    this.strings,
     this.onTap,
   });
 
@@ -52,7 +55,7 @@ class AchievementOverviewCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                '解锁进度',
+                strings?.unlockProgress ?? '解锁进度',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                       color: TeslaColors.white,
@@ -120,8 +123,8 @@ class AchievementOverviewCard extends StatelessWidget {
         Expanded(
           child: TweenAnimationBuilder<double>(
             tween: Tween(begin: 0, end: progress),
-            duration: TeslaAnimation.pageTransitionDuration,
-            curve: TeslaAnimation.teslaCurve,
+            duration: TeslaTheme.transitionDuration,
+            curve: TeslaTheme.transitionCurve,
             builder: (context, value, child) {
               return Container(
                 height: 8,

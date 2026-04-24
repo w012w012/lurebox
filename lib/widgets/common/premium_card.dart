@@ -40,7 +40,7 @@ class _PremiumCardState extends State<PremiumCard> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue;
+    const accentColor = TeslaColors.electricBlue;
     final defaultBg = isDark ? TeslaColors.carbonDark : TeslaColors.white;
     final borderColor = isDark ? const Color(0xFF2A2D30) : TeslaColors.cloudGray;
 
@@ -54,8 +54,8 @@ class _PremiumCardState extends State<PremiumCard> {
         );
 
     Widget card = AnimatedContainer(
-      duration: TeslaAnimation.colorTransition,
-      curve: TeslaAnimation.teslaCurve,
+      duration: TeslaTheme.transitionDuration,
+      curve: TeslaTheme.transitionCurve,
       transform: Matrix4.diagonal3Values(
         _isPressed ? AnimationConstants.touchScale : 1.0,
         _isPressed ? AnimationConstants.touchScale : 1.0,
@@ -189,7 +189,7 @@ class PremiumStatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue;
+    const accentColor = TeslaColors.electricBlue;
 
     return PremiumCard(
       variant: PremiumCardVariant.standard,

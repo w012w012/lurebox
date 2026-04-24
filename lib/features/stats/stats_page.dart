@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/design/theme/app_theme.dart';
-import '../../core/design/theme/animation_constants.dart';
 import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/stats_provider.dart';
@@ -194,7 +193,7 @@ class _AnimatedStatCardState extends State<_AnimatedStatCard>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: TeslaAnimation.pageTransitionDuration,
+      duration: TeslaTheme.transitionDuration,
       vsync: this,
     );
 
@@ -203,7 +202,7 @@ class _AnimatedStatCardState extends State<_AnimatedStatCard>
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: TeslaAnimation.teslaCurve,
+      curve: TeslaTheme.transitionCurve,
     ));
 
     _slideAnimation = Tween<Offset>(
@@ -211,12 +210,12 @@ class _AnimatedStatCardState extends State<_AnimatedStatCard>
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: TeslaAnimation.teslaCurve,
+      curve: TeslaTheme.transitionCurve,
     ));
 
     // Stagger the animation start
     Future.delayed(
-      TeslaAnimation.transition * widget.index,
+      TeslaTheme.transitionDuration * widget.index,
       () {
         if (mounted) {
           _controller.forward();
@@ -342,8 +341,8 @@ class _StatCardState extends State<_StatCard> {
       onTap: widget.onTap,
       child: AnimatedScale(
         scale: _isPressed ? 0.98 : 1.0,
-        duration: TeslaAnimation.colorTransition,
-        curve: TeslaAnimation.teslaCurve,
+        duration: TeslaTheme.transitionDuration,
+        curve: TeslaTheme.transitionCurve,
         child: PremiumCard(
           variant: PremiumCardVariant.standard,
           padding: const EdgeInsets.all(AppTheme.spacingLg),

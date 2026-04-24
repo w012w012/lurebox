@@ -8,7 +8,6 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/animation_constants.dart';
 import '../../core/design/theme/tesla_theme.dart';
 import '../../core/di/di.dart';
 import '../../core/models/app_settings.dart';
@@ -58,6 +57,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
   String _trendTitle = '';
   String _trendType = 'day';
   bool _isLoading = true;
+  String? _errorMessage;
   bool _isSharing = false;
   bool _showByWeight = false;
   bool _showLocationDetails = true;
@@ -70,12 +70,12 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
   void initState() {
     super.initState();
     _contentAnimationController = AnimationController(
-      duration: TeslaAnimation.pageTransitionDuration,
+      duration: TeslaTheme.transitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _contentAnimationController,
-      curve: TeslaAnimation.teslaCurve,
+      curve: TeslaTheme.transitionCurve,
     );
     _loadDetail();
   }
@@ -163,7 +163,13 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
         _contentAnimationController.forward();
       }
     } catch (e) {
-      if (mounted) setState(() => _isLoading = false);
+      AppLogger.e('StatsDetailPage', 'Failed to load detail data', e);
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _errorMessage = e.toString();
+        });
+      }
     }
   }
 
@@ -347,11 +353,11 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
             '${widget.title} - ${strings.catchStatistics}\n${strings.fromLureBox}',
       );
     } catch (e) {
-      AppLogger.e('StatsDetailPage', '${strings.shareFailed}: $e');
+      AppLogger.e('StatsDetailPage', 'Failed to share stats', e);
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('${strings.shareFailed}: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(strings.shareFailed)),
+        );
       }
     } finally {
       if (mounted) setState(() => _isSharing = false);
@@ -404,7 +410,23 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                 color: TeslaColors.electricBlue,
               ),
             )
-          : FadeTransition(
+          : _errorMessage != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline, size: 48, color: Colors.grey),
+                      const SizedBox(height: 16),
+                      Text(strings.error, style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      TextButton(
+                        onPressed: _loadDetail,
+                        child: Text(strings.retry),
+                      ),
+                    ],
+                  ),
+                )
+              : FadeTransition(
               opacity: _fadeAnimation,
               child: Stack(
                 children: [
@@ -525,18 +547,21 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
             title: strings.rodDistribution,
             data: _rodDistribution,
             color: TeslaColors.electricBlue,
+            strings: strings,
           ),
         if (_reelDistribution.isNotEmpty)
           EquipmentChart(
             title: strings.reelDistribution,
             data: _reelDistribution,
             color: TeslaColors.electricBlue,
+            strings: strings,
           ),
         if (_lureDistribution.isNotEmpty)
           EquipmentChart(
             title: strings.lureDistribution,
             data: _lureDistribution,
             color: TeslaColors.electricBlue,
+            strings: strings,
           ),
         if (_catches.isEmpty)
           PremiumCard(
