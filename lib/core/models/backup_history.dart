@@ -98,13 +98,11 @@ class BackupHistory {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is BackupHistory &&
-        other.id == id &&
-        other.filePath == filePath;
+    return other is BackupHistory && other.id == id;
   }
 
   @override
-  int get hashCode => Object.hash(id, filePath);
+  int get hashCode => id.hashCode;
 
   @override
   String toString() {
