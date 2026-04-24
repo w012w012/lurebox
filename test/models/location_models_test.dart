@@ -344,6 +344,24 @@ void main() {
       expect(result.avgWeight, isNull);
     });
 
+    test('fromMap safely converts dynamic species_distribution values', () {
+      // JSON decode produces num values, not int
+      final map = <String, dynamic>{
+        'total_catches': 10,
+        'release_count': 5,
+        'keep_count': 5,
+        'species_distribution': <String, dynamic>{
+          'Bass': 5,
+          'Trout': 3.0, // double from JSON
+        },
+      };
+
+      final result = LocationStats.fromMap(map);
+
+      expect(result.speciesDistribution['Bass'], equals(5));
+      expect(result.speciesDistribution['Trout'], equals(3));
+    });
+
     test('toMap converts LocationStats to map', () {
       final map = testInstance.toMap();
 

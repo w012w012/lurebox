@@ -113,11 +113,29 @@ class LocationStats {
       totalCatches: map['total_catches'] as int? ?? 0,
       releaseCount: map['release_count'] as int? ?? 0,
       keepCount: map['keep_count'] as int? ?? 0,
-      speciesDistribution:
-          map['species_distribution'] as Map<String, int>? ?? {},
+      speciesDistribution: _safeIntMap(map['species_distribution']),
       avgLength: map['avg_length'] as double?,
       avgWeight: map['avg_weight'] as double?,
     );
+  }
+
+  /// 安全地将 dynamic Map 转换为 Map<String, int>
+  ///
+  /// JSON 解码后数值可能为 num/double，需要安全转换
+  static Map<String, int> _safeIntMap(dynamic value) {
+    if (value == null) return {};
+    if (value is Map<String, int>) return value;
+    if (value is Map) {
+      final result = <String, int>{};
+      for (final entry in value.entries) {
+        final v = entry.value;
+        if (v is num) {
+          result[entry.key.toString()] = v.toInt();
+        }
+      }
+      return result;
+    }
+    return {};
   }
 
   Map<String, dynamic> toMap() {
