@@ -41,7 +41,7 @@ class FakeEquipmentRepository implements EquipmentRepository {
   @override
   Future<int> create(Equipment equipment) async {
     final id = _nextId++;
-    _store[id] = equipment.copyWith(id: id);
+    _store[id] = Equipment.fromMap({...equipment.toMap(), 'id': id});
     return id;
   }
 
@@ -106,12 +106,12 @@ class FakeEquipmentRepository implements EquipmentRepository {
     // Clear existing default for this type
     for (final entry in _store.entries) {
       if (entry.value.type.name == type && entry.value.isDefault) {
-        _store[entry.key] = entry.value.copyWith(isDefault: false);
+        _store[entry.key] = Equipment.fromMap({...entry.value.toMap(), 'is_default': 0});
       }
     }
     // Set new default
     if (_store.containsKey(id)) {
-      _store[id] = _store[id]!.copyWith(isDefault: true);
+      _store[id] = Equipment.fromMap({..._store[id]!.toMap(), 'is_default': 1});
     }
   }
 
