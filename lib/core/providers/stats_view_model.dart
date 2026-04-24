@@ -48,7 +48,7 @@ class StatsDetailState {
 
   StatsDetailState copyWith({
     bool? isLoading,
-    String? errorMessage,
+    String? Function()? errorMessage,
     String? title,
     DateTime? startDate,
     DateTime? endDate,
@@ -69,7 +69,7 @@ class StatsDetailState {
   }) {
     return StatsDetailState(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       title: title ?? this.title,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
@@ -113,7 +113,7 @@ class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
   }
 
   Future<void> loadData() async {
-    state = state.copyWith(isLoading: true, errorMessage: null);
+    state = state.copyWith(isLoading: true, errorMessage: () => null);
 
     try {
       final fishList = await _fishCatchService.getByDateRange(
@@ -170,7 +170,7 @@ class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
         monthlyDistribution: monthlyMap,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: () => e.toString());
     }
   }
 

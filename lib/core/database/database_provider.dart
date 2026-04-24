@@ -107,7 +107,9 @@ class DatabaseProvider {
         weight REAL,
         weight_unit TEXT DEFAULT 'kg',
         fate INTEGER DEFAULT 0,
-        catch_time INTEGER NOT NULL,
+        catch_time INTEGER NOT NULL, -- HISTORICAL: stores ISO 8601 text (e.g. '2024-01-15T10:30:00.000') despite INTEGER affinity.
+                                    -- ISO 8601 lexicographic order == chronological order, so range comparisons work.
+                                    -- Do NOT migrate to real integers without updating all query code + backup import logic.
         location_name TEXT,
         latitude REAL,
         longitude REAL,

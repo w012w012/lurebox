@@ -54,7 +54,7 @@ class HomeState {
 
   HomeState copyWith({
     bool? isLoading,
-    String? errorMessage,
+    String? Function()? errorMessage,
     CatchStats? todayStats,
     Map<String, int>? todaySpecies,
     CatchStats? monthStats,
@@ -68,7 +68,7 @@ class HomeState {
   }) {
     return HomeState(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       todayStats: todayStats ?? this.todayStats,
       todaySpecies: todaySpecies ?? this.todaySpecies,
       monthStats: monthStats ?? this.monthStats,
@@ -95,7 +95,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
     // 但初始状态isLoading=true是为了显示加载UI，需要特殊处理
     if (state.isLoading && state.todayStats.total != 0) return;
 
-    state = state.copyWith(isLoading: true, errorMessage: null);
+    state = state.copyWith(isLoading: true, errorMessage: () => null);
 
     try {
       final dashboard = await _statsRepo.getDashboardData();
@@ -114,7 +114,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
         monthTrend: dashboard.monthTrend,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: () => e.toString());
     }
   }
 

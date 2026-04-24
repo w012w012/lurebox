@@ -287,7 +287,7 @@ void main() {
             .thenAnswer((_) async => exportPath);
 
         // Set export path
-        viewModel.state = viewModel.state.copyWith(exportPath: exportPath);
+        viewModel.state = viewModel.state.copyWith(exportPath: () => exportPath);
         expect(viewModel.state.exportPath, exportPath);
 
         // Clear - now correctly sets to null
@@ -298,9 +298,9 @@ void main() {
       test('clearExportPath does not affect other state fields', () {
         const exportPath = '/path/to/export.json';
         viewModel.state = viewModel.state.copyWith(
-          exportPath: exportPath,
+          exportPath: () => exportPath,
           totalCount: 42,
-          errorMessage: 'some error',
+          errorMessage: () => 'some error',
         );
 
         viewModel.clearExportPath();
@@ -352,7 +352,7 @@ void main() {
         await viewModel.exportData();
         expect(viewModel.state.exportPath, '/path/to/export.json');
         expect(viewModel.state.isExporting, false);
-        // Note: clearExportPath() does not actually clear due to copyWith bug
+        // Note: clearExportPath() now correctly clears exportPath via closure pattern
         expect(viewModel.state.totalCount, 25); // preserved
       });
 

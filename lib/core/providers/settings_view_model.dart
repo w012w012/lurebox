@@ -35,8 +35,7 @@ class SettingsState {
 
   SettingsState copyWith({
     bool? isLoading,
-    String? errorMessage,
-    bool clearError = false,
+    String? Function()? errorMessage,
     int? totalCount,
     String? appVersion,
     bool? isExporting,
@@ -44,14 +43,12 @@ class SettingsState {
     bool? isUploading,
     bool? isCreatingZipBackup,
     bool? isRestoringZipBackup,
-    String? exportPath,
-    bool clearExportPath = false,
-    String? errorDetail,
-    bool clearErrorDetail = false,
+    String? Function()? exportPath,
+    String? Function()? errorDetail,
   }) {
     return SettingsState(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       totalCount: totalCount ?? this.totalCount,
       appVersion: appVersion ?? this.appVersion,
       isExporting: isExporting ?? this.isExporting,
@@ -59,8 +56,8 @@ class SettingsState {
       isUploading: isUploading ?? this.isUploading,
       isCreatingZipBackup: isCreatingZipBackup ?? this.isCreatingZipBackup,
       isRestoringZipBackup: isRestoringZipBackup ?? this.isRestoringZipBackup,
-      exportPath: clearExportPath ? null : (exportPath ?? this.exportPath),
-      errorDetail: clearErrorDetail ? null : (errorDetail ?? this.errorDetail),
+      exportPath: exportPath != null ? exportPath() : this.exportPath,
+      errorDetail: errorDetail != null ? errorDetail() : this.errorDetail,
     );
   }
 }
@@ -79,30 +76,30 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
   }
 
   Future<void> loadStats() async {
-    state = state.copyWith(isLoading: true, clearError: true);
+    state = state.copyWith(isLoading: true, errorMessage: () => null);
     try {
       final count = await _fishCatchService.getCount();
       state = state.copyWith(isLoading: false, totalCount: count);
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: () => e.toString());
     }
   }
 
   Future<String?> exportData() async {
-    state = state.copyWith(isExporting: true, clearError: true);
+    state = state.copyWith(isExporting: true, errorMessage: () => null);
     try {
       final path = await _backupService.exportToJson();
-      state = state.copyWith(isExporting: false, exportPath: path);
+      state = state.copyWith(isExporting: false, exportPath: () => path);
       return path;
     } catch (e) {
-      state = state.copyWith(isExporting: false, errorMessage: e.toString());
+      state = state.copyWith(isExporting: false, errorMessage: () => e.toString());
       return null;
     }
   }
 
   Future<XFile?> exportDataWithFormat(
       {ExportFormat format = ExportFormat.json}) async {
-    state = state.copyWith(isExporting: true, clearError: true);
+    state = state.copyWith(isExporting: true, errorMessage: () => null);
     try {
       final catches = await _fishCatchService.getAll();
       final xFile = await ExportService.exportToFile(
@@ -112,20 +109,20 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       state = state.copyWith(isExporting: false);
       return xFile;
     } catch (e) {
-      state = state.copyWith(isExporting: false, errorMessage: e.toString());
+      state = state.copyWith(isExporting: false, errorMessage: () => e.toString());
       return null;
     }
   }
 
   Future<int?> importData(String filePath) async {
-    state = state.copyWith(isImporting: true, clearError: true);
+    state = state.copyWith(isImporting: true, errorMessage: () => null);
     try {
       final count = await _backupService.importFromJson(filePath);
       state = state.copyWith(isImporting: false);
       await loadStats();
       return count;
     } catch (e) {
-      state = state.copyWith(isImporting: false, errorMessage: e.toString());
+      state = state.copyWith(isImporting: false, errorMessage: () => e.toString());
       return null;
     }
   }
@@ -135,7 +132,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     required String username,
     required String password,
   }) async {
-    state = state.copyWith(isUploading: true, clearError: true);
+    state = state.copyWith(isUploading: true, errorMessage: () => null);
     try {
       final url = await _backupService.uploadToWebDAV(
         serverUrl: serverUrl,
@@ -145,13 +142,13 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       state = state.copyWith(isUploading: false);
       return url;
     } catch (e) {
-      state = state.copyWith(isUploading: false, errorMessage: e.toString());
+      state = state.copyWith(isUploading: false, errorMessage: () => e.toString());
       return null;
     }
   }
 
   Future<XFile?> exportZipBackup({bool includePhotos = true}) async {
-    state = state.copyWith(isCreatingZipBackup: true, clearError: true);
+    state = state.copyWith(isCreatingZipBackup: true, errorMessage: () => null);
     try {
       final options = BackupExportOptions(
         includePhotos: includePhotos,
@@ -163,7 +160,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     } catch (e) {
       state = state.copyWith(
         isCreatingZipBackup: false,
-        errorMessage: e.toString(),
+        errorMessage: () => e.toString(),
       );
       return null;
     }
@@ -173,7 +170,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
   ///
   /// 备份完成后，用户可以在"导出和备份管理"页面查看和管理备份文件
   Future<String?> startZipBackup({bool includePhotos = true}) async {
-    state = state.copyWith(isCreatingZipBackup: true, clearError: true);
+    state = state.copyWith(isCreatingZipBackup: true, errorMessage: () => null);
     try {
       final options = BackupExportOptions(
         includePhotos: includePhotos,
@@ -186,14 +183,14 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     } catch (e) {
       state = state.copyWith(
         isCreatingZipBackup: false,
-        errorMessage: e.toString(),
+        errorMessage: () => e.toString(),
       );
       return null;
     }
   }
 
   Future<ImportResult> importZipBackup() async {
-    state = state.copyWith(isRestoringZipBackup: true, clearError: true);
+    state = state.copyWith(isRestoringZipBackup: true, errorMessage: () => null);
     try {
       final result = await _backupZipService.importFromZip();
       state = state.copyWith(isRestoringZipBackup: false);
@@ -202,25 +199,31 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     } catch (e) {
       state = state.copyWith(
         isRestoringZipBackup: false,
-        errorMessage: e.toString(),
+        errorMessage: () => e.toString(),
       );
       return ImportResult.failure(e.toString());
     }
   }
 
   void clearExportPath() {
-    state = state.copyWith(clearExportPath: true);
+    state = state.copyWith(exportPath: () => null);
   }
 
   void clearError() {
-    state = state.copyWith(clearError: true, clearErrorDetail: true);
+    state = state.copyWith(errorMessage: () => null, errorDetail: () => null);
   }
 
   void setError(String message, {String? detail}) {
     if (detail != null) {
-      state = state.copyWith(errorMessage: message, errorDetail: detail);
+      state = state.copyWith(
+        errorMessage: () => message,
+        errorDetail: () => detail,
+      );
     } else {
-      state = state.copyWith(errorMessage: message, clearErrorDetail: true);
+      state = state.copyWith(
+        errorMessage: () => message,
+        errorDetail: () => null,
+      );
     }
   }
 }

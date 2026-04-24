@@ -61,7 +61,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/fish/:id',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
-          final fishId = int.parse(state.pathParameters['id']!);
+          final fishId = int.tryParse(state.pathParameters['id'] ?? '');
+          if (fishId == null) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid fish ID')),
+            );
+          }
           return FishDetailPage(fishId: fishId);
         },
       ),
@@ -69,7 +74,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/fish/:id/edit',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
-          final fishId = int.parse(state.pathParameters['id']!);
+          final fishId = int.tryParse(state.pathParameters['id'] ?? '');
+          if (fishId == null) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid fish ID')),
+            );
+          }
           return _FishEditPageWrapper(fishId: fishId);
         },
       ),
@@ -102,8 +112,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           final end = state.uri.queryParameters['end'];
           return StatsDetailPage(
             title: title,
-            startDate: start != null ? DateTime.parse(start) : DateTime.now(),
-            endDate: end != null ? DateTime.parse(end) : DateTime.now(),
+            startDate: start != null
+                ? (DateTime.tryParse(start) ?? DateTime.now())
+                : DateTime.now(),
+            endDate: end != null
+                ? (DateTime.tryParse(end) ?? DateTime.now())
+                : DateTime.now(),
           );
         },
       ),

@@ -71,30 +71,14 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
   Future<void> upsert(String name) async {
     try {
       final db = await _database;
-      final existing = await db.query(
-        _tableName,
-        where: 'name = ?',
-        whereArgs: [name],
+      await db.rawInsert(
+        '''INSERT INTO $_tableName (name, use_count, is_deleted, created_at)
+           VALUES (?, 1, 0, ?)
+           ON CONFLICT(name) DO UPDATE SET
+             use_count = use_count + 1,
+             is_deleted = 0''',
+        [name, DateTime.now().toIso8601String()],
       );
-
-      if (existing.isNotEmpty) {
-        await db.update(
-          _tableName,
-          {
-            'use_count': (existing.first['use_count'] as int? ?? 0) + 1,
-            'is_deleted': 0,
-          },
-          where: 'name = ?',
-          whereArgs: [name],
-        );
-      } else {
-        await db.insert(_tableName, {
-          'name': name,
-          'use_count': 1,
-          'is_deleted': 0,
-          'created_at': DateTime.now().toIso8601String(),
-        });
-      }
     } catch (e) {
       throw DatabaseException('Failed to upsert species history: $e');
     }
@@ -102,35 +86,7 @@ class SqliteSpeciesHistoryRepository implements SpeciesHistoryRepository {
 
   @override
   Future<void> incrementUseCount(String name) async {
-    try {
-      final db = await _database;
-      final existing = await db.query(
-        _tableName,
-        where: 'name = ?',
-        whereArgs: [name],
-      );
-
-      if (existing.isNotEmpty) {
-        await db.update(
-          _tableName,
-          {
-            'use_count': (existing.first['use_count'] as int? ?? 0) + 1,
-            'is_deleted': 0,
-          },
-          where: 'name = ?',
-          whereArgs: [name],
-        );
-      } else {
-        await db.insert(_tableName, {
-          'name': name,
-          'use_count': 1,
-          'is_deleted': 0,
-          'created_at': DateTime.now().toIso8601String(),
-        });
-      }
-    } catch (e) {
-      throw DatabaseException('Failed to increment use count: $e');
-    }
+    await upsert(name);
   }
 
   @override

@@ -23,8 +23,8 @@ class AiRecognitionSettingsNotifier
   }
 
   Future<void> updateSettings(AiRecognitionSettings settings) async {
-    state = settings;
     await _service.saveAiRecognitionSettings(settings);
+    state = settings;
   }
 
   Future<void> updateProvider(AiRecognitionProvider provider) async {
