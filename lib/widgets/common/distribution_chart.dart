@@ -231,5 +231,6 @@ class _PieChartPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _PieChartPainter oldDelegate) =>
+      entries != oldDelegate.entries || total != oldDelegate.total;
 }

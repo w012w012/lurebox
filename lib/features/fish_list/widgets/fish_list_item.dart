@@ -144,14 +144,14 @@ class FishListItem extends ConsumerWidget {
                             color: AppColors.warning.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text('⚠️', style: TextStyle(fontSize: 10)),
-                              SizedBox(width: 2),
+                              const Text('⚠️', style: TextStyle(fontSize: 10)),
+                              const SizedBox(width: 2),
                               Text(
-                                '待识别',
-                                style: TextStyle(
+                                strings.pendingRecognition,
+                                style: const TextStyle(
                                   fontSize: 10,
                                   color: AppColors.warning,
                                   fontWeight: FontWeight.bold,
@@ -268,7 +268,7 @@ class FishListItem extends ConsumerWidget {
                               const Text('🤖', style: TextStyle(fontSize: 10)),
                               const SizedBox(width: 2),
                               Text(
-                                '识别',
+                                strings.recognize,
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Theme.of(context).colorScheme.primary,

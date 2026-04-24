@@ -148,7 +148,7 @@ class _ExportBackupManagementPageState
         final fileToDelete = File(file.path);
         await fileToDelete.delete();
         if (mounted) {
-          AppSnackBar.showSuccess(context, '删除成功');
+          AppSnackBar.showSuccess(context, strings.deleteSuccess);
           _refreshFiles();
         }
       } catch (e) {
@@ -161,38 +161,41 @@ class _ExportBackupManagementPageState
 
   /// 分享文件
   Future<void> _shareFile(FileInfo file) async {
+    final strings = ref.read(currentStringsProvider);
     try {
       final xFile = XFile(file.path);
       await Share.shareXFiles(
         [xFile],
-        subject: file.isBackup ? 'LureBox 完整备份' : 'LureBox 数据导出',
+        subject: file.isBackup ? strings.lureboxCompleteBackup : strings.lureboxDataExport,
       );
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context, '分享失败', debugError: e);
+        final strings = ref.read(currentStringsProvider);
+        AppSnackBar.showError(context, strings.shareFailed, debugError: e);
       }
     }
   }
 
   /// 从 ZIP 备份恢复数据
   Future<void> _restoreBackup(FileInfo file) async {
+    final strings = ref.read(currentStringsProvider);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('恢复备份'),
+        title: Text(strings.restoreTitle),
         content: Text(
-          '恢复备份将覆盖当前所有数据。建议在恢复前导出一份当前数据的备份。\n\n'
+          '${strings.restoreOverwriteWarning}\n\n'
           '即将恢复: ${file.name}\n\n'
-          '是否继续？',
+          '${strings.continueAction}？',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: Text(strings.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('继续'),
+            child: Text(strings.continueAction),
           ),
         ],
       ),
@@ -202,7 +205,7 @@ class _ExportBackupManagementPageState
 
     try {
       if (mounted) {
-        AppSnackBar.showInfo(context, '正在恢复备份...');
+        AppSnackBar.showInfo(context, strings.importingData);
       }
 
       final backupZipService = ref.read(backupZipServiceProvider);
@@ -211,16 +214,16 @@ class _ExportBackupManagementPageState
       if (!mounted) return;
 
       if (result.isSuccess) {
-        AppSnackBar.showSuccess(context, '恢复成功');
+        AppSnackBar.showSuccess(context, strings.restoreSuccessMsg);
       } else {
         AppSnackBar.showError(
           context,
-          '恢复失败: ${result.errorMessage ?? "未知错误"}',
+          '${strings.restoreFailedMsg}: ${result.errorMessage ?? "未知错误"}',
         );
       }
     } catch (e) {
       if (mounted) {
-        AppSnackBar.showError(context, '恢复失败', debugError: e);
+        AppSnackBar.showError(context, strings.restoreFailedMsg, debugError: e);
       }
     }
   }
@@ -232,7 +235,7 @@ class _ExportBackupManagementPageState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('导出和备份管理'),
+        title: Text(strings.exportAndBackupManagement),
         centerTitle: true,
       ),
       body: FutureBuilder<List<FileInfo>>(
@@ -323,15 +326,15 @@ class _ExportBackupManagementPageState
     if (file.isBackup) {
       icon = Icons.backup;
       iconColor = TeslaColors.electricBlue;
-      fileTypeLabel = '完整备份';
+      fileTypeLabel = strings.fullBackupTitle;
     } else if (file.fileType == FileType.csvExport) {
       icon = Icons.table_chart;
       iconColor = TeslaColors.electricBlue;
-      fileTypeLabel = 'CSV 导出';
+      fileTypeLabel = strings.csvExport;
     } else {
       icon = Icons.code;
       iconColor = TeslaColors.electricBlue;
-      fileTypeLabel = 'JSON 导出';
+      fileTypeLabel = strings.jsonExport;
     }
 
     return Card(
@@ -408,7 +411,7 @@ class _ExportBackupManagementPageState
             if (file.isBackup)
               IconButton(
                 icon: const Icon(Icons.restore),
-                tooltip: '恢复备份',
+                tooltip: strings.restoreTitle,
                 onPressed: () => _restoreBackup(file),
               ),
             // Delete button for all files

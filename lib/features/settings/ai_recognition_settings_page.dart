@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/design/theme/tesla_theme.dart';
 import '../../core/models/ai_recognition_settings.dart';
 import '../../core/providers/ai_recognition_provider.dart';
+import '../../core/providers/language_provider.dart';
 import '../../widgets/common/premium_card.dart';
 import 'widgets/ai_provider_config_dialog.dart';
 
@@ -20,18 +22,19 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final strings = ref.watch(currentStringsProvider);
     final aiSettings = ref.watch(aiRecognitionSettingsProvider);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI 配置'),
+        title: Text(strings.aiConfigTitle),
         centerTitle: true,
       ),
       body: ListView(
         children: [
           const SizedBox(height: TeslaTheme.spacingMd),
           // 当前提供商选择
-          _buildCurrentProviderSection(context, ref, aiSettings),
+          _buildCurrentProviderSection(strings, context, ref, aiSettings),
           const SizedBox(height: TeslaTheme.spacingLg),
           // 提供商列表
           Padding(
@@ -39,7 +42,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
               horizontal: TeslaTheme.spacingMd,
             ),
             child: Text(
-              'AI 提供商',
+              strings.aiProviderLabel,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -48,6 +51,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
           const SizedBox(height: TeslaTheme.spacingSm),
           ...AiRecognitionProvider.values.map(
             (provider) => _buildProviderCard(
+              strings,
               context,
               ref,
               provider,
@@ -61,6 +65,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
   }
 
   Widget _buildCurrentProviderSection(
+    AppStrings strings,
     BuildContext context,
     WidgetRef ref,
     AiRecognitionSettings aiSettings,
@@ -74,7 +79,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '当前使用的 AI 提供商',
+              strings.aiCurrentProvider,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -108,6 +113,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
   }
 
   Widget _buildProviderCard(
+    AppStrings strings,
     BuildContext context,
     WidgetRef ref,
     AiRecognitionProvider provider,
@@ -143,7 +149,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    isConfigured ? '已配置' : '未配置',
+                    isConfigured ? strings.aiConfigured : strings.aiNotConfigured,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: isConfigured
                               ? TeslaColors.electricBlue

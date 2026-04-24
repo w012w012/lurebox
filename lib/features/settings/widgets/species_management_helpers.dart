@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
 import '../../../core/design/theme/app_theme.dart';
 import '../../../core/models/fish_catch.dart';
@@ -14,12 +15,13 @@ class SpeciesManagementDialogs {
   static Future<String?> showManualIdentifyDialog(
     BuildContext context,
     FishCatch fish,
+    AppStrings strings,
   ) async {
     final controller = TextEditingController();
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('手动识别'),
+        title: Text(strings.speciesManualRecognition),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,8 +36,8 @@ class SpeciesManagementDialogs {
             const SizedBox(height: AppTheme.spacingMd),
             TextField(
               controller: controller,
-              decoration: const InputDecoration(
-                labelText: '品种名称',
+              decoration: InputDecoration(
+                labelText: strings.speciesNameLabel,
                 border: OutlineInputBorder(),
               ),
               autofocus: true,
@@ -45,11 +47,11 @@ class SpeciesManagementDialogs {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: Text(strings.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('确认'),
+            child: Text(strings.confirm),
           ),
         ],
       ),
@@ -69,19 +71,20 @@ class SpeciesManagementDialogs {
   static Future<String?> showConfirmRecognitionDialog(
     BuildContext context,
     AiRecognitionOption option,
+    AppStrings strings,
   ) async {
     final controller = TextEditingController(text: option.speciesName);
 
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('确认品种'),
+        title: Text(strings.speciesConfirm),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'AI 识别结果：${option.speciesName}',
+              '${strings.speciesAiResult}：${option.speciesName}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
@@ -95,8 +98,8 @@ class SpeciesManagementDialogs {
             const SizedBox(height: AppTheme.spacingMd),
             TextField(
               controller: controller,
-              decoration: const InputDecoration(
-                labelText: '品种名称（可修改）',
+              decoration: InputDecoration(
+                labelText: strings.speciesEditableName,
                 border: OutlineInputBorder(),
               ),
             ),
@@ -105,11 +108,11 @@ class SpeciesManagementDialogs {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: Text(strings.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('确认'),
+            child: Text(strings.confirm),
           ),
         ],
       ),
@@ -131,17 +134,18 @@ class SpeciesManagementDialogs {
   static Future<String?> showRenameDialog(
     BuildContext context,
     String oldName,
+    AppStrings strings,
   ) async {
     final controller = TextEditingController(text: oldName);
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('重命名品种'),
+        title: Text(strings.speciesRename),
         content: TextField(
           controller: controller,
-          decoration: const InputDecoration(
-            labelText: '新名称',
-            hintText: '输入新物种名称',
+          decoration: InputDecoration(
+            labelText: strings.locationNewName,
+            hintText: strings.speciesEnterNewName,
             border: OutlineInputBorder(),
           ),
           autofocus: true,
@@ -149,7 +153,7 @@ class SpeciesManagementDialogs {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
+            child: Text(strings.cancel),
           ),
           ElevatedButton(
             onPressed: () {
@@ -158,7 +162,7 @@ class SpeciesManagementDialogs {
                 Navigator.pop(context, newName);
               }
             },
-            child: const Text('确认'),
+            child: Text(strings.confirm),
           ),
         ],
       ),
@@ -175,18 +179,19 @@ class SpeciesManagementDialogs {
     BuildContext context,
     String speciesName,
     int count,
+    AppStrings strings,
   ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('确认删除'),
+        title: Text(strings.speciesConfirmDelete),
         content: Text(
           '确定要删除品种 "$speciesName" 吗？\n\n这将同时删除 $count 条渔获记录，此操作不可恢复！',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: Text(strings.cancel),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -194,7 +199,7 @@ class SpeciesManagementDialogs {
               foregroundColor: Colors.white,
             ),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('确认删除'),
+            child: Text(strings.speciesConfirmDelete),
           ),
         ],
       ),

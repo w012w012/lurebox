@@ -119,7 +119,7 @@ class _MePageState extends ConsumerState<MePage> {
             context: context,
             icon: Icons.eco,
             title: 'LureBox',
-            subtitle: 'v$_appVersion · 路亚鱼护',
+            subtitle: 'v$_appVersion · ${strings.appName}',
             onTap: () => _showAboutDialog(context, strings),
           ),
 

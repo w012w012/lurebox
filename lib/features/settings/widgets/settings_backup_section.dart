@@ -102,7 +102,7 @@ class SettingsBackupSection extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '导出 CSV',
+                          strings.csvExport,
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
@@ -110,7 +110,7 @@ class SettingsBackupSection extends ConsumerWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '导出渔获记录为 CSV 表格',
+                          strings.exportCsvDesc,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -160,7 +160,7 @@ class SettingsBackupSection extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '完整备份',
+                          strings.fullBackupTitle,
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
@@ -168,7 +168,7 @@ class SettingsBackupSection extends ConsumerWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '导出包含数据库和照片的ZIP备份',
+                          strings.fullBackupDesc,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -219,7 +219,7 @@ class SettingsBackupSection extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '恢复备份',
+                          strings.restoreTitle,
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
@@ -227,7 +227,7 @@ class SettingsBackupSection extends ConsumerWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '从ZIP备份文件恢复数据',
+                          strings.restoreBackupDesc,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -274,7 +274,7 @@ class SettingsBackupSection extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '导出和备份管理',
+                          strings.exportAndBackupManagement,
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
@@ -282,7 +282,7 @@ class SettingsBackupSection extends ConsumerWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          '查看和管理导出备份文件',
+                          strings.exportAndBackupManagementDesc,
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],
@@ -299,6 +299,7 @@ class SettingsBackupSection extends ConsumerWidget {
   }
 
   Future<void> _handleCsvExport(BuildContext context, WidgetRef ref) async {
+    final strings = ref.read(currentStringsProvider);
     final viewModel = ref.read(settingsViewModelProvider.notifier);
     try {
       final xFile =
@@ -311,7 +312,7 @@ class SettingsBackupSection extends ConsumerWidget {
       }
     } catch (e) {
       if (context.mounted) {
-        AppSnackBar.showError(context, '导出失败', debugError: e);
+        AppSnackBar.showError(context, strings.exportFailedMsg, debugError: e);
       }
     }
   }
@@ -330,9 +331,9 @@ class SettingsBackupSection extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('完整备份'),
-        content: const Text(
-          '将创建包含数据库和所有照片的完整备份。\n\n是否继续？',
+        title: Text(strings.fullBackupTitle),
+        content: Text(
+          strings.fullBackupCreateDesc,
         ),
         actions: [
           TextButton(
@@ -342,9 +343,9 @@ class SettingsBackupSection extends ConsumerWidget {
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
-              _handleFullBackup(context, ref, includePhotos: true);
+              _handleFullBackup(context, ref, strings, includePhotos: true);
             },
-            child: const Text('开始备份'),
+            child: Text(strings.startBackup),
           ),
         ],
       ),
@@ -354,7 +355,8 @@ class SettingsBackupSection extends ConsumerWidget {
   /// 处理完整备份（保存到后台，不立即分享）
   Future<void> _handleFullBackup(
     BuildContext context,
-    WidgetRef ref, {
+    WidgetRef ref,
+    AppStrings strings, {
     required bool includePhotos,
   }) async {
     final viewModel = ref.read(settingsViewModelProvider.notifier);
@@ -363,14 +365,14 @@ class SettingsBackupSection extends ConsumerWidget {
     showDialog(
       context: context,
       barrierDismissible: false, // 防止用户关闭对话框
-      builder: (context) => const AlertDialog(
-        title: Text('正在创建备份'),
+      builder: (context) => AlertDialog(
+        title: Text(strings.creatingBackup),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: TeslaTheme.spacingMd),
-            Text('备份正在后台运行，请稍候...'),
+            const CircularProgressIndicator(),
+            const SizedBox(height: TeslaTheme.spacingMd),
+            Text(strings.backupRunning),
           ],
         ),
       ),
@@ -387,15 +389,14 @@ class SettingsBackupSection extends ConsumerWidget {
 
       if (savedPath != null) {
         // 显示备份完成提示
-        AppSnackBar.showSuccess(
-            context, '备份已完成，请到"导出和备份管理"中查看');
+        AppSnackBar.showSuccess(context, strings.backupComplete);
       } else {
-        AppSnackBar.showError(context, '备份失败');
+        AppSnackBar.showError(context, strings.backupFailed);
       }
     } catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭对话框
-        AppSnackBar.showError(context, '备份失败', debugError: e);
+        AppSnackBar.showError(context, strings.backupFailed, debugError: e);
       }
     }
   }
@@ -412,18 +413,18 @@ class SettingsBackupSection extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('恢复备份'),
-        content: const Text(
-          '恢复备份将覆盖当前所有数据。建议在恢复前导出一份当前数据的备份。\n\n是否继续？',
+        title: Text(strings.restoreTitle),
+        content: Text(
+          strings.restoreOverwriteWarning,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: Text(strings.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('继续'),
+            child: Text(strings.continueAction),
           ),
         ],
       ),
@@ -438,9 +439,9 @@ class SettingsBackupSection extends ConsumerWidget {
 
       if (result.isSuccess) {
         final metadata = result.metadata;
-        String message = '恢复成功';
+        String message = strings.restoreSuccessMsg;
         if (metadata != null) {
-          message = '恢复成功\n'
+          message = '${strings.restoreSuccessMsg}\n'
               '渔获: ${metadata.fishCatchesCount} 条\n'
               '装备: ${metadata.equipmentCount} 件\n'
               '照片: ${metadata.photoCount} 张';
@@ -449,12 +450,12 @@ class SettingsBackupSection extends ConsumerWidget {
       } else {
         AppSnackBar.showError(
           context,
-          '恢复失败: ${result.errorMessage ?? "未知错误"}',
+          '${strings.restoreFailedMsg}: ${result.errorMessage ?? "未知错误"}',
         );
       }
     } catch (e) {
       if (context.mounted) {
-        AppSnackBar.showError(context, '恢复失败', debugError: e);
+        AppSnackBar.showError(context, strings.restoreFailedMsg, debugError: e);
       }
     }
   }

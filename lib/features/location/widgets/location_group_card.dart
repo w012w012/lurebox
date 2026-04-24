@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
 import '../../../core/design/theme/app_theme.dart';
 import '../../../core/design/theme/animation_constants.dart';
@@ -8,12 +9,14 @@ import '../../../core/providers/location_view_model.dart';
 class LocationGroupCard extends StatefulWidget {
   final LocationGroup group;
   final Map<String, int> locationFishCounts;
+  final AppStrings? strings;
   final VoidCallback? onAutoMerge;
 
   const LocationGroupCard({
     super.key,
     required this.group,
     required this.locationFishCounts,
+    this.strings,
     this.onAutoMerge,
   });
 
@@ -82,7 +85,7 @@ class _LocationGroupCardState extends State<LocationGroupCard> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '相似钓点：${widget.group.representative}',
+                            '${widget.strings?.similarLocationsLabel ?? '相似钓点：'}${widget.group.representative}',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -91,7 +94,8 @@ class _LocationGroupCardState extends State<LocationGroupCard> {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            '包含 ${widget.group.locations.length} 个相似钓点',
+                            (widget.strings?.containsNSimilarLocations ?? '包含 %d 个相似钓点')
+                                .replaceAll('%d', '${widget.group.locations.length}'),
                             style: TextStyle(
                               fontSize: 12,
                               color: textSecondary,
@@ -110,7 +114,7 @@ class _LocationGroupCardState extends State<LocationGroupCard> {
                             vertical: AppTheme.spacingSm,
                           ),
                         ),
-                        child: const Text('合并'),
+                        child: Text(widget.strings?.mergeButton ?? '合并'),
                       ),
                     AnimatedRotation(
                       turns: _isExpanded ? 0.5 : 0,

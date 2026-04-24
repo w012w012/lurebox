@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/strings.dart';
 import '../../../core/design/theme/app_colors.dart';
 import '../../../core/design/theme/tesla_theme.dart';
 import '../../../core/models/fish_catch.dart';
@@ -59,6 +60,7 @@ class PendingQueueWidget extends StatelessWidget {
   final Function(FishCatch) onManualIdentify;
   final Function(FishCatch, AiRecognitionOption) onConfirmOption;
   final VoidCallback onBatchRecognize;
+  final AppStrings strings;
 
   const PendingQueueWidget({
     super.key,
@@ -73,6 +75,7 @@ class PendingQueueWidget extends StatelessWidget {
     required this.onManualIdentify,
     required this.onConfirmOption,
     required this.onBatchRecognize,
+    required this.strings,
   });
 
   @override
@@ -87,7 +90,7 @@ class PendingQueueWidget extends StatelessWidget {
             Icon(Icons.list_alt, size: 20, color: accentColor),
             const SizedBox(width: TeslaTheme.spacingSm),
             Text(
-              '待识别列表',
+              strings.pendingRecognitionList,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -127,7 +130,7 @@ class PendingQueueWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: TeslaTheme.spacingSm),
                   Text(
-                    '暂无待识别鱼获',
+                    strings.pendingNoFish,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -219,7 +222,7 @@ class PendingQueueWidget extends StatelessWidget {
                   ),
                 ),
                 PremiumButton(
-                  text: 'AI识别',
+                  text: strings.pendingAiRecognition,
                   onPressed:
                       recState.isRecognizing ? null : () => onRecognize(fish),
                   variant: PremiumButtonVariant.primary,
@@ -230,7 +233,7 @@ class PendingQueueWidget extends StatelessWidget {
                 ),
                 const SizedBox(width: TeslaTheme.spacingSm),
                 PremiumButton(
-                  text: '手动',
+                  text: strings.pendingManual,
                   onPressed: () => onManualIdentify(fish),
                   variant: PremiumButtonVariant.outline,
                   padding: const EdgeInsets.symmetric(
@@ -248,7 +251,7 @@ class PendingQueueWidget extends StatelessWidget {
               ),
               const SizedBox(height: TeslaTheme.spacingMicro),
               Text(
-                '正在识别中...',
+                strings.pendingRecognizing,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
@@ -376,7 +379,7 @@ class PendingQueueWidget extends StatelessWidget {
     }
 
     return PremiumButton(
-      text: '批量AI识别',
+      text: strings.pendingBatchRecognition,
       icon: Icons.auto_awesome,
       onPressed: pendingCatches.isEmpty ? null : onBatchRecognize,
       variant: PremiumButtonVariant.primary,

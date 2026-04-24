@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/constants/strings.dart';
+import '../../core/providers/language_provider.dart';
 import '../../core/providers/onboarding_provider.dart';
 import '../../core/design/theme/app_colors.dart';
 import 'package:go_router/go_router.dart';
@@ -15,12 +17,12 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  List<Widget> get _pages => [
-        _WelcomePage(),
-        _FeaturesPage(),
-        _PermissionsPage(),
-        _SettingsPage(),
-        _CompletePage(),
+  List<Widget> _buildPages(AppStrings strings) => [
+        _WelcomePage(strings: strings),
+        _FeaturesPage(strings: strings),
+        _PermissionsPage(strings: strings),
+        _SettingsPage(strings: strings),
+        _CompletePage(strings: strings),
       ];
 
   @override
@@ -30,7 +32,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   }
 
   void _nextPage() {
-    if (_currentPage < _pages.length - 1) {
+    if (_currentPage < 4) {
       _pageController.nextPage(
           duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     } else {
@@ -49,25 +51,28 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = ref.watch(currentStringsProvider);
+    final pages = _buildPages(strings);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             Align(
               alignment: Alignment.topRight,
-              child: TextButton(onPressed: _skip, child: const Text('跳过')),
+              child: TextButton(onPressed: _skip, child: Text(strings.onboardingSkip)),
             ),
             Expanded(
               child: PageView(
                 controller: _pageController,
                 onPageChanged: (index) => setState(() => _currentPage = index),
-                children: _pages,
+                children: pages,
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
-                _pages.length,
+                pages.length,
                 (index) => Container(
                   margin: const EdgeInsets.symmetric(horizontal: 4),
                   width: _currentPage == index ? 24 : 8,
@@ -89,7 +94,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                 child: ElevatedButton(
                   onPressed: _nextPage,
                   child:
-                      Text(_currentPage == _pages.length - 1 ? '开始使用' : '下一步'),
+                      Text(_currentPage == pages.length - 1 ? strings.onboardingGetStarted : strings.onboardingNext),
                 ),
               ),
             ),
@@ -101,6 +106,9 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 }
 
 class _WelcomePage extends StatelessWidget {
+  final AppStrings strings;
+  const _WelcomePage({required this.strings});
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -110,9 +118,9 @@ class _WelcomePage extends StatelessWidget {
           const Icon(Icons.water_drop,
               size: 100, color: TeslaColors.electricBlue),
           const SizedBox(height: 24),
-          Text('欢迎使用路亚鱼护', style: Theme.of(context).textTheme.headlineMedium),
+          Text(strings.onboardingWelcomeTitle, style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
-          Text('记录每一次出钓的渔获', style: Theme.of(context).textTheme.bodyLarge),
+          Text(strings.onboardingWelcomeDesc, style: Theme.of(context).textTheme.bodyLarge),
         ],
       ),
     );
@@ -120,28 +128,31 @@ class _WelcomePage extends StatelessWidget {
 }
 
 class _FeaturesPage extends StatelessWidget {
+  final AppStrings strings;
+  const _FeaturesPage({required this.strings});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          Text('功能介绍', style: Theme.of(context).textTheme.headlineSmall),
+          Text(strings.onboardingFeaturesTitle, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 24),
           Expanded(
             child: GridView.count(
               crossAxisCount: 2,
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
-              children: const [
+              children: [
                 _FeatureCard(
-                    icon: Icons.camera_alt, title: '拍照记录', desc: '快速拍摄鱼获照片'),
+                    icon: Icons.camera_alt, title: strings.onboardingFeatureCameraTitle, desc: strings.onboardingFeatureCameraDesc),
                 _FeatureCard(
-                    icon: Icons.inventory_2, title: '装备管理', desc: '管理鱼竿、鱼轮、鱼饵'),
+                    icon: Icons.inventory_2, title: strings.onboardingFeatureEquipmentTitle, desc: strings.onboardingFeatureEquipmentDesc),
                 _FeatureCard(
-                    icon: Icons.bar_chart, title: '统计分析', desc: '查看捕获数据趋势'),
+                    icon: Icons.bar_chart, title: strings.onboardingFeatureStatsTitle, desc: strings.onboardingFeatureStatsDesc),
                 _FeatureCard(
-                    icon: Icons.backup, title: '数据备份', desc: '云端备份永不丢失'),
+                    icon: Icons.backup, title: strings.onboardingFeatureBackupTitle, desc: strings.onboardingFeatureBackupDesc),
               ],
             ),
           ),
@@ -180,37 +191,40 @@ class _FeatureCard extends StatelessWidget {
 }
 
 class _PermissionsPage extends StatelessWidget {
+  final AppStrings strings;
+  const _PermissionsPage({required this.strings});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          Text('权限说明', style: Theme.of(context).textTheme.headlineSmall),
+          Text(strings.onboardingPermissionsTitle, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 32),
-          const Expanded(
+          Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   _PermissionCard(
                     icon: Icons.camera_alt,
-                    title: '相机权限',
-                    desc: '用于拍摄鱼获照片',
-                    example: '示例: 拍照记录渔获精彩瞬间',
+                    title: strings.onboardingPermissionCameraTitle,
+                    desc: strings.onboardingPermissionCameraDesc,
+                    example: strings.onboardingPermissionCameraExample,
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   _PermissionCard(
                     icon: Icons.location_on,
-                    title: '位置权限',
-                    desc: '记录钓点位置信息',
-                    example: '示例: 自动记录钓点坐标',
+                    title: strings.onboardingPermissionLocationTitle,
+                    desc: strings.onboardingPermissionLocationDesc,
+                    example: strings.onboardingPermissionLocationExample,
                   ),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 16),
-          const Text('我们不会收集或上传您的隐私数据'),
+          Text(strings.onboardingPrivacyNote),
         ],
       ),
     );
@@ -259,17 +273,20 @@ class _PermissionCard extends StatelessWidget {
 }
 
 class _SettingsPage extends StatelessWidget {
+  final AppStrings strings;
+  const _SettingsPage({required this.strings});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          Text('个性化设置', style: Theme.of(context).textTheme.headlineSmall),
+          Text(strings.onboardingSettingsTitle, style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 16),
-          Text('可以在设置中随时调整', style: Theme.of(context).textTheme.bodyMedium),
+          Text(strings.onboardingSettingsDesc, style: Theme.of(context).textTheme.bodyMedium),
           const Spacer(),
-          Text('单位制、主题、语言', style: Theme.of(context).textTheme.titleMedium),
+          Text(strings.onboardingSettingsItems, style: Theme.of(context).textTheme.titleMedium),
           const Spacer(),
         ],
       ),
@@ -278,18 +295,21 @@ class _SettingsPage extends StatelessWidget {
 }
 
 class _CompletePage extends StatelessWidget {
+  final AppStrings strings;
+  const _CompletePage({required this.strings});
+
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.check_circle,
+          const Icon(Icons.check_circle,
               size: 100, color: TeslaColors.electricBlue),
           const SizedBox(height: 24),
-          Text('准备就绪!', style: Theme.of(context).textTheme.headlineMedium),
+          Text(strings.onboardingReadyTitle, style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
-          Text('开始记录您的第一个渔获吧', style: Theme.of(context).textTheme.bodyLarge),
+          Text(strings.onboardingReadyDesc, style: Theme.of(context).textTheme.bodyLarge),
         ],
       ),
     );

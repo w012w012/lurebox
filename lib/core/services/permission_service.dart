@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart' as perm_handler;
 import 'package:geolocator/geolocator.dart';
 
+import '../constants/strings.dart';
+
 /// 权限请求结果
 class PermissionResult {
   final bool granted;
@@ -108,45 +110,54 @@ class PermissionService {
   );
 
   /// 请求相机权限（带教育引导）
-  Future<PermissionResult> requestCameraPermission(BuildContext context) async {
-    return _requestPermissionWithEducation(context, cameraInfo);
+  Future<PermissionResult> requestCameraPermission(
+    BuildContext context, {
+    AppStrings? strings,
+  }) async {
+    return _requestPermissionWithEducation(context, cameraInfo, strings: strings);
   }
 
   /// 请求位置权限（带教育引导）
   Future<PermissionResult> requestLocationPermission(
-      BuildContext context) async {
+    BuildContext context, {
+    AppStrings? strings,
+  }) async {
     // 先检查位置服务是否开启
     final serviceEnabled = await _platform.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      return const PermissionResult(
+      return PermissionResult(
         granted: false,
         permanentlyDenied: false,
-        errorMessage: '请开启设备定位服务',
+        errorMessage: strings?.errorDeviceLocationOff ?? '请开启设备定位服务',
       );
     }
 
     // 检查 context 是否仍然有效（防止在异步操作后使用已卸载的 context）
     if (!context.mounted) {
-      return const PermissionResult(
+      return PermissionResult(
         granted: false,
         permanentlyDenied: false,
-        errorMessage: '上下文已失效',
+        errorMessage: strings?.errorContextInvalid ?? '上下文已失效',
       );
     }
 
-    return _requestPermissionWithEducation(context, locationInfo);
+    return _requestPermissionWithEducation(context, locationInfo, strings: strings);
   }
 
   /// 请求照片库权限（带教育引导）
-  Future<PermissionResult> requestPhotosPermission(BuildContext context) async {
-    return _requestPermissionWithEducation(context, photosInfo);
+  Future<PermissionResult> requestPhotosPermission(
+    BuildContext context, {
+    AppStrings? strings,
+  }) async {
+    return _requestPermissionWithEducation(context, photosInfo, strings: strings);
   }
 
   /// 通用权限请求流程（带教育引导）
   Future<PermissionResult> _requestPermissionWithEducation(
     BuildContext context,
-    PermissionInfo info,
-  ) async {
+    PermissionInfo info, {
+    AppStrings? strings,
+  }) async {
     final status = await _platform.status(info.permission);
 
     // 已授权
@@ -157,18 +168,18 @@ class PermissionService {
     // 永久拒绝 - 引导到设置
     if (status.isPermanentlyDenied) {
       if (context.mounted) {
-        await _showSettingsDialog(context, info);
+        await _showSettingsDialog(context, info, strings: strings);
       }
       return PermissionResult(
         granted: false,
         permanentlyDenied: true,
-        errorMessage: '${info.title}已被永久拒绝，请在系统设置中开启',
+        errorMessage: strings?.errorPermanentlyDenied ?? '${info.title}已被永久拒绝，请在系统设置中开启',
       );
     }
 
     // 首次或已拒绝 - 显示教育引导后请求
     if (context.mounted) {
-      final shouldRequest = await _showEducationDialog(context, info);
+      final shouldRequest = await _showEducationDialog(context, info, strings: strings);
       if (shouldRequest == true) {
         final newStatus = await _platform.request(info.permission);
 
@@ -177,11 +188,11 @@ class PermissionService {
         }
 
         if (newStatus.isPermanentlyDenied && context.mounted) {
-          await _showSettingsDialog(context, info);
+          await _showSettingsDialog(context, info, strings: strings);
           return PermissionResult(
             granted: false,
             permanentlyDenied: true,
-            errorMessage: '${info.title}被拒绝，需要在系统设置中开启',
+            errorMessage: strings?.errorPermanentlyDenied ?? '${info.title}被拒绝，需要在系统设置中开启',
           );
         }
       }
@@ -190,18 +201,18 @@ class PermissionService {
     return PermissionResult(
       granted: false,
       permanentlyDenied: false,
-      errorMessage: '${info.title}被拒绝',
+      errorMessage: strings?.errorDenied ?? '${info.title}被拒绝',
     );
   }
 
   /// 显示权限教育对话框
   Future<bool?> _showEducationDialog(
-      BuildContext context, PermissionInfo info) {
+      BuildContext context, PermissionInfo info, {AppStrings? strings}) {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         icon: Icon(info.icon, size: 48, color: Theme.of(context).primaryColor),
-        title: Text('需要${info.title}'),
+        title: Text('${strings?.permissionRequiredTitle ?? '需要'}${info.title}'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,7 +247,7 @@ class PermissionService {
             ),
             const SizedBox(height: 8),
             Text(
-              '我们不会收集或上传您的数据，所有信息都保存在本地设备上。',
+              strings?.privacyNote ?? '我们不会收集或上传您的数据，所有信息都保存在本地设备上。',
               style: TextStyle(
                 fontSize: 12,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -247,11 +258,11 @@ class PermissionService {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('暂不授权'),
+            child: Text(strings?.permissionGrantLater ?? '暂不授权'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('授权'),
+            child: Text(strings?.permissionGrant ?? '授权'),
           ),
         ],
       ),
@@ -259,25 +270,25 @@ class PermissionService {
   }
 
   /// 显示引导到设置对话框
-  Future<void> _showSettingsDialog(BuildContext context, PermissionInfo info) {
+  Future<void> _showSettingsDialog(BuildContext context, PermissionInfo info, {AppStrings? strings}) {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('需要${info.title}'),
+        title: Text('${strings?.permissionRequiredTitle ?? '需要'}${info.title}'),
         content: Text(
           '您之前拒绝了${info.title}。\n\n请在系统设置中开启${info.title}，以使用相关功能。',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
+            child: Text(strings?.cancel ?? '取消'),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
               _platform.openAppSettings();
             },
-            child: const Text('打开设置'),
+            child: Text(strings?.permissionOpenSettings ?? '打开设置'),
           ),
         ],
       ),
