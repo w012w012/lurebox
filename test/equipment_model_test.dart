@@ -170,10 +170,11 @@ void main() {
         updatedAt: now,
       );
 
-      final copied = original.copyWith(
-        brand: () => 'Shimano',
-        model: () => 'Twinpower',
-      );
+      final copied = Equipment.fromMap({
+        ...original.toMap(),
+        'brand': 'Shimano',
+        'model': 'Twinpower',
+      });
 
       expect(copied.id, 1);
       expect(copied.type, EquipmentType.rod);
@@ -193,7 +194,7 @@ void main() {
         updatedAt: now,
       );
 
-      final copied = original.copyWith();
+      final copied = Equipment.fromMap({...original.toMap()});
 
       expect(copied.isDefault, true);
       expect(copied.isDeleted, true);
@@ -243,128 +244,6 @@ void main() {
       );
 
       expect(equipment1.hashCode, equipment2.hashCode);
-    });
-  });
-
-  group('Equipment List Extensions', () {
-    final now = DateTime(2024, 1, 1);
-
-    List<Equipment> createTestList() {
-      return [
-        Equipment(
-          id: 1,
-          type: EquipmentType.rod,
-          brand: 'Rod 1',
-          isDeleted: false,
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Equipment(
-          id: 2,
-          type: EquipmentType.rod,
-          brand: 'Rod 2',
-          isDeleted: true,
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Equipment(
-          id: 3,
-          type: EquipmentType.reel,
-          brand: 'Reel 1',
-          isDeleted: false,
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Equipment(
-          id: 4,
-          type: EquipmentType.reel,
-          brand: 'Reel 2',
-          isDeleted: false,
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Equipment(
-          id: 5,
-          type: EquipmentType.lure,
-          brand: 'Lure 1',
-          isDeleted: false,
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Equipment(
-          id: 6,
-          type: EquipmentType.lure,
-          brand: 'Lure 2',
-          isDeleted: false,
-          createdAt: now,
-          updatedAt: now,
-        ),
-      ];
-    }
-
-    test('filterByType returns only matching type and non-deleted', () {
-      final list = createTestList();
-
-      final result = list.filterByType(EquipmentType.rod);
-
-      expect(result.length, 1);
-      expect(result.first.id, 1);
-    });
-
-    test('rods returns only rods that are not deleted', () {
-      final list = createTestList();
-
-      expect(list.rods.length, 1);
-      expect(list.rods.first.id, 1);
-    });
-
-    test('reels returns only reels that are not deleted', () {
-      final list = createTestList();
-
-      expect(list.reels.length, 2);
-      expect(list.reels.map((e) => e.id), containsAll([3, 4]));
-    });
-
-    test('lures returns only lures that are not deleted', () {
-      final list = createTestList();
-
-      expect(list.lures.length, 2);
-      expect(list.lures.map((e) => e.id), containsAll([5, 6]));
-    });
-
-    test('active returns only non-deleted items', () {
-      final list = createTestList();
-
-      expect(list.active.length, 5);
-    });
-
-    test('defaults returns only default items', () {
-      final list = [
-        Equipment(
-          id: 1,
-          type: EquipmentType.rod,
-          isDefault: true,
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Equipment(
-          id: 2,
-          type: EquipmentType.rod,
-          isDefault: false,
-          createdAt: now,
-          updatedAt: now,
-        ),
-        Equipment(
-          id: 3,
-          type: EquipmentType.reel,
-          isDefault: true,
-          createdAt: now,
-          updatedAt: now,
-        ),
-      ];
-
-      expect(list.defaults.length, 2);
-      expect(list.defaults.map((e) => e.id), containsAll([1, 3]));
     });
   });
 }

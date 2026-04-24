@@ -197,6 +197,7 @@ class Equipment {
       'lure_weight': lureWeight,
       'lure_weight_unit': lureWeightUnit,
       'lure_size': lureSize,
+      'lure_size_unit': lureSizeUnit,
       'lure_color': lureColor,
       'lure_quantity': lureQuantity,
       'lure_quantity_unit': lureQuantityUnit,
@@ -216,8 +217,6 @@ class Equipment {
       'updated_at': updatedAt.toIso8601String(),
     };
 
-    map['lure_size_unit'] = lureSizeUnit;
-
     return map;
   }
 
@@ -226,108 +225,6 @@ class Equipment {
     if (brand != null && brand!.isNotEmpty) parts.add(brand!);
     if (model != null && model!.isNotEmpty) parts.add(model!);
     return parts.isEmpty ? type.label : parts.join(' ');
-  }
-
-  String get rodCategoryName {
-    if (type != EquipmentType.rod || category == null) return '';
-    return RodCategory.getName(category!);
-  }
-
-  String get reelCategoryName {
-    if (type != EquipmentType.reel || category == null) return '';
-    return ReelCategory.getName(category!);
-  }
-
-  Equipment copyWith({
-    int? id,
-    EquipmentType? type,
-    String? Function()? brand,
-    String? Function()? model,
-    String? Function()? length,
-    String? Function()? sections,
-    String? Function()? jointType,
-    String? Function()? material,
-    String? Function()? hardness,
-    String? Function()? weightRange,
-    int? Function()? reelBearings,
-    String? Function()? reelRatio,
-    String? Function()? reelCapacity,
-    String? Function()? reelBrakeType,
-    String? Function()? reelWeight,
-    String Function()? reelWeightUnit,
-    String? Function()? lureType,
-    String? Function()? lureWeight,
-    String? Function()? lureSize,
-    String Function()? lureSizeUnit,
-    String? Function()? lureColor,
-    int? Function()? lureQuantity,
-    String? Function()? lureQuantityUnit,
-    double? Function()? price,
-    DateTime? Function()? purchaseDate,
-    bool? isDefault,
-    bool? isDeleted,
-    String? Function()? category,
-    String? Function()? rodAction,
-    String? Function()? reelLine,
-    DateTime? Function()? reelLineDate,
-    String? Function()? reelLineNumber,
-    String? Function()? reelLineLength,
-    String Function()? lengthUnit,
-    String Function()? lureWeightUnit,
-    String Function()? lineLengthUnit,
-    String Function()? lineWeightUnit,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return Equipment(
-      id: id ?? this.id,
-      type: type ?? this.type,
-      brand: brand != null ? brand() : this.brand,
-      model: model != null ? model() : this.model,
-      length: length != null ? length() : this.length,
-      sections: sections != null ? sections() : this.sections,
-      jointType: jointType != null ? jointType() : this.jointType,
-      material: material != null ? material() : this.material,
-      hardness: hardness != null ? hardness() : this.hardness,
-      weightRange: weightRange != null ? weightRange() : this.weightRange,
-      reelBearings: reelBearings != null ? reelBearings() : this.reelBearings,
-      reelRatio: reelRatio != null ? reelRatio() : this.reelRatio,
-      reelCapacity: reelCapacity != null ? reelCapacity() : this.reelCapacity,
-      reelBrakeType:
-          reelBrakeType != null ? reelBrakeType() : this.reelBrakeType,
-      reelWeight: reelWeight != null ? reelWeight() : this.reelWeight,
-      reelWeightUnit:
-          reelWeightUnit != null ? reelWeightUnit() : this.reelWeightUnit,
-      lureType: lureType != null ? lureType() : this.lureType,
-      lureWeight: lureWeight != null ? lureWeight() : this.lureWeight,
-      lureSize: lureSize != null ? lureSize() : this.lureSize,
-      lureSizeUnit: lureSizeUnit != null ? lureSizeUnit() : this.lureSizeUnit,
-      lureColor: lureColor != null ? lureColor() : this.lureColor,
-      lureQuantity: lureQuantity != null ? lureQuantity() : this.lureQuantity,
-      lureQuantityUnit:
-          lureQuantityUnit != null ? lureQuantityUnit() : this.lureQuantityUnit,
-      price: price != null ? price() : this.price,
-      purchaseDate: purchaseDate != null ? purchaseDate() : this.purchaseDate,
-      isDefault: isDefault ?? this.isDefault,
-      isDeleted: isDeleted ?? this.isDeleted,
-      category: category != null ? category() : this.category,
-      rodAction: rodAction != null ? rodAction() : this.rodAction,
-      reelLine: reelLine != null ? reelLine() : this.reelLine,
-      reelLineDate: reelLineDate != null ? reelLineDate() : this.reelLineDate,
-      reelLineNumber:
-          reelLineNumber != null ? reelLineNumber() : this.reelLineNumber,
-      reelLineLength:
-          reelLineLength != null ? reelLineLength() : this.reelLineLength,
-      lengthUnit: lengthUnit != null ? lengthUnit() : this.lengthUnit,
-      lureWeightUnit:
-          lureWeightUnit != null ? lureWeightUnit() : this.lureWeightUnit,
-      lineLengthUnit:
-          lineLengthUnit != null ? lineLengthUnit() : this.lineLengthUnit,
-      lineWeightUnit:
-          lineWeightUnit != null ? lineWeightUnit() : this.lineWeightUnit,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
   }
 
   @override
@@ -344,15 +241,131 @@ class Equipment {
   }
 }
 
-extension EquipmentListExtension on List<Equipment> {
-  List<Equipment> filterByType(EquipmentType type) {
-    return where((e) => e.type == type && !e.isDeleted).toList();
-  }
+/// Type-safe accessor for rod-specific parameters.
+/// Returns null if the equipment type is not rod.
+class RodParams {
+  final String? length;
+  final String lengthUnit;
+  final String? sections;
+  final String? jointType;
+  final String? material;
+  final String? hardness;
+  final String? rodAction;
+  final String? weightRange;
 
-  List<Equipment> get rods => filterByType(EquipmentType.rod);
-  List<Equipment> get reels => filterByType(EquipmentType.reel);
-  List<Equipment> get lures => filterByType(EquipmentType.lure);
+  const RodParams({
+    this.length,
+    this.lengthUnit = 'm',
+    this.sections,
+    this.jointType,
+    this.material,
+    this.hardness,
+    this.rodAction,
+    this.weightRange,
+  });
+}
 
-  List<Equipment> get active => where((e) => !e.isDeleted).toList();
-  List<Equipment> get defaults => where((e) => e.isDefault).toList();
+/// Type-safe accessor for reel-specific parameters.
+/// Returns null if the equipment type is not reel.
+class ReelParams {
+  final int? bearings;
+  final String? ratio;
+  final String? capacity;
+  final String? brakeType;
+  final String? weight;
+  final String weightUnit;
+  final String? line;
+  final DateTime? lineDate;
+  final String? lineNumber;
+  final String? lineLength;
+  final String lineLengthUnit;
+  final String lineWeightUnit;
+
+  const ReelParams({
+    this.bearings,
+    this.ratio,
+    this.capacity,
+    this.brakeType,
+    this.weight,
+    this.weightUnit = 'g',
+    this.line,
+    this.lineDate,
+    this.lineNumber,
+    this.lineLength,
+    this.lineLengthUnit = 'm',
+    this.lineWeightUnit = 'kg',
+  });
+}
+
+/// Type-safe accessor for lure-specific parameters.
+/// Returns null if the equipment type is not lure.
+class LureParams {
+  final String? type;
+  final String? weight;
+  final String weightUnit;
+  final String? size;
+  final String sizeUnit;
+  final String? color;
+  final int? quantity;
+  final String? quantityUnit;
+
+  const LureParams({
+    this.type,
+    this.weight,
+    this.weightUnit = 'g',
+    this.size,
+    this.sizeUnit = 'cm',
+    this.color,
+    this.quantity,
+    this.quantityUnit,
+  });
+}
+
+/// Type-safe parameter accessors on Equipment.
+extension EquipmentParamsX on Equipment {
+  /// Returns rod-specific parameters, or null if not a rod.
+  RodParams? get rodParams => type == EquipmentType.rod
+      ? RodParams(
+          length: length,
+          lengthUnit: lengthUnit,
+          sections: sections,
+          jointType: jointType,
+          material: material,
+          hardness: hardness,
+          rodAction: rodAction,
+          weightRange: weightRange,
+        )
+      : null;
+
+  /// Returns reel-specific parameters, or null if not a reel.
+  ReelParams? get reelParams => type == EquipmentType.reel
+      ? ReelParams(
+          bearings: reelBearings,
+          ratio: reelRatio,
+          capacity: reelCapacity,
+          brakeType: reelBrakeType,
+          weight: reelWeight,
+          weightUnit: reelWeightUnit,
+          line: reelLine,
+          lineDate: reelLineDate,
+          lineNumber: reelLineNumber,
+          lineLength: reelLineLength,
+          lineLengthUnit: lineLengthUnit,
+          lineWeightUnit: lineWeightUnit,
+        )
+      : null;
+
+  /// Returns lure-specific parameters, or null if not a lure.
+  LureParams? get lureParams => type == EquipmentType.lure
+      ? LureParams(
+          type: lureType,
+          weight: lureWeight,
+          weightUnit: lureWeightUnit,
+          size: lureSize,
+          sizeUnit: lureSizeUnit,
+          color: lureColor,
+          quantity: lureQuantity,
+          quantityUnit: lureQuantityUnit,
+        )
+      : null;
 }
