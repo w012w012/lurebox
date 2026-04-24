@@ -333,7 +333,7 @@ class EnhancedBackupService {
         for (final fish in fishCatches) {
           try {
             final map = Map<String, dynamic>.from(fish);
-            final catchTime = map['catch_time'] as int?;
+            final catchTime = map['catch_time'] as String?;
             final species = map['species'] as String?;
 
             // 检查是否已存在相同时间和物种的记录

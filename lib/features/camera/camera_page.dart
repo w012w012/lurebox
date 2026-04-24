@@ -105,8 +105,12 @@ class _CameraPageState extends ConsumerState<CameraPage> {
   @override
   void dispose() {
     // 释放相机资源
-    final vm = ref.read(cameraViewModelProvider.notifier);
-    vm.disposeCamera();
+    try {
+      final vm = ref.read(cameraViewModelProvider.notifier);
+      vm.disposeCamera();
+    } catch (_) {
+      // ViewModel may already be disposed
+    }
 
     _lengthController.removeListener(_onLengthChanged);
     _speciesController.dispose();

@@ -1100,7 +1100,7 @@ void main() {
           {
             'id': 1,
             'species': 'Bass',
-            'catch_time': 1234567890000,
+            'catch_time': '2024-01-01T10:00:00.000',
             'length': 30.0,
             'fate': 0,
             'created_at': '2024-01-01T00:00:00.000',
@@ -1109,7 +1109,7 @@ void main() {
           {
             'id': 2,
             'species': 'Trout',
-            'catch_time': 1234567891000,
+            'catch_time': '2024-01-01T11:00:00.000',
             'length': 25.0,
             'fate': 1,
             'created_at': '2024-01-01T00:00:00.000',
@@ -1145,7 +1145,7 @@ void main() {
       final now = DateTime.now().toIso8601String();
       await _realDb.insert('fish_catches', {
         'species': 'Bass',
-        'catch_time': 1234567890000,
+        'catch_time': '2024-01-01T10:00:00.000',
         'length': 30.0,
         'fate': 0,
         'created_at': now,
@@ -1159,7 +1159,7 @@ void main() {
           {
             'id': 99,
             'species': 'Bass',
-            'catch_time': 1234567890000,
+            'catch_time': '2024-01-01T10:00:00.000',
             'length': 30.0,
             'fate': 0,
             'created_at': now,

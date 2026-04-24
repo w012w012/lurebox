@@ -52,10 +52,13 @@ class UserSpeciesAlias {
       identical(this, other) ||
       other is UserSpeciesAlias &&
           runtimeType == other.runtimeType &&
-          id == other.id;
+          id == other.id &&
+          (id != null ||
+              (userAlias == other.userAlias && speciesId == other.speciesId));
 
   @override
-  int get hashCode => id.hashCode;
+  int get hashCode =>
+      id != null ? id.hashCode : Object.hash(userAlias, speciesId);
 
   @override
   String toString() {

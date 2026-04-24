@@ -30,7 +30,7 @@ class LocationManagementState {
 
   LocationManagementState copyWith({
     bool? isLoading,
-    String? errorMessage,
+    String? Function()? errorMessage,
     List<Map<String, dynamic>>? locations,
     List<LocationGroup>? locationGroups,
     Set<String>? selectedLocations,
@@ -39,7 +39,7 @@ class LocationManagementState {
   }) {
     return LocationManagementState(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       locations: locations ?? this.locations,
       locationGroups: locationGroups ?? this.locationGroups,
       selectedLocations: selectedLocations ?? this.selectedLocations,
@@ -59,7 +59,7 @@ class LocationManagementViewModel
   }
 
   Future<void> loadData() async {
-    state = state.copyWith(isLoading: true, errorMessage: null);
+    state = state.copyWith(isLoading: true, errorMessage: () => null);
     try {
       final locations = await _locationService.getAllLocations();
 
@@ -82,7 +82,7 @@ class LocationManagementViewModel
         locationGroups: groups,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: () => e.toString());
     }
   }
 
@@ -113,7 +113,7 @@ class LocationManagementViewModel
   Future<bool> mergeLocations(String targetName) async {
     if (state.selectedLocations.length < 2) return false;
 
-    state = state.copyWith(isMerging: true, errorMessage: null);
+    state = state.copyWith(isMerging: true, errorMessage: () => null);
     try {
       await _locationService.mergeLocations(
         state.selectedLocations.toList(),
@@ -123,7 +123,7 @@ class LocationManagementViewModel
       await loadData();
       return true;
     } catch (e) {
-      state = state.copyWith(isMerging: false, errorMessage: e.toString());
+      state = state.copyWith(isMerging: false, errorMessage: () => e.toString());
       return false;
     }
   }
@@ -131,7 +131,7 @@ class LocationManagementViewModel
   Future<bool> autoMergeGroup(LocationGroup group) async {
     if (group.locations.length < 2) return false;
 
-    state = state.copyWith(isMerging: true, errorMessage: null);
+    state = state.copyWith(isMerging: true, errorMessage: () => null);
     try {
       await _locationService.mergeLocations(
         group.locations,
@@ -141,7 +141,7 @@ class LocationManagementViewModel
       state = state.copyWith(isMerging: false);
       return true;
     } catch (e) {
-      state = state.copyWith(isMerging: false, errorMessage: e.toString());
+      state = state.copyWith(isMerging: false, errorMessage: () => e.toString());
       return false;
     }
   }
@@ -149,14 +149,14 @@ class LocationManagementViewModel
   Future<bool> renameLocation(String oldName, String newName) async {
     if (oldName.isEmpty || newName.isEmpty || oldName == newName) return false;
 
-    state = state.copyWith(isMerging: true, errorMessage: null);
+    state = state.copyWith(isMerging: true, errorMessage: () => null);
     try {
       await _locationService.renameLocation(oldName, newName);
       state = state.copyWith(isMerging: false);
       await loadData();
       return true;
     } catch (e) {
-      state = state.copyWith(isMerging: false, errorMessage: e.toString());
+      state = state.copyWith(isMerging: false, errorMessage: () => e.toString());
       return false;
     }
   }

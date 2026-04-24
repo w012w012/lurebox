@@ -272,6 +272,10 @@ class Equipment {
     DateTime? Function()? reelLineDate,
     String? Function()? reelLineNumber,
     String? Function()? reelLineLength,
+    String Function()? lengthUnit,
+    String Function()? lureWeightUnit,
+    String Function()? lineLengthUnit,
+    String Function()? lineWeightUnit,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -314,6 +318,13 @@ class Equipment {
           reelLineNumber != null ? reelLineNumber() : this.reelLineNumber,
       reelLineLength:
           reelLineLength != null ? reelLineLength() : this.reelLineLength,
+      lengthUnit: lengthUnit != null ? lengthUnit() : this.lengthUnit,
+      lureWeightUnit:
+          lureWeightUnit != null ? lureWeightUnit() : this.lureWeightUnit,
+      lineLengthUnit:
+          lineLengthUnit != null ? lineLengthUnit() : this.lineLengthUnit,
+      lineWeightUnit:
+          lineWeightUnit != null ? lineWeightUnit() : this.lineWeightUnit,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

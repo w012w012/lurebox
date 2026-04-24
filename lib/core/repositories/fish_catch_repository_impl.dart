@@ -334,7 +334,7 @@ class SqliteFishCatchRepository implements FishCatchRepository {
       }
       if (species != null && species.isNotEmpty) {
         // 浼樺寲锛氫娇鐢ㄦ洿楂樻晥鐨凩IKE鏌ヨ锛岄伩鍏嶅墠瀵奸€氶厤绗?
-        whereClauses.add('species = ? OR species LIKE ?');
+        whereClauses.add('(species = ? OR species LIKE ?)');
         whereArgs.add(species);
         whereArgs.add('$species%');
       }

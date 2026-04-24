@@ -94,10 +94,13 @@ class FishListViewModel extends StateNotifier<FishListState> {
   static const int _defaultPageSize = 20;
 
   final FishCatchService _fishCatchService;
+  int _loadGeneration = 0;
 
   FishListViewModel(this._fishCatchService) : super(const FishListState());
 
   Future<void> loadCatches({bool reset = false, UnitSettings? units}) async {
+    final generation = ++_loadGeneration;
+
     if (reset) {
       state = state.copyWith(
         currentPage: 0,
@@ -116,6 +119,8 @@ class FishListViewModel extends StateNotifier<FishListState> {
     try {
       const pageSize = _defaultPageSize;
       final page = reset ? 1 : state.currentPage + 1;
+
+      if (generation != _loadGeneration) return;
 
       List<FishCatch> newCatches;
       int totalCount;
@@ -145,6 +150,7 @@ class FishListViewModel extends StateNotifier<FishListState> {
         totalCount = result.totalCount;
       }
       final allCatches = reset ? newCatches : [...state.catches, ...newCatches];
+      if (generation != _loadGeneration) return;
       final filtered = _applyFilters(
         allCatches,
         state.filter,

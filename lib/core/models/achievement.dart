@@ -6,7 +6,7 @@ enum AchievementLevel {
   platinum;
 
   /// Display name (Chinese)
-  String get name {
+  String get label {
     switch (this) {
       case AchievementLevel.bronze:
         return '青铜';
@@ -35,7 +35,7 @@ enum AchievementLevel {
 
   static AchievementLevel fromJson(String value) {
     return AchievementLevel.values.firstWhere(
-      (e) => e.jsonName == value || e.name == value,
+      (e) => e.jsonName == value || e.label == value,
       orElse: () => AchievementLevel.bronze,
     );
   }

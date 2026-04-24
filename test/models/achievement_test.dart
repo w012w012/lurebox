@@ -3,11 +3,11 @@ import 'package:lurebox/core/models/achievement.dart';
 
 void main() {
   group('AchievementLevel', () {
-    test('name returns correct Chinese name', () {
-      expect(AchievementLevel.bronze.name, equals('青铜'));
-      expect(AchievementLevel.silver.name, equals('白银'));
-      expect(AchievementLevel.gold.name, equals('黄金'));
-      expect(AchievementLevel.platinum.name, equals('铂金'));
+    test('label returns correct Chinese name', () {
+      expect(AchievementLevel.bronze.label, equals('青铜'));
+      expect(AchievementLevel.silver.label, equals('白银'));
+      expect(AchievementLevel.gold.label, equals('黄金'));
+      expect(AchievementLevel.platinum.label, equals('铂金'));
     });
 
     test('fromJson parses valid values', () {

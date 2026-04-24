@@ -33,8 +33,7 @@ class StatsTimeRange {
       start.day.hashCode ^
       end.year.hashCode ^
       end.month.hashCode ^
-      end.day.hashCode ^
-      label.hashCode;
+      end.day.hashCode;
 }
 
 /// 统计时间范围 Provider

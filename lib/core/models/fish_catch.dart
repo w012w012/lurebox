@@ -56,6 +56,13 @@ class FishCatch {
   final double? pressure; // 气压（hPa）
   final int? weatherCode; // 天气代码（WMO）
   final bool pendingRecognition; // 待识别标记：true=待识别，false=已识别
+  final String? notes;
+  final String? rigType;
+  final String? sinkerWeight;
+  final String? sinkerPosition;
+  final String? hookType;
+  final String? hookSize;
+  final String? hookWeight;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -81,6 +88,13 @@ class FishCatch {
     this.pressure,
     this.weatherCode,
     this.pendingRecognition = false,
+    this.notes,
+    this.rigType,
+    this.sinkerWeight,
+    this.sinkerPosition,
+    this.hookType,
+    this.hookSize,
+    this.hookWeight,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -108,6 +122,13 @@ class FishCatch {
       pressure: (map['pressure'] as num?)?.toDouble(),
       weatherCode: map['weather_code'] as int?,
       pendingRecognition: (map['pending_recognition'] as int? ?? 0) == 1,
+      notes: map['notes'] as String?,
+      rigType: map['rig_type'] as String?,
+      sinkerWeight: map['sinker_weight'] as String?,
+      sinkerPosition: map['sinker_position'] as String?,
+      hookType: map['hook_type'] as String?,
+      hookSize: map['hook_size'] as String?,
+      hookWeight: map['hook_weight'] as String?,
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),
     );
@@ -136,6 +157,13 @@ class FishCatch {
       'pressure': pressure,
       'weather_code': weatherCode,
       'pending_recognition': pendingRecognition ? 1 : 0,
+      'notes': notes,
+      'rig_type': rigType,
+      'sinker_weight': sinkerWeight,
+      'sinker_position': sinkerPosition,
+      'hook_type': hookType,
+      'hook_size': hookSize,
+      'hook_weight': hookWeight,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
@@ -163,6 +191,13 @@ class FishCatch {
     double? Function()? pressure,
     int? Function()? weatherCode,
     bool? pendingRecognition,
+    String? Function()? notes,
+    String? Function()? rigType,
+    String? Function()? sinkerWeight,
+    String? Function()? sinkerPosition,
+    String? Function()? hookType,
+    String? Function()? hookSize,
+    String? Function()? hookWeight,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -189,6 +224,15 @@ class FishCatch {
       pressure: pressure != null ? pressure() : this.pressure,
       weatherCode: weatherCode != null ? weatherCode() : this.weatherCode,
       pendingRecognition: pendingRecognition ?? this.pendingRecognition,
+      notes: notes != null ? notes() : this.notes,
+      rigType: rigType != null ? rigType() : this.rigType,
+      sinkerWeight: sinkerWeight != null ? sinkerWeight() : this.sinkerWeight,
+      sinkerPosition: sinkerPosition != null
+          ? sinkerPosition()
+          : this.sinkerPosition,
+      hookType: hookType != null ? hookType() : this.hookType,
+      hookSize: hookSize != null ? hookSize() : this.hookSize,
+      hookWeight: hookWeight != null ? hookWeight() : this.hookWeight,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -216,7 +260,8 @@ extension FishCatchListExtension on List<FishCatch> {
         case 'today':
           final start = DateTime(now.year, now.month, now.day);
           final end = start.add(const Duration(days: 1));
-          return fish.catchTime.isAfter(start) && fish.catchTime.isBefore(end);
+          return !fish.catchTime.isBefore(start) &&
+              fish.catchTime.isBefore(end);
         case 'week':
           final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
           final start = DateTime(
@@ -225,17 +270,20 @@ extension FishCatchListExtension on List<FishCatch> {
             startOfWeek.day,
           );
           final end = start.add(const Duration(days: 7));
-          return fish.catchTime.isAfter(start) && fish.catchTime.isBefore(end);
+          return !fish.catchTime.isBefore(start) &&
+              fish.catchTime.isBefore(end);
         case 'month':
           final nextMonth = now.month == 12 ? 1 : now.month + 1;
           final nextYear = now.month == 12 ? now.year + 1 : now.year;
           final start = DateTime(now.year, now.month, 1);
-          final end = DateTime(nextYear, nextMonth, 1).add(const Duration(days: 1));
-          return fish.catchTime.isAfter(start) && fish.catchTime.isBefore(end);
+          final end = DateTime(nextYear, nextMonth, 1);
+          return !fish.catchTime.isBefore(start) &&
+              fish.catchTime.isBefore(end);
         case 'year':
           final start = DateTime(now.year, 1, 1);
           final end = DateTime(now.year + 1, 1, 1);
-          return fish.catchTime.isAfter(start) && fish.catchTime.isBefore(end);
+          return !fish.catchTime.isBefore(start) &&
+              fish.catchTime.isBefore(end);
         default:
           return true;
       }

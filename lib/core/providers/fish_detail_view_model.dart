@@ -26,7 +26,7 @@ class FishDetailState {
 
   FishDetailState copyWith({
     bool? isLoading,
-    String? errorMessage,
+    String? Function()? errorMessage,
     Map<String, dynamic>? fish,
     Map<String, dynamic>? rodEquipment,
     Map<String, dynamic>? reelEquipment,
@@ -36,7 +36,7 @@ class FishDetailState {
   }) {
     return FishDetailState(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       fish: fish ?? this.fish,
       rodEquipment: rodEquipment ?? this.rodEquipment,
       reelEquipment: reelEquipment ?? this.reelEquipment,
@@ -61,14 +61,14 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
   }
 
   Future<void> loadFish() async {
-    state = state.copyWith(isLoading: true, errorMessage: null);
+    state = state.copyWith(isLoading: true, errorMessage: () => null);
 
     try {
       final fishModel = await _fishCatchService.getById(fishId);
       if (fishModel == null) {
         state = state.copyWith(
           isLoading: false,
-          errorMessage: 'Fish not found',
+          errorMessage: () => 'Fish not found',
         );
         return;
       }
@@ -120,7 +120,7 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
         lureEquipment: lureEquipment,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: () => e.toString());
     }
   }
 
@@ -130,7 +130,7 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
       await _fishCatchService.delete(fishId);
       return true;
     } catch (e) {
-      state = state.copyWith(isDeleting: false, errorMessage: e.toString());
+      state = state.copyWith(isDeleting: false, errorMessage: () => e.toString());
       return false;
     }
   }

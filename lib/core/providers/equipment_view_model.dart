@@ -29,7 +29,7 @@ class EquipmentListState {
 
   EquipmentListState copyWith({
     bool? isLoading,
-    String? errorMessage,
+    String? Function()? errorMessage,
     List<Equipment>? rodList,
     List<Equipment>? reelList,
     List<Equipment>? lureList,
@@ -40,7 +40,7 @@ class EquipmentListState {
   }) {
     return EquipmentListState(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       rodList: rodList ?? this.rodList,
       reelList: reelList ?? this.reelList,
       lureList: lureList ?? this.lureList,
@@ -75,7 +75,7 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
   }
 
   Future<void> loadData() async {
-    state = state.copyWith(isLoading: true, errorMessage: null);
+    state = state.copyWith(isLoading: true, errorMessage: () => null);
     try {
       final results = await Future.wait([
         _equipmentService.getAll(type: 'rod'),
@@ -92,7 +92,7 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
         equipmentStats: (results[3] as Map).cast<int, Map<String, int>>(),
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: () => e.toString());
     }
   }
 
@@ -117,7 +117,7 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
       await _equipmentService.delete(id);
       await loadData();
     } catch (e) {
-      state = state.copyWith(errorMessage: e.toString());
+      state = state.copyWith(errorMessage: () => e.toString());
     }
   }
 
@@ -128,7 +128,7 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
       await _equipmentService.setDefaultEquipment(id, type);
       await loadData();
     } catch (e) {
-      state = state.copyWith(errorMessage: e.toString());
+      state = state.copyWith(errorMessage: () => e.toString());
     }
   }
 }
