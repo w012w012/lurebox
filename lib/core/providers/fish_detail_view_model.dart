@@ -74,9 +74,9 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
       }
       final fish = fishModel.toMap();
 
-      final rodId = fish['rod_id'] as int?;
-      final reelId = fish['reel_id'] as int?;
-      final lureId = fish['lure_id'] as int?;
+      final rodId = fishModel.rodId;
+      final reelId = fishModel.reelId;
+      final lureId = fishModel.lureId;
 
       Map<String, dynamic>? rodEquipment;
       Map<String, dynamic>? reelEquipment;
@@ -96,12 +96,12 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
       }
 
       if ((rodId == null && reelId == null && lureId == null) &&
-          fish['equipment_id'] != null) {
-        final equipmentId = fish['equipment_id'] as int;
+          fishModel.equipmentId != null) {
+        final equipmentId = fishModel.equipmentId!;
         final eq = await _equipmentService.getById(equipmentId);
         if (eq != null) {
           final equipment = eq.toMap();
-          final type = equipment['type'] as String;
+          final type = (equipment['type'] as String?) ?? '';
           if (type == 'rod') {
             rodEquipment = equipment;
           } else if (type == 'reel') {

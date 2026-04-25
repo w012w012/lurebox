@@ -35,13 +35,13 @@ class SqliteStatsRepository extends BaseSqliteRepository
       }
 
       final results = await db.rawQuery('''
-        SELECT 
+        SELECT
           COUNT(*) as total,
-          SUM(CASE WHEN fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as release,
-          SUM(CASE WHEN fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as keep
+          SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as release,
+          SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as keep
         FROM $tableName
         $whereClause
-        ''', whereArgs);
+        ''', [FishFateType.release.value, FishFateType.keep.value, ...whereArgs]);
 
       if (results.isEmpty) {
         return const CatchStats(total: 0, release: 0, keep: 0);
@@ -177,7 +177,8 @@ class SqliteStatsRepository extends BaseSqliteRepository
     try {
       final db = await database;
       final results = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $tableName WHERE fate = ${FishFateType.release.value}',
+        'SELECT COUNT(*) as count FROM $tableName WHERE fate = ?',
+        [FishFateType.release.value],
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
@@ -193,9 +194,9 @@ class SqliteStatsRepository extends BaseSqliteRepository
       final results = await db.rawQuery('''
         SELECT
           COUNT(*) as total,
-          SUM(CASE WHEN fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as release
+          SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as release
         FROM $tableName
-      ''');
+      ''', [FishFateType.release.value]);
       final total = results.first['total'] as int? ?? 0;
       if (total == 0) return 0.0;
       final release = results.first['release'] as int? ?? 0;
@@ -209,12 +210,14 @@ class SqliteStatsRepository extends BaseSqliteRepository
   Future<int> getConsecutiveDays() async {
     try {
       final db = await database;
+      final cutoff = DateTime.now().subtract(const Duration(days: 365));
       final results = await db.rawQuery('''
         SELECT DATE(catch_time) as catch_date, COUNT(*) as count
         FROM $tableName
+        WHERE catch_time >= ?
         GROUP BY catch_date
         ORDER BY catch_date DESC
-      ''');
+      ''', [cutoff.toIso8601String()]);
 
       if (results.isEmpty) return 0;
 
@@ -295,9 +298,9 @@ class SqliteStatsRepository extends BaseSqliteRepository
       final db = await database;
       final results = await db.rawQuery('''
         SELECT COUNT(*) as count FROM $tableName
-        WHERE strftime('%H', catch_time) >= '${TimeConstants.morningStart}'
-          AND strftime('%H', catch_time) < '${TimeConstants.morningEnd}'
-      ''');
+        WHERE strftime('%H', catch_time) >= ?
+          AND strftime('%H', catch_time) < ?
+      ''', [TimeConstants.morningStart, TimeConstants.morningEnd]);
       return results.first['count'] as int? ?? 0;
     } catch (e) {
       throwDbError('get morning catch count', e);
@@ -310,9 +313,9 @@ class SqliteStatsRepository extends BaseSqliteRepository
       final db = await database;
       final results = await db.rawQuery('''
         SELECT COUNT(*) as count FROM $tableName
-        WHERE strftime('%H', catch_time) >= '${TimeConstants.nightStart}'
-           OR strftime('%H', catch_time) < '${TimeConstants.nightEnd}'
-      ''');
+        WHERE strftime('%H', catch_time) >= ?
+           OR strftime('%H', catch_time) < ?
+      ''', [TimeConstants.nightStart, TimeConstants.nightEnd]);
       return results.first['count'] as int? ?? 0;
     } catch (e) {
       throwDbError('get night catch count', e);
@@ -428,37 +431,45 @@ class SqliteStatsRepository extends BaseSqliteRepository
     final results = await db.rawQuery('''
       SELECT
         COUNT(*) as all_total,
-        SUM(CASE WHEN fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as all_release,
-        SUM(CASE WHEN fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as all_keep,
+        SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as all_release,
+        SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as all_keep,
         SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as today_total,
-        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as today_release,
-        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as today_keep,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ? THEN 1 ELSE 0 END) as today_release,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ? THEN 1 ELSE 0 END) as today_keep,
         SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as month_total,
-        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as month_release,
-        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as month_keep,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ? THEN 1 ELSE 0 END) as month_release,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ? THEN 1 ELSE 0 END) as month_keep,
         SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as year_total,
-        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as year_release,
-        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as year_keep
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ? THEN 1 ELSE 0 END) as year_release,
+        SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ? THEN 1 ELSE 0 END) as year_keep
       FROM $tableName
     ''', [
+      FishFateType.release.value,
+      FishFateType.keep.value,
       todayStart.toIso8601String(),
       todayEnd.toIso8601String(),
       todayStart.toIso8601String(),
       todayEnd.toIso8601String(),
+      FishFateType.release.value,
       todayStart.toIso8601String(),
       todayEnd.toIso8601String(),
+      FishFateType.keep.value,
       monthStart.toIso8601String(),
       monthEnd.toIso8601String(),
       monthStart.toIso8601String(),
       monthEnd.toIso8601String(),
+      FishFateType.release.value,
       monthStart.toIso8601String(),
       monthEnd.toIso8601String(),
+      FishFateType.keep.value,
       yearStart.toIso8601String(),
       yearEnd.toIso8601String(),
       yearStart.toIso8601String(),
       yearEnd.toIso8601String(),
+      FishFateType.release.value,
       yearStart.toIso8601String(),
       yearEnd.toIso8601String(),
+      FishFateType.keep.value,
     ]);
 
     final row = results.first;
@@ -554,7 +565,7 @@ SELECT
   COUNT(*) as catch_count,
   AVG(length) as avg_length,
   AVG(weight) as avg_weight,
-  SUM(CASE WHEN fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as release_count
+  SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as release_count
 FROM (
   SELECT equipment_id as eq_id, species, length, weight, fate FROM $tableName WHERE equipment_id IS NOT NULL
   UNION ALL
@@ -565,7 +576,7 @@ FROM (
   SELECT lure_id as eq_id, species, length, weight, fate FROM $tableName WHERE lure_id IS NOT NULL
 )
 GROUP BY eq_id
-''');
+''', [FishFateType.release.value]);
 
       final stats = <int, EquipmentCatchStats>{};
       for (final row in results) {
@@ -713,13 +724,18 @@ GROUP BY eq_id, species
         SELECT
           DATE(catch_time) as date,
           COUNT(*) as count,
-          SUM(CASE WHEN fate = ${FishFateType.release.value} THEN 1 ELSE 0 END) as release,
-          SUM(CASE WHEN fate = ${FishFateType.keep.value} THEN 1 ELSE 0 END) as keep
+          SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as release,
+          SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as keep
         FROM $tableName
         WHERE catch_time >= ? AND catch_time < ?
         GROUP BY DATE(catch_time)
         ORDER BY date ASC
-      ''', [startDate.toIso8601String(), endDate.toIso8601String()]);
+      ''', [
+        FishFateType.release.value,
+        FishFateType.keep.value,
+        startDate.toIso8601String(),
+        endDate.toIso8601String(),
+      ]);
 
       return results.map((row) {
         return {

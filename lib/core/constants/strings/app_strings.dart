@@ -338,7 +338,10 @@ class AppStrings extends StringsBase with
   final String jointTypeHint;
   final String ratio;
   final String ratioHint;
+  final String ratioFront;
+  final String ratioBack;
   final String capacityHint;
+  final String capacityLineUnit;
   final String brakeTypeHint;
   final String lineType;
   final String lineTypeHint;
@@ -538,6 +541,7 @@ class AppStrings extends StringsBase with
   final String goToSpeciesManagement;
   final String airTemperature;
   final String pressure;
+  final String weatherInfo;
   final String weatherClear;
   final String weatherMainlyClear;
   final String weatherPartlyCloudy;
@@ -770,6 +774,7 @@ class AppStrings extends StringsBase with
   final String quantityUnitItem;
   final String quantityUnitPack;
   final String quantityUnitBox;
+  final String quantityUnitCarton;
   final String cardJointMethod;
   final String cardAction;
   final String cardStrength;
@@ -1101,7 +1106,10 @@ class AppStrings extends StringsBase with
     required this.jointTypeHint,
     required this.ratio,
     required this.ratioHint,
+    required this.ratioFront,
+    required this.ratioBack,
     required this.capacityHint,
+    required this.capacityLineUnit,
     required this.brakeTypeHint,
     required this.lineType,
     required this.lineTypeHint,
@@ -1301,6 +1309,7 @@ class AppStrings extends StringsBase with
     required this.goToSpeciesManagement,
     required this.airTemperature,
     required this.pressure,
+    required this.weatherInfo,
     required this.weatherClear,
     required this.weatherMainlyClear,
     required this.weatherPartlyCloudy,
@@ -1530,6 +1539,7 @@ class AppStrings extends StringsBase with
     required this.quantityUnitItem,
     required this.quantityUnitPack,
     required this.quantityUnitBox,
+    required this.quantityUnitCarton,
     required this.cardJointMethod,
     required this.cardAction,
     required this.cardStrength,

@@ -131,26 +131,24 @@ class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
       final dailyMap = <int, int>{};
       final monthlyMap = <int, int>{};
 
-      for (final fish in catches) {
-        final fate = fish['fate'] as int;
-        if (fate == FishFateType.release.value) {
+      for (final fish in fishList) {
+        if (fish.fate == FishFateType.release) {
           releaseCount++;
         } else {
           keepCount++;
         }
 
-        final weight = fish['weight'] as double?;
-        if (weight != null) totalWeight += weight;
+        if (fish.weight != null) totalWeight += fish.weight!;
 
-        final species = fish['species'] as String? ?? '未知';
+        final species = fish.species;
         speciesMap[species] = (speciesMap[species] ?? 0) + 1;
 
-        final location = fish['location_name'] as String?;
+        final location = fish.locationName;
         if (location != null && location.isNotEmpty) {
           locationMap[location] = (locationMap[location] ?? 0) + 1;
         }
 
-        final catchTime = DateTime.parse(fish['catch_time'] as String);
+        final catchTime = fish.catchTime;
         hourlyMap[catchTime.hour] = (hourlyMap[catchTime.hour] ?? 0) + 1;
         dailyMap[catchTime.day] = (dailyMap[catchTime.day] ?? 0) + 1;
         monthlyMap[catchTime.month] = (monthlyMap[catchTime.month] ?? 0) + 1;

@@ -34,10 +34,12 @@ class FishRecognitionResult {
   });
 
   factory FishRecognitionResult.fromJson(Map<String, dynamic> json) {
+    final primaryJson = json['primarySpecies'];
+    if (primaryJson is! Map<String, dynamic>) {
+      throw const FormatException('Invalid primarySpecies in recognition result');
+    }
     return FishRecognitionResult(
-      primarySpecies: SpeciesInfo.fromJson(
-        json['primarySpecies'] as Map<String, dynamic>,
-      ),
+      primarySpecies: SpeciesInfo.fromJson(primaryJson),
       confidence: json['confidence'] as int? ?? 0,
       alternatives: (json['alternatives'] as List<dynamic>?)
               ?.map((e) => SpeciesInfo.fromJson(e as Map<String, dynamic>))

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../utils/legacy_value_migrator.dart';
 
 /// 应用全局设置数据模型
 ///
@@ -58,7 +59,7 @@ class UnitSettings {
     this.lineLengthUnit = 'm',
     this.lureWeightUnit = 'g',
     this.lureLengthUnit = 'cm',
-    this.lureQuantityUnit = '个',
+    this.lureQuantityUnit = 'piece',
     this.temperatureUnit = 'C',
   });
 
@@ -103,7 +104,10 @@ class UnitSettings {
       lineLengthUnit: json['lineLengthUnit'] as String? ?? 'm',
       lureWeightUnit: json['lureWeightUnit'] as String? ?? 'g',
       lureLengthUnit: json['lureLengthUnit'] as String? ?? 'cm',
-      lureQuantityUnit: json['lureQuantityUnit'] as String? ?? '个',
+      lureQuantityUnit: LegacyValueMigrator.migrateValue(
+        'lure_quantity_unit',
+        json['lureQuantityUnit'] as String? ?? 'piece',
+      ),
       temperatureUnit: json['temperatureUnit'] as String? ?? 'C',
     );
   }

@@ -49,6 +49,27 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
   Map<String, int> _speciesStats = {};
   Map<String, double> _speciesWeightStats = {};
   List<Map<String, dynamic>> _speciesSummary = [];
+
+  /// Safe accessors for Map values — avoid `as` crash on null/wrong type
+  static String _s(Map<String, dynamic> m, String k) =>
+      m[k]?.toString() ?? '';
+  static double? _d(Map<String, dynamic> m, String k) {
+    final v = m[k];
+    if (v is num) return v.toDouble();
+    return null;
+  }
+  static int _i(Map<String, dynamic> m, String k) {
+    final v = m[k];
+    if (v is int) return v;
+    if (v is num) return v.toInt();
+    return 0;
+  }
+  static DateTime? _dt(Map<String, dynamic> m, String k) {
+    final v = m[k]?.toString();
+    if (v == null || v.isEmpty) return null;
+    return DateTime.tryParse(v);
+  }
+
   Map<String, int> _rodDistribution = {};
   Map<String, int> _reelDistribution = {};
   Map<String, int> _lureDistribution = {};
@@ -93,17 +114,18 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
       final fishList = await ref
           .read(fishCatchServiceProvider)
           .getByDateRange(widget.startDate, widget.endDate);
+      if (!mounted) return;
       final catches = fishList.map((f) => f.toMap()).toList();
 
       final speciesMap = <String, int>{};
       for (final fish in catches) {
-        final species = fish['species'] as String;
+        final species = _s(fish, 'species');
         speciesMap[species] = (speciesMap[species] ?? 0) + 1;
       }
 
       final speciesData = <String, Map<String, dynamic>>{};
       for (final fish in catches) {
-        final species = fish['species'] as String;
+        final species = _s(fish, 'species');
         if (!speciesData.containsKey(species)) {
           speciesData[species] = {
             'species': species,
@@ -112,9 +134,10 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
           };
         }
         speciesData[species]!['count'] =
-            (speciesData[species]!['count'] as int) + 1;
-        final weight = fish['weight'] as double?;
-        final weightUnit = fish['weight_unit'] as String? ?? 'kg';
+            _i(speciesData[species]!, 'count') + 1;
+        final weight = _d(fish, 'weight');
+        final weightUnit =
+            _s(fish, 'weight_unit').isEmpty ? 'kg' : _s(fish, 'weight_unit');
         if (weight != null) {
           // Convert to display unit before summing
           final displayWeight = UnitConverter.convertWeight(
@@ -123,11 +146,11 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
             displayUnits.fishWeightUnit,
           );
           speciesData[species]!['totalWeight'] =
-              (speciesData[species]!['totalWeight'] as double) + displayWeight;
+              (_d(speciesData[species]!, 'totalWeight') ?? 0.0) + displayWeight;
         }
       }
       final speciesSummary = speciesData.values.toList()
-        ..sort((a, b) => (b['count'] as int).compareTo(a['count'] as int));
+        ..sort((a, b) => _i(b, 'count').compareTo(_i(a, 'count')));
 
       _rodDistribution =
           await ref.read(fishCatchServiceProvider).getEquipmentDistribution(
@@ -176,9 +199,11 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
   void _calculateLocationAnalysis(List<Map<String, dynamic>> catches) {
     final locationMap = <String, Map<String, int>>{};
     for (final fish in catches) {
-      final location = fish['location_name'] as String?;
+      final location = _s(fish, 'location_name').isEmpty
+          ? null
+          : _s(fish, 'location_name');
       if (location == null || location.isEmpty) continue;
-      final species = fish['species'] as String;
+      final species = _s(fish, 'species');
       if (!locationMap.containsKey(location)) {
         locationMap[location] = {};
       }
@@ -192,8 +217,8 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
     _speciesWeightStats = {};
     _totalWeight = 0;
     for (final species in _speciesSummary) {
-      final s = species['species'] as String;
-      final weight = (species['totalWeight'] as num?)?.toDouble() ?? 0.0;
+      final s = _s(species, 'species');
+      final weight = _d(species, 'totalWeight') ?? 0.0;
       _speciesWeightStats[s] = weight;
       _totalWeight += weight;
     }
@@ -215,7 +240,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
         trendMap['$h${strings.hour}'] = 0;
       }
       for (final fish in catches) {
-        final t = DateTime.parse(fish['catch_time'] as String);
+        final t = _dt(fish, 'catch_time') ?? DateTime.now();
         final key = '${t.hour}${strings.hour}';
         trendMap[key] = (trendMap[key] ?? 0) + 1;
       }
@@ -226,7 +251,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
         trendMap['$d${strings.day}'] = 0;
       }
       for (final fish in catches) {
-        final t = DateTime.parse(fish['catch_time'] as String);
+        final t = _dt(fish, 'catch_time') ?? DateTime.now();
         if (t.month == now.month && t.year == now.year) {
           final key = '${t.day}${strings.day}';
           trendMap[key] = (trendMap[key] ?? 0) + 1;
@@ -238,7 +263,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
         trendMap['$m${strings.monthUnit}'] = 0;
       }
       for (final fish in catches) {
-        final t = DateTime.parse(fish['catch_time'] as String);
+        final t = _dt(fish, 'catch_time') ?? DateTime.now();
         if (t.year == now.year) {
           final key = '${t.month}${strings.monthUnit}';
           trendMap[key] = (trendMap[key] ?? 0) + 1;
@@ -265,7 +290,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
         trendMap['${d.month}/${d.day}'] = 0;
       }
       for (final fish in catches) {
-        final t = DateTime.parse(fish['catch_time'] as String);
+        final t = _dt(fish, 'catch_time') ?? DateTime.now();
         final diff = now.difference(t).inDays;
         if (diff >= 0 && diff < 30) {
           final key = '${t.month}/${t.day}';
@@ -286,7 +311,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
         trendMap['${d.month}${strings.monthUnit}'] = 0;
       }
       for (final fish in catches) {
-        final t = DateTime.parse(fish['catch_time'] as String);
+        final t = _dt(fish, 'catch_time') ?? DateTime.now();
         final catchDate = DateTime(t.year, t.month, 1);
         final nowDate = DateTime(now.year, now.month, 1);
         final diffMonths = (nowDate.year - catchDate.year) * 12 +
@@ -302,13 +327,13 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
     } else {
       _trendTitle = strings.yearlyTrend;
       final startYear = catches.isNotEmpty
-          ? DateTime.parse(catches.last['catch_time'] as String).year
+          ? (_dt(catches.last, 'catch_time') ?? DateTime.now()).year
           : now.year;
       for (int y = startYear; y <= now.year; y++) {
         trendMap['$y${strings.yearUnit}'] = 0;
       }
       for (final fish in catches) {
-        final t = DateTime.parse(fish['catch_time'] as String);
+        final t = _dt(fish, 'catch_time') ?? DateTime.now();
         final key = '${t.year}${strings.yearUnit}';
         if (trendMap.containsKey(key)) {
           trendMap[key] = (trendMap[key] ?? 0) + 1;
@@ -339,7 +364,8 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
       await Future.delayed(const Duration(milliseconds: 100));
       final image = await boundary.toImage(pixelRatio: 2.0);
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      final pngBytes = byteData!.buffer.asUint8List();
+      if (byteData == null) return;
+      final pngBytes = byteData.buffer.asUint8List();
 
       final tempDir = await getTemporaryDirectory();
       final file = File(

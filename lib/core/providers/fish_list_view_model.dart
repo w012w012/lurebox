@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/fish_catch.dart';
 import '../models/fish_filter.dart';
@@ -95,6 +96,7 @@ class FishListViewModel extends StateNotifier<FishListState> {
 
   final FishCatchService _fishCatchService;
   int _loadGeneration = 0;
+  Timer? _filterDebounce;
 
   FishListViewModel(this._fishCatchService) : super(const FishListState());
 
@@ -251,8 +253,17 @@ class FishListViewModel extends StateNotifier<FishListState> {
   }
 
   void _updateFilter(FishFilter filter) {
+    _filterDebounce?.cancel();
     state = state.copyWith(filter: filter);
-    loadCatches(reset: true);
+    _filterDebounce = Timer(const Duration(milliseconds: 300), () {
+      loadCatches(reset: true);
+    });
+  }
+
+  @override
+  void dispose() {
+    _filterDebounce?.cancel();
+    super.dispose();
   }
 
   void toggleSelectionMode() {

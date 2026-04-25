@@ -14,7 +14,7 @@ void main() {
         expect(settings.lineLengthUnit, 'm');
         expect(settings.lureWeightUnit, 'g');
         expect(settings.lureLengthUnit, 'cm');
-        expect(settings.lureQuantityUnit, '个');
+        expect(settings.lureQuantityUnit, 'piece');
         expect(settings.temperatureUnit, 'C');
       });
     });
@@ -28,7 +28,7 @@ void main() {
           lineLengthUnit: 'ft',
           lureWeightUnit: 'oz',
           lureLengthUnit: 'mm',
-          lureQuantityUnit: '条',
+          lureQuantityUnit: 'item',
           temperatureUnit: 'F',
         );
 
@@ -43,6 +43,15 @@ void main() {
         expect(decoded.lureLengthUnit, original.lureLengthUnit);
         expect(decoded.lureQuantityUnit, original.lureQuantityUnit);
         expect(decoded.temperatureUnit, original.temperatureUnit);
+      });
+
+      test('fromJson migrates legacy Chinese quantity unit values', () {
+        final json = <String, dynamic>{
+          'lureQuantityUnit': '条',
+        };
+
+        final settings = UnitSettings.fromJson(json);
+        expect(settings.lureQuantityUnit, 'piece');
       });
 
       test('round-trip with all default values', () {
@@ -83,7 +92,7 @@ void main() {
         expect(settings.lineLengthUnit, 'm');
         expect(settings.lureWeightUnit, 'g');
         expect(settings.lureLengthUnit, 'cm');
-        expect(settings.lureQuantityUnit, '个');
+        expect(settings.lureQuantityUnit, 'piece');
         expect(settings.temperatureUnit, 'C');
       });
 
@@ -98,7 +107,7 @@ void main() {
         expect(settings.lineLengthUnit, 'm');
         expect(settings.lureWeightUnit, 'g');
         expect(settings.lureLengthUnit, 'cm');
-        expect(settings.lureQuantityUnit, '个');
+        expect(settings.lureQuantityUnit, 'piece');
         expect(settings.temperatureUnit, 'C');
       });
 
@@ -116,7 +125,7 @@ void main() {
         expect(settings.lineLengthUnit, 'm');
         expect(settings.lureWeightUnit, 'g');
         expect(settings.lureLengthUnit, 'cm');
-        expect(settings.lureQuantityUnit, '个');
+        expect(settings.lureQuantityUnit, 'piece');
         expect(settings.temperatureUnit, 'C');
       });
     });
@@ -142,7 +151,7 @@ void main() {
           lineLengthUnit: 'inch',
           lureWeightUnit: 'g',
           lureLengthUnit: 'mm',
-          lureQuantityUnit: '只',
+          lureQuantityUnit: 'item',
           temperatureUnit: 'F',
         );
 
@@ -182,7 +191,7 @@ void main() {
         expect(modified.lineLengthUnit, 'm');
         expect(modified.lureWeightUnit, 'g');
         expect(modified.lureLengthUnit, 'cm');
-        expect(modified.lureQuantityUnit, '个');
+        expect(modified.lureQuantityUnit, 'piece');
         expect(modified.temperatureUnit, 'C');
       });
 
@@ -232,7 +241,7 @@ void main() {
             lineLengthUnit: 'ft',
             lureWeightUnit: 'oz',
             lureLengthUnit: 'mm',
-            lureQuantityUnit: '条',
+            lureQuantityUnit: 'piece',
             temperatureUnit: 'F',
           ),
           darkMode: DarkMode.dark,
@@ -248,7 +257,7 @@ void main() {
         expect(decoded.units.lineLengthUnit, 'ft');
         expect(decoded.units.lureWeightUnit, 'oz');
         expect(decoded.units.lureLengthUnit, 'mm');
-        expect(decoded.units.lureQuantityUnit, '条');
+        expect(decoded.units.lureQuantityUnit, 'piece');
         expect(decoded.units.temperatureUnit, 'F');
         expect(decoded.darkMode, DarkMode.dark);
         expect(decoded.language, AppLanguage.english);
@@ -393,7 +402,7 @@ void main() {
             'lineLengthUnit': 'm',
             'lureWeightUnit': 'oz',
             'lureLengthUnit': 'inch',
-            'lureQuantityUnit': '条',
+            'lureQuantityUnit': 'piece',
             'temperatureUnit': 'F',
           },
           'darkMode': 'light',
@@ -408,7 +417,7 @@ void main() {
         expect(settings.units.lineLengthUnit, 'm');
         expect(settings.units.lureWeightUnit, 'oz');
         expect(settings.units.lureLengthUnit, 'inch');
-        expect(settings.units.lureQuantityUnit, '条');
+        expect(settings.units.lureQuantityUnit, 'piece');
         expect(settings.units.temperatureUnit, 'F');
       });
 
@@ -450,7 +459,7 @@ void main() {
             lineLengthUnit: 'inch',
             lureWeightUnit: 'oz',
             lureLengthUnit: 'cm',
-            lureQuantityUnit: '只',
+            lureQuantityUnit: 'item',
             temperatureUnit: 'C',
           ),
           darkMode: DarkMode.light,
@@ -466,7 +475,7 @@ void main() {
         expect(decoded.units.lineLengthUnit, 'inch');
         expect(decoded.units.lureWeightUnit, 'oz');
         expect(decoded.units.lureLengthUnit, 'cm');
-        expect(decoded.units.lureQuantityUnit, '只');
+        expect(decoded.units.lureQuantityUnit, 'item');
         expect(decoded.units.temperatureUnit, 'C');
         expect(decoded.darkMode, DarkMode.light);
         expect(decoded.language, AppLanguage.english);

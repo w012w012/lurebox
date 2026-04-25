@@ -55,7 +55,11 @@ class BackupService {
     }
 
     final jsonString = await file.readAsString();
-    final backupData = jsonDecode(jsonString) as Map<String, dynamic>;
+    final decoded = jsonDecode(jsonString);
+    if (decoded is! Map<String, dynamic>) {
+      throw const DatabaseException('Invalid backup file format');
+    }
+    final backupData = decoded;
 
     final db = await _dbProvider.database;
     int importedCount = 0;

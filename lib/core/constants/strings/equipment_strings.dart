@@ -85,7 +85,10 @@ mixin EquipmentStringsMixin {
   String get jointTypeHint;
   String get ratio;
   String get ratioHint;
+  String get ratioFront;
+  String get ratioBack;
   String get capacityHint;
+  String get capacityLineUnit;
   String get brakeTypeHint;
   String get lineTypeHint;
   String get lureTypeHint;
@@ -149,6 +152,7 @@ mixin EquipmentStringsMixin {
   String get quantityUnitItem;
   String get quantityUnitPack;
   String get quantityUnitBox;
+  String get quantityUnitCarton;
   String get cardJointMethod;
   String get cardAction;
   String get cardStrength;

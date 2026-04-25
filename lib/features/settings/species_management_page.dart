@@ -58,7 +58,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         child: pendingCatchesAsync.when(
           data: (catches) => _buildContent(context, catches, strings),
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('加载失败: $e')),
+          error: (e, _) => Center(child: Text('${strings.errorLoadFailed}: $e')),
         ),
       ),
     );
@@ -113,11 +113,13 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           _recognitionStates.remove(fish.id);
         });
         if (mounted) {
-          AppSnackBar.showSuccess(context, '已更新品种: $speciesName');
+          final s = ref.read(currentStringsProvider);
+          AppSnackBar.showSuccess(context, s.speciesUpdated.replaceFirst('%s', speciesName));
         }
       } catch (e) {
         if (mounted) {
-          AppSnackBar.showError(context, '更新失败', debugError: e);
+          final s = ref.read(currentStringsProvider);
+          AppSnackBar.showError(context, s.speciesUpdateFailed, debugError: e);
         }
       }
     }
@@ -135,8 +137,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       final fishCatch = await repository.getById(fish.id);
       if (fishCatch == null || fishCatch.imagePath.isEmpty) {
         setState(() {
-          _recognitionStates[fish.id] = const SingleRecognitionState(
-            error: '图片不存在',
+          _recognitionStates[fish.id] = SingleRecognitionState(
+            error: ref.read(currentStringsProvider).speciesImageNotFound,
           );
         });
         return;
@@ -145,8 +147,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       final file = File(fishCatch.imagePath);
       if (!await file.exists()) {
         setState(() {
-          _recognitionStates[fish.id] = const SingleRecognitionState(
-            error: '图片文件不存在',
+          _recognitionStates[fish.id] = SingleRecognitionState(
+            error: ref.read(currentStringsProvider).errorImageNotFound,
           );
         });
         return;
@@ -157,8 +159,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           settings.providerConfigs[settings.currentProvider];
       if (currentConfig == null || currentConfig.apiKey.isEmpty) {
         setState(() {
-          _recognitionStates[fish.id] = const SingleRecognitionState(
-            error: '请先配置 AI 识别 API Key',
+          _recognitionStates[fish.id] = SingleRecognitionState(
+            error: ref.read(currentStringsProvider).speciesConfigureApiKey,
           );
         });
         return;
@@ -170,11 +172,12 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       // 构建多选项列表
       final options = <AiRecognitionOption>[];
 
+      final s = ref.read(currentStringsProvider);
       if (result.primarySpecies.chineseName.isNotEmpty) {
         options.add(AiRecognitionOption(
           speciesName: result.primarySpecies.chineseName,
           confidence: result.primarySpecies.confidence / 100.0,
-          providerName: 'AI 识别结果',
+          providerName: s.speciesAiResultTitle,
         ));
       }
 
@@ -185,7 +188,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
             options.add(AiRecognitionOption(
               speciesName: alt.chineseName,
               confidence: alt.confidence / 100.0,
-              providerName: '备选',
+              providerName: s.speciesAlternative,
             ));
           }
         }
@@ -194,8 +197,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       // 如果没有结果
       if (options.isEmpty) {
         setState(() {
-          _recognitionStates[fish.id] = const SingleRecognitionState(
-            error: '未能识别出结果',
+          _recognitionStates[fish.id] = SingleRecognitionState(
+            error: ref.read(currentStringsProvider).speciesNoResult,
           );
         });
         return;
@@ -211,7 +214,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       setState(() {
         _recognitionStates[fish.id] = SingleRecognitionState(
           isRecognizing: false,
-          error: '识别失败: $e',
+          error: ref.read(currentStringsProvider).speciesRecognitionFailed.replaceFirst('%s', '$e'),
         );
       });
     }
@@ -237,11 +240,13 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           _recognitionStates.remove(fish.id);
         });
         if (mounted) {
-          AppSnackBar.showSuccess(context, '已更新品种: $speciesName');
+          final s = ref.read(currentStringsProvider);
+          AppSnackBar.showSuccess(context, s.speciesUpdated.replaceFirst('%s', speciesName));
         }
       } catch (e) {
         if (mounted) {
-          AppSnackBar.showError(context, '更新失败', debugError: e);
+          final s = ref.read(currentStringsProvider);
+          AppSnackBar.showError(context, s.speciesUpdateFailed, debugError: e);
         }
       }
     }
@@ -265,10 +270,12 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         ref.invalidate(pendingRecognitionCatchesProvider);
         setState(() {});
         if (!context.mounted) return;
-        AppSnackBar.showSuccess(context, '已将 "$oldName" 重命名为 "$result"');
+        final s = ref.read(currentStringsProvider);
+        AppSnackBar.showSuccess(context, s.speciesRenamed.replaceFirst('%s', oldName).replaceFirst('%s', result));
       } catch (e) {
         if (!context.mounted) return;
-        AppSnackBar.showError(context, '重命名失败', debugError: e);
+        final s = ref.read(currentStringsProvider);
+        AppSnackBar.showError(context, s.speciesRenameFailed, debugError: e);
       }
     }
   }
@@ -292,11 +299,13 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         ref.invalidate(pendingRecognitionCatchesProvider);
         setState(() {});
         if (!context.mounted) return;
+        final s = ref.read(currentStringsProvider);
         AppSnackBar.showSuccess(
-            context, '已删除品种 "$speciesName" ($count 条记录)');
+            context, s.speciesDeleted.replaceFirst('%s', speciesName).replaceFirst('%d', '$count'));
       } catch (e) {
         if (!context.mounted) return;
-        AppSnackBar.showError(context, '删除失败', debugError: e);
+        final s = ref.read(currentStringsProvider);
+        AppSnackBar.showError(context, s.speciesDeleteFailed, debugError: e);
       }
     }
   }
@@ -356,8 +365,9 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       ref.invalidate(pendingRecognitionCatchesProvider);
 
       if (mounted) {
+        final s = ref.read(currentStringsProvider);
         AppSnackBar.showInfo(
-            context, '识别完成: $_batchSuccess 条成功, $_batchFailed 条失败');
+            context, s.speciesRecognitionComplete.replaceFirst('%d', '$_batchSuccess').replaceFirst('%d', '$_batchFailed'));
       }
     } finally {
       setState(() => _isBatchRecognizing = false);
@@ -395,7 +405,7 @@ class _SpeciesListSection extends ConsumerWidget {
             Icon(Icons.category, size: 20, color: accentColor),
             const SizedBox(width: TeslaTheme.spacingSm),
             Text(
-              '已保存品种',
+              'Saved Species',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -410,7 +420,7 @@ class _SpeciesListSection extends ConsumerWidget {
                 variant: PremiumCardVariant.flat,
                 child: Center(
                   child: Text(
-                    '暂无品种记录',
+                    ref.read(currentStringsProvider).speciesNoRecords,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
@@ -443,9 +453,12 @@ class _SpeciesListSection extends ConsumerWidget {
                   final speciesName = entry.key;
                   final count = entry.value;
 
+                  final strings = ref.read(currentStringsProvider);
+                  final countLabel = strings.fishCountSuffix.replaceFirst('%d', '$count');
                   return _SpeciesListItem(
                     speciesName: speciesName,
                     count: count,
+                    countLabel: countLabel,
                     onRename: () => onRename(context, speciesName),
                     onDelete: () => onDelete(context, speciesName, count),
                   );
@@ -466,7 +479,7 @@ class _SpeciesListSection extends ConsumerWidget {
             variant: PremiumCardVariant.flat,
             child: Center(
               child: Text(
-                '加载失败: $e',
+                '${ref.read(currentStringsProvider).errorLoadFailed}: $e',
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ),
@@ -481,12 +494,14 @@ class _SpeciesListSection extends ConsumerWidget {
 class _SpeciesListItem extends StatelessWidget {
   final String speciesName;
   final int count;
+  final String countLabel;
   final VoidCallback onRename;
   final VoidCallback onDelete;
 
   const _SpeciesListItem({
     required this.speciesName,
     required this.count,
+    required this.countLabel,
     required this.onRename,
     required this.onDelete,
   });
@@ -534,7 +549,7 @@ class _SpeciesListItem extends StatelessWidget {
                         ),
                   ),
                   Text(
-                    '$count 条渔获记录',
+                    countLabel,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

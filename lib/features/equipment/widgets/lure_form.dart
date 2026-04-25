@@ -111,11 +111,11 @@ class LureForm extends ConsumerWidget {
               child: PremiumDropdown<String>(
                 value: quantityUnit ?? units.lureQuantityUnit,
                 items: [
-                  PremiumDropdownItem(value: '条', label: strings.quantityUnitPiece),
-                  PremiumDropdownItem(value: '只', label: strings.quantityUnitItem),
-                  PremiumDropdownItem(value: '个', label: strings.quantityUnitPack),
-                  PremiumDropdownItem(value: '包', label: strings.quantityUnitBox),
-                  const PremiumDropdownItem(value: '盒', label: '盒'),
+                  PremiumDropdownItem(value: 'piece', label: strings.quantityUnitPiece),
+                  PremiumDropdownItem(value: 'item', label: strings.quantityUnitItem),
+                  PremiumDropdownItem(value: 'pack', label: strings.quantityUnitPack),
+                  PremiumDropdownItem(value: 'box', label: strings.quantityUnitBox),
+                  PremiumDropdownItem(value: 'carton', label: strings.quantityUnitCarton),
                 ],
                 onChanged: onQuantityUnitChanged,
               ),

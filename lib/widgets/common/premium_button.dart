@@ -254,7 +254,7 @@ class PremiumIconButton extends StatelessWidget {
       case PremiumButtonVariant.primary:
         button = Semantics(
           button: true,
-          label: accessibilityLabel ?? tooltip ?? '图标按钮',
+          label: accessibilityLabel ?? tooltip ?? 'Icon button',
           child: Container(
             width: size,
             height: size,
@@ -277,7 +277,7 @@ class PremiumIconButton extends StatelessWidget {
       case PremiumButtonVariant.secondary:
         button = Semantics(
           button: true,
-          label: accessibilityLabel ?? tooltip ?? '图标按钮',
+          label: accessibilityLabel ?? tooltip ?? 'Icon button',
           child: Container(
             width: size,
             height: size,
@@ -301,7 +301,7 @@ class PremiumIconButton extends StatelessWidget {
       case PremiumButtonVariant.outline:
         button = Semantics(
           button: true,
-          label: accessibilityLabel ?? tooltip ?? '图标按钮',
+          label: accessibilityLabel ?? tooltip ?? 'Icon button',
           child: Container(
             width: size,
             height: size,
@@ -324,7 +324,7 @@ class PremiumIconButton extends StatelessWidget {
       case PremiumButtonVariant.text:
         button = Semantics(
           button: true,
-          label: accessibilityLabel ?? tooltip ?? '图标按钮',
+          label: accessibilityLabel ?? tooltip ?? 'Icon button',
           child: SizedBox(
             width: size,
             height: size,
@@ -340,7 +340,7 @@ class PremiumIconButton extends StatelessWidget {
       case PremiumButtonVariant.danger:
         button = Semantics(
           button: true,
-          label: accessibilityLabel ?? tooltip ?? '图标按钮',
+          label: accessibilityLabel ?? tooltip ?? 'Icon button',
           child: Container(
             width: size,
             height: size,
@@ -360,7 +360,7 @@ class PremiumIconButton extends StatelessWidget {
       case PremiumButtonVariant.success:
         button = Semantics(
           button: true,
-          label: accessibilityLabel ?? tooltip ?? '图标按钮',
+          label: accessibilityLabel ?? tooltip ?? 'Icon button',
           child: Container(
             width: size,
             height: size,
@@ -412,7 +412,7 @@ class PremiumFAB extends StatelessWidget {
 
     return Semantics(
       button: true,
-      label: tooltip ?? '浮动操作按钮',
+      label: tooltip ?? 'Floating action button',
       child: FloatingActionButton(
         onPressed: onPressed,
         tooltip: tooltip,

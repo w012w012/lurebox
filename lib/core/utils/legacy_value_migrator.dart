@@ -46,12 +46,22 @@ class LegacyValueMigrator {
     '创新组合刹车': 'innovative',
   };
 
+  // ===== 数量单位 (lure_quantity_unit) =====
+  static const _quantityUnits = {
+    '条': 'piece',
+    '只': 'item',
+    '个': 'pack',
+    '包': 'box',
+    '盒': 'carton',
+  };
+
   /// 所有映射的集合，按字段名索引
   static const _fieldMaps = {
     'sections': _sections,
     'joint_type': _jointTypes,
     'rod_action': _rodActions,
     'reel_brake_type': _brakeTypes,
+    'lure_quantity_unit': _quantityUnits,
   };
 
   /// 将单个旧中文值转换为英文键

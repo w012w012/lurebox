@@ -1,6 +1,7 @@
 import 'package:open_meteo/open_meteo.dart';
 
 import '../constants/strings.dart';
+import 'app_logger.dart';
 
 /// 天气代码转中文描述（默认行为，兼容旧代码）
 /// 基于 WMO Weather interpretation codes (WW)
@@ -158,7 +159,7 @@ class WeatherService {
         weatherCode: current[WeatherCurrent.weather_code]?.value.toInt(),
       );
     } catch (e) {
-      // 返回 null 让调用者知道获取天气失败
+      AppLogger.e('WeatherService', 'Failed to fetch weather data', e);
       return const WeatherData(
           airTemperature: null, pressure: null, weatherCode: null);
     }
