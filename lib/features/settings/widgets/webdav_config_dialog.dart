@@ -88,8 +88,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                   if (value == null || value.isEmpty) {
                     return strings.webdavPleaseEnterAddress;
                   }
-                  if (!value.startsWith('http://') &&
-                      !value.startsWith('https://')) {
+                  if (!value.startsWith('https://')) {
                     return strings.webdavUrlMustStartHttp;
                   }
                   return null;
@@ -135,6 +134,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                         _obscurePassword = !_obscurePassword;
                       });
                     },
+                    tooltip: 'Show/hide password',
                   ),
                 ),
                 obscureText: _obscurePassword,

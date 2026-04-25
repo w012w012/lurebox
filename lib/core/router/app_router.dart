@@ -63,8 +63,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final fishId = int.tryParse(state.pathParameters['id'] ?? '');
           if (fishId == null) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid fish ID')),
+            return Consumer(
+              builder: (context, ref, _) {
+                final strings = ref.watch(currentStringsProvider);
+                return Scaffold(
+                  body: Center(child: Text(strings.invalidFishId)),
+                );
+              },
             );
           }
           return FishDetailPage(fishId: fishId);
@@ -76,8 +81,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) {
           final fishId = int.tryParse(state.pathParameters['id'] ?? '');
           if (fishId == null) {
-            return const Scaffold(
-              body: Center(child: Text('Invalid fish ID')),
+            return Consumer(
+              builder: (context, ref, _) {
+                final strings = ref.watch(currentStringsProvider);
+                return Scaffold(
+                  body: Center(child: Text(strings.invalidFishId)),
+                );
+              },
             );
           }
           return _FishEditPageWrapper(fishId: fishId);
@@ -130,7 +140,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/equipment/edit',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) {
-          final type = state.uri.queryParameters['type'] ?? 'rod';
+          const allowedTypes = {'rod', 'reel', 'lure', 'line'};
+          final rawType = state.uri.queryParameters['type'] ?? 'rod';
+          final type = allowedTypes.contains(rawType) ? rawType : 'rod';
           final idStr = state.uri.queryParameters['id'];
           final equipmentId = idStr != null ? int.tryParse(idStr) : null;
           return EquipmentEditPage(type: type, equipmentId: equipmentId);

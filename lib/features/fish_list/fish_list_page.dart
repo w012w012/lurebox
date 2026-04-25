@@ -81,13 +81,13 @@ class _FishListPageState extends ConsumerState<FishListPage>
       context: context,
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
-      initialDateRange: state.filter.customStartDate != null &&
-              state.filter.customEndDate != null
-          ? DateTimeRange(
-              start: state.filter.customStartDate!,
-              end: state.filter.customEndDate!,
-            )
-          : null,
+      initialDateRange: switch ((
+                state.filter.customStartDate,
+                state.filter.customEndDate,
+              )) {
+                (final start?, final end?) => DateTimeRange(start: start, end: end),
+                _ => null,
+              },
       helpText: strings.selectDateRange,
       cancelText: strings.cancel,
       confirmText: strings.confirm,
@@ -297,9 +297,10 @@ class _FishListPageState extends ConsumerState<FishListPage>
       );
     }
 
-    if (state.errorMessage != null) {
+    final errorMessage = state.errorMessage;
+    if (errorMessage != null) {
       return ErrorView(
-        message: state.errorMessage!,
+        message: errorMessage,
         onRetry: () =>
             ref.read(fishListViewModelProvider.notifier).loadCatches(),
         strings: strings,

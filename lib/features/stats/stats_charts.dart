@@ -180,13 +180,13 @@ class SpeciesPieChart extends ConsumerWidget {
   });
 
   static const _chartColors = [
-    TeslaColors.electricBlue,
-    TeslaColors.electricBlue,
-    TeslaColors.electricBlue,
-    TeslaColors.electricBlue,
-    TeslaColors.electricBlue,
-    TeslaColors.electricBlue,
-    TeslaColors.electricBlue,
+    Color(0xFF3E6AE1), // electric blue
+    Color(0xFF38B2AC), // teal
+    Color(0xFF805AD5), // purple
+    Color(0xFFDD6B20), // orange
+    Color(0xFFD53F8C), // pink
+    Color(0xFF48BB78), // green
+    Color(0xFF5A67D8), // indigo
   ];
 
   @override

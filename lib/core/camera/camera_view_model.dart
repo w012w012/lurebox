@@ -11,6 +11,8 @@ import '../di/di.dart';
 import '../services/fish_catch_service.dart';
 import '../services/equipment_service.dart';
 import '../services/error_service.dart' as error_service;
+import '../constants/strings.dart';
+import '../providers/language_provider.dart';
 import 'camera_helper.dart';
 import 'camera_state.dart';
 
@@ -18,10 +20,13 @@ class CameraViewModel extends StateNotifier<CameraState> {
   final CameraHelper _cameraHelper = CameraHelper();
   final FishCatchService _fishCatchService;
   final EquipmentService _equipmentService;
+  final AppStrings _strings;
   BuildContext? _context;
 
-  CameraViewModel(this._fishCatchService, this._equipmentService)
-      : super(const CameraState());
+  CameraViewModel(this._fishCatchService, this._equipmentService, this._strings)
+      : super(const CameraState()) {
+    _cameraHelper.setStrings(_strings);
+  }
 
   CameraHelper get cameraHelper => _cameraHelper;
 
@@ -296,7 +301,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
           id: 0,
           imagePath: state.imagePath ?? '',
           watermarkedImagePath: state.watermarkedImagePath,
-          species: state.species.isNotEmpty ? state.species : '待识别',
+          species: state.species.isNotEmpty ? state.species : _strings.pendingRecognition,
           length: state.length,
           lengthUnit: state.lengthUnit,
           weight: state.weight ?? state.estimatedWeight,
@@ -329,7 +334,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
     } catch (e) {
       state = state.copyWith(
         captureState: CameraCaptureState.error,
-        errorMessage: () => '保存失败: $e',
+        errorMessage: () => '${_strings.errorSaveFailed}: $e',
         isLoading: false,
       );
       return null;
@@ -381,5 +386,6 @@ final cameraViewModelProvider =
   return CameraViewModel(
     ref.read(fishCatchServiceProvider),
     ref.read(equipmentServiceProvider),
+    ref.read(currentStringsProvider),
   );
 });

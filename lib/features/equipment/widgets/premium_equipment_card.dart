@@ -310,7 +310,6 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
   }
 
   Widget _buildCategoryChip(BuildContext context, String category) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: TeslaTheme.spacingSm,
@@ -323,7 +322,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       child: Text(
         category,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
+              color: TeslaColors.electricBlue,
             ),
       ),
     );
@@ -374,146 +373,17 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
   List<Widget> _buildInfoRows(String type, Map<String, dynamic> e) {
     final strings = ref.watch(currentStringsProvider);
     final displayUnits = ref.watch(appSettingsProvider).units;
-    final items = <_InfoItem>[];
-    _InfoItem? reelLineItem; // Store reel line info separately for its own row
 
-    if (type == 'rod') {
-      if (e['length'] != null) {
-        final lengthValue = double.tryParse(e['length'].toString()) ?? 0;
-        final lengthUnit = e['length_unit'] ?? 'm';
-        final displayLength = UnitConverter.convertLength(
-          lengthValue,
-          lengthUnit,
-          displayUnits.rodLengthUnit,
-        );
-        items.add(
-          _InfoItem(
-            strings.rodLength,
-            '${displayLength.toStringAsFixed(2)} ${UnitConverter.getLengthSymbol(displayUnits.rodLengthUnit)}',
-          ),
-        );
-      }
-      if (e['sections'] != null) {
-        items.add(_InfoItem(strings.sections, '${e['sections']}'));
-      }
-      if (e['joint_type'] != null) {
-        items.add(_InfoItem(strings.cardJointMethod, e['joint_type']));
-      }
-      if (e['hardness'] != null) {
-        items.add(_InfoItem(strings.hardness, e['hardness']));
-      }
-      if (e['rod_action'] != null) {
-        items.add(_InfoItem(strings.rodAction, e['rod_action']));
-      }
-      if (e['material'] != null) {
-        items.add(_InfoItem(strings.material, e['material']));
-      }
-      if (e['weight_range'] != null) {
-        final rangeStr = e['weight_range'].toString();
-        final displayWeight =
-            _parseWeightRange(rangeStr, displayUnits.lureWeightUnit);
-        if (displayWeight.isNotEmpty) {
-          items.add(
-            _InfoItem(
-              strings.weightRange,
-              displayWeight,
-            ),
-          );
-        }
-      }
-    } else if (type == 'reel') {
-      if (e['reel_weight'] != null) {
-        final weightValue = double.tryParse(e['reel_weight'].toString()) ?? 0;
-        final weightUnit = e['reel_weight_unit'] ?? 'g';
-        final displayWeight = UnitConverter.convertWeight(
-          weightValue,
-          weightUnit,
-          displayUnits.lureWeightUnit,
-        );
-        items.add(
-          _InfoItem(
-            strings.reelWeight,
-            '${displayWeight.toStringAsFixed(1)} ${UnitConverter.getWeightSymbol(displayUnits.lureWeightUnit)}',
-          ),
-        );
-      }
-      if (e['reel_ratio'] != null) {
-        items.add(_InfoItem(strings.reelRatio, e['reel_ratio']));
-      }
-      if (e['reel_capacity'] != null) {
-        items.add(_InfoItem(strings.reelCapacity, e['reel_capacity']));
-      }
-      if (e['reel_brake_type'] != null) {
-        items.add(_InfoItem(strings.reelBrakeType, e['reel_brake_type']));
-      }
-      if (e['reel_line'] != null) {
-        final lineBrand = e['reel_line'] as String? ?? '';
-        final lineNumber = e['reel_line_number'] as String? ?? '';
-        final lineLength = e['reel_line_length'] as String? ?? '';
-        final lineDate = e['reel_line_date'];
-        String lineInfo = lineBrand;
-        if (lineNumber.isNotEmpty) lineInfo += ' / $lineNumber';
-        if (lineLength.isNotEmpty) lineInfo += ' / $lineLength';
-        if (lineDate != null) {
-          final dateStr = lineDate.toString().split(RegExp(r'[ T]'))[0];
-          lineInfo += ' / $dateStr';
-        }
-        reelLineItem = _InfoItem(strings.line, lineInfo);
-      }
-    } else if (type == 'lure') {
-      if (e['lure_type'] != null) {
-        items.add(_InfoItem(strings.lureType, e['lure_type']));
-      }
-      if (e['lure_weight'] != null) {
-        final weightValue = double.tryParse(e['lure_weight'].toString()) ?? 0;
-        final weightUnit = e['lure_weight_unit'] ?? 'g';
-        final displayWeight = UnitConverter.convertWeight(
-          weightValue,
-          weightUnit,
-          displayUnits.lureWeightUnit,
-        );
-        items.add(
-          _InfoItem(
-            strings.lureWeight,
-            '${displayWeight.toStringAsFixed(1)} ${UnitConverter.getWeightSymbol(displayUnits.lureWeightUnit)}',
-          ),
-        );
-      }
-      if (e['lure_size'] != null) {
-        final sizeValue = double.tryParse(e['lure_size'].toString()) ?? 0;
-        final sizeUnit = e['lure_size_unit'] ?? 'cm';
-        final displaySize = UnitConverter.convertLength(
-          sizeValue,
-          sizeUnit,
-          displayUnits.lureLengthUnit,
-        );
-        items.add(
-          _InfoItem(
-            strings.lureSize,
-            '${displaySize.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.lureLengthUnit)}',
-          ),
-        );
-      }
-      if (e['lure_color'] != null) {
-        items.add(_InfoItem(strings.lureColor, e['lure_color']));
-      }
-      if (e['lure_action'] != null) {
-        items.add(_InfoItem(strings.cardAction, e['lure_action']));
-      }
-    } else if (type == 'line') {
-      if (e['line_type'] != null) {
-        items.add(_InfoItem(strings.lineType, e['line_type']));
-      }
-      if (e['line_length'] != null) {
-        items.add(_InfoItem(strings.lineLength, e['line_length']));
-      }
-      if (e['line_strength'] != null) {
-        items.add(_InfoItem(strings.cardStrength, e['line_strength']));
-      }
-      if (e['line_color'] != null) {
-        items.add(_InfoItem(strings.cardColor, e['line_color']));
-      }
-    }
+    final result = switch (type) {
+      'rod' => _buildRodItems(e, strings, displayUnits),
+      'reel' => _buildReelItems(e, strings, displayUnits),
+      'lure' => _buildLureItems(e, strings, displayUnits),
+      'line' => _buildLineItems(e, strings),
+      _ => (items: <_InfoItem>[], extra: <_InfoItem>[]),
+    };
+
+    final items = result.items;
+    final reelLineItem = result.extra.isNotEmpty ? result.extra.first : null;
 
     if (items.isEmpty && reelLineItem == null) return [];
 
@@ -523,7 +393,6 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       children: items.map((item) => _buildInfoItem(context, item)).toList(),
     );
 
-    // 添加数量显示（仅针对 lure）
     if (type == 'lure' && e['lure_quantity'] != null) {
       final quantity = e['lure_quantity'] as int;
       final unit = e['lure_quantity_unit'] as String? ?? '条';
@@ -534,7 +403,6 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       ];
     }
 
-    // 渔轮鱼线信息单独一行展示
     if (type == 'reel' && reelLineItem != null) {
       return [
         row,
@@ -544,6 +412,153 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     }
 
     return [row];
+  }
+
+  ({List<_InfoItem> items, List<_InfoItem> extra}) _buildRodItems(
+    Map<String, dynamic> e,
+    AppStrings strings,
+    dynamic displayUnits,
+  ) {
+    final items = <_InfoItem>[];
+    if (e['length'] != null) {
+      final lengthValue = double.tryParse(e['length'].toString()) ?? 0;
+      final lengthUnit = e['length_unit'] ?? 'm';
+      final displayLength = UnitConverter.convertLength(
+        lengthValue, lengthUnit, displayUnits.rodLengthUnit,
+      );
+      items.add(_InfoItem(
+        strings.rodLength,
+        '${displayLength.toStringAsFixed(2)} ${UnitConverter.getLengthSymbol(displayUnits.rodLengthUnit)}',
+      ));
+    }
+    if (e['sections'] != null) {
+      items.add(_InfoItem(strings.sections, '${e['sections']}'));
+    }
+    if (e['joint_type'] != null) {
+      items.add(_InfoItem(strings.cardJointMethod, e['joint_type']));
+    }
+    if (e['hardness'] != null) {
+      items.add(_InfoItem(strings.hardness, e['hardness']));
+    }
+    if (e['rod_action'] != null) {
+      items.add(_InfoItem(strings.rodAction, e['rod_action']));
+    }
+    if (e['material'] != null) {
+      items.add(_InfoItem(strings.material, e['material']));
+    }
+    if (e['weight_range'] != null) {
+      final displayWeight = _parseWeightRange(
+        e['weight_range'].toString(), displayUnits.lureWeightUnit,
+      );
+      if (displayWeight.isNotEmpty) {
+        items.add(_InfoItem(strings.weightRange, displayWeight));
+      }
+    }
+    return (items: items, extra: <_InfoItem>[]);
+  }
+
+  ({List<_InfoItem> items, List<_InfoItem> extra}) _buildReelItems(
+    Map<String, dynamic> e,
+    AppStrings strings,
+    dynamic displayUnits,
+  ) {
+    final items = <_InfoItem>[];
+    final extra = <_InfoItem>[];
+    if (e['reel_weight'] != null) {
+      final weightValue = double.tryParse(e['reel_weight'].toString()) ?? 0;
+      final weightUnit = e['reel_weight_unit'] ?? 'g';
+      final displayWeight = UnitConverter.convertWeight(
+        weightValue, weightUnit, displayUnits.lureWeightUnit,
+      );
+      items.add(_InfoItem(
+        strings.reelWeight,
+        '${displayWeight.toStringAsFixed(1)} ${UnitConverter.getWeightSymbol(displayUnits.lureWeightUnit)}',
+      ));
+    }
+    if (e['reel_ratio'] != null) {
+      items.add(_InfoItem(strings.reelRatio, e['reel_ratio']));
+    }
+    if (e['reel_capacity'] != null) {
+      items.add(_InfoItem(strings.reelCapacity, e['reel_capacity']));
+    }
+    if (e['reel_brake_type'] != null) {
+      items.add(_InfoItem(strings.reelBrakeType, e['reel_brake_type']));
+    }
+    if (e['reel_line'] != null) {
+      final lineBrand = e['reel_line'] as String? ?? '';
+      final lineNumber = e['reel_line_number'] as String? ?? '';
+      final lineLength = e['reel_line_length'] as String? ?? '';
+      final lineDate = e['reel_line_date'];
+      String lineInfo = lineBrand;
+      if (lineNumber.isNotEmpty) lineInfo += ' / $lineNumber';
+      if (lineLength.isNotEmpty) lineInfo += ' / $lineLength';
+      if (lineDate != null) {
+        final dateStr = lineDate.toString().split(RegExp(r'[ T]'))[0];
+        lineInfo += ' / $dateStr';
+      }
+      extra.add(_InfoItem(strings.line, lineInfo));
+    }
+    return (items: items, extra: extra);
+  }
+
+  ({List<_InfoItem> items, List<_InfoItem> extra}) _buildLureItems(
+    Map<String, dynamic> e,
+    AppStrings strings,
+    dynamic displayUnits,
+  ) {
+    final items = <_InfoItem>[];
+    if (e['lure_type'] != null) {
+      items.add(_InfoItem(strings.lureType, e['lure_type']));
+    }
+    if (e['lure_weight'] != null) {
+      final weightValue = double.tryParse(e['lure_weight'].toString()) ?? 0;
+      final weightUnit = e['lure_weight_unit'] ?? 'g';
+      final displayWeight = UnitConverter.convertWeight(
+        weightValue, weightUnit, displayUnits.lureWeightUnit,
+      );
+      items.add(_InfoItem(
+        strings.lureWeight,
+        '${displayWeight.toStringAsFixed(1)} ${UnitConverter.getWeightSymbol(displayUnits.lureWeightUnit)}',
+      ));
+    }
+    if (e['lure_size'] != null) {
+      final sizeValue = double.tryParse(e['lure_size'].toString()) ?? 0;
+      final sizeUnit = e['lure_size_unit'] ?? 'cm';
+      final displaySize = UnitConverter.convertLength(
+        sizeValue, sizeUnit, displayUnits.lureLengthUnit,
+      );
+      items.add(_InfoItem(
+        strings.lureSize,
+        '${displaySize.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.lureLengthUnit)}',
+      ));
+    }
+    if (e['lure_color'] != null) {
+      items.add(_InfoItem(strings.lureColor, e['lure_color']));
+    }
+    if (e['lure_action'] != null) {
+      items.add(_InfoItem(strings.cardAction, e['lure_action']));
+    }
+    return (items: items, extra: <_InfoItem>[]);
+  }
+
+  ({List<_InfoItem> items, List<_InfoItem> extra}) _buildLineItems(
+    Map<String, dynamic> e,
+    AppStrings strings,
+  ) {
+    final items = <_InfoItem>[];
+    if (e['line_type'] != null) {
+      items.add(_InfoItem(strings.lineType, e['line_type']));
+    }
+    if (e['line_length'] != null) {
+      items.add(_InfoItem(strings.lineLength, e['line_length']));
+    }
+    if (e['line_strength'] != null) {
+      items.add(_InfoItem(strings.cardStrength, e['line_strength']));
+    }
+    if (e['line_color'] != null) {
+      items.add(_InfoItem(strings.cardColor, e['line_color']));
+    }
+    return (items: items, extra: <_InfoItem>[]);
   }
 
   Widget _buildInfoItem(BuildContext context, _InfoItem item) {

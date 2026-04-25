@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../core/constants/strings.dart';
+import '../../core/services/app_logger.dart';
 import '../../core/models/app_settings.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
@@ -74,24 +75,51 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     vm.initializeUnits(appSettings.units);
 
     // 并行初始化，提高启动速度
+    final strings = ref.read(currentStringsProvider);
     await Future.wait([
       vm.initializeCamera().timeout(
             const Duration(seconds: 10),
-            onTimeout: () => throw Exception('相机初始化超时'),
+            onTimeout: () => throw Exception(strings.cameraInitTimeout),
           ),
       vm.loadSpeciesHistory().timeout(
             const Duration(seconds: 5),
-            onTimeout: () => throw Exception('加载物种历史超时'),
+            onTimeout: () => throw Exception(strings.speciesHistoryTimeout),
           ),
       vm.loadEquipments().timeout(
             const Duration(seconds: 5),
-            onTimeout: () => throw Exception('加载装备超时'),
+            onTimeout: () => throw Exception(strings.equipmentLoadTimeout),
           ),
       vm.getLocation().timeout(
             const Duration(seconds: 15),
-            onTimeout: () => throw Exception('获取位置超时'),
+            onTimeout: () => throw Exception(strings.locationFetchTimeout),
           ),
     ]);
+  }
+
+  bool _hasUnsavedData(CameraState state) {
+    return state.species.isNotEmpty || state.length > 0;
+  }
+
+  Future<bool> _showDiscardDialog(
+      BuildContext context, AppStrings strings) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(strings.discardChanges),
+        content: Text(strings.discardChangesMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(strings.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(strings.confirm),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
   }
 
   void _onLengthChanged() {
@@ -126,7 +154,17 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     final strings = ref.watch(currentStringsProvider);
 
     if (state.captureState == CameraCaptureState.pictureTaken) {
-      return _buildFormView(state, vm, strings);
+      return PopScope(
+        canPop: !_hasUnsavedData(state),
+        onPopInvokedWithResult: (didPop, result) async {
+          if (didPop) return;
+          final shouldPop = await _showDiscardDialog(context, strings);
+          if (shouldPop && context.mounted) {
+            Navigator.of(context).pop();
+          }
+        },
+        child: _buildFormView(state, vm, strings),
+      );
     }
 
     return CameraViewWidget(
@@ -451,26 +489,25 @@ class _CameraPageState extends ConsumerState<CameraPage> {
         // 重置 captureState 到 pictureTaken，让用户留在表单页面
         vm.resetCaptureStateToForm();
         if (mounted) {
-          // 显示 viewModel 中的错误信息
-          final debugInfo = '保存失败: fishId=$fishId\n'
-              '${errorFromState != null ? '错误: $errorFromState\n' : ''}'
-              'imagePath: ${state.imagePath != null ? "已设置" : "未设置"}\n'
-              'species: "${state.species}" (empty: ${state.species.isEmpty})\n'
-              'length: ${state.length}';
+          // 内部 debug 信息仅用于日志，不暴露给用户
+          AppLogger.w('CameraPage', 'Save failed: fishId=$fishId, '
+              'error=$errorFromState, '
+              'imagePath=${state.imagePath != null ? "set" : "null"}, '
+              'species="${state.species}", '
+              'length=${state.length}');
           AppSnackBar.showError(
             context,
             strings.saveFailedCheckInput,
-            debugError: debugInfo,
           );
         }
       }
     } on Exception catch (e) {
       vm.resetCaptureStateToForm();
+      AppLogger.w('CameraPage', 'Save exception: $e');
       if (mounted) {
         AppSnackBar.showError(
           context,
           strings.saveFailedRetry,
-          debugError: e,
         );
       }
     }

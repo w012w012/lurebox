@@ -182,14 +182,11 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
             child: ListTile(
               leading: const Icon(Icons.access_time),
               title: Text(s.catchTime),
-              subtitle: Text(
-                _catchTime != null
-                    ? '${_catchTime!.year}-${_catchTime!.month.toString().padLeft(2, '0')}-${_catchTime!.day.toString().padLeft(2, '0')} ${_catchTime!.hour.toString().padLeft(2, '0')}:${_catchTime!.minute.toString().padLeft(2, '0')}'
-                    : s.notSet,
-              ),
+              subtitle: Text(_formatCatchTime(s)),
               trailing: IconButton(
                 icon: const Icon(Icons.edit, size: 20),
                 onPressed: _pickDateTime,
+                tooltip: 'Edit catch time',
               ),
             ),
           ),
@@ -210,6 +207,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
                       IconButton(
                         icon: const Icon(Icons.edit, size: 20),
                         onPressed: _editWeather,
+                        tooltip: 'Edit weather',
                       ),
                     ],
                   ),
@@ -464,6 +462,13 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
     }
     tempController.dispose();
     pressureController.dispose();
+  }
+
+  String _formatCatchTime(AppStrings s) {
+    final t = _catchTime;
+    if (t == null) return s.notSet;
+    return '${t.year}-${t.month.toString().padLeft(2, '0')}-${t.day.toString().padLeft(2, '0')} '
+        '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
   }
 
   String _getWeatherDisplayText(String temperatureUnit) {

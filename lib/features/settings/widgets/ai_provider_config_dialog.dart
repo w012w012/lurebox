@@ -111,6 +111,7 @@ class _AiProviderConfigDialogState
                         _obscureApiKey = !_obscureApiKey;
                       });
                     },
+                    tooltip: 'Show/hide API key',
                   ),
                 ),
                 obscureText: _obscureApiKey,

@@ -87,7 +87,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
               ),
               const SizedBox(height: 16),
               Text(
-                state.errorMessage ?? 'Fish not found',
+                state.errorMessage ?? strings.fishNotFound,
                 style: TextStyle(
                   color: colorScheme.onSurfaceVariant,
                   fontSize: 16,

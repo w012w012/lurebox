@@ -426,7 +426,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                       color: TeslaColors.electricBlue,
                     ),
               onPressed: _shareStats,
-              tooltip: strings.share,
+              tooltip: 'Share',
             ),
         ],
       ),

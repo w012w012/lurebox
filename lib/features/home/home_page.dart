@@ -104,9 +104,10 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (widget.state.errorMessage != null) {
+    final errorMessage = widget.state.errorMessage;
+    if (errorMessage != null) {
       return ErrorView(
-        message: widget.state.errorMessage!,
+        message: errorMessage,
         onRetry: () => ref.read(homeViewModelProvider.notifier).refresh(),
         strings: widget.strings,
       );
@@ -126,7 +127,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
           _buildAnimatedItem(0, _buildPendingRecognitionCard(context, ref)),
           const SizedBox(height: 12),
           // Item 1: Podium
-          _buildAnimatedItem(2, _buildPodium(context)),
+          _buildAnimatedItem(1, _buildPodium(context)),
           const SizedBox(height: 12),
           // Item 3: Today stat card
           _buildAnimatedItem(

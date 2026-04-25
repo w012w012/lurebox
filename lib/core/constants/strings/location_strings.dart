@@ -22,4 +22,5 @@ mixin LocationStringsMixin {
   String get containsNSimilarLocations;
   String get mergeButton;
   String get fishCountSuffix;
+  String get locationFailed;
 }

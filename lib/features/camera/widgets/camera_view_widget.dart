@@ -125,35 +125,39 @@ class CameraViewWidget extends ConsumerWidget {
               size: 48,
               variant: PremiumButtonVariant.secondary,
             ),
-            GestureDetector(
-              onTap: state.isTakingPicture ? null : onTakePicture,
-              child: Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: accentColor,
-                    width: 4,
-                  ),
-                ),
-                child: Center(
-                  child: Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
+            Semantics(
+              label: 'Take photo',
+              button: true,
+              child: GestureDetector(
+                onTap: state.isTakingPicture ? null : onTakePicture,
+                child: Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
                       color: accentColor,
+                      width: 4,
                     ),
-                    child: state.isTakingPicture
-                        ? Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: CircularProgressIndicator(
-                              color: TeslaColors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : null,
+                  ),
+                  child: Center(
+                    child: Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: accentColor,
+                      ),
+                      child: state.isTakingPicture
+                          ? Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: CircularProgressIndicator(
+                                color: TeslaColors.white,
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : null,
+                    ),
                   ),
                 ),
               ),

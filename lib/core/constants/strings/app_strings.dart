@@ -224,6 +224,8 @@ class AppStrings extends StringsBase with
   final String cameraPermissionRequired;
   final String noCameraFound;
   final String cameraInitFailed;
+  final String cameraControllerInitFailed;
+  final String cameraTakePictureFailed;
   final String centimeter;
   final String inch;
   final String kilogram;
@@ -598,12 +600,36 @@ class AppStrings extends StringsBase with
   final String onboardingSettingsItems;
   final String onboardingReadyTitle;
   final String onboardingReadyDesc;
+  final String onboardingPermissionsGrant;
+  final String onboardingPermissionsRequesting;
+  final String onboardingPermissionsGranted;
 
   final String recognize;
   final String notUsing;
   final String sharing;
   final String distribution;
   final String fishListTitle;
+  final String invalidFishId;
+  final String fishNotFound;
+  final String discardChanges;
+  final String discardChangesMessage;
+  final String aboutFeatureCatchTitle;
+  final String aboutFeatureCatchDesc;
+  final String aboutFeatureEquipmentTitle;
+  final String aboutFeatureEquipmentDesc;
+  final String aboutFeatureStatsTitle;
+  final String aboutFeatureStatsDesc;
+  final String aboutFeatureAITitle;
+  final String aboutFeatureAIDesc;
+  final String aboutFeatureWatermarkTitle;
+  final String aboutFeatureWatermarkDesc;
+  final String aboutFeatureExportTitle;
+  final String aboutFeatureExportDesc;
+  final String aboutFeatureCloudTitle;
+  final String aboutFeatureCloudDesc;
+  final String aboutFeatureAchievementTitle;
+  final String aboutFeatureAchievementDesc;
+  final String aboutCopyright;
   final String locationCancelSelect;
   final String locationMergeTo;
   final String locationEnterTargetName;
@@ -734,6 +760,7 @@ class AppStrings extends StringsBase with
   final String containsNSimilarLocations;
   final String mergeButton;
   final String fishCountSuffix;
+  final String locationFailed;
   final String unlockProgress;
   final String speciesCountPattern2;
   final String monthlyNewSpecies;
@@ -992,6 +1019,8 @@ class AppStrings extends StringsBase with
     required this.cameraPermissionRequired,
     required this.noCameraFound,
     required this.cameraInitFailed,
+    required this.cameraControllerInitFailed,
+    required this.cameraTakePictureFailed,
     required this.centimeter,
     required this.inch,
     required this.kilogram,
@@ -1364,11 +1393,35 @@ class AppStrings extends StringsBase with
     required this.onboardingSettingsItems,
     required this.onboardingReadyTitle,
     required this.onboardingReadyDesc,
+    required this.onboardingPermissionsGrant,
+    required this.onboardingPermissionsRequesting,
+    required this.onboardingPermissionsGranted,
     required this.recognize,
     required this.notUsing,
     required this.sharing,
     required this.distribution,
     required this.fishListTitle,
+    required this.invalidFishId,
+    required this.fishNotFound,
+    required this.discardChanges,
+    required this.discardChangesMessage,
+    required this.aboutFeatureCatchTitle,
+    required this.aboutFeatureCatchDesc,
+    required this.aboutFeatureEquipmentTitle,
+    required this.aboutFeatureEquipmentDesc,
+    required this.aboutFeatureStatsTitle,
+    required this.aboutFeatureStatsDesc,
+    required this.aboutFeatureAITitle,
+    required this.aboutFeatureAIDesc,
+    required this.aboutFeatureWatermarkTitle,
+    required this.aboutFeatureWatermarkDesc,
+    required this.aboutFeatureExportTitle,
+    required this.aboutFeatureExportDesc,
+    required this.aboutFeatureCloudTitle,
+    required this.aboutFeatureCloudDesc,
+    required this.aboutFeatureAchievementTitle,
+    required this.aboutFeatureAchievementDesc,
+    required this.aboutCopyright,
     required this.locationCancelSelect,
     required this.locationMergeTo,
     required this.locationEnterTargetName,
@@ -1499,6 +1552,7 @@ class AppStrings extends StringsBase with
     required this.containsNSimilarLocations,
     required this.mergeButton,
     required this.fishCountSuffix,
+    required this.locationFailed,
     required this.unlockProgress,
     required this.speciesCountPattern2,
     required this.monthlyNewSpecies,

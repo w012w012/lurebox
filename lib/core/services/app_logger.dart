@@ -30,7 +30,7 @@ class AppLogger {
     String message, [
     Object? error,
   ]) {
-    if (kReleaseMode && level == LogLevel.debug) return;
+    if (kReleaseMode) return;
     final suffix = error != null ? '\n$error' : '';
     debugPrint('[$level][$tag] $message$suffix');
   }
