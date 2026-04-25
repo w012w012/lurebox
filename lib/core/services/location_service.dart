@@ -1,4 +1,4 @@
-import '../database/database_provider.dart';
+import 'package:lurebox/core/database/database_provider.dart';
 
 /// 位置服务 - 钓点管理的业务逻辑层
 ///
@@ -10,9 +10,9 @@ import '../database/database_provider.dart';
 /// 注意：[findSimilarLocations] 是同步方法，其他为异步方法。
 
 class LocationService {
-  final DatabaseProvider _dbProvider;
 
   LocationService(this._dbProvider);
+  final DatabaseProvider _dbProvider;
 
   Future<List<Map<String, dynamic>>> getAllLocations() async {
     final db = await _dbProvider.database;
@@ -121,15 +121,15 @@ class LocationService {
       (i) => List.generate(s2.length + 1, (j) => 0),
     );
 
-    for (int i = 0; i <= s1.length; i++) {
+    for (var i = 0; i <= s1.length; i++) {
       matrix[i][0] = i;
     }
-    for (int j = 0; j <= s2.length; j++) {
+    for (var j = 0; j <= s2.length; j++) {
       matrix[0][j] = j;
     }
 
-    for (int i = 1; i <= s1.length; i++) {
-      for (int j = 1; j <= s2.length; j++) {
+    for (var i = 1; i <= s1.length; i++) {
+      for (var j = 1; j <= s2.length; j++) {
         final cost = s1[i - 1] == s2[j - 1] ? 0 : 1;
         matrix[i][j] = [
           matrix[i - 1][j] + 1,

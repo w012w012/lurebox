@@ -191,7 +191,6 @@ void main() {
         id: 'f001',
         standardName: '不同名称',
         scientificName: 'Different',
-        aliases: [],
         category: FishCategory.saltwaterLure,
         rarity: FishRarity.mythical,
       );
@@ -204,7 +203,6 @@ void main() {
         id: 'f001',
         standardName: '不同名称',
         scientificName: 'Different',
-        aliases: [],
         category: FishCategory.saltwaterLure,
         rarity: FishRarity.mythical,
       );
@@ -277,14 +275,14 @@ void main() {
       expect(lureSpecies.length, equals(34));
       expect(
           lureSpecies.every((s) => s.category == FishCategory.freshwaterLure),
-          isTrue);
+          isTrue,);
 
       final saltwaterLure =
           FishGuideData.getByCategory(FishCategory.saltwaterLure);
       expect(saltwaterLure.length, equals(16));
       expect(
           saltwaterLure.every((s) => s.category == FishCategory.saltwaterLure),
-          isTrue);
+          isTrue,);
 
       final saltwaterGeneral =
           FishGuideData.getByCategory(FishCategory.saltwaterGeneral);
@@ -328,7 +326,7 @@ void main() {
       for (final species in FishGuideData.allSpecies) {
         expect(species.id, isNotEmpty);
         expect(
-            species.id.startsWith('f') || species.id.startsWith('g'), isTrue);
+            species.id.startsWith('f') || species.id.startsWith('g'), isTrue,);
       }
     });
 
@@ -339,7 +337,7 @@ void main() {
     });
 
     test('f001-f034 are freshwater lure species', () {
-      for (int i = 1; i <= 34; i++) {
+      for (var i = 1; i <= 34; i++) {
         final id = 'f${i.toString().padLeft(3, '0')}';
         final species = FishGuideData.getById(id);
         expect(species, isNotNull, reason: 'Missing species: $id');
@@ -348,7 +346,7 @@ void main() {
     });
 
     test('f035-f050 are saltwater lure species', () {
-      for (int i = 35; i <= 50; i++) {
+      for (var i = 35; i <= 50; i++) {
         final id = 'f${i.toString().padLeft(3, '0')}';
         final species = FishGuideData.getById(id);
         expect(species, isNotNull, reason: 'Missing species: $id');
@@ -358,7 +356,7 @@ void main() {
 
     test('all g-species have valid categories', () {
       for (final species in FishGuideData.allSpecies.where(
-          (s) => s.id.startsWith('g'))) {
+          (s) => s.id.startsWith('g'),)) {
         expect(
           species.category == FishCategory.freshwaterGeneral ||
               species.category == FishCategory.saltwaterGeneral,

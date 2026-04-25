@@ -1,23 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/services/backup_service.dart';
+import 'package:lurebox/core/services/backup_zip_service.dart';
+import 'package:lurebox/core/services/export_service.dart';
+import 'package:lurebox/core/services/fish_catch_service.dart';
 import 'package:share_plus/share_plus.dart';
-import '../di/di.dart';
-import '../services/backup_service.dart';
-import '../services/backup_zip_service.dart';
-import '../services/export_service.dart';
-import '../services/fish_catch_service.dart';
 
 class SettingsState {
-  final bool isLoading;
-  final String? errorMessage;
-  final int totalCount;
-  final String appVersion;
-  final bool isExporting;
-  final bool isImporting;
-  final bool isUploading;
-  final bool isCreatingZipBackup;
-  final bool isRestoringZipBackup;
-  final String? exportPath;
-  final String? errorDetail;
 
   const SettingsState({
     this.isLoading = false,
@@ -32,6 +21,17 @@ class SettingsState {
     this.exportPath,
     this.errorDetail,
   });
+  final bool isLoading;
+  final String? errorMessage;
+  final int totalCount;
+  final String appVersion;
+  final bool isExporting;
+  final bool isImporting;
+  final bool isUploading;
+  final bool isCreatingZipBackup;
+  final bool isRestoringZipBackup;
+  final String? exportPath;
+  final String? errorDetail;
 
   SettingsState copyWith({
     bool? isLoading,
@@ -63,9 +63,6 @@ class SettingsState {
 }
 
 class SettingsViewModel extends StateNotifier<SettingsState> {
-  final BackupService _backupService;
-  final BackupZipService _backupZipService;
-  final FishCatchService _fishCatchService;
 
   SettingsViewModel(
     this._backupService,
@@ -74,6 +71,9 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
   ) : super(const SettingsState()) {
     loadStats();
   }
+  final BackupService _backupService;
+  final BackupZipService _backupZipService;
+  final FishCatchService _fishCatchService;
 
   Future<void> loadStats() async {
     state = state.copyWith(isLoading: true, errorMessage: () => null);
@@ -81,7 +81,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       final count = await _fishCatchService.getCount();
       state = state.copyWith(isLoading: false, totalCount: count);
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: () => e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: e.toString);
     }
   }
 
@@ -92,13 +92,13 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       state = state.copyWith(isExporting: false, exportPath: () => path);
       return path;
     } catch (e) {
-      state = state.copyWith(isExporting: false, errorMessage: () => e.toString());
+      state = state.copyWith(isExporting: false, errorMessage: e.toString);
       return null;
     }
   }
 
   Future<XFile?> exportDataWithFormat(
-      {ExportFormat format = ExportFormat.json}) async {
+      {ExportFormat format = ExportFormat.json,}) async {
     state = state.copyWith(isExporting: true, errorMessage: () => null);
     try {
       final catches = await _fishCatchService.getAll();
@@ -109,7 +109,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       state = state.copyWith(isExporting: false);
       return xFile;
     } catch (e) {
-      state = state.copyWith(isExporting: false, errorMessage: () => e.toString());
+      state = state.copyWith(isExporting: false, errorMessage: e.toString);
       return null;
     }
   }
@@ -122,7 +122,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       await loadStats();
       return count;
     } catch (e) {
-      state = state.copyWith(isImporting: false, errorMessage: () => e.toString());
+      state = state.copyWith(isImporting: false, errorMessage: e.toString);
       return null;
     }
   }
@@ -142,7 +142,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       state = state.copyWith(isUploading: false);
       return url;
     } catch (e) {
-      state = state.copyWith(isUploading: false, errorMessage: () => e.toString());
+      state = state.copyWith(isUploading: false, errorMessage: e.toString);
       return null;
     }
   }
@@ -160,7 +160,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     } catch (e) {
       state = state.copyWith(
         isCreatingZipBackup: false,
-        errorMessage: () => e.toString(),
+        errorMessage: e.toString,
       );
       return null;
     }
@@ -183,7 +183,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     } catch (e) {
       state = state.copyWith(
         isCreatingZipBackup: false,
-        errorMessage: () => e.toString(),
+        errorMessage: e.toString,
       );
       return null;
     }
@@ -199,7 +199,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     } catch (e) {
       state = state.copyWith(
         isRestoringZipBackup: false,
-        errorMessage: () => e.toString(),
+        errorMessage: e.toString,
       );
       return ImportResult.failure(e.toString());
     }

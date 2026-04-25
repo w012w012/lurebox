@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lurebox/core/models/user_species_alias.dart';
 import 'package:lurebox/core/repositories/user_species_alias_repository.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
   late Database db;
@@ -27,9 +27,9 @@ CREATE TABLE user_species_alias (
 )
 ''');
           await db.execute(
-              'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)');
+              'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)',);
           await db.execute(
-              'CREATE INDEX idx_alias_species ON user_species_alias(species_id)');
+              'CREATE INDEX idx_alias_species ON user_species_alias(species_id)',);
         },
       ),
     );
@@ -93,7 +93,7 @@ CREATE TABLE user_species_alias (
 
       expect(results.length, equals(2));
       expect(
-          results.map((a) => a.userAlias).toList(), containsAll(['桂鱼', '桂花鱼']));
+          results.map((a) => a.userAlias).toList(), containsAll(['桂鱼', '桂花鱼']),);
     });
 
     test('findBySpeciesId returns empty list for non-existent species',
@@ -155,7 +155,7 @@ CREATE TABLE user_species_alias (
         'id': 1,
         'user_alias': '桂鱼',
         'species_id': 'f001',
-        'created_at': DateTime(2024, 1, 1).millisecondsSinceEpoch,
+        'created_at': DateTime(2024).millisecondsSinceEpoch,
       };
 
       final alias = UserSpeciesAlias.fromMap(map);
@@ -163,14 +163,14 @@ CREATE TABLE user_species_alias (
       expect(alias.id, equals(1));
       expect(alias.userAlias, equals('桂鱼'));
       expect(alias.speciesId, equals('f001'));
-      expect(alias.createdAt, equals(DateTime(2024, 1, 1)));
+      expect(alias.createdAt, equals(DateTime(2024)));
     });
 
     test('fromMap handles null id', () {
       final map = {
         'user_alias': '桂鱼',
         'species_id': 'f001',
-        'created_at': DateTime(2024, 1, 1).millisecondsSinceEpoch,
+        'created_at': DateTime(2024).millisecondsSinceEpoch,
       };
 
       final alias = UserSpeciesAlias.fromMap(map);
@@ -184,7 +184,7 @@ CREATE TABLE user_species_alias (
         id: 1,
         userAlias: '桂鱼',
         speciesId: 'f001',
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
       );
 
       final map = alias.toMap();
@@ -193,14 +193,14 @@ CREATE TABLE user_species_alias (
       expect(map['user_alias'], equals('桂鱼'));
       expect(map['species_id'], equals('f001'));
       expect(map['created_at'],
-          equals(DateTime(2024, 1, 1).millisecondsSinceEpoch));
+          equals(DateTime(2024).millisecondsSinceEpoch),);
     });
 
     test('toMap excludes null id', () {
       final alias = UserSpeciesAlias(
         userAlias: '桂鱼',
         speciesId: 'f001',
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
       );
 
       final map = alias.toMap();
@@ -213,7 +213,7 @@ CREATE TABLE user_species_alias (
         id: 1,
         userAlias: '桂鱼',
         speciesId: 'f001',
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
       );
 
       final copy = original.copyWith(userAlias: '翘嘴');
@@ -228,7 +228,7 @@ CREATE TABLE user_species_alias (
         id: 1,
         userAlias: '桂鱼',
         speciesId: 'f001',
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
       );
 
       final alias2 = UserSpeciesAlias(
@@ -246,7 +246,7 @@ CREATE TABLE user_species_alias (
         id: 1,
         userAlias: '桂鱼',
         speciesId: 'f001',
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
       );
 
       final alias2 = UserSpeciesAlias(

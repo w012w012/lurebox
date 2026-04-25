@@ -1,9 +1,28 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/fish_catch.dart';
-import '../di/di.dart';
-import '../services/fish_catch_service.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/services/fish_catch_service.dart';
 
 class StatsDetailState {
+
+  const StatsDetailState({
+    required this.title, required this.startDate, required this.endDate, this.isLoading = true,
+    this.errorMessage,
+    this.totalCount = 0,
+    this.releaseCount = 0,
+    this.keepCount = 0,
+    this.totalWeight = 0.0,
+    this.speciesDistribution = const {},
+    this.locationDistribution = const {},
+    this.rodDistribution = const {},
+    this.reelDistribution = const {},
+    this.lureDistribution = const {},
+    this.hourlyDistribution = const {},
+    this.dailyDistribution = const {},
+    this.monthlyDistribution = const {},
+    this.catches = const [],
+    this.isSharing = false,
+  });
   final bool isLoading;
   final String? errorMessage;
   final String title;
@@ -23,28 +42,6 @@ class StatsDetailState {
   final Map<int, int> monthlyDistribution;
   final List<Map<String, dynamic>> catches;
   final bool isSharing;
-
-  const StatsDetailState({
-    this.isLoading = true,
-    this.errorMessage,
-    required this.title,
-    required this.startDate,
-    required this.endDate,
-    this.totalCount = 0,
-    this.releaseCount = 0,
-    this.keepCount = 0,
-    this.totalWeight = 0.0,
-    this.speciesDistribution = const {},
-    this.locationDistribution = const {},
-    this.rodDistribution = const {},
-    this.reelDistribution = const {},
-    this.lureDistribution = const {},
-    this.hourlyDistribution = const {},
-    this.dailyDistribution = const {},
-    this.monthlyDistribution = const {},
-    this.catches = const [],
-    this.isSharing = false,
-  });
 
   StatsDetailState copyWith({
     bool? isLoading,
@@ -97,7 +94,6 @@ class StatsDetailState {
 }
 
 class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
-  final FishCatchService _fishCatchService;
 
   StatsDetailViewModel({
     required FishCatchService fishCatchService,
@@ -107,10 +103,11 @@ class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
   })  : _fishCatchService = fishCatchService,
         super(
           StatsDetailState(
-              title: title, startDate: startDate, endDate: endDate),
+              title: title, startDate: startDate, endDate: endDate,),
         ) {
     loadData();
   }
+  final FishCatchService _fishCatchService;
 
   Future<void> loadData() async {
     state = state.copyWith(isLoading: true, errorMessage: () => null);
@@ -122,8 +119,8 @@ class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
       );
       final catches = fishList.map((f) => f.toMap()).toList();
 
-      int releaseCount = 0;
-      int keepCount = 0;
+      var releaseCount = 0;
+      var keepCount = 0;
       double totalWeight = 0;
       final speciesMap = <String, int>{};
       final locationMap = <String, int>{};
@@ -168,7 +165,7 @@ class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
         monthlyDistribution: monthlyMap,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: () => e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: e.toString);
     }
   }
 

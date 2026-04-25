@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
-import '../design/theme/app_colors.dart';
-import '../constants/strings.dart';
-import '../../widgets/common/premium_button.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
 
 /// 通用的空状态组件，支持插画图标、文字描述和操作按钮。
 class AppEmptyState extends StatelessWidget {
+
+  const AppEmptyState({
+    required this.message, super.key,
+    this.description,
+    this.icon,
+    this.imageAsset,
+    this.actionLabel,
+    this.onAction,
+    this.backgroundColor,
+  });
   /// 主提示文字
   final String message;
 
@@ -26,22 +36,11 @@ class AppEmptyState extends StatelessWidget {
   /// 背景色（默认透明）
   final Color? backgroundColor;
 
-  const AppEmptyState({
-    super.key,
-    required this.message,
-    this.description,
-    this.icon,
-    this.imageAsset,
-    this.actionLabel,
-    this.onAction,
-    this.backgroundColor,
-  });
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Container(
+    return ColoredBox(
       color: backgroundColor ?? (isDark ? TeslaColors.carbonDark : Colors.transparent),
       child: Center(
         child: Padding(
@@ -112,20 +111,18 @@ class AppEmptyState extends StatelessWidget {
 
 /// 错误视图（保留向后兼容）
 class ErrorView extends StatelessWidget {
+
+  const ErrorView({
+    required this.message, required this.strings, super.key,
+    this.onRetry,
+    this.title,
+    this.icon,
+  });
   final String message;
   final VoidCallback? onRetry;
   final String? title;
   final IconData? icon;
   final AppStrings? strings;
-
-  const ErrorView({
-    super.key,
-    required this.message,
-    this.onRetry,
-    this.title,
-    this.icon,
-    required this.strings,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -174,9 +171,9 @@ class ErrorView extends StatelessWidget {
 
 /// 加载视图
 class LoadingView extends StatelessWidget {
-  final String? message;
 
   const LoadingView({super.key, this.message});
+  final String? message;
 
   @override
   Widget build(BuildContext context) {

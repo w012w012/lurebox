@@ -43,6 +43,35 @@ enum AchievementLevel {
 
 /// 成就模型
 class Achievement {
+
+  const Achievement({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.level,
+    required this.category,
+    required this.target,
+    required this.current,
+    required this.progress, this.unlockedAt,
+  });
+
+  factory Achievement.fromJson(Map<String, dynamic> json) {
+    return Achievement(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      description: json['description'] as String,
+      icon: json['icon'] as String,
+      level: AchievementLevel.fromJson(json['level'] as String),
+      category: json['category'] as String,
+      target: json['target'] as int,
+      current: json['current'] as int,
+      unlockedAt: json['unlockedAt'] != null
+          ? DateTime.parse(json['unlockedAt'] as String)
+          : null,
+      progress: (json['progress'] as num).toDouble(),
+    );
+  }
   final String id;
   final String title;
   final String description;
@@ -54,23 +83,10 @@ class Achievement {
   final DateTime? unlockedAt;
   final double progress;
 
-  const Achievement({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.icon,
-    required this.level,
-    required this.category,
-    required this.target,
-    required this.current,
-    this.unlockedAt,
-    required this.progress,
-  });
-
   bool get isUnlocked => current >= target;
   bool get isLocked => !isUnlocked;
   double get progressPercent {
-    if (target == 0) return 0.0;
+    if (target == 0) return 0;
     return (current / target * 100).clamp(0, 100);
   }
 
@@ -113,23 +129,6 @@ class Achievement {
       'unlockedAt': unlockedAt?.toIso8601String(),
       'progress': progress,
     };
-  }
-
-  factory Achievement.fromJson(Map<String, dynamic> json) {
-    return Achievement(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      icon: json['icon'] as String,
-      level: AchievementLevel.fromJson(json['level'] as String),
-      category: json['category'] as String,
-      target: json['target'] as int,
-      current: json['current'] as int,
-      unlockedAt: json['unlockedAt'] != null
-          ? DateTime.parse(json['unlockedAt'] as String)
-          : null,
-      progress: (json['progress'] as num).toDouble(),
-    );
   }
 
   @override

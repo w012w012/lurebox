@@ -1,7 +1,7 @@
-import '../constants/pagination_constants.dart';
-import '../models/equipment.dart';
-import 'base_repository.dart';
-import 'equipment_repository.dart';
+import 'package:lurebox/core/constants/pagination_constants.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/repositories/base_repository.dart';
+import 'package:lurebox/core/repositories/equipment_repository.dart';
 
 /// SQLite 实现 - 钓具/装备仓储层
 ///
@@ -10,8 +10,6 @@ import 'equipment_repository.dart';
 
 class SqliteEquipmentRepository extends BaseSqliteRepository
     implements EquipmentRepository {
-  @override
-  String get tableName => 'equipments';
 
   /// 无参构造函数（使用默认 DatabaseService）
   SqliteEquipmentRepository();
@@ -19,6 +17,8 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
   /// 带数据库的构造函数（用于测试）
   SqliteEquipmentRepository.withDatabase(super.testDb)
       : super.withDatabase();
+  @override
+  String get tableName => 'equipments';
 
   @override
   Future<List<Equipment>> getAll({String? type}) async {
@@ -38,7 +38,7 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
         orderBy: 'is_default DESC, created_at DESC',
       );
       return List<Equipment>.from(
-          results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)));
+          results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)),);
     } catch (e) {
       throwDbError('get equipments', e);
     }
@@ -151,7 +151,7 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
         'SELECT COUNT(*) as count FROM $tableName WHERE $whereClause',
         whereArgs,
       );
-      final totalCount = countResult.first['count'] as int;
+      final totalCount = countResult.first['count']! as int;
 
       final results = await db.query(
         tableName,
@@ -162,7 +162,7 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
         offset: offset,
       );
       final items = List<Equipment>.from(
-          results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)));
+          results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)),);
 
       final hasMore = (page * pageSize) < totalCount;
 
@@ -218,7 +218,7 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
         'SELECT COUNT(*) as count FROM $tableName WHERE $whereClause',
         whereArgs,
       );
-      final totalCount = countResult.first['count'] as int;
+      final totalCount = countResult.first['count']! as int;
 
       final results = await db.query(
         tableName,
@@ -229,7 +229,7 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
         offset: offset,
       );
       final items = List<Equipment>.from(
-          results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)));
+          results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)),);
 
       final hasMore = (page * pageSize) < totalCount;
 
@@ -281,7 +281,7 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
 
       final stats = <String, int>{};
       for (final row in results) {
-        stats[row['type'] as String] = row['count'] as int;
+        stats[row['type']! as String] = row['count']! as int;
       }
       return stats;
     } catch (e) {
@@ -300,7 +300,7 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
         ORDER BY brand
       ''');
 
-      return results.map((row) => row['brand'] as String).toList();
+      return results.map((row) => row['brand']! as String).toList();
     } catch (e) {
       throwDbError('get brands', e);
     }
@@ -320,7 +320,7 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
         [brand],
       );
 
-      return results.map((row) => row['model'] as String).toList();
+      return results.map((row) => row['model']! as String).toList();
     } catch (e) {
       throwDbError('get models by brand', e);
     }
@@ -343,8 +343,8 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
 
       final distribution = <String, int>{};
       for (final row in results) {
-        final category = row['category'] as String;
-        distribution[category] = row['count'] as int;
+        final category = row['category']! as String;
+        distribution[category] = row['count']! as int;
       }
       return distribution;
     } catch (e) {

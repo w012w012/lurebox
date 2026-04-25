@@ -15,8 +15,8 @@
 /// 5. 支持放流或保留的标记
 library;
 
-import '../utils/unit_converter.dart';
-import 'app_settings.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
 
 enum FishFateType {
   release(0, '放流'),
@@ -35,48 +35,14 @@ enum FishFateType {
 }
 
 class FishCatch {
-  final int id;
-  final String imagePath;
-  final String? watermarkedImagePath;
-  final String species;
-  final double length;
-  final String lengthUnit; // 输入时的单位
-  final double? weight;
-  final String weightUnit; // 输入时的单位
-  final FishFateType fate;
-  final DateTime catchTime;
-  final String? locationName;
-  final double? latitude;
-  final double? longitude;
-  final int? equipmentId;
-  final int? rodId;
-  final int? reelId;
-  final int? lureId;
-  final double? airTemperature; // 气温（摄氏度）
-  final double? pressure; // 气压（hPa）
-  final int? weatherCode; // 天气代码（WMO）
-  final bool pendingRecognition; // 待识别标记：true=待识别，false=已识别
-  final String? notes;
-  final String? rigType;
-  final String? sinkerWeight;
-  final String? sinkerPosition;
-  final String? hookType;
-  final String? hookSize;
-  final String? hookWeight;
-  final DateTime createdAt;
-  final DateTime updatedAt;
 
   const FishCatch({
     required this.id,
     required this.imagePath,
-    this.watermarkedImagePath,
-    required this.species,
-    required this.length,
+    required this.species, required this.length, required this.fate, required this.catchTime, required this.createdAt, required this.updatedAt, this.watermarkedImagePath,
     this.lengthUnit = 'cm',
     this.weight,
     this.weightUnit = 'kg',
-    required this.fate,
-    required this.catchTime,
     this.locationName,
     this.latitude,
     this.longitude,
@@ -95,8 +61,6 @@ class FishCatch {
     this.hookType,
     this.hookSize,
     this.hookWeight,
-    required this.createdAt,
-    required this.updatedAt,
   });
 
   factory FishCatch.fromMap(Map<String, dynamic> map) {
@@ -133,6 +97,36 @@ class FishCatch {
       updatedAt: DateTime.parse(map['updated_at'] as String),
     );
   }
+  final int id;
+  final String imagePath;
+  final String? watermarkedImagePath;
+  final String species;
+  final double length;
+  final String lengthUnit; // 输入时的单位
+  final double? weight;
+  final String weightUnit; // 输入时的单位
+  final FishFateType fate;
+  final DateTime catchTime;
+  final String? locationName;
+  final double? latitude;
+  final double? longitude;
+  final int? equipmentId;
+  final int? rodId;
+  final int? reelId;
+  final int? lureId;
+  final double? airTemperature; // 气温（摄氏度）
+  final double? pressure; // 气压（hPa）
+  final int? weatherCode; // 天气代码（WMO）
+  final bool pendingRecognition; // 待识别标记：true=待识别，false=已识别
+  final String? notes;
+  final String? rigType;
+  final String? sinkerWeight;
+  final String? sinkerPosition;
+  final String? hookType;
+  final String? hookSize;
+  final String? hookWeight;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   Map<String, dynamic> toMap() {
     return {
@@ -275,13 +269,13 @@ extension FishCatchListExtension on List<FishCatch> {
         case 'month':
           final nextMonth = now.month == 12 ? 1 : now.month + 1;
           final nextYear = now.month == 12 ? now.year + 1 : now.year;
-          final start = DateTime(now.year, now.month, 1);
-          final end = DateTime(nextYear, nextMonth, 1);
+          final start = DateTime(now.year, now.month);
+          final end = DateTime(nextYear, nextMonth);
           return !fish.catchTime.isBefore(start) &&
               fish.catchTime.isBefore(end);
         case 'year':
-          final start = DateTime(now.year, 1, 1);
-          final end = DateTime(now.year + 1, 1, 1);
+          final start = DateTime(now.year);
+          final end = DateTime(now.year + 1);
           return !fish.catchTime.isBefore(start) &&
               fish.catchTime.isBefore(end);
         default:

@@ -1,4 +1,4 @@
-import 'openai_compatible_provider.dart';
+import 'package:lurebox/core/services/adapters/openai_compatible_provider.dart';
 
 /// Tencent (腾讯混元) 鱼类识别提供者
 ///

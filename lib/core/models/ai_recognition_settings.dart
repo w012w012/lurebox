@@ -49,11 +49,6 @@ enum AiRecognitionProvider {
 
 /// AI 提供商配置
 class AiProviderConfig {
-  final AiRecognitionProvider provider;
-  final String apiKey;
-  final String? baseUrl;
-  final String? modelName;
-  final bool enabled;
 
   const AiProviderConfig({
     required this.provider,
@@ -62,6 +57,21 @@ class AiProviderConfig {
     this.modelName,
     this.enabled = true,
   });
+
+  factory AiProviderConfig.fromJson(Map<String, dynamic> json) {
+    return AiProviderConfig(
+      provider: AiRecognitionProvider.fromValue(json['provider'] as int? ?? 0),
+      apiKey: json['apiKey'] as String? ?? '',
+      baseUrl: json['baseUrl'] as String?,
+      modelName: json['modelName'] as String?,
+      enabled: json['enabled'] as bool? ?? true,
+    );
+  }
+  final AiRecognitionProvider provider;
+  final String apiKey;
+  final String? baseUrl;
+  final String? modelName;
+  final bool enabled;
 
   AiProviderConfig copyWith({
     AiRecognitionProvider? provider,
@@ -86,24 +96,10 @@ class AiProviderConfig {
         'modelName': modelName,
         'enabled': enabled,
       };
-
-  factory AiProviderConfig.fromJson(Map<String, dynamic> json) {
-    return AiProviderConfig(
-      provider: AiRecognitionProvider.fromValue(json['provider'] as int? ?? 0),
-      apiKey: json['apiKey'] as String? ?? '',
-      baseUrl: json['baseUrl'] as String?,
-      modelName: json['modelName'] as String?,
-      enabled: json['enabled'] as bool? ?? true,
-    );
-  }
 }
 
 /// AI 识别设置
 class AiRecognitionSettings {
-  final AiRecognitionProvider currentProvider;
-  final Map<AiRecognitionProvider, AiProviderConfig> providerConfigs;
-  final bool autoRecognize;
-  final Duration timeout;
 
   const AiRecognitionSettings({
     this.currentProvider = AiRecognitionProvider.gemini,
@@ -111,29 +107,6 @@ class AiRecognitionSettings {
     this.autoRecognize = true,
     this.timeout = const Duration(seconds: 10),
   });
-
-  AiRecognitionSettings copyWith({
-    AiRecognitionProvider? currentProvider,
-    Map<AiRecognitionProvider, AiProviderConfig>? providerConfigs,
-    bool? autoRecognize,
-    Duration? timeout,
-  }) {
-    return AiRecognitionSettings(
-      currentProvider: currentProvider ?? this.currentProvider,
-      providerConfigs: providerConfigs ?? this.providerConfigs,
-      autoRecognize: autoRecognize ?? this.autoRecognize,
-      timeout: timeout ?? this.timeout,
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-        'currentProvider': currentProvider.value,
-        'providerConfigs': providerConfigs.map(
-          (key, value) => MapEntry(key.value.toString(), value.toJson()),
-        ),
-        'autoRecognize': autoRecognize,
-        'timeout': timeout.inSeconds,
-      };
 
   factory AiRecognitionSettings.fromJson(Map<String, dynamic> json) {
     final configsJson = json['providerConfigs'] as Map<String, dynamic>? ?? {};
@@ -159,8 +132,35 @@ class AiRecognitionSettings {
     );
   }
 
-  String encode() => jsonEncode(toJson());
-
   factory AiRecognitionSettings.decode(String source) =>
-      AiRecognitionSettings.fromJson(jsonDecode(source));
+      AiRecognitionSettings.fromJson(jsonDecode(source) as Map<String, dynamic>);
+  final AiRecognitionProvider currentProvider;
+  final Map<AiRecognitionProvider, AiProviderConfig> providerConfigs;
+  final bool autoRecognize;
+  final Duration timeout;
+
+  AiRecognitionSettings copyWith({
+    AiRecognitionProvider? currentProvider,
+    Map<AiRecognitionProvider, AiProviderConfig>? providerConfigs,
+    bool? autoRecognize,
+    Duration? timeout,
+  }) {
+    return AiRecognitionSettings(
+      currentProvider: currentProvider ?? this.currentProvider,
+      providerConfigs: providerConfigs ?? this.providerConfigs,
+      autoRecognize: autoRecognize ?? this.autoRecognize,
+      timeout: timeout ?? this.timeout,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'currentProvider': currentProvider.value,
+        'providerConfigs': providerConfigs.map(
+          (key, value) => MapEntry(key.value.toString(), value.toJson()),
+        ),
+        'autoRecognize': autoRecognize,
+        'timeout': timeout.inSeconds,
+      };
+
+  String encode() => jsonEncode(toJson());
 }

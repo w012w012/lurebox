@@ -1,4 +1,4 @@
-import '../models/species_history.dart';
+import 'package:lurebox/core/models/species_history.dart';
 
 export '../models/species_history.dart';
 

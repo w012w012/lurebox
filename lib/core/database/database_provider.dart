@@ -1,18 +1,19 @@
 import 'dart:async';
-import 'package:sqflite/sqflite.dart';
+
+import 'package:lurebox/core/services/app_logger.dart';
 import 'package:path/path.dart';
-import '../services/app_logger.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// 数据库提供者
 /// 负责数据库的初始化和连接管理
 class DatabaseProvider {
+
+  DatabaseProvider._();
   static DatabaseProvider? _instance;
   static DatabaseProvider get instance => _instance ??= DatabaseProvider._();
 
   static const String _databaseName = 'lurebox.db';
   static const int _databaseVersion = 22;
-
-  DatabaseProvider._();
 
   Database? _database;
   Completer<Database>? _initCompleter;
@@ -59,7 +60,7 @@ class DatabaseProvider {
 
     AppLogger.i('DatabaseProvider', 'Opening database: $path');
 
-    return await openDatabase(
+    return openDatabase(
       path,
       version: _databaseVersion,
       onConfigure: _onConfigure,
@@ -262,7 +263,7 @@ class DatabaseProvider {
     }
     if (oldVersion < 3) {
       await db.execute(
-        'ALTER TABLE equipments ADD COLUMN lure_quantity_unit TEXT DEFAULT \'pcs\'',
+        "ALTER TABLE equipments ADD COLUMN lure_quantity_unit TEXT DEFAULT 'pcs'",
       );
     }
     if (oldVersion < 4) {
@@ -424,7 +425,7 @@ CREATE TABLE backup_history (
       await _addColumnIfNotExists(db, 'fish_catches', 'rig_type', 'TEXT');
       await _addColumnIfNotExists(db, 'fish_catches', 'sinker_weight', 'TEXT');
       await _addColumnIfNotExists(
-          db, 'fish_catches', 'sinker_position', 'TEXT');
+          db, 'fish_catches', 'sinker_position', 'TEXT',);
       await _addColumnIfNotExists(db, 'fish_catches', 'hook_type', 'TEXT');
       await _addColumnIfNotExists(db, 'fish_catches', 'hook_size', 'TEXT');
       await _addColumnIfNotExists(db, 'fish_catches', 'hook_weight', 'TEXT');
@@ -458,9 +459,9 @@ CREATE TABLE user_species_alias (
 
       // 创建索引
       await db.execute(
-          'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)');
+          'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)',);
       await db.execute(
-          'CREATE INDEX idx_alias_species ON user_species_alias(species_id)');
+          'CREATE INDEX idx_alias_species ON user_species_alias(species_id)',);
     }
     if (oldVersion < 21) {
       // 添加 catch_time 索引以优化按时间排序的查询
@@ -495,7 +496,7 @@ CREATE TABLE user_species_alias (
   ) async {
     try {
       final result = await db.rawQuery(
-        "PRAGMA table_info($table)",
+        'PRAGMA table_info($table)',
       );
       final columnExists = result.any((row) => row['name'] == column);
       if (!columnExists) {

@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lurebox/core/database/database_provider.dart';
+import 'package:lurebox/core/services/backup_service.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
-import 'package:lurebox/core/services/backup_service.dart';
-import 'package:lurebox/core/database/database_provider.dart';
 
 // Custom Mock Database that implements sqflite's Database interface for testing
 class MockDb extends Mock implements Database {
@@ -109,9 +110,9 @@ class MockDb extends Mock implements Database {
 }
 
 class _MockTransaction implements Transaction {
-  final MockDb _mockDb;
 
   _MockTransaction(this._mockDb);
+  final MockDb _mockDb;
 
   @override
   Future<int> insert(
@@ -138,9 +139,9 @@ class _MockTransaction implements Transaction {
 
 // Mock DatabaseProvider for testing
 class MockDatabaseProvider extends Mock implements DatabaseProvider {
-  final MockDb mockDb;
 
   MockDatabaseProvider(this.mockDb);
+  final MockDb mockDb;
 
   @override
   Future<Database> get database => Future.value(mockDb);
@@ -199,16 +200,16 @@ void main() {
       test('queries all required tables', () async {
         // Arrange
         final fishCatchesData = [
-          {'id': 1, 'species': 'Bass', 'length': 30.0}
+          {'id': 1, 'species': 'Bass', 'length': 30.0},
         ];
         final equipmentsData = [
-          {'id': 1, 'type': 'rod', 'brand': 'Test'}
+          {'id': 1, 'type': 'rod', 'brand': 'Test'},
         ];
         final speciesHistoryData = [
-          {'id': 1, 'name': 'Bass', 'use_count': 5}
+          {'id': 1, 'name': 'Bass', 'use_count': 5},
         ];
         final settingsData = [
-          {'id': 1, 'key': 'theme', 'value': 'dark'}
+          {'id': 1, 'key': 'theme', 'value': 'dark'},
         ];
 
         mockDatabase.addQueryResult('fish_catches', fishCatchesData);
@@ -229,16 +230,16 @@ void main() {
       test('writes valid JSON with expected structure', () async {
         // Arrange
         final fishCatchesData = [
-          {'id': 1, 'species': 'Bass', 'length': 30.0, 'catch_time': 1234567890}
+          {'id': 1, 'species': 'Bass', 'length': 30.0, 'catch_time': 1234567890},
         ];
         final equipmentsData = [
-          {'id': 1, 'type': 'rod', 'brand': 'Shimano'}
+          {'id': 1, 'type': 'rod', 'brand': 'Shimano'},
         ];
         final speciesHistoryData = [
-          {'id': 1, 'name': 'Bass', 'use_count': 1}
+          {'id': 1, 'name': 'Bass', 'use_count': 1},
         ];
         final settingsData = [
-          {'id': 1, 'key': 'theme', 'value': 'light'}
+          {'id': 1, 'key': 'theme', 'value': 'light'},
         ];
 
         mockDatabase.addQueryResult('fish_catches', fishCatchesData);
@@ -279,16 +280,16 @@ void main() {
           'version': 1,
           'exportTime': DateTime.now().toIso8601String(),
           'fishCatches': [
-            {'id': 1, 'species': 'Trout', 'length': 25.0}
+            {'id': 1, 'species': 'Trout', 'length': 25.0},
           ],
           'equipments': [
-            {'id': 1, 'type': 'reel', 'brand': 'Abu Garcia'}
+            {'id': 1, 'type': 'reel', 'brand': 'Abu Garcia'},
           ],
           'speciesHistory': [
-            {'id': 1, 'name': 'Trout', 'use_count': 1}
+            {'id': 1, 'name': 'Trout', 'use_count': 1},
           ],
           'settings': [
-            {'id': 1, 'key': 'theme', 'value': 'dark'}
+            {'id': 1, 'key': 'theme', 'value': 'dark'},
           ],
         });
 

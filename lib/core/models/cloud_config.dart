@@ -4,24 +4,10 @@ import 'dart:convert';
 ///
 /// 支持多种云存储提供商：WebDAV、Nextcloud、OwnCloud 等
 class CloudConfig {
-  final int? id;
-  final CloudProvider provider;
-  final String serverUrl;
-  final String username;
-  final String password;
-  final bool isActive;
-  final DateTime createdAt;
-  final DateTime updatedAt;
 
   const CloudConfig({
-    this.id,
-    required this.provider,
-    required this.serverUrl,
-    required this.username,
-    required this.password,
+    required this.provider, required this.serverUrl, required this.username, required this.password, required this.createdAt, required this.updatedAt, this.id,
     this.isActive = false,
-    required this.createdAt,
-    required this.updatedAt,
   });
 
   /// 从 Map 创建 CloudConfig
@@ -40,6 +26,14 @@ class CloudConfig {
       updatedAt: DateTime.parse(map['updated_at'] as String),
     );
   }
+  final int? id;
+  final CloudProvider provider;
+  final String serverUrl;
+  final String username;
+  final String password;
+  final bool isActive;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   /// 转换为 Map（含密码，用于完整序列化）
   Map<String, dynamic> toMap() {

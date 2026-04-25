@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/camera/camera_state.dart';
 import 'package:lurebox/core/camera/camera_view_model.dart';
 import 'package:lurebox/core/constants/strings.dart';
@@ -7,6 +6,7 @@ import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -138,7 +138,7 @@ void main() {
     test('setLength also computes estimatedWeight', () {
       viewModel.setLength(30);
       expect(viewModel.state.estimatedWeight, isNotNull);
-      expect(viewModel.state.estimatedWeight!, greaterThan(0));
+      expect(viewModel.state.estimatedWeight, greaterThan(0));
     });
 
     test('setLength with 0 does not set estimatedWeight', () {
@@ -226,7 +226,7 @@ void main() {
     });
 
     test('setCatchTime updates state.catchTime', () {
-      final time = DateTime(2025, 1, 1);
+      final time = DateTime(2025);
       viewModel.setCatchTime(time);
       expect(viewModel.state.catchTime, time);
     });
@@ -253,7 +253,7 @@ void main() {
       // Mutate several fields
       viewModel.setSpecies('Bass');
       viewModel.setLength(30);
-      viewModel.setWeight(5.0);
+      viewModel.setWeight(5);
       viewModel.setFate(FishFateType.keep);
       viewModel.setLocationName('River');
       viewModel.setImagePath('/path/img.jpg');
@@ -343,7 +343,7 @@ void main() {
   // ===========================================================================
   group('setLocation', () {
     test('updates locationName, latitude, longitude, and weather fields', () {
-      viewModel.setLocation('Beach', 35.0, 139.0, 25.0, 1013.0, 1);
+      viewModel.setLocation('Beach', 35, 139, 25, 1013, 1);
 
       final s = viewModel.state;
       expect(s.locationName, 'Beach');
@@ -365,7 +365,7 @@ void main() {
     });
 
     test('setPressure updates state.pressure', () {
-      viewModel.setPressure(1015.0);
+      viewModel.setPressure(1015);
       expect(viewModel.state.pressure, 1015.0);
     });
 
@@ -622,9 +622,9 @@ void main() {
   // ===========================================================================
   group('loadEquipments', () {
     test('loads rods, reels, lures and selects defaults', () async {
-      final defaultRod = _rod(id: 1, isDefault: true);
-      final defaultReel = _reel(id: 2, isDefault: true);
-      final defaultLure = _lure(id: 3, isDefault: true);
+      final defaultRod = _rod(isDefault: true);
+      final defaultReel = _reel(isDefault: true);
+      final defaultLure = _lure(isDefault: true);
 
       when(() => mockEquipmentService.getAll(type: 'rod'))
           .thenAnswer((_) async => [defaultRod, _rod(id: 11)]);
@@ -645,11 +645,11 @@ void main() {
 
     test('selects null defaults when no default equipment exists', () async {
       when(() => mockEquipmentService.getAll(type: 'rod'))
-          .thenAnswer((_) async => [_rod(id: 1)]);
+          .thenAnswer((_) async => [_rod()]);
       when(() => mockEquipmentService.getAll(type: 'reel'))
-          .thenAnswer((_) async => [_reel(id: 2)]);
+          .thenAnswer((_) async => [_reel()]);
       when(() => mockEquipmentService.getAll(type: 'lure'))
-          .thenAnswer((_) async => [_lure(id: 3)]);
+          .thenAnswer((_) async => [_lure()]);
 
       await viewModel.loadEquipments();
 

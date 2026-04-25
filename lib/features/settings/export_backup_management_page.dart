@@ -1,16 +1,16 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/di/di.dart';
-import '../../widgets/common/app_snack_bar.dart';
 
 /// 文件类型枚举
 enum FileType {
@@ -26,11 +26,6 @@ enum FileType {
 
 /// 文件信息类
 class FileInfo {
-  final String name;
-  final String path;
-  final DateTime modified;
-  final int size;
-  final FileType fileType;
 
   const FileInfo({
     required this.name,
@@ -39,6 +34,11 @@ class FileInfo {
     required this.size,
     required this.fileType,
   });
+  final String name;
+  final String path;
+  final DateTime modified;
+  final int size;
+  final FileType fileType;
 
   String get formattedSize {
     if (size < 1024) {
@@ -60,7 +60,7 @@ class FileInfo {
 Future<List<FileInfo>> _listExportBackupFiles() async {
   final directory = await getApplicationDocumentsDirectory();
   final dir = Directory(directory.path);
-  final List<FileInfo> files = [];
+  final files = <FileInfo>[];
 
   await for (final entity in dir.list()) {
     if (entity is File) {
@@ -85,7 +85,7 @@ Future<List<FileInfo>> _listExportBackupFiles() async {
           modified: stat.modified,
           size: stat.size,
           fileType: fileType,
-        ));
+        ),);
       }
     }
   }
@@ -143,7 +143,7 @@ class _ExportBackupManagementPageState
       ),
     );
 
-    if (confirmed == true) {
+    if (confirmed ?? false) {
       try {
         final fileToDelete = File(file.path);
         await fileToDelete.delete();

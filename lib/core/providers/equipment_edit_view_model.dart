@@ -1,29 +1,29 @@
-import '../services/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../constants/strings.dart';
-import '../constants/price_ranges.dart';
-import '../di/di.dart';
-import '../models/equipment.dart';
-import '../services/equipment_service.dart';
-import 'equipment_edit_state.dart';
+import 'package:lurebox/core/constants/price_ranges.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/providers/equipment_edit_state.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/services/equipment_service.dart';
 
 // =============================================================================
 // Base Notifier (Handles Shared Fields)
 // =============================================================================
 
 class _BaseEquipmentEditNotifier {
-  final EquipmentService _equipmentService;
-  EquipmentEditState _state;
-  final String type;
 
   _BaseEquipmentEditNotifier(
     this._equipmentService,
     this.type, [
     Map<String, dynamic>? equipment,
   ]) : _state = _createInitialState(type, equipment);
+  final EquipmentService _equipmentService;
+  EquipmentEditState _state;
+  final String type;
 
   static EquipmentEditState _createInitialState(
-      String type, Map<String, dynamic>? equipment) {
+      String type, Map<String, dynamic>? equipment,) {
     switch (type) {
       case 'rod':
         return RodEditState(type: type, equipment: equipment);
@@ -55,7 +55,7 @@ class _BaseEquipmentEditNotifier {
     // Note: equipment parameter is non-nullable, null check omitted
 
     AppLogger.d(
-        'EquipmentEditViewModel', 'loadDataFromMap START - equipment.length: ${equipment['length']}');
+        'EquipmentEditViewModel', 'loadDataFromMap START - equipment.length: ${equipment['length']}',);
 
     // Load common fields from equipment map
     final brandValue = _getValue(equipment, 'brand')?.toString() ?? '';
@@ -136,7 +136,7 @@ class _BaseEquipmentEditNotifier {
   void updateLureQuantityUnit(String? value) {}
 
   Future<bool> save() async {
-    _updateState(_state.withUpdates(isSaving: true, errorMessage: null));
+    _updateState(_state.withUpdates(isSaving: true));
 
     try {
       String? category;
@@ -198,7 +198,7 @@ class _BaseEquipmentEditNotifier {
     } catch (e) {
       AppLogger.e('EquipmentEditViewModel', 'Failed to save equipment', e);
       _updateState(
-          _state.withUpdates(isSaving: false, errorMessage: e.toString()));
+          _state.withUpdates(isSaving: false, errorMessage: e.toString()),);
       return false;
     }
   }
@@ -214,17 +214,17 @@ class _BaseEquipmentEditNotifier {
 
 class RodEditNotifier extends _BaseEquipmentEditNotifier {
   RodEditNotifier(
-    EquipmentService equipmentService,
-    String type,
-    Map<String, dynamic>? equipment,
-  ) : super(equipmentService, type, equipment);
+    super.equipmentService,
+    super.type,
+    super.equipment,
+  );
 
   RodEditState get rodState => _state as RodEditState;
 
   @override
   void _loadData(Map<String, dynamic> e) {
-    String categoryType1 = '';
-    String categoryType2 = '';
+    var categoryType1 = '';
+    var categoryType2 = '';
 
     AppLogger.d('EquipmentEditViewModel', '[_loadData Rod] e.length: ${e['length']}');
     AppLogger.d('EquipmentEditViewModel', '[_loadData Rod] _getValue length: ${_getValue(e, 'length')}');
@@ -253,10 +253,10 @@ class RodEditNotifier extends _BaseEquipmentEditNotifier {
       hardness: _getValue(e, 'hardness')?.toString() ?? '',
       rodAction: _getValue(e, 'rod_action')?.toString() ?? '',
       weightRange: _getValue(e, 'weight_range')?.toString() ?? '',
-    ));
+    ),);
 
     AppLogger.d(
-        'EquipmentEditViewModel', '[_loadData Rod] after copyWith, rodState.length: ${rodState.length}');
+        'EquipmentEditViewModel', '[_loadData Rod] after copyWith, rodState.length: ${rodState.length}',);
   }
 
   @override
@@ -323,17 +323,17 @@ class RodEditNotifier extends _BaseEquipmentEditNotifier {
 
 class ReelEditNotifier extends _BaseEquipmentEditNotifier {
   ReelEditNotifier(
-    EquipmentService equipmentService,
-    String type,
-    Map<String, dynamic>? equipment,
-  ) : super(equipmentService, type, equipment);
+    super.equipmentService,
+    super.type,
+    super.equipment,
+  );
 
   ReelEditState get reelState => _state as ReelEditState;
 
   @override
   void _loadData(Map<String, dynamic> e) {
-    String categoryType1 = '';
-    String categoryType2 = '';
+    var categoryType1 = '';
+    var categoryType2 = '';
 
     final category = _getValue(e, 'category')?.toString();
     if (category != null && category.contains('|')) {
@@ -360,7 +360,7 @@ class ReelEditNotifier extends _BaseEquipmentEditNotifier {
       reelLineLengthUnit:
           _getValue(e, 'reel_line_length_unit')?.toString() ?? 'm',
       reelLineDate: _getValue(e, 'reel_line_date')?.toString() ?? '',
-    ));
+    ),);
   }
 
   @override
@@ -443,10 +443,10 @@ class ReelEditNotifier extends _BaseEquipmentEditNotifier {
 
 class LureEditNotifier extends _BaseEquipmentEditNotifier {
   LureEditNotifier(
-    EquipmentService equipmentService,
-    String type,
-    Map<String, dynamic>? equipment,
-  ) : super(equipmentService, type, equipment);
+    super.equipmentService,
+    super.type,
+    super.equipment,
+  );
 
   LureEditState get lureState => _state as LureEditState;
 
@@ -461,7 +461,7 @@ class LureEditNotifier extends _BaseEquipmentEditNotifier {
       lureColor: _getValue(e, 'lure_color')?.toString() ?? '',
       lureQuantity: _getValue(e, 'lure_quantity')?.toString() ?? '',
       lureQuantityUnit: _getValue(e, 'lure_quantity_unit')?.toString() ?? '',
-    ));
+    ),);
   }
 
   @override
@@ -521,8 +521,6 @@ class LureEditNotifier extends _BaseEquipmentEditNotifier {
 /// Main ViewModel that delegates to type-specific notifiers.
 /// Maintains the existing API for backwards compatibility.
 class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
-  final EquipmentService _equipmentService;
-  late _BaseEquipmentEditNotifier _delegate;
 
   EquipmentEditViewModel(
     this._equipmentService,
@@ -532,6 +530,8 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
     _delegate = _createDelegate(type, equipment);
     state = _delegate.state;
   }
+  final EquipmentService _equipmentService;
+  late _BaseEquipmentEditNotifier _delegate;
 
   static EquipmentEditState _buildInitial(
     String type,
@@ -544,7 +544,7 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
       };
 
   _BaseEquipmentEditNotifier _createDelegate(
-      String type, Map<String, dynamic>? equipment) {
+      String type, Map<String, dynamic>? equipment,) {
     switch (type) {
       case 'rod':
         return RodEditNotifier(_equipmentService, type, equipment);

@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/app_settings.dart';
-import 'package:lurebox/core/services/settings_service.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/services/settings_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockSettingsService extends Mock implements SettingsService {}
 
@@ -139,7 +139,7 @@ void main() {
         'updateLanguage creates new settings with new language and calls updateSettings',
         () async {
       // Arrange
-      const initialSettings = AppSettings(language: AppLanguage.chinese);
+      const initialSettings = AppSettings();
       when(() => mockService.getAppSettings())
           .thenAnswer((_) async => initialSettings);
       when(() => mockService.saveAppSettings(any())).thenAnswer((_) async {});
@@ -160,7 +160,6 @@ void main() {
       // Arrange
       const initialSettings = AppSettings(
         darkMode: DarkMode.light,
-        language: AppLanguage.chinese,
       );
       const newSettings = AppSettings(
         darkMode: DarkMode.dark,

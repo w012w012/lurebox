@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/animation_constants.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import 'premium_card.dart';
+import 'package:lurebox/core/design/theme/animation_constants.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// iOS-style Settings Tile widget.
 /// Provides consistent iOS settings app appearance with blue accent colors,
 /// touch feedback animations, and proper dark mode support.
 class SettingsTile extends StatefulWidget {
+
+  const SettingsTile({
+    required this.icon, required this.title, super.key,
+    this.subtitle,
+    this.trailing,
+    this.onTap,
+    this.showChevron = false,
+    this.variant = PremiumCardVariant.flat,
+  });
   /// Icon displayed on the left side of the tile.
   final IconData icon;
 
@@ -29,17 +38,6 @@ class SettingsTile extends StatefulWidget {
 
   /// Card variant for the underlying PremiumCard.
   final PremiumCardVariant variant;
-
-  const SettingsTile({
-    super.key,
-    required this.icon,
-    required this.title,
-    this.subtitle,
-    this.trailing,
-    this.onTap,
-    this.showChevron = false,
-    this.variant = PremiumCardVariant.flat,
-  });
 
   @override
   State<SettingsTile> createState() => _SettingsTileState();
@@ -163,17 +161,16 @@ class _SettingsTileState extends State<SettingsTile> {
 
 /// A settings section header with optional action.
 class SettingsSectionHeader extends StatelessWidget {
+
+  const SettingsSectionHeader({
+    required this.title, super.key,
+    this.action,
+  });
   /// The header title text.
   final String title;
 
   /// Optional action widget displayed on the right.
   final Widget? action;
-
-  const SettingsSectionHeader({
-    super.key,
-    required this.title,
-    this.action,
-  });
 
   @override
   Widget build(BuildContext context) {

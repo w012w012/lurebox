@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
-import 'app_logger.dart';
+import 'package:lurebox/core/database/database_provider.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/services/error_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
-
-import '../database/database_provider.dart';
-import 'error_service.dart';
 
 /// 备份 ZIP 服务 - ZIP 压缩备份与完整性校验
 ///
@@ -26,26 +26,6 @@ import 'error_service.dart';
 ///
 /// 包含备份版本、导出时间、数据校验和、统计信息等
 class BackupMetadata {
-  /// 备份格式版本号
-  final int version;
-
-  /// 备份导出时间
-  final DateTime exportTime;
-
-  /// 数据库文件的 SHA-256 校验和
-  final String databaseChecksum;
-
-  /// 照片数量
-  final int photoCount;
-
-  /// 渔获记录数量
-  final int fishCatchesCount;
-
-  /// 装备记录数量
-  final int equipmentCount;
-
-  /// 应用版本号
-  final String appVersion;
 
   const BackupMetadata({
     required this.version,
@@ -69,6 +49,26 @@ class BackupMetadata {
       appVersion: map['appVersion'] as String,
     );
   }
+  /// 备份格式版本号
+  final int version;
+
+  /// 备份导出时间
+  final DateTime exportTime;
+
+  /// 数据库文件的 SHA-256 校验和
+  final String databaseChecksum;
+
+  /// 照片数量
+  final int photoCount;
+
+  /// 渔获记录数量
+  final int fishCatchesCount;
+
+  /// 装备记录数量
+  final int equipmentCount;
+
+  /// 应用版本号
+  final String appVersion;
 
   /// 转换为 Map
   Map<String, dynamic> toMap() {
@@ -135,27 +135,25 @@ class BackupMetadata {
 ///
 /// 配置备份过程中是否包含照片、是否创建恢复点等
 class BackupExportOptions {
+
+  const BackupExportOptions({
+    this.includePhotos = true,
+    this.createRecoveryPoint = false,
+  });
   /// 是否包含照片文件
   final bool includePhotos;
 
   /// 是否创建恢复点（保留当前数据库副本）
   final bool createRecoveryPoint;
 
-  const BackupExportOptions({
-    this.includePhotos = true,
-    this.createRecoveryPoint = false,
-  });
-
   /// 默认导出选项（包含照片，不创建恢复点）
   static const BackupExportOptions defaultOptions = BackupExportOptions(
-    includePhotos: true,
-    createRecoveryPoint: false,
+    
   );
 
   /// 仅导出数据库选项
   static const BackupExportOptions databaseOnly = BackupExportOptions(
     includePhotos: false,
-    createRecoveryPoint: false,
   );
 
   /// 复制并修改指定字段
@@ -174,14 +172,6 @@ class BackupExportOptions {
 ///
 /// 包含校验是否通过、错误信息（如果失败）和元数据
 class IntegrityResult {
-  /// 备份文件是否有效
-  final bool isValid;
-
-  /// 错误信息（如果校验失败）
-  final String? errorMessage;
-
-  /// 备份元数据
-  final BackupMetadata? metadata;
 
   const IntegrityResult({
     required this.isValid,
@@ -211,6 +201,14 @@ class IntegrityResult {
     this.errorMessage,
     this.metadata,
   ) : isValid = false;
+  /// 备份文件是否有效
+  final bool isValid;
+
+  /// 错误信息（如果校验失败）
+  final String? errorMessage;
+
+  /// 备份元数据
+  final BackupMetadata? metadata;
 
   @override
   bool operator ==(Object other) {
@@ -229,14 +227,6 @@ class IntegrityResult {
 ///
 /// 包含导入是否成功、错误信息（如果失败）和元数据
 class ImportResult {
-  /// 导入是否成功
-  final bool isSuccess;
-
-  /// 错误信息（如果失败）
-  final String? errorMessage;
-
-  /// 备份元数据（如果成功）
-  final BackupMetadata? metadata;
 
   const ImportResult({
     required this.isSuccess,
@@ -260,6 +250,14 @@ class ImportResult {
   const ImportResult.successWithMetadata(this.metadata)
       : isSuccess = true,
         errorMessage = null;
+  /// 导入是否成功
+  final bool isSuccess;
+
+  /// 错误信息（如果失败）
+  final String? errorMessage;
+
+  /// 备份元数据（如果成功）
+  final BackupMetadata? metadata;
 
   @override
   bool operator ==(Object other) {
@@ -280,9 +278,9 @@ class ImportResult {
 /// - 创建包含数据库和照片的 ZIP 备份文件
 /// - 校验备份文件的完整性（SHA-256 校验和）
 class BackupZipService {
-  final DatabaseProvider _dbProvider;
 
   BackupZipService(this._dbProvider);
+  final DatabaseProvider _dbProvider;
 
   /// 导出数据库和照片到 ZIP 文件
   ///
@@ -311,7 +309,7 @@ class BackupZipService {
       // 3. 创建临时目录
       final tempDir = await getTemporaryDirectory();
       final backupDir = Directory(p.join(tempDir.path,
-          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}'));
+          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}',),);
       await backupDir.create(recursive: true);
 
       // 4. 复制数据库文件到临时目录
@@ -322,7 +320,7 @@ class BackupZipService {
       final dbChecksum = await _calculateSha256(dbCopyPath);
 
       // 6. 收集并复制照片（如果选项包含照片）
-      int photoCount = 0;
+      var photoCount = 0;
       if (options.includePhotos) {
         final photosDir = Directory(p.join(backupDir.path, 'photos'));
         await photosDir.create(recursive: true);
@@ -339,8 +337,8 @@ class BackupZipService {
         exportTime: DateTime.now(),
         databaseChecksum: dbChecksum,
         photoCount: photoCount,
-        fishCatchesCount: stats['fishCatchesCount'] as int,
-        equipmentCount: stats['equipmentCount'] as int,
+        fishCatchesCount: stats['fishCatchesCount']!,
+        equipmentCount: stats['equipmentCount']!,
         appVersion: '1.0.5',
       );
 
@@ -351,7 +349,7 @@ class BackupZipService {
 
       // 9. 创建 ZIP 文件
       final zipPath = p.join(tempDir.path,
-          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}.zip');
+          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}.zip',);
       await _createZip(backupDir.path, zipPath);
 
       // 10. 清理临时备份目录（保留 ZIP 文件）
@@ -387,7 +385,7 @@ class BackupZipService {
       // 3. 创建临时目录
       final tempDir = await getTemporaryDirectory();
       final backupDir = Directory(p.join(tempDir.path,
-          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}'));
+          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}',),);
       await backupDir.create(recursive: true);
 
       // 4. 复制数据库文件到临时目录
@@ -398,7 +396,7 @@ class BackupZipService {
       final dbChecksum = await _calculateSha256(dbCopyPath);
 
       // 6. 收集并复制照片（如果选项包含照片）
-      int photoCount = 0;
+      var photoCount = 0;
       if (options.includePhotos) {
         final photosDir = Directory(p.join(backupDir.path, 'photos'));
         await photosDir.create(recursive: true);
@@ -415,8 +413,8 @@ class BackupZipService {
         exportTime: DateTime.now(),
         databaseChecksum: dbChecksum,
         photoCount: photoCount,
-        fishCatchesCount: stats['fishCatchesCount'] as int,
-        equipmentCount: stats['equipmentCount'] as int,
+        fishCatchesCount: stats['fishCatchesCount']!,
+        equipmentCount: stats['equipmentCount']!,
         appVersion: '1.0.5',
       );
 
@@ -427,7 +425,7 @@ class BackupZipService {
 
       // 9. 创建 ZIP 文件（先在 temp 目录）
       final tempZipPath = p.join(tempDir.path,
-          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}.zip');
+          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}.zip',);
       await _createZip(backupDir.path, tempZipPath);
 
       // 10. 将 ZIP 复制到应用文档目录
@@ -470,7 +468,7 @@ class BackupZipService {
   /// 且 WatermarkedImage Widget 会根据当前设置实时渲染水印。
   Future<int> _copyPhotosToBackup(String dbPath, String photosDir) async {
     final db = await openDatabase(dbPath, readOnly: true);
-    int count = 0;
+    var count = 0;
 
     try {
       // 查询所有渔获记录的照片路径（仅原图，不备份水印图片）
@@ -480,7 +478,7 @@ class BackupZipService {
       );
 
       final appDir = await getApplicationDocumentsDirectory();
-      final Set<String> processedPaths = {};
+      final processedPaths = <String>{};
 
       for (final fish in catches) {
         final imagePath = fish['image_path'] as String?;
@@ -501,7 +499,7 @@ class BackupZipService {
 
   /// 复制单个照片文件（如果存在）
   Future<void> _copyPhotoIfExists(
-      String relativePath, String appDir, String photosDir) async {
+      String relativePath, String appDir, String photosDir,) async {
     // 处理可能的相对路径或绝对路径
     String fullPath;
     if (p.isAbsolute(relativePath)) {
@@ -530,7 +528,7 @@ class BackupZipService {
 
       final equipmentCount = Sqflite.firstIntValue(
             await db.rawQuery(
-                'SELECT COUNT(*) FROM equipments WHERE is_deleted = 0'),
+                'SELECT COUNT(*) FROM equipments WHERE is_deleted = 0',),
           ) ??
           0;
 
@@ -587,7 +585,6 @@ class BackupZipService {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['zip'],
-        allowMultiple: false,
       );
 
       if (result == null || result.files.isEmpty) {
@@ -621,7 +618,7 @@ class BackupZipService {
       final extractDir = Directory(p.join(
         tempDir.path,
         'lurebox_import_${DateTime.now().millisecondsSinceEpoch}',
-      ));
+      ),);
       await extractDir.create(recursive: true);
 
       try {
@@ -721,7 +718,7 @@ class BackupZipService {
             columns: ['id', 'image_path'],
           );
           for (final fish in catches) {
-            final id = fish['id'] as int;
+            final id = fish['id']! as int;
             final imagePath = fish['image_path'] as String?;
             if (imagePath != null && imagePath.isNotEmpty) {
               final fileName = p.basename(imagePath);

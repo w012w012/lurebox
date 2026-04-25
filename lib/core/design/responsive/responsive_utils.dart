@@ -33,14 +33,13 @@ extension ResponsiveBreakpointExtension on num {
 
 /// Widget that provides responsive breakpoint information to its children
 class ResponsiveBuilder extends StatelessWidget {
-  final Widget Function(
-          BuildContext context, double width, ResponsiveBreakpoint breakpoint)
-      builder;
 
   const ResponsiveBuilder({
-    super.key,
-    required this.builder,
+    required this.builder, super.key,
   });
+  final Widget Function(
+          BuildContext context, double width, ResponsiveBreakpoint breakpoint,)
+      builder;
 
   @override
   Widget build(BuildContext context) {
@@ -92,6 +91,15 @@ mixin ResponsiveMixin<T extends StatefulWidget> on State<T> {
 
 /// Convenience widget for responsive column/row switching
 class ResponsiveLayout extends StatelessWidget {
+
+  const ResponsiveLayout({
+    super.key,
+    this.mobile,
+    this.tablet,
+    this.crossAxisAlignment = CrossAxisAlignment.start,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+    this.gap = 16,
+  });
   /// Widget shown on mobile (single column)
   final Widget? mobile;
 
@@ -106,15 +114,6 @@ class ResponsiveLayout extends StatelessWidget {
 
   /// Gap between children
   final double gap;
-
-  const ResponsiveLayout({
-    super.key,
-    this.mobile,
-    this.tablet,
-    this.crossAxisAlignment = CrossAxisAlignment.start,
-    this.mainAxisAlignment = MainAxisAlignment.start,
-    this.gap = 16,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -141,16 +140,15 @@ class ResponsiveLayout extends StatelessWidget {
 
 /// Responsive container that constrains width on large screens
 class ResponsiveContainer extends StatelessWidget {
-  final Widget child;
-  final double? maxWidth;
-  final EdgeInsetsGeometry? padding;
 
   const ResponsiveContainer({
-    super.key,
-    required this.child,
+    required this.child, super.key,
     this.maxWidth,
     this.padding,
   });
+  final Widget child;
+  final double? maxWidth;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {

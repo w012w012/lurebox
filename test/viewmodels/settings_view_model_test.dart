@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:lurebox/core/providers/settings_view_model.dart';
 import 'package:lurebox/core/services/backup_service.dart';
 import 'package:lurebox/core/services/backup_zip_service.dart';
 import 'package:lurebox/core/services/export_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
-import 'package:lurebox/core/providers/settings_view_model.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MockBackupService extends Mock implements BackupService {}
 
@@ -44,10 +44,10 @@ void main() {
         .thenAnswer((_) async => 10);
     when(() => mockBackupZipService.exportToZip(
           options: any(named: 'options'),
-        )).thenAnswer((_) async => XFile('/path/to/backup.zip'));
+        ),).thenAnswer((_) async => XFile('/path/to/backup.zip'));
     when(() => mockBackupZipService.exportToZipAndSave(
           options: any(named: 'options'),
-        )).thenAnswer((_) async => '/path/to/saved/backup.zip');
+        ),).thenAnswer((_) async => '/path/to/saved/backup.zip');
     when(() => mockBackupZipService.importFromZip())
         .thenAnswer((_) async => const ImportResult.success());
 
@@ -408,7 +408,7 @@ void main() {
       test('exportZipBackup success', () async {
         when(() => mockBackupZipService.exportToZip(
               options: any(named: 'options'),
-            )).thenAnswer((_) async => XFile('/path/to/backup.zip'));
+            ),).thenAnswer((_) async => XFile('/path/to/backup.zip'));
 
         final result = await viewModel.exportZipBackup();
 
@@ -419,7 +419,7 @@ void main() {
       test('exportZipBackup error', () async {
         when(() => mockBackupZipService.exportToZip(
               options: any(named: 'options'),
-            )).thenThrow(Exception('Zip error'));
+            ),).thenThrow(Exception('Zip error'));
 
         final result = await viewModel.exportZipBackup();
 
@@ -430,7 +430,7 @@ void main() {
       test('startZipBackup success', () async {
         when(() => mockBackupZipService.exportToZipAndSave(
               options: any(named: 'options'),
-            )).thenAnswer((_) async => '/saved/backup.zip');
+            ),).thenAnswer((_) async => '/saved/backup.zip');
 
         final result = await viewModel.startZipBackup();
 
@@ -451,7 +451,7 @@ void main() {
 
       test('importZipBackup error', () async {
         when(() => mockBackupZipService.importFromZip()).thenAnswer(
-            (_) async => const ImportResult.failure('Import failed'));
+            (_) async => const ImportResult.failure('Import failed'),);
 
         final result = await viewModel.importZipBackup();
 
@@ -469,7 +469,7 @@ void main() {
               serverUrl: any(named: 'serverUrl'),
               username: any(named: 'username'),
               password: any(named: 'password'),
-            )).thenAnswer((_) async => 'https://example.com/backup.json');
+            ),).thenAnswer((_) async => 'https://example.com/backup.json');
 
         final result = await viewModel.uploadToWebDAV(
           serverUrl: 'https://example.com/',
@@ -486,7 +486,7 @@ void main() {
               serverUrl: any(named: 'serverUrl'),
               username: any(named: 'username'),
               password: any(named: 'password'),
-            )).thenThrow(Exception('Upload failed'));
+            ),).thenThrow(Exception('Upload failed'));
 
         final result = await viewModel.uploadToWebDAV(
           serverUrl: 'https://example.com/',
@@ -505,7 +505,7 @@ void main() {
               serverUrl: any(named: 'serverUrl'),
               username: any(named: 'username'),
               password: any(named: 'password'),
-            )).thenAnswer((_) async {
+            ),).thenAnswer((_) async {
           uploadingState = viewModel.state.isUploading;
           return 'https://example.com/backup.json';
         });

@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/settings_view_model.dart';
-import '../../core/widgets/error_view.dart';
-import '../../widgets/common/premium_card.dart';
-import '../../widgets/common/settings_tile.dart';
-import 'widgets/settings_units_section.dart';
-import 'widgets/settings_about_section.dart';
-import 'widgets/settings_stats_card.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/settings_view_model.dart';
+import 'package:lurebox/core/widgets/error_view.dart';
+import 'package:lurebox/features/settings/widgets/settings_about_section.dart';
+import 'package:lurebox/features/settings/widgets/settings_stats_card.dart';
+import 'package:lurebox/features/settings/widgets/settings_units_section.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
+import 'package:lurebox/widgets/common/settings_tile.dart';
 
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});

@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
+import 'package:lurebox/core/providers/fish_list_view_model.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 import 'package:lurebox/core/repositories/species_history_repository.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
-import 'package:lurebox/core/providers/fish_list_view_model.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockFishCatchRepository extends Mock implements FishCatchRepository {}
 
@@ -33,9 +33,9 @@ void main() {
   late FishCatchService service;
 
   final testCatches = [
-    _createFishCatch(id: 1, species: 'Bass', length: 30.0, catchTime: DateTime(2024, 1, 1)),
-    _createFishCatch(id: 2, species: 'Trout', length: 25.0, catchTime: DateTime(2024, 1, 2)),
-    _createFishCatch(id: 3, species: 'Bass', length: 35.0, catchTime: DateTime(2024, 1, 3)),
+    _createFishCatch(id: 1, species: 'Bass', length: 30, catchTime: DateTime(2024)),
+    _createFishCatch(id: 2, species: 'Trout', length: 25, catchTime: DateTime(2024, 1, 2)),
+    _createFishCatch(id: 3, species: 'Bass', length: 35, catchTime: DateTime(2024, 1, 3)),
   ];
 
   setUp(() {
@@ -59,7 +59,7 @@ void main() {
           page: any(named: 'page'),
           pageSize: any(named: 'pageSize'),
           orderBy: any(named: 'orderBy'),
-        )).thenAnswer(
+        ),).thenAnswer(
       (_) async => const PaginatedResult(
         items: [],
         totalCount: 0,
@@ -76,7 +76,7 @@ void main() {
           fate: any(named: 'fate'),
           species: any(named: 'species'),
           orderBy: any(named: 'orderBy'),
-        )).thenAnswer(
+        ),).thenAnswer(
       (_) async => const PaginatedResult(
         items: [],
         totalCount: 0,
@@ -133,7 +133,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => paginatedResult);
+            ),).thenAnswer((_) async => paginatedResult);
 
         await viewModel.loadCatches(reset: true);
 
@@ -152,7 +152,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async {
+            ),).thenAnswer((_) async {
           await Future.delayed(const Duration(milliseconds: 10));
           return const PaginatedResult(
             items: [],
@@ -182,7 +182,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => paginatedResult1);
+            ),).thenAnswer((_) async => paginatedResult1);
 
         await viewModel.loadCatches(reset: true);
         expect(viewModel.state.currentPage, 1);
@@ -199,7 +199,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => paginatedResult2);
+            ),).thenAnswer((_) async => paginatedResult2);
 
         await viewModel.loadCatches(reset: true);
         expect(viewModel.state.currentPage, 1);
@@ -219,7 +219,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => paginatedResult1);
+            ),).thenAnswer((_) async => paginatedResult1);
 
         await viewModel.loadCatches(reset: true);
 
@@ -235,9 +235,9 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => paginatedResult2);
+            ),).thenAnswer((_) async => paginatedResult2);
 
-        await viewModel.loadCatches(reset: false);
+        await viewModel.loadCatches();
 
         expect(viewModel.state.catches.length, 3);
         expect(viewModel.state.currentPage, 2);
@@ -249,7 +249,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenThrow(Exception('Network error'));
+            ),).thenThrow(Exception('Network error'));
 
         await viewModel.loadCatches(reset: true);
 
@@ -267,7 +267,7 @@ void main() {
               fate: any(named: 'fate'),
               species: any(named: 'species'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer(
+            ),).thenAnswer(
             (_) async => const PaginatedResult(
               items: [],
               totalCount: 0,
@@ -306,7 +306,7 @@ void main() {
               fate: any(named: 'fate'),
               species: any(named: 'species'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer(
+            ),).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -331,7 +331,7 @@ void main() {
               fate: any(named: 'fate'),
               species: any(named: 'species'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer(
+            ),).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -358,7 +358,7 @@ void main() {
               fate: any(named: 'fate'),
               species: any(named: 'species'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer(
+            ),).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -381,7 +381,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer(
+            ),).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -402,7 +402,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer(
+            ),).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -495,7 +495,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => paginatedResult);
+            ),).thenAnswer((_) async => paginatedResult);
 
         await viewModel.loadCatches(reset: true);
         viewModel.toggleSelectionMode();
@@ -519,7 +519,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => paginatedResult);
+            ),).thenAnswer((_) async => paginatedResult);
 
         await viewModel.loadCatches(reset: true);
         viewModel.toggleSelectionMode();
@@ -538,16 +538,16 @@ void main() {
         );
         when(() => mockRepository.getByIds([1, 2]))
             .thenAnswer((_) async => [
-                  _createFishCatch(id: 1, species: 'Bass', length: 30.0),
-                  _createFishCatch(id: 2, species: 'Trout', length: 25.0),
-                ]);
+                  _createFishCatch(id: 1, species: 'Bass', length: 30),
+                  _createFishCatch(id: 2, species: 'Trout', length: 25),
+                ],);
         when(() => mockRepository.deleteMultiple([1, 2]))
             .thenAnswer((_) async {});
         when(() => mockRepository.getPage(
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => emptyResult);
+            ),).thenAnswer((_) async => emptyResult);
 
         await viewModel.deleteSelected();
 
@@ -570,7 +570,7 @@ void main() {
         viewModel.toggleSelection(1);
 
         when(() => mockRepository.getByIds([1]))
-            .thenAnswer((_) async => [_createFishCatch(id: 1, species: 'Bass', length: 30.0)]);
+            .thenAnswer((_) async => [_createFishCatch(id: 1, species: 'Bass', length: 30)]);
         when(() => mockRepository.deleteMultiple([1]))
             .thenThrow(Exception('Delete failed'));
 
@@ -586,7 +586,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async {
+            ),).thenAnswer((_) async {
           await Future.delayed(const Duration(seconds: 1));
           return const PaginatedResult(
             items: [],
@@ -610,7 +610,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).called(1);
+            ),).called(1);
       });
 
       test('does nothing when hasMore is false', () async {
@@ -626,14 +626,14 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => paginatedResult);
+            ),).thenAnswer((_) async => paginatedResult);
 
         await viewModel.loadCatches(reset: true);
         verify(() => mockRepository.getPage(
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).called(1);
+            ),).called(1);
 
         // Reset call count
         clearInteractions(mockRepository);
@@ -645,7 +645,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            ));
+            ),);
       });
     });
 
@@ -735,7 +735,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => paginatedResult);
+            ),).thenAnswer((_) async => paginatedResult);
 
         await viewModel.loadCatches(reset: true);
 
@@ -762,10 +762,8 @@ FishCatch _createFishCatch({
     imagePath: '/test/fish_$id.jpg',
     species: species,
     length: length,
-    lengthUnit: 'cm',
     fate: fate,
     catchTime: now,
-    pendingRecognition: false,
     createdAt: now,
     updatedAt: now,
   );

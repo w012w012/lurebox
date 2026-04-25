@@ -1,42 +1,39 @@
 import 'dart:io';
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/utils/file_utils.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/features/stats/widgets/catch_trend_chart.dart';
+import 'package:lurebox/features/stats/widgets/location_stats_card.dart';
+import 'package:lurebox/features/stats/widgets/monthly_stats_card.dart';
+import 'package:lurebox/features/stats/widgets/species_distribution_chart.dart';
+import 'package:lurebox/features/stats/widgets/stats_summary_card.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 import 'package:path_provider/path_provider.dart';
-
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/di/di.dart';
-import '../../core/models/app_settings.dart';
-import '../../core/models/fish_catch.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/app_settings_provider.dart';
-import '../../core/services/app_logger.dart';
-import '../../core/utils/file_utils.dart';
-import '../../core/utils/unit_converter.dart';
-import '../../widgets/common/premium_card.dart';
-import 'widgets/catch_trend_chart.dart';
-import 'widgets/species_distribution_chart.dart';
-import 'widgets/monthly_stats_card.dart';
-import 'widgets/location_stats_card.dart';
-import 'widgets/stats_summary_card.dart';
+import 'package:share_plus/share_plus.dart';
 
 class StatsDetailPage extends ConsumerStatefulWidget {
+
+  const StatsDetailPage({
+    required this.title, required this.startDate, required this.endDate, super.key,
+    this.speciesStats,
+  });
   final String title;
   final DateTime startDate;
   final DateTime endDate;
   final Map<String, int>? speciesStats;
-
-  const StatsDetailPage({
-    super.key,
-    required this.title,
-    required this.startDate,
-    required this.endDate,
-    this.speciesStats,
-  });
 
   @override
   ConsumerState<StatsDetailPage> createState() => _StatsDetailPageState();
@@ -236,7 +233,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
 
     if (widget.title.contains(strings.today)) {
       _trendTitle = strings.hourlyTrend;
-      for (int h = 0; h < 24; h++) {
+      for (var h = 0; h < 24; h++) {
         trendMap['$h${strings.hour}'] = 0;
       }
       for (final fish in catches) {
@@ -247,7 +244,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
     } else if (widget.title.contains(strings.month)) {
       _trendTitle = strings.dailyTrend;
       final daysInMonth = DateTime(now.year, now.month + 1, 0).day;
-      for (int d = 1; d <= daysInMonth; d++) {
+      for (var d = 1; d <= daysInMonth; d++) {
         trendMap['$d${strings.day}'] = 0;
       }
       for (final fish in catches) {
@@ -259,7 +256,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
       }
     } else if (widget.title.contains(strings.year)) {
       _trendTitle = strings.monthlyTrend;
-      for (int m = 1; m <= 12; m++) {
+      for (var m = 1; m <= 12; m++) {
         trendMap['$m${strings.monthUnit}'] = 0;
       }
       for (final fish in catches) {
@@ -285,7 +282,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
 
     if (_trendType == 'day') {
       _trendTitle = strings.last30Days;
-      for (int i = 29; i >= 0; i--) {
+      for (var i = 29; i >= 0; i--) {
         final d = now.subtract(Duration(days: i));
         trendMap['${d.month}/${d.day}'] = 0;
       }
@@ -301,19 +298,18 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
       }
     } else if (_trendType == 'month') {
       _trendTitle = strings.last12Months;
-      for (int i = 11; i >= 0; i--) {
+      for (var i = 11; i >= 0; i--) {
         final nowSub = DateTime(
           now.year,
           now.month,
-          1,
         ).subtract(Duration(days: i * 30));
-        final d = DateTime(nowSub.year, nowSub.month, 1);
+        final d = DateTime(nowSub.year, nowSub.month);
         trendMap['${d.month}${strings.monthUnit}'] = 0;
       }
       for (final fish in catches) {
         final t = _dt(fish, 'catch_time') ?? DateTime.now();
-        final catchDate = DateTime(t.year, t.month, 1);
-        final nowDate = DateTime(now.year, now.month, 1);
+        final catchDate = DateTime(t.year, t.month);
+        final nowDate = DateTime(now.year, now.month);
         final diffMonths = (nowDate.year - catchDate.year) * 12 +
             nowDate.month -
             catchDate.month;
@@ -329,7 +325,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
       final startYear = catches.isNotEmpty
           ? (_dt(catches.last, 'catch_time') ?? DateTime.now()).year
           : now.year;
-      for (int y = startYear; y <= now.year; y++) {
+      for (var y = startYear; y <= now.year; y++) {
         trendMap['$y${strings.yearUnit}'] = 0;
       }
       for (final fish in catches) {
@@ -361,8 +357,8 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
           as RenderRepaintBoundary?;
       if (boundary == null) return;
 
-      await Future.delayed(const Duration(milliseconds: 100));
-      final image = await boundary.toImage(pixelRatio: 2.0);
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      final image = await boundary.toImage(pixelRatio: 2);
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       if (byteData == null) return;
       final pngBytes = byteData.buffer.asUint8List();

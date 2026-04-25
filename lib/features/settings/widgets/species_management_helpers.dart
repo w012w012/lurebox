@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/app_theme.dart';
-import '../../../core/models/fish_catch.dart';
-import 'pending_queue_widget.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/features/settings/widgets/pending_queue_widget.dart';
 
 /// 品种管理页面辅助对话框
 ///
@@ -59,7 +59,7 @@ class SpeciesManagementDialogs {
 
     controller.dispose();
 
-    if (confirmed == true) {
+    if (confirmed ?? false) {
       return controller.text.trim();
     }
     return null;
@@ -118,7 +118,7 @@ class SpeciesManagementDialogs {
       ),
     );
 
-    if (confirmed == true) {
+    if (confirmed ?? false) {
       final result = controller.text.trim();
       controller.dispose();
       return result.isNotEmpty ? result : null;
@@ -205,6 +205,6 @@ class SpeciesManagementDialogs {
       ),
     );
 
-    return confirmed == true;
+    return confirmed ?? false;
   }
 }

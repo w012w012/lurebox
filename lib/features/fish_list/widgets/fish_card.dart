@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/models/fish_catch.dart';
-import '../../../core/utils/unit_converter.dart';
-import '../../../widgets/common/image_cache_helper.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/widgets/common/image_cache_helper.dart';
 
 class FishCard extends StatelessWidget {
+
+  const FishCard({
+    required this.fish, required this.onTap, required this.strings, super.key,
+    this.isSelected = false,
+    this.isSelectionMode = false,
+    this.onLongPress,
+    this.lengthUnit = 'cm',
+    this.weightUnit = 'kg',
+    this.isChinese = true,
+  });
   final Map<String, dynamic> fish;
   final bool isSelected;
   final bool isSelectionMode;
@@ -15,19 +25,6 @@ class FishCard extends StatelessWidget {
   final String lengthUnit;
   final String weightUnit;
   final bool isChinese;
-
-  const FishCard({
-    super.key,
-    required this.fish,
-    this.isSelected = false,
-    this.isSelectionMode = false,
-    required this.onTap,
-    this.onLongPress,
-    required this.strings,
-    this.lengthUnit = 'cm',
-    this.weightUnit = 'kg',
-    this.isChinese = true,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +100,7 @@ class FishCard extends StatelessWidget {
   }
 
   Widget _buildPlaceholder(BuildContext context) {
-    return Container(
+    return ColoredBox(
       color: Theme.of(context).colorScheme.surfaceContainerHighest,
       child: Icon(
         Icons.image,

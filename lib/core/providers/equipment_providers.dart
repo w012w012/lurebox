@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../di/di.dart';
-import '../models/equipment.dart';
-import '../repositories/equipment_repository.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/repositories/equipment_repository.dart';
 
 final equipmentProviderV2 = FutureProvider.family<List<Equipment>, String?>((
   ref,
   type,
 ) async {
   final service = ref.watch(equipmentServiceProvider);
-  return await service.getAll(type: type);
+  return service.getAll(type: type);
 });
 
 final equipmentByIdProvider = FutureProvider.family<Equipment?, int>((
@@ -16,7 +16,7 @@ final equipmentByIdProvider = FutureProvider.family<Equipment?, int>((
   id,
 ) async {
   final service = ref.watch(equipmentServiceProvider);
-  return await service.getById(id);
+  return service.getById(id);
 });
 
 final defaultEquipmentProvider = FutureProvider.family<Equipment?, String>((
@@ -24,7 +24,7 @@ final defaultEquipmentProvider = FutureProvider.family<Equipment?, String>((
   type,
 ) async {
   final service = ref.watch(equipmentServiceProvider);
-  return await service.getDefaultEquipment(type);
+  return service.getDefaultEquipment(type);
 });
 
 final paginatedEquipmentProvider = FutureProvider.family<
@@ -36,7 +36,7 @@ final paginatedEquipmentProvider = FutureProvider.family<
       String? orderBy
     })>((ref, params) async {
   final service = ref.watch(equipmentServiceProvider);
-  return await service.getPage(
+  return service.getPage(
     page: params.page,
     pageSize: params.pageSize,
     type: params.type,
@@ -56,7 +56,7 @@ final filteredPaginatedEquipmentProvider = FutureProvider.family<
       String? orderBy,
     })>((ref, params) async {
   final service = ref.watch(equipmentServiceProvider);
-  return await service.getFilteredPage(
+  return service.getFilteredPage(
     page: params.page,
     pageSize: params.pageSize,
     type: params.type,
@@ -69,12 +69,12 @@ final filteredPaginatedEquipmentProvider = FutureProvider.family<
 
 final equipmentStatsProvider = FutureProvider<Map<String, int>>((ref) async {
   final service = ref.watch(equipmentServiceProvider);
-  return await service.getStats();
+  return service.getStats();
 });
 
 final brandsProvider = FutureProvider<List<String>>((ref) async {
   final service = ref.watch(equipmentServiceProvider);
-  return await service.getBrands();
+  return service.getBrands();
 });
 
 final modelsByBrandProvider = FutureProvider.family<List<String>, String>((
@@ -82,11 +82,11 @@ final modelsByBrandProvider = FutureProvider.family<List<String>, String>((
   brand,
 ) async {
   final service = ref.watch(equipmentServiceProvider);
-  return await service.getModelsByBrand(brand);
+  return service.getModelsByBrand(brand);
 });
 
 final categoryDistributionProvider =
     FutureProvider.family<Map<String, int>, String>((ref, type) async {
   final service = ref.watch(equipmentServiceProvider);
-  return await service.getCategoryDistribution(type);
+  return service.getCategoryDistribution(type);
 });

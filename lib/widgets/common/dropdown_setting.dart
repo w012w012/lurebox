@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
 
 class DropdownSetting<T> extends StatelessWidget {
+
+  const DropdownSetting({
+    required this.icon, required this.title, required this.value, required this.items, required this.onChanged, super.key,
+    this.iconColor,
+  });
   final IconData icon;
   final String title;
   final T value;
   final List<DropdownMenuItem<T>> items;
   final ValueChanged<T?> onChanged;
   final Color? iconColor;
-
-  const DropdownSetting({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.value,
-    required this.items,
-    required this.onChanged,
-    this.iconColor,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,22 +32,18 @@ class DropdownSetting<T> extends StatelessWidget {
 }
 
 class SwitchSetting extends StatelessWidget {
+
+  const SwitchSetting({
+    required this.icon, required this.title, required this.value, required this.onChanged, super.key,
+    this.subtitle,
+    this.iconColor,
+  });
   final IconData icon;
   final String title;
   final String? subtitle;
   final bool value;
   final ValueChanged<bool> onChanged;
   final Color? iconColor;
-
-  const SwitchSetting({
-    super.key,
-    required this.icon,
-    required this.title,
-    this.subtitle,
-    required this.value,
-    required this.onChanged,
-    this.iconColor,
-  });
 
   @override
   Widget build(BuildContext context) {

@@ -1,6 +1,5 @@
-import 'package:sqflite/sqflite.dart' hide DatabaseException;
-import 'base_repository.dart';
-import 'species_history_repository.dart';
+import 'package:lurebox/core/repositories/base_repository.dart';
+import 'package:lurebox/core/repositories/species_history_repository.dart';
 
 /// SQLite implementation — species history repository.
 ///
@@ -8,13 +7,13 @@ import 'species_history_repository.dart';
 
 class SqliteSpeciesHistoryRepository extends BaseSqliteRepository
     implements SpeciesHistoryRepository {
-  @override
-  String get tableName => 'species_history';
 
   SqliteSpeciesHistoryRepository();
 
-  SqliteSpeciesHistoryRepository.withDatabase(Future<Database> testDb)
-      : super.withDatabase(testDb);
+  SqliteSpeciesHistoryRepository.withDatabase(super.testDb)
+      : super.withDatabase();
+  @override
+  String get tableName => 'species_history';
 
   @override
   Future<List<SpeciesHistory>> getAll({
@@ -31,7 +30,7 @@ class SqliteSpeciesHistoryRepository extends BaseSqliteRepository
         limit: limit,
       );
       return List<SpeciesHistory>.from(results
-          .map((map) => SpeciesHistory.fromMap(map as Map<String, dynamic>)));
+          .map((map) => SpeciesHistory.fromMap(map as Map<String, dynamic>)),);
     } catch (e) {
       throwDbError('get species history', e);
     }

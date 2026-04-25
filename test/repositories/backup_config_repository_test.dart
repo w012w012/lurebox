@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:lurebox/core/models/cloud_config.dart';
 import 'package:lurebox/core/models/backup_history.dart';
+import 'package:lurebox/core/models/cloud_config.dart';
 import 'package:lurebox/core/repositories/backup_config_repository.dart';
 import 'package:lurebox/core/services/secure_storage_service.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
   late Database db;
@@ -71,7 +71,6 @@ CREATE TABLE backup_history (
         serverUrl: 'https://example.com/webdav',
         username: 'user1',
         password: 'pass123',
-        isActive: false,
         createdAt: now,
         updatedAt: now,
       );
@@ -89,7 +88,6 @@ CREATE TABLE backup_history (
         serverUrl: 'https://nextcloud.example.com',
         username: 'admin',
         password: 'secret',
-        isActive: false,
         createdAt: now,
         updatedAt: now,
       );
@@ -117,7 +115,6 @@ CREATE TABLE backup_history (
         serverUrl: 'https://example.com',
         username: 'user',
         password: 'pass',
-        isActive: false,
         createdAt: now,
         updatedAt: now,
       );
@@ -137,7 +134,6 @@ CREATE TABLE backup_history (
         serverUrl: 'https://server1.com',
         username: 'user1',
         password: 'pass1',
-        isActive: false,
         createdAt: now,
         updatedAt: now,
       );
@@ -146,7 +142,6 @@ CREATE TABLE backup_history (
         serverUrl: 'https://server2.com',
         username: 'user2',
         password: 'pass2',
-        isActive: false,
         createdAt: now,
         updatedAt: now,
       );
@@ -168,7 +163,6 @@ CREATE TABLE backup_history (
         serverUrl: 'https://server1.com',
         username: 'user1',
         password: 'pass1',
-        isActive: false,
         createdAt: now,
         updatedAt: now,
       );
@@ -177,7 +171,6 @@ CREATE TABLE backup_history (
         serverUrl: 'https://server2.com',
         username: 'user2',
         password: 'pass2',
-        isActive: false,
         createdAt: now,
         updatedAt: now,
       );
@@ -203,7 +196,6 @@ CREATE TABLE backup_history (
         serverUrl: 'https://old.com',
         username: 'olduser',
         password: 'oldpass',
-        isActive: false,
         createdAt: now,
         updatedAt: now,
       );
@@ -230,7 +222,6 @@ CREATE TABLE backup_history (
         serverUrl: 'https://example.com',
         username: 'user',
         password: 'pass',
-        isActive: false,
         createdAt: now,
         updatedAt: now,
       );
@@ -248,7 +239,6 @@ CREATE TABLE backup_history (
         serverUrl: 'https://example.com',
         username: 'user',
         password: 'pass',
-        isActive: false,
         createdAt: now,
         updatedAt: now,
       );
@@ -343,7 +333,6 @@ CREATE TABLE backup_history (
         serverUrl: 'https://example.com',
         username: 'user',
         password: 'to_delete',
-        isActive: false,
         createdAt: now,
         updatedAt: now,
       );
@@ -444,7 +433,6 @@ CREATE TABLE backup_history (
         fileSize: 512 * 1024,
         fishCount: 5,
         equipmentCount: 3,
-        photoCount: 0,
         createdAt: now,
       );
 
@@ -473,21 +461,21 @@ CREATE TABLE backup_history (
         backupType: BackupType.json,
         fileSize: 100,
         createdAt: baseTime,
-      ));
+      ),);
       await repository.addBackupHistory(BackupHistory(
         filePath: '/backups/backup2.zip',
         fileName: 'backup2.zip',
         backupType: BackupType.zipFull,
         fileSize: 200,
         createdAt: baseTime.add(const Duration(milliseconds: 10)),
-      ));
+      ),);
       await repository.addBackupHistory(BackupHistory(
         filePath: '/backups/backup3.zip',
         fileName: 'backup3.zip',
         backupType: BackupType.zipDbOnly,
         fileSize: 300,
         createdAt: baseTime.add(const Duration(milliseconds: 20)),
-      ));
+      ),);
 
       final histories = await repository.getBackupHistory();
 
@@ -499,14 +487,14 @@ CREATE TABLE backup_history (
     test('getBackupHistory respects limit parameter', () async {
       final baseTime = DateTime.now();
 
-      for (int i = 0; i < 5; i++) {
+      for (var i = 0; i < 5; i++) {
         await repository.addBackupHistory(BackupHistory(
           filePath: '/backups/backup$i.zip',
           fileName: 'backup$i.zip',
           backupType: BackupType.json,
           fileSize: 100 * i,
           createdAt: baseTime.add(Duration(milliseconds: i * 10)),
-        ));
+        ),);
       }
 
       final histories = await repository.getBackupHistory(limit: 3);
@@ -518,14 +506,14 @@ CREATE TABLE backup_history (
       final baseTime = DateTime.now();
 
       // Add 5 records
-      for (int i = 0; i < 5; i++) {
+      for (var i = 0; i < 5; i++) {
         await repository.addBackupHistory(BackupHistory(
           filePath: '/backups/backup$i.zip',
           fileName: 'backup$i.zip',
           backupType: BackupType.json,
           fileSize: 100,
           createdAt: baseTime.add(Duration(milliseconds: i * 10)),
-        ));
+        ),);
       }
 
       // Keep only 2
@@ -546,7 +534,7 @@ CREATE TABLE backup_history (
         backupType: BackupType.json,
         fileSize: 100,
         createdAt: now,
-      ));
+      ),);
 
       final deleted = await repository.cleanupOldBackupHistory(10);
 
@@ -565,14 +553,14 @@ CREATE TABLE backup_history (
         backupType: BackupType.json,
         fileSize: 100,
         createdAt: now,
-      ));
+      ),);
       await repository.addBackupHistory(BackupHistory(
         filePath: '/backups/backup2.zip',
         fileName: 'backup2.zip',
         backupType: BackupType.json,
         fileSize: 200,
         createdAt: now,
-      ));
+      ),);
 
       final histories = await repository.getBackupHistory();
       final toDelete = histories.firstWhere((h) => h.fileName == 'backup1.zip');
@@ -615,8 +603,8 @@ CREATE TABLE backup_history (
         username: 'admin',
         password: 'secret',
         isActive: true,
-        createdAt: DateTime(2024, 1, 1),
-        updatedAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
+        updatedAt: DateTime(2024),
       );
 
       final map = config.toMap();
@@ -634,9 +622,8 @@ CREATE TABLE backup_history (
         serverUrl: 'https://old.com',
         username: 'user',
         password: 'pass',
-        isActive: false,
-        createdAt: DateTime(2024, 1, 1),
-        updatedAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
+        updatedAt: DateTime(2024),
       );
 
       final copy = original.copyWith(
@@ -658,8 +645,8 @@ CREATE TABLE backup_history (
         username: 'user',
         password: 'pass1',
         isActive: true,
-        createdAt: DateTime(2024, 1, 1),
-        updatedAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
+        updatedAt: DateTime(2024),
       );
 
       final config2 = CloudConfig(
@@ -709,7 +696,7 @@ CREATE TABLE backup_history (
         fishCount: 15,
         equipmentCount: 8,
         photoCount: 30,
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
       );
 
       final map = history.toMap();
@@ -727,7 +714,7 @@ CREATE TABLE backup_history (
         fileName: 'old.zip',
         backupType: BackupType.json,
         fileSize: 100,
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
       );
 
       final copy = original.copyWith(

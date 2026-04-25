@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/animation_constants.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/providers/home_view_model.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/pending_recognition_providers.dart';
-import '../../core/widgets/error_view.dart';
-import '../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/animation_constants.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/home_view_model.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/pending_recognition_providers.dart';
+import 'package:lurebox/core/widgets/error_view.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -31,10 +31,10 @@ class HomePage extends ConsumerWidget {
 }
 
 class _HomePageBody extends ConsumerStatefulWidget {
-  final HomeState state;
-  final AppStrings strings;
 
   const _HomePageBody({required this.state, required this.strings});
+  final HomeState state;
+  final AppStrings strings;
 
   @override
   ConsumerState<_HomePageBody> createState() => _HomePageBodyState();
@@ -65,7 +65,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
     );
 
     _fadeAnimations = _controllers.map((controller) {
-      return Tween<double>(begin: 0.0, end: 1.0).animate(
+      return Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(parent: controller, curve: TeslaTheme.transitionCurve),
       );
     }).toList();
@@ -153,7 +153,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                     ).add(const Duration(days: 1)),
                   );
                 },
-              )),
+              ),),
           const SizedBox(height: 12),
           // Item 4: Month stat card
           _buildAnimatedItem(
@@ -171,11 +171,11 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                   _navigateToDetail(
                     context,
                     widget.strings.monthCatch,
-                    DateTime(now.year, now.month, 1),
-                    DateTime(now.year, now.month + 1, 1),
+                    DateTime(now.year, now.month),
+                    DateTime(now.year, now.month + 1),
                   );
                 },
-              )),
+              ),),
           const SizedBox(height: 12),
           // Item 5: Year stat card
           _buildAnimatedItem(
@@ -193,11 +193,11 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                   _navigateToDetail(
                     context,
                     widget.strings.yearCatch,
-                    DateTime(now.year, 1, 1),
-                    DateTime(now.year + 1, 1, 1),
+                    DateTime(now.year),
+                    DateTime(now.year + 1),
                   );
                 },
-              )),
+              ),),
           const SizedBox(height: 12),
           // Item 6: All catch stat card
           _buildAnimatedItem(
@@ -215,11 +215,11 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                   _navigateToDetail(
                     context,
                     widget.strings.allCatch,
-                    DateTime(2000, 1, 1),
-                    DateTime(now.year + 1, 1, 1),
+                    DateTime(2000),
+                    DateTime(now.year + 1),
                   );
                 },
-              )),
+              ),),
           const SizedBox(height: 24),
         ],
       ),
@@ -256,7 +256,6 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
           border: Border.all(
             color: TeslaColors.cloudGray,
-            width: 1,
           ),
         ),
         child: Center(
@@ -301,7 +300,6 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
         borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
         border: Border.all(
           color: TeslaColors.cloudGray,
-          width: 1,
         ),
       ),
       child: Column(
@@ -454,7 +452,6 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
     VoidCallback onTap,
   ) {
     return PremiumCard(
-      variant: PremiumCardVariant.standard,
       onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -552,10 +549,6 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
 }
 
 class _StatBadge extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final int count;
-  final Color color;
 
   const _StatBadge({
     required this.icon,
@@ -563,6 +556,10 @@ class _StatBadge extends StatelessWidget {
     required this.count,
     required this.color,
   });
+  final IconData icon;
+  final String label;
+  final int count;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {

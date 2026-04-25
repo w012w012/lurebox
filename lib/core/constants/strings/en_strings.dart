@@ -1,4 +1,4 @@
-import 'app_strings.dart';
+import 'package:lurebox/core/constants/strings/app_strings.dart';
 
 /// English locale strings
 const AppStrings englishStrings = AppStrings(
@@ -243,7 +243,7 @@ const AppStrings englishStrings = AppStrings(
     unlocked: 'Unlocked',
     totalAchievements: 'Total Achievements',
     achievementUnit: ' achievements',
-    remainingAchievements: 'Need \$count more achievements',
+    remainingAchievements: r'Need $count more achievements',
     noAchievements: 'No achievements',
     achieved: 'Achieved',
     editEquipment: 'Edit Equipment',
@@ -481,14 +481,14 @@ const AppStrings englishStrings = AppStrings(
     generatingCsvFile: 'Generating CSV file...',
     exportConfirm: 'Export Confirm',
     confirmExport: 'Confirm Export',
-    willExportNRecords: 'Will export \$count records',
+    willExportNRecords: r'Will export $count records',
     exportOptions: 'Export Options',
     format: 'Format',
     yes: 'Yes',
     no: 'No',
-    previewFirstN: 'Preview (first \$count)',
-    moreRecordsRemaining: '... and \$count more records',
-    exportNRecords: 'Export \$count records',
+    previewFirstN: r'Preview (first $count)',
+    moreRecordsRemaining: r'... and $count more records',
+    exportNRecords: r'Export $count records',
     noMatchingRecords: 'No matching records',
     allTime: 'All Time',
     startDate: 'Start',
@@ -501,7 +501,7 @@ const AppStrings englishStrings = AppStrings(
     includeLocationInfo: 'Include Location Info',
     confirmImportFile: 'Import data?',
     importingData: 'Importing...',
-    importedCount: 'Imported \$count records',
+    importedCount: r'Imported $count records',
     pleaseFillCompleteInfo: 'Please fill in all information',
     uploading: 'Uploading...',
     enumerationSeparator: ', ',

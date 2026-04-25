@@ -39,8 +39,8 @@ void main() {
 
     group('CSV format', () {
       test('writes CSV file with correct extension', () async {
-        final List<FishCatch> catches = [
-          TestDataFactory.createFishCatch(id: 1, species: 'Bass'),
+        final catches = <FishCatch>[
+          TestDataFactory.createFishCatch(),
         ];
 
         final file = await ExportService.exportToFile(
@@ -53,9 +53,8 @@ void main() {
       });
 
       test('CSV file contains UTF-8 encoded Chinese characters', () async {
-        final List<FishCatch> catches = [
+        final catches = <FishCatch>[
           TestDataFactory.createFishCatch(
-            id: 1,
             species: '鳜鱼',
             locationName: '杭州西湖',
           ),
@@ -72,8 +71,8 @@ void main() {
       });
 
       test('CSV file includes headers and data rows', () async {
-        final List<FishCatch> catches = [
-          TestDataFactory.createFishCatch(id: 1, species: 'Bass', length: 30.0),
+        final catches = <FishCatch>[
+          TestDataFactory.createFishCatch(),
         ];
 
         final file = await ExportService.exportToFile(
@@ -93,14 +92,13 @@ void main() {
       });
 
       test('includeImagePaths=false excludes image path columns from CSV', () async {
-        final List<FishCatch> catches = [
-          TestDataFactory.createFishCatch(id: 1, species: 'Bass'),
+        final catches = <FishCatch>[
+          TestDataFactory.createFishCatch(),
         ];
 
         final file = await ExportService.exportToFile(
           catches: catches,
           format: ExportFormat.csv,
-          includeImagePaths: false,
         );
 
         final content = await File(file.path).readAsString();
@@ -109,8 +107,8 @@ void main() {
       });
 
       test('includeImagePaths=true includes image path columns in CSV', () async {
-        final List<FishCatch> catches = [
-          TestDataFactory.createFishCatch(id: 1, species: 'Bass'),
+        final catches = <FishCatch>[
+          TestDataFactory.createFishCatch(),
         ];
 
         final file = await ExportService.exportToFile(
@@ -124,8 +122,8 @@ void main() {
       });
 
       test('lengthUnit parameter affects CSV header', () async {
-        final List<FishCatch> catches = [
-          TestDataFactory.createFishCatch(id: 1, species: 'Bass'),
+        final catches = <FishCatch>[
+          TestDataFactory.createFishCatch(),
         ];
 
         final file = await ExportService.exportToFile(
@@ -139,8 +137,8 @@ void main() {
       });
 
       test('weightUnit parameter affects CSV header', () async {
-        final List<FishCatch> catches = [
-          TestDataFactory.createFishCatch(id: 1, species: 'Bass'),
+        final catches = <FishCatch>[
+          TestDataFactory.createFishCatch(),
         ];
 
         final file = await ExportService.exportToFile(
@@ -156,8 +154,8 @@ void main() {
 
     group('JSON format', () {
       test('writes JSON file with correct extension', () async {
-        final List<FishCatch> catches = [
-          TestDataFactory.createFishCatch(id: 1, species: 'Bass'),
+        final catches = <FishCatch>[
+          TestDataFactory.createFishCatch(),
         ];
 
         final file = await ExportService.exportToFile(
@@ -196,8 +194,8 @@ void main() {
       });
 
       test('JSON contains fishCatches array', () async {
-        final List<FishCatch> catches = [
-          TestDataFactory.createFishCatch(id: 1, species: 'Bass'),
+        final catches = <FishCatch>[
+          TestDataFactory.createFishCatch(),
         ];
 
         final file = await ExportService.exportToFile(
@@ -213,8 +211,8 @@ void main() {
       });
 
       test('JSON fishCatches entry contains species', () async {
-        final List<FishCatch> catches = [
-          TestDataFactory.createFishCatch(id: 1, species: 'Bass'),
+        final catches = <FishCatch>[
+          TestDataFactory.createFishCatch(),
         ];
 
         final file = await ExportService.exportToFile(
@@ -263,7 +261,7 @@ void main() {
         final file = await ExportService.exportToFile(
           catches: const [],
           format: ExportFormat.json,
-          startDate: DateTime(2024, 1, 1),
+          startDate: DateTime(2024),
         );
 
         final content = await File(file.path).readAsString();
@@ -291,7 +289,7 @@ void main() {
         final file = await ExportService.exportToFile(
           catches: const [],
           format: ExportFormat.json,
-          startDate: DateTime(2024, 1, 1),
+          startDate: DateTime(2024),
           endDate: DateTime(2024, 12, 31),
         );
 
@@ -336,13 +334,11 @@ void main() {
 
     group('includeLocation parameter', () {
       test('includeLocation=false still exports location fields in CSV', () async {
-        final List<FishCatch> catches = [
+        final catches = <FishCatch>[
           TestDataFactory.createFishCatch(
-            id: 1,
-            species: 'Bass',
             locationName: 'Lake',
-            latitude: 35.0,
-            longitude: 120.0,
+            latitude: 35,
+            longitude: 120,
           ),
         ];
 
@@ -359,20 +355,17 @@ void main() {
       });
 
       test('includeLocation=true exports with location data', () async {
-        final List<FishCatch> catches = [
+        final catches = <FishCatch>[
           TestDataFactory.createFishCatch(
-            id: 1,
-            species: 'Bass',
             locationName: 'Lake',
-            latitude: 35.0,
-            longitude: 120.0,
+            latitude: 35,
+            longitude: 120,
           ),
         ];
 
         final file = await ExportService.exportToFile(
           catches: catches,
           format: ExportFormat.csv,
-          includeLocation: true,
         );
 
         final content = await File(file.path).readAsString();

@@ -146,10 +146,8 @@ void main() {
       test('decode restores settings from encoded string', () {
         const original = UnitSettings(
           fishLengthUnit: 'm',
-          fishWeightUnit: 'kg',
           rodLengthUnit: 'cm',
           lineLengthUnit: 'inch',
-          lureWeightUnit: 'g',
           lureLengthUnit: 'mm',
           lureQuantityUnit: 'item',
           temperatureUnit: 'F',
@@ -241,7 +239,6 @@ void main() {
             lineLengthUnit: 'ft',
             lureWeightUnit: 'oz',
             lureLengthUnit: 'mm',
-            lureQuantityUnit: 'piece',
             temperatureUnit: 'F',
           ),
           darkMode: DarkMode.dark,
@@ -277,7 +274,7 @@ void main() {
 
       test('toJson includes hasCompletedOnboarding', () {
         final withOnboarding = AppSettings(hasCompletedOnboarding: true);
-        final withoutOnboarding = AppSettings(hasCompletedOnboarding: false);
+        final withoutOnboarding = AppSettings();
 
         final jsonWith = withOnboarding.toJson();
         final jsonWithout = withoutOnboarding.toJson();
@@ -454,13 +451,10 @@ void main() {
         final original = AppSettings(
           units: const UnitSettings(
             fishLengthUnit: 'm',
-            fishWeightUnit: 'kg',
             rodLengthUnit: 'ft',
             lineLengthUnit: 'inch',
             lureWeightUnit: 'oz',
-            lureLengthUnit: 'cm',
             lureQuantityUnit: 'item',
-            temperatureUnit: 'C',
           ),
           darkMode: DarkMode.light,
           language: AppLanguage.english,
@@ -551,7 +545,7 @@ void main() {
       });
 
       test('copyWith updates hasCompletedOnboarding', () {
-        const original = AppSettings(hasCompletedOnboarding: false);
+        const original = AppSettings();
 
         final modified = original.copyWith(hasCompletedOnboarding: true);
 

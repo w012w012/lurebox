@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../core/constants/strings.dart';
-import '../../../core/camera/camera_state.dart';
-import '../../../core/camera/camera_view_model.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../widgets/common/premium_input.dart';
+import 'package:lurebox/core/camera/camera_state.dart';
+import 'package:lurebox/core/camera/camera_view_model.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/widgets/common/premium_input.dart';
 
 /// Species input card with text field, pending recognition toggle, and history chips.
 class SpeciesInputCard extends ConsumerWidget {
+
+  const SpeciesInputCard({
+    required this.state, required this.vm, required this.strings, required this.controller, super.key,
+  });
   final CameraState state;
   final CameraViewModel vm;
   final AppStrings strings;
   final TextEditingController controller;
-
-  const SpeciesInputCard({
-    super.key,
-    required this.state,
-    required this.vm,
-    required this.strings,
-    required this.controller,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,9 +37,7 @@ class SpeciesInputCard extends ConsumerWidget {
                 hint: strings.enterSpeciesName,
                 prefixIcon: const Icon(Icons.set_meal),
                 enabled: !state.pendingRecognition,
-                onChanged: (value) {
-                  vm.setSpecies(value);
-                },
+                onChanged: vm.setSpecies,
               ),
             ),
             const SizedBox(width: 8),

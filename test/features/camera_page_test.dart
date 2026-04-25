@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/camera/camera_state.dart';
 import 'package:lurebox/core/camera/camera_view_model.dart';
 import 'package:lurebox/core/constants/strings.dart';
-import 'package:lurebox/core/services/fish_catch_service.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:lurebox/core/services/fish_catch_service.dart';
 import 'package:lurebox/features/camera/widgets/camera_view_widget.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
+
 import '../helpers/test_helpers.dart';
 
 /// Mock CameraViewModel that avoids real camera hardware.
@@ -36,7 +36,7 @@ class _MockCameraViewModel extends CameraViewModel {
 }
 
 void main() {
-  setUpAll(() => registerFallbackValues());
+  setUpAll(registerFallbackValues);
 
   Widget buildWidget({
     required CameraState state,
@@ -63,7 +63,6 @@ void main() {
       testWidgets('shows CircularProgressIndicator when isLoading',
           (tester) async {
         const loadingState = CameraState(
-          isCameraInitialized: false,
           isLoading: true,
         );
         await tester.pumpWidget(buildWidget(state: loadingState));
@@ -79,8 +78,7 @@ void main() {
       testWidgets('shows loading when not initialized and not loading',
           (tester) async {
         const initial = CameraState(
-          isCameraInitialized: false,
-          isLoading: false,
+          
         );
         await tester.pumpWidget(buildWidget(state: initial));
         await tester.pump();
@@ -92,7 +90,6 @@ void main() {
     group('Error state', () {
       testWidgets('shows error icon and message', (tester) async {
         const errorState = CameraState(
-          isCameraInitialized: false,
           errorMessage: 'Camera permission denied',
         );
         await tester.pumpWidget(buildWidget(state: errorState));
@@ -104,7 +101,6 @@ void main() {
 
       testWidgets('shows retry button with correct label', (tester) async {
         const errorState = CameraState(
-          isCameraInitialized: false,
           errorMessage: 'No camera found',
         );
         await tester.pumpWidget(buildWidget(state: errorState));
@@ -118,7 +114,6 @@ void main() {
 
       testWidgets('retry button has primary variant', (tester) async {
         const errorState = CameraState(
-          isCameraInitialized: false,
           errorMessage: 'Error',
         );
         await tester.pumpWidget(buildWidget(state: errorState));
@@ -135,9 +130,7 @@ void main() {
       testWidgets('switch camera button disabled when canSwitchCamera false',
           (tester) async {
         const noSwitch = CameraState(
-          isCameraInitialized: false,
           isLoading: true,
-          canSwitchCamera: false,
         );
         await tester.pumpWidget(buildWidget(state: noSwitch));
         await tester.pump();
@@ -151,7 +144,6 @@ void main() {
       testWidgets('switch camera button enabled when canSwitchCamera true',
           (tester) async {
         const withSwitch = CameraState(
-          isCameraInitialized: false,
           isLoading: true,
           canSwitchCamera: true,
         );
@@ -168,7 +160,6 @@ void main() {
     group('Controls rendering', () {
       testWidgets('renders gallery and switch camera buttons', (tester) async {
         const state = CameraState(
-          isCameraInitialized: false,
           isLoading: true,
         );
         await tester.pumpWidget(buildWidget(state: state));
@@ -186,7 +177,6 @@ void main() {
 
       testWidgets('gallery button uses secondary variant', (tester) async {
         const state = CameraState(
-          isCameraInitialized: false,
           isLoading: true,
         );
         await tester.pumpWidget(buildWidget(state: state));
@@ -200,7 +190,6 @@ void main() {
 
       testWidgets('capture button has circular shape', (tester) async {
         const state = CameraState(
-          isCameraInitialized: false,
           isLoading: true,
         );
         await tester.pumpWidget(buildWidget(state: state));
@@ -210,15 +199,14 @@ void main() {
           (w) =>
               w is Container &&
               w.decoration is BoxDecoration &&
-              (w.decoration as BoxDecoration).shape == BoxShape.circle &&
-              (w.decoration as BoxDecoration).border != null,
+              (w.decoration! as BoxDecoration).shape == BoxShape.circle &&
+              (w.decoration! as BoxDecoration).border != null,
         );
         expect(circleFinder, findsOneWidget);
       });
 
       testWidgets('has SafeArea at bottom', (tester) async {
         const state = CameraState(
-          isCameraInitialized: false,
           isLoading: true,
         );
         await tester.pumpWidget(buildWidget(state: state));

@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/models/watermark_settings.dart';
-import '../../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/watermark_settings.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 class WatermarkInfoSection extends StatelessWidget {
+
+  const WatermarkInfoSection({
+    required this.settings, required this.strings, required this.onToggle, required this.onReorder, super.key,
+  });
   final WatermarkSettings settings;
   final AppStrings strings;
   final void Function(WatermarkInfoType) onToggle;
   final void Function(int, int) onReorder;
-
-  const WatermarkInfoSection({
-    super.key,
-    required this.settings,
-    required this.strings,
-    required this.onToggle,
-    required this.onReorder,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -111,18 +107,15 @@ class WatermarkInfoSection extends StatelessWidget {
 }
 
 class _WatermarkInfoTile extends StatelessWidget {
+
+  const _WatermarkInfoTile({
+    required this.typeInfo, required this.isSelected, required this.strings, super.key,
+    this.onToggle,
+  });
   final WatermarkInfoTypeInfo typeInfo;
   final bool isSelected;
   final AppStrings strings;
   final VoidCallback? onToggle;
-
-  const _WatermarkInfoTile({
-    super.key,
-    required this.typeInfo,
-    required this.isSelected,
-    required this.strings,
-    this.onToggle,
-  });
 
   @override
   Widget build(BuildContext context) {

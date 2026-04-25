@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/providers/language_provider.dart';
-import '../../widgets/common/premium_card.dart';
 
 class MePage extends ConsumerStatefulWidget {
   const MePage({super.key});
@@ -190,7 +189,7 @@ class _MePageState extends ConsumerState<MePage> {
   }
 
   void _showAboutDialog(BuildContext context, AppStrings strings) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Row(
@@ -248,7 +247,7 @@ class _MePageState extends ConsumerState<MePage> {
   }
 
   Widget _buildFeatureItem(
-      BuildContext ctx, String emoji, String title, String description) {
+      BuildContext ctx, String emoji, String title, String description,) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: TeslaTheme.spacingMicro),
       child: Row(

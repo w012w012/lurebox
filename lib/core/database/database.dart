@@ -126,9 +126,9 @@ abstract class Database {
 /// 包装 sqflite 的 Database 实例，转换为 Database 接口
 /// 供生产环境使用。
 class DatabaseWrapper implements Database {
-  final Database _db;
 
   DatabaseWrapper(this._db);
+  final Database _db;
 
   @override
   Future<List<Map<String, dynamic>>> query(

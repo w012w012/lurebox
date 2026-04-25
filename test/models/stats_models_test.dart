@@ -160,8 +160,8 @@ void main() {
       const original = EquipmentCatchStats(
         equipmentId: 1,
         catchCount: 10,
-        avgLength: 30.0,
-        avgWeight: 2.0,
+        avgLength: 30,
+        avgWeight: 2,
         releaseCount: 5,
       );
 
@@ -190,15 +190,15 @@ void main() {
       const stats1 = EquipmentCatchStats(
         equipmentId: 1,
         catchCount: 10,
-        avgLength: 30.0,
-        avgWeight: 2.0,
+        avgLength: 30,
+        avgWeight: 2,
         releaseCount: 5,
       );
       const stats2 = EquipmentCatchStats(
         equipmentId: 1,
         catchCount: 10,
-        avgLength: 30.0,
-        avgWeight: 2.0,
+        avgLength: 30,
+        avgWeight: 2,
         releaseCount: 5,
       );
 
@@ -240,14 +240,14 @@ void main() {
     test('aggregates species counts correctly across time periods', () {
       const dashboard = DashboardData(
         todayStats: CatchStats(total: 2, release: 1, keep: 1),
-        todaySpecies: const {'Bass': 2},
+        todaySpecies: {'Bass': 2},
         monthStats: CatchStats(total: 20, release: 15, keep: 5),
-        monthSpecies: const {'Bass': 15, 'Trout': 5},
+        monthSpecies: {'Bass': 15, 'Trout': 5},
         yearStats: CatchStats(total: 100, release: 80, keep: 20),
-        yearSpecies: const {'Bass': 60, 'Trout': 30, 'Carp': 10},
+        yearSpecies: {'Bass': 60, 'Trout': 30, 'Carp': 10},
         allStats: CatchStats(total: 500, release: 350, keep: 150),
-        allSpecies: const {'Bass': 200, 'Trout': 150, 'Carp': 100, 'Pike': 50},
-        top3Longest: const [],
+        allSpecies: {'Bass': 200, 'Trout': 150, 'Carp': 100, 'Pike': 50},
+        top3Longest: [],
       );
 
       // Verify species counts increase over time periods
@@ -259,14 +259,14 @@ void main() {
     test('calculates release rates for all time periods', () {
       const dashboard = DashboardData(
         todayStats: CatchStats(total: 4, release: 3, keep: 1),
-        todaySpecies: const {'Bass': 4},
+        todaySpecies: {'Bass': 4},
         monthStats: CatchStats(total: 20, release: 10, keep: 10),
-        monthSpecies: const {'Bass': 20},
+        monthSpecies: {'Bass': 20},
         yearStats: CatchStats(total: 100, release: 70, keep: 30),
-        yearSpecies: const {'Bass': 100},
+        yearSpecies: {'Bass': 100},
         allStats: CatchStats(total: 200, release: 100, keep: 100),
-        allSpecies: const {'Bass': 200},
-        top3Longest: const [],
+        allSpecies: {'Bass': 200},
+        top3Longest: [],
       );
 
       expect(dashboard.todayStats.releaseRate, equals(0.75));
@@ -278,14 +278,14 @@ void main() {
     test('handles empty top3Longest list', () {
       const dashboard = DashboardData(
         todayStats: CatchStats(total: 0, release: 0, keep: 0),
-        todaySpecies: const {},
+        todaySpecies: {},
         monthStats: CatchStats(total: 0, release: 0, keep: 0),
-        monthSpecies: const {},
+        monthSpecies: {},
         yearStats: CatchStats(total: 0, release: 0, keep: 0),
-        yearSpecies: const {},
+        yearSpecies: {},
         allStats: CatchStats(total: 0, release: 0, keep: 0),
-        allSpecies: const {},
-        top3Longest: const [],
+        allSpecies: {},
+        top3Longest: [],
       );
 
       expect(dashboard.top3Longest, isEmpty);
@@ -299,13 +299,13 @@ void main() {
       ];
       const dashboard = DashboardData(
         todayStats: CatchStats(total: 3, release: 2, keep: 1),
-        todaySpecies: const {'Bass': 3},
+        todaySpecies: {'Bass': 3},
         monthStats: CatchStats(total: 3, release: 2, keep: 1),
-        monthSpecies: const {'Bass': 3},
+        monthSpecies: {'Bass': 3},
         yearStats: CatchStats(total: 3, release: 2, keep: 1),
-        yearSpecies: const {'Bass': 3},
+        yearSpecies: {'Bass': 3},
         allStats: CatchStats(total: 3, release: 2, keep: 1),
-        allSpecies: const {'Bass': 3},
+        allSpecies: {'Bass': 3},
         top3Longest: top3Longest,
       );
 
@@ -337,7 +337,7 @@ void main() {
     test('creates AchievementMetrics with custom values', () {
       const metrics = AchievementMetrics(
         totalCatches: 100,
-        maxLength: 50.0,
+        maxLength: 50,
         speciesCount: 10,
         equipmentCount: 5,
         locationCount: 3,
@@ -359,7 +359,7 @@ void main() {
     test('copyWith creates modified copy', () {
       const original = AchievementMetrics(totalCatches: 50, speciesCount: 5);
 
-      final copy = original.copyWith(totalCatches: 100, maxLength: 30.0);
+      final copy = original.copyWith(totalCatches: 100, maxLength: 30);
 
       expect(copy.totalCatches, equals(100));
       expect(copy.maxLength, equals(30.0));
@@ -369,7 +369,7 @@ void main() {
     test('copyWith preserves unmodified fields', () {
       const original = AchievementMetrics(
         totalCatches: 50,
-        maxLength: 25.0,
+        maxLength: 25,
         speciesCount: 5,
         equipmentCount: 3,
         locationCount: 2,
@@ -421,7 +421,7 @@ void main() {
     test('handles weight and length achievements', () {
       const metrics = AchievementMetrics(
         maxLength: 120.5,
-        totalWeight: 500.0,
+        totalWeight: 500,
       );
 
       expect(metrics.maxLength, equals(120.5));

@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import '../../../core/models/fishing_location.dart';
+import 'package:lurebox/core/models/fishing_location.dart';
 
 class LocationDetailSheet extends StatelessWidget {
-  final FishingLocation location;
-  final VoidCallback? onNavigate;
-  final VoidCallback? onViewCatches;
 
   const LocationDetailSheet({
-    super.key,
-    required this.location,
+    required this.location, super.key,
     this.onNavigate,
     this.onViewCatches,
   });
+  final FishingLocation location;
+  final VoidCallback? onNavigate;
+  final VoidCallback? onViewCatches;
 
   @override
   Widget build(BuildContext context) {

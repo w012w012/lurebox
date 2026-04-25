@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/animation_constants.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/models/fish_catch.dart';
-import '../../core/providers/app_settings_provider.dart';
-import '../../core/providers/fish_list_view_model.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/widgets/error_view.dart';
-import '../../widgets/common/premium_button.dart';
-import 'widgets/fish_filter_panel.dart';
-import 'widgets/fish_list_item.dart';
-import 'widgets/fish_search_delegate.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/animation_constants.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/fish_list_view_model.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/widgets/error_view.dart';
+import 'package:lurebox/features/fish_list/widgets/fish_filter_panel.dart';
+import 'package:lurebox/features/fish_list/widgets/fish_list_item.dart';
+import 'package:lurebox/features/fish_list/widgets/fish_search_delegate.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
 
 class FishListPage extends ConsumerStatefulWidget {
   const FishListPage({super.key});
@@ -157,7 +156,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
       ),
     );
 
-    if (confirm == true) {
+    if (confirm ?? false) {
       await ref.read(fishListViewModelProvider.notifier).deleteSelected();
     }
   }
@@ -193,7 +192,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
 
     // 如果超过最大动画数量，跳过动画（返回已完成动画）
     if (_itemAnimationControllers.length >= _maxActiveAnimations) {
-      return const AlwaysStoppedAnimation(1.0);
+      return const AlwaysStoppedAnimation(1);
     }
 
     final controller = AnimationController(
@@ -208,7 +207,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
       parent: controller,
       curve: Interval(
         delayFraction.clamp(0.0, 0.6),
-        1.0,
+        1,
         curve: TeslaTheme.transitionCurve,
       ),
     );
@@ -380,7 +379,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
   }
 
   void _showFilterSheet(
-      BuildContext context, FishListState state, AppStrings strings) {
+      BuildContext context, FishListState state, AppStrings strings,) {
     FishFilterPanel.show(
       context: context,
       strings: strings,
@@ -400,7 +399,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
   }
 
   Widget _buildTabletGridView(
-      BoxConstraints constraints, FishListState state, AppStrings strings) {
+      BoxConstraints constraints, FishListState state, AppStrings strings,) {
     final crossAxisCount = constraints.maxWidth >= 900 ? 3 : 2;
     final itemWidth = (constraints.maxWidth - 32 - (crossAxisCount - 1) * 16) /
         crossAxisCount;
@@ -515,7 +514,6 @@ class _FishListPageState extends ConsumerState<FishListPage>
         border: Border(
           bottom: BorderSide(
             color: TeslaColors.cloudGray.withValues(alpha: 0.5),
-            width: 1,
           ),
         ),
       ),
@@ -575,10 +573,6 @@ class _FishListPageState extends ConsumerState<FishListPage>
 }
 
 class _SortButton extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final bool isAsc;
-  final VoidCallback onTap;
 
   const _SortButton({
     required this.label,
@@ -586,6 +580,10 @@ class _SortButton extends StatelessWidget {
     required this.isAsc,
     required this.onTap,
   });
+  final String label;
+  final bool isSelected;
+  final bool isAsc;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -630,13 +628,13 @@ class _SortButton extends StatelessWidget {
 
 /// Animated wrapper for list items with staggered fade + slide effect
 class _AnimatedListItem extends StatelessWidget {
-  final Animation<double> animation;
-  final Widget child;
 
   const _AnimatedListItem({
     required this.animation,
     required this.child,
   });
+  final Animation<double> animation;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {

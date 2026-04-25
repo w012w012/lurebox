@@ -146,7 +146,6 @@ class AppColors {
   static ColorScheme lightColorScheme() {
     return const ColorScheme.light(
       primary: primaryLight,
-      onPrimary: surfaceLight,
       primaryContainer: Color(0xFFB8C5D6),
       onPrimaryContainer: primaryLight,
       secondary: secondaryLight,
@@ -158,8 +157,6 @@ class AppColors {
       tertiaryContainer: Color(0xFFDBEAFE),
       onTertiaryContainer: accentLight,
       error: error,
-      onError: surfaceLight,
-      surface: surfaceLight,
       onSurface: textPrimaryLight,
       surfaceContainerHighest: Color(0xFFF7FAFC),
       onSurfaceVariant: textSecondaryLight,

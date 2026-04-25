@@ -1,18 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/fish_catch.dart';
-import '../di/di.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 
 /// 统计时间范围
 class StatsTimeRange {
-  final DateTime start;
-  final DateTime end;
-  final String label;
 
   const StatsTimeRange({
     required this.start,
     required this.end,
     required this.label,
   });
+  final DateTime start;
+  final DateTime end;
+  final String label;
 
   @override
   bool operator ==(Object other) =>
@@ -48,10 +48,6 @@ final statsTimeRangeProvider = StateProvider<StatsTimeRange>((ref) {
 
 /// 时间范围内的鱼获统计
 class TimeRangeStats {
-  final int totalCount;
-  final int releaseCount;
-  final int keepCount;
-  final Map<String, int> speciesStats;
 
   const TimeRangeStats({
     required this.totalCount,
@@ -59,6 +55,10 @@ class TimeRangeStats {
     required this.keepCount,
     required this.speciesStats,
   });
+  final int totalCount;
+  final int releaseCount;
+  final int keepCount;
+  final Map<String, int> speciesStats;
 
   double get releaseRate =>
       totalCount > 0 ? (releaseCount / totalCount * 100) : 0;
@@ -74,8 +74,8 @@ final timeRangeStatsProvider =
   final filteredList = fishList.filterPendingRecognition();
   final catches = filteredList.map((f) => f.toMap()).toList();
 
-  int releaseCount = 0;
-  int keepCount = 0;
+  var releaseCount = 0;
+  var keepCount = 0;
   final speciesMap = <String, int>{};
 
   for (final fish in catches) {
@@ -113,8 +113,8 @@ final todayStatsProvider = Provider<AsyncValue<TimeRangeStats>>((ref) {
 final monthStatsProvider = Provider<AsyncValue<TimeRangeStats>>((ref) {
   final now = DateTime.now();
   final range = StatsTimeRange(
-    start: DateTime(now.year, now.month, 1),
-    end: DateTime(now.year, now.month + 1, 1),
+    start: DateTime(now.year, now.month),
+    end: DateTime(now.year, now.month + 1),
     label: '本月',
   );
   return ref.watch(timeRangeStatsProvider(range));
@@ -124,8 +124,8 @@ final monthStatsProvider = Provider<AsyncValue<TimeRangeStats>>((ref) {
 final yearStatsProvider = Provider<AsyncValue<TimeRangeStats>>((ref) {
   final now = DateTime.now();
   final range = StatsTimeRange(
-    start: DateTime(now.year, 1, 1),
-    end: DateTime(now.year + 1, 1, 1),
+    start: DateTime(now.year),
+    end: DateTime(now.year + 1),
     label: '本年',
   );
   return ref.watch(timeRangeStatsProvider(range));

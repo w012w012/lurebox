@@ -26,11 +26,6 @@
 library;
 
 class PaginatedResult<T> {
-  final List<T> items;
-  final int totalCount;
-  final int page;
-  final int pageSize;
-  final bool hasMore;
 
   const PaginatedResult({
     required this.items,
@@ -39,6 +34,11 @@ class PaginatedResult<T> {
     required this.pageSize,
     required this.hasMore,
   });
+  final List<T> items;
+  final int totalCount;
+  final int page;
+  final int pageSize;
+  final bool hasMore;
 
   PaginatedResult<T> copyWith({
     List<T>? items,
@@ -69,7 +69,7 @@ class PaginatedResult<T> {
 
   static bool _listEquals<T>(List<T> a, List<T> b) {
     if (a.length != b.length) return false;
-    for (int i = 0; i < a.length; i++) {
+    for (var i = 0; i < a.length; i++) {
       if (a[i] != b[i]) return false;
     }
     return true;

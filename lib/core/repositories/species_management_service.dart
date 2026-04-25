@@ -1,12 +1,10 @@
-import '../repositories/user_species_alias_repository.dart';
-import '../services/fish_species_matcher.dart';
+import 'package:lurebox/core/repositories/user_species_alias_repository.dart';
+import 'package:lurebox/core/services/fish_species_matcher.dart';
 
 /// 品种管理服务
 ///
 /// 负责品种重命名和合并的同步逻辑
 class SpeciesManagementService {
-  final UserSpeciesAliasRepository _aliasRepo;
-  final FishSpeciesMatcher _matcher;
 
   /// 创建品种管理服务
   ///
@@ -17,6 +15,8 @@ class SpeciesManagementService {
     required FishSpeciesMatcher matcher,
   })  : _aliasRepo = aliasRepo,
         _matcher = matcher;
+  final UserSpeciesAliasRepository _aliasRepo;
+  final FishSpeciesMatcher _matcher;
 
   /// 重命名品种
   ///

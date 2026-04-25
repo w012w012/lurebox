@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/watermark_settings.dart';
-import '../services/settings_service.dart';
-import '../di/di.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/watermark_settings.dart';
+import 'package:lurebox/core/services/settings_service.dart';
 
 class WatermarkSettingsNotifier extends StateNotifier<WatermarkSettings> {
-  final SettingsService _service;
 
   WatermarkSettingsNotifier(this._service) : super(const WatermarkSettings()) {
     _loadSettings();
   }
+  final SettingsService _service;
 
   Future<void> _loadSettings() async {
     final settings = await _service.getWatermarkSettings();
@@ -40,7 +40,7 @@ class WatermarkSettingsNotifier extends StateNotifier<WatermarkSettings> {
   }
 
   Future<void> toggleInfoType(WatermarkInfoType type) async {
-    final List<WatermarkInfoType> newTypes = List.from(state.infoTypes);
+    final newTypes = List<WatermarkInfoType>.from(state.infoTypes);
     if (newTypes.contains(type)) {
       newTypes.remove(type);
     } else {
@@ -51,7 +51,7 @@ class WatermarkSettingsNotifier extends StateNotifier<WatermarkSettings> {
   }
 
   Future<void> reorderInfoTypes(int oldIndex, int newIndex) async {
-    final List<WatermarkInfoType> newTypes = List.from(state.infoTypes);
+    final newTypes = List<WatermarkInfoType>.from(state.infoTypes);
     if (oldIndex < newIndex) {
       newIndex -= 1;
     }

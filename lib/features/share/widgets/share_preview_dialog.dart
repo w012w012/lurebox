@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/services/share_template.dart';
-import '../../../widgets/common/premium_button.dart';
-import 'share_card_widget.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/services/share_template.dart';
+import 'package:lurebox/features/share/widgets/share_card_widget.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
 
 class SharePreviewDialog extends StatelessWidget {
-  final ShareCardConfig config;
-  final VoidCallback? onShare;
-  final VoidCallback? onEdit;
 
   const SharePreviewDialog({
-    super.key,
-    required this.config,
+    required this.config, super.key,
     this.onShare,
     this.onEdit,
   });
+  final ShareCardConfig config;
+  final VoidCallback? onShare;
+  final VoidCallback? onEdit;
 
   static Future<void> show(
     BuildContext context, {
@@ -99,7 +98,6 @@ class SharePreviewDialog extends StatelessWidget {
                       Expanded(
                         child: PremiumButton(
                           text: 'Share',
-                          variant: PremiumButtonVariant.primary,
                           borderRadius: 12,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           onPressed: () {

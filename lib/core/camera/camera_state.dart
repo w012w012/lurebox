@@ -1,5 +1,5 @@
-import '../models/fish_catch.dart';
-import '../models/equipment.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 
 enum CameraCaptureState {
   initial,
@@ -11,42 +11,6 @@ enum CameraCaptureState {
 }
 
 class CameraState {
-  final bool pendingRecognition;
-  final CameraCaptureState captureState;
-  final String? imagePath;
-  final String? watermarkedImagePath;
-  final String species;
-  final double length;
-  final String lengthUnit;
-  final double? weight;
-  final String weightUnit;
-  final FishFateType fate;
-  final String? locationName;
-  final double? latitude;
-  final double? longitude;
-  final DateTime? catchTime;
-  final double? airTemperature; // 气温（摄氏度）
-  final double? pressure; // 气压（hPa）
-  final int? weatherCode; // 天气代码（WMO）
-  final List<String> speciesHistory;
-  final List<Equipment> rods;
-  final List<Equipment> reels;
-  final List<Equipment> lures;
-  final Equipment? selectedRod;
-  final Equipment? selectedReel;
-  final Equipment? selectedLure;
-  final double? estimatedWeight;
-  final bool isCameraInitialized;
-  final String? errorMessage;
-  final bool isLoading;
-  final bool isTakingPicture;
-  final bool canSwitchCamera;
-  // AI 识别相关状态
-  final bool isRecognizing;
-  final String? recognizedSpecies;
-  final int? recognitionConfidence;
-
-  static const double weightCoefficient = 0.012;
 
   const CameraState({
     this.captureState = CameraCaptureState.initial,
@@ -83,6 +47,42 @@ class CameraState {
     this.recognitionConfidence,
     this.pendingRecognition = false,
   });
+  final bool pendingRecognition;
+  final CameraCaptureState captureState;
+  final String? imagePath;
+  final String? watermarkedImagePath;
+  final String species;
+  final double length;
+  final String lengthUnit;
+  final double? weight;
+  final String weightUnit;
+  final FishFateType fate;
+  final String? locationName;
+  final double? latitude;
+  final double? longitude;
+  final DateTime? catchTime;
+  final double? airTemperature; // 气温（摄氏度）
+  final double? pressure; // 气压（hPa）
+  final int? weatherCode; // 天气代码（WMO）
+  final List<String> speciesHistory;
+  final List<Equipment> rods;
+  final List<Equipment> reels;
+  final List<Equipment> lures;
+  final Equipment? selectedRod;
+  final Equipment? selectedReel;
+  final Equipment? selectedLure;
+  final double? estimatedWeight;
+  final bool isCameraInitialized;
+  final String? errorMessage;
+  final bool isLoading;
+  final bool isTakingPicture;
+  final bool canSwitchCamera;
+  // AI 识别相关状态
+  final bool isRecognizing;
+  final String? recognizedSpecies;
+  final int? recognitionConfidence;
+
+  static const double weightCoefficient = 0.012;
 
   CameraState copyWith({
     CameraCaptureState? captureState,

@@ -1,33 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../features/achievement/achievement_page.dart';
-import '../../features/camera/camera_page.dart';
-import '../../features/equipment/equipment_edit_page.dart';
-import '../../features/equipment/equipment_list_page.dart';
-import '../../features/equipment/equipment_overview_page.dart';
-import '../../features/fish_detail/fish_detail_page.dart';
-import '../../features/fish_list/fish_list_page.dart';
-import '../../features/home/home_page.dart';
-import '../../features/me/me_page.dart';
-import '../../features/me/backup_export_page.dart';
-import '../../features/me/me_settings_page.dart';
-import '../../features/onboarding/onboarding_page.dart';
-import '../../features/settings/ai_recognition_settings_page.dart';
-import '../../features/settings/export_backup_management_page.dart';
-import '../../features/settings/location_management_page.dart';
-import '../../features/settings/settings_page.dart';
-import '../../features/settings/species_management_page.dart';
-import '../../features/settings/watermark_settings_page.dart';
-import '../../features/stats/stats_detail_page.dart';
-import '../../widgets/common/premium_navigation_bar.dart';
-import '../../core/constants/strings.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/onboarding_provider.dart';
-import '../../core/providers/fish_detail_view_model.dart';
-import '../../features/fish_detail/widgets/fish_edit_page.dart';
-import '../../features/settings/widgets/settings_units_section.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/providers/fish_detail_view_model.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/onboarding_provider.dart';
+import 'package:lurebox/features/achievement/achievement_page.dart';
+import 'package:lurebox/features/camera/camera_page.dart';
+import 'package:lurebox/features/equipment/equipment_edit_page.dart';
+import 'package:lurebox/features/equipment/equipment_list_page.dart';
+import 'package:lurebox/features/equipment/equipment_overview_page.dart';
+import 'package:lurebox/features/fish_detail/fish_detail_page.dart';
+import 'package:lurebox/features/fish_detail/widgets/fish_edit_page.dart';
+import 'package:lurebox/features/fish_list/fish_list_page.dart';
+import 'package:lurebox/features/home/home_page.dart';
+import 'package:lurebox/features/me/backup_export_page.dart';
+import 'package:lurebox/features/me/me_page.dart';
+import 'package:lurebox/features/me/me_settings_page.dart';
+import 'package:lurebox/features/onboarding/onboarding_page.dart';
+import 'package:lurebox/features/settings/ai_recognition_settings_page.dart';
+import 'package:lurebox/features/settings/export_backup_management_page.dart';
+import 'package:lurebox/features/settings/location_management_page.dart';
+import 'package:lurebox/features/settings/settings_page.dart';
+import 'package:lurebox/features/settings/species_management_page.dart';
+import 'package:lurebox/features/settings/watermark_settings_page.dart';
+import 'package:lurebox/features/settings/widgets/settings_units_section.dart';
+import 'package:lurebox/features/stats/stats_detail_page.dart';
+import 'package:lurebox/widgets/common/premium_navigation_bar.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -212,9 +211,9 @@ final routerProvider = Provider<GoRouter>((ref) {
 });
 
 class MainShell extends ConsumerWidget {
-  final Widget child;
 
-  const MainShell({super.key, required this.child});
+  const MainShell({required this.child, super.key});
+  final Widget child;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -269,24 +268,20 @@ class MainShell extends ConsumerWidget {
     switch (index) {
       case 0:
         context.go('/');
-        break;
       case 1:
         context.go('/fish');
-        break;
       case 2:
         context.go('/equipment');
-        break;
       case 3:
         context.go('/me');
-        break;
     }
   }
 }
 
 class _FishEditPageWrapper extends ConsumerWidget {
-  final int fishId;
 
   const _FishEditPageWrapper({required this.fishId});
+  final int fishId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -306,10 +301,10 @@ class _FishEditPageWrapper extends ConsumerWidget {
 }
 
 class _FishEditPage extends StatelessWidget {
-  final Map<String, dynamic> fish;
-  final AppStrings strings;
 
   const _FishEditPage({required this.fish, required this.strings});
+  final Map<String, dynamic> fish;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {

@@ -138,8 +138,7 @@ class FakeFishCatchService implements FishCatchService {
   @override
   Future<PaginatedResult<FishCatch>> getFilteredPageByFilter({
     required int page,
-    int pageSize = 20,
-    required FishFilter filter,
+    required FishFilter filter, int pageSize = 20,
   }) async {
     return const PaginatedResult(
       items: [],
@@ -161,12 +160,12 @@ void main() {
   group('StatsTimeRange', () {
     test('equality works for same values', () {
       final range1 = StatsTimeRange(
-        start: DateTime(2024, 1, 1),
+        start: DateTime(2024),
         end: DateTime(2024, 12, 31),
         label: '全部',
       );
       final range2 = StatsTimeRange(
-        start: DateTime(2024, 1, 1),
+        start: DateTime(2024),
         end: DateTime(2024, 12, 31),
         label: '全部',
       );
@@ -176,12 +175,12 @@ void main() {
 
     test('equality fails for different start date', () {
       final range1 = StatsTimeRange(
-        start: DateTime(2024, 1, 1),
+        start: DateTime(2024),
         end: DateTime(2024, 12, 31),
         label: '全部',
       );
       final range2 = StatsTimeRange(
-        start: DateTime(2024, 2, 1),
+        start: DateTime(2024, 2),
         end: DateTime(2024, 12, 31),
         label: '全部',
       );
@@ -191,12 +190,12 @@ void main() {
 
     test('equality fails for different end date', () {
       final range1 = StatsTimeRange(
-        start: DateTime(2024, 1, 1),
+        start: DateTime(2024),
         end: DateTime(2024, 12, 31),
         label: '全部',
       );
       final range2 = StatsTimeRange(
-        start: DateTime(2024, 1, 1),
+        start: DateTime(2024),
         end: DateTime(2025, 12, 31),
         label: '全部',
       );
@@ -211,8 +210,8 @@ void main() {
         label: '全部',
       );
       final range2 = StatsTimeRange(
-        start: DateTime(2024, 1, 1, 0, 0),
-        end: DateTime(2024, 12, 31, 0, 0),
+        start: DateTime(2024),
+        end: DateTime(2024, 12, 31),
         label: '全部',
       );
 
@@ -221,12 +220,12 @@ void main() {
 
     test('hashCode is same for equal objects', () {
       final range1 = StatsTimeRange(
-        start: DateTime(2024, 1, 1),
+        start: DateTime(2024),
         end: DateTime(2024, 12, 31),
         label: '全部',
       );
       final range2 = StatsTimeRange(
-        start: DateTime(2024, 1, 1),
+        start: DateTime(2024),
         end: DateTime(2024, 12, 31),
         label: '全部',
       );
@@ -330,13 +329,13 @@ void main() {
     test('filters out pending recognition records', () async {
       final now = DateTime.now();
       fakeService.getByDateRangeResult = [
-        _createFishCatch(id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now, pendingRecognition: false),
+        _createFishCatch(id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now),
         _createFishCatch(id: 2, species: 'Trout', fate: FishFateType.release, catchTime: now, pendingRecognition: true), // Should be filtered
-        _createFishCatch(id: 3, species: 'Carp', fate: FishFateType.keep, catchTime: now, pendingRecognition: false),
+        _createFishCatch(id: 3, species: 'Carp', fate: FishFateType.keep, catchTime: now),
       ];
 
       final range = StatsTimeRange(
-        start: DateTime(2024, 1, 1),
+        start: DateTime(2024),
         end: DateTime(2024, 12, 31),
         label: 'test',
       );
@@ -357,7 +356,7 @@ void main() {
       ];
 
       final range = StatsTimeRange(
-        start: DateTime(2024, 1, 1),
+        start: DateTime(2024),
         end: DateTime(2024, 12, 31),
         label: 'test',
       );
@@ -376,7 +375,7 @@ void main() {
       ];
 
       final range = StatsTimeRange(
-        start: DateTime(2024, 1, 1),
+        start: DateTime(2024),
         end: DateTime(2024, 12, 31),
         label: 'test',
       );
@@ -398,7 +397,7 @@ void main() {
       ];
 
       final range = StatsTimeRange(
-        start: DateTime(2024, 1, 1),
+        start: DateTime(2024),
         end: DateTime(2024, 12, 31),
         label: 'test',
       );
@@ -414,7 +413,7 @@ void main() {
       fakeService.getByDateRangeResult = [];
 
       final range = StatsTimeRange(
-        start: DateTime(2024, 1, 1),
+        start: DateTime(2024),
         end: DateTime(2024, 12, 31),
         label: 'test',
       );
@@ -429,7 +428,7 @@ void main() {
 
     test('calls getByDateRange with correct date range', () async {
       fakeService.getByDateRangeResult = [];
-      final startDate = DateTime(2024, 6, 1);
+      final startDate = DateTime(2024, 6);
       final endDate = DateTime(2024, 6, 30);
 
       final range = StatsTimeRange(
@@ -567,7 +566,7 @@ void main() {
     test('returns correct map structure for each catch', () async {
       final now = DateTime.now();
       fakeService.getTop3LongestCatchesResult = [
-        _createFishCatch(id: 1, species: 'Bass', length: 50.0, fate: FishFateType.release, catchTime: now),
+        _createFishCatch(id: 1, species: 'Bass', length: 50, fate: FishFateType.release, catchTime: now),
       ];
 
       final result = await container.read(top3LongestCatchesProvider.future);
@@ -592,7 +591,6 @@ FishCatch _createFishCatch({
     imagePath: '/test/fish_$id.jpg',
     species: species,
     length: length,
-    lengthUnit: 'cm',
     fate: fate,
     catchTime: catchTime,
     pendingRecognition: pendingRecognition,

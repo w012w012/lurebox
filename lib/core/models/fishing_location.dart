@@ -28,22 +28,14 @@
 library;
 
 class FishingLocation {
-  final int id;
-  final String name;
-  final double? latitude;
-  final double? longitude;
-  final DateTime? lastVisit;
-  final int fishCount;
-  final DateTime createdAt;
 
   const FishingLocation({
     required this.id,
     required this.name,
-    this.latitude,
+    required this.createdAt, this.latitude,
     this.longitude,
     this.lastVisit,
     this.fishCount = 0,
-    required this.createdAt,
   });
 
   factory FishingLocation.fromMap(Map<String, dynamic> map) {
@@ -59,6 +51,13 @@ class FishingLocation {
       createdAt: DateTime.parse(map['created_at'] as String),
     );
   }
+  final int id;
+  final String name;
+  final double? latitude;
+  final double? longitude;
+  final DateTime? lastVisit;
+  final int fishCount;
+  final DateTime createdAt;
 
   Map<String, dynamic> toMap() {
     return {

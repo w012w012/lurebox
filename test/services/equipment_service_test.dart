@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/models/equipment.dart';
-import 'package:lurebox/core/models/paginated_result.dart';
 import 'package:lurebox/core/repositories/equipment_repository.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
 
@@ -18,7 +17,7 @@ class FakeEquipmentRepository implements EquipmentRepository {
   Future<List<Equipment>> getAll({String? type}) async {
     return _store.values
         .where((e) =>
-            !e.isDeleted && (type == null || e.type.name == _typeStr(type)))
+            !e.isDeleted && (type == null || e.type.name == _typeStr(type)),)
         .toList();
   }
 
@@ -147,7 +146,7 @@ class FakeEquipmentRepository implements EquipmentRepository {
   Future<Map<String, int>> getCategoryDistribution(String type) async {
     final dist = <String, int>{};
     for (final e in _store.values.where(
-        (e) => !e.isDeleted && e.type.name == type && e.category != null)) {
+        (e) => !e.isDeleted && e.type.name == type && e.category != null,)) {
       dist[e.category!] = (dist[e.category!] ?? 0) + 1;
     }
     return dist;
@@ -171,7 +170,7 @@ void main() {
 
   group('EquipmentService delegation', () {
     test('getAll delegates to repository', () async {
-      await repository.create(_makeRod(id: 1, brand: 'Shimano'));
+      await repository.create(_makeRod(brand: 'Shimano'));
       await repository.create(_makeRod(id: 2, brand: 'Daiwa'));
 
       final result = await service.getAll();
@@ -181,7 +180,7 @@ void main() {
     });
 
     test('getAll with type filter delegates to repository', () async {
-      await repository.create(_makeRod(id: 1));
+      await repository.create(_makeRod());
       await repository.create(_makeReel(id: 2));
       await repository.create(_makeLure(id: 3));
 
@@ -192,7 +191,7 @@ void main() {
     });
 
     test('getById returns equipment when found', () async {
-      await repository.create(_makeRod(id: 1, brand: 'Shimano'));
+      await repository.create(_makeRod(brand: 'Shimano'));
 
       final result = await service.getById(1);
 
@@ -212,15 +211,15 @@ void main() {
     });
 
     test('update delegates to repository', () async {
-      await repository.create(_makeRod(id: 1, brand: 'Old'));
+      await repository.create(_makeRod(brand: 'Old'));
 
-      await service.update(_makeRod(id: 1, brand: 'New'));
+      await service.update(_makeRod(brand: 'New'));
 
       expect((await repository.getById(1))!.brand, equals('New'));
     });
 
     test('delete delegates to repository', () async {
-      await repository.create(_makeRod(id: 1));
+      await repository.create(_makeRod());
 
       await service.delete(1);
 
@@ -230,7 +229,7 @@ void main() {
 
   group('EquipmentService.getPage', () {
     test('returns PaginatedResult structure', () async {
-      for (int i = 0; i < 5; i++) {
+      for (var i = 0; i < 5; i++) {
         await repository.create(_makeRod(id: 0));
       }
 
@@ -245,7 +244,7 @@ void main() {
     });
 
     test('page 2 returns remaining items', () async {
-      for (int i = 0; i < 5; i++) {
+      for (var i = 0; i < 5; i++) {
         await repository.create(_makeRod(id: 0));
       }
 
@@ -272,7 +271,7 @@ void main() {
   group('EquipmentService.setDefaultEquipment', () {
     test('sets new default and clears previous default for same type',
         () async {
-      await repository.create(_makeRod(id: 1, isDefault: true));
+      await repository.create(_makeRod(isDefault: true));
       await repository.create(_makeRod(id: 2));
 
       await service.setDefaultEquipment(2, 'rod');
@@ -282,7 +281,7 @@ void main() {
     });
 
     test('setting same equipment as default is idempotent', () async {
-      await repository.create(_makeRod(id: 1, isDefault: true));
+      await repository.create(_makeRod(isDefault: true));
 
       await service.setDefaultEquipment(1, 'rod');
 
@@ -290,7 +289,7 @@ void main() {
     });
 
     test('default for one type does not affect other types', () async {
-      await repository.create(_makeRod(id: 1, isDefault: true));
+      await repository.create(_makeRod(isDefault: true));
       await repository.create(_makeReel(id: 2));
 
       await service.setDefaultEquipment(2, 'reel');
@@ -304,7 +303,7 @@ void main() {
     });
 
     test('getDefaultEquipment returns current default', () async {
-      await repository.create(_makeRod(id: 1));
+      await repository.create(_makeRod());
       await repository.create(_makeRod(id: 2, isDefault: true));
 
       final result = await service.getDefaultEquipment('rod');
@@ -314,7 +313,7 @@ void main() {
     });
 
     test('getDefaultEquipment returns null when no default', () async {
-      await repository.create(_makeRod(id: 1));
+      await repository.create(_makeRod());
 
       final result = await service.getDefaultEquipment('rod');
 
@@ -383,10 +382,10 @@ void main() {
 
 // ----- Test data helpers -----
 
-late final _now = DateTime.now();
+final _now = DateTime.now();
 
 Equipment _makeRod(
-    {int id = 1, String? brand, String? model, bool isDefault = false}) {
+    {int id = 1, String? brand, String? model, bool isDefault = false,}) {
   return Equipment(
     id: id,
     type: EquipmentType.rod,

@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/providers/app_settings_provider.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../widgets/common/premium_input.dart';
-import '../../../widgets/common/unit_dropdown.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/widgets/common/premium_input.dart';
+import 'package:lurebox/widgets/common/unit_dropdown.dart';
 
 class LureForm extends ConsumerWidget {
+
+  const LureForm({
+    required this.weightController, required this.weightUnit, required this.onWeightUnitChanged, required this.sizeController, required this.sizeUnit, required this.onSizeUnitChanged, required this.colorController, required this.quantityController, required this.quantityUnit, required this.onQuantityUnitChanged, super.key,
+  });
   final TextEditingController weightController;
   final String weightUnit;
   final ValueChanged<String> onWeightUnitChanged;
@@ -17,20 +21,6 @@ class LureForm extends ConsumerWidget {
   final TextEditingController quantityController;
   final String? quantityUnit;
   final ValueChanged<String?> onQuantityUnitChanged;
-
-  const LureForm({
-    super.key,
-    required this.weightController,
-    required this.weightUnit,
-    required this.onWeightUnitChanged,
-    required this.sizeController,
-    required this.sizeUnit,
-    required this.onSizeUnitChanged,
-    required this.colorController,
-    required this.quantityController,
-    required this.quantityUnit,
-    required this.onQuantityUnitChanged,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

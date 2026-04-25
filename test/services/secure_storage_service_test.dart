@@ -247,7 +247,7 @@ void main() {
 
         await service.saveProviderApiKey('openai', 'sk-test-123');
         expect(
-            await service.getProviderApiKey('openai'), equals('sk-test-123'));
+            await service.getProviderApiKey('openai'), equals('sk-test-123'),);
       });
 
       test('hasProviderApiKey returns true after save', () async {
@@ -255,10 +255,10 @@ void main() {
             SecureStorageService(storage: InMemoryApiKeyStorage());
 
         expect(
-            await service.hasProviderApiKey('openai'), isFalse);
+            await service.hasProviderApiKey('openai'), isFalse,);
         await service.saveProviderApiKey('openai', 'sk-test');
         expect(
-            await service.hasProviderApiKey('openai'), isTrue);
+            await service.hasProviderApiKey('openai'), isTrue,);
       });
 
       test('deleteProviderApiKey removes the key', () async {
@@ -268,7 +268,7 @@ void main() {
         await service.saveProviderApiKey('openai', 'sk-test');
         await service.deleteProviderApiKey('openai');
         expect(
-            await service.hasProviderApiKey('openai'), isFalse);
+            await service.hasProviderApiKey('openai'), isFalse,);
       });
 
       test('deleteAllProviderApiKeys clears all keys', () async {
@@ -280,9 +280,9 @@ void main() {
         await service.deleteAllProviderApiKeys();
 
         expect(
-            await service.hasProviderApiKey('openai'), isFalse);
+            await service.hasProviderApiKey('openai'), isFalse,);
         expect(
-            await service.hasProviderApiKey('gemini'), isFalse);
+            await service.hasProviderApiKey('gemini'), isFalse,);
       });
 
       test('saveAllProviderApiKeys saves multiple keys', () async {
@@ -295,9 +295,9 @@ void main() {
         });
 
         expect(
-            await service.getProviderApiKey('openai'), equals('sk-test-1'));
+            await service.getProviderApiKey('openai'), equals('sk-test-1'),);
         expect(
-            await service.getProviderApiKey('gemini'), equals('sk-test-2'));
+            await service.getProviderApiKey('gemini'), equals('sk-test-2'),);
       });
 
       test('getAllProviderApiKeys returns all saved keys', () async {

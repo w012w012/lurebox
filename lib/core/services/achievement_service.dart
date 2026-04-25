@@ -1,7 +1,7 @@
-import 'app_logger.dart';
-import '../constants/achievements.dart';
-import '../models/achievement.dart';
-import '../repositories/stats_repository.dart';
+import 'package:lurebox/core/constants/achievements.dart';
+import 'package:lurebox/core/models/achievement.dart';
+import 'package:lurebox/core/repositories/stats_repository.dart';
+import 'package:lurebox/core/services/app_logger.dart';
 
 /// 成就服务 - 用户成就系统
 ///
@@ -18,9 +18,9 @@ import '../repositories/stats_repository.dart';
 /// 每个成就包含目标值、当前进度、完成百分比和锁定状态。
 
 class AchievementService {
-  final StatsRepository _statsRepo;
 
   AchievementService(this._statsRepo);
+  final StatsRepository _statsRepo;
 
   Future<List<Achievement>> getAllAchievements() async {
     final results = <Achievement>[];
@@ -185,7 +185,7 @@ class AchievementService {
   }
 
   Future<int> _getEquipmentCount() async {
-    return await _statsRepo.getEquipmentCount();
+    return _statsRepo.getEquipmentCount();
   }
 
   Future<int> _getEquipmentComboMax() async {

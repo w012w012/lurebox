@@ -1,23 +1,20 @@
 import 'package:flutter/material.dart';
 
-import '../../core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
 
 /// 通用分布图表组件
 class DistributionChart extends StatelessWidget {
+
+  const DistributionChart({
+    required this.data, required this.title, required this.color, super.key,
+    this.maxItems = 6,
+    this.chartType = ChartType.bar,
+  });
   final Map<String, int> data;
   final String title;
   final Color color;
   final int maxItems;
   final ChartType chartType;
-
-  const DistributionChart({
-    super.key,
-    required this.data,
-    required this.title,
-    required this.color,
-    this.maxItems = 6,
-    this.chartType = ChartType.bar,
-  });
 
   static const _chartColors = [
     AppColors.blue,
@@ -195,23 +192,23 @@ class DistributionChart extends StatelessWidget {
 enum ChartType { bar, pie }
 
 class _PieChartPainter extends CustomPainter {
-  final List<MapEntry<String, int>> entries;
-  final int total;
-  final List<Color> colors;
 
   _PieChartPainter({
     required this.entries,
     required this.total,
     required this.colors,
   });
+  final List<MapEntry<String, int>> entries;
+  final int total;
+  final List<Color> colors;
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
-    double startAngle = -90 * (3.14159265359 / 180);
+    var startAngle = -90 * (3.14159265359 / 180);
 
-    for (int i = 0; i < entries.length; i++) {
+    for (var i = 0; i < entries.length; i++) {
       final sweepAngle =
           (entries[i].value / total) * 360 * (3.14159265359 / 180);
       final paint = Paint()

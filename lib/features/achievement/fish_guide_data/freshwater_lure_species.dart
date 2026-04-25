@@ -1,11 +1,11 @@
-import '../../../core/models/fish_species.dart';
+import 'package:lurebox/core/models/fish_species.dart';
 
 /// freshwaterLure 鱼种数据
 class FreshwaterLureSpecies {
   FreshwaterLureSpecies._();
 
   static const List<FishSpecies> data = [
-    const FishSpecies(
+    FishSpecies(
     id: 'f001',
     standardName: '鳜鱼',
     scientificName: 'Siniperca chuatsi',
@@ -18,7 +18,7 @@ class FreshwaterLureSpecies {
     description: '典型肉食性淡水鱼，体侧有黑色斑点',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f002',
     standardName: '大口黑鲈',
     scientificName: 'Micropterus salmoides',
@@ -31,7 +31,7 @@ class FreshwaterLureSpecies {
     description: '原产北美，入侵我国的外来物种',
     iconEmoji: '🐠',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f003',
     standardName: '河鲈',
     scientificName: 'Perca fluviatilis',
@@ -44,7 +44,7 @@ class FreshwaterLureSpecies {
     description: '体侧有五道黑色横纹',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f004',
     standardName: '乌鳢',
     scientificName: 'Channa argus',
@@ -57,7 +57,7 @@ class FreshwaterLureSpecies {
     description: '适应能力强，能在缺氧环境中生存',
     iconEmoji: '🐍',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f005',
     standardName: '斑鳢',
     scientificName: 'Channa maculata',
@@ -70,7 +70,7 @@ class FreshwaterLureSpecies {
     description: '与乌鳢相似，但花纹不同',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f006',
     standardName: '翘嘴红鲌',
     scientificName: 'Culter alburnus',
@@ -83,7 +83,7 @@ class FreshwaterLureSpecies {
     description: '体型修长，嘴型上翘',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f007',
     standardName: '蒙古红鲌',
     scientificName: 'Culter mongolicus',
@@ -96,7 +96,7 @@ class FreshwaterLureSpecies {
     description: '体型较小的红尾掠食鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f008',
     standardName: '黄颡鱼',
     scientificName: 'Pelteobagrus fulvidraco',
@@ -109,7 +109,7 @@ class FreshwaterLureSpecies {
     description: '体色金黄，有毒刺',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f009',
     standardName: '瓦氏黄颡鱼',
     scientificName: 'Pelteobagrus vachelli',
@@ -122,7 +122,7 @@ class FreshwaterLureSpecies {
     description: '体型比黄颡鱼大',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f010',
     standardName: '斑点叉尾鮰',
     scientificName: 'Ictalurus punctatus',
@@ -135,7 +135,7 @@ class FreshwaterLureSpecies {
     description: '原产北美，我国引进养殖',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f011',
     standardName: '革胡子鲇',
     scientificName: 'Clarias gariepinus',
@@ -148,7 +148,7 @@ class FreshwaterLureSpecies {
     description: '外来物种，繁殖能力强',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f012',
     standardName: '南方大口鲇',
     scientificName: 'Silurus meridionalis',
@@ -161,7 +161,7 @@ class FreshwaterLureSpecies {
     description: '体型大，口裂大',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f013',
     standardName: '北方大口鲇',
     scientificName: 'Silurus asotus',
@@ -174,7 +174,7 @@ class FreshwaterLureSpecies {
     description: '北方特有大型鲇鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f014',
     standardName: '鲇鱼',
     scientificName: 'Silurus asotus',
@@ -187,7 +187,7 @@ class FreshwaterLureSpecies {
     description: '体表无鳞，适应力强',
     iconEmoji: '🐱',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f015',
     standardName: '马口鱼',
     scientificName: 'Opsariichthys bidens',
@@ -200,7 +200,7 @@ class FreshwaterLureSpecies {
     description: '雄鱼婚姻色鲜艳',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f016',
     standardName: '宽鳍鱲',
     scientificName: 'Zacco temminckii',
@@ -213,7 +213,7 @@ class FreshwaterLureSpecies {
     description: '春季繁殖期体色艳丽',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f017',
     standardName: '餐条',
     scientificName: 'Hemiculter leucisculus',
@@ -226,7 +226,7 @@ class FreshwaterLureSpecies {
     description: '常见小型鱼，数量多',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f018',
     standardName: '红眼金线鱼',
     scientificName: 'Rhodeus sericeus',
@@ -239,7 +239,7 @@ class FreshwaterLureSpecies {
     description: '眼睛呈红色',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f019',
     standardName: '鳊鱼',
     scientificName: 'Parabramis pekinensis',
@@ -252,7 +252,7 @@ class FreshwaterLureSpecies {
     description: '体型侧扁，草食性',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f020',
     standardName: '中华细鲫',
     scientificName: 'Aphyocypris chinensis',
@@ -265,7 +265,7 @@ class FreshwaterLureSpecies {
     description: '小型淡水鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f021',
     standardName: '蓝鳍鲫',
     scientificName: 'Cyprinus carpio',
@@ -278,7 +278,7 @@ class FreshwaterLureSpecies {
     description: '鳍条带蓝色',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f022',
     standardName: '泥鳅',
     scientificName: 'Misgurnus anguillicaudatus',
@@ -291,7 +291,7 @@ class FreshwaterLureSpecies {
     description: '耐低氧，适应性强',
     iconEmoji: '🐍',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f023',
     standardName: '黄鳝',
     scientificName: 'Monopterus albus',
@@ -304,7 +304,7 @@ class FreshwaterLureSpecies {
     description: '体型细长，无鳞',
     iconEmoji: '🐍',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f024',
     standardName: '鳗鱼',
     scientificName: 'Anguilla japonica',
@@ -317,7 +317,7 @@ class FreshwaterLureSpecies {
     description: '洄游性鱼类',
     iconEmoji: '🐍',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f025',
     standardName: '刀鱼',
     scientificName: 'Coilia nasus',
@@ -330,7 +330,7 @@ class FreshwaterLureSpecies {
     description: '体型侧扁如刀',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f026',
     standardName: '河鲀',
     scientificName: 'Takifugu spp.',
@@ -343,7 +343,7 @@ class FreshwaterLureSpecies {
     description: '体内有河豚毒素',
     iconEmoji: '🐡',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f027',
     standardName: '中华鲂',
     scientificName: 'Megalobrama amblycephala',
@@ -356,7 +356,7 @@ class FreshwaterLureSpecies {
     description: '著名淡水养殖鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f028',
     standardName: '三角鲂',
     scientificName: 'Megalobrama terminalis',
@@ -369,7 +369,7 @@ class FreshwaterLureSpecies {
     description: '体型呈三角形',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f029',
     standardName: '虹鳟',
     scientificName: 'Oncorhynchus mykiss',
@@ -382,11 +382,10 @@ class FreshwaterLureSpecies {
     description: '侧线有彩虹色斑纹',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f030',
     standardName: '金鳟',
     scientificName: 'Oncorhynchus mykiss',
-    aliases: [],
     category: FishCategory.freshwaterLure,
     rarity: FishRarity.legendary,
     habitat: '冷水溪流',
@@ -395,7 +394,7 @@ class FreshwaterLureSpecies {
     description: '虹鳟的金色变异种',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f031',
     standardName: '胭脂鱼',
     scientificName: 'Myxocyprinus asiaticus',
@@ -408,7 +407,7 @@ class FreshwaterLureSpecies {
     description: '中国特有淡水鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f032',
     standardName: '鸭嘴鲇',
     scientificName: 'Polyodon spathula',
@@ -421,7 +420,7 @@ class FreshwaterLureSpecies {
     description: '原产北美，嘴呈鸭嘴状',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f033',
     standardName: '中华鲟',
     scientificName: 'Acipenser sinensis',
@@ -434,7 +433,7 @@ class FreshwaterLureSpecies {
     description: '国家一级保护动物',
     iconEmoji: '🦈',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f034',
     standardName: '白鲟',
     scientificName: 'Psephurus gladius',

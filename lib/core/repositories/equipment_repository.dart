@@ -1,6 +1,6 @@
-import '../constants/pagination_constants.dart';
-import '../models/equipment.dart';
-import '../models/paginated_result.dart';
+import 'package:lurebox/core/constants/pagination_constants.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/models/paginated_result.dart';
 
 export '../models/paginated_result.dart';
 

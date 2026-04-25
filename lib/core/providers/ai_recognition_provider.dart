@@ -1,16 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/ai_recognition_settings.dart';
-import '../services/settings_service.dart';
-import '../di/di.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/services/settings_service.dart';
 
 class AiRecognitionSettingsNotifier
     extends StateNotifier<AiRecognitionSettings> {
-  final SettingsService _service;
 
   AiRecognitionSettingsNotifier(this._service)
       : super(const AiRecognitionSettings()) {
     _loadSettings();
   }
+  final SettingsService _service;
 
   Future<void> _loadSettings() async {
     try {

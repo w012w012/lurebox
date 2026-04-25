@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../core/constants/strings.dart';
-import '../../../core/camera/camera_state.dart';
-import '../../../core/camera/camera_view_model.dart';
-import '../../../widgets/common/premium_input.dart';
+import 'package:lurebox/core/camera/camera_state.dart';
+import 'package:lurebox/core/camera/camera_view_model.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/widgets/common/premium_input.dart';
 
 /// Length input field with unit dropdown.
 class LengthInputField extends ConsumerWidget {
+
+  const LengthInputField({
+    required this.state, required this.vm, required this.strings, required this.controller, super.key,
+  });
   final CameraState state;
   final CameraViewModel vm;
   final AppStrings strings;
   final TextEditingController controller;
-
-  const LengthInputField({
-    super.key,
-    required this.state,
-    required this.vm,
-    required this.strings,
-    required this.controller,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -1,15 +1,15 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'core/design/theme/app_theme.dart';
-import 'core/services/app_logger.dart';
-import 'core/models/app_settings.dart';
-import 'core/providers/app_settings_provider.dart';
-import 'core/providers/language_provider.dart';
-import 'core/database/database_provider.dart';
-import 'core/router/app_router.dart';
+import 'package:lurebox/core/database/database_provider.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/router/app_router.dart';
+import 'package:lurebox/core/services/app_logger.dart';
 
 /// LureBox (路亚鱼护) 应用入口
 ///

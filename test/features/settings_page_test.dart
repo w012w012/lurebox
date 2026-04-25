@@ -51,7 +51,7 @@ void main() {
     });
 
     testWidgets('calls onTap when tapped', (WidgetTester tester) async {
-      bool tapped = false;
+      var tapped = false;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -134,7 +134,6 @@ void main() {
             body: SettingsTile(
               icon: Icons.dark_mode,
               title: 'Dark Mode',
-              showChevron: false,
               trailing: Switch.adaptive(
                 value: false,
                 onChanged: (_) {},
@@ -202,7 +201,6 @@ void main() {
             body: SettingsTile(
               icon: Icons.info,
               title: 'About',
-              variant: PremiumCardVariant.flat,
               onTap: () {},
             ),
           ),

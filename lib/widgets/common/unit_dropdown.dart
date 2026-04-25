@@ -2,18 +2,14 @@ import 'package:flutter/material.dart';
 
 /// 单位选择器组件
 class UnitDropdown extends StatelessWidget {
+
+  const UnitDropdown({
+    required this.value, required this.options, required this.label, required this.onUnitChanged, super.key,
+  });
   final String value;
   final List<String> options;
   final String label;
   final ValueChanged<String> onUnitChanged;
-
-  const UnitDropdown({
-    super.key,
-    required this.value,
-    required this.options,
-    required this.label,
-    required this.onUnitChanged,
-  });
 
   @override
   Widget build(BuildContext context) {

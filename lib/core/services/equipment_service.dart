@@ -1,6 +1,6 @@
-import '../constants/pagination_constants.dart';
-import '../models/equipment.dart';
-import '../repositories/equipment_repository.dart';
+import 'package:lurebox/core/constants/pagination_constants.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/repositories/equipment_repository.dart';
 
 /// 装备服务 - 钓具装备的业务逻辑层
 ///
@@ -13,24 +13,24 @@ import '../repositories/equipment_repository.dart';
 /// 装备类型包括：鱼竿（rod）、鱼轮（reel）、鱼饵（lure）等。
 
 class EquipmentService {
-  final EquipmentRepository _repository;
 
   EquipmentService(this._repository);
+  final EquipmentRepository _repository;
 
   Future<List<Equipment>> getAll({String? type}) async {
-    return await _repository.getAll(type: type);
+    return _repository.getAll(type: type);
   }
 
   Future<Equipment?> getById(int id) async {
-    return await _repository.getById(id);
+    return _repository.getById(id);
   }
 
   Future<Equipment?> getDefaultEquipment(String type) async {
-    return await _repository.getDefaultEquipment(type);
+    return _repository.getDefaultEquipment(type);
   }
 
   Future<int> create(Equipment equipment) async {
-    return await _repository.create(equipment);
+    return _repository.create(equipment);
   }
 
   Future<void> update(Equipment equipment) async {
@@ -47,7 +47,7 @@ class EquipmentService {
     String? type,
     String orderBy = 'is_default DESC, created_at DESC',
   }) async {
-    return await _repository.getPage(
+    return _repository.getPage(
       page: page,
       pageSize: pageSize,
       type: type,
@@ -64,7 +64,7 @@ class EquipmentService {
     String? category,
     String orderBy = 'is_default DESC, created_at DESC',
   }) async {
-    return await _repository.getFilteredPage(
+    return _repository.getFilteredPage(
       page: page,
       pageSize: pageSize,
       type: type,
@@ -80,18 +80,18 @@ class EquipmentService {
   }
 
   Future<Map<String, int>> getStats() async {
-    return await _repository.getStats();
+    return _repository.getStats();
   }
 
   Future<List<String>> getBrands() async {
-    return await _repository.getBrands();
+    return _repository.getBrands();
   }
 
   Future<List<String>> getModelsByBrand(String brand) async {
-    return await _repository.getModelsByBrand(brand);
+    return _repository.getModelsByBrand(brand);
   }
 
   Future<Map<String, int>> getCategoryDistribution(String type) async {
-    return await _repository.getCategoryDistribution(type);
+    return _repository.getCategoryDistribution(type);
   }
 }

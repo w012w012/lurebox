@@ -12,7 +12,7 @@ void main() {
 
       test('returns field as-is when no special characters', () {
         expect(
-            CsvExporter.escapeCsvField('simple text'), equals('simple text'));
+            CsvExporter.escapeCsvField('simple text'), equals('simple text'),);
       });
 
       test('wraps field in quotes when it contains a comma', () {
@@ -21,12 +21,12 @@ void main() {
 
       test('wraps field in quotes and doubles embedded double quotes', () {
         expect(CsvExporter.escapeCsvField('say "hello"'),
-            equals('"say ""hello"""'));
+            equals('"say ""hello"""'),);
       });
 
       test('wraps field in quotes when it contains a newline', () {
         expect(CsvExporter.escapeCsvField('line1\nline2'),
-            equals('"line1\nline2"'));
+            equals('"line1\nline2"'),);
       });
 
       test('handles integer input', () {
@@ -104,7 +104,7 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: '测试鱼种',
-            length: 30.0,
+            length: 30,
             fate: FishFateType.keep,
             catchTime: DateTime(2024, 6, 15),
             locationName: '测试,地点', // Comma in location
@@ -126,7 +126,7 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: '测试"鱼', // Double quote in species
-            length: 30.0,
+            length: 30,
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             createdAt: DateTime(2024, 6, 15),
@@ -147,7 +147,7 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: '测试\n鱼', // Newline in species
-            length: 30.0,
+            length: 30,
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             createdAt: DateTime(2024, 6, 15),
@@ -169,7 +169,7 @@ void main() {
             id: 1,
             imagePath: '/test/1.jpg',
             species: '鳜鱼',
-            length: 35.0,
+            length: 35,
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             createdAt: DateTime(2024, 6, 15),
@@ -179,7 +179,7 @@ void main() {
             id: 2,
             imagePath: '/test/2.jpg',
             species: '黑鱼',
-            length: 40.0,
+            length: 40,
             fate: FishFateType.keep,
             catchTime: DateTime(2024, 6, 16),
             createdAt: DateTime(2024, 6, 16),
@@ -202,7 +202,7 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: '鳜鱼',
-            length: 35.0,
+            length: 35,
             // weight is null
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
@@ -226,7 +226,7 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: '鳜鱼',
-            length: 35.0,
+            length: 35,
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             createdAt: DateTime(2024, 6, 15),
@@ -252,7 +252,7 @@ void main() {
             imagePath: '/test/fish.jpg',
             watermarkedImagePath: '/test/fish_wm.jpg',
             species: '鳜鱼',
-            length: 35.0,
+            length: 35,
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             createdAt: DateTime(2024, 6, 15),
@@ -275,7 +275,7 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: 'Pending Species',
-            length: 35.0,
+            length: 35,
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             pendingRecognition: true,
@@ -297,7 +297,7 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: '鳜鱼',
-            length: 35.0,
+            length: 35,
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             createdAt: DateTime(2024, 6, 15),
@@ -315,7 +315,7 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: '鳜鱼',
-            length: 35.0,
+            length: 35,
             fate: FishFateType.keep,
             catchTime: DateTime(2024, 6, 15),
             createdAt: DateTime(2024, 6, 15),
@@ -333,11 +333,11 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: '鳜鱼',
-            length: 35.0,
+            length: 35,
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             weatherCode: 0, // Clear sky
-            airTemperature: 25.0,
+            airTemperature: 25,
             pressure: 1013.25,
             createdAt: DateTime(2024, 6, 15),
             updatedAt: DateTime(2024, 6, 15),
@@ -356,7 +356,7 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: '鳜鱼',
-            length: 35.0,
+            length: 35,
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             equipmentId: 5,
@@ -381,7 +381,7 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: '鳜鱼',
-            length: 35.0,
+            length: 35,
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             weatherCode: 999, // Unknown code
@@ -400,7 +400,7 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: '鳜鱼',
-            length: 35.0,
+            length: 35,
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             locationName: '杭州西湖',
@@ -431,18 +431,18 @@ void main() {
               id: 1,
               imagePath: '/test/fish.jpg',
               species: 'Test',
-              length: 30.0,
+              length: 30,
               fate: FishFateType.release,
-              catchTime: DateTime(2024, 1, 1),
+              catchTime: DateTime(2024),
               weatherCode: code,
-              createdAt: DateTime(2024, 1, 1),
-              updatedAt: DateTime(2024, 1, 1),
+              createdAt: DateTime(2024),
+              updatedAt: DateTime(2024),
             ),
           ];
 
           final csv = await CsvExporter.exportFishCatches(catches: catches);
           expect(csv, contains(expected),
-              reason: 'Weather code $code should map to $expected');
+              reason: 'Weather code $code should map to $expected',);
         }
       });
 
@@ -452,12 +452,12 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: 'Test',
-            length: 30.0,
+            length: 30,
             fate: FishFateType.release,
-            catchTime: DateTime(2024, 1, 1),
+            catchTime: DateTime(2024),
             weatherCode: 999,
-            createdAt: DateTime(2024, 1, 1),
-            updatedAt: DateTime(2024, 1, 1),
+            createdAt: DateTime(2024),
+            updatedAt: DateTime(2024),
           ),
         ];
 
@@ -475,7 +475,6 @@ void main() {
             imagePath: '/test/fish.jpg',
             species: 'Bass',
             length: 100, // 100 cm stored
-            lengthUnit: 'cm',
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             createdAt: DateTime(2024, 6, 15),
@@ -499,9 +498,8 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: 'Bass',
-            length: 30.0,
-            weight: 1.0, // 1 kg stored
-            weightUnit: 'kg',
+            length: 30,
+            weight: 1, // 1 kg stored
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             createdAt: DateTime(2024, 6, 15),
@@ -526,8 +524,8 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: 'Bass',
-            length: 30.0,
-            airTemperature: 20.0, // 20°C stored
+            length: 30,
+            airTemperature: 20, // 20°C stored
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             createdAt: DateTime(2024, 6, 15),
@@ -551,7 +549,7 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: 'Bass',
-            length: 30.0,
+            length: 30,
             fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15),
             createdAt: DateTime(2024, 6, 15),
@@ -574,7 +572,7 @@ void main() {
             id: 1,
             imagePath: '/test/fish.jpg',
             species: 'Bass',
-            length: 30.0,
+            length: 30,
             latitude: 30.123456,
             longitude: 120.654321,
             fate: FishFateType.release,

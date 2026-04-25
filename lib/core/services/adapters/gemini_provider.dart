@@ -1,23 +1,24 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:http/http.dart' as http;
-import '../fish_recognition_service.dart';
-import '../../models/ai_recognition_settings.dart';
-import 'fish_recognition_shared.dart';
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/services/adapters/fish_recognition_shared.dart';
+import 'package:lurebox/core/services/fish_recognition_service.dart';
 
 /// Gemini 鱼类识别提供者
 ///
 /// 使用 Google Gemini 2.0 Flash API 进行鱼类识别
 class GeminiFishRecognitionProvider implements FishRecognitionProvider {
-  static const String _systemPrompt = fishRecognitionSystemPrompt;
-
-  /// HTTP client for making requests (injectable for testing)
-  final http.Client? _client;
 
   /// Creates a Gemini provider with optional HTTP client injection
   /// If no client is provided, uses the default http.Client
   GeminiFishRecognitionProvider({http.Client? client}) : _client = client;
+  static const String _systemPrompt = fishRecognitionSystemPrompt;
+
+  /// HTTP client for making requests (injectable for testing)
+  final http.Client? _client;
 
   @override
   Future<FishRecognitionResult> identifySpecies(
@@ -32,17 +33,17 @@ class GeminiFishRecognitionProvider implements FishRecognitionProvider {
     final requestBody = {
       'systemInstruction': {
         'parts': [
-          {'text': _systemPrompt}
-        ]
+          {'text': _systemPrompt},
+        ],
       },
       'contents': [
         {
           'parts': [
             {
-              'inlineData': {'mimeType': 'image/jpeg', 'data': base64Image}
+              'inlineData': {'mimeType': 'image/jpeg', 'data': base64Image},
             },
-            {'text': '请识别这张图片中的鱼类品种。'}
-          ]
+            {'text': '请识别这张图片中的鱼类品种。'},
+          ],
         }
       ],
       'generationConfig': {
@@ -51,7 +52,7 @@ class GeminiFishRecognitionProvider implements FishRecognitionProvider {
         'topK': 40,
         'maxOutputTokens': 2048,
         'responseMimeType': 'application/json',
-      }
+      },
     };
 
     // 构建请求 URL
@@ -161,7 +162,7 @@ class GeminiFishRecognitionProvider implements FishRecognitionProvider {
       }
 
       // 提取 JSON 文本
-      String jsonText = '';
+      var jsonText = '';
       for (final part in parts) {
         if (part is Map<String, dynamic> && part.containsKey('text')) {
           jsonText = part['text'] as String;

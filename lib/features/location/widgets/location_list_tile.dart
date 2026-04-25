@@ -3,6 +3,16 @@ import 'package:intl/intl.dart';
 
 /// 钓点列表项组件
 class LocationListTile extends StatelessWidget {
+
+  const LocationListTile({
+    required this.name, required this.fishCount, super.key,
+    this.firstCatchTime,
+    this.lastCatchTime,
+    this.isSelected = false,
+    this.fishCountSuffix,
+    this.onTap,
+    this.onToggleSelect,
+  });
   final String name;
   final int fishCount;
   final DateTime? firstCatchTime;
@@ -11,18 +21,6 @@ class LocationListTile extends StatelessWidget {
   final String? fishCountSuffix;
   final VoidCallback? onTap;
   final VoidCallback? onToggleSelect;
-
-  const LocationListTile({
-    super.key,
-    required this.name,
-    required this.fishCount,
-    this.firstCatchTime,
-    this.lastCatchTime,
-    this.isSelected = false,
-    this.fishCountSuffix,
-    this.onTap,
-    this.onToggleSelect,
-  });
 
   @override
   Widget build(BuildContext context) {

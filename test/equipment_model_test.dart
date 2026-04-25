@@ -35,7 +35,7 @@ void main() {
   });
 
   group('Equipment', () {
-    final now = DateTime(2024, 1, 1, 12, 0, 0);
+    final now = DateTime(2024, 1, 1, 12);
 
     test('creates equipment with required fields', () {
       final equipment = Equipment(

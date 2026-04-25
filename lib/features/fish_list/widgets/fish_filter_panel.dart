@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/models/fish_catch.dart';
-import '../../../widgets/common/filter_chip.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/widgets/common/filter_chip.dart';
 
 class FishFilterPanel extends StatelessWidget {
+
+  const FishFilterPanel({
+    required this.strings, required this.timeFilter, required this.speciesList, required this.customDateLabel, required this.onShowDateRangePicker, required this.onTimeFilterChanged, required this.onFateFilterChanged, required this.onSpeciesFilterChanged, super.key,
+    this.fateFilter,
+    this.speciesFilter,
+  });
   final AppStrings strings;
   final String timeFilter;
   final FishFateType? fateFilter;
@@ -18,20 +24,6 @@ class FishFilterPanel extends StatelessWidget {
   final ValueChanged<String> onTimeFilterChanged;
   final ValueChanged<FishFateType?> onFateFilterChanged;
   final ValueChanged<String?> onSpeciesFilterChanged;
-
-  const FishFilterPanel({
-    super.key,
-    required this.strings,
-    required this.timeFilter,
-    this.fateFilter,
-    this.speciesFilter,
-    required this.speciesList,
-    required this.customDateLabel,
-    required this.onShowDateRangePicker,
-    required this.onTimeFilterChanged,
-    required this.onFateFilterChanged,
-    required this.onSpeciesFilterChanged,
-  });
 
   /// Show the filter panel as a modal bottom sheet.
   static void show({
@@ -47,7 +39,7 @@ class FishFilterPanel extends StatelessWidget {
     required ValueChanged<FishFateType?> onFateFilterChanged,
     required ValueChanged<String?> onSpeciesFilterChanged,
   }) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
@@ -204,14 +196,8 @@ class _FilterBottomSheet extends ConsumerStatefulWidget {
   const _FilterBottomSheet._({
     required this.strings,
     required this.timeFilter,
-    this.fateFilter,
+    required this.speciesList, required this.customDateLabel, required this.onShowDateRangePicker, required this.onTimeFilterChanged, required this.onFateFilterChanged, required this.onSpeciesFilterChanged, this.fateFilter,
     this.speciesFilter,
-    required this.speciesList,
-    required this.customDateLabel,
-    required this.onShowDateRangePicker,
-    required this.onTimeFilterChanged,
-    required this.onFateFilterChanged,
-    required this.onSpeciesFilterChanged,
   });
 
   final AppStrings strings;
@@ -337,22 +323,18 @@ class _FilterBottomSheetState extends ConsumerState<_FilterBottomSheet> {
 }
 
 class FishFilterCollapsed extends StatelessWidget {
+
+  const FishFilterCollapsed({
+    required this.hasFilters, required this.filterLabel, required this.expandLabel, required this.onTap, super.key,
+    this.onClear,
+    this.onShowSheet,
+  });
   final bool hasFilters;
   final String filterLabel;
   final String expandLabel;
   final VoidCallback onTap;
   final VoidCallback? onClear;
   final VoidCallback? onShowSheet;
-
-  const FishFilterCollapsed({
-    super.key,
-    required this.hasFilters,
-    required this.filterLabel,
-    required this.expandLabel,
-    required this.onTap,
-    this.onClear,
-    this.onShowSheet,
-  });
 
   @override
   Widget build(BuildContext context) {

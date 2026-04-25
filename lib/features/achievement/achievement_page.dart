@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/models/achievement.dart';
-import '../../core/providers/achievement_provider.dart';
-import '../../core/providers/language_provider.dart';
-import '../../widgets/common/premium_button.dart';
-import '../../widgets/common/premium_card.dart';
-import 'widgets/achievement_collapse_card.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/models/achievement.dart';
+import 'package:lurebox/core/providers/achievement_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/features/achievement/widgets/achievement_collapse_card.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// 成就页
 ///
@@ -64,7 +63,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(Icons.error_outline,
-                    size: 64, color: TeslaColors.electricBlue),
+                    size: 64, color: TeslaColors.electricBlue,),
                 const SizedBox(height: 16),
                 Text(
                   strings.error,
@@ -81,7 +80,6 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                 const SizedBox(height: 24),
                 PremiumButton(
                   text: strings.retry,
-                  variant: PremiumButtonVariant.primary,
                   icon: Icons.refresh,
                   onPressed: _onRefresh,
                 ),
@@ -153,7 +151,6 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
       child: PremiumCard(
         variant: PremiumCardVariant.elevated,
         padding: const EdgeInsets.all(20),
-        showBorder: false,
         backgroundColor: TeslaColors.electricBlue,
         child: Row(
           children: [

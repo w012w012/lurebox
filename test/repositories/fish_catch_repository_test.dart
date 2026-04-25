@@ -1,8 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository_impl.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
 import '../helpers/test_helpers.dart';
 
 void main() {
@@ -148,7 +149,7 @@ void main() {
     });
 
     test('create inserts fish catch and returns id', () async {
-      final fish = TestDataFactory.createFishCatch(species: 'Bass');
+      final fish = TestDataFactory.createFishCatch();
       final id = await repository.create(fish);
 
       expect(id, greaterThan(0));
@@ -189,9 +190,7 @@ void main() {
     test('getAll returns all fish catches ordered by catch_time DESC',
         () async {
       final fish1 = TestDataFactory.createFishCatch(
-        id: 1,
-        species: 'Bass',
-        catchTime: DateTime(2024, 1, 1),
+        catchTime: DateTime(2024),
       );
       final fish2 = TestDataFactory.createFishCatch(
         id: 2,
@@ -218,7 +217,7 @@ void main() {
     });
 
     test('getById returns fish catch when exists', () async {
-      final fish = TestDataFactory.createFishCatch(species: 'Bass');
+      final fish = TestDataFactory.createFishCatch();
       final id = await repository.create(fish);
 
       final result = await repository.getById(id);
@@ -235,13 +234,11 @@ void main() {
 
     test('update modifies existing fish catch', () async {
       final fish = TestDataFactory.createFishCatch(
-        id: 1,
-        species: 'Bass',
-        length: 30.0,
+        
       );
       final id = await repository.create(fish);
 
-      final updated = fish.copyWith(species: 'Trout', length: 35.0);
+      final updated = fish.copyWith(species: 'Trout', length: 35);
       await repository.update(updated);
 
       final result = await repository.getById(id);
@@ -250,7 +247,7 @@ void main() {
     });
 
     test('delete removes fish catch', () async {
-      final fish = TestDataFactory.createFishCatch(species: 'Bass');
+      final fish = TestDataFactory.createFishCatch();
       final id = await repository.create(fish);
 
       await repository.delete(id);
@@ -260,7 +257,7 @@ void main() {
     });
 
     test('deleteMultiple removes multiple fish catches', () async {
-      final fish1 = TestDataFactory.createFishCatch(id: 1, species: 'Bass');
+      final fish1 = TestDataFactory.createFishCatch();
       final fish2 = TestDataFactory.createFishCatch(id: 2, species: 'Trout');
       final fish3 = TestDataFactory.createFishCatch(id: 3, species: 'Salmon');
 
@@ -276,7 +273,7 @@ void main() {
     });
 
     test('deleteMultiple does nothing for empty list', () async {
-      final fish = TestDataFactory.createFishCatch(species: 'Bass');
+      final fish = TestDataFactory.createFishCatch();
       await repository.create(fish);
 
       // Should not throw
@@ -298,9 +295,7 @@ void main() {
 
     test('getByDateRange returns fish catches within range', () async {
       final fish1 = TestDataFactory.createFishCatch(
-        id: 1,
-        species: 'Bass',
-        catchTime: DateTime(2024, 1, 1),
+        catchTime: DateTime(2024),
       );
       final fish2 = TestDataFactory.createFishCatch(
         id: 2,
@@ -310,7 +305,7 @@ void main() {
       final fish3 = TestDataFactory.createFishCatch(
         id: 3,
         species: 'Salmon',
-        catchTime: DateTime(2024, 2, 1),
+        catchTime: DateTime(2024, 2),
       );
 
       await repository.create(fish1);
@@ -318,7 +313,7 @@ void main() {
       await repository.create(fish3);
 
       final results = await repository.getByDateRange(
-        DateTime(2024, 1, 1),
+        DateTime(2024),
         DateTime(2024, 1, 31),
       );
 
@@ -328,12 +323,12 @@ void main() {
 
     test('getByDateRange returns empty when no matches', () async {
       final fish = TestDataFactory.createFishCatch(
-        catchTime: DateTime(2024, 1, 1),
+        catchTime: DateTime(2024),
       );
       await repository.create(fish);
 
       final results = await repository.getByDateRange(
-        DateTime(2024, 6, 1),
+        DateTime(2024, 6),
         DateTime(2024, 6, 30),
       );
 
@@ -342,9 +337,7 @@ void main() {
 
     test('getByFate returns fish catches with matching fate', () async {
       final fish1 = TestDataFactory.createFishCatch(
-        id: 1,
-        species: 'Bass',
-        fate: FishFateType.release,
+        
       );
       final fish2 = TestDataFactory.createFishCatch(
         id: 2,
@@ -354,7 +347,6 @@ void main() {
       final fish3 = TestDataFactory.createFishCatch(
         id: 3,
         species: 'Salmon',
-        fate: FishFateType.release,
       );
 
       await repository.create(fish1);
@@ -368,7 +360,7 @@ void main() {
     });
 
     test('getByFate returns empty when no matches', () async {
-      final fish = TestDataFactory.createFishCatch(fate: FishFateType.release);
+      final fish = TestDataFactory.createFishCatch();
       await repository.create(fish);
 
       final results = await repository.getByFate(FishFateType.keep);
@@ -388,12 +380,12 @@ void main() {
 
     test('getPage returns first page with default pageSize', () async {
       // Create 25 fish catches
-      for (int i = 0; i < 25; i++) {
+      for (var i = 0; i < 25; i++) {
         await repository.create(TestDataFactory.createFishCatch(
           id: i + 1,
           species: 'Fish_$i',
           catchTime: DateTime(2024, 1, i + 1),
-        ));
+        ),);
       }
 
       final result = await repository.getPage(page: 1);
@@ -406,12 +398,12 @@ void main() {
     });
 
     test('getPage returns second page with correct items', () async {
-      for (int i = 0; i < 25; i++) {
+      for (var i = 0; i < 25; i++) {
         await repository.create(TestDataFactory.createFishCatch(
           id: i + 1,
           species: 'Fish_$i',
           catchTime: DateTime(2024, 1, i + 1),
-        ));
+        ),);
       }
 
       final result = await repository.getPage(page: 2);
@@ -422,12 +414,12 @@ void main() {
     });
 
     test('getPage returns last page with partial items', () async {
-      for (int i = 0; i < 45; i++) {
+      for (var i = 0; i < 45; i++) {
         await repository.create(TestDataFactory.createFishCatch(
           id: i + 1,
           species: 'Fish_$i',
           catchTime: DateTime(2024, 1, i + 1),
-        ));
+        ),);
       }
 
       final result = await repository.getPage(page: 3);
@@ -437,7 +429,7 @@ void main() {
     });
 
     test('getPage returns empty items for page beyond data', () async {
-      await repository.create(TestDataFactory.createFishCatch(species: 'Bass'));
+      await repository.create(TestDataFactory.createFishCatch());
 
       final result = await repository.getPage(page: 100);
 
@@ -446,12 +438,12 @@ void main() {
     });
 
     test('getPage with custom pageSize', () async {
-      for (int i = 0; i < 15; i++) {
+      for (var i = 0; i < 15; i++) {
         await repository.create(TestDataFactory.createFishCatch(
           id: i + 1,
           species: 'Fish_$i',
           catchTime: DateTime(2024, 1, i + 1),
-        ));
+        ),);
       }
 
       final result = await repository.getPage(page: 1, pageSize: 5);
@@ -463,9 +455,7 @@ void main() {
 
     test('getFilteredPage filters by date range', () async {
       final fish1 = TestDataFactory.createFishCatch(
-        id: 1,
-        species: 'Bass',
-        catchTime: DateTime(2024, 1, 1),
+        catchTime: DateTime(2024),
       );
       final fish2 = TestDataFactory.createFishCatch(
         id: 2,
@@ -475,7 +465,7 @@ void main() {
       final fish3 = TestDataFactory.createFishCatch(
         id: 3,
         species: 'Salmon',
-        catchTime: DateTime(2024, 2, 1),
+        catchTime: DateTime(2024, 2),
       );
 
       await repository.create(fish1);
@@ -484,7 +474,7 @@ void main() {
 
       final result = await repository.getFilteredPage(
         page: 1,
-        startDate: DateTime(2024, 1, 1),
+        startDate: DateTime(2024),
         endDate: DateTime(2024, 1, 31),
       );
 
@@ -494,9 +484,7 @@ void main() {
 
     test('getFilteredPage filters by fate', () async {
       final fish1 = TestDataFactory.createFishCatch(
-        id: 1,
-        species: 'Bass',
-        fate: FishFateType.release,
+        
       );
       final fish2 = TestDataFactory.createFishCatch(
         id: 2,
@@ -518,8 +506,7 @@ void main() {
 
     test('getFilteredPage filters by species', () async {
       final fish1 = TestDataFactory.createFishCatch(
-        id: 1,
-        species: 'Bass',
+        
       );
       final fish2 = TestDataFactory.createFishCatch(
         id: 2,
@@ -527,7 +514,6 @@ void main() {
       );
       final fish3 = TestDataFactory.createFishCatch(
         id: 3,
-        species: 'Bass',
       );
 
       await repository.create(fish1);
@@ -554,8 +540,7 @@ void main() {
 
     test('getPendingRecognitionCatches returns only pending records', () async {
       final fish1 = TestDataFactory.createFishCatch(
-        id: 1,
-        species: 'Bass',
+        
       ).copyWith(pendingRecognition: true);
       final fish2 = TestDataFactory.createFishCatch(
         id: 2,
@@ -579,7 +564,7 @@ void main() {
     test('getPendingRecognitionCatches returns empty when none pending',
         () async {
       final fish = TestDataFactory.createFishCatch(
-        species: 'Bass',
+        
       ).copyWith(pendingRecognition: false);
       await repository.create(fish);
 
@@ -590,7 +575,6 @@ void main() {
 
     test('updateSpecies updates species and clears pending flag', () async {
       final fish = TestDataFactory.createFishCatch(
-        id: 1,
         species: 'Unknown',
       ).copyWith(pendingRecognition: true);
       final id = await repository.create(fish);
@@ -604,7 +588,6 @@ void main() {
 
     test('batchUpdateSpecies updates multiple records', () async {
       final fish1 = TestDataFactory.createFishCatch(
-        id: 1,
         species: 'Unknown',
       ).copyWith(pendingRecognition: true);
       final fish2 = TestDataFactory.createFishCatch(
@@ -655,10 +638,10 @@ void main() {
     });
 
     test('getSpeciesCounts returns correct counts', () async {
-      final fish1 = TestDataFactory.createFishCatch(id: 1, species: 'Bass');
+      final fish1 = TestDataFactory.createFishCatch();
       final fish2 = TestDataFactory.createFishCatch(id: 2, species: 'Trout');
-      final fish3 = TestDataFactory.createFishCatch(id: 3, species: 'Bass');
-      final fish4 = TestDataFactory.createFishCatch(id: 4, species: 'Bass');
+      final fish3 = TestDataFactory.createFishCatch(id: 3);
+      final fish4 = TestDataFactory.createFishCatch(id: 4);
 
       await repository.create(fish1);
       await repository.create(fish2);
@@ -678,7 +661,7 @@ void main() {
     });
 
     test('renameSpecies updates all matching records', () async {
-      final fish1 = TestDataFactory.createFishCatch(id: 1, species: 'OldName');
+      final fish1 = TestDataFactory.createFishCatch(species: 'OldName');
       final fish2 = TestDataFactory.createFishCatch(id: 2, species: 'OldName');
       final fish3 = TestDataFactory.createFishCatch(id: 3, species: 'Other');
 
@@ -706,7 +689,7 @@ void main() {
     });
 
     test('mergeSpecies is same as renameSpecies', () async {
-      final fish1 = TestDataFactory.createFishCatch(id: 1, species: 'From');
+      final fish1 = TestDataFactory.createFishCatch(species: 'From');
       final fish2 = TestDataFactory.createFishCatch(id: 2, species: 'To');
       final fish3 = TestDataFactory.createFishCatch(id: 3, species: 'From');
 
@@ -722,9 +705,9 @@ void main() {
     });
 
     test('deleteSpecies removes all records with matching species', () async {
-      final fish1 = TestDataFactory.createFishCatch(id: 1, species: 'Bass');
+      final fish1 = TestDataFactory.createFishCatch();
       final fish2 = TestDataFactory.createFishCatch(id: 2, species: 'Trout');
-      final fish3 = TestDataFactory.createFishCatch(id: 3, species: 'Bass');
+      final fish3 = TestDataFactory.createFishCatch(id: 3);
 
       await repository.create(fish1);
       await repository.create(fish2);
@@ -762,7 +745,7 @@ void main() {
 
     test('getCount returns correct total', () async {
       await repository
-          .create(TestDataFactory.createFishCatch(id: 1, species: 'Bass'));
+          .create(TestDataFactory.createFishCatch());
       await repository
           .create(TestDataFactory.createFishCatch(id: 2, species: 'Trout'));
       await repository
@@ -786,10 +769,7 @@ void main() {
     test('getFilteredPageByFilter with FishFilter returns paginated results',
         () async {
       final fish1 = TestDataFactory.createFishCatch(
-        id: 1,
-        species: 'Bass',
-        fate: FishFateType.release,
-        catchTime: DateTime(2024, 1, 1),
+        catchTime: DateTime(2024),
       );
       final fish2 = TestDataFactory.createFishCatch(
         id: 2,
@@ -803,8 +783,6 @@ void main() {
 
       const filter = FishFilter(
         fateFilter: FishFateType.release,
-        sortBy: 'time',
-        sortAsc: false,
       );
 
       final result = await repository.getFilteredPageByFilter(

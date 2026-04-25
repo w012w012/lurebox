@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 import 'package:lurebox/core/services/fish_species_matcher.dart';
 import 'package:lurebox/core/services/fish_species_stats_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockFishCatchRepository extends Mock implements FishCatchRepository {}
 
@@ -60,22 +60,22 @@ void main() {
           _createFishCatch(
             id: 1,
             species: '鳜鱼',
-            length: 30.0,
+            length: 30,
             weight: 1.5,
             catchTime: DateTime(2024, 1, 15),
           ),
           _createFishCatch(
             id: 2,
             species: '鳜鱼',
-            length: 45.0,
+            length: 45,
             weight: 2.5,
             catchTime: DateTime(2024, 2, 20),
           ),
           _createFishCatch(
             id: 3,
             species: '鳜鱼',
-            length: 25.0,
-            weight: 1.0,
+            length: 25,
+            weight: 1,
             catchTime: DateTime(2024, 3, 10),
           ),
         ];
@@ -102,8 +102,8 @@ void main() {
           _createFishCatch(
             id: 1,
             species: '桂鱼', // alias for 鳜鱼
-            length: 35.0,
-            catchTime: DateTime(2024, 1, 1),
+            length: 35,
+            catchTime: DateTime(2024),
           ),
         ];
         when(() => mockRepository.getAll()).thenAnswer((_) async => catches);
@@ -124,16 +124,14 @@ void main() {
           _createFishCatch(
             id: 1,
             species: '鳜鱼',
-            length: 30.0,
-            weight: null, // no weight
-            catchTime: DateTime(2024, 1, 1),
+            length: 30,
+            catchTime: DateTime(2024),
           ),
           _createFishCatch(
             id: 2,
             species: '鳜鱼',
-            length: 35.0,
-            weight: null, // no weight
-            catchTime: DateTime(2024, 2, 1),
+            length: 35,
+            catchTime: DateTime(2024, 2),
           ),
         ];
         when(() => mockRepository.getAll()).thenAnswer((_) async => catches);
@@ -152,8 +150,8 @@ void main() {
           _createFishCatch(
             id: 1,
             species: '鳜鱼',
-            length: 40.0,
-            weight: 2.0,
+            length: 40,
+            weight: 2,
             catchTime: DateTime(2024, 6, 15),
           ),
         ];
@@ -174,12 +172,12 @@ void main() {
       test('filters catches by standard name and aliases', () async {
         // Arrange - catches using both standard name and aliases
         final catches = [
-          _createFishCatch(id: 1, species: '鳜鱼', length: 30.0), // standard name
-          _createFishCatch(id: 2, species: '桂鱼', length: 35.0), // alias
+          _createFishCatch(id: 1, species: '鳜鱼', length: 30), // standard name
+          _createFishCatch(id: 2, species: '桂鱼', length: 35), // alias
           _createFishCatch(
-              id: 3, species: '桂花鱼', length: 40.0), // another alias
+              id: 3, species: '桂花鱼', length: 40,), // another alias
           _createFishCatch(
-              id: 4, species: '其他鱼', length: 25.0), // different species
+              id: 4, species: '其他鱼', length: 25,), // different species
         ];
         when(() => mockRepository.getAll()).thenAnswer((_) async => catches);
 
@@ -210,13 +208,13 @@ void main() {
       test('returns correct distribution for catches', () async {
         // Arrange
         final catches = [
-          _createFishCatch(id: 1, species: '鳜鱼', length: 15.0), // 10-20
-          _createFishCatch(id: 2, species: '鳜鱼', length: 18.0), // 10-20
-          _createFishCatch(id: 3, species: '鳜鱼', length: 25.0), // 20-30
-          _createFishCatch(id: 4, species: '鳜鱼', length: 35.0), // 30-40
-          _createFishCatch(id: 5, species: '鳜鱼', length: 45.0), // 40-50
-          _createFishCatch(id: 6, species: '鳜鱼', length: 55.0), // 50+
-          _createFishCatch(id: 7, species: '鳜鱼', length: 60.0), // 50+
+          _createFishCatch(id: 1, species: '鳜鱼', length: 15), // 10-20
+          _createFishCatch(id: 2, species: '鳜鱼', length: 18), // 10-20
+          _createFishCatch(id: 3, species: '鳜鱼', length: 25), // 20-30
+          _createFishCatch(id: 4, species: '鳜鱼', length: 35), // 30-40
+          _createFishCatch(id: 5, species: '鳜鱼', length: 45), // 40-50
+          _createFishCatch(id: 6, species: '鳜鱼', length: 55), // 50+
+          _createFishCatch(id: 7, species: '鳜鱼', length: 60), // 50+
         ];
         when(() => mockRepository.getAll()).thenAnswer((_) async => catches);
 
@@ -241,15 +239,15 @@ void main() {
         // Arrange - catches at exact boundaries
         final catches = [
           _createFishCatch(
-              id: 1, species: '鳜鱼', length: 10.0), // should be in 10-20
+              id: 1, species: '鳜鱼', length: 10,), // should be in 10-20
           _createFishCatch(
-              id: 2, species: '鳜鱼', length: 20.0), // should be in 20-30
+              id: 2, species: '鳜鱼', length: 20,), // should be in 20-30
           _createFishCatch(
-              id: 3, species: '鳜鱼', length: 30.0), // should be in 30-40
+              id: 3, species: '鳜鱼', length: 30,), // should be in 30-40
           _createFishCatch(
-              id: 4, species: '鳜鱼', length: 40.0), // should be in 40-50
+              id: 4, species: '鳜鱼', length: 40,), // should be in 40-50
           _createFishCatch(
-              id: 5, species: '鳜鱼', length: 50.0), // should be in 50+
+              id: 5, species: '鳜鱼', length: 50,), // should be in 50+
         ];
         when(() => mockRepository.getAll()).thenAnswer((_) async => catches);
 
@@ -302,11 +300,11 @@ void main() {
           speciesId: 'f001',
           speciesName: '鳜鱼',
           totalCount: 5,
-          maxLength: 50.0,
-          minLength: 20.0,
-          avgLength: 35.0,
+          maxLength: 50,
+          minLength: 20,
+          avgLength: 35,
           maxWeight: 2.5,
-          firstCaughtAt: DateTime(2024, 1, 1),
+          firstCaughtAt: DateTime(2024),
           isUnlocked: true,
         );
 
@@ -314,11 +312,11 @@ void main() {
           speciesId: 'f001',
           speciesName: '鳜鱼',
           totalCount: 5,
-          maxLength: 50.0,
-          minLength: 20.0,
-          avgLength: 35.0,
+          maxLength: 50,
+          minLength: 20,
+          avgLength: 35,
           maxWeight: 2.5,
-          firstCaughtAt: DateTime(2024, 1, 1),
+          firstCaughtAt: DateTime(2024),
           isUnlocked: true,
         );
 

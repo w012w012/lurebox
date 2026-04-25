@@ -174,7 +174,7 @@ void main() {
             final tables = await freshDb.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name",
             );
-            final tableNames = tables.map((t) => t['name'] as String).toList();
+            final tableNames = tables.map((t) => t['name']! as String).toList();
 
             expect(tableNames, contains('fish_catches'));
             expect(tableNames, contains('equipments'));
@@ -186,7 +186,7 @@ void main() {
               "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='fish_catches'",
             );
             final fishIndexNames =
-                fishIndexes.map((i) => i['name'] as String).toList();
+                fishIndexes.map((i) => i['name']! as String).toList();
 
             expect(fishIndexNames, contains('idx_fish_catches_fate'));
             expect(fishIndexNames, contains('idx_fish_catches_equipment_id'));
@@ -198,7 +198,7 @@ void main() {
               "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='equipments'",
             );
             final equipIndexNames =
-                equipIndexes.map((i) => i['name'] as String).toList();
+                equipIndexes.map((i) => i['name']! as String).toList();
 
             expect(equipIndexNames, contains('idx_equipments_type'));
             expect(equipIndexNames, contains('idx_equipments_category'));
@@ -237,8 +237,8 @@ void main() {
           );
 
           // Verify v1 doesn't have lure_quantity
-          var columns = await db.rawQuery("PRAGMA table_info(equipments)");
-          var columnNames = columns.map((c) => c['name'] as String).toList();
+          var columns = await db.rawQuery('PRAGMA table_info(equipments)');
+          var columnNames = columns.map((c) => c['name']! as String).toList();
           expect(columnNames.contains('lure_quantity'), isFalse);
 
           await db.close();
@@ -261,8 +261,8 @@ void main() {
 
           try {
             // Verify v2 has lure_quantity
-            columns = await db2.rawQuery("PRAGMA table_info(equipments)");
-            columnNames = columns.map((c) => c['name'] as String).toList();
+            columns = await db2.rawQuery('PRAGMA table_info(equipments)');
+            columnNames = columns.map((c) => c['name']! as String).toList();
             expect(columnNames, contains('lure_quantity'));
           } finally {
             await db2.close();
@@ -311,16 +311,16 @@ void main() {
               }
               if (oldVersion < 3) {
                 await db.execute(
-                  'ALTER TABLE equipments ADD COLUMN lure_quantity_unit TEXT DEFAULT \'pcs\'',
+                  "ALTER TABLE equipments ADD COLUMN lure_quantity_unit TEXT DEFAULT 'pcs'",
                 );
               }
             },
           );
 
           try {
-            final columns = await db.rawQuery("PRAGMA table_info(equipments)");
+            final columns = await db.rawQuery('PRAGMA table_info(equipments)');
             final columnNames =
-                columns.map((c) => c['name'] as String).toList();
+                columns.map((c) => c['name']! as String).toList();
             expect(columnNames, contains('lure_quantity'));
             expect(columnNames, contains('lure_quantity_unit'));
           } finally {
@@ -370,22 +370,22 @@ void main() {
               }
               if (oldVersion < 3) {
                 await db.execute(
-                  'ALTER TABLE equipments ADD COLUMN lure_quantity_unit TEXT DEFAULT \'pcs\'',
+                  "ALTER TABLE equipments ADD COLUMN lure_quantity_unit TEXT DEFAULT 'pcs'",
                 );
               }
               if (oldVersion < 4) {
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN rod_power TEXT');
+                    'ALTER TABLE equipments ADD COLUMN rod_power TEXT',);
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN rod_action TEXT');
+                    'ALTER TABLE equipments ADD COLUMN rod_action TEXT',);
               }
             },
           );
 
           try {
-            final columns = await db.rawQuery("PRAGMA table_info(equipments)");
+            final columns = await db.rawQuery('PRAGMA table_info(equipments)');
             final columnNames =
-                columns.map((c) => c['name'] as String).toList();
+                columns.map((c) => c['name']! as String).toList();
             expect(columnNames, contains('rod_power'));
             expect(columnNames, contains('rod_action'));
           } finally {
@@ -441,9 +441,9 @@ void main() {
 
           try {
             final columns =
-                await db.rawQuery("PRAGMA table_info(fish_catches)");
+                await db.rawQuery('PRAGMA table_info(fish_catches)');
             final columnNames =
-                columns.map((c) => c['name'] as String).toList();
+                columns.map((c) => c['name']! as String).toList();
             expect(columnNames, contains('watermarked_image_path'));
           } finally {
             await db.close();
@@ -509,9 +509,9 @@ void main() {
 
           try {
             final columns =
-                await db.rawQuery("PRAGMA table_info(fish_catches)");
+                await db.rawQuery('PRAGMA table_info(fish_catches)');
             final columnNames =
-                columns.map((c) => c['name'] as String).toList();
+                columns.map((c) => c['name']! as String).toList();
             expect(columnNames, contains('watermarked_image_path'));
             expect(columnNames, contains('location_name'));
             expect(columnNames, contains('latitude'));
@@ -593,7 +593,7 @@ void main() {
             final tables = await db.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='table'",
             );
-            final tableNames = tables.map((t) => t['name'] as String).toList();
+            final tableNames = tables.map((t) => t['name']! as String).toList();
 
             expect(tableNames, contains('cloud_configs'));
             expect(tableNames, contains('backup_history'));
@@ -602,7 +602,7 @@ void main() {
             final indexes = await db.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='backup_history'",
             );
-            final indexNames = indexes.map((i) => i['name'] as String).toList();
+            final indexNames = indexes.map((i) => i['name']! as String).toList();
             expect(indexNames, contains('idx_backup_history_created_at'));
           } finally {
             await db.close();
@@ -684,7 +684,7 @@ void main() {
             final tables = await db.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='table'",
             );
-            final tableNames = tables.map((t) => t['name'] as String).toList();
+            final tableNames = tables.map((t) => t['name']! as String).toList();
 
             expect(tableNames, contains('fish_species'));
             expect(tableNames, contains('user_species_alias'));
@@ -693,7 +693,7 @@ void main() {
             final indexes = await db.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='user_species_alias'",
             );
-            final indexNames = indexes.map((i) => i['name'] as String).toList();
+            final indexNames = indexes.map((i) => i['name']! as String).toList();
             expect(indexNames, contains('idx_alias_user_alias'));
             expect(indexNames, contains('idx_alias_species'));
           } finally {
@@ -751,7 +751,7 @@ void main() {
             final indexes = await db.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='fish_catches'",
             );
-            final indexNames = indexes.map((i) => i['name'] as String).toList();
+            final indexNames = indexes.map((i) => i['name']! as String).toList();
 
             expect(indexNames, contains('idx_fish_catches_catch_time'));
             expect(indexNames, contains('idx_fish_catches_time_fate'));
@@ -815,7 +815,7 @@ void main() {
             final indexes = await db.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='equipments'",
             );
-            final indexNames = indexes.map((i) => i['name'] as String).toList();
+            final indexNames = indexes.map((i) => i['name']! as String).toList();
 
             expect(indexNames, contains('idx_equipments_type'));
             expect(indexNames, contains('idx_equipments_category'));
@@ -922,26 +922,26 @@ void main() {
               }
               if (oldVersion < 3) {
                 await db.execute(
-                  'ALTER TABLE equipments ADD COLUMN lure_quantity_unit TEXT DEFAULT \'pcs\'',
+                  "ALTER TABLE equipments ADD COLUMN lure_quantity_unit TEXT DEFAULT 'pcs'",
                 );
               }
               if (oldVersion < 4) {
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN rod_power TEXT');
+                    'ALTER TABLE equipments ADD COLUMN rod_power TEXT',);
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN rod_action TEXT');
+                    'ALTER TABLE equipments ADD COLUMN rod_action TEXT',);
               }
               if (oldVersion < 5) {
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN rod_length TEXT');
+                    'ALTER TABLE equipments ADD COLUMN rod_length TEXT',);
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN rod_weight TEXT');
+                    'ALTER TABLE equipments ADD COLUMN rod_weight TEXT',);
               }
               if (oldVersion < 6) {
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN reel_size TEXT');
+                    'ALTER TABLE equipments ADD COLUMN reel_size TEXT',);
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN reel_ratio TEXT');
+                    'ALTER TABLE equipments ADD COLUMN reel_ratio TEXT',);
               }
               if (oldVersion < 7) {
                 await db.execute(
@@ -965,7 +965,7 @@ void main() {
               }
               if (oldVersion < 10) {
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN lure_type TEXT');
+                    'ALTER TABLE equipments ADD COLUMN lure_type TEXT',);
               }
               if (oldVersion < 11) {
                 await db.execute('''
@@ -1004,62 +1004,62 @@ void main() {
               }
               if (oldVersion < 13) {
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN joint_type TEXT');
+                    'ALTER TABLE equipments ADD COLUMN joint_type TEXT',);
               }
               if (oldVersion < 14) {
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN reel_weight TEXT');
+                    'ALTER TABLE equipments ADD COLUMN reel_weight TEXT',);
                 await db.execute(
-                  'ALTER TABLE equipments ADD COLUMN reel_weight_unit TEXT DEFAULT \'g\'',
+                  "ALTER TABLE equipments ADD COLUMN reel_weight_unit TEXT DEFAULT 'g'",
                 );
               }
               if (oldVersion < 15) {
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN reel_bearings INTEGER');
+                    'ALTER TABLE equipments ADD COLUMN reel_bearings INTEGER',);
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN reel_capacity TEXT');
+                    'ALTER TABLE equipments ADD COLUMN reel_capacity TEXT',);
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN reel_brake_type TEXT');
+                    'ALTER TABLE equipments ADD COLUMN reel_brake_type TEXT',);
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN lure_weight TEXT');
+                    'ALTER TABLE equipments ADD COLUMN lure_weight TEXT',);
                 await db.execute(
-                  'ALTER TABLE equipments ADD COLUMN lure_weight_unit TEXT DEFAULT \'g\'',
+                  "ALTER TABLE equipments ADD COLUMN lure_weight_unit TEXT DEFAULT 'g'",
                 );
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN lure_size TEXT');
+                    'ALTER TABLE equipments ADD COLUMN lure_size TEXT',);
                 await db.execute(
-                  'ALTER TABLE equipments ADD COLUMN lure_size_unit TEXT DEFAULT \'cm\'',
+                  "ALTER TABLE equipments ADD COLUMN lure_size_unit TEXT DEFAULT 'cm'",
                 );
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN lure_color TEXT');
+                    'ALTER TABLE equipments ADD COLUMN lure_color TEXT',);
                 await db
                     .execute('ALTER TABLE equipments ADD COLUMN price REAL');
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN purchase_date TEXT');
+                    'ALTER TABLE equipments ADD COLUMN purchase_date TEXT',);
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN is_default INTEGER DEFAULT 0');
+                    'ALTER TABLE equipments ADD COLUMN is_default INTEGER DEFAULT 0',);
                 await db
                     .execute('ALTER TABLE equipments ADD COLUMN category TEXT');
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN reel_line TEXT');
+                    'ALTER TABLE equipments ADD COLUMN reel_line TEXT',);
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN reel_line_date TEXT');
+                    'ALTER TABLE equipments ADD COLUMN reel_line_date TEXT',);
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN reel_line_number TEXT');
+                    'ALTER TABLE equipments ADD COLUMN reel_line_number TEXT',);
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN reel_line_length TEXT');
+                    'ALTER TABLE equipments ADD COLUMN reel_line_length TEXT',);
                 await db.execute(
-                  'ALTER TABLE equipments ADD COLUMN line_length_unit TEXT DEFAULT \'m\'',
+                  "ALTER TABLE equipments ADD COLUMN line_length_unit TEXT DEFAULT 'm'",
                 );
                 await db.execute(
-                  'ALTER TABLE equipments ADD COLUMN line_weight_unit TEXT DEFAULT \'kg\'',
+                  "ALTER TABLE equipments ADD COLUMN line_weight_unit TEXT DEFAULT 'kg'",
                 );
                 await db.execute(
-                    'ALTER TABLE equipments ADD COLUMN weight_range TEXT');
+                    'ALTER TABLE equipments ADD COLUMN weight_range TEXT',);
                 await db
                     .execute('ALTER TABLE equipments ADD COLUMN length TEXT');
                 await db.execute(
-                  'ALTER TABLE equipments ADD COLUMN length_unit TEXT DEFAULT \'m\'',
+                  "ALTER TABLE equipments ADD COLUMN length_unit TEXT DEFAULT 'm'",
                 );
                 await db
                     .execute('ALTER TABLE equipments ADD COLUMN sections TEXT');
@@ -1070,17 +1070,17 @@ void main() {
               }
               if (oldVersion < 16) {
                 await db.execute(
-                    'ALTER TABLE fish_catches ADD COLUMN rig_type TEXT');
+                    'ALTER TABLE fish_catches ADD COLUMN rig_type TEXT',);
                 await db.execute(
-                    'ALTER TABLE fish_catches ADD COLUMN sinker_weight TEXT');
+                    'ALTER TABLE fish_catches ADD COLUMN sinker_weight TEXT',);
                 await db.execute(
-                    'ALTER TABLE fish_catches ADD COLUMN sinker_position TEXT');
+                    'ALTER TABLE fish_catches ADD COLUMN sinker_position TEXT',);
                 await db.execute(
-                    'ALTER TABLE fish_catches ADD COLUMN hook_type TEXT');
+                    'ALTER TABLE fish_catches ADD COLUMN hook_type TEXT',);
                 await db.execute(
-                    'ALTER TABLE fish_catches ADD COLUMN hook_size TEXT');
+                    'ALTER TABLE fish_catches ADD COLUMN hook_size TEXT',);
                 await db.execute(
-                    'ALTER TABLE fish_catches ADD COLUMN hook_weight TEXT');
+                    'ALTER TABLE fish_catches ADD COLUMN hook_weight TEXT',);
               }
               if (oldVersion < 17) {
                 await db.execute('''
@@ -1139,7 +1139,7 @@ void main() {
             final tables = await db.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name",
             );
-            final tableNames = tables.map((t) => t['name'] as String).toList();
+            final tableNames = tables.map((t) => t['name']! as String).toList();
 
             expect(tableNames, contains('fish_catches'));
             expect(tableNames, contains('equipments'));
@@ -1152,9 +1152,9 @@ void main() {
 
             // Verify fish_catches has all v22 columns
             final fishColumns =
-                await db.rawQuery("PRAGMA table_info(fish_catches)");
+                await db.rawQuery('PRAGMA table_info(fish_catches)');
             final fishColumnNames =
-                fishColumns.map((c) => c['name'] as String).toList();
+                fishColumns.map((c) => c['name']! as String).toList();
 
             expect(fishColumnNames, contains('watermarked_image_path'));
             expect(fishColumnNames, contains('location_name'));
@@ -1168,9 +1168,9 @@ void main() {
 
             // Verify equipments has all v22 columns
             final equipColumns =
-                await db.rawQuery("PRAGMA table_info(equipments)");
+                await db.rawQuery('PRAGMA table_info(equipments)');
             final equipColumnNames =
-                equipColumns.map((c) => c['name'] as String).toList();
+                equipColumns.map((c) => c['name']! as String).toList();
 
             expect(equipColumnNames, contains('lure_quantity'));
             expect(equipColumnNames, contains('rod_power'));
@@ -1220,7 +1220,7 @@ void main() {
 
           // Test _addColumnIfNotExists logic
           final resultBefore =
-              await db.rawQuery("PRAGMA table_info(test_table)");
+              await db.rawQuery('PRAGMA table_info(test_table)');
           final hasNewColumn =
               resultBefore.any((row) => row['name'] == 'new_column');
           expect(hasNewColumn, isFalse);
@@ -1228,12 +1228,12 @@ void main() {
           // Add column using ALTER TABLE
           try {
             await db.execute(
-              'ALTER TABLE test_table ADD COLUMN new_column TEXT DEFAULT \'test\'',
+              "ALTER TABLE test_table ADD COLUMN new_column TEXT DEFAULT 'test'",
             );
           } catch (_) {}
 
           final resultAfter =
-              await db.rawQuery("PRAGMA table_info(test_table)");
+              await db.rawQuery('PRAGMA table_info(test_table)');
           final hasNewColumnAfter =
               resultAfter.any((row) => row['name'] == 'new_column');
 

@@ -1,27 +1,24 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fl_chart/fl_chart.dart';
-
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 class CatchTrendChart extends ConsumerStatefulWidget {
+
+  const CatchTrendChart({
+    required this.trendData, required this.trendTitle, super.key,
+    this.showDropdown = false,
+    this.trendType,
+    this.onTrendTypeChanged,
+  });
   final Map<String, int> trendData;
   final String trendTitle;
   final bool showDropdown;
   final String? trendType;
   final ValueChanged<String>? onTrendTypeChanged;
-
-  const CatchTrendChart({
-    super.key,
-    required this.trendData,
-    required this.trendTitle,
-    this.showDropdown = false,
-    this.trendType,
-    this.onTrendTypeChanged,
-  });
 
   @override
   ConsumerState<CatchTrendChart> createState() => _CatchTrendChartState();
@@ -62,7 +59,6 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
     return FadeTransition(
       opacity: _fadeAnimation,
       child: PremiumCard(
-        variant: PremiumCardVariant.standard,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -129,7 +125,7 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
                                       .reduce((a, b) => a > b ? a : b) *
                                   1.3 +
                               1)
-                          .toDouble(),
+                          ,
                   barTouchData: BarTouchData(
                     enabled: true,
                     touchTooltipData: BarTouchTooltipData(
@@ -143,7 +139,7 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
                       ),
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
                         final keys = widget.trendData.keys.toList();
-                        final label = keys[group.x.toInt()];
+                        final label = keys[group.x];
                         final value = rod.toY.toInt();
                         return BarTooltipItem(
                           '$label\n$value ${strings.fishCountUnit}',
@@ -159,7 +155,6 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
                     ),
                   ),
                   titlesData: FlTitlesData(
-                    show: true,
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -171,7 +166,7 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
                             if (value.toInt() % step == 0) {
                               return Padding(
                                 padding: const EdgeInsets.only(
-                                    top: TeslaTheme.spacingMicro),
+                                    top: TeslaTheme.spacingMicro,),
                                 child: Text(
                                   keys[value.toInt()],
                                   style: Theme.of(
@@ -190,13 +185,13 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
                       ),
                     ),
                     leftTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                     topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                     rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                   ),
                   borderData: FlBorderData(show: false),

@@ -93,7 +93,6 @@ void main() {
             home: Scaffold(
               body: PremiumButton(
                 text: 'Test',
-                onPressed: null,
               ),
             ),
           ),
@@ -110,7 +109,6 @@ void main() {
             home: Scaffold(
               body: PremiumButton(
                 text: 'Primary',
-                variant: PremiumButtonVariant.primary,
               ),
             ),
           ),
@@ -243,7 +241,6 @@ void main() {
             home: Scaffold(
               body: PremiumButton(
                 text: 'Test',
-                onPressed: null,
               ),
             ),
           ),

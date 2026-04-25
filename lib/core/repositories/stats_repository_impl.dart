@@ -1,8 +1,7 @@
-import 'package:sqflite/sqflite.dart';
-import '../constants/time_constants.dart';
-import 'base_repository.dart';
-import '../models/fish_catch.dart';
-import 'stats_repository.dart';
+import 'package:lurebox/core/constants/time_constants.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/repositories/base_repository.dart';
+import 'package:lurebox/core/repositories/stats_repository.dart';
 
 /// SQLite 实现 - 统计数据仓储层
 ///
@@ -10,13 +9,13 @@ import 'stats_repository.dart';
 
 class SqliteStatsRepository extends BaseSqliteRepository
     implements StatsRepository {
-  @override
-  String get tableName => 'fish_catches';
 
   SqliteStatsRepository();
 
-  SqliteStatsRepository.withDatabase(Future<Database> testDb)
-      : super.withDatabase(testDb);
+  SqliteStatsRepository.withDatabase(super.testDb)
+      : super.withDatabase();
+  @override
+  String get tableName => 'fish_catches';
 
   @override
   Future<CatchStats> getCatchStats({
@@ -26,8 +25,8 @@ class SqliteStatsRepository extends BaseSqliteRepository
     try {
       final db = await database;
 
-      String whereClause = '';
-      List<dynamic> whereArgs = [];
+      var whereClause = '';
+      var whereArgs = <dynamic>[];
 
       if (startDate != null && endDate != null) {
         whereClause = 'WHERE catch_time >= ? AND catch_time < ?';
@@ -41,7 +40,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
           SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as keep
         FROM $tableName
         $whereClause
-        ''', [FishFateType.release.value, FishFateType.keep.value, ...whereArgs]);
+        ''', [FishFateType.release.value, FishFateType.keep.value, ...whereArgs],);
 
       if (results.isEmpty) {
         return const CatchStats(total: 0, release: 0, keep: 0);
@@ -62,8 +61,8 @@ class SqliteStatsRepository extends BaseSqliteRepository
     try {
       final db = await database;
 
-      String whereClause = '';
-      List<dynamic> whereArgs = [];
+      var whereClause = '';
+      var whereArgs = <dynamic>[];
 
       if (startDate != null && endDate != null) {
         whereClause = 'WHERE catch_time >= ? AND catch_time < ?';
@@ -196,7 +195,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
           COUNT(*) as total,
           SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as release
         FROM $tableName
-      ''', [FishFateType.release.value]);
+      ''', [FishFateType.release.value],);
       final total = results.first['total'] as int? ?? 0;
       if (total == 0) return 0.0;
       final release = results.first['release'] as int? ?? 0;
@@ -217,11 +216,11 @@ class SqliteStatsRepository extends BaseSqliteRepository
         WHERE catch_time >= ?
         GROUP BY catch_date
         ORDER BY catch_date DESC
-      ''', [cutoff.toIso8601String()]);
+      ''', [cutoff.toIso8601String()],);
 
       if (results.isEmpty) return 0;
 
-      int consecutiveDays = 0;
+      var consecutiveDays = 0;
       DateTime? lastDate;
 
       for (final row in results) {
@@ -300,7 +299,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
         SELECT COUNT(*) as count FROM $tableName
         WHERE strftime('%H', catch_time) >= ?
           AND strftime('%H', catch_time) < ?
-      ''', [TimeConstants.morningStart, TimeConstants.morningEnd]);
+      ''', [TimeConstants.morningStart, TimeConstants.morningEnd],);
       return results.first['count'] as int? ?? 0;
     } catch (e) {
       throwDbError('get morning catch count', e);
@@ -315,7 +314,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
         SELECT COUNT(*) as count FROM $tableName
         WHERE strftime('%H', catch_time) >= ?
            OR strftime('%H', catch_time) < ?
-      ''', [TimeConstants.nightStart, TimeConstants.nightEnd]);
+      ''', [TimeConstants.nightStart, TimeConstants.nightEnd],);
       return results.first['count'] as int? ?? 0;
     } catch (e) {
       throwDbError('get night catch count', e);
@@ -369,11 +368,11 @@ class SqliteStatsRepository extends BaseSqliteRepository
       final todayStart = DateTime(now.year, now.month, now.day);
       final todayEnd = todayStart.add(const Duration(days: 1));
 
-      final monthStart = DateTime(now.year, now.month, 1);
-      final monthEnd = DateTime(now.year, now.month + 1, 1);
+      final monthStart = DateTime(now.year, now.month);
+      final monthEnd = DateTime(now.year, now.month + 1);
 
-      final yearStart = DateTime(now.year, 1, 1);
-      final yearEnd = DateTime(now.year + 1, 1, 1);
+      final yearStart = DateTime(now.year);
+      final yearEnd = DateTime(now.year + 1);
 
       // 优化：将 9 个查询合并为 3 个
       final results = await Future.wait([
@@ -576,7 +575,7 @@ FROM (
   SELECT lure_id as eq_id, species, length, weight, fate FROM $tableName WHERE lure_id IS NOT NULL
 )
 GROUP BY eq_id
-''', [FishFateType.release.value]);
+''', [FishFateType.release.value],);
 
       final stats = <int, EquipmentCatchStats>{};
       for (final row in results) {
@@ -645,8 +644,8 @@ GROUP BY eq_id, species
       };
       final column = typeToColumn[type] ?? 'lure_id';
 
-      String whereClause = 'f.$column IS NOT NULL';
-      List<dynamic> whereArgs = [];
+      var whereClause = 'f.$column IS NOT NULL';
+      var whereArgs = <dynamic>[];
 
       if (startDate != null && endDate != null) {
         whereClause += ' AND f.catch_time >= ? AND f.catch_time < ?';
@@ -661,7 +660,7 @@ GROUP BY eq_id, species
         GROUP BY f.$column
         ORDER BY count DESC
         LIMIT 8
-        ''', whereArgs);
+        ''', whereArgs,);
 
       final distribution = <String, int>{};
       for (final row in results) {
@@ -692,7 +691,7 @@ GROUP BY eq_id, species
         limit: 3,
       );
       return List<FishCatch>.from(
-          results.map((map) => FishCatch.fromMap(map as Map<String, dynamic>)));
+          results.map((map) => FishCatch.fromMap(map as Map<String, dynamic>)),);
     } catch (e) {
       throwDbError('get top 3 longest catches', e);
     }
@@ -739,7 +738,7 @@ GROUP BY eq_id, species
 
       return results.map((row) {
         return {
-          'date': row['date'] as String,
+          'date': row['date']! as String,
           'count': row['count'] as int? ?? 0,
           'release': row['release'] as int? ?? 0,
           'keep': row['keep'] as int? ?? 0,

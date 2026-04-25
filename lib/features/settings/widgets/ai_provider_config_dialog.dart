@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/services/fish_recognition_service.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
 import 'package:path_provider/path_provider.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/models/ai_recognition_settings.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../core/services/fish_recognition_service.dart';
-import '../../../widgets/common/app_snack_bar.dart';
 
 /// AI 提供商配置对话框
 ///
@@ -18,16 +19,14 @@ import '../../../widgets/common/app_snack_bar.dart';
 /// - 测试连接按钮
 /// - 保存/取消按钮
 class AiProviderConfigDialog extends ConsumerStatefulWidget {
-  final AiRecognitionProvider provider;
-  final AiProviderConfig? config;
-  final Function(AiProviderConfig) onSave;
 
   const AiProviderConfigDialog({
-    super.key,
-    required this.provider,
+    required this.provider, required this.onSave, super.key,
     this.config,
-    required this.onSave,
   });
+  final AiRecognitionProvider provider;
+  final AiProviderConfig? config;
+  final void Function(AiProviderConfig) onSave;
 
   @override
   ConsumerState<AiProviderConfigDialog> createState() =>
@@ -329,7 +328,6 @@ class _AiProviderConfigDialogState
         apiKey: apiKey,
         baseUrl: baseUrl.isEmpty ? null : baseUrl,
         modelName: modelName.isEmpty ? null : modelName,
-        enabled: true,
       );
 
       final settings = AiRecognitionSettings(
@@ -353,7 +351,7 @@ class _AiProviderConfigDialogState
         setState(() {
           _isTesting = false;
           _isTestSuccess = false;
-          _testResult = '连接失败: ${e.toString()}';
+          _testResult = '连接失败: $e';
         });
       }
     } finally {
@@ -381,7 +379,6 @@ class _AiProviderConfigDialogState
       modelName: _modelNameController.text.trim().isEmpty
           ? null
           : _modelNameController.text.trim(),
-      enabled: true,
     );
 
     widget.onSave(config);

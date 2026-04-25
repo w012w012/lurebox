@@ -3,17 +3,6 @@
 /// Sealed class hierarchy for equipment edit states.
 /// Each equipment type (rod/reel/lure) has its own subclass with type-specific fields.
 sealed class EquipmentEditState {
-  final String type;
-  final Map<String, dynamic>? equipment;
-  final bool isSaving;
-  final String? errorMessage;
-  final String brand;
-  final String model;
-  final String price;
-  final String purchaseDate;
-  final bool isDefault;
-  final String categoryType1;
-  final String categoryType2;
 
   const EquipmentEditState({
     required this.type,
@@ -28,6 +17,17 @@ sealed class EquipmentEditState {
     this.categoryType1 = '',
     this.categoryType2 = '',
   });
+  final String type;
+  final Map<String, dynamic>? equipment;
+  final bool isSaving;
+  final String? errorMessage;
+  final String brand;
+  final String model;
+  final String price;
+  final String purchaseDate;
+  final bool isDefault;
+  final String categoryType1;
+  final String categoryType2;
 
   /// Whether this is an edit (vs create) operation.
   bool get isEdit => equipment != null;
@@ -50,14 +50,6 @@ sealed class EquipmentEditState {
 
 /// Rod-specific edit state
 class RodEditState extends EquipmentEditState {
-  final String length;
-  final String lengthUnit;
-  final String sections;
-  final String jointType;
-  final String material;
-  final String hardness;
-  final String rodAction;
-  final String weightRange;
 
   const RodEditState({
     required super.type,
@@ -80,6 +72,14 @@ class RodEditState extends EquipmentEditState {
     this.rodAction = '',
     this.weightRange = '',
   });
+  final String length;
+  final String lengthUnit;
+  final String sections;
+  final String jointType;
+  final String material;
+  final String hardness;
+  final String rodAction;
+  final String weightRange;
 
   RodEditState copyWith({
     String? type,
@@ -173,17 +173,6 @@ class RodEditState extends EquipmentEditState {
 
 /// Reel-specific edit state
 class ReelEditState extends EquipmentEditState {
-  final String reelBearings;
-  final String reelRatio;
-  final String reelCapacity;
-  final String reelBrakeType;
-  final String reelWeight;
-  final String reelWeightUnit;
-  final String reelLine;
-  final String reelLineNumber;
-  final String reelLineLength;
-  final String reelLineLengthUnit;
-  final String reelLineDate;
 
   const ReelEditState({
     required super.type,
@@ -209,6 +198,17 @@ class ReelEditState extends EquipmentEditState {
     this.reelLineLengthUnit = 'm',
     this.reelLineDate = '',
   });
+  final String reelBearings;
+  final String reelRatio;
+  final String reelCapacity;
+  final String reelBrakeType;
+  final String reelWeight;
+  final String reelWeightUnit;
+  final String reelLine;
+  final String reelLineNumber;
+  final String reelLineLength;
+  final String reelLineLengthUnit;
+  final String reelLineDate;
 
   ReelEditState copyWith({
     String? type,
@@ -314,14 +314,6 @@ class ReelEditState extends EquipmentEditState {
 
 /// Lure-specific edit state
 class LureEditState extends EquipmentEditState {
-  final String lureType;
-  final String lureWeight;
-  final String lureWeightUnit;
-  final String lureSize;
-  final String lureSizeUnit;
-  final String lureColor;
-  final String lureQuantity;
-  final String lureQuantityUnit;
 
   const LureEditState({
     required super.type,
@@ -344,6 +336,14 @@ class LureEditState extends EquipmentEditState {
     this.lureQuantity = '',
     this.lureQuantityUnit = 'pcs',
   });
+  final String lureType;
+  final String lureWeight;
+  final String lureWeightUnit;
+  final String lureSize;
+  final String lureSizeUnit;
+  final String lureColor;
+  final String lureQuantity;
+  final String lureQuantityUnit;
 
   LureEditState copyWith({
     String? type,

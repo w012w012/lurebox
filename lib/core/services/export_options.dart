@@ -10,12 +10,6 @@
 library;
 
 class ExportOptions {
-  final DateTime? startDate;
-  final DateTime? endDate;
-  final List<String>? speciesFilter;
-  final ExportFormat format;
-  final bool includeImagePaths;
-  final bool includeLocation;
 
   const ExportOptions({
     this.startDate,
@@ -25,6 +19,12 @@ class ExportOptions {
     this.includeImagePaths = false,
     this.includeLocation = true,
   });
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final List<String>? speciesFilter;
+  final ExportFormat format;
+  final bool includeImagePaths;
+  final bool includeLocation;
 }
 
 enum ExportFormat { csv }

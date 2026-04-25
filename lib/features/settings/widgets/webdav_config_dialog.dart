@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/di/di.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../core/providers/settings_view_model.dart';
-import '../../../core/services/backup_service.dart';
-import '../../../widgets/common/app_snack_bar.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/settings_view_model.dart';
+import 'package:lurebox/core/services/backup_service.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
 
 /// WebDAV 配置对话框
 ///

@@ -1,25 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/animation_constants.dart';
-import '../../core/design/theme/design_tokens.dart';
-import '../../core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/animation_constants.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/design_tokens.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
 
 /// 高级极简卡片组件
 /// 提供统一的卡片样式，支持多种变体，iOS风格触摸反馈
 class PremiumCard extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onTap;
-  final EdgeInsets? padding;
-  final EdgeInsets? margin;
-  final PremiumCardVariant variant;
-  final bool showBorder;
-  final Color? backgroundColor;
-  final double? borderRadius;
-  final List<BoxShadow>? shadows;
 
   const PremiumCard({
-    super.key,
-    required this.child,
+    required this.child, super.key,
     this.onTap,
     this.padding,
     this.margin,
@@ -29,6 +19,15 @@ class PremiumCard extends StatefulWidget {
     this.borderRadius,
     this.shadows,
   });
+  final Widget child;
+  final VoidCallback? onTap;
+  final EdgeInsets? padding;
+  final EdgeInsets? margin;
+  final PremiumCardVariant variant;
+  final bool showBorder;
+  final Color? backgroundColor;
+  final double? borderRadius;
+  final List<BoxShadow>? shadows;
 
   @override
   State<PremiumCard> createState() => _PremiumCardState();
@@ -59,7 +58,7 @@ class _PremiumCardState extends State<PremiumCard> {
       transform: Matrix4.diagonal3Values(
         _isPressed ? AnimationConstants.touchScale : 1.0,
         _isPressed ? AnimationConstants.touchScale : 1.0,
-        1.0,
+        1,
       ),
       transformAlignment: Alignment.center,
       child: Container(
@@ -68,7 +67,7 @@ class _PremiumCardState extends State<PremiumCard> {
           color: widget.backgroundColor ?? defaultBg,
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
           border: widget.showBorder
-              ? Border.all(color: borderColor, width: 1)
+              ? Border.all(color: borderColor)
               : null,
           boxShadow: widget.shadows ?? _getShadows(widget.variant, isDark),
         ),
@@ -111,6 +110,15 @@ enum PremiumCardVariant {
 
 /// 带标题的卡片
 class PremiumCardWithTitle extends StatelessWidget {
+
+  const PremiumCardWithTitle({
+    required this.title, required this.child, super.key,
+    this.subtitle,
+    this.onTap,
+    this.trailing,
+    this.padding,
+    this.variant = PremiumCardVariant.standard,
+  });
   final String title;
   final String? subtitle;
   final Widget child;
@@ -118,17 +126,6 @@ class PremiumCardWithTitle extends StatelessWidget {
   final Widget? trailing;
   final EdgeInsets? padding;
   final PremiumCardVariant variant;
-
-  const PremiumCardWithTitle({
-    super.key,
-    required this.title,
-    this.subtitle,
-    required this.child,
-    this.onTap,
-    this.trailing,
-    this.padding,
-    this.variant = PremiumCardVariant.standard,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -169,6 +166,14 @@ class PremiumCardWithTitle extends StatelessWidget {
 
 /// 统计卡片
 class PremiumStatCard extends StatelessWidget {
+
+  const PremiumStatCard({
+    required this.title, required this.value, super.key,
+    this.unit,
+    this.icon,
+    this.iconColor,
+    this.onTap,
+  });
   final String title;
   final String value;
   final String? unit;
@@ -176,23 +181,11 @@ class PremiumStatCard extends StatelessWidget {
   final Color? iconColor;
   final VoidCallback? onTap;
 
-  const PremiumStatCard({
-    super.key,
-    required this.title,
-    required this.value,
-    this.unit,
-    this.icon,
-    this.iconColor,
-    this.onTap,
-  });
-
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = TeslaColors.electricBlue;
 
     return PremiumCard(
-      variant: PremiumCardVariant.standard,
       onTap: onTap,
       child: Row(
         children: [
@@ -240,6 +233,15 @@ class PremiumStatCard extends StatelessWidget {
 
 /// 图片卡片
 class PremiumImageCard extends StatelessWidget {
+
+  const PremiumImageCard({
+    required this.imageUrl, super.key,
+    this.title,
+    this.subtitle,
+    this.onTap,
+    this.height,
+    this.fit = BoxFit.cover,
+  });
   final String imageUrl;
   final String? title;
   final String? subtitle;
@@ -247,20 +249,9 @@ class PremiumImageCard extends StatelessWidget {
   final double? height;
   final BoxFit fit;
 
-  const PremiumImageCard({
-    super.key,
-    required this.imageUrl,
-    this.title,
-    this.subtitle,
-    this.onTap,
-    this.height,
-    this.fit = BoxFit.cover,
-  });
-
   @override
   Widget build(BuildContext context) {
     return PremiumCard(
-      variant: PremiumCardVariant.standard,
       onTap: onTap,
       padding: EdgeInsets.zero,
       child: Column(
@@ -311,22 +302,20 @@ class PremiumImageCard extends StatelessWidget {
 
 /// 列表项卡片
 class PremiumListCard extends StatelessWidget {
+
+  const PremiumListCard({
+    required this.leading, required this.title, super.key,
+    this.subtitle,
+    this.trailing,
+    this.onTap,
+    this.showDivider = false,
+  });
   final Widget leading;
   final String title;
   final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
   final bool showDivider;
-
-  const PremiumListCard({
-    super.key,
-    required this.leading,
-    required this.title,
-    this.subtitle,
-    this.trailing,
-    this.onTap,
-    this.showDivider = false,
-  });
 
   @override
   Widget build(BuildContext context) {

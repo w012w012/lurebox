@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/providers/fish_detail_view_model.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/app_settings_provider.dart';
-import '../../core/utils/unit_converter.dart';
-import '../../widgets/common/app_snack_bar.dart';
-import '../share/watermark_share_preview_page.dart';
-import '../../widgets/common/premium_button.dart';
-import 'widgets/fish_action_buttons.dart';
-import 'widgets/fish_info_card.dart';
-import 'widgets/fish_image_gallery.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/fish_detail_view_model.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/features/fish_detail/widgets/fish_action_buttons.dart';
+import 'package:lurebox/features/fish_detail/widgets/fish_image_gallery.dart';
+import 'package:lurebox/features/fish_detail/widgets/fish_info_card.dart';
+import 'package:lurebox/features/share/watermark_share_preview_page.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
 
 class FishDetailPage extends ConsumerStatefulWidget {
-  final int fishId;
 
-  const FishDetailPage({super.key, required this.fishId});
+  const FishDetailPage({required this.fishId, super.key});
+  final int fishId;
 
   @override
   ConsumerState<FishDetailPage> createState() => _FishDetailPageState();
@@ -317,7 +317,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
       ),
     );
 
-    if (confirm == true) {
+    if (confirm ?? false) {
       final success = await ref
           .read(fishDetailViewModelProvider(widget.fishId).notifier)
           .deleteFish();
@@ -409,7 +409,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
 
     if (context.mounted) {
       Navigator.of(context).push(
-        MaterialPageRoute(
+        MaterialPageRoute<void>(
           builder: (_) => WatermarkSharePreviewPage(data: previewData),
         ),
       );

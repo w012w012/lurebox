@@ -21,7 +21,7 @@ void main() {
     });
 
     testWidgets('toggles selection on tap', (WidgetTester tester) async {
-      bool selected = false;
+      var selected = false;
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

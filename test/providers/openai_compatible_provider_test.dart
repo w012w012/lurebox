@@ -1,13 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
-import 'package:lurebox/core/services/fish_recognition_service.dart';
-import 'package:lurebox/core/services/adapters/openai_compatible_provider.dart';
 import 'package:lurebox/core/services/adapters/fish_recognition_shared.dart';
+import 'package:lurebox/core/services/adapters/openai_compatible_provider.dart';
+import 'package:lurebox/core/services/fish_recognition_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 /// Mock HTTP Client for testing
 class MockHttpClient extends Mock implements http.Client {}
@@ -57,9 +58,6 @@ Map<String, dynamic> _createSuccessfulOpenAIResponse({
 
 /// Test implementation of OpenAICompatibleProvider
 class TestOpenAICompatibleProvider extends OpenAICompatibleProvider {
-  final String testDefaultBaseUrl;
-  final String testDefaultModel;
-  final UrlPathStrategy? testUrlPathStrategy;
 
   TestOpenAICompatibleProvider({
     super.client,
@@ -67,6 +65,9 @@ class TestOpenAICompatibleProvider extends OpenAICompatibleProvider {
     this.testDefaultModel = 'test-model',
     this.testUrlPathStrategy,
   });
+  final String testDefaultBaseUrl;
+  final String testDefaultModel;
+  final UrlPathStrategy? testUrlPathStrategy;
 
   @override
   String get defaultBaseUrl => testDefaultBaseUrl;
@@ -88,14 +89,14 @@ class TestOpenAICompatibleProvider extends OpenAICompatibleProvider {
 /// Test provider that uses base class defaults (does not override urlPathStrategy)
 class TestOpenAICompatibleProviderWithDefaults
     extends OpenAICompatibleProvider {
-  final String testDefaultBaseUrl;
-  final String testDefaultModel;
 
   TestOpenAICompatibleProviderWithDefaults({
     super.client,
     this.testDefaultBaseUrl = 'https://api.test.com',
     this.testDefaultModel = 'test-model',
   });
+  final String testDefaultBaseUrl;
+  final String testDefaultModel;
 
   @override
   String get defaultBaseUrl => testDefaultBaseUrl;
@@ -243,7 +244,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.apiKeyInvalid),
-        )),
+        ),),
       );
     });
 
@@ -255,16 +256,16 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.rateLimited),
-        )),
+        ),),
       );
     });
 
     test('calls onRateLimited callback when provided and status is 429', () {
       final response = http.Response('Too Many Requests', 429);
-      bool callbackCalled = false;
+      var callbackCalled = false;
       expect(
         () => throwHttpError(response,
-            onRateLimited: () => callbackCalled = true),
+            onRateLimited: () => callbackCalled = true,),
         throwsA(isA<FishRecognitionException>()),
       );
       expect(callbackCalled, isTrue);
@@ -278,7 +279,7 @@ void main() {
       );
       final uri = provider.buildUrl('https://api.openai.com');
       expect(
-          uri.toString(), equals('https://api.openai.com/v1/chat/completions'));
+          uri.toString(), equals('https://api.openai.com/v1/chat/completions'),);
     });
 
     test('UrlPathStrategy.appendPath handles trailing slash in baseUrl', () {
@@ -287,7 +288,7 @@ void main() {
       );
       final uri = provider.buildUrl('https://api.openai.com/');
       expect(
-          uri.toString(), equals('https://api.openai.com/v1/chat/completions'));
+          uri.toString(), equals('https://api.openai.com/v1/chat/completions'),);
     });
 
     test('UrlPathStrategy.useDirect uses baseUrl as-is', () {
@@ -297,7 +298,7 @@ void main() {
       final uri =
           provider.buildUrl('https://api.baidubce.com/v1/chat/completions');
       expect(uri.toString(),
-          equals('https://api.baidubce.com/v1/chat/completions'));
+          equals('https://api.baidubce.com/v1/chat/completions'),);
     });
 
     test('UrlPathStrategy.custom throws UnimplementedError', () {
@@ -316,7 +317,7 @@ void main() {
       final provider = TestOpenAICompatibleProviderWithDefaults();
       final uri = provider.buildUrl('https://api.openai.com');
       expect(
-          uri.toString(), equals('https://api.openai.com/v1/chat/completions'));
+          uri.toString(), equals('https://api.openai.com/v1/chat/completions'),);
     });
   });
 
@@ -337,7 +338,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async => mockResponse);
+          ),).thenAnswer((_) async => mockResponse);
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
@@ -367,7 +368,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async => mockResponse);
+          ),).thenAnswer((_) async => mockResponse);
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
@@ -379,7 +380,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).called(1);
+          ),).called(1);
     });
 
     test('uses defaultModel when config.modelName is empty', () async {
@@ -399,7 +400,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async => mockResponse);
+          ),).thenAnswer((_) async => mockResponse);
 
       final provider = TestOpenAICompatibleProvider(
         client: mockClient,
@@ -414,7 +415,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).called(1);
+          ),).called(1);
     });
 
     test('uses config.baseUrl when provided', () async {
@@ -436,7 +437,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((invocation) async {
+          ),).thenAnswer((invocation) async {
         capturedUri = invocation.positionalArguments[0] as Uri;
         return mockResponse;
       });
@@ -469,7 +470,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((invocation) async {
+          ),).thenAnswer((invocation) async {
         capturedUri = invocation.positionalArguments[0] as Uri;
         return mockResponse;
       });
@@ -504,7 +505,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((invocation) async {
+          ),).thenAnswer((invocation) async {
         capturedBody =
             invocation.namedArguments[const Symbol('body')] as String?;
         return mockResponse;
@@ -540,7 +541,7 @@ void main() {
       expect(userContent[0]['text'], contains('识别'));
       expect(userContent[1]['type'], equals('image_url'));
       expect(userContent[1]['image_url']['url'],
-          startsWith('data:image/jpeg;base64,'));
+          startsWith('data:image/jpeg;base64,'),);
     });
 
     test('sets correct headers including Authorization', () async {
@@ -560,7 +561,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((invocation) async {
+          ),).thenAnswer((invocation) async {
         capturedHeaders = invocation.namedArguments[const Symbol('headers')]
             as Map<String, String>?;
         return mockResponse;
@@ -589,12 +590,12 @@ void main() {
             {
               'chineseName': '鳜鱼',
               'scientificName': 'Siniperca chuatsi',
-              'confidence': 45
+              'confidence': 45,
             },
             {
               'chineseName': '鲈鱼',
               'scientificName': 'Lateolabrax japonicus',
-              'confidence': 30
+              'confidence': 30,
             },
           ],
           notes: '结合体型和颜色判断',
@@ -606,7 +607,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async => mockResponse);
+          ),).thenAnswer((_) async => mockResponse);
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
@@ -626,7 +627,8 @@ void main() {
     test('handles response with markdown code blocks', () async {
       // Arrange
       final testImage = File('test/fixtures/test_fish.jpg');
-      const contentWithMarkdown = '''```json
+      const contentWithMarkdown = '''
+```json
 {"primarySpecies":{"chineseName":"鲈鱼","scientificName":"Lateolabrax japonicus","confidence":85},"confidence":85,"alternatives":[],"notes":""}
 ```''';
 
@@ -639,13 +641,13 @@ void main() {
             },
           },
         ],
-      }, 200);
+      }, 200,);
 
       when(() => mockClient.post(
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async => mockResponse);
+          ),).thenAnswer((_) async => mockResponse);
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
@@ -683,7 +685,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.apiKeyInvalid),
-        )),
+        ),),
       );
     });
 
@@ -696,7 +698,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.rateLimited),
-        )),
+        ),),
       );
     });
 
@@ -709,7 +711,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.networkError),
-        )),
+        ),),
       );
     });
 
@@ -731,7 +733,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.apiKeyInvalid),
-        )),
+        ),),
       );
     });
 
@@ -752,7 +754,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.apiKeyInvalid),
-        )),
+        ),),
       );
     });
 
@@ -774,7 +776,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.rateLimited),
-        )),
+        ),),
       );
     });
 
@@ -793,7 +795,7 @@ void main() {
     test('throws FishRecognitionException when message is missing', () {
       final response = http.Response(
         jsonEncode({
-          'choices': [{}]
+          'choices': [{}],
         }),
         200,
       );
@@ -809,7 +811,7 @@ void main() {
         jsonEncode({
           'choices': [
             {
-              'message': {'role': 'assistant', 'content': null}
+              'message': {'role': 'assistant', 'content': null},
             },
           ],
         }),
@@ -827,7 +829,7 @@ void main() {
         jsonEncode({
           'choices': [
             {
-              'message': {'role': 'assistant', 'content': ''}
+              'message': {'role': 'assistant', 'content': ''},
             },
           ],
         }),
@@ -845,7 +847,7 @@ void main() {
         jsonEncode({
           'choices': [
             {
-              'message': {'role': 'assistant', 'content': 'not valid json {'}
+              'message': {'role': 'assistant', 'content': 'not valid json {'},
             },
           ],
         }),
@@ -875,7 +877,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.unknown),
-        )),
+        ),),
       );
     });
   });
@@ -889,7 +891,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenThrow(TimeoutException('Connection timed out'));
+          ),).thenThrow(TimeoutException('Connection timed out'));
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
@@ -900,7 +902,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.timeout),
-        )),
+        ),),
       );
     });
 
@@ -912,7 +914,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenThrow(http.ClientException('Network is unreachable'));
+          ),).thenThrow(http.ClientException('Network is unreachable'));
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
@@ -923,7 +925,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.networkError),
-        )),
+        ),),
       );
     });
 
@@ -937,7 +939,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async => errorResponse);
+          ),).thenAnswer((_) async => errorResponse);
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
@@ -948,7 +950,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.apiKeyInvalid),
-        )),
+        ),),
       );
     });
   });

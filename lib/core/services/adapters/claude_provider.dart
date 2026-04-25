@@ -1,23 +1,24 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:http/http.dart' as http;
-import '../fish_recognition_service.dart';
-import '../../models/ai_recognition_settings.dart';
-import 'fish_recognition_shared.dart';
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/services/adapters/fish_recognition_shared.dart';
+import 'package:lurebox/core/services/fish_recognition_service.dart';
 
 /// Claude 鱼类识别提供者
 ///
 /// 使用 Anthropic Claude Messages API (Claude 3.5) 进行鱼类识别
 class ClaudeFishRecognitionProvider implements FishRecognitionProvider {
-  static const String _systemPrompt = fishRecognitionSystemPrompt;
-
-  /// HTTP client for making requests (injectable for testing)
-  final http.Client? _client;
 
   /// Creates a Claude provider with optional HTTP client injection
   /// If no client is provided, uses the default http.Client
   ClaudeFishRecognitionProvider({http.Client? client}) : _client = client;
+  static const String _systemPrompt = fishRecognitionSystemPrompt;
+
+  /// HTTP client for making requests (injectable for testing)
+  final http.Client? _client;
 
   @override
   Future<FishRecognitionResult> identifySpecies(
@@ -147,7 +148,7 @@ class ClaudeFishRecognitionProvider implements FishRecognitionProvider {
       }
 
       // 查找 text 类型的 content block
-      String jsonText = '';
+      var jsonText = '';
       for (final block in content) {
         if (block is Map<String, dynamic> && block['type'] == 'text') {
           jsonText = block['text'] as String? ?? '';

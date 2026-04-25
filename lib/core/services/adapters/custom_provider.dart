@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import '../app_logger.dart';
+
 import 'package:http/http.dart' as http;
-import '../fish_recognition_service.dart';
-import '../../models/ai_recognition_settings.dart';
-import 'fish_recognition_shared.dart';
-import 'openai_compatible_provider.dart';
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/services/adapters/fish_recognition_shared.dart';
+import 'package:lurebox/core/services/adapters/openai_compatible_provider.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/services/fish_recognition_service.dart';
 
 /// 自定义 鱼类识别提供者
 ///
@@ -67,7 +68,7 @@ class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
 
     // 确定使用的模型名称
     final modelName =
-        config.modelName?.isNotEmpty == true ? config.modelName! : defaultModel;
+        config.modelName?.isNotEmpty ?? false ? config.modelName! : defaultModel;
 
     // 构建请求体 - 使用 OpenAI 兼容的 vision API
     final requestBody = {
@@ -100,7 +101,7 @@ class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
 
     AppLogger.i('CustomProvider', 'Model: ${config.modelName}');
     AppLogger.i(
-        'CustomProvider', 'Request body size: ${jsonEncode(requestBody).length} bytes');
+        'CustomProvider', 'Request body size: ${jsonEncode(requestBody).length} bytes',);
 
     // 构建请求 URL - 使用用户自定义的 Base URL
     final url = buildUrl(baseUrl);

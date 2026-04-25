@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
 class SettingsCard extends StatelessWidget {
-  final List<Widget> children;
-  final EdgeInsetsGeometry? margin;
-  final EdgeInsetsGeometry? padding;
 
   const SettingsCard({
-    super.key,
-    required this.children,
+    required this.children, super.key,
     this.margin,
     this.padding,
   });
+  final List<Widget> children;
+  final EdgeInsetsGeometry? margin;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +26,15 @@ class SettingsCard extends StatelessWidget {
 }
 
 class SettingsSection extends StatelessWidget {
+
+  const SettingsSection({
+    required this.children, super.key,
+    this.title,
+    this.spacing = 8,
+  });
   final String? title;
   final List<Widget> children;
   final double spacing;
-
-  const SettingsSection({
-    super.key,
-    this.title,
-    required this.children,
-    this.spacing = 8,
-  });
 
   @override
   Widget build(BuildContext context) {

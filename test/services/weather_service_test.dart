@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lurebox/core/services/weather_service.dart';
 import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/services/weather_service.dart';
 
 void main() {
   group('WeatherService - getWeatherDescription', () {
@@ -120,12 +120,12 @@ void main() {
     });
 
     test('isEmpty returns false when temperature is set', () {
-      const data = WeatherData(airTemperature: 25.0);
+      const data = WeatherData(airTemperature: 25);
       expect(data.isEmpty, isFalse);
     });
 
     test('isEmpty returns false when pressure is set', () {
-      const data = WeatherData(pressure: 1013.0);
+      const data = WeatherData(pressure: 1013);
       expect(data.isEmpty, isFalse);
     });
 
@@ -136,8 +136,8 @@ void main() {
 
     test('isEmpty returns false when all fields are set', () {
       const data = WeatherData(
-        airTemperature: 25.0,
-        pressure: 1013.0,
+        airTemperature: 25,
+        pressure: 1013,
         weatherCode: 0,
       );
       expect(data.isEmpty, isFalse);
@@ -203,7 +203,7 @@ void main() {
     });
 
     test('fields are immutable after creation', () {
-      const data = WeatherData(airTemperature: 25.0);
+      const data = WeatherData(airTemperature: 25);
       expect(data.airTemperature, equals(25.0));
     });
   });

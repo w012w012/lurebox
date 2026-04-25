@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lurebox/core/models/species_history.dart';
 import 'package:lurebox/core/repositories/species_history_repository.dart';
 import 'package:lurebox/core/repositories/species_history_repository_impl.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
   late Database db;
@@ -29,9 +29,9 @@ CREATE TABLE species_history (
 )
 ''');
           await db.execute(
-              'CREATE INDEX idx_species_name ON species_history(name)');
+              'CREATE INDEX idx_species_name ON species_history(name)',);
           await db.execute(
-              'CREATE INDEX idx_species_use_count ON species_history(use_count)');
+              'CREATE INDEX idx_species_use_count ON species_history(use_count)',);
         },
       ),
     );
@@ -238,7 +238,7 @@ CREATE TABLE species_history (
       expect(species.name, equals('Bass'));
       expect(species.useCount, equals(5));
       expect(species.isDeleted, isFalse);
-      expect(species.createdAt, equals(DateTime(2024, 1, 1, 12, 0, 0)));
+      expect(species.createdAt, equals(DateTime(2024, 1, 1, 12)));
     });
 
     test('fromMap handles null use_count defaulting to 1', () {
@@ -275,7 +275,7 @@ CREATE TABLE species_history (
         name: 'Bass',
         useCount: 5,
         isDeleted: true,
-        createdAt: DateTime(2024, 1, 1, 12, 0, 0),
+        createdAt: DateTime(2024, 1, 1, 12),
       );
 
       final map = species.toMap();
@@ -292,8 +292,7 @@ CREATE TABLE species_history (
         id: 1,
         name: 'Bass',
         useCount: 5,
-        isDeleted: false,
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
       );
 
       final copy = original.copyWith(useCount: 10);
@@ -309,8 +308,7 @@ CREATE TABLE species_history (
         id: 1,
         name: 'Bass',
         useCount: 5,
-        isDeleted: false,
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
       );
 
       final species2 = SpeciesHistory(
@@ -329,8 +327,7 @@ CREATE TABLE species_history (
         id: 1,
         name: 'Bass',
         useCount: 5,
-        isDeleted: false,
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
       );
 
       final species2 = SpeciesHistory(

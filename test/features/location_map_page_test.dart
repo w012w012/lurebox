@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/constants/strings.dart';
-import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/animation_constants.dart';
 import 'package:lurebox/core/providers/location_view_model.dart';
-import 'package:lurebox/features/location/widgets/location_marker.dart';
 import 'package:lurebox/features/location/widgets/location_group_card.dart';
+import 'package:lurebox/features/location/widgets/location_marker.dart';
 
 Widget _wrapInApp(Widget child, {Brightness brightness = Brightness.light}) {
   return MaterialApp(
@@ -24,7 +22,7 @@ void main() {
           isSelected: false,
           onTap: _noop,
         ),
-      ));
+      ),);
 
       expect(find.text('Test Lake'), findsOneWidget);
       expect(find.text('5'), findsOneWidget);
@@ -38,7 +36,7 @@ void main() {
           isSelected: true,
           onTap: _noop,
         ),
-      ));
+      ),);
 
       expect(find.text('Selected Spot'), findsOneWidget);
       expect(find.text('3'), findsOneWidget);
@@ -53,7 +51,7 @@ void main() {
           isSelected: false,
           onTap: () => tapped = true,
         ),
-      ));
+      ),);
 
       await tester.tap(find.text('Tap Me'));
       expect(tapped, isTrue);
@@ -67,7 +65,7 @@ void main() {
           isSelected: false,
           onTap: _noop,
         ),
-      ));
+      ),);
 
       expect(find.byType(AnimatedScale), findsOneWidget);
     });
@@ -80,7 +78,7 @@ void main() {
           isSelected: false,
           onTap: _noop,
         ),
-      ));
+      ),);
 
       // The marker uses CustomPaint for the triangle pin shape.
       // Flutter may also use CustomPaint internally, so check at least 1.
@@ -95,7 +93,7 @@ void main() {
           isSelected: false,
           onTap: _noop,
         ),
-      ));
+      ),);
 
       expect(find.byIcon(Icons.location_on), findsOneWidget);
     });
@@ -114,7 +112,7 @@ void main() {
           group: testGroup,
           locationFishCounts: testCounts,
         ),
-      ));
+      ),);
 
       expect(find.textContaining('Lake Michigan'), findsOneWidget);
     });
@@ -125,7 +123,7 @@ void main() {
           group: testGroup,
           locationFishCounts: testCounts,
         ),
-      ));
+      ),);
 
       expect(find.text('包含 2 个相似钓点'), findsOneWidget);
     });
@@ -136,7 +134,7 @@ void main() {
           group: testGroup,
           locationFishCounts: testCounts,
         ),
-      ));
+      ),);
 
       expect(find.byIcon(Icons.merge_type), findsOneWidget);
     });
@@ -147,7 +145,7 @@ void main() {
           group: testGroup,
           locationFishCounts: testCounts,
         ),
-      ));
+      ),);
 
       expect(find.byIcon(Icons.expand_more), findsOneWidget);
     });
@@ -158,7 +156,7 @@ void main() {
           group: testGroup,
           locationFishCounts: testCounts,
         ),
-      ));
+      ),);
 
       expect(find.byType(AnimatedContainer), findsOneWidget);
     });
@@ -169,7 +167,7 @@ void main() {
           group: testGroup,
           locationFishCounts: testCounts,
         ),
-      ));
+      ),);
 
       expect(find.byType(AnimatedCrossFade), findsOneWidget);
     });
@@ -180,7 +178,7 @@ void main() {
           group: testGroup,
           locationFishCounts: testCounts,
         ),
-      ));
+      ),);
 
       // AnimatedCrossFade keeps both children in tree (collapsed = zero opacity).
       // Verify the cross-fade starts in collapsed state.
@@ -206,7 +204,7 @@ void main() {
           group: testGroup,
           locationFishCounts: testCounts,
         ),
-      ));
+      ),);
 
       await tester.tap(find.byType(InkWell));
       await tester.pumpAndSettle();
@@ -222,7 +220,7 @@ void main() {
           locationFishCounts: testCounts,
           onAutoMerge: () {},
         ),
-      ));
+      ),);
 
       expect(find.text('合并'), findsOneWidget);
     });
@@ -233,7 +231,7 @@ void main() {
           group: testGroup,
           locationFishCounts: testCounts,
         ),
-      ));
+      ),);
 
       expect(find.text('合并'), findsNothing);
     });
@@ -246,7 +244,7 @@ void main() {
           strings: AppStrings.english,
           onAutoMerge: () {},
         ),
-      ));
+      ),);
 
       expect(find.textContaining('Similar locations'), findsOneWidget);
       expect(find.text('Merge'), findsOneWidget);
@@ -259,7 +257,7 @@ void main() {
           locationFishCounts: testCounts,
         ),
         brightness: Brightness.dark,
-      ));
+      ),);
 
       expect(find.byType(AnimatedContainer), findsOneWidget);
       expect(find.textContaining('Lake Michigan'), findsOneWidget);

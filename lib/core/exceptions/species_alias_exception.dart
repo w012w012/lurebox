@@ -1,14 +1,14 @@
 /// 鱼种别名相关异常
 class SpeciesAliasException implements Exception {
-  final String message;
-  final String? operation;
-  final dynamic cause;
 
   const SpeciesAliasException({
     required this.message,
     this.operation,
     this.cause,
   });
+  final String message;
+  final String? operation;
+  final dynamic cause;
 
   @override
   String toString() {

@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'fish_catch.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 
 /// 渔获过滤与排序数据模型
 ///
@@ -30,14 +30,6 @@ import 'fish_catch.dart';
 /// - 支持空值清除（通过函数回调）
 
 class FishFilter {
-  final String timeFilter;
-  final FishFateType? fateFilter;
-  final String? speciesFilter;
-  final String sortBy;
-  final bool sortAsc;
-  final DateTime? customStartDate;
-  final DateTime? customEndDate;
-  final String? searchQuery;
 
   const FishFilter({
     this.timeFilter = 'all',
@@ -49,6 +41,14 @@ class FishFilter {
     this.customEndDate,
     this.searchQuery,
   });
+  final String timeFilter;
+  final FishFateType? fateFilter;
+  final String? speciesFilter;
+  final String sortBy;
+  final bool sortAsc;
+  final DateTime? customStartDate;
+  final DateTime? customEndDate;
+  final String? searchQuery;
 
   FishFilter copyWith({
     String? timeFilter,

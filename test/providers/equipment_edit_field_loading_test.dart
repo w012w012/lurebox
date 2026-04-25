@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/providers/equipment_edit_state.dart';
 import 'package:lurebox/core/providers/equipment_edit_view_model.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockEquipmentService extends Mock implements EquipmentService {}
 
@@ -399,20 +399,20 @@ void main() {
     test('returns error message for non-numeric price', () {
       vm.updatePrice('abc');
       expect(vm.validatePrice(AppStrings.english),
-          equals(AppStrings.english.invalidPrice));
+          equals(AppStrings.english.invalidPrice),);
     });
 
     test('returns error message for negative price', () {
       vm.updatePrice('-50');
       expect(vm.validatePrice(AppStrings.english),
-          equals(AppStrings.english.invalidPrice));
+          equals(AppStrings.english.invalidPrice),);
     });
 
     test('returns error message for price exceeding maximum', () {
       const maxPrice = 1000000.0;
       vm.updatePrice('${maxPrice + 1}');
       expect(vm.validatePrice(AppStrings.english),
-          equals(AppStrings.english.priceTooHigh));
+          equals(AppStrings.english.priceTooHigh),);
     });
 
     test('returns null for price at maximum boundary', () {

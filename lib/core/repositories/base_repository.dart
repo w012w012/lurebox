@@ -1,8 +1,8 @@
+import 'package:lurebox/core/constants/pagination_constants.dart';
+import 'package:lurebox/core/database/database_provider.dart';
+import 'package:lurebox/core/models/paginated_result.dart';
+import 'package:lurebox/core/services/error_service.dart';
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
-import '../constants/pagination_constants.dart';
-import '../database/database_provider.dart';
-import '../models/paginated_result.dart';
-import '../services/error_service.dart';
 
 /// Base class for all SQLite repository implementations.
 ///
@@ -11,21 +11,21 @@ import '../services/error_service.dart';
 /// - [paginate] helper for paginated queries
 /// - [throwDbError] for consistent error wrapping
 abstract class BaseSqliteRepository {
+
+  BaseSqliteRepository();
+
+  BaseSqliteRepository.withDatabase(Future<Database> testDb)
+      : _testDb = testDb;
   /// Optional test database future (injected via [withDatabase]).
   Future<Database>? _testDb;
 
   /// Subclass must return the SQL table name.
   String get tableName;
 
-  BaseSqliteRepository();
-
-  BaseSqliteRepository.withDatabase(Future<Database> testDb)
-      : _testDb = testDb;
-
   /// Returns the database instance — injected test DB or the real one.
   Future<Database> get database async {
     final testDb = _testDb;
-    if (testDb != null) return await testDb;
+    if (testDb != null) return testDb;
     return DatabaseProvider.instance.database;
   }
 

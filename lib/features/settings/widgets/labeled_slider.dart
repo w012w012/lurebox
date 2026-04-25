@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
 
 class LabeledSlider extends StatelessWidget {
+
+  const LabeledSlider({
+    required this.label, required this.value, required this.min, required this.max, required this.onChanged, super.key,
+    this.valueFormatter,
+  });
   final String label;
   final double value;
   final double min;
   final double max;
   final ValueChanged<double> onChanged;
   final String Function(double)? valueFormatter;
-
-  const LabeledSlider({
-    super.key,
-    required this.label,
-    required this.value,
-    required this.min,
-    required this.max,
-    required this.onChanged,
-    this.valueFormatter,
-  });
 
   @override
   Widget build(BuildContext context) {

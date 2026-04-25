@@ -1,34 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
 
 /// 高级极简输入框组件
 /// 提供统一的输入框样式，符合Premium Minimalist设计系统
 class PremiumTextField extends StatelessWidget {
-  final String? label;
-  final String? hint;
-  final String? errorText;
-  final TextEditingController? controller;
-  final ValueChanged<String>? onChanged;
-  final ValueChanged<String>? onSubmitted;
-  final VoidCallback? onEditingComplete;
-  final TextInputType? keyboardType;
-  final TextInputAction? textInputAction;
-  final bool obscureText;
-  final bool readOnly;
-  final bool enabled;
-  final bool autofocus;
-  final int? maxLines;
-  final int? maxLength;
-  final List<TextInputFormatter>? inputFormatters;
-  final Widget? prefixIcon;
-  final Widget? suffixIcon;
-  final Widget? prefix;
-  final Widget? suffix;
-  final FocusNode? focusNode;
-  final EdgeInsets? contentPadding;
 
   const PremiumTextField({
     super.key,
@@ -55,6 +33,28 @@ class PremiumTextField extends StatelessWidget {
     this.focusNode,
     this.contentPadding,
   });
+  final String? label;
+  final String? hint;
+  final String? errorText;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onEditingComplete;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final bool obscureText;
+  final bool readOnly;
+  final bool enabled;
+  final bool autofocus;
+  final int? maxLines;
+  final int? maxLength;
+  final List<TextInputFormatter>? inputFormatters;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
+  final Widget? prefix;
+  final Widget? suffix;
+  final FocusNode? focusNode;
+  final EdgeInsets? contentPadding;
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +111,7 @@ class PremiumTextField extends StatelessWidget {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
-          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 1),
+          borderSide: const BorderSide(color: TeslaColors.electricBlue),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
@@ -147,15 +147,6 @@ class PremiumTextField extends StatelessWidget {
 
 /// 高级极简搜索框
 class PremiumSearchField extends StatelessWidget {
-  final String? hint;
-  final TextEditingController? controller;
-  final ValueChanged<String>? onChanged;
-  final ValueChanged<String>? onSubmitted;
-  final VoidCallback? onClear;
-  final bool autofocus;
-  final FocusNode? focusNode;
-  final Widget? prefixIcon;
-  final AppStrings? strings;
 
   const PremiumSearchField({
     super.key,
@@ -169,6 +160,15 @@ class PremiumSearchField extends StatelessWidget {
     this.prefixIcon,
     this.strings,
   });
+  final String? hint;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
+  final VoidCallback? onClear;
+  final bool autofocus;
+  final FocusNode? focusNode;
+  final Widget? prefixIcon;
+  final AppStrings? strings;
 
   @override
   Widget build(BuildContext context) {
@@ -241,19 +241,6 @@ class PremiumSearchField extends StatelessWidget {
 
 /// 高级极简数字输入框
 class PremiumNumberField extends StatelessWidget {
-  final String? label;
-  final String? hint;
-  final String? errorText;
-  final TextEditingController? controller;
-  final ValueChanged<String>? onChanged;
-  final ValueChanged<String>? onSubmitted;
-  final String? suffixText;
-  final String? prefixText;
-  final double? min;
-  final double? max;
-  final int? decimals;
-  final bool enabled;
-  final FocusNode? focusNode;
 
   const PremiumNumberField({
     super.key,
@@ -271,6 +258,19 @@ class PremiumNumberField extends StatelessWidget {
     this.enabled = true,
     this.focusNode,
   });
+  final String? label;
+  final String? hint;
+  final String? errorText;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
+  final String? suffixText;
+  final String? prefixText;
+  final double? min;
+  final double? max;
+  final int? decimals;
+  final bool enabled;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -326,7 +326,7 @@ class PremiumNumberField extends StatelessWidget {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
-          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 1),
+          borderSide: const BorderSide(color: TeslaColors.electricBlue),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
@@ -367,10 +367,10 @@ class PremiumNumberField extends StatelessWidget {
 
 /// 范围输入格式化器
 class _RangeTextInputFormatter extends TextInputFormatter {
-  final double? min;
-  final double? max;
 
   _RangeTextInputFormatter({this.min, this.max});
+  final double? min;
+  final double? max;
 
   @override
   TextEditingValue formatEditUpdate(
@@ -381,7 +381,7 @@ class _RangeTextInputFormatter extends TextInputFormatter {
       return newValue;
     }
 
-    final double? value = double.tryParse(newValue.text);
+    final value = double.tryParse(newValue.text);
     if (value == null) {
       return oldValue;
     }
@@ -406,17 +406,6 @@ class _RangeTextInputFormatter extends TextInputFormatter {
 
 /// 高级极简多行文本输入框
 class PremiumTextArea extends StatelessWidget {
-  final String? label;
-  final String? hint;
-  final String? errorText;
-  final TextEditingController? controller;
-  final ValueChanged<String>? onChanged;
-  final ValueChanged<String>? onSubmitted;
-  final int minLines;
-  final int maxLines;
-  final int? maxLength;
-  final bool enabled;
-  final FocusNode? focusNode;
 
   const PremiumTextArea({
     super.key,
@@ -432,6 +421,17 @@ class PremiumTextArea extends StatelessWidget {
     this.enabled = true,
     this.focusNode,
   });
+  final String? label;
+  final String? hint;
+  final String? errorText;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
+  final int minLines;
+  final int maxLines;
+  final int? maxLength;
+  final bool enabled;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -479,7 +479,7 @@ class PremiumTextArea extends StatelessWidget {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
-          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 1),
+          borderSide: const BorderSide(color: TeslaColors.electricBlue),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
@@ -508,6 +508,16 @@ class PremiumTextArea extends StatelessWidget {
 
 /// 高级极简下拉选择框
 class PremiumDropdown<T> extends StatelessWidget {
+
+  const PremiumDropdown({
+    required this.items, super.key,
+    this.label,
+    this.value,
+    this.onChanged,
+    this.errorText,
+    this.enabled = true,
+    this.prefixIcon,
+  });
   final String? label;
   final T? value;
   final List<PremiumDropdownItem<T>> items;
@@ -515,17 +525,6 @@ class PremiumDropdown<T> extends StatelessWidget {
   final String? errorText;
   final bool enabled;
   final Widget? prefixIcon;
-
-  const PremiumDropdown({
-    super.key,
-    this.label,
-    this.value,
-    required this.items,
-    this.onChanged,
-    this.errorText,
-    this.enabled = true,
-    this.prefixIcon,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -583,7 +582,7 @@ class PremiumDropdown<T> extends StatelessWidget {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
-          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 1),
+          borderSide: const BorderSide(color: TeslaColors.electricBlue),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
@@ -609,8 +608,8 @@ class PremiumDropdown<T> extends StatelessWidget {
 
 /// 下拉选择项
 class PremiumDropdownItem<T> {
-  final T value;
-  final String label;
 
   const PremiumDropdownItem({required this.value, required this.label});
+  final T value;
+  final String label;
 }

@@ -1,23 +1,23 @@
 import 'dart:io';
 import 'dart:ui' as ui;
+
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:lurebox/core/constants/price_ranges.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/providers/equipment_view_model.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/utils/file_utils.dart';
+import 'package:lurebox/widgets/common/distribution_chart.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:fl_chart/fl_chart.dart';
-
-import '../../core/design/theme/app_colors.dart';
-import '../../core/constants/strings.dart';
-import '../../core/constants/price_ranges.dart';
-import '../../core/models/equipment.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/equipment_view_model.dart';
-import '../../core/services/app_logger.dart';
-import '../../core/utils/file_utils.dart';
-import '../../widgets/common/distribution_chart.dart';
-import '../../widgets/common/premium_button.dart';
-import '../../widgets/common/premium_card.dart';
+import 'package:share_plus/share_plus.dart';
 
 class EquipmentOverviewPage extends ConsumerStatefulWidget {
   const EquipmentOverviewPage({super.key});
@@ -41,8 +41,8 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
           as RenderRepaintBoundary?;
       if (boundary == null) return;
 
-      await Future.delayed(const Duration(milliseconds: 100));
-      final image = await boundary.toImage(pixelRatio: 2.0);
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      final image = await boundary.toImage(pixelRatio: 2);
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       if (byteData == null) return;
       final pngBytes = byteData.buffer.asUint8List();
@@ -56,7 +56,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
       final strings = ref.read(currentStringsProvider);
       await Share.shareXFiles([
         XFile(file.path),
-      ], text: '${strings.myEquipment} - ${strings.fromLureBox}');
+      ], text: '${strings.myEquipment} - ${strings.fromLureBox}',);
     } catch (e) {
       AppLogger.e('EquipmentOverview', 'Failed to share equipment overview', e);
       if (mounted) {
@@ -197,19 +197,16 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
                         String label;
                         String unit;
-                        switch (group.x.toInt()) {
+                        switch (group.x) {
                           case 0:
                             label = strings.rod;
                             unit = strings.rodUnit;
-                            break;
                           case 1:
                             label = strings.reel;
                             unit = strings.reelUnit;
-                            break;
                           case 2:
                             label = strings.lure;
                             unit = strings.lureUnit;
-                            break;
                           default:
                             return null;
                         }
@@ -224,7 +221,6 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                     ),
                   ),
                   titlesData: FlTitlesData(
-                    show: true,
                     topTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -289,10 +285,10 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                       ),
                     ),
                     leftTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                     rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                   ),
                   gridData: const FlGridData(show: false),
@@ -326,7 +322,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
             Row(
               children: [
                 const Icon(Icons.emoji_events,
-                    color: TeslaColors.electricBlue, size: 20),
+                    color: TeslaColors.electricBlue, size: 20,),
                 const SizedBox(width: 8),
                 Text(
                   strings.equipmentCatchRanking,
@@ -449,10 +445,10 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
     for (final lure in state.lureList) {
       if (lure.id == equipmentId) {
         final parts = <String>[];
-        if (lure.brand?.isNotEmpty == true) parts.add(lure.brand!);
-        if (lure.model?.isNotEmpty == true) parts.add(lure.model!);
-        if (lure.lureSize?.isNotEmpty == true) parts.add(lure.lureSize!);
-        if (lure.lureColor?.isNotEmpty == true) parts.add(lure.lureColor!);
+        if (lure.brand?.isNotEmpty ?? false) parts.add(lure.brand!);
+        if (lure.model?.isNotEmpty ?? false) parts.add(lure.model!);
+        if (lure.lureSize?.isNotEmpty ?? false) parts.add(lure.lureSize!);
+        if (lure.lureColor?.isNotEmpty ?? false) parts.add(lure.lureColor!);
         return parts.isNotEmpty ? parts.join(' ') : strings.unnamed;
       }
     }
@@ -468,7 +464,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         _buildBarChart(
           _getDistribution(
             rods,
-            (e) => e.brand?.isNotEmpty == true ? e.brand! : strings.unnamed,
+            (e) => e.brand?.isNotEmpty ?? false ? e.brand! : strings.unnamed,
           ),
           '${strings.brand}${strings.distribution}',
           TeslaColors.electricBlue,
@@ -477,7 +473,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         _buildBarChart(
           _getDistribution(
             rods,
-            (e) => e.length?.isNotEmpty == true ? e.length! : strings.notFilled,
+            (e) => e.length?.isNotEmpty ?? false ? e.length! : strings.notFilled,
           ),
           '${strings.length}${strings.distribution}',
           TeslaColors.electricBlue,
@@ -486,7 +482,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         _buildBarChart(
           _getDistribution(
             rods,
-            (e) => e.material?.isNotEmpty == true
+            (e) => e.material?.isNotEmpty ?? false
                 ? e.material!
                 : strings.notFilled,
           ),
@@ -497,7 +493,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         _buildPieChart(
           _getDistribution(
             rods,
-            (e) => e.hardness?.isNotEmpty == true
+            (e) => e.hardness?.isNotEmpty ?? false
                 ? e.hardness!
                 : strings.notFilled,
           ),
@@ -508,7 +504,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         _buildPieChart(
           _getDistribution(
             rods,
-            (e) => e.rodAction?.isNotEmpty == true
+            (e) => e.rodAction?.isNotEmpty ?? false
                 ? e.rodAction!
                 : strings.notFilled,
           ),
@@ -536,7 +532,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         _buildBarChart(
           _getDistribution(
             reels,
-            (e) => e.brand?.isNotEmpty == true ? e.brand! : strings.unnamed,
+            (e) => e.brand?.isNotEmpty ?? false ? e.brand! : strings.unnamed,
           ),
           '${strings.brand}${strings.distribution}',
           TeslaColors.electricBlue,
@@ -557,7 +553,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         _buildBarChart(
           _getDistribution(
             reels,
-            (e) => e.reelRatio?.isNotEmpty == true
+            (e) => e.reelRatio?.isNotEmpty ?? false
                 ? e.reelRatio!
                 : strings.notFilled,
           ),
@@ -568,7 +564,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         _buildPieChart(
           _getDistribution(
             reels,
-            (e) => e.reelBrakeType?.isNotEmpty == true
+            (e) => e.reelBrakeType?.isNotEmpty ?? false
                 ? e.reelBrakeType!
                 : strings.notFilled,
           ),
@@ -594,7 +590,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         _buildBarChart(
           _getDistribution(
             lures,
-            (e) => e.brand?.isNotEmpty == true ? e.brand! : strings.unnamed,
+            (e) => e.brand?.isNotEmpty ?? false ? e.brand! : strings.unnamed,
           ),
           '${strings.brand}${strings.distribution}',
           TeslaColors.electricBlue,
@@ -603,7 +599,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         _buildPieChart(
           _getDistribution(
             lures,
-            (e) => e.lureType?.isNotEmpty == true
+            (e) => e.lureType?.isNotEmpty ?? false
                 ? e.lureType!
                 : strings.notFilled,
           ),
@@ -643,7 +639,6 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
       data: data,
       title: title,
       color: color,
-      chartType: ChartType.bar,
     );
   }
 
@@ -715,7 +710,6 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                     );
                   }).toList(),
                   titlesData: FlTitlesData(
-                    show: true,
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -735,13 +729,13 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                       ),
                     ),
                     leftTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                     topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                     rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
+                      
                     ),
                   ),
                   borderData: FlBorderData(show: false),

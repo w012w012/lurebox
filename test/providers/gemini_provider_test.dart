@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
-import 'package:lurebox/core/services/fish_recognition_service.dart';
 import 'package:lurebox/core/services/adapters/gemini_provider.dart';
+import 'package:lurebox/core/services/fish_recognition_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 /// Creates an HTTP response with proper UTF-8 encoding for Chinese characters
 http.Response _createUtf8Response(String body, int statusCode) {
@@ -38,7 +39,6 @@ void main() {
       provider: AiRecognitionProvider.gemini,
       apiKey: 'test-api-key',
       modelName: 'gemini-2.0-flash',
-      enabled: true,
     );
   });
 
@@ -55,7 +55,7 @@ void main() {
               headers: any(named: 'headers'),
               body: any(named: 'body'),
               encoding: any(named: 'encoding'),
-            )).thenAnswer((_) async => mockResponse);
+            ),).thenAnswer((_) async => mockResponse);
 
         // Act
         final result = await provider.identifySpecies(imageFile, config);
@@ -80,7 +80,7 @@ void main() {
               headers: any(named: 'headers'),
               body: any(named: 'body'),
               encoding: any(named: 'encoding'),
-            )).thenAnswer((_) async => mockResponse);
+            ),).thenAnswer((_) async => mockResponse);
 
         // Act
         await provider.identifySpecies(imageFile, config);
@@ -91,7 +91,7 @@ void main() {
               headers: any(named: 'headers'),
               body: any(named: 'body'),
               encoding: any(named: 'encoding'),
-            )).called(1);
+            ),).called(1);
       });
 
       test('includes systemInstruction with fishing expert prompt', () async {
@@ -105,7 +105,7 @@ void main() {
               headers: any(named: 'headers'),
               body: any(named: 'body'),
               encoding: any(named: 'encoding'),
-            )).thenAnswer((_) async => mockResponse);
+            ),).thenAnswer((_) async => mockResponse);
 
         // Act
         await provider.identifySpecies(imageFile, config);
@@ -116,7 +116,7 @@ void main() {
               headers: any(named: 'headers'),
               body: any(named: 'body'),
               encoding: any(named: 'encoding'),
-            )).called(1);
+            ),).called(1);
       });
 
       test('correctly parses response to extract species', () async {
@@ -130,7 +130,7 @@ void main() {
               headers: any(named: 'headers'),
               body: any(named: 'body'),
               encoding: any(named: 'encoding'),
-            )).thenAnswer((_) async => mockResponse);
+            ),).thenAnswer((_) async => mockResponse);
 
         // Act
         final result = await provider.identifySpecies(imageFile, config);
@@ -143,14 +143,14 @@ void main() {
         // Arrange
         final imageFile = File('test/fixtures/test_fish.jpg');
         final errorResponse = _createUtf8Response(
-            '{"error": {"code": 429, "message": "Rate limit exceeded"}}', 429);
+            '{"error": {"code": 429, "message": "Rate limit exceeded"}}', 429,);
 
         when(() => mockHttpClient.post(
               any(),
               headers: any(named: 'headers'),
               body: any(named: 'body'),
               encoding: any(named: 'encoding'),
-            )).thenAnswer((_) async => errorResponse);
+            ),).thenAnswer((_) async => errorResponse);
 
         // Act & Assert
         expect(
@@ -172,7 +172,7 @@ void main() {
               headers: any(named: 'headers'),
               body: any(named: 'body'),
               encoding: any(named: 'encoding'),
-            )).thenAnswer((_) async => mockResponse);
+            ),).thenAnswer((_) async => mockResponse);
 
         // Act
         final result = await provider.identifySpecies(imageFile, config);
@@ -193,7 +193,7 @@ void main() {
               headers: any(named: 'headers'),
               body: any(named: 'body'),
               encoding: any(named: 'encoding'),
-            )).thenAnswer((_) async => mockResponse);
+            ),).thenAnswer((_) async => mockResponse);
 
         // Act
         await provider.identifySpecies(imageFile, config);
@@ -201,11 +201,11 @@ void main() {
         // Assert - verify URL contains correct format
         verify(() => mockHttpClient.post(
               Uri.parse(
-                  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=test-api-key'),
+                  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=test-api-key',),
               headers: any(named: 'headers'),
               body: any(named: 'body'),
               encoding: any(named: 'encoding'),
-            )).called(1);
+            ),).called(1);
       });
 
       test('includes generationConfig in request', () async {
@@ -219,7 +219,7 @@ void main() {
               headers: any(named: 'headers'),
               body: any(named: 'body'),
               encoding: any(named: 'encoding'),
-            )).thenAnswer((_) async => mockResponse);
+            ),).thenAnswer((_) async => mockResponse);
 
         // Act
         await provider.identifySpecies(imageFile, config);
@@ -230,7 +230,7 @@ void main() {
               headers: any(named: 'headers'),
               body: any(named: 'body'),
               encoding: any(named: 'encoding'),
-            )).called(1);
+            ),).called(1);
       });
     });
   });
@@ -259,12 +259,12 @@ Map<String, dynamic> _createSuccessfulGeminiResponse() {
                   }
                 ],
                 'notes': 'Identification based on body shape and color',
-              })
+              }),
             },
-          ]
-        }
+          ],
+        },
       }
-    ]
+    ],
   };
 }
 
@@ -288,11 +288,11 @@ Map<String, dynamic> _createSuccessfulGeminiResponseWithMarkdown() {
   "alternatives": [],
   "notes": ""
 }
-'''
+''',
             },
-          ]
-        }
+          ],
+        },
       }
-    ]
+    ],
   };
 }

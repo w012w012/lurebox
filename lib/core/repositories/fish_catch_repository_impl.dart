@@ -1,9 +1,8 @@
-﻿import 'package:sqflite/sqflite.dart' hide DatabaseException;
-import '../constants/pagination_constants.dart';
-import '../models/fish_catch.dart';
-import '../models/fish_filter.dart';
-import 'base_repository.dart';
-import 'fish_catch_repository.dart';
+import 'package:lurebox/core/constants/pagination_constants.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/models/fish_filter.dart';
+import 'package:lurebox/core/repositories/base_repository.dart';
+import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 
 /// SQLite 瀹炵幇 - 娓旇幏璁板綍浠撳偍灞?
 ///
@@ -12,20 +11,20 @@ import 'fish_catch_repository.dart';
 
 class SqliteFishCatchRepository extends BaseSqliteRepository
     implements FishCatchRepository {
-  @override
-  String get tableName => 'fish_catches';
 
   SqliteFishCatchRepository();
 
-  SqliteFishCatchRepository.withDatabase(Future<Database> testDb)
-      : super.withDatabase(testDb);
+  SqliteFishCatchRepository.withDatabase(super.testDb)
+      : super.withDatabase();
+  @override
+  String get tableName => 'fish_catches';
 
   /// SQL WHERE clause result
   ///
   /// [whereClause] is the SQL WHERE string (empty string if no filter)
   /// [whereArgs] are the parameterized arguments
   (String whereClause, List<dynamic> whereArgs) _buildWhereClause(
-      FishFilter filter) {
+      FishFilter filter,) {
     final clauses = <String>[];
     final args = <dynamic>[];
 
@@ -59,7 +58,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
 
   /// Add date filter clauses based on timeFilter
   void _addDateFilter(
-      FishFilter filter, List<String> clauses, List<dynamic> args) {
+      FishFilter filter, List<String> clauses, List<dynamic> args,) {
     final timeFilter = filter.timeFilter;
     if (timeFilter == 'all') return;
 
@@ -101,10 +100,10 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         // Explicit rollover to avoid relying on DateTime normalization
         final nextMonth = now.month == 12 ? 1 : now.month + 1;
         final nextYear = now.month == 12 ? now.year + 1 : now.year;
-        return (DateTime(now.year, now.month, 1), DateTime(nextYear, nextMonth, 1));
+        return (DateTime(now.year, now.month), DateTime(nextYear, nextMonth));
 
       case 'year':
-        return (DateTime(now.year, 1, 1), DateTime(now.year + 1, 1, 1));
+        return (DateTime(now.year), DateTime(now.year + 1));
 
       case 'custom':
         if (customStart == null || customEnd == null) return (null, null);
@@ -139,7 +138,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
       final db = await database;
       final results = await db.query(tableName, orderBy: 'catch_time DESC')
           as List<Map<String, dynamic>>;
-      return results.map((map) => FishCatch.fromMap(map)).toList();
+      return results.map(FishCatch.fromMap).toList();
     } catch (e) {
       throwDbError('get all fish catches', e);
     }
@@ -172,7 +171,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         'SELECT * FROM $tableName WHERE id IN ($placeholders)',
         ids,
       ) as List<Map<String, dynamic>>;
-      return results.map((map) => FishCatch.fromMap(map)).toList();
+      return results.map(FishCatch.fromMap).toList();
     } catch (e) {
       throwDbError('get fish catches by ids', e);
     }
@@ -241,7 +240,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         whereArgs: [start.toIso8601String(), end.toIso8601String()],
         orderBy: 'catch_time DESC',
       ) as List<Map<String, dynamic>>;
-      return List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
+      return List<FishCatch>.from(results.map(FishCatch.fromMap));
     } catch (e) {
       throwDbError('get fish catches by date range', e);
     }
@@ -257,7 +256,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         whereArgs: [fate.value],
         orderBy: 'catch_time DESC',
       ) as List<Map<String, dynamic>>;
-      return List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
+      return List<FishCatch>.from(results.map(FishCatch.fromMap));
     } catch (e) {
       throwDbError('get fish catches by fate', e);
     }
@@ -295,7 +294,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
       }
 
       final items =
-          List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
+          List<FishCatch>.from(results.map(FishCatch.fromMap));
       final hasMore = results.length == pageSize;
 
       return PaginatedResult(
@@ -373,7 +372,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         offset: offset,
       ) as List<Map<String, dynamic>>;
       final items =
-          List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
+          List<FishCatch>.from(results.map(FishCatch.fromMap));
       final hasMore = results.length == pageSize;
 
       return PaginatedResult(
@@ -396,8 +395,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
   @override
   Future<PaginatedResult<FishCatch>> getFilteredPageByFilter({
     required int page,
-    int pageSize = PaginationConstants.defaultPageSize,
-    required FishFilter filter,
+    required FishFilter filter, int pageSize = PaginationConstants.defaultPageSize,
   }) async {
     pageSize = pageSize.clamp(1, PaginationConstants.maxPageSize);
     try {
@@ -424,7 +422,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
           await db.rawQuery(dataSql, dataArgs) as List<Map<String, dynamic>>;
 
       final items =
-          List<FishCatch>.from(results.map((map) => FishCatch.fromMap(map)));
+          List<FishCatch>.from(results.map(FishCatch.fromMap));
 
       // Correct hasMore calculation based on total filtered count
       final hasMore = (page + 1) * pageSize < totalCount;
@@ -451,7 +449,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         whereArgs: [1],
         orderBy: 'catch_time DESC',
       ) as List<Map<String, dynamic>>;
-      return results.map((map) => FishCatch.fromMap(map)).toList();
+      return results.map(FishCatch.fromMap).toList();
     } catch (e) {
       throwDbError('get pending recognition catches', e);
     }
@@ -492,7 +490,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
 
   @override
   Future<void> batchUpdateSpecies(
-      List<int> ids, List<String> speciesList) async {
+      List<int> ids, List<String> speciesList,) async {
     // Edge case: Empty input - return early without SQL execution
     if (ids.isEmpty) {
       return;
@@ -515,7 +513,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
       buffer.write('UPDATE $tableName SET species = CASE id ');
 
       // Generate N WHEN ... THEN ... clauses (using ? placeholders)
-      for (int i = 0; i < count; i++) {
+      for (var i = 0; i < count; i++) {
         buffer.write('WHEN ? THEN ? ');
       }
 
@@ -524,7 +522,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
       buffer.write('WHERE id IN (');
 
       // Generate ? placeholders for WHERE IN
-      for (int i = 0; i < count; i++) {
+      for (var i = 0; i < count; i++) {
         if (i > 0) buffer.write(', ');
         buffer.write('?');
       }
@@ -533,13 +531,13 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
       // Build argument list: 3N + 1 parameters (id, species for each CASE, updated_at, id for WHERE)
       // SQL: UPDATE ... SET species = CASE id WHEN ? THEN ? ... END ... WHERE id IN (?, ?, ...)
       final args = <dynamic>[];
-      for (int i = 0; i < count; i++) {
+      for (var i = 0; i < count; i++) {
         args.add(ids[i]);
         args.add(speciesList[i]);
       }
       args.add(now);
       // Add ids for WHERE clause (the missing N parameters)
-      for (int i = 0; i < count; i++) {
+      for (var i = 0; i < count; i++) {
         args.add(ids[i]);
       }
 
@@ -557,7 +555,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
       final results = await db.rawQuery(
         'SELECT species, COUNT(*) as count FROM $tableName GROUP BY species ORDER BY count DESC',
       );
-      final Map<String, int> counts = {};
+      final counts = <String, int>{};
       for (final row in results) {
         final species = row['species'] as String?;
         final count = row['count'] as int?;
@@ -642,7 +640,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         final hookType = row['hook_type'] as String?;
         final hookSize = row['hook_size'] as String?;
         final hookWeight = row['hook_weight'] as String?;
-        final count = row['catch_count'] as int;
+        final count = row['catch_count']! as int;
 
         if (rigType != null && rigType.isNotEmpty) {
           rigTypeStats[rigType] = (rigTypeStats[rigType] ?? 0) + count;

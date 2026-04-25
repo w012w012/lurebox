@@ -1,16 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/providers/equipment_edit_state.dart';
 import 'package:lurebox/core/providers/equipment_edit_view_model.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockEquipmentService extends Mock implements EquipmentService {}
 
 void main() {
   late MockEquipmentService mockService;
-  final strings = AppStrings.chinese;
+  const strings = AppStrings.chinese;
 
   setUp(() {
     mockService = MockEquipmentService();
@@ -21,7 +21,7 @@ void main() {
       'model': '',
       'created_at': DateTime.now().toIso8601String(),
       'updated_at': DateTime.now().toIso8601String(),
-    }));
+    }),);
   });
 
   group('RodEditNotifier', () {

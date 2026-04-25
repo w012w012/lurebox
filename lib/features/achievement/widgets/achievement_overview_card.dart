@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// Progress status of the achievement
 enum AchievementProgressStatus {
@@ -15,22 +15,19 @@ enum AchievementProgressStatus {
 /// Achievement overview card showing unlock progress.
 /// Displays achievement count, progress bar, and monthly new additions.
 class AchievementOverviewCard extends StatelessWidget {
+
+  const AchievementOverviewCard({
+    required this.unlockedCount, required this.totalCount, required this.monthlyNewCount, super.key,
+    this.status = AchievementProgressStatus.inProgress,
+    this.strings,
+    this.onTap,
+  });
   final int unlockedCount;
   final int totalCount;
   final int monthlyNewCount;
   final AchievementProgressStatus status;
   final AppStrings? strings;
   final VoidCallback? onTap;
-
-  const AchievementOverviewCard({
-    super.key,
-    required this.unlockedCount,
-    required this.totalCount,
-    required this.monthlyNewCount,
-    this.status = AchievementProgressStatus.inProgress,
-    this.strings,
-    this.onTap,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +37,6 @@ class AchievementOverviewCard extends StatelessWidget {
     return PremiumCard(
       variant: PremiumCardVariant.elevated,
       padding: const EdgeInsets.all(20),
-      showBorder: false,
       backgroundColor: Theme.of(context).colorScheme.primary,
       onTap: onTap,
       child: Column(
@@ -105,17 +101,14 @@ class AchievementOverviewCard extends StatelessWidget {
           color: TeslaColors.pewter,
           size: 16,
         );
-        break;
       case AchievementProgressStatus.inProgress:
         trailingIcon = null;
-        break;
       case AchievementProgressStatus.completed:
         trailingIcon = const Icon(
           Icons.check_circle,
           color: TeslaColors.electricBlue,
           size: 16,
         );
-        break;
     }
 
     return Row(

@@ -42,9 +42,7 @@ void main() {
       test('uses defaultHashtags when customHashtags is empty with showHashtags=true',
           () {
         const config = ShareCardConfig(
-          showHashtags: true,
           showStats: false,
-          customHashtags: [],
         );
 
         final result = ShareCardService.generateShareText(config);
@@ -53,7 +51,6 @@ void main() {
 
       test('uses customHashtags when provided with showHashtags=true', () {
         const config = ShareCardConfig(
-          showHashtags: true,
           showStats: false,
           customHashtags: ['#custom', '#tags'],
         );
@@ -66,8 +63,6 @@ void main() {
           () {
         const config = ShareCardConfig(
           showHashtags: false,
-          showStats: true,
-          statsData: null,
         );
 
         final result = ShareCardService.generateShareText(config);
@@ -78,7 +73,6 @@ void main() {
           () {
         const config = ShareCardConfig(
           showHashtags: false,
-          showStats: true,
           statsData: {
             'totalCatches': 42,
             'speciesCount': 5,
@@ -93,7 +87,6 @@ void main() {
       test('includes only available stats when some keys are missing', () {
         const config = ShareCardConfig(
           showHashtags: false,
-          showStats: true,
           statsData: {
             'totalCatches': 10,
           },
@@ -106,8 +99,6 @@ void main() {
 
       test('combines hashtags and stats correctly', () {
         const config = ShareCardConfig(
-          showHashtags: true,
-          showStats: true,
           customHashtags: ['#fishing'],
           statsData: {
             'totalCatches': 25,
@@ -177,7 +168,7 @@ void main() {
     });
 
     test('original remains unchanged after copyWith', () {
-      const original = ShareCardConfig(showStats: true);
+      const original = ShareCardConfig();
       original.copyWith(showStats: false);
       expect(original.showStats, isTrue);
     });

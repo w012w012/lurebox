@@ -1,4 +1,4 @@
-import '../models/achievement.dart';
+import 'package:lurebox/core/models/achievement.dart';
 
 /// 成就配置
 class AchievementConfig {
@@ -384,13 +384,6 @@ class AchievementConfig {
 
 /// 成就定义
 class AchievementDefinition {
-  final String id;
-  final String title;
-  final String description;
-  final String icon;
-  final AchievementLevel level;
-  final String category;
-  final int target;
 
   const AchievementDefinition({
     required this.id,
@@ -401,4 +394,11 @@ class AchievementDefinition {
     required this.category,
     required this.target,
   });
+  final String id;
+  final String title;
+  final String description;
+  final String icon;
+  final AchievementLevel level;
+  final String category;
+  final int target;
 }

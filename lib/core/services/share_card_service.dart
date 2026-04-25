@@ -1,10 +1,11 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/services/share_template.dart';
 import 'package:share_plus/share_plus.dart';
-import 'app_logger.dart';
-import 'share_template.dart';
 
 /// 分享卡片服务 - Widget 捕获与社交分享
 ///
@@ -23,7 +24,7 @@ class ShareCardService {
       if (renderObj is! RenderRepaintBoundary) return null;
       final boundary = renderObj;
 
-      final image = await boundary.toImage(pixelRatio: 3.0);
+      final image = await boundary.toImage(pixelRatio: 3);
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
       return byteData?.buffer.asUint8List();
     } catch (e) {
@@ -39,7 +40,7 @@ class ShareCardService {
         mimeType: 'image/png',
         name: 'lurebox_share.png',
       ),
-    ], text: text);
+    ], text: text,);
   }
 
   static Future<void> shareText(String text) async {
@@ -78,7 +79,7 @@ class ShareCardService {
     if (renderObj is! RenderRepaintBoundary) return null;
     final boundary = renderObj;
 
-    final image = await boundary.toImage(pixelRatio: 2.0);
+    final image = await boundary.toImage(pixelRatio: 2);
     final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
     return byteData?.buffer.asUint8List();
   }

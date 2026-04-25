@@ -1,6 +1,7 @@
 import 'dart:io';
-import '../fish_recognition_service.dart';
-import '../../models/ai_recognition_settings.dart';
+
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/services/fish_recognition_service.dart';
 
 /// DeepSeek 鱼类识别提供者
 ///

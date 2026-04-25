@@ -1,12 +1,13 @@
 import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 import 'package:lurebox/core/repositories/species_history_repository.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockFishCatchRepository extends Mock implements FishCatchRepository {}
 
@@ -57,7 +58,6 @@ void main() {
     return FishCatch(
       id: id,
       imagePath: imagePath ?? '/test/fish_$id.jpg',
-      watermarkedImagePath: null,
       species: species,
       length: length,
       weight: weight,
@@ -77,7 +77,7 @@ void main() {
           'calls repository.create() and speciesHistoryRepo.incrementUseCount()',
           () async {
         // Arrange
-        final fish = createFishCatch(species: 'Bass');
+        final fish = createFishCatch();
         when(() => mockRepository.create(any())).thenAnswer((_) async => 1);
         when(() => mockSpeciesHistoryRepo.incrementUseCount(any()))
             .thenAnswer((_) async {});
@@ -108,7 +108,7 @@ void main() {
     group('delete', () {
       test('calls repository.delete() when fish exists', () async {
         // Arrange
-        final fish = createFishCatch(id: 5, species: 'Bass');
+        final fish = createFishCatch(id: 5);
         when(() => mockRepository.getById(5)).thenAnswer((_) async => fish);
         when(() => mockRepository.delete(5)).thenAnswer((_) async {});
 
@@ -122,7 +122,7 @@ void main() {
 
       test('does not throw when image cleanup fails during delete', () async {
         // Arrange
-        final fish = createFishCatch(id: 10, species: 'Bass');
+        final fish = createFishCatch(id: 10);
         when(() => mockRepository.getById(10)).thenAnswer((_) async => fish);
         when(() => mockRepository.delete(10)).thenAnswer((_) async {});
 
@@ -166,7 +166,6 @@ void main() {
 
         final fish = createFishCatch(
           id: 5,
-          species: 'Bass',
           imagePath: imageFile.path,
         );
         when(() => mockRepository.getById(5)).thenAnswer((_) async => fish);
@@ -194,7 +193,7 @@ void main() {
           imagePath: imageFile.path,
           watermarkedImagePath: watermarkedFile.path,
           species: 'Trout',
-          length: 30.0,
+          length: 30,
           fate: FishFateType.release,
           catchTime: now,
           createdAt: now,
@@ -214,7 +213,6 @@ void main() {
         // FishCatch allows empty imagePath; _deleteImageFiles skips empty strings
         final fish = createFishCatch(
           id: 7,
-          species: 'Bass',
           imagePath: '', // empty — no file to delete
         );
         when(() => mockRepository.getById(7)).thenAnswer((_) async => fish);
@@ -248,15 +246,15 @@ void main() {
         final imageFile = File('${tempDir.path}/fish_9.jpg');
         await imageFile.writeAsString('data');
 
-        final fish = createFishCatch(id: 9, species: 'Bass', imagePath: imageFile.path);
+        final fish = createFishCatch(id: 9, imagePath: imageFile.path);
 
-        bool repositoryDeleteCalled = false;
+        var repositoryDeleteCalled = false;
         when(() => mockRepository.getById(9)).thenAnswer((_) async => fish);
         when(() => mockRepository.delete(9)).thenAnswer((_) async {
           // When repository.delete is called, the file should already be gone
           repositoryDeleteCalled = true;
           expect(await imageFile.exists(), isFalse,
-              reason: 'image should be deleted BEFORE repository.delete()');
+              reason: 'image should be deleted BEFORE repository.delete()',);
         });
 
         await service.delete(9);
@@ -267,7 +265,7 @@ void main() {
     group('deleteMultiple', () {
       test('deletes multiple records', () async {
         // Arrange
-        final fish1 = createFishCatch(id: 1, species: 'Bass');
+        final fish1 = createFishCatch();
         final fish2 = createFishCatch(id: 2, species: 'Trout');
         final fish3 = createFishCatch(id: 3, species: 'Pike');
 
@@ -315,12 +313,12 @@ void main() {
         final now = DateTime.now();
         final fish1 = FishCatch(
           id: 1, imagePath: file1.path, species: 'Bass',
-          length: 30.0, fate: FishFateType.release,
+          length: 30, fate: FishFateType.release,
           catchTime: now, createdAt: now, updatedAt: now,
         );
         final fish2 = FishCatch(
           id: 2, imagePath: file2.path, species: 'Trout',
-          length: 25.0, fate: FishFateType.release,
+          length: 25, fate: FishFateType.release,
           catchTime: now, createdAt: now, updatedAt: now,
         );
 
@@ -340,9 +338,9 @@ void main() {
         // getByIds returns only fish that exist — fish 1 and 2, not 3
         when(() => mockRepository.getByIds([1, 2, 3]))
             .thenAnswer((_) async => [
-                  createFishCatch(id: 1, species: 'Bass'),
+                  createFishCatch(),
                   createFishCatch(id: 2, species: 'Trout'),
-                ]);
+                ],);
         when(() => mockRepository.deleteMultiple([1, 2, 3]))
             .thenAnswer((_) async {});
 
@@ -355,7 +353,7 @@ void main() {
         final file1 = File('${tempDir.path}/fish_4.jpg');
         await file1.writeAsString('img4');
 
-        final fish1 = createFishCatch(id: 4, species: 'Bass', imagePath: file1.path);
+        final fish1 = createFishCatch(id: 4, imagePath: file1.path);
 
         when(() => mockRepository.getByIds([4, 5]))
             .thenAnswer((_) async => [fish1]);
@@ -372,7 +370,7 @@ void main() {
     group('update', () {
       test('delegates to repository.update()', () async {
         // Arrange
-        final fish = createFishCatch(id: 5, species: 'Bass');
+        final fish = createFishCatch(id: 5);
         when(() => mockRepository.update(any())).thenAnswer((_) async {});
 
         // Act
@@ -388,7 +386,7 @@ void main() {
         // Arrange
         final paginatedResult = PaginatedResult<FishCatch>(
           items: [
-            createFishCatch(id: 1, species: 'Bass'),
+            createFishCatch(),
             createFishCatch(id: 2, species: 'Trout'),
           ],
           totalCount: 2,
@@ -405,12 +403,11 @@ void main() {
               fate: any(named: 'fate'),
               species: any(named: 'species'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => paginatedResult);
+            ),).thenAnswer((_) async => paginatedResult);
 
         // Act
         final result = await service.getFilteredPage(
           page: 1,
-          pageSize: 20,
           species: 'Bass',
         );
 
@@ -419,18 +416,13 @@ void main() {
         expect(result.totalCount, equals(2));
         verify(() => mockRepository.getFilteredPage(
               page: 1,
-              pageSize: 20,
-              startDate: null,
-              endDate: null,
-              fate: null,
               species: 'Bass',
-              orderBy: 'catch_time DESC',
-            )).called(1);
+            ),).called(1);
       });
 
       test('passes all filter parameters to repository', () async {
         // Arrange
-        final startDate = DateTime(2024, 1, 1);
+        final startDate = DateTime(2024);
         final endDate = DateTime(2024, 12, 31);
         const paginatedResult = PaginatedResult<FishCatch>(
           items: [],
@@ -448,7 +440,7 @@ void main() {
               fate: any(named: 'fate'),
               species: any(named: 'species'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => paginatedResult);
+            ),).thenAnswer((_) async => paginatedResult);
 
         // Act
         await service.getFilteredPage(
@@ -470,13 +462,13 @@ void main() {
               fate: FishFateType.keep,
               species: 'Trout',
               orderBy: 'length DESC',
-            )).called(1);
+            ),).called(1);
       });
     });
 
     group('getById', () {
       test('returns fish when exists', () async {
-        final fish = createFishCatch(id: 5, species: 'Bass');
+        final fish = createFishCatch(id: 5);
         when(() => mockRepository.getById(5)).thenAnswer((_) async => fish);
 
         final result = await service.getById(5);
@@ -498,7 +490,7 @@ void main() {
     group('getAll', () {
       test('returns all fish from repository', () async {
         final fishList = [
-          createFishCatch(id: 1, species: 'Bass'),
+          createFishCatch(),
           createFishCatch(id: 2, species: 'Trout'),
         ];
         when(() => mockRepository.getAll()).thenAnswer((_) async => fishList);
@@ -521,9 +513,9 @@ void main() {
 
     group('getByDateRange', () {
       test('delegates to repository', () async {
-        final start = DateTime(2024, 1, 1);
+        final start = DateTime(2024);
         final end = DateTime(2024, 12, 31);
-        final fishList = [createFishCatch(id: 1)];
+        final fishList = [createFishCatch()];
         when(() => mockRepository.getByDateRange(start, end))
             .thenAnswer((_) async => fishList);
 
@@ -537,8 +529,8 @@ void main() {
     group('getByFate', () {
       test('delegates to repository with release fate', () async {
         final fishList = [
-          createFishCatch(id: 1, fate: FishFateType.release),
-          createFishCatch(id: 2, fate: FishFateType.release),
+          createFishCatch(),
+          createFishCatch(id: 2),
         ];
         when(() => mockRepository.getByFate(FishFateType.release))
             .thenAnswer((_) async => fishList);
@@ -550,7 +542,7 @@ void main() {
       });
 
       test('delegates to repository with keep fate', () async {
-        final fishList = [createFishCatch(id: 1, fate: FishFateType.keep)];
+        final fishList = [createFishCatch(fate: FishFateType.keep)];
         when(() => mockRepository.getByFate(FishFateType.keep))
             .thenAnswer((_) async => fishList);
 
@@ -564,7 +556,7 @@ void main() {
     group('getPage', () {
       test('delegates to repository with default parameters', () async {
         final paginatedResult = PaginatedResult<FishCatch>(
-          items: [createFishCatch(id: 1)],
+          items: [createFishCatch()],
           totalCount: 1,
           page: 1,
           pageSize: 20,
@@ -574,16 +566,14 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => paginatedResult);
+            ),).thenAnswer((_) async => paginatedResult);
 
         final result = await service.getPage(page: 1);
 
         expect(result.items.length, equals(1));
         verify(() => mockRepository.getPage(
               page: 1,
-              pageSize: 20,
-              orderBy: 'catch_time DESC',
-            )).called(1);
+            ),).called(1);
       });
 
       test('passes custom parameters to repository', () async {
@@ -598,7 +588,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => paginatedResult);
+            ),).thenAnswer((_) async => paginatedResult);
 
         await service.getPage(
           page: 2,
@@ -610,7 +600,7 @@ void main() {
               page: 2,
               pageSize: 10,
               orderBy: 'length ASC',
-            )).called(1);
+            ),).called(1);
       });
     });
 
@@ -628,9 +618,9 @@ void main() {
     group('getTop3LongestCatches', () {
       test('delegates to stats repository', () async {
         final fishList = [
-          createFishCatch(id: 1, length: 50.0),
-          createFishCatch(id: 2, length: 45.0),
-          createFishCatch(id: 3, length: 40.0),
+          createFishCatch(length: 50),
+          createFishCatch(id: 2, length: 45),
+          createFishCatch(id: 3, length: 40),
         ];
         when(() => mockStatsRepo.getTop3LongestCatches())
             .thenAnswer((_) async => fishList);
@@ -657,31 +647,30 @@ void main() {
         when(() => mockStatsRepo.getSpeciesStats(
               startDate: any(named: 'startDate'),
               endDate: any(named: 'endDate'),
-            )).thenAnswer((_) async => stats);
+            ),).thenAnswer((_) async => stats);
 
         final result = await service.getSpeciesStats();
 
         expect(result, equals(stats));
         verify(() => mockStatsRepo.getSpeciesStats(
-              startDate: null,
-              endDate: null,
-            )).called(1);
+              
+            ),).called(1);
       });
 
       test('passes date range to stats repository', () async {
-        final startDate = DateTime(2024, 1, 1);
+        final startDate = DateTime(2024);
         final endDate = DateTime(2024, 6, 30);
         when(() => mockStatsRepo.getSpeciesStats(
               startDate: any(named: 'startDate'),
               endDate: any(named: 'endDate'),
-            )).thenAnswer((_) async => {});
+            ),).thenAnswer((_) async => {});
 
         await service.getSpeciesStats(startDate: startDate, endDate: endDate);
 
         verify(() => mockStatsRepo.getSpeciesStats(
               startDate: startDate,
               endDate: endDate,
-            )).called(1);
+            ),).called(1);
       });
     });
 
@@ -692,15 +681,15 @@ void main() {
                   1: const EquipmentCatchStats(
                     equipmentId: 1,
                     catchCount: 5,
-                    avgLength: 30.0,
-                    avgWeight: 2.0,
+                    avgLength: 30,
+                    avgWeight: 2,
                     releaseCount: 3,
                   ),
-                });
+                },);
         when(() => mockStatsRepo.getAllEquipmentSpeciesStats())
             .thenAnswer((_) async => {
                   1: {'Bass': 3, 'Trout': 2},
-                });
+                },);
 
         final result = await service.getAllEquipmentCatchStats();
 
@@ -726,7 +715,7 @@ void main() {
               any(),
               startDate: any(named: 'startDate'),
               endDate: any(named: 'endDate'),
-            )).thenAnswer((_) async => distribution);
+            ),).thenAnswer((_) async => distribution);
 
         final result = await service.getEquipmentDistribution('rod');
 
@@ -741,11 +730,11 @@ void main() {
                   1: const EquipmentCatchStats(
                     equipmentId: 1,
                     catchCount: 5,
-                    avgLength: 30.0,
-                    avgWeight: 2.0,
+                    avgLength: 30,
+                    avgWeight: 2,
                     releaseCount: 3,
                   ),
-                });
+                },);
 
         final result = await service.getEquipmentCatchStats(1);
 
@@ -783,7 +772,7 @@ void main() {
 
         await service.getSpeciesHistory(limit: 100);
 
-        verify(() => mockSpeciesHistoryRepo.getAll(limit: 100)).called(1);
+        verify(() => mockSpeciesHistoryRepo.getAll()).called(1);
       });
     });
 
@@ -829,7 +818,7 @@ void main() {
           speciesFilter: 'Bass',
         );
         final paginatedResult = PaginatedResult<FishCatch>(
-          items: [createFishCatch(id: 1, species: 'Bass')],
+          items: [createFishCatch()],
           totalCount: 1,
           page: 1,
           pageSize: 20,
@@ -839,7 +828,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               filter: any(named: 'filter'),
-            )).thenAnswer((_) async => paginatedResult);
+            ),).thenAnswer((_) async => paginatedResult);
 
         final result = await service.getFilteredPageByFilter(
           page: 1,
@@ -849,9 +838,8 @@ void main() {
         expect(result.items.length, equals(1));
         verify(() => mockRepository.getFilteredPageByFilter(
               page: 1,
-              pageSize: 20,
               filter: filter,
-            )).called(1);
+            ),).called(1);
       });
     });
   });

@@ -1,17 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../di/di.dart';
-import '../services/fish_catch_service.dart';
-import '../services/equipment_service.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:lurebox/core/services/fish_catch_service.dart';
 
 class FishDetailState {
-  final bool isLoading;
-  final String? errorMessage;
-  final Map<String, dynamic>? fish;
-  final Map<String, dynamic>? rodEquipment;
-  final Map<String, dynamic>? reelEquipment;
-  final Map<String, dynamic>? lureEquipment;
-  final bool isDeleting;
-  final bool isSharing;
 
   const FishDetailState({
     this.isLoading = true,
@@ -23,6 +15,14 @@ class FishDetailState {
     this.isDeleting = false,
     this.isSharing = false,
   });
+  final bool isLoading;
+  final String? errorMessage;
+  final Map<String, dynamic>? fish;
+  final Map<String, dynamic>? rodEquipment;
+  final Map<String, dynamic>? reelEquipment;
+  final Map<String, dynamic>? lureEquipment;
+  final bool isDeleting;
+  final bool isSharing;
 
   FishDetailState copyWith({
     bool? isLoading,
@@ -48,9 +48,6 @@ class FishDetailState {
 }
 
 class FishDetailViewModel extends StateNotifier<FishDetailState> {
-  final int fishId;
-  final FishCatchService _fishCatchService;
-  final EquipmentService _equipmentService;
 
   FishDetailViewModel(
     this.fishId,
@@ -59,6 +56,9 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
   ) : super(const FishDetailState()) {
     loadFish();
   }
+  final int fishId;
+  final FishCatchService _fishCatchService;
+  final EquipmentService _equipmentService;
 
   Future<void> loadFish() async {
     state = state.copyWith(isLoading: true, errorMessage: () => null);
@@ -120,7 +120,7 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
         lureEquipment: lureEquipment,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: () => e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: e.toString);
     }
   }
 
@@ -130,7 +130,7 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
       await _fishCatchService.delete(fishId);
       return true;
     } catch (e) {
-      state = state.copyWith(isDeleting: false, errorMessage: () => e.toString());
+      state = state.copyWith(isDeleting: false, errorMessage: e.toString);
       return false;
     }
   }

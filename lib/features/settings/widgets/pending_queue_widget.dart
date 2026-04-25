@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/models/fish_catch.dart';
-import '../../../widgets/common/premium_card.dart';
-import '../../../widgets/common/premium_button.dart';
-import '../../../widgets/common/image_cache_helper.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/widgets/common/image_cache_helper.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// AI 识别结果选项
 class AiRecognitionOption {
-  final String speciesName;
-  final double confidence;
-  final String providerName;
 
   const AiRecognitionOption({
     required this.speciesName,
     required this.confidence,
     required this.providerName,
   });
+  final String speciesName;
+  final double confidence;
+  final String providerName;
 }
 
 /// 单条识别状态
 class SingleRecognitionState {
-  final bool isRecognizing;
-  final List<AiRecognitionOption> options;
-  final String? error;
 
   const SingleRecognitionState({
     this.isRecognizing = false,
     this.options = const [],
     this.error,
   });
+  final bool isRecognizing;
+  final List<AiRecognitionOption> options;
+  final String? error;
 
   SingleRecognitionState copyWith({
     bool? isRecognizing,
@@ -49,6 +49,10 @@ class SingleRecognitionState {
 ///
 /// 显示待识别鱼获列表，支持单条AI识别、手动识别、批量识别功能
 class PendingQueueWidget extends StatelessWidget {
+
+  const PendingQueueWidget({
+    required this.pendingCatches, required this.recognitionStates, required this.isBatchRecognizing, required this.batchProgress, required this.batchTotal, required this.batchSuccess, required this.batchFailed, required this.onRecognize, required this.onManualIdentify, required this.onConfirmOption, required this.onBatchRecognize, required this.strings, super.key,
+  });
   final List<FishCatch> pendingCatches;
   final Map<int, SingleRecognitionState> recognitionStates;
   final bool isBatchRecognizing;
@@ -56,31 +60,15 @@ class PendingQueueWidget extends StatelessWidget {
   final int batchTotal;
   final int batchSuccess;
   final int batchFailed;
-  final Function(FishCatch) onRecognize;
-  final Function(FishCatch) onManualIdentify;
-  final Function(FishCatch, AiRecognitionOption) onConfirmOption;
+  final void Function(FishCatch) onRecognize;
+  final void Function(FishCatch) onManualIdentify;
+  final void Function(FishCatch, AiRecognitionOption) onConfirmOption;
   final VoidCallback onBatchRecognize;
   final AppStrings strings;
 
-  const PendingQueueWidget({
-    super.key,
-    required this.pendingCatches,
-    required this.recognitionStates,
-    required this.isBatchRecognizing,
-    required this.batchProgress,
-    required this.batchTotal,
-    required this.batchSuccess,
-    required this.batchFailed,
-    required this.onRecognize,
-    required this.onManualIdentify,
-    required this.onConfirmOption,
-    required this.onBatchRecognize,
-    required this.strings,
-  });
-
   @override
   Widget build(BuildContext context) {
-    final accentColor = TeslaColors.electricBlue;
+    const accentColor = TeslaColors.electricBlue;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,7 +155,7 @@ class PendingQueueWidget extends StatelessWidget {
     final recState =
         recognitionStates[fish.id] ?? const SingleRecognitionState();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = TeslaColors.electricBlue;
+    const accentColor = TeslaColors.electricBlue;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: TeslaTheme.spacingSm),
@@ -190,7 +178,7 @@ class PendingQueueWidget extends StatelessWidget {
                         width: 100,
                       ),
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
+                      errorBuilder: (_, __, ___) => ColoredBox(
                         color: Theme.of(context)
                             .colorScheme
                             .surfaceContainerHighest,
@@ -225,7 +213,6 @@ class PendingQueueWidget extends StatelessWidget {
                   text: strings.pendingAiRecognition,
                   onPressed:
                       recState.isRecognizing ? null : () => onRecognize(fish),
-                  variant: PremiumButtonVariant.primary,
                   padding: const EdgeInsets.symmetric(
                     horizontal: TeslaTheme.spacingMd,
                     vertical: TeslaTheme.spacingSm,
@@ -285,7 +272,7 @@ class PendingQueueWidget extends StatelessWidget {
   }
 
   Widget _buildRecognitionOption(
-      BuildContext context, FishCatch fish, AiRecognitionOption option) {
+      BuildContext context, FishCatch fish, AiRecognitionOption option,) {
     return Padding(
       padding: const EdgeInsets.only(bottom: TeslaTheme.spacingSm),
       child: InkWell(
@@ -359,7 +346,7 @@ class PendingQueueWidget extends StatelessWidget {
   }
 
   Widget _buildBatchRecognizeButton(
-      BuildContext context, List<FishCatch> pendingCatches) {
+      BuildContext context, List<FishCatch> pendingCatches,) {
     if (isBatchRecognizing) {
       return PremiumCard(
         variant: PremiumCardVariant.flat,
@@ -382,7 +369,6 @@ class PendingQueueWidget extends StatelessWidget {
       text: strings.pendingBatchRecognition,
       icon: Icons.auto_awesome,
       onPressed: pendingCatches.isEmpty ? null : onBatchRecognize,
-      variant: PremiumButtonVariant.primary,
       isFullWidth: true,
     );
   }

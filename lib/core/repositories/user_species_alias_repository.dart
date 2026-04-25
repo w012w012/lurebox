@@ -1,7 +1,6 @@
-import 'package:sqflite/sqflite.dart';
-import '../exceptions/species_alias_exception.dart';
-import '../models/user_species_alias.dart';
-import 'base_repository.dart';
+import 'package:lurebox/core/exceptions/species_alias_exception.dart';
+import 'package:lurebox/core/models/user_species_alias.dart';
+import 'package:lurebox/core/repositories/base_repository.dart';
 
 /// 用户鱼种别名仓储层
 ///
@@ -26,15 +25,15 @@ abstract class UserSpeciesAliasRepository {
 /// SQLite 实现 - 用户鱼种别名仓储层
 class SqliteUserSpeciesAliasRepository extends BaseSqliteRepository
     implements UserSpeciesAliasRepository {
-  @override
-  String get tableName => 'user_species_alias';
 
   /// 无参构造函数（使用默认 DatabaseService）
   SqliteUserSpeciesAliasRepository();
 
   /// 带数据库的构造函数（用于测试）
-  SqliteUserSpeciesAliasRepository.withDatabase(Future<Database> testDb)
-      : super.withDatabase(testDb);
+  SqliteUserSpeciesAliasRepository.withDatabase(super.testDb)
+      : super.withDatabase();
+  @override
+  String get tableName => 'user_species_alias';
 
   @override
   Future<int> create(String userAlias, String speciesId) async {
@@ -85,7 +84,7 @@ class SqliteUserSpeciesAliasRepository extends BaseSqliteRepository
         whereArgs: [speciesId],
         orderBy: 'created_at DESC',
       );
-      return results.map((map) => UserSpeciesAlias.fromMap(map)).toList();
+      return results.map(UserSpeciesAlias.fromMap).toList();
     } catch (e) {
       throw SpeciesAliasException(
         message: 'Failed to find species aliases by speciesId',
@@ -121,7 +120,7 @@ class SqliteUserSpeciesAliasRepository extends BaseSqliteRepository
         tableName,
         orderBy: 'created_at DESC',
       );
-      return results.map((map) => UserSpeciesAlias.fromMap(map)).toList();
+      return results.map(UserSpeciesAlias.fromMap).toList();
     } catch (e) {
       throw SpeciesAliasException(
         message: 'Failed to get all species aliases',

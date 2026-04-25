@@ -1,8 +1,8 @@
+import 'package:lurebox/core/models/backup_history.dart';
+import 'package:lurebox/core/models/cloud_config.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/services/secure_storage_service.dart';
 import 'package:sqflite/sqflite.dart';
-import '../models/cloud_config.dart';
-import '../models/backup_history.dart';
-import '../services/secure_storage_service.dart';
-import '../services/app_logger.dart';
 
 /// 备份配置仓库接口
 abstract class BackupConfigRepository {
@@ -41,19 +41,19 @@ abstract class BackupConfigRepository {
 ///
 /// 密码由 [CloudPasswordStorage] 管理，不再持久化到 SQLite。
 class SqliteBackupConfigRepository implements BackupConfigRepository {
+
+  SqliteBackupConfigRepository(this._dbFuture, this._passwordStorage);
   final Future<Database> _dbFuture;
   final CloudPasswordStorage _passwordStorage;
 
-  SqliteBackupConfigRepository(this._dbFuture, this._passwordStorage);
-
-  Future<Database> get _db async => await _dbFuture;
+  Future<Database> get _db async => _dbFuture;
 
   @override
   Future<int> saveCloudConfig(CloudConfig config) async {
     final db = await _db;
     final map = config.toDbMap()..remove('id');
     final id = await db.insert('cloud_configs', map,
-        conflictAlgorithm: ConflictAlgorithm.replace);
+        conflictAlgorithm: ConflictAlgorithm.replace,);
     if (config.password.isNotEmpty) {
       await _passwordStorage.save(id, config.password);
     }
@@ -105,7 +105,7 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
   Future<int> deleteCloudConfig(int id) async {
     final db = await _db;
     await _passwordStorage.delete(id);
-    return await db.delete(
+    return db.delete(
       'cloud_configs',
       where: 'id = ?',
       whereArgs: [id],
@@ -138,8 +138,8 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
   Future<int> addBackupHistory(BackupHistory history) async {
     final db = await _db;
     final map = history.toMap()..remove('id');
-    return await db.insert('backup_history', map,
-        conflictAlgorithm: ConflictAlgorithm.replace);
+    return db.insert('backup_history', map,
+        conflictAlgorithm: ConflictAlgorithm.replace,);
   }
 
   @override
@@ -150,13 +150,13 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
       orderBy: 'created_at DESC',
       limit: limit,
     );
-    return results.map((e) => BackupHistory.fromMap(e)).toList();
+    return results.map(BackupHistory.fromMap).toList();
   }
 
   @override
   Future<int> deleteBackupHistory(int id) async {
     final db = await _db;
-    return await db.delete(
+    return db.delete(
       'backup_history',
       where: 'id = ?',
       whereArgs: [id],
@@ -175,8 +175,8 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
 
     if (results.isEmpty) return 0;
 
-    final idsToDelete = results.map((e) => e['id'] as int).toList();
-    return await db.delete(
+    final idsToDelete = results.map((e) => e['id']! as int).toList();
+    return db.delete(
       'backup_history',
       where: 'id IN (${idsToDelete.map((_) => '?').join(',')})',
       whereArgs: idsToDelete,

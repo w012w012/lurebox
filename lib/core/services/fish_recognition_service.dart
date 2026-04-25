@@ -1,30 +1,20 @@
 import 'dart:io';
-import '../models/ai_recognition_settings.dart';
-import 'adapters/gemini_provider.dart';
-import 'adapters/openai_provider.dart';
-import 'adapters/claude_provider.dart';
-import 'adapters/minimax_provider.dart';
-import 'adapters/siliconflow_provider.dart';
-import 'adapters/deepseek_provider.dart';
-import 'adapters/baidu_provider.dart';
-import 'adapters/aliyun_provider.dart';
-import 'adapters/tencent_provider.dart';
-import 'adapters/zhipu_provider.dart';
-import 'adapters/custom_provider.dart';
+
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/services/adapters/aliyun_provider.dart';
+import 'package:lurebox/core/services/adapters/baidu_provider.dart';
+import 'package:lurebox/core/services/adapters/claude_provider.dart';
+import 'package:lurebox/core/services/adapters/custom_provider.dart';
+import 'package:lurebox/core/services/adapters/deepseek_provider.dart';
+import 'package:lurebox/core/services/adapters/gemini_provider.dart';
+import 'package:lurebox/core/services/adapters/minimax_provider.dart';
+import 'package:lurebox/core/services/adapters/openai_provider.dart';
+import 'package:lurebox/core/services/adapters/siliconflow_provider.dart';
+import 'package:lurebox/core/services/adapters/tencent_provider.dart';
+import 'package:lurebox/core/services/adapters/zhipu_provider.dart';
 
 /// 鱼类识别结果
 class FishRecognitionResult {
-  /// 主要识别物种
-  final SpeciesInfo primarySpecies;
-
-  /// 置信度 (0-100)
-  final int confidence;
-
-  /// 候选物种列表
-  final List<SpeciesInfo> alternatives;
-
-  /// 备注信息
-  final String notes;
 
   const FishRecognitionResult({
     required this.primarySpecies,
@@ -48,6 +38,17 @@ class FishRecognitionResult {
       notes: json['notes'] as String? ?? '',
     );
   }
+  /// 主要识别物种
+  final SpeciesInfo primarySpecies;
+
+  /// 置信度 (0-100)
+  final int confidence;
+
+  /// 候选物种列表
+  final List<SpeciesInfo> alternatives;
+
+  /// 备注信息
+  final String notes;
 
   Map<String, dynamic> toJson() => {
         'primarySpecies': primarySpecies.toJson(),
@@ -59,14 +60,6 @@ class FishRecognitionResult {
 
 /// 物种信息
 class SpeciesInfo {
-  /// 中文名称
-  final String chineseName;
-
-  /// 学名
-  final String scientificName;
-
-  /// 置信度 (0-100)
-  final int confidence;
 
   const SpeciesInfo({
     required this.chineseName,
@@ -76,13 +69,21 @@ class SpeciesInfo {
 
   factory SpeciesInfo.fromJson(Map<String, dynamic> json) {
     return SpeciesInfo(
-      chineseName: (json['chineseName'] as String?)?.isNotEmpty == true
+      chineseName: (json['chineseName'] as String?)?.isNotEmpty ?? false
           ? json['chineseName'] as String
           : '未知物种',
       scientificName: json['scientificName'] as String? ?? '',
       confidence: (json['confidence'] as int?)?.clamp(0, 100) ?? 0,
     );
   }
+  /// 中文名称
+  final String chineseName;
+
+  /// 学名
+  final String scientificName;
+
+  /// 置信度 (0-100)
+  final int confidence;
 
   Map<String, dynamic> toJson() => {
         'chineseName': chineseName,
@@ -93,10 +94,10 @@ class SpeciesInfo {
 
 /// 鱼类识别异常
 class FishRecognitionException implements Exception {
-  final FishRecognitionErrorType type;
-  final String message;
 
   const FishRecognitionException(this.type, this.message);
+  final FishRecognitionErrorType type;
+  final String message;
 
   @override
   String toString() => 'FishRecognitionException($type): $message';
@@ -144,17 +145,17 @@ class FishRecognitionService {
   /// Provider factory map — only the selected provider is instantiated
   static final Map<AiRecognitionProvider, FishRecognitionProvider Function()>
       _factories = {
-    AiRecognitionProvider.gemini: () => GeminiFishRecognitionProvider(),
-    AiRecognitionProvider.openai: () => OpenAIFishRecognitionProvider(),
-    AiRecognitionProvider.claude: () => ClaudeFishRecognitionProvider(),
-    AiRecognitionProvider.minimax: () => MiniMaxFishRecognitionProvider(),
-    AiRecognitionProvider.siliconflow: () => SiliconFlowFishRecognitionProvider(),
-    AiRecognitionProvider.deepseek: () => DeepSeekFishRecognitionProvider(),
-    AiRecognitionProvider.baidu: () => BaiduFishRecognitionProvider(),
-    AiRecognitionProvider.aliyun: () => AliyunFishRecognitionProvider(),
-    AiRecognitionProvider.tencent: () => TencentFishRecognitionProvider(),
-    AiRecognitionProvider.zhipu: () => ZhipuFishRecognitionProvider(),
-    AiRecognitionProvider.custom: () => CustomFishRecognitionProvider(),
+    AiRecognitionProvider.gemini: GeminiFishRecognitionProvider.new,
+    AiRecognitionProvider.openai: OpenAIFishRecognitionProvider.new,
+    AiRecognitionProvider.claude: ClaudeFishRecognitionProvider.new,
+    AiRecognitionProvider.minimax: MiniMaxFishRecognitionProvider.new,
+    AiRecognitionProvider.siliconflow: SiliconFlowFishRecognitionProvider.new,
+    AiRecognitionProvider.deepseek: DeepSeekFishRecognitionProvider.new,
+    AiRecognitionProvider.baidu: BaiduFishRecognitionProvider.new,
+    AiRecognitionProvider.aliyun: AliyunFishRecognitionProvider.new,
+    AiRecognitionProvider.tencent: TencentFishRecognitionProvider.new,
+    AiRecognitionProvider.zhipu: ZhipuFishRecognitionProvider.new,
+    AiRecognitionProvider.custom: CustomFishRecognitionProvider.new,
   };
 
   /// 识别鱼类物种
@@ -218,6 +219,6 @@ class FishRecognitionService {
     }
 
     final provider = factory();
-    return await provider.identifySpecies(image, config);
+    return provider.identifySpecies(image, config);
   }
 }

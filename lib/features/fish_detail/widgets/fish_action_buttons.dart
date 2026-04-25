@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
 
 class FishActionButtons extends StatelessWidget {
+
+  const FishActionButtons({
+    required this.strings, super.key,
+    this.onEdit,
+    this.onDelete,
+    this.onShare,
+    this.isDeleting = false,
+    this.isSharing = false,
+  });
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final VoidCallback? onShare;
   final bool isDeleting;
   final bool isSharing;
   final AppStrings strings;
-
-  const FishActionButtons({
-    super.key,
-    this.onEdit,
-    this.onDelete,
-    this.onShare,
-    this.isDeleting = false,
-    this.isSharing = false,
-    required this.strings,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +45,6 @@ class FishActionButtons extends StatelessWidget {
 }
 
 class _ActionButton extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback? onPressed;
-  final bool isLoading;
-  final bool isDestructive;
 
   const _ActionButton({
     required this.icon,
@@ -59,6 +53,11 @@ class _ActionButton extends StatelessWidget {
     this.isLoading = false,
     this.isDestructive = false,
   });
+  final IconData icon;
+  final String label;
+  final VoidCallback? onPressed;
+  final bool isLoading;
+  final bool isDestructive;
 
   @override
   Widget build(BuildContext context) {
@@ -74,16 +73,14 @@ class _ActionButton extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            isLoading
-                ? SizedBox(
+            if (isLoading) SizedBox(
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
                       color: color,
                     ),
-                  )
-                : Icon(icon, color: color),
+                  ) else Icon(icon, color: color),
             const SizedBox(height: 4),
             Text(
               label,

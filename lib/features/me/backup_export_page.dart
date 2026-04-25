@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/settings_view_model.dart';
+import 'package:lurebox/core/services/export_service.dart';
+import 'package:lurebox/features/settings/widgets/webdav_config_dialog.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 import 'package:share_plus/share_plus.dart';
-
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/settings_view_model.dart';
-import '../../core/services/export_service.dart';
-import '../../widgets/common/premium_card.dart';
-import '../../widgets/common/app_snack_bar.dart';
-import '../settings/widgets/webdav_config_dialog.dart';
 
 class BackupExportPage extends ConsumerWidget {
   const BackupExportPage({super.key});
@@ -156,7 +155,7 @@ class BackupExportPage extends ConsumerWidget {
   }
 
   void _showWebDAVDialog(BuildContext context) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => const WebDAVConfigDialog(),
     );
@@ -178,7 +177,7 @@ class BackupExportPage extends ConsumerWidget {
   }
 
   void _showFullBackupDialog(BuildContext context, WidgetRef ref, AppStrings strings) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(strings.fullBackupTitle),
@@ -210,7 +209,7 @@ class BackupExportPage extends ConsumerWidget {
   }) async {
     final viewModel = ref.read(settingsViewModelProvider.notifier);
 
-    showDialog(
+    showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
@@ -282,7 +281,7 @@ class BackupExportPage extends ConsumerWidget {
 
       if (result.isSuccess) {
         final metadata = result.metadata;
-        String message = strings.restoreSuccessMsg;
+        var message = strings.restoreSuccessMsg;
         if (metadata != null) {
           message = '${strings.restoreSuccessMsg}\n'
               '渔获: ${metadata.fishCatchesCount} 条\n'

@@ -1,4 +1,3 @@
-import '../constants/constants.dart';
 
 /// 钓具装备数据模型
 ///
@@ -18,6 +17,7 @@ import '../constants/constants.dart';
 /// - 管理用户的钓具库存
 /// - 在渔获记录中关联使用的钓具
 /// - 统计分析不同钓具的捕获效果
+library;
 
 enum EquipmentType {
   rod('rod', '鱼竿'),
@@ -37,50 +37,11 @@ enum EquipmentType {
 }
 
 class Equipment {
-  final int id;
-  final EquipmentType type;
-  final String? brand;
-  final String? model;
-  final String? length;
-  final String lengthUnit; // 鱼竿长度单位 (m, cm, ft, inch)
-  final String? sections;
-  final String? jointType;
-  final String? material;
-  final String? hardness;
-  final String? weightRange;
-  final int? reelBearings;
-  final String? reelRatio;
-  final String? reelCapacity;
-  final String? reelBrakeType;
-  final String? reelWeight;
-  final String reelWeightUnit; // 渔轮重量单位 (g, oz)
-  final String? lureType;
-  final String? lureWeight;
-  final String lureWeightUnit; // 假饵重量单位 (g, oz)
-  final String? lureSize;
-  final String lureSizeUnit; // 假饵尺寸单位 (cm, mm, inch)
-  final String? lureColor;
-  final int? lureQuantity; // 假饵数量
-  final String? lureQuantityUnit; // 假饵数量单位
-  final double? price;
-  final DateTime? purchaseDate;
-  final bool isDefault;
-  final bool isDeleted;
-  final String? category;
-  final String? rodAction;
-  final String? reelLine;
-  final DateTime? reelLineDate;
-  final String? reelLineNumber;
-  final String? reelLineLength;
-  final String lineLengthUnit; // 鱼线长度单位
-  final String lineWeightUnit; // 鱼线拉力单位 (kg, lb)
-  final DateTime createdAt;
-  final DateTime updatedAt;
 
   const Equipment({
     required this.id,
     required this.type,
-    this.brand,
+    required this.createdAt, required this.updatedAt, this.brand,
     this.model,
     this.length,
     this.lengthUnit = 'm',
@@ -115,16 +76,7 @@ class Equipment {
     this.reelLineLength,
     this.lineLengthUnit = 'm',
     this.lineWeightUnit = 'kg',
-    required this.createdAt,
-    required this.updatedAt,
   });
-
-  static dynamic _getField(Map<String, dynamic> map, String key) {
-    if (map.containsKey(key)) return map[key];
-    final altKey = key.replaceAll('_', ' ');
-    if (map.containsKey(altKey)) return map[altKey];
-    return null;
-  }
 
   factory Equipment.fromMap(Map<String, dynamic> map) {
     return Equipment(
@@ -172,6 +124,52 @@ class Equipment {
       createdAt: DateTime.parse(_getField(map, 'created_at').toString()),
       updatedAt: DateTime.parse(_getField(map, 'updated_at').toString()),
     );
+  }
+  final int id;
+  final EquipmentType type;
+  final String? brand;
+  final String? model;
+  final String? length;
+  final String lengthUnit; // 鱼竿长度单位 (m, cm, ft, inch)
+  final String? sections;
+  final String? jointType;
+  final String? material;
+  final String? hardness;
+  final String? weightRange;
+  final int? reelBearings;
+  final String? reelRatio;
+  final String? reelCapacity;
+  final String? reelBrakeType;
+  final String? reelWeight;
+  final String reelWeightUnit; // 渔轮重量单位 (g, oz)
+  final String? lureType;
+  final String? lureWeight;
+  final String lureWeightUnit; // 假饵重量单位 (g, oz)
+  final String? lureSize;
+  final String lureSizeUnit; // 假饵尺寸单位 (cm, mm, inch)
+  final String? lureColor;
+  final int? lureQuantity; // 假饵数量
+  final String? lureQuantityUnit; // 假饵数量单位
+  final double? price;
+  final DateTime? purchaseDate;
+  final bool isDefault;
+  final bool isDeleted;
+  final String? category;
+  final String? rodAction;
+  final String? reelLine;
+  final DateTime? reelLineDate;
+  final String? reelLineNumber;
+  final String? reelLineLength;
+  final String lineLengthUnit; // 鱼线长度单位
+  final String lineWeightUnit; // 鱼线拉力单位 (kg, lb)
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  static dynamic _getField(Map<String, dynamic> map, String key) {
+    if (map.containsKey(key)) return map[key];
+    final altKey = key.replaceAll('_', ' ');
+    if (map.containsKey(altKey)) return map[altKey];
+    return null;
   }
 
   Map<String, dynamic> toMap() {
@@ -244,14 +242,6 @@ class Equipment {
 /// Type-safe accessor for rod-specific parameters.
 /// Returns null if the equipment type is not rod.
 class RodParams {
-  final String? length;
-  final String lengthUnit;
-  final String? sections;
-  final String? jointType;
-  final String? material;
-  final String? hardness;
-  final String? rodAction;
-  final String? weightRange;
 
   const RodParams({
     this.length,
@@ -263,23 +253,19 @@ class RodParams {
     this.rodAction,
     this.weightRange,
   });
+  final String? length;
+  final String lengthUnit;
+  final String? sections;
+  final String? jointType;
+  final String? material;
+  final String? hardness;
+  final String? rodAction;
+  final String? weightRange;
 }
 
 /// Type-safe accessor for reel-specific parameters.
 /// Returns null if the equipment type is not reel.
 class ReelParams {
-  final int? bearings;
-  final String? ratio;
-  final String? capacity;
-  final String? brakeType;
-  final String? weight;
-  final String weightUnit;
-  final String? line;
-  final DateTime? lineDate;
-  final String? lineNumber;
-  final String? lineLength;
-  final String lineLengthUnit;
-  final String lineWeightUnit;
 
   const ReelParams({
     this.bearings,
@@ -295,19 +281,23 @@ class ReelParams {
     this.lineLengthUnit = 'm',
     this.lineWeightUnit = 'kg',
   });
+  final int? bearings;
+  final String? ratio;
+  final String? capacity;
+  final String? brakeType;
+  final String? weight;
+  final String weightUnit;
+  final String? line;
+  final DateTime? lineDate;
+  final String? lineNumber;
+  final String? lineLength;
+  final String lineLengthUnit;
+  final String lineWeightUnit;
 }
 
 /// Type-safe accessor for lure-specific parameters.
 /// Returns null if the equipment type is not lure.
 class LureParams {
-  final String? type;
-  final String? weight;
-  final String weightUnit;
-  final String? size;
-  final String sizeUnit;
-  final String? color;
-  final int? quantity;
-  final String? quantityUnit;
 
   const LureParams({
     this.type,
@@ -319,6 +309,14 @@ class LureParams {
     this.quantity,
     this.quantityUnit,
   });
+  final String? type;
+  final String? weight;
+  final String weightUnit;
+  final String? size;
+  final String sizeUnit;
+  final String? color;
+  final int? quantity;
+  final String? quantityUnit;
 }
 
 /// Type-safe parameter accessors on Equipment.

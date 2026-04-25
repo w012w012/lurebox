@@ -1,4 +1,4 @@
-import '../models/location_models.dart';
+import 'package:lurebox/core/models/location_models.dart';
 
 export '../models/location_models.dart';
 

@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 
 class ListTileAction extends StatelessWidget {
+
+  const ListTileAction({
+    required this.icon, required this.title, super.key,
+    this.iconColor,
+    this.subtitle,
+    this.trailing,
+    this.onTap,
+  });
   final IconData icon;
   final Color? iconColor;
   final String title;
   final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
-
-  const ListTileAction({
-    super.key,
-    required this.icon,
-    this.iconColor,
-    required this.title,
-    this.subtitle,
-    this.trailing,
-    this.onTap,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +32,9 @@ class ListTileAction extends StatelessWidget {
 }
 
 class ListTileDivider extends StatelessWidget {
-  final List<Widget> children;
 
-  const ListTileDivider({super.key, required this.children});
+  const ListTileDivider({required this.children, super.key});
+  final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {

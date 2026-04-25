@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lurebox/core/database/database_provider.dart';
+import 'package:lurebox/core/services/location_service.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:lurebox/core/services/location_service.dart';
-import 'package:lurebox/core/database/database_provider.dart';
 
 // Custom Mock Database for query-based tests
 class MockDb extends Mock implements Database {
@@ -106,9 +106,9 @@ class MockDb extends Mock implements Database {
 }
 
 class _MockTransaction implements Transaction {
-  final MockDb _mockDb;
 
   _MockTransaction(this._mockDb);
+  final MockDb _mockDb;
 
   @override
   Future<int> update(
@@ -225,9 +225,9 @@ class _MockQueryCursor implements QueryCursor {
 
 // Mock DatabaseProvider for query-based tests
 class MockDatabaseProvider extends Mock implements DatabaseProvider {
-  final MockDb mockDb;
 
   MockDatabaseProvider(this.mockDb);
+  final MockDb mockDb;
 
   @override
   Future<Database> get database => Future.value(mockDb);
@@ -235,9 +235,9 @@ class MockDatabaseProvider extends Mock implements DatabaseProvider {
 
 // Real DatabaseProvider for integration tests
 class RealDatabaseProvider implements DatabaseProvider {
-  final Database _db;
 
   RealDatabaseProvider(this._db);
+  final Database _db;
 
   @override
   Future<Database> get database => Future.value(_db);
@@ -400,7 +400,7 @@ void main() {
           'fish_catches',
           columns: ['location_name'],
         );
-        final locationNames = results.map((r) => r['location_name'] as String).toList();
+        final locationNames = results.map((r) => r['location_name']! as String).toList();
 
         expect(locationNames, equals(['新地点', '新地点']));
         expect(locationNames, isNot(contains('旧地点1')));
@@ -432,7 +432,7 @@ void main() {
           columns: ['location_name'],
           orderBy: 'location_name ASC',
         );
-        final locationNames = results.map((r) => r['location_name'] as String).toList();
+        final locationNames = results.map((r) => r['location_name']! as String).toList();
 
         expect(locationNames, equals(['保留的地点', '新地点']));
       });
@@ -471,7 +471,7 @@ void main() {
           'fish_catches',
           columns: ['location_name'],
         );
-        final locationNames = results.map((r) => r['location_name'] as String).toList();
+        final locationNames = results.map((r) => r['location_name']! as String).toList();
 
         // Only the existing location remains - mergeLocations only updates existing records
         expect(locationNames, equals(['存在的地点']));
@@ -495,7 +495,7 @@ void main() {
           'fish_catches',
           columns: ['location_name'],
         );
-        final locationNames = results.map((r) => r['location_name'] as String).toList();
+        final locationNames = results.map((r) => r['location_name']! as String).toList();
 
         expect(locationNames, equals(['新名称']));
         expect(locationNames, isNot(contains('旧名称')));
@@ -525,7 +525,7 @@ void main() {
           'fish_catches',
           columns: ['location_name'],
         );
-        final locationNames = results.map((r) => r['location_name'] as String).toList();
+        final locationNames = results.map((r) => r['location_name']! as String).toList();
 
         expect(locationNames, equals(['新名称', '新名称']));
       });
@@ -576,7 +576,7 @@ void main() {
           columns: ['location_name'],
           orderBy: 'species ASC',
         );
-        final locationNames = results.map((r) => r['location_name'] as String).toList();
+        final locationNames = results.map((r) => r['location_name']! as String).toList();
 
         expect(locationNames, equals(['新名称', '保留地点']));
       });

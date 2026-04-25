@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/models/watermark_settings.dart';
-import '../../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/watermark_settings.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 class WatermarkEnableSwitch extends StatelessWidget {
+
+  const WatermarkEnableSwitch({
+    required this.settings, required this.strings, required this.onToggle, super.key,
+  });
   final WatermarkSettings settings;
   final AppStrings strings;
   final ValueChanged<bool> onToggle;
-
-  const WatermarkEnableSwitch({
-    super.key,
-    required this.settings,
-    required this.strings,
-    required this.onToggle,
-  });
 
   @override
   Widget build(BuildContext context) {

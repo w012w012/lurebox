@@ -1,4 +1,4 @@
-import 'app_strings.dart';
+import 'package:lurebox/core/constants/strings/app_strings.dart';
 
 /// Chinese locale strings
 const AppStrings chineseStrings = AppStrings(
@@ -242,7 +242,7 @@ const AppStrings chineseStrings = AppStrings(
     unlocked: '已解锁',
     totalAchievements: '总成就',
     achievementUnit: '个成就',
-    remainingAchievements: '还需要 \$count 项成就',
+    remainingAchievements: r'还需要 $count 项成就',
     noAchievements: '暂无成就',
     achieved: '已达成',
     editEquipment: '编辑装备',
@@ -473,14 +473,14 @@ const AppStrings chineseStrings = AppStrings(
     generatingCsvFile: '正在生成 CSV 文件...',
     exportConfirm: '导出确认',
     confirmExport: '确认导出',
-    willExportNRecords: '将导出 \$count 条记录',
+    willExportNRecords: r'将导出 $count 条记录',
     exportOptions: '导出选项',
     format: '格式',
     yes: '是',
     no: '否',
-    previewFirstN: '预览 (前 \$count 条)',
-    moreRecordsRemaining: '... 还有 \$count 条记录',
-    exportNRecords: '导出 \$count 条记录',
+    previewFirstN: r'预览 (前 $count 条)',
+    moreRecordsRemaining: r'... 还有 $count 条记录',
+    exportNRecords: r'导出 $count 条记录',
     noMatchingRecords: '没有符合条件的记录',
     allTime: '全部时间',
     startDate: '开始',
@@ -493,7 +493,7 @@ const AppStrings chineseStrings = AppStrings(
     includeLocationInfo: '包含位置信息',
     confirmImportFile: '确认导入数据？',
     importingData: '正在导入...',
-    importedCount: '导入了 \$count 条记录',
+    importedCount: r'导入了 $count 条记录',
     pleaseFillCompleteInfo: '请填写完整信息',
     uploading: '正在上传...',
     enumerationSeparator: '、',

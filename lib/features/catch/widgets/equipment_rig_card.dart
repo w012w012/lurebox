@@ -1,30 +1,25 @@
 import 'package:flutter/material.dart';
-
-import '../../../core/constants/strings.dart';
-import '../../../core/models/equipment.dart';
-import '../../../core/camera/camera_state.dart';
-import '../../../core/camera/camera_view_model.dart';
-import '../../../core/utils/unit_converter.dart';
-import '../../../widgets/common/premium_button.dart';
+import 'package:lurebox/core/camera/camera_state.dart';
+import 'package:lurebox/core/camera/camera_view_model.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
 
 /// 装备卡片
 ///
 /// 展示装备信息（鱼竿、鱼轮、鱼饵）
 class EquipmentRigCard extends StatelessWidget {
+
+  const EquipmentRigCard({
+    required this.state, required this.vm, required this.strings, required this.onModifyPressed, super.key,
+    this.isChinese = true,
+  });
   final CameraState state;
   final CameraViewModel vm;
   final AppStrings strings;
   final VoidCallback onModifyPressed;
   final bool isChinese;
-
-  const EquipmentRigCard({
-    super.key,
-    required this.state,
-    required this.vm,
-    required this.strings,
-    required this.onModifyPressed,
-    this.isChinese = true,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -93,50 +88,50 @@ class EquipmentRigCard extends StatelessWidget {
   String _buildRodDisplay(Equipment? rod) {
     if (rod == null) return '-';
     final parts = <String>[];
-    if (rod.brand?.isNotEmpty == true) parts.add(rod.brand!);
-    if (rod.model?.isNotEmpty == true) parts.add(rod.model!);
+    if (rod.brand?.isNotEmpty ?? false) parts.add(rod.brand!);
+    if (rod.model?.isNotEmpty ?? false) parts.add(rod.model!);
     // 握柄类型
     if (rod.category != null && rod.category!.contains('|')) {
       parts.add(rod.category!.split('|')[0]);
     }
-    if (rod.length?.isNotEmpty == true) {
+    if (rod.length?.isNotEmpty ?? false) {
       parts.add(
-          '${rod.length}${UnitConverter.getLengthSymbol(rod.lengthUnit, isChinese: isChinese)}');
+          '${rod.length}${UnitConverter.getLengthSymbol(rod.lengthUnit, isChinese: isChinese)}',);
     }
-    if (rod.hardness?.isNotEmpty == true) parts.add(rod.hardness!);
-    if (rod.rodAction?.isNotEmpty == true) parts.add(rod.rodAction!);
+    if (rod.hardness?.isNotEmpty ?? false) parts.add(rod.hardness!);
+    if (rod.rodAction?.isNotEmpty ?? false) parts.add(rod.rodAction!);
     return parts.isEmpty ? '-' : parts.join(' / ');
   }
 
   String _buildReelDisplay(Equipment? reel) {
     if (reel == null) return '-';
     final parts = <String>[];
-    if (reel.brand?.isNotEmpty == true) parts.add(reel.brand!);
-    if (reel.model?.isNotEmpty == true) parts.add(reel.model!);
-    if (reel.reelRatio?.isNotEmpty == true) parts.add(reel.reelRatio!);
+    if (reel.brand?.isNotEmpty ?? false) parts.add(reel.brand!);
+    if (reel.model?.isNotEmpty ?? false) parts.add(reel.model!);
+    if (reel.reelRatio?.isNotEmpty ?? false) parts.add(reel.reelRatio!);
     return parts.isEmpty ? '-' : parts.join(' / ');
   }
 
   String _buildLureDisplay(Equipment? lure) {
     if (lure == null) return '-';
     final parts = <String>[];
-    if (lure.brand?.isNotEmpty == true) parts.add(lure.brand!);
-    if (lure.model?.isNotEmpty == true) parts.add(lure.model!);
-    if (lure.lureSize?.isNotEmpty == true) {
+    if (lure.brand?.isNotEmpty ?? false) parts.add(lure.brand!);
+    if (lure.model?.isNotEmpty ?? false) parts.add(lure.model!);
+    if (lure.lureSize?.isNotEmpty ?? false) {
       parts.add(
-          '${lure.lureSize}${UnitConverter.getLengthSymbol(lure.lureSizeUnit, isChinese: isChinese)}');
+          '${lure.lureSize}${UnitConverter.getLengthSymbol(lure.lureSizeUnit, isChinese: isChinese)}',);
     }
-    if (lure.lureColor?.isNotEmpty == true) parts.add(lure.lureColor!);
+    if (lure.lureColor?.isNotEmpty ?? false) parts.add(lure.lureColor!);
     return parts.isEmpty ? '-' : parts.join(' / ');
   }
 }
 
 /// 装备信息行
 class _EquipmentRow extends StatelessWidget {
-  final String label;
-  final String value;
 
   const _EquipmentRow({required this.label, required this.value});
+  final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {

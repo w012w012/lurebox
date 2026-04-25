@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../../core/constants/constants.dart';
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/models/app_settings.dart';
-import '../../../core/models/fish_catch.dart';
-import '../../../core/providers/app_settings_provider.dart';
-import '../../../core/utils/unit_converter.dart';
-import '../../../core/services/weather_service.dart' show getLocalizedWeatherDescription;
+import 'package:lurebox/core/constants/constants.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/services/weather_service.dart' show getLocalizedWeatherDescription;
+import 'package:lurebox/core/utils/unit_converter.dart';
 
 String _buildRodDisplay(Map<String, dynamic>? rod, String displayUnit,
-    {bool isChinese = true}) {
+    {bool isChinese = true,}) {
   if (rod == null) return '';
   final parts = <String>[];
   if (rod['brand'] != null && (rod['brand'] as String).isNotEmpty) {
@@ -24,7 +24,7 @@ String _buildRodDisplay(Map<String, dynamic>? rod, String displayUnit,
   if (rod['length'] != null && (rod['length'] as String).isNotEmpty) {
     final lengthStr = rod['length'] as String;
     final lengthValue = double.tryParse(lengthStr) ?? 0.0;
-    final lengthUnit = rod['length_unit'] ?? 'm';
+    final lengthUnit = (rod['length_unit'] as String?) ?? 'm';
     if (lengthValue > 0) {
       final convertedLength = UnitConverter.convertLength(
         lengthValue,
@@ -63,7 +63,7 @@ String _buildReelDisplay(Map<String, dynamic>? reel) {
 }
 
 String _buildLureDisplay(Map<String, dynamic>? lure, String displayUnit,
-    {bool isChinese = true}) {
+    {bool isChinese = true,}) {
   if (lure == null) return '';
   final parts = <String>[];
   if (lure['brand'] != null && (lure['brand'] as String).isNotEmpty) {
@@ -74,14 +74,14 @@ String _buildLureDisplay(Map<String, dynamic>? lure, String displayUnit,
   }
   if (lure['lure_size'] != null && (lure['lure_size'] as String).isNotEmpty) {
     final sizeValue = double.tryParse(lure['lure_size'] as String) ?? 0;
-    final sizeUnit = lure['lure_size_unit'] ?? 'cm';
+    final sizeUnit = (lure['lure_size_unit'] as String?) ?? 'cm';
     final convertedSize = UnitConverter.convertLength(
       sizeValue,
       sizeUnit,
       displayUnit,
     );
     parts.add(
-        '${convertedSize.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnit, isChinese: isChinese)}');
+        '${convertedSize.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnit, isChinese: isChinese)}',);
   }
   if (lure['lure_color'] != null && (lure['lure_color'] as String).isNotEmpty) {
     parts.add(lure['lure_color'] as String);
@@ -90,6 +90,16 @@ String _buildLureDisplay(Map<String, dynamic>? lure, String displayUnit,
 }
 
 class FishInfoCard extends ConsumerWidget {
+
+  const FishInfoCard({
+    required this.species, required this.length, required this.lengthUnit, required this.weight, required this.weightUnit, required this.fate, required this.catchTime, required this.locationName, required this.strings, super.key,
+    this.rodEquipment,
+    this.reelEquipment,
+    this.lureEquipment,
+    this.airTemperature,
+    this.pressure,
+    this.weatherCode,
+  });
   final String species;
   final double length;
   final String lengthUnit;
@@ -105,25 +115,6 @@ class FishInfoCard extends ConsumerWidget {
   final double? pressure;
   final int? weatherCode;
   final AppStrings strings;
-
-  const FishInfoCard({
-    super.key,
-    required this.species,
-    required this.length,
-    required this.lengthUnit,
-    required this.weight,
-    required this.weightUnit,
-    required this.fate,
-    required this.catchTime,
-    required this.locationName,
-    this.rodEquipment,
-    this.reelEquipment,
-    this.lureEquipment,
-    this.airTemperature,
-    this.pressure,
-    this.weatherCode,
-    required this.strings,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -297,11 +288,6 @@ class FishInfoCard extends ConsumerWidget {
 }
 
 class _InfoRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color? valueColor;
-  final Color? iconColor;
 
   const _InfoRow({
     required this.icon,
@@ -310,6 +296,11 @@ class _InfoRow extends StatelessWidget {
     this.valueColor,
     this.iconColor,
   });
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color? valueColor;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -349,10 +340,10 @@ class _IOSDivider extends StatelessWidget {
 }
 
 class _EquipmentInfoRow extends StatelessWidget {
-  final String label;
-  final String value;
 
   const _EquipmentInfoRow({required this.label, required this.value});
+  final String label;
+  final String value;
 
   @override
   Widget build(BuildContext context) {

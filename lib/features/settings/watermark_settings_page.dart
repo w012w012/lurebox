@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/watermark_provider.dart';
-import 'widgets/watermark_color_selector.dart';
-import 'widgets/watermark_custom_text_field.dart';
-import '../../core/models/watermark_settings.dart';
-import '../../widgets/common/premium_card.dart';
-import 'widgets/watermark_enable_switch.dart';
-import 'widgets/watermark_info_section.dart';
-import 'widgets/watermark_position_selector.dart';
-import 'widgets/watermark_preview_card.dart';
-import 'widgets/watermark_style_selector.dart';
-import 'widgets/labeled_slider.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/watermark_settings.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/watermark_provider.dart';
+import 'package:lurebox/features/settings/widgets/labeled_slider.dart';
+import 'package:lurebox/features/settings/widgets/watermark_color_selector.dart';
+import 'package:lurebox/features/settings/widgets/watermark_custom_text_field.dart';
+import 'package:lurebox/features/settings/widgets/watermark_enable_switch.dart';
+import 'package:lurebox/features/settings/widgets/watermark_info_section.dart';
+import 'package:lurebox/features/settings/widgets/watermark_position_selector.dart';
+import 'package:lurebox/features/settings/widgets/watermark_preview_card.dart';
+import 'package:lurebox/features/settings/widgets/watermark_style_selector.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// 水印设置页面
 class WatermarkSettingsPage extends ConsumerWidget {

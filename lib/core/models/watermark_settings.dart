@@ -34,12 +34,6 @@ enum WatermarkPosition {
 
 /// 预设样式参数
 class WatermarkStylePreset {
-  final double blurRadius;
-  final double backgroundOpacity;
-  final int backgroundColor;
-  final double fontSize;
-  final int textColor;
-  final WatermarkPosition position;
 
   const WatermarkStylePreset({
     required this.blurRadius,
@@ -49,49 +43,44 @@ class WatermarkStylePreset {
     required this.textColor,
     required this.position,
   });
+  final double blurRadius;
+  final double backgroundOpacity;
+  final int backgroundColor;
+  final double fontSize;
+  final int textColor;
+  final WatermarkPosition position;
 }
 
 /// 预设样式参数映射
 const watermarkStylePresets = {
   WatermarkStyle.minimal: WatermarkStylePreset(
-    blurRadius: 10.0,
+    blurRadius: 10,
     backgroundOpacity: 0.5,
     backgroundColor: 0xFF000000,
-    fontSize: 14.0,
+    fontSize: 14,
     textColor: 0xFFFFFFFF,
     position: WatermarkPosition.bottomLeft,
   ),
   WatermarkStyle.elegant: WatermarkStylePreset(
-    blurRadius: 16.0,
+    blurRadius: 16,
     backgroundOpacity: 0.35,
     backgroundColor: 0xFF1A1A2E,
-    fontSize: 12.0,
+    fontSize: 12,
     textColor: 0xFFE0E0E0,
     position: WatermarkPosition.bottomRight,
   ),
   WatermarkStyle.bold: WatermarkStylePreset(
-    blurRadius: 6.0,
+    blurRadius: 6,
     backgroundOpacity: 0.7,
     backgroundColor: 0xFF000000,
-    fontSize: 20.0,
+    fontSize: 20,
     textColor: 0xFFFFFFFF,
     position: WatermarkPosition.center,
   ),
 };
 
 /// 水印设置
-class WatermarkSettings {
-  final bool enabled;
-  final WatermarkStyle style;
-  final List<WatermarkInfoType> infoTypes;
-  // 样式设置
-  final double blurRadius; // 背景圆角程度
-  final double backgroundOpacity; // 背景透明度（0.0-1.0）
-  final int backgroundColor; // 背景色（RGB）
-  final double fontSize; // 字体大小
-  final int textColor; // 字体颜色（ARGB）
-  final WatermarkPosition position; // 水印位置
-  final String? customText; // 自定义文字
+class WatermarkSettings { // 自定义文字
 
   const WatermarkSettings({
     this.enabled = true,
@@ -113,47 +102,6 @@ class WatermarkSettings {
     this.position = WatermarkPosition.bottomLeft,
     this.customText,
   });
-
-  WatermarkSettings copyWith({
-    bool? enabled,
-    WatermarkStyle? style,
-    List<WatermarkInfoType>? infoTypes,
-    double? blurRadius,
-    double? backgroundOpacity,
-    int? backgroundColor,
-    double? fontSize,
-    int? textColor,
-    WatermarkPosition? position,
-    String? customText,
-  }) {
-    return WatermarkSettings(
-      enabled: enabled ?? this.enabled,
-      style: style ?? this.style,
-      infoTypes: infoTypes ?? this.infoTypes,
-      blurRadius: blurRadius ?? this.blurRadius,
-      backgroundOpacity: backgroundOpacity ?? this.backgroundOpacity,
-      backgroundColor: backgroundColor ?? this.backgroundColor,
-      fontSize: fontSize ?? this.fontSize,
-      textColor: textColor ?? this.textColor,
-      position: position ?? this.position,
-      customText: customText ?? this.customText,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'enabled': enabled,
-      'style': style.name,
-      'infoTypes': infoTypes.map((e) => e.name).toList(),
-      'blurRadius': blurRadius,
-      'backgroundOpacity': backgroundOpacity,
-      'backgroundColor': backgroundColor,
-      'fontSize': fontSize,
-      'textColor': textColor,
-      'position': position.name,
-      if (customText != null) 'customText': customText,
-    };
-  }
 
   factory WatermarkSettings.fromJson(Map<String, dynamic> json) {
     return WatermarkSettings(
@@ -196,23 +144,75 @@ class WatermarkSettings {
     );
   }
 
-  String encode() => jsonEncode(toJson());
-
   factory WatermarkSettings.decode(String source) =>
-      WatermarkSettings.fromJson(jsonDecode(source));
+      WatermarkSettings.fromJson(jsonDecode(source) as Map<String, dynamic>);
+  final bool enabled;
+  final WatermarkStyle style;
+  final List<WatermarkInfoType> infoTypes;
+  // 样式设置
+  final double blurRadius; // 背景圆角程度
+  final double backgroundOpacity; // 背景透明度（0.0-1.0）
+  final int backgroundColor; // 背景色（RGB）
+  final double fontSize; // 字体大小
+  final int textColor; // 字体颜色（ARGB）
+  final WatermarkPosition position; // 水印位置
+  final String? customText;
+
+  WatermarkSettings copyWith({
+    bool? enabled,
+    WatermarkStyle? style,
+    List<WatermarkInfoType>? infoTypes,
+    double? blurRadius,
+    double? backgroundOpacity,
+    int? backgroundColor,
+    double? fontSize,
+    int? textColor,
+    WatermarkPosition? position,
+    String? customText,
+  }) {
+    return WatermarkSettings(
+      enabled: enabled ?? this.enabled,
+      style: style ?? this.style,
+      infoTypes: infoTypes ?? this.infoTypes,
+      blurRadius: blurRadius ?? this.blurRadius,
+      backgroundOpacity: backgroundOpacity ?? this.backgroundOpacity,
+      backgroundColor: backgroundColor ?? this.backgroundColor,
+      fontSize: fontSize ?? this.fontSize,
+      textColor: textColor ?? this.textColor,
+      position: position ?? this.position,
+      customText: customText ?? this.customText,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'enabled': enabled,
+      'style': style.name,
+      'infoTypes': infoTypes.map((e) => e.name).toList(),
+      'blurRadius': blurRadius,
+      'backgroundOpacity': backgroundOpacity,
+      'backgroundColor': backgroundColor,
+      'fontSize': fontSize,
+      'textColor': textColor,
+      'position': position.name,
+      if (customText != null) 'customText': customText,
+    };
+  }
+
+  String encode() => jsonEncode(toJson());
 }
 
 /// 水印信息类型信息
 class WatermarkInfoTypeInfo {
-  final WatermarkInfoType type;
-  final String name;
-  final String icon;
 
   const WatermarkInfoTypeInfo({
     required this.type,
     required this.name,
     required this.icon,
   });
+  final WatermarkInfoType type;
+  final String name;
+  final String icon;
 
   static const List<WatermarkInfoTypeInfo> allTypes = [
     WatermarkInfoTypeInfo(

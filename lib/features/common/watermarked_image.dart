@@ -1,20 +1,57 @@
 import 'dart:io';
 import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
-import '../../core/services/app_logger.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/strings.dart';
-import '../../core/models/watermark_settings.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/app_settings_provider.dart';
-import '../../core/providers/watermark_provider.dart';
-import '../../core/utils/unit_converter.dart';
-import '../../core/services/weather_service.dart' show getLocalizedWeatherDescription;
-import '../../widgets/common/image_cache_helper.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/models/watermark_settings.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/watermark_provider.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/services/weather_service.dart' show getLocalizedWeatherDescription;
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/widgets/common/image_cache_helper.dart';
 
 /// 带水印的图片 Widget
 class WatermarkedImage extends ConsumerWidget {
+
+  const WatermarkedImage({
+    required this.imagePath, required this.species, required this.length, super.key,
+    this.weight,
+    this.lengthUnit,
+    this.weightUnit,
+    this.locationName,
+    this.catchTime,
+    this.rodName,
+    this.reelName,
+    this.lureName,
+    this.rodBrand,
+    this.rodModel,
+    this.rodMaterial,
+    this.rodLength,
+    this.rodLengthUnit,
+    this.rodHardness,
+    this.rodAction,
+    this.reelBrand,
+    this.reelModel,
+    this.reelRatio,
+    this.lureBrand,
+    this.lureModel,
+    this.lureSize,
+    this.lureSizeUnit,
+    this.lureColor,
+    this.lureWeight,
+    this.lureWeightUnit,
+    this.airTemperature,
+    this.pressure,
+    this.weatherCode,
+    this.fit = BoxFit.cover,
+    this.cacheWidth,
+    this.cacheHeight,
+    this.errorBuilder,
+    this.showWatermark = true,
+  });
   final String imagePath;
   final String species;
   final double length;
@@ -52,46 +89,6 @@ class WatermarkedImage extends ConsumerWidget {
   final Widget Function(BuildContext, Object, StackTrace?)? errorBuilder;
   final bool showWatermark;
 
-  const WatermarkedImage({
-    super.key,
-    required this.imagePath,
-    required this.species,
-    required this.length,
-    this.weight,
-    this.lengthUnit,
-    this.weightUnit,
-    this.locationName,
-    this.catchTime,
-    this.rodName,
-    this.reelName,
-    this.lureName,
-    this.rodBrand,
-    this.rodModel,
-    this.rodMaterial,
-    this.rodLength,
-    this.rodLengthUnit,
-    this.rodHardness,
-    this.rodAction,
-    this.reelBrand,
-    this.reelModel,
-    this.reelRatio,
-    this.lureBrand,
-    this.lureModel,
-    this.lureSize,
-    this.lureSizeUnit,
-    this.lureColor,
-    this.lureWeight,
-    this.lureWeightUnit,
-    this.airTemperature,
-    this.pressure,
-    this.weatherCode,
-    this.fit = BoxFit.cover,
-    this.cacheWidth,
-    this.cacheHeight,
-    this.errorBuilder,
-    this.showWatermark = true,
-  });
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(watermarkSettingsProvider);
@@ -100,14 +97,14 @@ class WatermarkedImage extends ConsumerWidget {
     final displayUnits = appSettings.units;
 
     // 转换长度和重量到当前显示单位
-    final double displayLength = lengthUnit != null
+    final displayLength = lengthUnit != null
         ? UnitConverter.convertLength(
             length,
             lengthUnit!,
             displayUnits.fishLengthUnit,
           )
         : length;
-    final double? displayWeight = weight != null && weightUnit != null
+    final displayWeight = weight != null && weightUnit != null
         ? UnitConverter.convertWeight(
             weight!,
             weightUnit!,
@@ -183,6 +180,43 @@ class WatermarkedImage extends ConsumerWidget {
 
 /// 水印绘制器
 class WatermarkPainter extends CustomPainter {
+
+  WatermarkPainter({
+    required this.species,
+    required this.length,
+    required this.settings, required this.strings, required this.displayLength, required this.displayLengthUnit, required this.displayWeightUnit, required this.displayTemperatureUnit, this.weight,
+    this.lengthUnit,
+    this.weightUnit,
+    this.locationName,
+    this.catchTime,
+    this.rodName,
+    this.reelName,
+    this.lureName,
+    this.rodBrand,
+    this.rodModel,
+    this.rodMaterial,
+    this.rodLength,
+    this.rodLengthUnit,
+    this.rodHardness,
+    this.rodAction,
+    this.reelBrand,
+    this.reelModel,
+    this.reelRatio,
+    this.lureBrand,
+    this.lureModel,
+    this.lureSize,
+    this.lureSizeUnit,
+    this.lureColor,
+    this.lureWeight,
+    this.lureWeightUnit,
+    this.airTemperature,
+    this.pressure,
+    this.weatherCode,
+    this.displayWeight,
+    this.referenceWidth,
+    this.dragOffset,
+    this.watermarkScale = 1.0,
+  });
   final String species;
   final double length;
   final double? weight;
@@ -224,49 +258,6 @@ class WatermarkPainter extends CustomPainter {
   final Offset? dragOffset;
   final double watermarkScale;
 
-  WatermarkPainter({
-    required this.species,
-    required this.length,
-    this.weight,
-    this.lengthUnit,
-    this.weightUnit,
-    this.locationName,
-    this.catchTime,
-    this.rodName,
-    this.reelName,
-    this.lureName,
-    this.rodBrand,
-    this.rodModel,
-    this.rodMaterial,
-    this.rodLength,
-    this.rodLengthUnit,
-    this.rodHardness,
-    this.rodAction,
-    this.reelBrand,
-    this.reelModel,
-    this.reelRatio,
-    this.lureBrand,
-    this.lureModel,
-    this.lureSize,
-    this.lureSizeUnit,
-    this.lureColor,
-    this.lureWeight,
-    this.lureWeightUnit,
-    this.airTemperature,
-    this.pressure,
-    this.weatherCode,
-    required this.settings,
-    required this.strings,
-    required this.displayLength,
-    this.displayWeight,
-    required this.displayLengthUnit,
-    required this.displayWeightUnit,
-    required this.displayTemperatureUnit,
-    this.referenceWidth,
-    this.dragOffset,
-    this.watermarkScale = 1.0,
-  });
-
   @override
   void paint(Canvas canvas, Size size) {
     // 构建水印文本列表
@@ -278,7 +269,7 @@ class WatermarkPainter extends CustomPainter {
   }
 
   List<String> _buildWatermarkLines() {
-    final List<String> lines = [];
+    final lines = <String>[];
 
     for (final type in settings.infoTypes) {
       if (type == WatermarkInfoType.appName) continue; // App名称最后处理
@@ -286,24 +277,20 @@ class WatermarkPainter extends CustomPainter {
       switch (type) {
         case WatermarkInfoType.species:
           if (species.isNotEmpty) lines.add('${strings.species}：$species');
-          break;
         case WatermarkInfoType.length:
           lines.add(
             '${strings.length}：${displayLength.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayLengthUnit)}',
           );
-          break;
         case WatermarkInfoType.weight:
           if (displayWeight != null) {
             lines.add(
               '${strings.weight}：${displayWeight!.toStringAsFixed(2)} ${UnitConverter.getWeightSymbol(displayWeightUnit)}',
             );
           }
-          break;
         case WatermarkInfoType.location:
           if (locationName != null && locationName!.isNotEmpty) {
             lines.add('${strings.location}：$locationName');
           }
-          break;
         case WatermarkInfoType.rod:
           if (rodBrand != null && rodBrand!.isNotEmpty) {
             final rodParts = <String>[];
@@ -315,7 +302,7 @@ class WatermarkPainter extends CustomPainter {
               final lengthValue = double.tryParse(rodLength!) ?? 0.0;
               final lengthUnit = rodLengthUnit ?? 'm';
               rodParts.add(
-                  '${lengthValue.toStringAsFixed(2)} ${UnitConverter.getLengthSymbol(lengthUnit)}');
+                  '${lengthValue.toStringAsFixed(2)} ${UnitConverter.getLengthSymbol(lengthUnit)}',);
             }
             if (rodHardness != null && rodHardness!.isNotEmpty) {
               rodParts.add(rodHardness!);
@@ -329,7 +316,6 @@ class WatermarkPainter extends CustomPainter {
           } else if (rodName != null && rodName!.isNotEmpty) {
             lines.add('${strings.rod}：$rodName');
           }
-          break;
         case WatermarkInfoType.reel:
           if (reelBrand != null && reelBrand!.isNotEmpty) {
             final reelParts = <String>[];
@@ -346,7 +332,6 @@ class WatermarkPainter extends CustomPainter {
           } else if (reelName != null && reelName!.isNotEmpty) {
             lines.add('${strings.reel}：$reelName');
           }
-          break;
         case WatermarkInfoType.lure:
           if (lureBrand != null && lureBrand!.isNotEmpty) {
             final lureParts = <String>[];
@@ -362,7 +347,7 @@ class WatermarkPainter extends CustomPainter {
             if (lureWeight != null && lureWeight!.isNotEmpty) {
               final weightUnit = lureWeightUnit ?? 'g';
               lureParts.add(
-                  '$lureWeight ${UnitConverter.getWeightSymbol(weightUnit)}');
+                  '$lureWeight ${UnitConverter.getWeightSymbol(weightUnit)}',);
             }
             if (lureColor != null && lureColor!.isNotEmpty) {
               lureParts.add(lureColor!);
@@ -373,14 +358,12 @@ class WatermarkPainter extends CustomPainter {
           } else if (lureName != null && lureName!.isNotEmpty) {
             lines.add('${strings.lure}：$lureName');
           }
-          break;
         case WatermarkInfoType.time:
           if (catchTime != null) {
             final timeStr =
                 '${catchTime!.year}-${catchTime!.month.toString().padLeft(2, '0')}-${catchTime!.day.toString().padLeft(2, '0')} ${catchTime!.hour.toString().padLeft(2, '0')}:${catchTime!.minute.toString().padLeft(2, '0')}';
             lines.add('${strings.time}：$timeStr');
           }
-          break;
         case WatermarkInfoType.airTemperature:
           if (airTemperature != null) {
             final displayTemp = UnitConverter.convertTemperature(
@@ -392,12 +375,10 @@ class WatermarkPainter extends CustomPainter {
               '${strings.airTemperature}：${UnitConverter.formatTemperature(displayTemp, displayTemperatureUnit)}',
             );
           }
-          break;
         case WatermarkInfoType.pressure:
           if (pressure != null) {
             lines.add('${strings.pressure}：${pressure!.toStringAsFixed(0)}hPa');
           }
-          break;
         case WatermarkInfoType.weather:
           if (weatherCode != null) {
             final weatherDesc = getLocalizedWeatherDescription(weatherCode, strings);
@@ -405,7 +386,6 @@ class WatermarkPainter extends CustomPainter {
               lines.add('${strings.weather}：$weatherDesc');
             }
           }
-          break;
         case WatermarkInfoType.appName:
           // 已在上面处理
           break;
@@ -428,7 +408,7 @@ class WatermarkPainter extends CustomPainter {
   /// 简约左下水印（逐行显示）
   void _drawMinimal(Canvas canvas, Size size, List<String> lines) {
     // 根据 referenceWidth 缩放字号，确保不同画布尺寸下视觉比例一致
-    final double scale = referenceWidth != null && referenceWidth! > 0
+    final scale = referenceWidth != null && referenceWidth! > 0
         ? size.width / referenceWidth!
         : 1.0;
     final baseFontSize =
@@ -449,31 +429,26 @@ class WatermarkPainter extends CustomPainter {
         paddingLeft = size.width * 0.03;
         paddingBottom = 0;
         paddingRight = 0;
-        break;
       case WatermarkPosition.topRight:
         paddingTop = size.height * 0.05;
         paddingRight = size.width * 0.03;
         paddingBottom = 0;
         paddingLeft = 0;
-        break;
       case WatermarkPosition.bottomLeft:
         paddingBottom = size.height * 0.05;
         paddingLeft = size.width * 0.03;
         paddingTop = 0;
         paddingRight = 0;
-        break;
       case WatermarkPosition.bottomRight:
         paddingBottom = size.height * 0.05;
         paddingRight = size.width * 0.03;
         paddingTop = 0;
         paddingLeft = 0;
-        break;
       case WatermarkPosition.center:
         paddingTop = size.height * 0.5 - (lines.length * lineHeight / 2);
         paddingLeft = size.width * 0.5;
         paddingBottom = 0;
         paddingRight = 0;
-        break;
     }
 
     // 计算起始位置
@@ -506,30 +481,26 @@ class WatermarkPainter extends CustomPainter {
       }
 
       final bgHeight = lines.length * lineHeight + 16;
-      double bgX, bgY;
+      double bgX;
+      double bgY;
 
       // 根据位置计算背景位置
       switch (settings.position) {
         case WatermarkPosition.topLeft:
           bgX = paddingLeft - 8;
           bgY = paddingTop - 8;
-          break;
         case WatermarkPosition.topRight:
           bgX = size.width - paddingRight - bgWidth - 8;
           bgY = paddingTop - 8;
-          break;
         case WatermarkPosition.bottomLeft:
           bgX = paddingLeft - 8;
           bgY = size.height - paddingBottom - bgHeight + 8;
-          break;
         case WatermarkPosition.bottomRight:
           bgX = size.width - paddingRight - bgWidth - 8;
           bgY = size.height - paddingBottom - bgHeight + 8;
-          break;
         case WatermarkPosition.center:
           bgX = paddingLeft - bgWidth / 2 - 8;
           bgY = paddingTop - 8;
-          break;
       }
 
       // 使用 blurRadius 作为圆角半径
@@ -549,7 +520,7 @@ class WatermarkPainter extends CustomPainter {
         ? lines
         : lines.reversed.toList();
 
-    for (int i = 0; i < drawLines.length; i++) {
+    for (var i = 0; i < drawLines.length; i++) {
       final line = drawLines[i];
       final isAppName = line.startsWith('\u200B');
       final textPainter = TextPainter(
@@ -571,7 +542,7 @@ class WatermarkPainter extends CustomPainter {
       );
       textPainter.layout();
 
-      double x = paddingLeft;
+      var x = paddingLeft;
       if (settings.position == WatermarkPosition.topRight ||
           settings.position == WatermarkPosition.bottomRight) {
         x = size.width - paddingRight - textPainter.width;
@@ -593,7 +564,7 @@ class WatermarkPainter extends CustomPainter {
 
   /// 在指定偏移位置绘制水印（用于拖拽定位）
   void _drawAtOffset(Canvas canvas, Size size, List<String> lines,
-      Offset offset, double baseFontSize, double lineHeight) {
+      Offset offset, double baseFontSize, double lineHeight,) {
     if (lines.isEmpty) return;
 
     final textColor = Color(settings.textColor);
@@ -634,7 +605,7 @@ class WatermarkPainter extends CustomPainter {
     }
 
     // 绘制文字
-    double y = offset.dy;
+    var y = offset.dy;
     for (final line in lines) {
       final tp = TextPainter(
         text: TextSpan(text: line, style: textStyle),
@@ -673,7 +644,7 @@ class WatermarkExporter {
     required String imagePath,
     required String species,
     required double length,
-    double? weight,
+    required WatermarkSettings settings, required AppStrings strings, required double displayLength, required double? displayWeight, required String displayLengthUnit, required String displayWeightUnit, required String displayTemperatureUnit, double? weight,
     String? lengthUnit,
     String? weightUnit,
     String? locationName,
@@ -701,13 +672,6 @@ class WatermarkExporter {
     double? airTemperature,
     double? pressure,
     int? weatherCode,
-    required WatermarkSettings settings,
-    required AppStrings strings,
-    required double displayLength,
-    required double? displayWeight,
-    required String displayLengthUnit,
-    required String displayWeightUnit,
-    required String displayTemperatureUnit,
     double referenceWidth = 400.0,
     Offset? dragOffset,
     double watermarkScale = 1.0,

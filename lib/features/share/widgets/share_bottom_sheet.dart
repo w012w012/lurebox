@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../core/services/share_template.dart';
-import '../../../core/services/share_card_service.dart';
-import '../../../widgets/common/premium_button.dart';
-import 'share_card_widget.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/services/share_card_service.dart';
+import 'package:lurebox/core/services/share_template.dart';
+import 'package:lurebox/features/share/widgets/share_card_widget.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
 
 class ShareBottomSheet extends ConsumerStatefulWidget {
-  final Map<String, dynamic>? statsData;
-  final VoidCallback? onShare;
 
   const ShareBottomSheet({super.key, this.statsData, this.onShare});
+  final Map<String, dynamic>? statsData;
+  final VoidCallback? onShare;
 
   static Future<void> show(
     BuildContext context, {
@@ -240,7 +238,6 @@ class _ShareBottomSheetState extends ConsumerState<ShareBottomSheet> {
 
     return PremiumButton(
       text: strings.share,
-      variant: PremiumButtonVariant.primary,
       isFullWidth: true,
       borderRadius: 12,
       padding: const EdgeInsets.symmetric(vertical: 16),

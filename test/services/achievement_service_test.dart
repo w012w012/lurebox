@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/constants/achievements.dart';
 import 'package:lurebox/core/models/achievement.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
 import 'package:lurebox/core/services/achievement_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockStatsRepository extends Mock implements StatsRepository {}
 
@@ -261,7 +261,7 @@ void main() {
 
         expect(stats['unlockedCount'], greaterThan(0));
         expect(
-            stats['totalCount'], equals(AchievementConfig.definitions.length));
+            stats['totalCount'], equals(AchievementConfig.definitions.length),);
         expect(stats['progress'], greaterThanOrEqualTo(0));
         expect(stats['progress'], lessThanOrEqualTo(100));
       });

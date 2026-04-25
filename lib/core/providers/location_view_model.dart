@@ -1,22 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/location_service.dart';
-import '../di/di.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/services/location_service.dart';
 
 class LocationGroup {
-  final String representative;
-  final List<String> locations;
 
   const LocationGroup({required this.representative, required this.locations});
+  final String representative;
+  final List<String> locations;
 }
 
 class LocationManagementState {
-  final bool isLoading;
-  final String? errorMessage;
-  final List<Map<String, dynamic>> locations;
-  final List<LocationGroup> locationGroups;
-  final Set<String> selectedLocations;
-  final bool isMerging;
-  final String? mergeTargetName;
 
   const LocationManagementState({
     this.isLoading = true,
@@ -27,6 +20,13 @@ class LocationManagementState {
     this.isMerging = false,
     this.mergeTargetName,
   });
+  final bool isLoading;
+  final String? errorMessage;
+  final List<Map<String, dynamic>> locations;
+  final List<LocationGroup> locationGroups;
+  final Set<String> selectedLocations;
+  final bool isMerging;
+  final String? mergeTargetName;
 
   LocationManagementState copyWith({
     bool? isLoading,
@@ -51,12 +51,12 @@ class LocationManagementState {
 
 class LocationManagementViewModel
     extends StateNotifier<LocationManagementState> {
-  final LocationService _locationService;
 
   LocationManagementViewModel(this._locationService)
       : super(const LocationManagementState()) {
     loadData();
   }
+  final LocationService _locationService;
 
   Future<void> loadData() async {
     state = state.copyWith(isLoading: true, errorMessage: () => null);
@@ -82,7 +82,7 @@ class LocationManagementViewModel
         locationGroups: groups,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: () => e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: e.toString);
     }
   }
 
@@ -123,7 +123,7 @@ class LocationManagementViewModel
       await loadData();
       return true;
     } catch (e) {
-      state = state.copyWith(isMerging: false, errorMessage: () => e.toString());
+      state = state.copyWith(isMerging: false, errorMessage: e.toString);
       return false;
     }
   }
@@ -141,7 +141,7 @@ class LocationManagementViewModel
       state = state.copyWith(isMerging: false);
       return true;
     } catch (e) {
-      state = state.copyWith(isMerging: false, errorMessage: () => e.toString());
+      state = state.copyWith(isMerging: false, errorMessage: e.toString);
       return false;
     }
   }
@@ -156,7 +156,7 @@ class LocationManagementViewModel
       await loadData();
       return true;
     } catch (e) {
-      state = state.copyWith(isMerging: false, errorMessage: () => e.toString());
+      state = state.copyWith(isMerging: false, errorMessage: e.toString);
       return false;
     }
   }

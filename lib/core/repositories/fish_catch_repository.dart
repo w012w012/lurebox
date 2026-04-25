@@ -1,7 +1,7 @@
-import '../constants/pagination_constants.dart';
-import '../models/fish_catch.dart';
-import '../models/fish_filter.dart';
-import '../models/paginated_result.dart';
+import 'package:lurebox/core/constants/pagination_constants.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/models/fish_filter.dart';
+import 'package:lurebox/core/models/paginated_result.dart';
 
 export '../models/paginated_result.dart';
 
@@ -79,8 +79,7 @@ abstract class FishCatchRepository {
   /// [filter] 包含所有过滤条件（timeFilter/fateFilter/speciesFilter/searchQuery/sortBy/sortAsc）
   Future<PaginatedResult<FishCatch>> getFilteredPageByFilter({
     required int page,
-    int pageSize = PaginationConstants.defaultPageSize,
-    required FishFilter filter,
+    required FishFilter filter, int pageSize = PaginationConstants.defaultPageSize,
   });
 
   /// 获取渔获总数（高效实现，使用 SELECT COUNT(*)）

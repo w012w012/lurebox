@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/user_species_alias.dart';
-import 'package:lurebox/core/repositories/user_species_alias_repository.dart';
 import 'package:lurebox/core/repositories/species_management_service.dart';
+import 'package:lurebox/core/repositories/user_species_alias_repository.dart';
 import 'package:lurebox/core/services/fish_species_matcher.dart';
+import 'package:mocktail/mocktail.dart';
 
 // Mock classes
 class MockUserSpeciesAliasRepository extends Mock

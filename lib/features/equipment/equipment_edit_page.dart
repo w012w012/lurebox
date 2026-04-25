@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/di/di.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/app_settings_provider.dart';
-import '../../core/providers/equipment_edit_state.dart';
-import '../../core/providers/equipment_edit_view_model.dart';
-import '../../core/utils/unit_converter.dart';
-import '../../core/utils/legacy_value_migrator.dart';
-import '../../widgets/common/premium_button.dart';
-import '../../widgets/common/premium_card.dart';
-import '../../widgets/common/premium_input.dart';
-import '../../widgets/common/app_snack_bar.dart';
-import 'widgets/rod_form.dart';
-import 'widgets/reel_form.dart';
-import 'widgets/lure_form.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/equipment_edit_state.dart';
+import 'package:lurebox/core/providers/equipment_edit_view_model.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/utils/legacy_value_migrator.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/features/equipment/widgets/lure_form.dart';
+import 'package:lurebox/features/equipment/widgets/reel_form.dart';
+import 'package:lurebox/features/equipment/widgets/rod_form.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
+import 'package:lurebox/widgets/common/premium_input.dart';
 
 class EquipmentEditPage extends ConsumerStatefulWidget {
+  const EquipmentEditPage({required this.type, super.key, this.equipmentId});
   final String type;
   final int? equipmentId;
-  const EquipmentEditPage({super.key, required this.type, this.equipmentId});
   @override
   ConsumerState<EquipmentEditPage> createState() => _EquipmentEditPageState();
 }
@@ -70,7 +70,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       _getOrCreateController('model', equipment.model ?? '');
       _getOrCreateController('price', equipment.price?.toString() ?? '');
       _getOrCreateController('purchaseDate',
-          equipment.purchaseDate?.toIso8601String().split('T').first ?? '');
+          equipment.purchaseDate?.toIso8601String().split('T').first ?? '',);
 
       // Sync type-specific controllers from equipment map
       _syncTypeSpecificControllers(equipmentMap);
@@ -95,7 +95,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
   TextEditingController _getOrCreateController(String field, String value) {
     final controller = _controllers.putIfAbsent(
-        field, () => TextEditingController(text: value));
+        field, () => TextEditingController(text: value),);
     if (value.isNotEmpty && controller.text != value) {
       controller.text = value;
     }
@@ -111,7 +111,6 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
         final wr = equipment['weight_range']?.toString() ?? '';
         _getOrCreateController('weightRangeMin', _parseWeightRange(wr).$1);
         _getOrCreateController('weightRangeMax', _parseWeightRange(wr).$2);
-        break;
       case 'reel':
         _getOrCreateController('reelBearings', equipment['reel_bearings']?.toString() ?? '');
         final ratio = equipment['reel_ratio']?.toString() ?? '';
@@ -124,13 +123,11 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
         _getOrCreateController('reelLine', equipment['reel_line']?.toString() ?? '');
         _getOrCreateController('reelLineNumber', equipment['reel_line_number']?.toString() ?? '');
         _getOrCreateController('reelLineLength', equipment['reel_line_length']?.toString() ?? '');
-        break;
       case 'lure':
         _getOrCreateController('lureWeight', equipment['lure_weight']?.toString() ?? '');
         _getOrCreateController('lureSize', equipment['lure_size']?.toString() ?? '');
         _getOrCreateController('lureColor', equipment['lure_color']?.toString() ?? '');
         _getOrCreateController('lureQuantity', equipment['lure_quantity']?.toString() ?? '');
-        break;
     }
   }
 
@@ -475,79 +472,54 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
           break;
         case 'brand':
           notifier.updateBrand(value);
-          break;
         case 'model':
           notifier.updateModel(value);
-          break;
         case 'price':
           notifier.updatePrice(value);
-          break;
         case 'purchaseDate':
           notifier.updatePurchaseDate(value);
-          break;
         case 'length':
           notifier.updateLength(value);
-          break;
         case 'sections':
           notifier.updateSections(value);
-          break;
         case 'material':
           notifier.updateMaterial(value);
-          break;
         case 'hardness':
           notifier.updateHardness(value);
-          break;
         case 'rodAction':
           notifier.updateRodAction(value);
-          break;
         case 'weightRange':
           notifier.updateWeightRange(value);
-          break;
         case 'reelBearings':
           notifier.updateReelBearings(value);
-          break;
         case 'reelRatio':
           notifier.updateReelRatio(value);
-          break;
         case 'reelCapacity':
           notifier.updateReelCapacity(value);
-          break;
         case 'reelBrakeType':
           notifier.updateReelBrakeType(value);
-          break;
         case 'reelWeight':
           notifier.updateReelWeight(value);
-          break;
         case 'reelLine':
           notifier.updateReelLine(value);
-          break;
         case 'reelLineNumber':
           notifier.updateReelLineNumber(value);
-          break;
         case 'reelLineLength':
           notifier.updateReelLineLength(value);
-          break;
         case 'reelLineDate':
           notifier.updateReelLineDate(value);
-          break;
         case 'lureType':
           notifier.updateLureType(value);
-          break;
         case 'lureWeight':
           notifier.updateLureWeight(value);
-          break;
         case 'lureSize':
           notifier.updateLureSize(value);
-          break;
         case 'lureColor':
           notifier.updateLureColor(value);
-          break;
         case 'lureQuantity':
           notifier.updateLureQuantity(value);
-          break;
         case 'lureQuantityUnit':
           notifier.updateLureQuantityUnit(value);
-          break;
       }
     }
 
@@ -564,7 +536,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
         equipmentEditViewModelProvider((
           type: widget.type,
           equipment: _loadedEquipment,
-        )),
+        ),),
       );
       if (s.errorMessage != null) {
         AppSnackBar.showError(context, strings.saveFailed, debugError: s.errorMessage);
@@ -733,13 +705,13 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
 /// 包裹 Autocomplete 文本字段，处理点击外部关闭
 class _DismissibleAutocompleteField extends StatefulWidget {
-  final FocusNode focusNode;
-  final Widget child;
 
   const _DismissibleAutocompleteField({
     required this.focusNode,
     required this.child,
   });
+  final FocusNode focusNode;
+  final Widget child;
 
   @override
   State<_DismissibleAutocompleteField> createState() =>
@@ -775,15 +747,15 @@ class _DismissibleAutocompleteFieldState
 
 /// 可关闭的下拉选项面板 - 支持点击外部关闭
 class _DismissibleAutocompleteOptions<T> extends StatelessWidget {
-  final void Function(T) onSelected;
-  final Iterable<T> options;
-  final FocusNode focusNode;
 
   const _DismissibleAutocompleteOptions({
     required this.onSelected,
     required this.options,
     required this.focusNode,
   });
+  final void Function(T) onSelected;
+  final Iterable<T> options;
+  final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -794,9 +766,7 @@ class _DismissibleAutocompleteOptions<T> extends StatelessWidget {
         // 点击外部关闭
         Positioned.fill(
           child: GestureDetector(
-            onTap: () {
-              focusNode.unfocus();
-            },
+            onTap: focusNode.unfocus,
             child: Container(color: Colors.transparent),
           ),
         ),

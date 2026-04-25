@@ -1,32 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/models/app_settings.dart';
-import '../../../core/providers/app_settings_provider.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../core/utils/unit_converter.dart';
-import '../../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 class StatsSummaryCard extends ConsumerStatefulWidget {
+
+  const StatsSummaryCard({
+    required this.totalCount, required this.speciesSummary, required this.rodDistribution, required this.reelDistribution, required this.lureDistribution, required this.weightUnit, super.key,
+  });
   final int totalCount;
   final List<Map<String, dynamic>> speciesSummary;
   final Map<String, int> rodDistribution;
   final Map<String, int> reelDistribution;
   final Map<String, int> lureDistribution;
   final String weightUnit;
-
-  const StatsSummaryCard({
-    super.key,
-    required this.totalCount,
-    required this.speciesSummary,
-    required this.rodDistribution,
-    required this.reelDistribution,
-    required this.lureDistribution,
-    required this.weightUnit,
-  });
 
   @override
   ConsumerState<StatsSummaryCard> createState() => _StatsSummaryCardState();
@@ -61,13 +55,12 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
   Widget build(BuildContext context) {
     final strings = ref.watch(currentStringsProvider);
     final isChinese = ref.watch(
-        appSettingsProvider.select((s) => s.language == AppLanguage.chinese));
+        appSettingsProvider.select((s) => s.language == AppLanguage.chinese),);
     if (widget.speciesSummary.isEmpty) return const SizedBox();
 
     return FadeTransition(
       opacity: _fadeAnimation,
       child: PremiumCard(
-        variant: PremiumCardVariant.standard,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -192,18 +185,15 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
 }
 
 class EquipmentChart extends StatefulWidget {
+
+  const EquipmentChart({
+    required this.title, required this.data, required this.color, super.key,
+    this.strings,
+  });
   final String title;
   final Map<String, int> data;
   final Color color;
   final AppStrings? strings;
-
-  const EquipmentChart({
-    super.key,
-    required this.title,
-    required this.data,
-    required this.color,
-    this.strings,
-  });
 
   @override
   State<EquipmentChart> createState() => _EquipmentChartState();
@@ -257,7 +247,6 @@ class _EquipmentChartState extends State<EquipmentChart>
     return FadeTransition(
       opacity: _fadeAnimation,
       child: PremiumCard(
-        variant: PremiumCardVariant.standard,
         margin: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

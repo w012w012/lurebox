@@ -1,11 +1,12 @@
 import 'dart:io';
-import 'app_logger.dart';
-import '../constants/pagination_constants.dart';
-import '../models/fish_catch.dart';
-import '../models/fish_filter.dart';
-import '../repositories/fish_catch_repository.dart';
-import '../repositories/species_history_repository.dart';
-import '../repositories/stats_repository.dart';
+
+import 'package:lurebox/core/constants/pagination_constants.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/models/fish_filter.dart';
+import 'package:lurebox/core/repositories/fish_catch_repository.dart';
+import 'package:lurebox/core/repositories/species_history_repository.dart';
+import 'package:lurebox/core/repositories/stats_repository.dart';
+import 'package:lurebox/core/services/app_logger.dart';
 
 /// 渔获服务 - 渔获记录的业务逻辑层
 ///
@@ -19,20 +20,20 @@ import '../repositories/stats_repository.dart';
 /// 和 [StatsRepository]（统计数据）。创建/删除渔获时会自动管理关联的图片文件。
 
 class FishCatchService {
+
+  FishCatchService(this._repository, this._speciesHistoryRepo, this._statsRepo);
   final FishCatchRepository _repository;
   final SpeciesHistoryRepository _speciesHistoryRepo;
   final StatsRepository _statsRepo;
 
-  FishCatchService(this._repository, this._speciesHistoryRepo, this._statsRepo);
-
   // ===== CRUD Operations =====
 
   Future<List<FishCatch>> getAll() async {
-    return await _repository.getAll();
+    return _repository.getAll();
   }
 
   Future<FishCatch?> getById(int id) async {
-    return await _repository.getById(id);
+    return _repository.getById(id);
   }
 
   Future<int> create(FishCatch fish) async {
@@ -63,11 +64,11 @@ class FishCatchService {
   // ===== Query Operations =====
 
   Future<List<FishCatch>> getByDateRange(DateTime start, DateTime end) async {
-    return await _repository.getByDateRange(start, end);
+    return _repository.getByDateRange(start, end);
   }
 
   Future<List<FishCatch>> getByFate(FishFateType fate) async {
-    return await _repository.getByFate(fate);
+    return _repository.getByFate(fate);
   }
 
   Future<PaginatedResult<FishCatch>> getPage({
@@ -75,7 +76,7 @@ class FishCatchService {
     int pageSize = PaginationConstants.defaultPageSize,
     String orderBy = 'catch_time DESC',
   }) async {
-    return await _repository.getPage(
+    return _repository.getPage(
       page: page,
       pageSize: pageSize,
       orderBy: orderBy,
@@ -91,7 +92,7 @@ class FishCatchService {
     String? species,
     String orderBy = 'catch_time DESC',
   }) async {
-    return await _repository.getFilteredPage(
+    return _repository.getFilteredPage(
       page: page,
       pageSize: pageSize,
       startDate: startDate,
@@ -107,10 +108,9 @@ class FishCatchService {
   /// Uses SQL-level filtering for all filter fields
   Future<PaginatedResult<FishCatch>> getFilteredPageByFilter({
     required int page,
-    int pageSize = PaginationConstants.defaultPageSize,
-    required FishFilter filter,
+    required FishFilter filter, int pageSize = PaginationConstants.defaultPageSize,
   }) async {
-    return await _repository.getFilteredPageByFilter(
+    return _repository.getFilteredPageByFilter(
       page: page,
       pageSize: pageSize,
       filter: filter,
@@ -118,20 +118,20 @@ class FishCatchService {
   }
 
   Future<int> getCount() async {
-    return await _repository.getCount();
+    return _repository.getCount();
   }
 
   // ===== Stats Operations (delegated to StatsRepository) =====
 
   Future<List<FishCatch>> getTop3LongestCatches() async {
-    return await _statsRepo.getTop3LongestCatches();
+    return _statsRepo.getTop3LongestCatches();
   }
 
   Future<Map<String, int>> getSpeciesStats({
     DateTime? startDate,
     DateTime? endDate,
   }) async {
-    return await _statsRepo.getSpeciesStats(
+    return _statsRepo.getSpeciesStats(
       startDate: startDate,
       endDate: endDate,
     );
@@ -162,7 +162,7 @@ class FishCatchService {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
-    return await _statsRepo.getEquipmentDistribution(
+    return _statsRepo.getEquipmentDistribution(
       type,
       startDate: startDate,
       endDate: endDate,

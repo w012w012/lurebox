@@ -8,8 +8,8 @@ void main() {
     setUp(() {
       testInstance = LocationWithStats(
         name: 'Test Lake',
-        latitude: 35.0,
-        longitude: 139.0,
+        latitude: 35,
+        longitude: 139,
         fishCount: 10,
         lastCatchTime: DateTime(2024, 1, 15),
       );
@@ -26,8 +26,8 @@ void main() {
     test('creates LocationWithStats with null lastCatchTime', () {
       const instance = LocationWithStats(
         name: 'River',
-        latitude: 36.0,
-        longitude: 140.0,
+        latitude: 36,
+        longitude: 140,
         fishCount: 5,
       );
 
@@ -105,8 +105,8 @@ void main() {
     test('toMap handles null lastCatchTime', () {
       const instance = LocationWithStats(
         name: 'River',
-        latitude: 36.0,
-        longitude: 140.0,
+        latitude: 36,
+        longitude: 140,
         fishCount: 5,
       );
 
@@ -137,7 +137,7 @@ void main() {
     test('copyWith cannot set lastCatchTime to null (uses ?? operator)', () {
       // Note: copyWith uses ?? operator so explicitly passing null
       // doesn't actually set it to null - this is the actual behavior
-      final copy = testInstance.copyWith(lastCatchTime: null);
+      final copy = testInstance.copyWith();
 
       // The ?? operator means: if lastCatchTime is null, use this.lastCatchTime
       expect(copy.lastCatchTime, equals(testInstance.lastCatchTime));
@@ -146,10 +146,10 @@ void main() {
     test('equality based on name, latitude, and longitude', () {
       final other = LocationWithStats(
         name: 'Test Lake',
-        latitude: 35.0,
-        longitude: 139.0,
+        latitude: 35,
+        longitude: 139,
         fishCount: 999,
-        lastCatchTime: DateTime(2020, 1, 1),
+        lastCatchTime: DateTime(2020),
       );
 
       expect(testInstance, equals(other));
@@ -158,8 +158,8 @@ void main() {
     test('different name is not equal', () {
       const other = LocationWithStats(
         name: 'Different Lake',
-        latitude: 35.0,
-        longitude: 139.0,
+        latitude: 35,
+        longitude: 139,
         fishCount: 10,
       );
 
@@ -169,8 +169,8 @@ void main() {
     test('different latitude is not equal', () {
       const other = LocationWithStats(
         name: 'Test Lake',
-        latitude: 36.0,
-        longitude: 139.0,
+        latitude: 36,
+        longitude: 139,
         fishCount: 10,
       );
 
@@ -180,8 +180,8 @@ void main() {
     test('different longitude is not equal', () {
       const other = LocationWithStats(
         name: 'Test Lake',
-        latitude: 35.0,
-        longitude: 140.0,
+        latitude: 35,
+        longitude: 140,
         fishCount: 10,
       );
 
@@ -191,8 +191,8 @@ void main() {
     test('hashCode based on name, latitude, and longitude', () {
       const other = LocationWithStats(
         name: 'Test Lake',
-        latitude: 35.0,
-        longitude: 139.0,
+        latitude: 35,
+        longitude: 139,
         fishCount: 999,
       );
 
@@ -421,7 +421,7 @@ void main() {
         () {
       // Note: copyWith uses ?? operator so explicitly passing null
       // doesn't actually set it to null - this is the actual behavior
-      final copy = testInstance.copyWith(avgLength: null, avgWeight: null);
+      final copy = testInstance.copyWith();
 
       // The ?? operator means: if value is null, use this.value
       expect(copy.avgLength, equals(testInstance.avgLength));
@@ -499,7 +499,7 @@ void main() {
         releaseCount: 7,
         keepCount: 3,
         speciesDistribution: {'Bass': 5, 'Trout': 5},
-        avgLength: 40.0,
+        avgLength: 40,
         avgWeight: 2.3,
       );
 
@@ -513,7 +513,7 @@ void main() {
         keepCount: 3,
         speciesDistribution: {'Bass': 5, 'Trout': 5},
         avgLength: 30.5,
-        avgWeight: 5.0,
+        avgWeight: 5,
       );
 
       expect(testInstance, isNot(equals(other)));
@@ -525,8 +525,6 @@ void main() {
         releaseCount: 7,
         keepCount: 3,
         speciesDistribution: {'Bass': 5, 'Trout': 5},
-        avgLength: null,
-        avgWeight: null,
       );
 
       const stats2 = LocationStats(
@@ -534,8 +532,6 @@ void main() {
         releaseCount: 7,
         keepCount: 3,
         speciesDistribution: {'Bass': 5, 'Trout': 5},
-        avgLength: null,
-        avgWeight: null,
       );
 
       expect(stats1, equals(stats2));

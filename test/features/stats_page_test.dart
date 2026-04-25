@@ -39,13 +39,13 @@ void main() {
           return AppSettingsNotifierTest();
         }),
         todayStatsProvider.overrideWith(
-            (ref) => todayStats ?? AsyncValue.data(createStats())),
+            (ref) => todayStats ?? AsyncValue.data(createStats()),),
         monthStatsProvider.overrideWith(
-            (ref) => monthStats ?? AsyncValue.data(createStats())),
+            (ref) => monthStats ?? AsyncValue.data(createStats()),),
         yearStatsProvider
             .overrideWith((ref) => yearStats ?? AsyncValue.data(createStats())),
         allTimeStatsProvider.overrideWith(
-            (ref) => allTimeStats ?? AsyncValue.data(createStats())),
+            (ref) => allTimeStats ?? AsyncValue.data(createStats()),),
       ],
       child: const MaterialApp(
         home: StatsPage(),
@@ -66,7 +66,7 @@ void main() {
         (tester) async {
       await tester.pumpWidget(createWidgetUnderTest(
         todayStats: const AsyncValue.loading(),
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
 
@@ -87,7 +87,7 @@ void main() {
         monthStats: AsyncValue.data(stats),
         yearStats: AsyncValue.data(stats),
         allTimeStats: AsyncValue.data(stats),
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
@@ -112,7 +112,7 @@ void main() {
         monthStats: AsyncValue.data(stats),
         yearStats: AsyncValue.data(stats),
         allTimeStats: AsyncValue.data(stats),
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
@@ -134,7 +134,7 @@ void main() {
         monthStats: AsyncValue.data(stats),
         yearStats: AsyncValue.data(stats),
         allTimeStats: AsyncValue.data(stats),
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
@@ -147,9 +147,6 @@ void main() {
     testWidgets('stat cards show 0% release rate when count is 0',
         (tester) async {
       final stats = createStats(
-        totalCount: 0,
-        releaseCount: 0,
-        keepCount: 0,
         speciesStats: {},
       );
 
@@ -158,7 +155,7 @@ void main() {
         monthStats: AsyncValue.data(stats),
         yearStats: AsyncValue.data(stats),
         allTimeStats: AsyncValue.data(stats),
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
@@ -181,7 +178,7 @@ void main() {
         monthStats: AsyncValue.data(stats),
         yearStats: AsyncValue.data(stats),
         allTimeStats: AsyncValue.data(stats),
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
@@ -203,7 +200,7 @@ void main() {
         monthStats: AsyncValue.data(stats),
         yearStats: AsyncValue.data(stats),
         allTimeStats: AsyncValue.data(stats),
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
@@ -215,7 +212,7 @@ void main() {
     testWidgets('error state shows error icon', (tester) async {
       await tester.pumpWidget(createWidgetUnderTest(
         todayStats: AsyncValue.error(Exception('Failed'), StackTrace.current),
-      ));
+      ),);
       await tester.pump();
       await tester.pumpAndSettle();
 
@@ -235,7 +232,7 @@ void main() {
         monthStats: AsyncValue.data(stats),
         yearStats: AsyncValue.data(stats),
         allTimeStats: AsyncValue.data(stats),
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();

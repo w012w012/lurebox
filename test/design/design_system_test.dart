@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/design/theme/animation_constants.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/design/theme/app_theme.dart';
-import 'package:lurebox/widgets/common/premium_card.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 Widget _wrapInTheme(Widget child, {Brightness brightness = Brightness.light}) {
   return MaterialApp(
@@ -35,7 +35,7 @@ void main() {
   group('AppColors - Theme Integration', () {
     testWidgets('light theme wires AppColors to colorScheme', (tester) async {
       await tester.pumpWidget(
-        _wrapInTheme(const Text('Test'), brightness: Brightness.light),
+        _wrapInTheme(const Text('Test')),
       );
       final context = tester.element(find.byType(Text));
       final scheme = Theme.of(context).colorScheme;
@@ -67,7 +67,7 @@ void main() {
     testWidgets('light theme primary differs from dark mode primary constant',
         (tester) async {
       await tester.pumpWidget(
-        _wrapInTheme(const Text('Test'), brightness: Brightness.light),
+        _wrapInTheme(const Text('Test')),
       );
       final context = tester.element(find.byType(Text));
       final lightPrimary = Theme.of(context).colorScheme.primary;
@@ -195,7 +195,7 @@ void main() {
         equals(const EdgeInsets.symmetric(
           horizontal: AppTheme.spacingLg,
           vertical: AppTheme.spacingSm,
-        )),
+        ),),
       );
     });
   });
@@ -207,7 +207,6 @@ void main() {
           PremiumButton(
             text: 'Primary',
             onPressed: () {},
-            variant: PremiumButtonVariant.primary,
           ),
         ),
       );
