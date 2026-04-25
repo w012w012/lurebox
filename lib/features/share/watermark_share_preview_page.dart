@@ -191,6 +191,7 @@ class _WatermarkSharePreviewPageState
   Widget build(BuildContext context) {
     final settings = ref.watch(watermarkSettingsProvider);
     final strings = ref.watch(currentStringsProvider);
+    debugPrint('[WM-DEBUG] build: offset=$_watermarkOffset scale=$_watermarkScale imageRect=$_imageRect');
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -219,6 +220,7 @@ class _WatermarkSharePreviewPageState
     if (_imageRect == Rect.zero) {
       final container = MediaQuery.of(context).size;
       _imageRect = _computeImageRect(container, _imageSize);
+      debugPrint('[WM-DEBUG] _buildPreview: imageRect=$_imageRect container=$container');
 
       if (_watermarkOffset == null) {
         final wmSize = _estimateWatermarkSize();
@@ -226,6 +228,7 @@ class _WatermarkSharePreviewPageState
           _imageRect.left + _imageRect.width * 0.03,
           _imageRect.bottom - _imageRect.height * 0.05 - wmSize.height,
         );
+        debugPrint('[WM-DEBUG] _buildPreview: initialOffset=$_watermarkOffset');
       }
     }
 
@@ -293,16 +296,17 @@ class _WatermarkSharePreviewPageState
   }
 
   void _onScaleStart(ScaleStartDetails details) {
+    debugPrint('[WM-DEBUG] onScaleStart: offset=$_watermarkOffset scale=$_watermarkScale');
     _baseOffset = _watermarkOffset ?? Offset.zero;
     _baseScale = _watermarkScale;
   }
 
   void _onScaleUpdate(ScaleUpdateDetails details) {
     if (_watermarkOffset == null) return;
-    // 单指拖动: details.scale == 1.0, details.focalPointDelta 有值
-    // 双指缩放: details.scale != 1.0, 同时可有 focalPointDelta
     final newScale = (_baseScale * details.scale).clamp(0.3, 5.0);
     final newOffset = _baseOffset + details.focalPointDelta;
+    debugPrint('[WM-DEBUG] onScaleUpdate: delta=${details.focalPointDelta} '
+        'newOffset=$newOffset scale=${details.scale} pointerCount=${details.pointerCount}');
     setState(() {
       _watermarkScale = newScale;
       _watermarkOffset = newOffset;

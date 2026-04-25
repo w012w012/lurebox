@@ -386,7 +386,7 @@ const AppStrings chineseStrings = AppStrings(
     watermarkPreviewSpecies: '鳜鱼',
     watermarkPreviewLocation: '杭州西湖',
     sharePreview: '分享预览',
-    resetPosition: '重置位置',
+    resetPosition: '重置',
     confirmShare: '确认分享',
     dragToAdjustWatermark: '拖拽水印调整位置',
     pinchToZoomWatermark: '双指捏合缩放水印',
