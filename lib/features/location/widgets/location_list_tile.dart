@@ -85,7 +85,7 @@ class LocationListTile extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '$fishCount${fishCountSuffix ?? ' 条'}',
+                          (fishCountSuffix ?? '%d 条渔获').replaceFirst('%d', '$fishCount'),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
