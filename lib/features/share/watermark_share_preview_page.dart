@@ -116,6 +116,15 @@ class _WatermarkSharePreviewPageState
   Rect _imageRect = Rect.zero;
   Size _imageSize = Size.zero;
 
+  // 调试信息
+  final List<String> _debugLines = [];
+  int _buildCount = 0;
+
+  void _log(String msg) {
+    _debugLines.add(msg);
+    if (_debugLines.length > 12) _debugLines.removeAt(0);
+  }
+
   PreviewData get _data => widget.data;
 
   @override
@@ -191,7 +200,8 @@ class _WatermarkSharePreviewPageState
   Widget build(BuildContext context) {
     final settings = ref.watch(watermarkSettingsProvider);
     final strings = ref.watch(currentStringsProvider);
-    debugPrint('[WM-DEBUG] build: offset=$_watermarkOffset scale=$_watermarkScale imageRect=$_imageRect');
+    _buildCount++;
+    _log('build #$_buildCount offset=${_watermarkOffset?.dx.toStringAsFixed(1)},${_watermarkOffset?.dy.toStringAsFixed(1)}');
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -220,7 +230,7 @@ class _WatermarkSharePreviewPageState
     if (_imageRect == Rect.zero) {
       final container = MediaQuery.of(context).size;
       _imageRect = _computeImageRect(container, _imageSize);
-      debugPrint('[WM-DEBUG] _buildPreview: imageRect=$_imageRect container=$container');
+      _log('init imageRect=${_imageRect.left.toStringAsFixed(0)},${_imageRect.top.toStringAsFixed(0)} ${_imageRect.width.toStringAsFixed(0)}x${_imageRect.height.toStringAsFixed(0)}');
 
       if (_watermarkOffset == null) {
         final wmSize = _estimateWatermarkSize();
@@ -228,7 +238,7 @@ class _WatermarkSharePreviewPageState
           _imageRect.left + _imageRect.width * 0.03,
           _imageRect.bottom - _imageRect.height * 0.05 - wmSize.height,
         );
-        debugPrint('[WM-DEBUG] _buildPreview: initialOffset=$_watermarkOffset');
+        _log('init wmOffset=${_watermarkOffset!.dx.toStringAsFixed(1)},${_watermarkOffset!.dy.toStringAsFixed(1)}');
       }
     }
 
@@ -247,6 +257,7 @@ class _WatermarkSharePreviewPageState
           ),
           if (settings.enabled && _watermarkOffset != null)
             CustomPaint(
+
               size: Size(_imageRect.right, _imageRect.bottom),
               painter: WatermarkPainter(
                 species: _data.species,
@@ -290,13 +301,37 @@ class _WatermarkSharePreviewPageState
                 watermarkScale: _watermarkScale,
               ),
             ),
+          // 调试覆盖层
+          Positioned(
+            top: 8,
+            left: 8,
+            right: 8,
+            child: IgnorePointer(
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.7),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  _debugLines.join('\n'),
+                  style: const TextStyle(
+                    color: Colors.greenAccent,
+                    fontSize: 10,
+                    fontFamily: 'monospace',
+                    height: 1.3,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
   void _onScaleStart(ScaleStartDetails details) {
-    debugPrint('[WM-DEBUG] onScaleStart: offset=$_watermarkOffset scale=$_watermarkScale');
+    _log('START base=${_watermarkOffset?.dx.toStringAsFixed(1)},${_watermarkOffset?.dy.toStringAsFixed(1)}');
     _baseOffset = _watermarkOffset ?? Offset.zero;
     _baseScale = _watermarkScale;
   }
@@ -305,8 +340,9 @@ class _WatermarkSharePreviewPageState
     if (_watermarkOffset == null) return;
     final newScale = (_baseScale * details.scale).clamp(0.3, 5.0);
     final newOffset = _baseOffset + details.focalPointDelta;
-    debugPrint('[WM-DEBUG] onScaleUpdate: delta=${details.focalPointDelta} '
-        'newOffset=$newOffset scale=${details.scale} pointerCount=${details.pointerCount}');
+    _log('MOVE d=${details.focalPointDelta.dx.toStringAsFixed(1)},${details.focalPointDelta.dy.toStringAsFixed(1)} '
+        '→ ${newOffset.dx.toStringAsFixed(1)},${newOffset.dy.toStringAsFixed(1)} '
+        'n=${details.pointerCount}');
     setState(() {
       _watermarkScale = newScale;
       _watermarkOffset = newOffset;
