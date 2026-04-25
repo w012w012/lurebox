@@ -1,0 +1,4 @@
+keystore.file=lurebox-release.jks
+keystore.password=your_keystore_password
+key.alias=your_key_alias
+key.password=your_key_password
