@@ -387,7 +387,7 @@ const AppStrings englishStrings = AppStrings(
     watermarkPreviewSpecies: 'Mandarin Fish',
     watermarkPreviewLocation: 'West Lake, Hangzhou',
     sharePreview: 'Share Preview',
-    resetPosition: 'Reset Position',
+    resetPosition: 'Reset',
     confirmShare: 'Confirm Share',
     dragToAdjustWatermark: 'Drag watermark to adjust position',
     pinchToZoomWatermark: 'Pinch to zoom watermark',
