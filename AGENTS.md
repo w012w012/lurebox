@@ -50,7 +50,7 @@ Use helpers from `test/helpers/test_helpers.dart`:
 ## Anti-Patterns (THIS PROJECT)
 - No anti-pattern comments (`DO NOT`, `NEVER`, `ALWAYS`, `DEPRECATED`) found in code
 - **Architecture deviation**: Widgets exist in BOTH `lib/widgets/` AND nested in `lib/features/` - dual location creates confusion
-- **Architecture deviation**: AI providers in `core/services/adapters/` (12 files) - non-standard location
+- **Architecture deviation**: AI providers in `core/services/adapters/` (13 files) - non-standard location
 - **Architecture deviation**: `core/camera/` separate from `features/camera/` - camera logic split
 
 ## Code Style
@@ -108,7 +108,7 @@ final homeViewModelProvider = StateNotifierProvider<HomeNotifier, HomeState>((re
 - Services return `Future<T>` or `Future<T?>`
 - Database operations wrapped in try-catch
 - Use `FlutterError.onError` in main.dart
-- Log errors with `debugPrint()` for debugging
+- Log errors with `AppLogger.e(tag, message)` (suppressed in release mode)
 
 ### Design System (Tesla-Inspired)
 Reference: `DESIGN.md` for full specification.
@@ -149,9 +149,9 @@ Reference: `DESIGN.md` for full specification.
 ```
 lib/
 ├── core/
-│   ├── models/           # Data models (17 models: FishCatch, Equipment, etc.)
-│   ├── providers/        # Riverpod providers & notifiers (19 files)
-│   ├── services/         # Business logic (18 services)
+│   ├── models/           # Data models (16 models: FishCatch, Equipment, etc.)
+│   ├── providers/        # Riverpod providers & notifiers (21 files)
+│   ├── services/         # Business logic (34 files, including 13 AI adapters)
 │   ├── database/         # DatabaseProvider singleton
 │   ├── constants/        # AppStrings, achievements, price ranges
 │   ├── design/           # Theme, colors (light/dark), styles
@@ -168,12 +168,11 @@ lib/
 - `sqflite` - SQLite database
 - `camera` / `image_picker` - Photo capture
 - `geolocator` - GPS location
-- `flutter_map` - Map display
 - `fl_chart` - Charts/statistics
 - `open_meteo` - Weather data
 - `mocktail` - Test mocking
 - `share_plus` - Social sharing
-- `csv`, `pdf`, `printing` - Export functionality
+- `csv` - Export functionality (CSV/JSON)
 - `archive`, `crypto` - Backup functionality
 
 ## Database
