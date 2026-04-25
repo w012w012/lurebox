@@ -341,21 +341,20 @@ class _WatermarkSharePreviewPageState
 
   void _onScaleStart(ScaleStartDetails details) {
     _scaleUpdateCount = 0;
-    _log('▶ START base=${_watermarkOffset?.dx.toStringAsFixed(0)},${_watermarkOffset?.dy.toStringAsFixed(0)}');
     _baseOffset = _watermarkOffset ?? Offset.zero;
     _baseScale = _watermarkScale;
+    _log('▶ START base=${_baseOffset.dx.toStringAsFixed(0)},${_baseOffset.dy.toStringAsFixed(0)}');
   }
 
   void _onScaleUpdate(ScaleUpdateDetails details) {
     if (_watermarkOffset == null) return;
     _scaleUpdateCount++;
+    // focalPointDelta 是每事件增量，需累加到当前位置
+    final newOffset = _watermarkOffset! + details.focalPointDelta;
     final newScale = (_baseScale * details.scale).clamp(0.3, 5.0);
-    final newOffset = _baseOffset + details.focalPointDelta;
-    // 只记录前 3 次和之后每 5 次，避免刷屏
-    if (_scaleUpdateCount <= 3 || _scaleUpdateCount % 5 == 0) {
+    if (_scaleUpdateCount <= 3 || _scaleUpdateCount % 20 == 0) {
       _log('MOVE#$_scaleUpdateCount d=${details.focalPointDelta.dx.toStringAsFixed(1)},${details.focalPointDelta.dy.toStringAsFixed(1)} '
-          '→ ${newOffset.dx.toStringAsFixed(0)},${newOffset.dy.toStringAsFixed(0)} '
-          's=${details.scale.toStringAsFixed(2)} n=${details.pointerCount}');
+          '→ ${newOffset.dx.toStringAsFixed(0)},${newOffset.dy.toStringAsFixed(0)}');
     }
     setState(() {
       _watermarkScale = newScale;
@@ -364,7 +363,8 @@ class _WatermarkSharePreviewPageState
   }
 
   void _onScaleEnd(ScaleEndDetails details) {
-    _log('■ END lastOffset=${_watermarkOffset?.dx.toStringAsFixed(0)},${_watermarkOffset?.dy.toStringAsFixed(0)}');
+    _log('■ END offset=${_watermarkOffset?.dx.toStringAsFixed(0)},${_watermarkOffset?.dy.toStringAsFixed(0)} '
+        'scale=${_watermarkScale.toStringAsFixed(2)}');
   }
 
   Widget _buildToolbar(AppStrings strings) {
