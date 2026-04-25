@@ -119,10 +119,12 @@ class _WatermarkSharePreviewPageState
   // 调试信息
   final List<String> _debugLines = [];
   int _buildCount = 0;
+  int _scaleUpdateCount = 0;
+  Offset? _lastAppliedOffset;
 
   void _log(String msg) {
     _debugLines.add(msg);
-    if (_debugLines.length > 12) _debugLines.removeAt(0);
+    if (_debugLines.length > 15) _debugLines.removeAt(0);
   }
 
   PreviewData get _data => widget.data;
@@ -201,7 +203,13 @@ class _WatermarkSharePreviewPageState
     final settings = ref.watch(watermarkSettingsProvider);
     final strings = ref.watch(currentStringsProvider);
     _buildCount++;
-    _log('build #$_buildCount offset=${_watermarkOffset?.dx.toStringAsFixed(1)},${_watermarkOffset?.dy.toStringAsFixed(1)}');
+    final offsetChanged = _lastAppliedOffset != _watermarkOffset;
+    _lastAppliedOffset = _watermarkOffset;
+    // 只在 offset 变化或每 10 次 build 记录一次，避免刷屏
+    if (offsetChanged || _buildCount % 10 == 0) {
+      _log('build#$_buildCount${offsetChanged ? " ΔOFFSET" : ""} '
+          'off=${_watermarkOffset?.dx.toStringAsFixed(0)},${_watermarkOffset?.dy.toStringAsFixed(0)}');
+    }
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -246,6 +254,7 @@ class _WatermarkSharePreviewPageState
       behavior: HitTestBehavior.translucent,
       onScaleStart: _onScaleStart,
       onScaleUpdate: _onScaleUpdate,
+      onScaleEnd: _onScaleEnd,
       child: Stack(
         children: [
           Positioned.fromRect(
@@ -331,22 +340,31 @@ class _WatermarkSharePreviewPageState
   }
 
   void _onScaleStart(ScaleStartDetails details) {
-    _log('START base=${_watermarkOffset?.dx.toStringAsFixed(1)},${_watermarkOffset?.dy.toStringAsFixed(1)}');
+    _scaleUpdateCount = 0;
+    _log('▶ START base=${_watermarkOffset?.dx.toStringAsFixed(0)},${_watermarkOffset?.dy.toStringAsFixed(0)}');
     _baseOffset = _watermarkOffset ?? Offset.zero;
     _baseScale = _watermarkScale;
   }
 
   void _onScaleUpdate(ScaleUpdateDetails details) {
     if (_watermarkOffset == null) return;
+    _scaleUpdateCount++;
     final newScale = (_baseScale * details.scale).clamp(0.3, 5.0);
     final newOffset = _baseOffset + details.focalPointDelta;
-    _log('MOVE d=${details.focalPointDelta.dx.toStringAsFixed(1)},${details.focalPointDelta.dy.toStringAsFixed(1)} '
-        '→ ${newOffset.dx.toStringAsFixed(1)},${newOffset.dy.toStringAsFixed(1)} '
-        'n=${details.pointerCount}');
+    // 只记录前 3 次和之后每 5 次，避免刷屏
+    if (_scaleUpdateCount <= 3 || _scaleUpdateCount % 5 == 0) {
+      _log('MOVE#$_scaleUpdateCount d=${details.focalPointDelta.dx.toStringAsFixed(1)},${details.focalPointDelta.dy.toStringAsFixed(1)} '
+          '→ ${newOffset.dx.toStringAsFixed(0)},${newOffset.dy.toStringAsFixed(0)} '
+          's=${details.scale.toStringAsFixed(2)} n=${details.pointerCount}');
+    }
     setState(() {
       _watermarkScale = newScale;
       _watermarkOffset = newOffset;
     });
+  }
+
+  void _onScaleEnd(ScaleEndDetails details) {
+    _log('■ END lastOffset=${_watermarkOffset?.dx.toStringAsFixed(0)},${_watermarkOffset?.dy.toStringAsFixed(0)}');
   }
 
   Widget _buildToolbar(AppStrings strings) {
