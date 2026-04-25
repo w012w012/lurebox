@@ -176,39 +176,43 @@ class PremiumNavigationBar extends StatelessWidget {
   }
 
   Widget _buildCenterFab(BuildContext context) {
-    return GestureDetector(
-      onTap: onCenterFabPressed,
-      behavior: HitTestBehavior.opaque,
-      child: Material(
-        color: Colors.transparent,
-        child: SizedBox(
-          width: 82,
-          height: 82,
-          child: Center(
-            child: Container(
-              width: 82,
-              height: 82,
-              decoration: BoxDecoration(
-                color: TeslaColors.electricBlue,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: TeslaColors.electricBlue.withValues(alpha: 0.5),
-                    blurRadius: 20,
-                    offset: const Offset(0, 6),
-                  ),
-                  BoxShadow(
-                    color: TeslaColors.electricBlue.withValues(alpha: 0.25),
-                    blurRadius: 36,
-                    spreadRadius: 6,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.camera_alt,
-                color: Colors.white,
-                size: 40,
+    return Semantics(
+      label: 'Take photo',
+      button: true,
+      child: GestureDetector(
+        onTap: onCenterFabPressed,
+        behavior: HitTestBehavior.opaque,
+        child: Material(
+          color: Colors.transparent,
+          child: SizedBox(
+            width: 82,
+            height: 82,
+            child: Center(
+              child: Container(
+                width: 82,
+                height: 82,
+                decoration: BoxDecoration(
+                  color: TeslaColors.electricBlue,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: TeslaColors.electricBlue.withValues(alpha: 0.5),
+                      blurRadius: 20,
+                      offset: const Offset(0, 6),
+                    ),
+                    BoxShadow(
+                      color: TeslaColors.electricBlue.withValues(alpha: 0.25),
+                      blurRadius: 36,
+                      spreadRadius: 6,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.camera_alt,
+                  color: Colors.white,
+                  size: 40,
+                ),
               ),
             ),
           ),

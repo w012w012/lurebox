@@ -6,8 +6,10 @@ import 'package:permission_handler/permission_handler.dart';
 import '../services/error_service.dart' as error_service;
 import '../services/permission_service.dart';
 import '../services/weather_service.dart';
+import '../constants/strings.dart';
 
 class CameraHelper {
+  AppStrings? _strings;
   List<CameraDescription> _cameras = [];
   CameraController? _cameraController;
   bool _isInitialized = false;
@@ -19,6 +21,8 @@ class CameraHelper {
   Position? _position;
   WeatherData? _weatherData;
   final WeatherService _weatherService = WeatherService();
+
+  void setStrings(AppStrings strings) => _strings = strings;
 
   CameraController? get cameraController => _cameraController;
   bool get isInitialized => _isInitialized;
@@ -40,7 +44,7 @@ class CameraHelper {
           final result =
               await PermissionService().requestCameraPermission(context);
           if (!result.granted) {
-            _errorMessage = '需要相机权限';
+            _errorMessage = _strings?.cameraPermissionRequired ?? 'Camera permission required';
             return;
           }
         } else {
@@ -53,13 +57,13 @@ class CameraHelper {
 
         _cameras = await availableCameras();
         if (_cameras.isEmpty) {
-          _errorMessage = 'No cameras available';
+          _errorMessage = _strings?.noCameraFound ?? 'No cameras available';
           return;
         }
         await _initCameraController(_cameras[_currentCameraIndex]);
       }, context: '初始化相机');
     } catch (e) {
-      _errorMessage = '相机初始化失败: $e';
+      _errorMessage = '${_strings?.cameraInitFailed ?? 'Camera initialization failed'}: $e';
       _isInitialized = false;
     }
   }
@@ -80,7 +84,7 @@ class CameraHelper {
       _isInitialized = true;
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = '相机控制器初始化失败: $e';
+      _errorMessage = '${_strings?.cameraControllerInitFailed ?? 'Camera controller initialization failed'}: $e';
       _isInitialized = false;
     }
   }
@@ -106,7 +110,7 @@ class CameraHelper {
         return image.path;
       }, context: '拍照');
     } catch (e) {
-      _errorMessage = '拍照失败: $e';
+      _errorMessage = '${_strings?.cameraTakePictureFailed ?? 'Take picture failed'}: $e';
       return null;
     }
   }
@@ -119,7 +123,7 @@ class CameraHelper {
           final result =
               await PermissionService().requestLocationPermission(context);
           if (!result.granted) {
-            _locationName = '位置权限未授权';
+            _locationName = _strings?.locationPermissionDenied ?? 'Location permission denied';
             return;
           }
         } else {
@@ -128,7 +132,7 @@ class CameraHelper {
           if (!status.isGranted) {
             status = await Permission.locationWhenInUse.request();
             if (!status.isGranted) {
-              _locationName = '位置权限未授权';
+              _locationName = _strings?.locationPermissionDenied ?? 'Location permission denied';
               return;
             }
           }
@@ -146,19 +150,20 @@ class CameraHelper {
           _longitude = position.longitude;
           _position = position;
         } catch (e) {
-          _locationName = '定位失败';
+          _locationName = _strings?.locationFailed ?? 'Location fetch failed';
           return;
         }
 
+        final lat = _latitude;
+        final lng = _longitude;
+        if (lat == null || lng == null) return;
+
         // 获取天气数据
-        _weatherData = await _weatherService.getWeather(
-          _latitude!,
-          _longitude!,
-        );
+        _weatherData = await _weatherService.getWeather(lat, lng);
 
         try {
           final placemarks =
-              await placemarkFromCoordinates(_latitude!, _longitude!).timeout(
+              await placemarkFromCoordinates(lat, lng).timeout(
             const Duration(seconds: 5),
             onTimeout: () =>
                 throw const error_service.LocationException('地址解析超时'),
@@ -168,7 +173,7 @@ class CameraHelper {
             _locationName =
                 '${place.administrativeArea ?? ''}${place.locality ?? ''}${place.name ?? ''}';
             if (_locationName == null || _locationName!.isEmpty) {
-              _locationName = '未知位置';
+              _locationName = _strings?.unknownLocation ?? 'Unknown location';
             }
           } else {
             _locationName = '未知位置';
@@ -178,7 +183,7 @@ class CameraHelper {
         }
       }, context: '获取位置信息');
     } catch (e) {
-      _locationName = '获取位置失败';
+      _locationName = _strings?.errorLocationFetch ?? 'Location fetch failed';
     }
   }
 

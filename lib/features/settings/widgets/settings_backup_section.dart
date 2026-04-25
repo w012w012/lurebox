@@ -20,280 +20,116 @@ class SettingsBackupSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = ref.watch(currentStringsProvider);
     final settingsState = ref.watch(settingsViewModelProvider);
-    final accentColor = TeslaColors.electricBlue;
 
     return PremiumCard(
       child: Column(
         children: [
-          // WebDAV Backup
-          InkWell(
+          _buildTile(
+            context: context,
+            icon: Icons.cloud_upload,
+            title: strings.webdavBackup,
+            subtitle: strings.syncToCloud,
             onTap: () => _showWebDAVDialog(context, ref, strings),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: TeslaTheme.spacingMd,
-                horizontal: TeslaTheme.spacingSm,
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(TeslaTheme.spacingSm),
-                    decoration: BoxDecoration(
-                      color: accentColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
-                    ),
-                    child:
-                        Icon(Icons.cloud_upload, color: accentColor, size: 22),
-                  ),
-                  const SizedBox(width: TeslaTheme.spacingMd),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          strings.webdavBackup,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          strings.syncToCloud,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(Icons.chevron_right),
-                ],
-              ),
-            ),
           ),
           const Divider(height: 1),
-          // Export CSV
-          InkWell(
-            onTap: settingsState.isExporting
-                ? null
-                : () => _handleCsvExport(context, ref),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: TeslaTheme.spacingMd,
-                horizontal: TeslaTheme.spacingSm,
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(TeslaTheme.spacingSm),
-                    decoration: BoxDecoration(
-                      color: accentColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
-                    ),
-                    child: Icon(
-                      settingsState.isExporting
-                          ? Icons.hourglass_empty
-                          : Icons.table_chart,
-                      color: accentColor,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: TeslaTheme.spacingMd),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          strings.csvExport,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          strings.exportCsvDesc,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (settingsState.isExporting)
-                    const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  else
-                    const Icon(Icons.chevron_right),
-                ],
-              ),
-            ),
+          _buildTile(
+            context: context,
+            icon: Icons.table_chart,
+            title: strings.csvExport,
+            subtitle: strings.exportCsvDesc,
+            isLoading: settingsState.isExporting,
+            onTap: () => _handleCsvExport(context, ref),
           ),
-          // ZIP Full Backup
-          InkWell(
-            onTap: settingsState.isCreatingZipBackup
-                ? null
-                : () => _showFullBackupDialog(context, ref, strings),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: TeslaTheme.spacingMd,
-                horizontal: TeslaTheme.spacingSm,
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(TeslaTheme.spacingSm),
-                    decoration: BoxDecoration(
-                      color: accentColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
-                    ),
-                    child: Icon(
-                      settingsState.isCreatingZipBackup
-                          ? Icons.hourglass_empty
-                          : Icons.archive,
-                      color: accentColor,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: TeslaTheme.spacingMd),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          strings.fullBackupTitle,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          strings.fullBackupDesc,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (settingsState.isCreatingZipBackup)
-                    const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  else
-                    const Icon(Icons.chevron_right),
-                ],
-              ),
-            ),
+          _buildTile(
+            context: context,
+            icon: Icons.archive,
+            title: strings.fullBackupTitle,
+            subtitle: strings.fullBackupDesc,
+            isLoading: settingsState.isCreatingZipBackup,
+            onTap: () => _showFullBackupDialog(context, ref, strings),
           ),
           const Divider(height: 1),
-          // ZIP Restore
-          InkWell(
-            onTap: settingsState.isRestoringZipBackup
-                ? null
-                : () => _handleZipRestore(context, ref, strings),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: TeslaTheme.spacingMd,
-                horizontal: TeslaTheme.spacingSm,
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(TeslaTheme.spacingSm),
-                    decoration: BoxDecoration(
-                      color: accentColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
-                    ),
-                    child: Icon(
-                      settingsState.isRestoringZipBackup
-                          ? Icons.hourglass_empty
-                          : Icons.restore,
-                      color: accentColor,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: TeslaTheme.spacingMd),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          strings.restoreTitle,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          strings.restoreBackupDesc,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (settingsState.isRestoringZipBackup)
-                    const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  else
-                    const Icon(Icons.chevron_right),
-                ],
-              ),
-            ),
+          _buildTile(
+            context: context,
+            icon: Icons.restore,
+            title: strings.restoreTitle,
+            subtitle: strings.restoreBackupDesc,
+            isLoading: settingsState.isRestoringZipBackup,
+            onTap: () => _handleZipRestore(context, ref, strings),
           ),
           const Divider(height: 1),
-          // Export/Backup Management
-          InkWell(
+          _buildTile(
+            context: context,
+            icon: Icons.folder_open,
+            title: strings.exportAndBackupManagement,
+            subtitle: strings.exportAndBackupManagementDesc,
             onTap: () => context.push('/settings/export-backup'),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: TeslaTheme.spacingMd,
-                horizontal: TeslaTheme.spacingSm,
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(TeslaTheme.spacingSm),
-                    decoration: BoxDecoration(
-                      color: accentColor.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
-                    ),
-                    child: Icon(
-                      Icons.folder_open,
-                      color: accentColor,
-                      size: 22,
-                    ),
-                  ),
-                  const SizedBox(width: TeslaTheme.spacingMd),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          strings.exportAndBackupManagement,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          strings.exportAndBackupManagementDesc,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(Icons.chevron_right),
-                ],
-              ),
-            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTile({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+    bool isLoading = false,
+  }) {
+    const accentColor = TeslaColors.electricBlue;
+    return InkWell(
+      onTap: isLoading ? null : onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: TeslaTheme.spacingMd,
+          horizontal: TeslaTheme.spacingSm,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+              ),
+              child: Icon(
+                isLoading ? Icons.hourglass_empty : icon,
+                color: accentColor,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: TeslaTheme.spacingMd),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyLarge
+                        ?.copyWith(fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+              ),
+            ),
+            if (isLoading)
+              const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else
+              const Icon(Icons.chevron_right),
+          ],
+        ),
       ),
     );
   }

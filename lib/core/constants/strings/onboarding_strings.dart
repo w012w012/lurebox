@@ -27,4 +27,7 @@ mixin OnboardingStringsMixin {
   String get onboardingSettingsItems;
   String get onboardingReadyTitle;
   String get onboardingReadyDesc;
+  String get onboardingPermissionsGrant;
+  String get onboardingPermissionsRequesting;
+  String get onboardingPermissionsGranted;
 }

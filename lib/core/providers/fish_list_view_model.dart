@@ -82,12 +82,13 @@ class FishListState {
       (filter.searchQuery?.isNotEmpty ?? false);
 
   String getCustomDateLabel(String Function() getString) {
-    if (filter.customStartDate == null || filter.customEndDate == null) {
+    final startDate = filter.customStartDate;
+    final endDate = filter.customEndDate;
+    if (startDate == null || endDate == null) {
       return getString();
     }
-    final start = filter.customStartDate!;
-    final end = filter.customEndDate!.subtract(const Duration(days: 1));
-    return '${start.month}/${start.day} - ${end.month}/${end.day}';
+    final end = endDate.subtract(const Duration(days: 1));
+    return '${startDate.month}/${startDate.day} - ${end.month}/${end.day}';
   }
 }
 

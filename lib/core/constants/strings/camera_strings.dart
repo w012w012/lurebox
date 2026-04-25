@@ -17,4 +17,6 @@ mixin CameraStringsMixin {
   String get saveFailedRetry;
   String get savedLabel;
   String get notSavedLabel;
+  String get cameraControllerInitFailed;
+  String get cameraTakePictureFailed;
 }

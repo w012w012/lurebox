@@ -83,21 +83,23 @@ class CsvExporter {
           : fish.length;
 
       // Convert weight to display unit
+      final fishWeight = fish.weight;
       double? displayWeight;
-      if (fish.weight != null) {
+      if (fishWeight != null) {
         displayWeight = fish.weightUnit != weightUnit
             ? UnitConverter.convertWeight(
-                fish.weight!, fish.weightUnit, weightUnit)
-            : fish.weight;
+                fishWeight, fish.weightUnit, weightUnit)
+            : fishWeight;
       }
 
       // Convert temperature to display unit
+      final fishTemp = fish.airTemperature;
       double? displayTemp;
-      if (fish.airTemperature != null) {
+      if (fishTemp != null) {
         displayTemp = temperatureUnit != 'C'
             ? UnitConverter.convertTemperature(
-                fish.airTemperature!, 'C', temperatureUnit)
-            : fish.airTemperature;
+                fishTemp, 'C', temperatureUnit)
+            : fishTemp;
       }
 
       final row = <String>[

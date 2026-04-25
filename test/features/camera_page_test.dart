@@ -1,555 +1,241 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/camera/camera_state.dart';
+import 'package:lurebox/core/camera/camera_view_model.dart';
 import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/services/fish_catch_service.dart';
+import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:lurebox/features/camera/widgets/camera_view_widget.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
+import '../helpers/test_helpers.dart';
 
-// Minimal mock that satisfies CameraViewWidget interface
-class MinimalCameraViewModel {
-  final CameraState state;
-  final Future<void> Function() initializeCamera;
-  final Future<void> Function() switchCamera;
+/// Mock CameraViewModel that avoids real camera hardware.
+///
+/// CameraViewWidget takes (state, vm, strings) as constructor params.
+/// vm.cameraHelper is only accessed in the camera preview path
+/// (isCameraInitialized && no error), which we skip because it
+/// requires real camera hardware.
+class _MockCameraViewModel extends CameraViewModel {
+  _MockCameraViewModel()
+      : super(
+          FishCatchService(
+            MockFishCatchRepository(),
+            MockSpeciesHistoryRepository(),
+            MockStatsRepository(),
+          ),
+          EquipmentService(MockEquipmentRepository()),
+          AppStrings.chinese,
+        );
 
-  const MinimalCameraViewModel({
-    required this.state,
-    this.initializeCamera = _noop,
-    this.switchCamera = _noop,
-  });
+  @override
+  Future<void> initializeCamera() async {}
 
-  static Future<void> _noop() async {}
+  @override
+  Future<void> switchCamera() async {}
 }
 
 void main() {
-  group('CameraViewWidget', () {
-    late CameraState testState;
+  setUpAll(() => registerFallbackValues());
 
-    setUp(() {
-      testState = const CameraState(
-        captureState: CameraCaptureState.cameraReady,
-        isCameraInitialized: true,
-        isLoading: false,
-        isTakingPicture: false,
-        canSwitchCamera: true,
-      );
-    });
-
-    Widget buildTestWidget({
-      CameraState? state,
-      MinimalCameraViewModel? vm,
-      VoidCallback? onPickFromGallery,
-      VoidCallback? onTakePicture,
-    }) {
-      final effectiveVm = vm ?? MinimalCameraViewModel(state: testState);
-      return MaterialApp(
-        theme: ThemeData.light(),
-        home: Scaffold(
-          body: _TestableCameraViewWidget(
-            state: state ?? testState,
-            vm: effectiveVm,
-            strings: AppStrings.chinese,
-            onPickFromGallery: onPickFromGallery ?? () {},
-            onTakePicture: onTakePicture ?? () {},
-          ),
+  Widget buildWidget({
+    required CameraState state,
+    CameraViewModel? vm,
+    VoidCallback? onPickFromGallery,
+    VoidCallback? onTakePicture,
+  }) {
+    return MaterialApp(
+      theme: ThemeData.light(),
+      home: Scaffold(
+        body: CameraViewWidget(
+          state: state,
+          vm: vm ?? _MockCameraViewModel(),
+          strings: AppStrings.chinese,
+          onPickFromGallery: onPickFromGallery,
+          onTakePicture: onTakePicture,
         ),
-      );
-    }
+      ),
+    );
+  }
 
-    group('Rendering', () {
-      testWidgets('renders camera controls when initialized', (tester) async {
-        await tester.pumpWidget(buildTestWidget());
-        await tester.pumpAndSettle();
-
-        // Verify the camera controls are rendered
-        expect(find.byType(Row), findsWidgets);
-        expect(find.byIcon(Icons.photo_library), findsOneWidget);
-        expect(find.byIcon(Icons.cameraswitch), findsOneWidget);
-      });
-
-      testWidgets('renders PremiumIconButton for gallery selection',
-          (tester) async {
-        await tester.pumpWidget(buildTestWidget());
-        await tester.pumpAndSettle();
-
-        final galleryButton = find.widgetWithIcon(
-          PremiumIconButton,
-          Icons.photo_library,
-        );
-        expect(galleryButton, findsOneWidget);
-      });
-
-      testWidgets('renders PremiumIconButton for camera switch',
-          (tester) async {
-        await tester.pumpWidget(buildTestWidget());
-        await tester.pumpAndSettle();
-
-        final switchButton = find.widgetWithIcon(
-          PremiumIconButton,
-          Icons.cameraswitch,
-        );
-        expect(switchButton, findsOneWidget);
-      });
-
-      testWidgets('renders capture button with circular shape', (tester) async {
-        await tester.pumpWidget(buildTestWidget());
-        await tester.pumpAndSettle();
-
-        // Find the capture button container with circle shape (outer ring)
-        final captureButtonFinder = find.byWidgetPredicate(
-          (widget) =>
-              widget is Container &&
-              widget.decoration is BoxDecoration &&
-              (widget.decoration as BoxDecoration).shape == BoxShape.circle &&
-              (widget.decoration as BoxDecoration).border != null,
-        );
-        expect(captureButtonFinder, findsOneWidget);
-      });
-    });
-
-    group('Theme Colors - iOS Blue Styling', () {
-      testWidgets(
-          'uses accentLight color for capture button border in light mode',
-          (tester) async {
-        await tester.pumpWidget(buildTestWidget());
-        await tester.pumpAndSettle();
-
-        // Find the outer circle of capture button (has border)
-        final outerContainerFinder = find.byWidgetPredicate(
-          (widget) {
-            if (widget is Container) {
-              final decoration = widget.decoration;
-              if (decoration is BoxDecoration) {
-                return decoration.shape == BoxShape.circle &&
-                    decoration.border != null;
-              }
-            }
-            return false;
-          },
-        );
-
-        expect(outerContainerFinder, findsOneWidget);
-      });
-
-      testWidgets('uses accentDark color for capture button in dark mode',
-          (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            theme: ThemeData.dark(),
-            home: Scaffold(
-              body: _TestableCameraViewWidget(
-                state: testState,
-                vm: MinimalCameraViewModel(state: testState),
-                strings: AppStrings.chinese,
-                onPickFromGallery: () {},
-                onTakePicture: () {},
-              ),
-            ),
-          ),
-        );
-        await tester.pumpAndSettle();
-
-        // Verify capture button renders in dark mode
-        final captureButtonFinder = find.byWidgetPredicate(
-          (widget) =>
-              widget is Container &&
-              widget.decoration is BoxDecoration &&
-              (widget.decoration as BoxDecoration).shape == BoxShape.circle,
-        );
-        expect(captureButtonFinder, findsAtLeastNWidgets(2));
-      });
-
-      testWidgets('gallery button uses secondary variant with accent color',
-          (tester) async {
-        await tester.pumpWidget(buildTestWidget());
-        await tester.pumpAndSettle();
-
-        final galleryButton = tester.widget<PremiumIconButton>(
-          find.widgetWithIcon(PremiumIconButton, Icons.photo_library),
-        );
-        expect(galleryButton.variant, equals(PremiumButtonVariant.secondary));
-      });
-
-      testWidgets(
-          'switch camera button uses secondary variant with accent color',
-          (tester) async {
-        await tester.pumpWidget(buildTestWidget());
-        await tester.pumpAndSettle();
-
-        final switchButton = tester.widget<PremiumIconButton>(
-          find.widgetWithIcon(PremiumIconButton, Icons.cameraswitch),
-        );
-        expect(switchButton.variant, equals(PremiumButtonVariant.secondary));
-      });
-    });
-
-    group('Capture Button States', () {
-      testWidgets('shows loading indicator when taking picture',
+  group('CameraViewWidget', () {
+    group('Loading state', () {
+      testWidgets('shows CircularProgressIndicator when isLoading',
           (tester) async {
         const loadingState = CameraState(
-          captureState: CameraCaptureState.cameraReady,
-          isCameraInitialized: true,
-          isLoading: false,
-          isTakingPicture: true,
-          canSwitchCamera: true,
-        );
-        await tester.pumpWidget(buildTestWidget(state: loadingState));
-        await tester
-            .pump(); // Use pump() instead of pumpAndSettle() for animations
-
-        expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      });
-
-      testWidgets('capture button is disabled when taking picture',
-          (tester) async {
-        var tapCount = 0;
-        const loadingState = CameraState(
-          captureState: CameraCaptureState.cameraReady,
-          isCameraInitialized: true,
-          isLoading: false,
-          isTakingPicture: true,
-          canSwitchCamera: true,
-        );
-        await tester.pumpWidget(buildTestWidget(
-          state: loadingState,
-          onTakePicture: () => tapCount++,
-        ));
-        await tester
-            .pump(); // Use pump() instead of pumpAndSettle() for animations
-
-        // Find the capture button by its outer container with specific size
-        final captureButtonFinder = find.byWidgetPredicate(
-          (widget) =>
-              widget is Container &&
-              widget.constraints?.maxWidth == 72 &&
-              widget.constraints?.maxHeight == 72,
-        );
-        expect(captureButtonFinder, findsOneWidget);
-
-        // Find the GestureDetector that contains this button
-        final gestureAncestor = find.ancestor(
-          of: captureButtonFinder,
-          matching: find.byType(GestureDetector),
-        );
-        expect(gestureAncestor, findsOneWidget);
-
-        await tester.tap(gestureAncestor);
-        await tester.pump();
-
-        // Should not trigger callback when taking picture (onTap is null)
-        expect(tapCount, equals(0));
-      });
-
-      testWidgets(
-          'switch camera button is disabled when canSwitchCamera is false',
-          (tester) async {
-        const noSwitchState = CameraState(
-          captureState: CameraCaptureState.cameraReady,
-          isCameraInitialized: true,
-          isLoading: false,
-          isTakingPicture: false,
-          canSwitchCamera: false,
-        );
-        await tester.pumpWidget(buildTestWidget(state: noSwitchState));
-        await tester.pumpAndSettle();
-
-        final switchButton = tester.widget<PremiumIconButton>(
-          find.widgetWithIcon(PremiumIconButton, Icons.cameraswitch),
-        );
-        expect(switchButton.onPressed, isNull);
-      });
-    });
-
-    group('Interactions', () {
-      testWidgets('calls onPickFromGallery when gallery button tapped',
-          (tester) async {
-        var galleryTapCount = 0;
-        await tester.pumpWidget(buildTestWidget(
-          onPickFromGallery: () => galleryTapCount++,
-        ));
-        await tester.pumpAndSettle();
-
-        final galleryButton = find.byIcon(Icons.photo_library);
-        await tester.tap(galleryButton);
-        await tester.pumpAndSettle();
-
-        expect(galleryTapCount, equals(1));
-      });
-
-      testWidgets('calls onTakePicture when capture button tapped',
-          (tester) async {
-        var captureTapCount = 0;
-        await tester.pumpWidget(buildTestWidget(
-          onTakePicture: () => captureTapCount++,
-        ));
-        await tester.pumpAndSettle();
-
-        // Find the capture button by its outer container with specific size (72x72)
-        final captureButtonFinder = find.byWidgetPredicate(
-          (widget) =>
-              widget is Container &&
-              widget.constraints?.maxWidth == 72 &&
-              widget.constraints?.maxHeight == 72,
-        );
-        expect(captureButtonFinder, findsOneWidget);
-
-        // Find the GestureDetector that contains this button
-        final gestureAncestor = find.ancestor(
-          of: captureButtonFinder,
-          matching: find.byType(GestureDetector),
-        );
-        expect(gestureAncestor, findsOneWidget);
-
-        await tester.tap(gestureAncestor);
-        await tester.pump();
-
-        expect(captureTapCount, equals(1));
-      });
-    });
-
-    group('Loading and Error States', () {
-      testWidgets('shows loading view when isLoading is true', (tester) async {
-        const loadingState = CameraState(
-          captureState: CameraCaptureState.initial,
           isCameraInitialized: false,
           isLoading: true,
-          isTakingPicture: false,
-          canSwitchCamera: false,
         );
-        await tester.pumpWidget(buildTestWidget(state: loadingState));
+        await tester.pumpWidget(buildWidget(state: loadingState));
         await tester.pump();
 
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
         expect(
-            find.text(AppStrings.chinese.initializingCamera), findsOneWidget);
+          find.text(AppStrings.chinese.initializingCamera),
+          findsOneWidget,
+        );
       });
 
-      testWidgets('shows error view when errorMessage is present',
+      testWidgets('shows loading when not initialized and not loading',
           (tester) async {
-        const errorState = CameraState(
-          captureState: CameraCaptureState.initial,
+        const initial = CameraState(
           isCameraInitialized: false,
           isLoading: false,
-          isTakingPicture: false,
-          canSwitchCamera: false,
-          errorMessage: 'Camera permission denied',
         );
-        await tester.pumpWidget(buildTestWidget(state: errorState));
-        await tester.pumpAndSettle();
+        await tester.pumpWidget(buildWidget(state: initial));
+        await tester.pump();
 
-        expect(find.text('Camera permission denied'), findsOneWidget);
-        expect(find.byIcon(Icons.camera_alt), findsOneWidget);
-        expect(find.widgetWithText(PremiumButton, AppStrings.chinese.retry),
-            findsOneWidget);
+        expect(find.byType(CircularProgressIndicator), findsOneWidget);
       });
     });
 
-    group('Controls Container Styling', () {
-      testWidgets('has safe area padding at bottom', (tester) async {
-        await tester.pumpWidget(buildTestWidget());
-        await tester.pumpAndSettle();
+    group('Error state', () {
+      testWidgets('shows error icon and message', (tester) async {
+        const errorState = CameraState(
+          isCameraInitialized: false,
+          errorMessage: 'Camera permission denied',
+        );
+        await tester.pumpWidget(buildWidget(state: errorState));
+        await tester.pump();
+
+        expect(find.byIcon(Icons.camera_alt), findsOneWidget);
+        expect(find.text('Camera permission denied'), findsOneWidget);
+      });
+
+      testWidgets('shows retry button with correct label', (tester) async {
+        const errorState = CameraState(
+          isCameraInitialized: false,
+          errorMessage: 'No camera found',
+        );
+        await tester.pumpWidget(buildWidget(state: errorState));
+        await tester.pump();
+
+        expect(
+          find.widgetWithText(PremiumButton, AppStrings.chinese.retry),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('retry button has primary variant', (tester) async {
+        const errorState = CameraState(
+          isCameraInitialized: false,
+          errorMessage: 'Error',
+        );
+        await tester.pumpWidget(buildWidget(state: errorState));
+        await tester.pump();
+
+        final retryButton = tester.widget<PremiumButton>(
+          find.widgetWithText(PremiumButton, AppStrings.chinese.retry),
+        );
+        expect(retryButton.variant, PremiumButtonVariant.primary);
+      });
+    });
+
+    group('Capture button states', () {
+      testWidgets('switch camera button disabled when canSwitchCamera false',
+          (tester) async {
+        const noSwitch = CameraState(
+          isCameraInitialized: false,
+          isLoading: true,
+          canSwitchCamera: false,
+        );
+        await tester.pumpWidget(buildWidget(state: noSwitch));
+        await tester.pump();
+
+        final switchBtn = tester.widget<PremiumIconButton>(
+          find.widgetWithIcon(PremiumIconButton, Icons.cameraswitch),
+        );
+        expect(switchBtn.onPressed, isNull);
+      });
+
+      testWidgets('switch camera button enabled when canSwitchCamera true',
+          (tester) async {
+        const withSwitch = CameraState(
+          isCameraInitialized: false,
+          isLoading: true,
+          canSwitchCamera: true,
+        );
+        await tester.pumpWidget(buildWidget(state: withSwitch));
+        await tester.pump();
+
+        final switchBtn = tester.widget<PremiumIconButton>(
+          find.widgetWithIcon(PremiumIconButton, Icons.cameraswitch),
+        );
+        expect(switchBtn.onPressed, isNotNull);
+      });
+    });
+
+    group('Controls rendering', () {
+      testWidgets('renders gallery and switch camera buttons', (tester) async {
+        const state = CameraState(
+          isCameraInitialized: false,
+          isLoading: true,
+        );
+        await tester.pumpWidget(buildWidget(state: state));
+        await tester.pump();
+
+        expect(
+          find.widgetWithIcon(PremiumIconButton, Icons.photo_library),
+          findsOneWidget,
+        );
+        expect(
+          find.widgetWithIcon(PremiumIconButton, Icons.cameraswitch),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('gallery button uses secondary variant', (tester) async {
+        const state = CameraState(
+          isCameraInitialized: false,
+          isLoading: true,
+        );
+        await tester.pumpWidget(buildWidget(state: state));
+        await tester.pump();
+
+        final galleryBtn = tester.widget<PremiumIconButton>(
+          find.widgetWithIcon(PremiumIconButton, Icons.photo_library),
+        );
+        expect(galleryBtn.variant, PremiumButtonVariant.secondary);
+      });
+
+      testWidgets('capture button has circular shape', (tester) async {
+        const state = CameraState(
+          isCameraInitialized: false,
+          isLoading: true,
+        );
+        await tester.pumpWidget(buildWidget(state: state));
+        await tester.pump();
+
+        final circleFinder = find.byWidgetPredicate(
+          (w) =>
+              w is Container &&
+              w.decoration is BoxDecoration &&
+              (w.decoration as BoxDecoration).shape == BoxShape.circle &&
+              (w.decoration as BoxDecoration).border != null,
+        );
+        expect(circleFinder, findsOneWidget);
+      });
+
+      testWidgets('has SafeArea at bottom', (tester) async {
+        const state = CameraState(
+          isCameraInitialized: false,
+          isLoading: true,
+        );
+        await tester.pumpWidget(buildWidget(state: state));
+        await tester.pump();
 
         expect(find.byType(SafeArea), findsWidgets);
       });
+    });
 
-      testWidgets('has iOS-style rounded top corners on controls container',
-          (tester) async {
-        await tester.pumpWidget(buildTestWidget());
-        await tester.pumpAndSettle();
+    group('AppBar', () {
+      testWidgets('shows recordCatch title', (tester) async {
+        const state = CameraState(isLoading: true);
+        await tester.pumpWidget(buildWidget(state: state));
+        await tester.pump();
 
-        // Find Container with rounded top corners
-        final containerFinder = find.byWidgetPredicate(
-          (widget) {
-            if (widget is Container) {
-              final decoration = widget.decoration;
-              if (decoration is BoxDecoration) {
-                return decoration.borderRadius != null &&
-                    decoration.borderRadius ==
-                        const BorderRadius.vertical(top: Radius.circular(24));
-              }
-            }
-            return false;
-          },
-        );
-        expect(containerFinder, findsOneWidget);
+        expect(find.text(AppStrings.chinese.recordCatch), findsOneWidget);
       });
     });
   });
-}
-
-/// Test wrapper that accepts a simpler VM interface
-class _TestableCameraViewWidget extends StatelessWidget {
-  final CameraState state;
-  final MinimalCameraViewModel vm;
-  final AppStrings strings;
-  final VoidCallback? onPickFromGallery;
-  final VoidCallback? onTakePicture;
-
-  const _TestableCameraViewWidget({
-    required this.state,
-    required this.vm,
-    required this.strings,
-    this.onPickFromGallery,
-    this.onTakePicture,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // Inline the relevant parts of CameraViewWidget for testing
-    return Scaffold(
-      appBar: AppBar(title: Text(strings.recordCatch)),
-      body: Column(
-        children: [
-          Expanded(child: _buildCameraPreview(context)),
-          _buildCameraControls(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCameraPreview(BuildContext context) {
-    if (state.errorMessage != null && !state.isCameraInitialized) {
-      return _buildErrorView(context);
-    }
-
-    if (!state.isCameraInitialized || state.isLoading) {
-      return _buildLoadingView();
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          color: Colors.grey[300],
-          child: const Center(child: Text('Camera Preview')),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildErrorView(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.camera_alt,
-              size: 64,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              state.errorMessage ?? 'Camera error',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-            ),
-            const SizedBox(height: 16),
-            PremiumButton(
-              text: strings.retry,
-              onPressed: () {},
-              variant: PremiumButtonVariant.primary,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLoadingView() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(),
-          const SizedBox(height: 16),
-          Text(strings.initializingCamera),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCameraControls(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark
-        ? const Color(0xFF93C5FD) // accentDark
-        : const Color(0xFF3B82F6); // accentLight
-    final surfaceColor =
-        isDark ? const Color(0xFF0A0A0A) : const Color(0xFFFFFFFF);
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: surfaceColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            PremiumIconButton(
-              icon: Icons.photo_library,
-              onPressed: onPickFromGallery,
-              tooltip: strings.selectFromGallery,
-              size: 48,
-              variant: PremiumButtonVariant.secondary,
-            ),
-            GestureDetector(
-              onTap: state.isTakingPicture ? null : onTakePicture,
-              child: Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: accentColor,
-                    width: 4,
-                  ),
-                ),
-                child: Center(
-                  child: Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: accentColor,
-                    ),
-                    child: state.isTakingPicture
-                        ? Padding(
-                            padding: const EdgeInsets.all(15),
-                            child: CircularProgressIndicator(
-                              color: surfaceColor,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : null,
-                  ),
-                ),
-              ),
-            ),
-            PremiumIconButton(
-              icon: Icons.cameraswitch,
-              onPressed: state.canSwitchCamera ? () {} : null,
-              tooltip: strings.switchCamera,
-              size: 48,
-              variant: PremiumButtonVariant.secondary,
-              color: state.canSwitchCamera
-                  ? accentColor
-                  : Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }

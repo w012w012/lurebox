@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../core/constants/strings.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/onboarding_provider.dart';
@@ -190,9 +191,48 @@ class _FeatureCard extends StatelessWidget {
   }
 }
 
-class _PermissionsPage extends StatelessWidget {
+class _PermissionsPage extends StatefulWidget {
   final AppStrings strings;
   const _PermissionsPage({required this.strings});
+
+  @override
+  State<_PermissionsPage> createState() => _PermissionsPageState();
+}
+
+class _PermissionsPageState extends State<_PermissionsPage> {
+  bool _cameraGranted = false;
+  bool _locationGranted = false;
+  bool _isRequesting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkCurrentStatus();
+  }
+
+  Future<void> _checkCurrentStatus() async {
+    final camera = await Permission.camera.status;
+    final location = await Permission.locationWhenInUse.status;
+    if (mounted) {
+      setState(() {
+        _cameraGranted = camera.isGranted;
+        _locationGranted = location.isGranted;
+      });
+    }
+  }
+
+  Future<void> _requestPermissions() async {
+    setState(() => _isRequesting = true);
+    final camera = await Permission.camera.request();
+    final location = await Permission.locationWhenInUse.request();
+    if (mounted) {
+      setState(() {
+        _cameraGranted = camera.isGranted;
+        _locationGranted = location.isGranted;
+        _isRequesting = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +240,8 @@ class _PermissionsPage extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          Text(strings.onboardingPermissionsTitle, style: Theme.of(context).textTheme.headlineSmall),
+          Text(widget.strings.onboardingPermissionsTitle,
+              style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 32),
           Expanded(
             child: SingleChildScrollView(
@@ -208,23 +249,53 @@ class _PermissionsPage extends StatelessWidget {
                 children: [
                   _PermissionCard(
                     icon: Icons.camera_alt,
-                    title: strings.onboardingPermissionCameraTitle,
-                    desc: strings.onboardingPermissionCameraDesc,
-                    example: strings.onboardingPermissionCameraExample,
+                    title: widget.strings.onboardingPermissionCameraTitle,
+                    desc: widget.strings.onboardingPermissionCameraDesc,
+                    example: widget.strings.onboardingPermissionCameraExample,
+                    granted: _cameraGranted,
                   ),
                   const SizedBox(height: 16),
                   _PermissionCard(
                     icon: Icons.location_on,
-                    title: strings.onboardingPermissionLocationTitle,
-                    desc: strings.onboardingPermissionLocationDesc,
-                    example: strings.onboardingPermissionLocationExample,
+                    title: widget.strings.onboardingPermissionLocationTitle,
+                    desc: widget.strings.onboardingPermissionLocationDesc,
+                    example: widget.strings.onboardingPermissionLocationExample,
+                    granted: _locationGranted,
                   ),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 16),
-          Text(strings.onboardingPrivacyNote),
+          if (!_cameraGranted || !_locationGranted)
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: _isRequesting ? null : _requestPermissions,
+                icon: _isRequesting
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.security),
+                label: Text(_isRequesting
+                    ? widget.strings.onboardingPermissionsRequesting
+                    : widget.strings.onboardingPermissionsGrant),
+              ),
+            ),
+          if (_cameraGranted && _locationGranted)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.check_circle, color: TeslaColors.success, size: 20),
+                const SizedBox(width: 8),
+                Text(widget.strings.onboardingPermissionsGranted,
+                    style: TextStyle(color: TeslaColors.success)),
+              ],
+            ),
+          const SizedBox(height: 8),
+          Text(widget.strings.onboardingPrivacyNote),
         ],
       ),
     );
@@ -236,11 +307,13 @@ class _PermissionCard extends StatelessWidget {
   final String title;
   final String desc;
   final String example;
+  final bool granted;
   const _PermissionCard(
       {required this.icon,
       required this.title,
       required this.desc,
-      required this.example});
+      required this.example,
+      this.granted = false});
 
   @override
   Widget build(BuildContext context) {
@@ -252,9 +325,19 @@ class _PermissionCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, color: TeslaColors.electricBlue, size: 32),
+                Icon(icon,
+                    color: granted
+                        ? TeslaColors.success
+                        : TeslaColors.electricBlue,
+                    size: 32),
                 const SizedBox(width: 12),
-                Text(title, style: Theme.of(context).textTheme.titleMedium),
+                Expanded(
+                  child: Text(title,
+                      style: Theme.of(context).textTheme.titleMedium),
+                ),
+                if (granted)
+                  const Icon(Icons.check_circle,
+                      color: TeslaColors.success, size: 20),
               ],
             ),
             const SizedBox(height: 8),

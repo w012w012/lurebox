@@ -84,4 +84,25 @@ mixin CommonStringsMixin {
   String get sharing;
   String get distribution;
   String get fishListTitle;
+  String get invalidFishId;
+  String get fishNotFound;
+  String get discardChanges;
+  String get discardChangesMessage;
+  String get aboutFeatureCatchTitle;
+  String get aboutFeatureCatchDesc;
+  String get aboutFeatureEquipmentTitle;
+  String get aboutFeatureEquipmentDesc;
+  String get aboutFeatureStatsTitle;
+  String get aboutFeatureStatsDesc;
+  String get aboutFeatureAITitle;
+  String get aboutFeatureAIDesc;
+  String get aboutFeatureWatermarkTitle;
+  String get aboutFeatureWatermarkDesc;
+  String get aboutFeatureExportTitle;
+  String get aboutFeatureExportDesc;
+  String get aboutFeatureCloudTitle;
+  String get aboutFeatureCloudDesc;
+  String get aboutFeatureAchievementTitle;
+  String get aboutFeatureAchievementDesc;
+  String get aboutCopyright;
 }

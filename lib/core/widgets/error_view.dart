@@ -91,7 +91,7 @@ class AppEmptyState extends StatelessWidget {
                 PremiumButton(
                   text: actionLabel!,
                   onPressed: onAction,
-                  icon: Icons.camera_alt,
+                  icon: icon ?? Icons.add,
                 ),
               ],
             ],
@@ -116,7 +116,7 @@ class ErrorView extends StatelessWidget {
   final VoidCallback? onRetry;
   final String? title;
   final IconData? icon;
-  final dynamic strings;
+  final AppStrings? strings;
 
   const ErrorView({
     super.key,
@@ -129,7 +129,7 @@ class ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveStrings = strings is AppStrings ? strings as AppStrings : null;
+    final effectiveStrings = strings;
 
     return Center(
       child: Padding(
@@ -144,7 +144,7 @@ class ErrorView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              title ?? (effectiveStrings?.error ?? '错误'),
+              title ?? (effectiveStrings?.error ?? 'Error'),
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
@@ -160,7 +160,7 @@ class ErrorView extends StatelessWidget {
             if (onRetry != null) ...[
               const SizedBox(height: 24),
               PremiumButton(
-                text: effectiveStrings?.retry ?? '重试',
+                text: effectiveStrings?.retry ?? 'Retry',
                 onPressed: onRetry,
                 icon: Icons.refresh,
               ),

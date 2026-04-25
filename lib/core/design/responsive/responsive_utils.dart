@@ -122,12 +122,15 @@ class ResponsiveLayout extends StatelessWidget {
       builder: (context, constraints) {
         final isTablet = constraints.maxWidth >= 600;
 
-        if (isTablet && tablet != null) {
-          return tablet!;
+        final tabletWidget = tablet;
+        final mobileWidget = mobile;
+
+        if (isTablet && tabletWidget != null) {
+          return tabletWidget;
         }
 
-        if (mobile != null) {
-          return mobile!;
+        if (mobileWidget != null) {
+          return mobileWidget;
         }
 
         return const SizedBox.shrink();

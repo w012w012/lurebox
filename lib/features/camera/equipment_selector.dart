@@ -41,6 +41,7 @@ class EquipmentSelector extends ConsumerWidget {
       onPressed: () => _showSelector(context, strings),
       icon: const Icon(Icons.hardware, size: 32),
       color: Theme.of(context).colorScheme.primary,
+      tooltip: 'Select equipment',
     );
   }
 

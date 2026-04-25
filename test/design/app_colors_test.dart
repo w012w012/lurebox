@@ -9,9 +9,8 @@ void main() {
         expect(AppColors.primaryLight, const Color(0xFF1E3A5F));
       });
 
-      test('primaryDark should be light blue for dark mode contrast', () {
-        // Should be lighter than primaryLight for dark mode readability
-        expect(AppColors.primaryDark.r, isNotNull);
+      test('primaryDark should be light blue #8FADC5', () {
+        expect(AppColors.primaryDark, const Color(0xFF8FADC5));
       });
     });
 
@@ -20,8 +19,8 @@ void main() {
         expect(AppColors.accentLight, const Color(0xFF3B82F6));
       });
 
-      test('accentDark should be lighter blue for dark mode', () {
-        expect(AppColors.accentDark.r, isNotNull);
+      test('accentDark should be lighter blue #93C5FD', () {
+        expect(AppColors.accentDark, const Color(0xFF93C5FD));
       });
     });
 
@@ -86,6 +85,38 @@ void main() {
         expect(AppColors.chartColors, isNotEmpty);
         // Teal should be in the chart colors
         expect(AppColors.chartColors, contains(AppColors.teal));
+      });
+    });
+
+    group('Color Distinctness', () {
+      test('primary/accent semantic pairs should differ between modes', () {
+        expect(AppColors.primaryLight, isNot(equals(AppColors.primaryDark)));
+        expect(AppColors.accentLight, isNot(equals(AppColors.accentDark)));
+      });
+
+      test('chart colors should all be distinct', () {
+        final uniqueColors = AppColors.chartColors.toSet();
+        expect(uniqueColors.length, equals(AppColors.chartColors.length));
+      });
+    });
+
+    group('Tesla Design System', () {
+      test('teslaElectricBlue should be #3E6AE1', () {
+        expect(AppColors.teslaElectricBlue, const Color(0xFF3E6AE1));
+      });
+
+      test('teslaCarbonDark should be #171A20', () {
+        expect(AppColors.teslaCarbonDark, const Color(0xFF171A20));
+      });
+
+      test('teslaFrostedGlassWhite should have 0.75 alpha', () {
+        final color = AppColors.teslaFrostedGlassWhite;
+        expect(color.a, closeTo(0.75, 0.01));
+      });
+
+      test('teslaFrostedGlassDark should have 0.85 alpha', () {
+        final color = AppColors.teslaFrostedGlassDark;
+        expect(color.a, closeTo(0.85, 0.01));
       });
     });
   });

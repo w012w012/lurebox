@@ -87,9 +87,7 @@ class _LocationStatsCardState extends State<LocationStatsCard>
                     color: accentColor,
                   ),
                   onPressed: widget.onToggleDetails,
-                  tooltip: widget.showDetails
-                      ? widget.strings.hideLocation
-                      : widget.strings.showLocation,
+                  tooltip: 'Show/hide details',
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),

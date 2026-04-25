@@ -171,7 +171,7 @@ class SettingsPage extends ConsumerWidget {
         children: [
           Icon(
             Icons.auto_awesome,
-            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
+            color: TeslaColors.electricBlue,
           ),
           const SizedBox(width: TeslaTheme.spacingMd),
           Expanded(
@@ -212,7 +212,7 @@ class SettingsPage extends ConsumerWidget {
         children: [
           Icon(
             Icons.location_on,
-            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
+            color: TeslaColors.electricBlue,
           ),
           const SizedBox(width: TeslaTheme.spacingMd),
           Expanded(
@@ -253,7 +253,7 @@ class SettingsPage extends ConsumerWidget {
         children: [
           Icon(
             Icons.category,
-            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
+            color: TeslaColors.electricBlue,
           ),
           const SizedBox(width: TeslaTheme.spacingMd),
           Expanded(
@@ -293,7 +293,7 @@ class SettingsPage extends ConsumerWidget {
           Icon(
             Icons.eco,
             size: 48,
-            color: isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue,
+            color: TeslaColors.electricBlue,
           ),
           const SizedBox(height: TeslaTheme.spacingSm),
           Text(

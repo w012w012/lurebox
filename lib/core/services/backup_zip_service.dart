@@ -629,17 +629,25 @@ class BackupZipService {
         final zipBytes = await zipFile.readAsBytes();
         final archive = ZipDecoder().decodeBytes(zipBytes);
 
-        // 解压所有文件
+        // 解压所有文件（含路径遍历防护）
+        final canonicalExtractDir = p.canonicalize(extractDir.path);
         for (final archiveFile in archive) {
           final filename = archiveFile.name;
           final filePath = p.join(extractDir.path, filename);
+          final resolvedPath = p.canonicalize(filePath);
+
+          if (!resolvedPath.startsWith(canonicalExtractDir)) {
+            return ImportResult.failure(
+              'Invalid backup: path traversal detected in "$filename"',
+            );
+          }
 
           if (archiveFile.isFile) {
-            final outputFile = File(filePath);
+            final outputFile = File(resolvedPath);
             await outputFile.parent.create(recursive: true);
             await outputFile.writeAsBytes(archiveFile.content as List<int>);
           } else {
-            await Directory(filePath).create(recursive: true);
+            await Directory(resolvedPath).create(recursive: true);
           }
         }
 
