@@ -56,7 +56,7 @@ class ReelForm extends ConsumerWidget {
               child: PremiumTextField(
                 controller: ratioAController,
                 label: strings.ratio,
-                hint: '前',
+                hint: strings.ratioFront,
                 keyboardType: TextInputType.number,
               ),
             ),
@@ -68,7 +68,7 @@ class ReelForm extends ConsumerWidget {
               child: PremiumTextField(
                 controller: ratioBController,
                 label: '',
-                hint: '后',
+                hint: strings.ratioBack,
                 keyboardType: TextInputType.number,
               ),
             ),
@@ -86,9 +86,9 @@ class ReelForm extends ConsumerWidget {
                 keyboardType: TextInputType.number,
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Text('号/', style: TextStyle(fontSize: 14)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Text(strings.capacityLineUnit, style: const TextStyle(fontSize: 14)),
             ),
             Expanded(
               child: PremiumTextField(

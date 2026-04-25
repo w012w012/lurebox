@@ -4,6 +4,7 @@ mixin WeatherStringsMixin {
   String get tapToSet;
   String get airTemperature;
   String get pressure;
+  String get weatherInfo;
   String get weatherClear;
   String get weatherMainlyClear;
   String get weatherPartlyCloudy;

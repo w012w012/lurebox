@@ -235,12 +235,12 @@ class UnitSettingsPage extends ConsumerWidget {
                 context: context,
                 title: strings.quantity,
                 value: units.lureQuantityUnit,
-                items: const [
-                  PremiumDropdownItem(value: '条', label: '条'),
-                  PremiumDropdownItem(value: '只', label: '只'),
-                  PremiumDropdownItem(value: '个', label: '个'),
-                  PremiumDropdownItem(value: '包', label: '包'),
-                  PremiumDropdownItem(value: '盒', label: '盒'),
+                items: [
+                  PremiumDropdownItem(value: 'piece', label: strings.quantityUnitPiece),
+                  PremiumDropdownItem(value: 'item', label: strings.quantityUnitItem),
+                  PremiumDropdownItem(value: 'pack', label: strings.quantityUnitPack),
+                  PremiumDropdownItem(value: 'box', label: strings.quantityUnitBox),
+                  PremiumDropdownItem(value: 'carton', label: strings.quantityUnitCarton),
                 ],
                 onChanged: (value) {
                   if (value != null) {

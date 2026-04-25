@@ -213,11 +213,11 @@ class FishInfoCard extends ConsumerWidget {
                 pressure != null ||
                 weatherCode != null) ...[
               _IOSDivider(),
-              const Padding(
-                padding: EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
+              Padding(
+                padding: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
                 child: Text(
-                  '天气信息',
-                  style: TextStyle(
+                  strings.weatherInfo,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: TeslaColors.carbonDark,
@@ -227,7 +227,7 @@ class FishInfoCard extends ConsumerWidget {
               if (airTemperature != null)
                 _InfoRow(
                   icon: Icons.thermostat,
-                  label: '气温',
+                  label: strings.airTemperature,
                   value: UnitConverter.formatTemperature(
                     airTemperature!,
                     displayUnits.temperatureUnit,
@@ -238,7 +238,7 @@ class FishInfoCard extends ConsumerWidget {
               if (pressure != null)
                 _InfoRow(
                   icon: Icons.speed,
-                  label: '气压',
+                  label: strings.pressure,
                   value: '${pressure!.toStringAsFixed(0)}hPa',
                   iconColor: TeslaColors.electricBlue,
                 ),

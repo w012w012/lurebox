@@ -44,7 +44,8 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
       await Future.delayed(const Duration(milliseconds: 100));
       final image = await boundary.toImage(pixelRatio: 2.0);
       final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      final pngBytes = byteData!.buffer.asUint8List();
+      if (byteData == null) return;
+      final pngBytes = byteData.buffer.asUint8List();
 
       final tempDir = await getTemporaryDirectory();
       final file = File(

@@ -52,7 +52,8 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
   Future<int> saveCloudConfig(CloudConfig config) async {
     final db = await _db;
     final map = config.toDbMap()..remove('id');
-    final id = await db.insert('cloud_configs', map);
+    final id = await db.insert('cloud_configs', map,
+        conflictAlgorithm: ConflictAlgorithm.replace);
     if (config.password.isNotEmpty) {
       await _passwordStorage.save(id, config.password);
     }
@@ -137,7 +138,8 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
   Future<int> addBackupHistory(BackupHistory history) async {
     final db = await _db;
     final map = history.toMap()..remove('id');
-    return await db.insert('backup_history', map);
+    return await db.insert('backup_history', map,
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   @override
@@ -204,12 +206,19 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
       final dbPassword = row['password'] as String? ?? '';
       if (id != null && dbPassword.isNotEmpty) {
         await _passwordStorage.save(id, dbPassword);
-        await db.update(
-          'cloud_configs',
-          {'password': ''},
-          where: 'id = ?',
-          whereArgs: [id],
-        );
+        try {
+          await db.update(
+            'cloud_configs',
+            {'password': ''},
+            where: 'id = ?',
+            whereArgs: [id],
+          );
+        } catch (e) {
+          AppLogger.w(
+            'BackupConfigRepository',
+            'Failed to clear plaintext password for config $id after migration',
+          );
+        }
         AppLogger.i(
           'BackupConfigRepository',
           'Migrated password for cloud config $id to secure storage',
