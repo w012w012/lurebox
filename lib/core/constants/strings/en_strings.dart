@@ -144,7 +144,6 @@ const AppStrings englishStrings = AppStrings(
     reasonableRelease:
         'Release responsibly, keep big release small, fish ethically',
     fromLureBox: '\u200BFrom LureBox',
-    yourFishingAssistant: 'LureBox - Your Fishing Assistant',
     fishCountUnit: '',
     hour: ':00',
     day: '',

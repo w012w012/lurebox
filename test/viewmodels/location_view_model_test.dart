@@ -17,6 +17,14 @@ void main() {
     mockService = MockLocationService();
   });
 
+  tearDown(() {
+    try {
+      viewModel.dispose();
+    } catch (_) {
+      // viewModel may not be initialized in all tests
+    }
+  });
+
   List<Map<String, dynamic>> createLocations(List<String> names) {
     return names.map((name) {
       return {

@@ -57,6 +57,10 @@ void main() {
     );
   });
 
+  tearDown(() {
+    viewModel.dispose();
+  });
+
   group('EquipmentListViewModel', () {
     // ============================================================
     // Initial State Tests

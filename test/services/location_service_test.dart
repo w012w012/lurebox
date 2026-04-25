@@ -267,6 +267,10 @@ void main() {
       service = LocationService(mockDbProvider);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     test('getAllLocations returns location data from rawQuery', () async {
       final locationData = [
         {

@@ -14,6 +14,10 @@ void main() {
         provider = SiliconFlowFishRecognitionProvider(client: MockHttpClient());
       });
 
+      tearDown(() {
+        // No resources to clean up - mocks are garbage collected
+      });
+
       test('defaultBaseUrl points to SiliconFlow endpoint', () {
         expect(
           provider.defaultBaseUrl,

@@ -31,6 +31,10 @@ void main() {
     );
   });
 
+  tearDown(() {
+    // No resources to clean up - mocks are garbage collected
+  });
+
   // Helper to create a UTF-8 encoded HTTP response
   http.Response createUtf8Response(Map<String, dynamic> json, int statusCode) {
     return http.Response.bytes(

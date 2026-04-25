@@ -704,6 +704,10 @@ void main() {
       service = BackupZipService(mockDbProvider);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     test('returns failure when ZIP file not found', () async {
       const nonExistentPath = '/non/existent/path/backup.zip';
       final result = await service.importFromZipPath(nonExistentPath);

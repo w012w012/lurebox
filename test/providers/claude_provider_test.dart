@@ -39,6 +39,10 @@ void main() {
     );
   });
 
+  tearDown(() {
+    // No resources to clean up - mocks are garbage collected
+  });
+
   group('ClaudeFishRecognitionProvider', () {
     group('identifySpecies', () {
       test('returns FishRecognitionResult on successful response', () async {

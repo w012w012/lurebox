@@ -20,6 +20,14 @@ void main() {
     mockService = MockAchievementService();
   });
 
+  tearDown(() {
+    try {
+      viewModel.dispose();
+    } catch (_) {
+      // viewModel may not be initialized in all tests
+    }
+  });
+
   Achievement createAchievement({
     String id = 'test_achievement',
     String title = 'Test Achievement',
@@ -89,6 +97,7 @@ void main() {
         expect(viewModel.state.errorMessage, isNull);
         expect(viewModel.state.progress['catch_1'], 10);
         expect(viewModel.state.progress['catch_2'], 5);
+        verify(() => mockService.getAllAchievements()).called(1);
       });
 
       test('handles error when loading achievements fails', () async {
@@ -102,6 +111,7 @@ void main() {
         expect(viewModel.state.isLoading, false);
         expect(viewModel.state.errorMessage, isNotNull);
         expect(viewModel.state.errorMessage, contains('Failed to load'));
+        verify(() => mockService.getAllAchievements()).called(1);
       });
 
       test('filters achievements by category when setCategory is called',

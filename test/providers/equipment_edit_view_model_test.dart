@@ -24,6 +24,10 @@ void main() {
     }),);
   });
 
+  tearDown(() {
+    // No resources to clean up - mocks are garbage collected
+  });
+
   group('RodEditNotifier', () {
     test('initial state has rod type and empty fields', () {
       final notifier = RodEditNotifier(mockService, 'rod', null);
@@ -108,7 +112,7 @@ void main() {
     test('validatePrice returns error for negative price', () {
       final notifier = RodEditNotifier(mockService, 'rod', null);
       notifier.updatePrice('-10');
-      expect(notifier.validatePrice(strings), isNotNull);
+      expect(notifier.validatePrice(strings), isNotEmpty);
     });
 
     test('validatePrice returns null for empty price', () {

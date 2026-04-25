@@ -13,6 +13,10 @@ void main() {
         provider = AliyunFishRecognitionProvider(client: MockHttpClient());
       });
 
+      tearDown(() {
+        // No resources to clean up - mocks are garbage collected
+      });
+
       test('defaultBaseUrl points to DashScope endpoint', () {
         expect(
           provider.defaultBaseUrl,

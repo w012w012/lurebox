@@ -19,6 +19,10 @@ void main() {
     mockService = MockSettingsService();
   });
 
+  tearDown(() {
+    // No resources to clean up - mocks are garbage collected
+  });
+
   group('AppSettingsNotifier', () {
     test('constructor calls _loadSettings and updates state', () async {
       // Arrange

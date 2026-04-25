@@ -10,6 +10,10 @@ void main() {
     testImage = File('test/fixtures/test_fish.jpg');
   });
 
+  tearDown(() {
+    // No resources to clean up - file handle is just a reference
+  });
+
   group('FishRecognitionService', () {
     group('identifySpecies config validation', () {
       test('throws FishRecognitionException when config is null', () async {

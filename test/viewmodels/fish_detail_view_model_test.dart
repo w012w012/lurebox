@@ -82,6 +82,14 @@ void main() {
         .thenAnswer((_) async => null);
   });
 
+  tearDown(() {
+    try {
+      viewModel.dispose();
+    } catch (_) {
+      // viewModel may not be initialized in all tests
+    }
+  });
+
   group('FishDetailViewModel', () {
     group('initial state', () {
       test('has correct default values', () {

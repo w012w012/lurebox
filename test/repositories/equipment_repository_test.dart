@@ -470,6 +470,71 @@ CREATE TABLE equipments (
         expect(defaultRod!.id, equals(1));
         expect(defaultReel!.id, equals(2));
       });
+
+      test('setting default when no equipment of type exists succeeds', () async {
+        // No equipment created, try to set default
+        // Should not throw, just does nothing
+        await repository.setDefaultEquipment(999, 'nonexistent');
+      });
+
+      test('setting non-existent ID as default silently does nothing',
+          () async {
+        final rod = TestDataFactory.createEquipment(
+          id: 0,
+          brand: 'Rod',
+          model: 'Model',
+        );
+        await repository.create(rod);
+
+        // Set default to non-existent ID
+        await repository.setDefaultEquipment(999, 'rod');
+
+        // Original default should still work (or none if not set)
+        final result = await repository.getDefaultEquipment('rod');
+        // Since we never set a valid default, this should be null
+        expect(result, isNull);
+      });
+
+      test('clears all defaults of same type before setting new default',
+          () async {
+        // Create 3 rods, all somehow set as default
+        final rod1 = Equipment.fromMap({
+          ...TestDataFactory.createEquipment(
+            id: 0,
+            brand: 'Rod1',
+            model: 'Model1',
+          ).toMap(),
+          'is_default': 1,
+        });
+        final rod2 = Equipment.fromMap({
+          ...TestDataFactory.createEquipment(
+            id: 0,
+            brand: 'Rod2',
+            model: 'Model2',
+          ).toMap(),
+          'is_default': 1,
+        });
+        final rod3 = TestDataFactory.createEquipment(
+          id: 0,
+          brand: 'Rod3',
+          model: 'Model3',
+        );
+
+        await repository.create(rod1);
+        await repository.create(rod2);
+        await repository.create(rod3);
+
+        // Set rod3 as default
+        await repository.setDefaultEquipment(3, 'rod');
+
+        // All rods checked - only rod3 should be default
+        final rod1Result = await repository.getById(1);
+        final rod2Result = await repository.getById(2);
+        final rod3Result = await repository.getById(3);
+        expect(rod1Result!.isDefault, isFalse);
+        expect(rod2Result!.isDefault, isFalse);
+        expect(rod3Result!.isDefault, isTrue);
+      });
     });
 
     group('getPage', () {
@@ -651,6 +716,94 @@ CREATE TABLE equipments (
         expect(result.items.length, equals(1));
         expect(result.items.first.brand, equals('Shimano'));
         expect(result.items.first.model, equals('Tournament'));
+      });
+
+      test('returns empty when no equipment matches filters', () async {
+        await repository.create(TestDataFactory.createEquipment(
+          id: 0,
+          brand: 'Shimano',
+          model: 'Model',
+        ),);
+
+        final result = await repository.getFilteredPage(
+          page: 1,
+          brand: 'Nonexistent',
+        );
+
+        expect(result.items.length, equals(0));
+        expect(result.hasMore, isFalse);
+      });
+
+      test('brand filter is case-insensitive', () async {
+        await repository.create(TestDataFactory.createEquipment(
+          id: 0,
+          brand: 'Shimano',
+          model: 'Model',
+        ),);
+
+        final resultLower = await repository.getFilteredPage(
+          page: 1,
+          brand: 'shimano',
+        );
+
+        expect(resultLower.items.length, equals(1));
+
+        final resultUpper = await repository.getFilteredPage(
+          page: 1,
+          brand: 'SHIMANO',
+        );
+
+        expect(resultUpper.items.length, equals(1));
+      });
+
+      test('model filter is case-insensitive', () async {
+        await repository.create(TestDataFactory.createEquipment(
+          id: 0,
+          brand: 'Brand',
+          model: 'Tournament',
+        ),);
+
+        final resultLower = await repository.getFilteredPage(
+          page: 1,
+          model: 'tournament',
+        );
+
+        expect(resultLower.items.length, equals(1));
+      });
+
+      test('all filters null returns all non-deleted items', () async {
+        await repository.create(TestDataFactory.createEquipment(
+          id: 0,
+          brand: 'Shimano',
+          model: 'Model1',
+        ),);
+        await repository.create(TestDataFactory.createEquipment(
+          id: 0,
+          brand: 'Daiwa',
+          model: 'Model2',
+        ),);
+
+        final result = await repository.getFilteredPage(
+          page: 1,
+        );
+
+        expect(result.items.length, equals(2));
+      });
+
+      test('filters exclude deleted equipment', () async {
+        await repository.create(TestDataFactory.createEquipment(
+          id: 0,
+          brand: 'Shimano',
+          model: 'Model',
+        ),);
+        await repository.delete(1);
+
+        final result = await repository.getFilteredPage(
+          page: 1,
+          brand: 'Shimano',
+        );
+
+        expect(result.items.length, equals(0));
       });
     });
 

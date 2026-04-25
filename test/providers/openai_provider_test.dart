@@ -14,6 +14,10 @@ void main() {
         provider = OpenAIFishRecognitionProvider(client: MockHttpClient());
       });
 
+      tearDown(() {
+        // No resources to clean up - mocks are garbage collected
+      });
+
       test('defaultBaseUrl points to OpenAI endpoint', () {
         expect(
           provider.defaultBaseUrl,

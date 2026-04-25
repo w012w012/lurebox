@@ -143,7 +143,6 @@ const AppStrings chineseStrings = AppStrings(
     protectionEcology: '保护水生生态',
     reasonableRelease: '合理放流，留大放小，文明作钓',
     fromLureBox: '\u200B来自路亚鱼护',
-    yourFishingAssistant: '路亚鱼护 - 你的钓鱼好帮手',
     fishCountUnit: '条',
     hour: '时',
     day: '日',
