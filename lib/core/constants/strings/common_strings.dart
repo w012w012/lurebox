@@ -41,7 +41,6 @@ mixin CommonStringsMixin {
   String get protectionEcology;
   String get reasonableRelease;
   String get fromLureBox;
-  String get yourFishingAssistant;
   String get total;
   String get quantity;
   String get search;

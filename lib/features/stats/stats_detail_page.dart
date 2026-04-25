@@ -612,47 +612,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
             ),
           ),
         const SizedBox(height: TeslaTheme.spacingLg),
-        _buildFooter(strings),
-        const SizedBox(height: TeslaTheme.spacingMd),
       ],
-    );
-  }
-
-  Widget _buildFooter(AppStrings strings) {
-    const accentColor = TeslaColors.electricBlue;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: TeslaTheme.spacingMicro,
-        horizontal: TeslaTheme.spacingLg,
-      ),
-      decoration: BoxDecoration(
-        color: accentColor,
-        borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.set_meal, color: Colors.white, size: 20),
-          const SizedBox(width: TeslaTheme.spacingSm),
-          Text(
-            strings.appName,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            strings.yourFishingAssistant,
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.white.withValues(alpha: 0.8),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

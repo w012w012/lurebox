@@ -10,6 +10,10 @@ void main() {
       matcher = FishSpeciesMatcher();
     });
 
+    tearDown(() {
+      // No resources to clean up - fakes are garbage collected
+    });
+
     group('findSpeciesByAlias', () {
       test('returns species when alias matches exactly', () {
         // 桂鱼 is an alias for 鳜鱼 (f001)

@@ -126,6 +126,10 @@ void main() {
     );
   });
 
+  tearDown(() {
+    viewModel.dispose();
+  });
+
   group('StatsDetailViewModel', () {
     group('initial state', () {
       test('has correct default values before loading', () {
@@ -278,6 +282,9 @@ void main() {
 
         // Assert - catches
         expect(viewModel.state.catches.length, 4);
+
+        // Verify repository was called
+        verify(() => mockRepository.getByDateRange(testStartDate, testEndDate)).called(1);
 
         // Assert - isLoading
         expect(viewModel.state.isLoading, false);

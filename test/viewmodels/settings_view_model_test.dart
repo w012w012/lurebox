@@ -58,6 +58,10 @@ void main() {
     );
   });
 
+  tearDown(() {
+    viewModel.dispose();
+  });
+
   group('SettingsViewModel', () {
     // ============================================================
     // Initial State Tests
@@ -361,7 +365,7 @@ void main() {
             .thenThrow(Exception('Stats error'));
 
         await viewModel.loadStats();
-        expect(viewModel.state.errorMessage, isNotNull);
+        expect(viewModel.state.errorMessage, contains('Stats error'));
 
         viewModel.clearError();
         expect(viewModel.state.errorMessage, isNull);
@@ -379,7 +383,7 @@ void main() {
         final result = await viewModel.importData('');
 
         expect(result, isNull);
-        expect(viewModel.state.errorMessage, isNotNull);
+        expect(viewModel.state.errorMessage, contains('Invalid path'));
       });
 
       test('handles zero totalCount correctly', () async {

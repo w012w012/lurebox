@@ -61,6 +61,8 @@ flutter analyze
 ```
 
 ## NOTES
-- 199 Dart files in lib/, 109 exports via `core.dart` barrel
+- 335 Dart files in lib/, 109 exports via `core.dart` barrel
+- 99 test files (~39k lines) mirror this structure
 - All features depend on this layer - changes here affect everything
 - `core/services/adapters/` has 13 AI provider implementations
+- `core/camera/` has split logic with `features/camera/`

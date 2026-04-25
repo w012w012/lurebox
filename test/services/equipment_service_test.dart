@@ -168,6 +168,10 @@ void main() {
     service = EquipmentService(repository);
   });
 
+  tearDown(() {
+    // No resources to clean up - fakes are garbage collected
+  });
+
   group('EquipmentService delegation', () {
     test('getAll delegates to repository', () async {
       await repository.create(_makeRod(brand: 'Shimano'));

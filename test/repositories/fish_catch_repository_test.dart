@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository_impl.dart';
@@ -792,6 +793,178 @@ void main() {
 
       expect(result.items.length, equals(1));
       expect(result.items[0].species, equals('Bass'));
+    });
+  });
+
+  group('FishCatchRepository - getSoftWormRigAnalytics', () {
+    late SqliteFishCatchRepository repository;
+
+    setUp(() {
+      repository = SqliteFishCatchRepository.withDatabase(
+        Future<Database>.value(db),
+      );
+    });
+
+    test('returns empty maps when no catches exist', () async {
+      final result = await repository.getSoftWormRigAnalytics();
+
+      expect(result['rigType'], isEmpty);
+      expect(result['hookType'], isEmpty);
+      expect(result['hookSize'], isEmpty);
+      expect(result['hookWeight'], isEmpty);
+    });
+
+    test('returns empty maps when no soft worm lures exist', () async {
+      final fish = TestDataFactory.createFishCatch(
+        catchTime: DateTime(2024),
+      );
+      await repository.create(fish);
+
+      final result = await repository.getSoftWormRigAnalytics();
+
+      expect(result['rigType'], isEmpty);
+      expect(result['hookType'], isEmpty);
+    });
+
+    test('returns correct analytics for catches with soft worm lures',
+        () async {
+      // Create equipment (soft worm lure)
+      final softWormLure = Equipment.fromMap({
+        ...TestDataFactory.createEquipment(
+          id: 0,
+          type: EquipmentType.lure,
+          brand: 'Brand',
+          model: 'SoftWorm',
+        ).toMap(),
+        'lure_type': '软虫',
+      });
+      await db.insert('equipments', softWormLure.toMap()..remove('id'));
+
+      // Create fish catch with rig details and link to lure
+      final fish = TestDataFactory.createFishCatch(
+        catchTime: DateTime(2024),
+      ).copyWith(
+        rigType: () => '卡罗莱纳',
+        hookType: () => '曲柄钩',
+        hookSize: () => '3/0',
+        hookWeight: () => '5g',
+      );
+      final fishId = await repository.create(fish);
+
+      // Update to link lure
+      await db.update(
+        'fish_catches',
+        {'lure_id': 1},
+        where: 'id = ?',
+        whereArgs: [fishId],
+      );
+
+      final result = await repository.getSoftWormRigAnalytics();
+
+      expect(result['rigType']!['卡罗莱纳'], equals(1));
+      expect(result['hookType']!['曲柄钩'], equals(1));
+      expect(result['hookSize']!['3/0'], equals(1));
+      expect(result['hookWeight']!['5g'], equals(1));
+    });
+
+    test('aggregates multiple catches with same rig configuration', () async {
+      // Create equipment (soft worm lure)
+      final softWormLure = Equipment.fromMap({
+        ...TestDataFactory.createEquipment(
+          id: 0,
+          type: EquipmentType.lure,
+          brand: 'Brand',
+          model: 'SoftWorm',
+        ).toMap(),
+        'lure_type': '软虫',
+      });
+      await db.insert('equipments', softWormLure.toMap()..remove('id'));
+
+      // Create multiple fish catches with same rig
+      for (var i = 0; i < 3; i++) {
+        final fish = TestDataFactory.createFishCatch(
+          catchTime: DateTime(2024, 1, i + 1),
+        ).copyWith(
+          rigType: () => '卡罗莱纳',
+          hookType: () => '曲柄钩',
+        );
+        final fishId = await repository.create(fish);
+        await db.update(
+          'fish_catches',
+          {'lure_id': 1},
+          where: 'id = ?',
+          whereArgs: [fishId],
+        );
+      }
+
+      final result = await repository.getSoftWormRigAnalytics();
+
+      expect(result['rigType']!['卡罗莱纳'], equals(3));
+      expect(result['hookType']!['曲柄钩'], equals(3));
+    });
+
+    test('ignores catches with null rig_type', () async {
+      // Create equipment (soft worm lure)
+      final softWormLure = Equipment.fromMap({
+        ...TestDataFactory.createEquipment(
+          id: 0,
+          type: EquipmentType.lure,
+          brand: 'Brand',
+          model: 'SoftWorm',
+        ).toMap(),
+        'lure_type': '软虫',
+      });
+      await db.insert('equipments', softWormLure.toMap()..remove('id'));
+
+      // Create fish catch without rig type but with lure linked
+      final fish = TestDataFactory.createFishCatch(
+        catchTime: DateTime(2024),
+      ).copyWith(
+        rigType: () => null,
+      );
+      final fishId = await repository.create(fish);
+      await db.update(
+        'fish_catches',
+        {'lure_id': 1},
+        where: 'id = ?',
+        whereArgs: [fishId],
+      );
+
+      final result = await repository.getSoftWormRigAnalytics();
+
+      expect(result['rigType'], isEmpty);
+    });
+
+    test('ignores non-soft-worm lures', () async {
+      // Create equipment (not a soft worm lure)
+      final otherLure = Equipment.fromMap({
+        ...TestDataFactory.createEquipment(
+          id: 0,
+          type: EquipmentType.lure,
+          brand: 'Brand',
+          model: 'Crankbait',
+        ).toMap(),
+        'lure_type': 'crankbait',
+      });
+      await db.insert('equipments', otherLure.toMap()..remove('id'));
+
+      // Create fish catch with rig details but non-soft-worm lure
+      final fish = TestDataFactory.createFishCatch(
+        catchTime: DateTime(2024),
+      ).copyWith(
+        rigType: () => '卡罗莱纳',
+      );
+      final fishId = await repository.create(fish);
+      await db.update(
+        'fish_catches',
+        {'lure_id': 1},
+        where: 'id = ?',
+        whereArgs: [fishId],
+      );
+
+      final result = await repository.getSoftWormRigAnalytics();
+
+      expect(result['rigType'], isEmpty);
     });
   });
 }

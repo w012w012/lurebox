@@ -103,6 +103,10 @@ void main() {
         .thenAnswer((_) async => {});
   });
 
+  tearDown(() {
+    viewModel.dispose();
+  });
+
   group('FishListViewModel', () {
     group('initial state', () {
       test('is correct', () {

@@ -51,6 +51,10 @@ void main() {
     viewModel = HomeViewModel(mockRepository);
   });
 
+  tearDown(() {
+    viewModel.dispose();
+  });
+
   group('HomeViewModel', () {
     group('initial state', () {
       test('has correct default values before loading', () {
@@ -277,7 +281,7 @@ void main() {
             .thenThrow(Exception('Initial error'));
 
         await viewModel.loadData();
-        expect(viewModel.state.errorMessage, isNotNull);
+        expect(viewModel.state.errorMessage, contains('Initial error'));
 
         // Arrange - Second load succeeds
         when(() => mockRepository.getDashboardData()).thenAnswer(

@@ -118,6 +118,10 @@ void main() {
       provider = CustomFishRecognitionProvider(client: mockClient);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     test('throws FishRecognitionException when baseUrl is empty', () async {
       final configWithoutBaseUrl = testConfig.copyWith(baseUrl: '');
 
@@ -352,6 +356,10 @@ void main() {
 
     setUp(() {
       provider = CustomFishRecognitionProvider(client: mockClient);
+    });
+
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
     });
 
     test('throws FishRecognitionException on timeout', () async {

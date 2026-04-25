@@ -17,6 +17,10 @@ void main() {
       achievementService = AchievementService(mockStatsRepo);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     group('getAllAchievements', () {
       test('returns list of achievements with progress', () async {
         // Setup mock returns

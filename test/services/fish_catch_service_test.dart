@@ -43,6 +43,10 @@ void main() {
     );
   });
 
+  tearDown(() {
+    // No resources to clean up - mocks are garbage collected
+  });
+
   FishCatch createFishCatch({
     int id = 1,
     String species = 'Bass',

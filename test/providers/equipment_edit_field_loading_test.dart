@@ -25,6 +25,10 @@ void main() {
       vm = EquipmentEditViewModel(mockService, 'rod', null);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     test('loads fields from map with underscore-separated keys (SQLite format)',
         () {
       final map = <String, dynamic>{
@@ -211,6 +215,10 @@ void main() {
       vm = EquipmentEditViewModel(mockService, 'reel', null);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     test('loads reel-specific fields from underscore-separated map', () {
       final map = <String, dynamic>{
         'brand': 'Shimano',
@@ -313,6 +321,10 @@ void main() {
       vm = EquipmentEditViewModel(mockService, 'lure', null);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     test('loads lure-specific fields from underscore-separated map', () {
       final map = <String, dynamic>{
         'brand': 'Rapala',
@@ -381,6 +393,10 @@ void main() {
       vm = EquipmentEditViewModel(mockService, 'rod', null);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     test('returns null for empty price (optional field)', () {
       vm.updatePrice('');
       expect(vm.validatePrice(AppStrings.english), isNull);
@@ -446,6 +462,10 @@ void main() {
       vm = EquipmentEditViewModel(mockService, 'rod', null);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     test('returns false and sets errorMessage when create throws', () async {
       when(() => mockService.create(any())).thenThrow(Exception('DB error'));
 
@@ -455,7 +475,7 @@ void main() {
       final result = await vm.save();
 
       expect(result, isFalse);
-      expect(vm.state.errorMessage, isNotNull);
+      expect(vm.state.errorMessage, contains('DB error'));
     });
 
     test('isSaving is false after save completes', () async {
@@ -477,6 +497,10 @@ void main() {
     setUp(() {
       mockService = MockEquipmentService();
       vm = EquipmentEditViewModel(mockService, 'rod', null);
+    });
+
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
     });
 
     test('updateBrand updates state', () {
@@ -501,6 +525,10 @@ void main() {
     setUp(() {
       mockService = MockEquipmentService();
       vm = EquipmentEditViewModel(mockService, 'rod', null);
+    });
+
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
     });
 
     test('loads brand and model from map', () {

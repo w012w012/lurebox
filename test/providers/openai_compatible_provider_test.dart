@@ -127,6 +127,10 @@ void main() {
     );
   });
 
+  tearDown(() {
+    // No resources to clean up - mocks are garbage collected
+  });
+
   group('extractJsonFromResponse', () {
     test('returns original string when no markdown blocks', () {
       const content = '{"primarySpecies": {"chineseName": "测试"}}';
@@ -665,6 +669,10 @@ void main() {
 
     setUp(() {
       provider = TestOpenAICompatibleProvider(client: mockClient);
+    });
+
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
     });
 
     test('throws FishRecognitionException on 401 unauthorized', () {

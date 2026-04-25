@@ -14,6 +14,10 @@ void main() {
         provider = TencentFishRecognitionProvider(client: MockHttpClient());
       });
 
+      tearDown(() {
+        // No resources to clean up - mocks are garbage collected
+      });
+
       test('defaultBaseUrl points to Hunyuan endpoint', () {
         expect(
           provider.defaultBaseUrl,

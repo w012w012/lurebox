@@ -171,7 +171,6 @@ class AppStrings extends StringsBase with
     required this.protectionEcology,
     required this.reasonableRelease,
     required this.fromLureBox,
-    required this.yourFishingAssistant,
     required this.fishCountUnit,
     required this.hour,
     required this.day,
@@ -1107,8 +1106,6 @@ class AppStrings extends StringsBase with
   final String reasonableRelease;
   @override
   final String fromLureBox;
-  @override
-  final String yourFishingAssistant;
   @override
   final String fishCountUnit;
   @override

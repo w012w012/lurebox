@@ -174,6 +174,10 @@ void main() {
     backupService = BackupService(mockDbProvider);
   });
 
+  tearDown(() {
+    // No resources to clean up - mocks are garbage collected
+  });
+
   group('BackupService', () {
     group('exportToJson', () {
       test('returns file path with timestamp', () async {

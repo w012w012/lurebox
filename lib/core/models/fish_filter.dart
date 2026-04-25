@@ -118,7 +118,12 @@ class FishFilterNotifier extends StateNotifier<FishFilter> {
   }
 
   void setSortBy(String sortBy, {bool? sortAsc}) {
-    state = state.copyWith(sortBy: sortBy, sortAsc: sortAsc ?? state.sortAsc);
+    if (state.sortBy == sortBy) {
+      // Toggle sort direction when selecting the same field
+      state = state.copyWith(sortAsc: !state.sortAsc);
+    } else {
+      state = state.copyWith(sortBy: sortBy, sortAsc: sortAsc ?? state.sortAsc);
+    }
   }
 
   void setCustomDateRange(DateTime? start, DateTime? end) {

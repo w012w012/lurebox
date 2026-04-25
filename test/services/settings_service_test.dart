@@ -25,6 +25,10 @@ void main() {
     );
   });
 
+  tearDown(() {
+    // No resources to clean up - mocks are garbage collected
+  });
+
   group('SettingsService', () {
     group('WatermarkSettings', () {
       test('saveWatermarkSettings calls repository.set with encoded JSON',

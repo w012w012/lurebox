@@ -61,6 +61,10 @@ void main() {
       PermissionService().setPlatformForTesting(mock);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     test('returns true when status is granted', () async {
       mock.statusResult = PermissionStatus.granted;
 
@@ -116,6 +120,10 @@ void main() {
       PermissionService().setPlatformForTesting(mock);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     test('returns true when status is permanentlyDenied', () async {
       mock.statusResult = PermissionStatus.permanentlyDenied;
 
@@ -149,6 +157,10 @@ void main() {
       PermissionService().setPlatformForTesting(mock);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     test('calls platform.openAppSettings()', () async {
       expect(mock.openSettingsCalled, isFalse);
 
@@ -164,6 +176,10 @@ void main() {
     setUp(() {
       mock = MockPermissionPlatform();
       PermissionService().setPlatformForTesting(mock);
+    });
+
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
     });
 
     test('mock reports location service disabled', () async {
@@ -237,6 +253,10 @@ void main() {
     setUp(() {
       mock = MockPermissionPlatform();
       PermissionService().setPlatformForTesting(mock);
+    });
+
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
     });
 
     testWidgets('camera education dialog shows title and description', (tester) async {

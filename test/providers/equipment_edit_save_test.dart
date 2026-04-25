@@ -23,6 +23,10 @@ void main() {
       notifier = RodEditNotifier(mockService, 'rod', null);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     test('creates new rod with correct data', () async {
       // Arrange
       when(() => mockService.create(any())).thenAnswer((_) async => 1);
@@ -146,6 +150,10 @@ void main() {
       notifier = ReelEditNotifier(mockService, 'reel', null);
     });
 
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
+    });
+
     test('creates new reel with correct data', () async {
       // Arrange
       when(() => mockService.create(any())).thenAnswer((_) async => 2);
@@ -257,6 +265,10 @@ void main() {
     setUp(() {
       mockService = MockEquipmentService();
       notifier = LureEditNotifier(mockService, 'lure', null);
+    });
+
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
     });
 
     test('creates new lure with correct data', () async {
@@ -372,6 +384,10 @@ void main() {
 
     setUp(() {
       mockService = MockEquipmentService();
+    });
+
+    tearDown(() {
+      // No resources to clean up - mocks are garbage collected
     });
 
     test('RodEditViewModel delegates to RodEditNotifier', () async {

@@ -13,6 +13,10 @@ void main() {
         provider = BaiduFishRecognitionProvider(client: MockHttpClient());
       });
 
+      tearDown(() {
+        // No resources to clean up - mocks are garbage collected
+      });
+
       test('defaultBaseUrl points to Baidu ERNIE endpoint', () {
         expect(
           provider.defaultBaseUrl,

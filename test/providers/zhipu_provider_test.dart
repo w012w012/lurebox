@@ -14,6 +14,10 @@ void main() {
         provider = ZhipuFishRecognitionProvider(client: MockHttpClient());
       });
 
+      tearDown(() {
+        // No resources to clean up - mocks are garbage collected
+      });
+
       test('defaultBaseUrl points to GLM endpoint', () {
         expect(
           provider.defaultBaseUrl,

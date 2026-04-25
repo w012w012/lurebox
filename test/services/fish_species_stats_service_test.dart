@@ -24,6 +24,10 @@ void main() {
     service = FishSpeciesStatsService(mockRepository, matcher);
   });
 
+  tearDown(() {
+    // No resources to clean up - mocks are garbage collected
+  });
+
   group('FishSpeciesStatsService', () {
     group('getStats', () {
       test('returns empty stats for unknown species', () async {
