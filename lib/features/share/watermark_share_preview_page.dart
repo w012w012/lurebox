@@ -118,6 +118,26 @@ class _WatermarkSharePreviewPageState
 
   PreviewData get _data => widget.data;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadImageSize();
+  }
+
+  Future<void> _loadImageSize() async {
+    final bytes = await File(_data.imagePath).readAsBytes();
+    final codec = await ui.instantiateImageCodec(bytes);
+    final frame = await codec.getNextFrame();
+    if (!mounted) return;
+    setState(() {
+      _imageSize = Size(
+        frame.image.width.toDouble(),
+        frame.image.height.toDouble(),
+      );
+    });
+    frame.image.dispose();
+  }
+
   /// 计算 BoxFit.contain 下图片的实际显示区域
   Rect _computeImageRect(Size container, Size image) {
     if (container == Size.zero || image == Size.zero) return Rect.zero;
@@ -139,22 +159,11 @@ class _WatermarkSharePreviewPageState
     );
   }
 
-  Future<void> _resetPosition() async {
-    final imageFile = File(_data.imagePath);
-    final bytes = await imageFile.readAsBytes();
-    final codec = await ui.instantiateImageCodec(bytes);
-    final frame = await codec.getNextFrame();
-    _imageSize = Size(
-      frame.image.width.toDouble(),
-      frame.image.height.toDouble(),
-    );
-    frame.image.dispose();
-
-    if (!mounted) return;
+  void _resetPosition() {
+    if (_imageSize == Size.zero) return;
     final container = MediaQuery.of(context).size;
     final rect = _computeImageRect(container, _imageSize);
     final watermarkSize = _estimateWatermarkSize();
-
     setState(() {
       _imageRect = rect;
       _watermarkScale = 1.0;
@@ -165,7 +174,7 @@ class _WatermarkSharePreviewPageState
     });
   }
 
-  /// 估算水印区域大小（用于初始化）
+  /// 估算水印区域大小（用于初始定位）
   Size _estimateWatermarkSize() {
     final settings = ref.read(watermarkSettingsProvider);
     final lines = settings.infoTypes
@@ -192,122 +201,95 @@ class _WatermarkSharePreviewPageState
       ),
       body: Column(
         children: [
-          Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return FutureBuilder<Size>(
-                  future: _loadImageSize(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: TeslaColors.electricBlue,
-                        ),
-                      );
-                    }
-                    _imageSize = snapshot.data!;
-                    _imageRect = _computeImageRect(
-                      Size(constraints.maxWidth, constraints.maxHeight),
-                      _imageSize,
-                    );
-
-                    if (_watermarkOffset == null) {
-                      final wmSize = _estimateWatermarkSize();
-                      _watermarkOffset = Offset(
-                        _imageRect.left + _imageRect.width * 0.03,
-                        _imageRect.bottom -
-                            _imageRect.height * 0.05 -
-                            wmSize.height,
-                      );
-                    }
-
-                    return GestureDetector(
-                      onScaleStart: _onScaleStart,
-                      onScaleUpdate: _onScaleUpdate,
-                      child: Stack(
-                        children: [
-                          Positioned.fromRect(
-                            rect: _imageRect,
-                            child: Image.file(
-                              File(_data.imagePath),
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          if (settings.enabled && _watermarkOffset != null)
-                            CustomPaint(
-                              size: Size(
-                                constraints.maxWidth,
-                                constraints.maxHeight,
-                              ),
-                              painter: WatermarkPainter(
-                                species: _data.species,
-                                length: _data.length,
-                                weight: _data.weight,
-                                lengthUnit: _data.lengthUnit,
-                                weightUnit: _data.weightUnit,
-                                locationName: _data.locationName,
-                                catchTime: _data.catchTime,
-                                rodName: _data.rodName,
-                                reelName: _data.reelName,
-                                lureName: _data.lureName,
-                                rodBrand: _data.rodBrand,
-                                rodModel: _data.rodModel,
-                                rodMaterial: _data.rodMaterial,
-                                rodLength: _data.rodLength,
-                                rodLengthUnit: _data.rodLengthUnit,
-                                rodHardness: _data.rodHardness,
-                                rodAction: _data.rodAction,
-                                reelBrand: _data.reelBrand,
-                                reelModel: _data.reelModel,
-                                reelRatio: _data.reelRatio,
-                                lureBrand: _data.lureBrand,
-                                lureModel: _data.lureModel,
-                                lureSize: _data.lureSize,
-                                lureSizeUnit: _data.lureSizeUnit,
-                                lureColor: _data.lureColor,
-                                lureWeight: _data.lureWeight,
-                                lureWeightUnit: _data.lureWeightUnit,
-                                airTemperature: _data.airTemperature,
-                                pressure: _data.pressure,
-                                weatherCode: _data.weatherCode,
-                                settings: settings,
-                                strings: strings,
-                                displayLength: _data.displayLength,
-                                displayWeight: _data.displayWeight,
-                                displayLengthUnit: _data.displayLengthUnit,
-                                displayWeightUnit: _data.displayWeightUnit,
-                                displayTemperatureUnit:
-                                    _data.displayTemperatureUnit,
-                                dragOffset: _watermarkOffset,
-                                watermarkScale: _watermarkScale,
-                              ),
-                            ),
-                        ],
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
+          Expanded(child: _buildPreview(settings)),
           _buildToolbar(strings),
         ],
       ),
     );
   }
 
-  Future<Size> _loadImageSize() async {
-    if (_imageSize != Size.zero) return _imageSize;
-    final bytes = await File(_data.imagePath).readAsBytes();
-    final codec = await ui.instantiateImageCodec(bytes);
-    final frame = await codec.getNextFrame();
-    final size = Size(
-      frame.image.width.toDouble(),
-      frame.image.height.toDouble(),
+  Widget _buildPreview(WatermarkSettings settings) {
+    if (_imageSize == Size.zero) {
+      return const Center(
+        child: CircularProgressIndicator(color: TeslaColors.electricBlue),
+      );
+    }
+
+    // 仅在首次加载后计算 imageRect，拖拽时不再重新计算
+    if (_imageRect == Rect.zero) {
+      final container = MediaQuery.of(context).size;
+      _imageRect = _computeImageRect(container, _imageSize);
+
+      if (_watermarkOffset == null) {
+        final wmSize = _estimateWatermarkSize();
+        _watermarkOffset = Offset(
+          _imageRect.left + _imageRect.width * 0.03,
+          _imageRect.bottom - _imageRect.height * 0.05 - wmSize.height,
+        );
+      }
+    }
+
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onScaleStart: _onScaleStart,
+      onScaleUpdate: _onScaleUpdate,
+      child: Stack(
+        children: [
+          Positioned.fromRect(
+            rect: _imageRect,
+            child: Image.file(
+              File(_data.imagePath),
+              fit: BoxFit.contain,
+            ),
+          ),
+          if (settings.enabled && _watermarkOffset != null)
+            CustomPaint(
+              size: Size(_imageRect.right, _imageRect.bottom),
+              painter: WatermarkPainter(
+                species: _data.species,
+                length: _data.length,
+                weight: _data.weight,
+                lengthUnit: _data.lengthUnit,
+                weightUnit: _data.weightUnit,
+                locationName: _data.locationName,
+                catchTime: _data.catchTime,
+                rodName: _data.rodName,
+                reelName: _data.reelName,
+                lureName: _data.lureName,
+                rodBrand: _data.rodBrand,
+                rodModel: _data.rodModel,
+                rodMaterial: _data.rodMaterial,
+                rodLength: _data.rodLength,
+                rodLengthUnit: _data.rodLengthUnit,
+                rodHardness: _data.rodHardness,
+                rodAction: _data.rodAction,
+                reelBrand: _data.reelBrand,
+                reelModel: _data.reelModel,
+                reelRatio: _data.reelRatio,
+                lureBrand: _data.lureBrand,
+                lureModel: _data.lureModel,
+                lureSize: _data.lureSize,
+                lureSizeUnit: _data.lureSizeUnit,
+                lureColor: _data.lureColor,
+                lureWeight: _data.lureWeight,
+                lureWeightUnit: _data.lureWeightUnit,
+                airTemperature: _data.airTemperature,
+                pressure: _data.pressure,
+                weatherCode: _data.weatherCode,
+                settings: settings,
+                strings: ref.read(currentStringsProvider),
+                displayLength: _data.displayLength,
+                displayWeight: _data.displayWeight,
+                displayLengthUnit: _data.displayLengthUnit,
+                displayWeightUnit: _data.displayWeightUnit,
+                displayTemperatureUnit: _data.displayTemperatureUnit,
+                dragOffset: _watermarkOffset,
+                watermarkScale: _watermarkScale,
+              ),
+            ),
+        ],
+      ),
     );
-    frame.image.dispose();
-    _imageSize = size;
-    return size;
   }
 
   void _onScaleStart(ScaleStartDetails details) {
