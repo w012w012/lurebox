@@ -30,10 +30,9 @@
 
 ## 功能预览
 
-![功能预览1](screenshots/1.jpg)
-![功能预览2](screenshots/2.jpg)
-![功能预览3](screenshots/3.jpg)
-![功能预览4](screenshots/4.jpg)
+| ![功能预览1](screenshots/1.jpg) | ![功能预览2](screenshots/2.jpg) | ![功能预览3](screenshots/3.jpg) |
+|:---:|:---:|:---:|
+| ![功能预览4](screenshots/4.jpg) | | |
 
 ## 功能特点
 
