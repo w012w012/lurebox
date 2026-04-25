@@ -69,3 +69,15 @@ android/app/src/debug/
 # Local properties (contains secrets - keystore passwords)
 local.properties
 android/local.properties
+
+# Flutter metadata (auto-generated, not needed for collaboration)
+.metadata
+
+# Documentation (project-specific, managed separately)
+/docs/
+
+# Unused platform targets
+/linux/
+/macos/
+/web/
+/windows/
