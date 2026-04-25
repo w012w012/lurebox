@@ -416,6 +416,7 @@ class AppStrings extends StringsBase with
   final String resetPosition;
   final String confirmShare;
   final String dragToAdjustWatermark;
+  final String pinchToZoomWatermark;
   final String rodDistribution;
   final String reelDistribution;
   final String lureDistribution;
@@ -1215,6 +1216,7 @@ class AppStrings extends StringsBase with
     required this.resetPosition,
     required this.confirmShare,
     required this.dragToAdjustWatermark,
+    required this.pinchToZoomWatermark,
     required this.rodDistribution,
     required this.reelDistribution,
     required this.lureDistribution,

@@ -389,6 +389,7 @@ const AppStrings chineseStrings = AppStrings(
     resetPosition: '重置位置',
     confirmShare: '确认分享',
     dragToAdjustWatermark: '拖拽水印调整位置',
+    pinchToZoomWatermark: '双指捏合缩放水印',
     rodDistribution: '鱼竿分布',
     reelDistribution: '渔轮分布',
     lureDistribution: '鱼饵分布',

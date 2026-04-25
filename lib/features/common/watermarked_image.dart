@@ -222,6 +222,7 @@ class WatermarkPainter extends CustomPainter {
   final String displayTemperatureUnit;
   final double? referenceWidth;
   final Offset? dragOffset;
+  final double watermarkScale;
 
   WatermarkPainter({
     required this.species,
@@ -263,6 +264,7 @@ class WatermarkPainter extends CustomPainter {
     required this.displayTemperatureUnit,
     this.referenceWidth,
     this.dragOffset,
+    this.watermarkScale = 1.0,
   });
 
   @override
@@ -430,7 +432,7 @@ class WatermarkPainter extends CustomPainter {
         ? size.width / referenceWidth!
         : 1.0;
     final baseFontSize =
-        (settings.fontSize > 0 ? settings.fontSize : 14.0) * scale;
+        (settings.fontSize > 0 ? settings.fontSize : 14.0) * scale * watermarkScale;
     final lineHeight = baseFontSize * 1.5;
 
     // 如果有 dragOffset，直接使用偏移量绘制，忽略 preset position
@@ -659,7 +661,8 @@ class WatermarkPainter extends CustomPainter {
         displayLengthUnit != oldDelegate.displayLengthUnit ||
         displayWeightUnit != oldDelegate.displayWeightUnit ||
         dragOffset != oldDelegate.dragOffset ||
-        referenceWidth != oldDelegate.referenceWidth;
+        referenceWidth != oldDelegate.referenceWidth ||
+        watermarkScale != oldDelegate.watermarkScale;
   }
 }
 
@@ -707,6 +710,7 @@ class WatermarkExporter {
     required String displayTemperatureUnit,
     double referenceWidth = 400.0,
     Offset? dragOffset,
+    double watermarkScale = 1.0,
   }) async {
     try {
       // 读取原图
@@ -765,6 +769,7 @@ class WatermarkExporter {
         displayTemperatureUnit: displayTemperatureUnit,
         referenceWidth: referenceWidth,
         dragOffset: dragOffset,
+        watermarkScale: watermarkScale,
       );
       painter.paint(canvas, size);
 

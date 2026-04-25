@@ -109,6 +109,9 @@ class _WatermarkSharePreviewPageState
     extends ConsumerState<WatermarkSharePreviewPage> {
   Offset? _watermarkOffset;
   bool _isSharing = false;
+  double _watermarkScale = 1.0;
+  Offset _baseOffset = Offset.zero;
+  double _baseScale = 1.0;
 
   Rect _imageRect = Rect.zero;
   Size _imageSize = Size.zero;
@@ -154,6 +157,7 @@ class _WatermarkSharePreviewPageState
 
     setState(() {
       _imageRect = rect;
+      _watermarkScale = 1.0;
       _watermarkOffset = Offset(
         rect.left + rect.width * 0.03,
         rect.bottom - rect.height * 0.05 - watermarkSize.height,
@@ -161,16 +165,17 @@ class _WatermarkSharePreviewPageState
     });
   }
 
-  /// 估算水印区域大小（用于初始化和边界约束）
+  /// 估算水印区域大小（用于初始化）
   Size _estimateWatermarkSize() {
     final settings = ref.read(watermarkSettingsProvider);
     final lines = settings.infoTypes
         .where((t) => t != WatermarkInfoType.appName)
         .length +
         1;
-    final fontSize = settings.fontSize > 0 ? settings.fontSize : 14.0;
+    final fontSize =
+        (settings.fontSize > 0 ? settings.fontSize : 14.0) * _watermarkScale;
     final lineHeight = fontSize * 1.5;
-    return Size(200, lines * lineHeight + 16);
+    return Size(200 * _watermarkScale, lines * lineHeight + 16);
   }
 
   @override
@@ -217,7 +222,8 @@ class _WatermarkSharePreviewPageState
                     }
 
                     return GestureDetector(
-                      onPanUpdate: _onDragUpdate,
+                      onScaleStart: _onScaleStart,
+                      onScaleUpdate: _onScaleUpdate,
                       child: Stack(
                         children: [
                           Positioned.fromRect(
@@ -273,6 +279,7 @@ class _WatermarkSharePreviewPageState
                                 displayTemperatureUnit:
                                     _data.displayTemperatureUnit,
                                 dragOffset: _watermarkOffset,
+                                watermarkScale: _watermarkScale,
                               ),
                             ),
                         ],
@@ -303,23 +310,21 @@ class _WatermarkSharePreviewPageState
     return size;
   }
 
-  void _onDragUpdate(DragUpdateDetails details) {
-    if (_watermarkOffset == null) return;
-    final wmSize = _estimateWatermarkSize();
-    final newOffset = _watermarkOffset! + details.delta;
+  void _onScaleStart(ScaleStartDetails details) {
+    _baseOffset = _watermarkOffset ?? Offset.zero;
+    _baseScale = _watermarkScale;
+  }
 
-    // 限制水印在图片区域内
-    final clamped = Offset(
-      newOffset.dx.clamp(
-        _imageRect.left,
-        _imageRect.right - wmSize.width,
-      ),
-      newOffset.dy.clamp(
-        _imageRect.top,
-        _imageRect.bottom - wmSize.height,
-      ),
-    );
-    setState(() => _watermarkOffset = clamped);
+  void _onScaleUpdate(ScaleUpdateDetails details) {
+    if (_watermarkOffset == null) return;
+    // 单指拖动: details.scale == 1.0, details.focalPointDelta 有值
+    // 双指缩放: details.scale != 1.0, 同时可有 focalPointDelta
+    final newScale = (_baseScale * details.scale).clamp(0.3, 5.0);
+    final newOffset = _baseOffset + details.focalPointDelta;
+    setState(() {
+      _watermarkScale = newScale;
+      _watermarkOffset = newOffset;
+    });
   }
 
   Widget _buildToolbar(AppStrings strings) {
@@ -330,7 +335,7 @@ class _WatermarkSharePreviewPageState
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            strings.dragToAdjustWatermark,
+            '${strings.dragToAdjustWatermark}  |  ${strings.pinchToZoomWatermark}',
             style: const TextStyle(color: Colors.white60, fontSize: 13),
           ),
           const SizedBox(height: 12),
@@ -433,6 +438,7 @@ class _WatermarkSharePreviewPageState
         displayWeightUnit: _data.displayWeightUnit,
         displayTemperatureUnit: _data.displayTemperatureUnit,
         dragOffset: scaledOffset,
+        watermarkScale: _watermarkScale,
       );
 
       if (watermarkedPath == null) {
