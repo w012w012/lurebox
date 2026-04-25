@@ -110,22 +110,10 @@ class _WatermarkSharePreviewPageState
   Offset? _watermarkOffset;
   bool _isSharing = false;
   double _watermarkScale = 1.0;
-  Offset _baseOffset = Offset.zero;
   double _baseScale = 1.0;
 
   Rect _imageRect = Rect.zero;
   Size _imageSize = Size.zero;
-
-  // 调试信息
-  final List<String> _debugLines = [];
-  int _buildCount = 0;
-  int _scaleUpdateCount = 0;
-  Offset? _lastAppliedOffset;
-
-  void _log(String msg) {
-    _debugLines.add(msg);
-    if (_debugLines.length > 15) _debugLines.removeAt(0);
-  }
 
   PreviewData get _data => widget.data;
 
@@ -202,14 +190,6 @@ class _WatermarkSharePreviewPageState
   Widget build(BuildContext context) {
     final settings = ref.watch(watermarkSettingsProvider);
     final strings = ref.watch(currentStringsProvider);
-    _buildCount++;
-    final offsetChanged = _lastAppliedOffset != _watermarkOffset;
-    _lastAppliedOffset = _watermarkOffset;
-    // 只在 offset 变化或每 10 次 build 记录一次，避免刷屏
-    if (offsetChanged || _buildCount % 10 == 0) {
-      _log('build#$_buildCount${offsetChanged ? " ΔOFFSET" : ""} '
-          'off=${_watermarkOffset?.dx.toStringAsFixed(0)},${_watermarkOffset?.dy.toStringAsFixed(0)}');
-    }
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -238,7 +218,6 @@ class _WatermarkSharePreviewPageState
     if (_imageRect == Rect.zero) {
       final container = MediaQuery.of(context).size;
       _imageRect = _computeImageRect(container, _imageSize);
-      _log('init imageRect=${_imageRect.left.toStringAsFixed(0)},${_imageRect.top.toStringAsFixed(0)} ${_imageRect.width.toStringAsFixed(0)}x${_imageRect.height.toStringAsFixed(0)}');
 
       if (_watermarkOffset == null) {
         final wmSize = _estimateWatermarkSize();
@@ -246,7 +225,6 @@ class _WatermarkSharePreviewPageState
           _imageRect.left + _imageRect.width * 0.03,
           _imageRect.bottom - _imageRect.height * 0.05 - wmSize.height,
         );
-        _log('init wmOffset=${_watermarkOffset!.dx.toStringAsFixed(1)},${_watermarkOffset!.dy.toStringAsFixed(1)}');
       }
     }
 
@@ -310,62 +288,26 @@ class _WatermarkSharePreviewPageState
                 watermarkScale: _watermarkScale,
               ),
             ),
-          // 调试覆盖层
-          Positioned(
-            top: 8,
-            left: 8,
-            right: 8,
-            child: IgnorePointer(
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  _debugLines.join('\n'),
-                  style: const TextStyle(
-                    color: Colors.greenAccent,
-                    fontSize: 10,
-                    fontFamily: 'monospace',
-                    height: 1.3,
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
   }
 
   void _onScaleStart(ScaleStartDetails details) {
-    _scaleUpdateCount = 0;
-    _baseOffset = _watermarkOffset ?? Offset.zero;
     _baseScale = _watermarkScale;
-    _log('▶ START base=${_baseOffset.dx.toStringAsFixed(0)},${_baseOffset.dy.toStringAsFixed(0)}');
   }
 
   void _onScaleUpdate(ScaleUpdateDetails details) {
     if (_watermarkOffset == null) return;
-    _scaleUpdateCount++;
-    // focalPointDelta 是每事件增量，需累加到当前位置
     final newOffset = _watermarkOffset! + details.focalPointDelta;
     final newScale = (_baseScale * details.scale).clamp(0.3, 5.0);
-    if (_scaleUpdateCount <= 3 || _scaleUpdateCount % 20 == 0) {
-      _log('MOVE#$_scaleUpdateCount d=${details.focalPointDelta.dx.toStringAsFixed(1)},${details.focalPointDelta.dy.toStringAsFixed(1)} '
-          '→ ${newOffset.dx.toStringAsFixed(0)},${newOffset.dy.toStringAsFixed(0)}');
-    }
     setState(() {
       _watermarkScale = newScale;
       _watermarkOffset = newOffset;
     });
   }
 
-  void _onScaleEnd(ScaleEndDetails details) {
-    _log('■ END offset=${_watermarkOffset?.dx.toStringAsFixed(0)},${_watermarkOffset?.dy.toStringAsFixed(0)} '
-        'scale=${_watermarkScale.toStringAsFixed(2)}');
-  }
+  void _onScaleEnd(ScaleEndDetails details) {}
 
   Widget _buildToolbar(AppStrings strings) {
     return Container(
