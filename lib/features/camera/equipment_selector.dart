@@ -6,6 +6,17 @@ import '../../core/design/theme/app_colors.dart';
 import '../../core/providers/language_provider.dart';
 import '../equipment/equipment_list_page.dart';
 
+String _brakeTypeLabel(String key, AppStrings strings) {
+  return switch (key) {
+    'traditional_magnetic' => strings.brakeTypeTraditionalMagnetic,
+    'centrifugal'          => strings.brakeTypeCentrifugal,
+    'dc'                   => strings.brakeTypeDC,
+    'floating_magnetic'    => strings.brakeTypeFloatingMagnetic,
+    'innovative'           => strings.brakeTypeInnovative,
+    _                      => key,
+  };
+}
+
 /// 装备选择器组件
 class EquipmentSelector extends ConsumerWidget {
   final List<Map<String, dynamic>> rodList;
@@ -176,7 +187,7 @@ class EquipmentSelector extends ConsumerWidget {
                             final brakeType =
                                 item['reel_brake_type'] as String?;
                             if (brakeType != null && brakeType.isNotEmpty) {
-                              parts.add(brakeType);
+                              parts.add(_brakeTypeLabel(brakeType, strings));
                             }
                             final weight = item['reel_weight'] as String?;
                             if (weight != null && weight.isNotEmpty) {
@@ -435,7 +446,7 @@ class EquipmentInfoRow extends ConsumerWidget {
       }
 
       final brakeType = eq['reel_brake_type'] as String?;
-      if (brakeType != null && brakeType.isNotEmpty) parts.add(brakeType);
+      if (brakeType != null && brakeType.isNotEmpty) parts.add(_brakeTypeLabel(brakeType, strings));
 
       final weight = eq['reel_weight'] as String?;
       if (weight != null && weight.isNotEmpty) parts.add(weight);

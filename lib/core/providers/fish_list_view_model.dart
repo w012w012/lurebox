@@ -128,18 +128,10 @@ class FishListViewModel extends StateNotifier<FishListState> {
       List<FishCatch> newCatches;
       int totalCount;
       if (state.hasFilters) {
-        final result = await _fishCatchService.getFilteredPage(
+        final result = await _fishCatchService.getFilteredPageByFilter(
           page: page,
           pageSize: pageSize,
-          startDate: state.filter.timeFilter == 'custom'
-              ? state.filter.customStartDate
-              : null,
-          endDate: state.filter.timeFilter == 'custom'
-              ? state.filter.customEndDate
-              : null,
-          fate: state.filter.fateFilter,
-          species: state.filter.speciesFilter,
-          orderBy: _getOrderBy(state.filter.sortBy, state.filter.sortAsc),
+          filter: state.filter,
         );
         newCatches = result.items;
         totalCount = result.totalCount;
