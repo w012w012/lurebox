@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:share_plus/share_plus.dart';
-
 import '../../core/constants/strings.dart';
 import '../../core/design/theme/app_colors.dart';
 import '../../core/design/theme/tesla_theme.dart';
 import '../../core/providers/fish_detail_view_model.dart';
 import '../../core/providers/language_provider.dart';
 import '../../core/providers/app_settings_provider.dart';
-import '../../core/providers/watermark_provider.dart';
-import '../../core/services/app_logger.dart';
 import '../../core/utils/unit_converter.dart';
 import '../../widgets/common/app_snack_bar.dart';
-import '../common/watermarked_image.dart';
+import '../share/watermark_share_preview_page.dart';
 import '../../widgets/common/premium_button.dart';
-import '../../widgets/common/premium_card.dart';
 import 'widgets/fish_action_buttons.dart';
 import 'widgets/fish_info_card.dart';
 import 'widgets/fish_image_gallery.dart';
@@ -341,139 +336,83 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
     String? lureName,
     DateTime catchTime,
   ) async {
-    if (state.isSharing) return;
+    final imagePath = fish['image_path'] as String?;
+    if (imagePath == null || imagePath.isEmpty) {
+      AppSnackBar.showError(context, strings.takePhotoFirst);
+      return;
+    }
 
-    ref
-        .read(fishDetailViewModelProvider(widget.fishId).notifier)
-        .setSharing(true);
+    final appSettings = ref.read(appSettingsProvider);
+    final units = appSettings.units;
+    final fishLengthUnit =
+        fish['length_unit'] as String? ?? units.fishLengthUnit;
+    final fishWeightUnit =
+        fish['weight_unit'] as String? ?? units.fishWeightUnit;
+    final fishLength = fish['length'] as double;
+    final fishWeight = fish['weight'] as double?;
 
-    try {
-      final imagePath = fish['image_path'] as String?;
-      if (imagePath == null || imagePath.isEmpty) {
-        if (context.mounted) {
-          AppSnackBar.showError(context, strings.takePhotoFirst);
-        }
-        return;
-      }
+    final displayLength = UnitConverter.convertLength(
+      fishLength,
+      fishLengthUnit,
+      units.fishLengthUnit,
+    );
+    final displayWeight = fishWeight != null
+        ? UnitConverter.convertWeight(
+            fishWeight,
+            fishWeightUnit,
+            units.fishWeightUnit,
+          )
+        : null;
 
-      final appSettings = ref.read(appSettingsProvider);
-      final units = appSettings.units;
-      final fishLengthUnit =
-          fish['length_unit'] as String? ?? units.fishLengthUnit;
-      final fishWeightUnit =
-          fish['weight_unit'] as String? ?? units.fishWeightUnit;
-      final fishLength = fish['length'] as double;
-      final fishWeight = fish['weight'] as double?;
+    final shareText =
+        '${fish['species']} - ${displayLength.toStringAsFixed(2)}${UnitConverter.getLengthSymbol(units.fishLengthUnit)}';
 
-      final displayLength = UnitConverter.convertLength(
-        fishLength,
-        fishLengthUnit,
-        units.fishLengthUnit,
-      );
-      final displayWeight = fishWeight != null
-          ? UnitConverter.convertWeight(
-              fishWeight,
-              fishWeightUnit,
-              units.fishWeightUnit,
-            )
-          : null;
+    final previewData = PreviewData(
+      imagePath: imagePath,
+      species: fish['species'] as String,
+      length: fishLength,
+      weight: fishWeight,
+      lengthUnit: fishLengthUnit,
+      weightUnit: fishWeightUnit,
+      locationName: fish['location_name'] as String?,
+      catchTime: catchTime,
+      rodName: rodName,
+      reelName: reelName,
+      lureName: lureName,
+      rodBrand: state.rodEquipment?['brand'] as String?,
+      rodModel: state.rodEquipment?['model'] as String?,
+      rodMaterial: state.rodEquipment?['material'] as String?,
+      rodLength: state.rodEquipment?['length'] as String?,
+      rodLengthUnit: state.rodEquipment?['length_unit'] as String?,
+      rodHardness: state.rodEquipment?['hardness'] as String?,
+      rodAction: state.rodEquipment?['rod_action'] as String?,
+      reelBrand: state.reelEquipment?['brand'] as String?,
+      reelModel: state.reelEquipment?['model'] as String?,
+      reelRatio: state.reelEquipment?['reel_ratio'] as String?,
+      lureBrand: state.lureEquipment?['brand'] as String?,
+      lureModel: state.lureEquipment?['model'] as String?,
+      lureSize: state.lureEquipment?['lure_size'] as String?,
+      lureSizeUnit: state.lureEquipment?['lure_size_unit'] as String?,
+      lureColor: state.lureEquipment?['lure_color'] as String?,
+      lureWeight: state.lureEquipment?['lure_weight'] as String?,
+      lureWeightUnit: state.lureEquipment?['lure_weight_unit'] as String?,
+      airTemperature: fish['air_temperature'] as double?,
+      pressure: fish['pressure'] as double?,
+      weatherCode: fish['weather_code'] as int?,
+      displayLength: displayLength,
+      displayWeight: displayWeight,
+      displayLengthUnit: units.fishLengthUnit,
+      displayWeightUnit: units.fishWeightUnit,
+      displayTemperatureUnit: units.temperatureUnit,
+      shareText: shareText,
+    );
 
-      showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => Center(
-          child: PremiumCard(
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(
-                    color: TeslaColors.electricBlue,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    strings.sharing,
-                    style: const TextStyle(
-                      color: TeslaColors.carbonDark,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+    if (context.mounted) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => WatermarkSharePreviewPage(data: previewData),
         ),
       );
-
-      final watermarkedPath = await WatermarkExporter.exportWatermarkedImage(
-        imagePath: fish['image_path'] as String,
-        species: fish['species'] as String,
-        length: fishLength,
-        weight: fishWeight,
-        lengthUnit: fishLengthUnit,
-        weightUnit: fishWeightUnit,
-        locationName: fish['location_name'] as String?,
-        catchTime: catchTime,
-        rodName: rodName,
-        reelName: reelName,
-        lureName: lureName,
-        rodBrand: state.rodEquipment?['brand'] as String?,
-        rodModel: state.rodEquipment?['model'] as String?,
-        rodMaterial: state.rodEquipment?['material'] as String?,
-        rodLength: state.rodEquipment?['length'] as String?,
-        rodLengthUnit: state.rodEquipment?['length_unit'] as String?,
-        rodHardness: state.rodEquipment?['hardness'] as String?,
-        rodAction: state.rodEquipment?['rod_action'] as String?,
-        reelBrand: state.reelEquipment?['brand'] as String?,
-        reelModel: state.reelEquipment?['model'] as String?,
-        reelRatio: state.reelEquipment?['reel_ratio'] as String?,
-        lureBrand: state.lureEquipment?['brand'] as String?,
-        lureModel: state.lureEquipment?['model'] as String?,
-        lureSize: state.lureEquipment?['lure_size'] as String?,
-        lureSizeUnit: state.lureEquipment?['lure_size_unit'] as String?,
-        lureColor: state.lureEquipment?['lure_color'] as String?,
-        lureWeight: state.lureEquipment?['lure_weight'] as String?,
-        lureWeightUnit: state.lureEquipment?['lure_weight_unit'] as String?,
-        airTemperature: fish['air_temperature'] as double?,
-        pressure: fish['pressure'] as double?,
-        weatherCode: fish['weather_code'] as int?,
-        settings: ref.read(watermarkSettingsProvider),
-        strings: strings,
-        displayLength: displayLength,
-        displayWeight: displayWeight,
-        displayLengthUnit: units.fishLengthUnit,
-        displayWeightUnit: units.fishWeightUnit,
-        displayTemperatureUnit: units.temperatureUnit,
-      );
-
-      if (watermarkedPath == null) {
-        if (context.mounted) {
-          Navigator.of(context).pop();
-          AppSnackBar.showError(context, strings.shareFailed);
-        }
-        return;
-      }
-
-      await Share.shareXFiles([
-        XFile(watermarkedPath),
-      ],
-          text:
-              '${fish['species']} - ${displayLength.toStringAsFixed(2)}${UnitConverter.getLengthSymbol(units.fishLengthUnit)}');
-
-      await WatermarkExporter.deleteTempFile(watermarkedPath);
-
-      if (context.mounted) Navigator.of(context).pop();
-    } catch (e) {
-      AppLogger.e('FishDetailPage', '分享失败: $e');
-      if (context.mounted) {
-        Navigator.of(context).pop();
-        AppSnackBar.showError(context, strings.shareFailed, debugError: e);
-      }
-    } finally {
-      ref
-          .read(fishDetailViewModelProvider(widget.fishId).notifier)
-          .setSharing(false);
     }
   }
 

@@ -50,4 +50,8 @@ mixin WatermarkStringsMixin {
   String get watermarkCustomTextPlaceholder;
   String get watermarkPreviewSpecies;
   String get watermarkPreviewLocation;
+  String get sharePreview;
+  String get resetPosition;
+  String get confirmShare;
+  String get dragToAdjustWatermark;
 }
