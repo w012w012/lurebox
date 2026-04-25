@@ -435,7 +435,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       items.add(_InfoItem(strings.sections, '${e['sections']}'));
     }
     if (e['joint_type'] != null) {
-      items.add(_InfoItem(strings.cardJointMethod, e['joint_type']));
+      items.add(_InfoItem(strings.cardJointMethod, _getJointTypeLabel(e['joint_type'], strings)));
     }
     if (e['hardness'] != null) {
       items.add(_InfoItem(strings.hardness, e['hardness']));
@@ -657,6 +657,16 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       'floating_magnetic'    => strings.brakeTypeFloatingMagnetic,
       'innovative'           => strings.brakeTypeInnovative,
       _                      => key,
+    };
+  }
+
+  String _getJointTypeLabel(String key, AppStrings strings) {
+    return switch (key) {
+      'spigot'         => strings.jointTypeSpigot,
+      'reverse_spigot' => strings.jointTypeReverseSpigot,
+      'dragon_spigot'  => strings.jointTypeDragonSpigot,
+      'telescopic'     => strings.jointTypeTelescopic,
+      _                => key,
     };
   }
 

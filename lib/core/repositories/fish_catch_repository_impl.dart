@@ -184,6 +184,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
       final db = await database;
       final map = fish.toMap();
       map.remove('id');
+      map.removeWhere((_, v) => v == null);
       map['created_at'] = DateTime.now().toIso8601String();
       map['updated_at'] = DateTime.now().toIso8601String();
       return await db.insert(tableName, map);

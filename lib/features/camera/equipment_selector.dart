@@ -17,6 +17,16 @@ String _brakeTypeLabel(String key, AppStrings strings) {
   };
 }
 
+String _jointTypeLabel(String key, AppStrings strings) {
+  return switch (key) {
+    'spigot'         => strings.jointTypeSpigot,
+    'reverse_spigot' => strings.jointTypeReverseSpigot,
+    'dragon_spigot'  => strings.jointTypeDragonSpigot,
+    'telescopic'     => strings.jointTypeTelescopic,
+    _                => key,
+  };
+}
+
 /// 装备选择器组件
 class EquipmentSelector extends ConsumerWidget {
   final List<Map<String, dynamic>> rodList;
@@ -148,7 +158,7 @@ class EquipmentSelector extends ConsumerWidget {
                             }
                             final jointType = item['joint_type'] as String?;
                             if (jointType != null && jointType.isNotEmpty) {
-                              parts.add(jointType);
+                              parts.add(_jointTypeLabel(jointType, strings));
                             }
                             final defaultLabel = item['is_default'] == 1
                                 ? '⭐${strings.defaultLabel}'
@@ -424,7 +434,7 @@ class EquipmentInfoRow extends ConsumerWidget {
       }
 
       final jointType = eq['joint_type'] as String?;
-      if (jointType != null && jointType.isNotEmpty) parts.add(jointType);
+      if (jointType != null && jointType.isNotEmpty) parts.add(_jointTypeLabel(jointType, strings));
 
       final weightRange = eq['weight_range'] as String?;
       if (weightRange != null && weightRange.isNotEmpty) {

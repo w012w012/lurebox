@@ -489,15 +489,18 @@ class _CameraPageState extends ConsumerState<CameraPage> {
         // 重置 captureState 到 pictureTaken，让用户留在表单页面
         vm.resetCaptureStateToForm();
         if (mounted) {
-          // 内部 debug 信息仅用于日志，不暴露给用户
           AppLogger.w('CameraPage', 'Save failed: fishId=$fishId, '
               'error=$errorFromState, '
               'imagePath=${state.imagePath != null ? "set" : "null"}, '
               'species="${state.species}", '
               'length=${state.length}');
+          // 优先展示真实错误，方便用户定位问题
+          final displayError = errorFromState != null && errorFromState.isNotEmpty
+              ? errorFromState.replaceFirst(RegExp(r'^[^:]+:\s*'), '')
+              : null;
           AppSnackBar.showError(
             context,
-            strings.saveFailedCheckInput,
+            displayError ?? strings.saveFailedCheckInput,
           );
         }
       }
