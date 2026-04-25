@@ -1,19 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'app_logger.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
-import 'package:sqflite/sqflite.dart' hide DatabaseException;
-import 'package:share_plus/share_plus.dart';
 
-import '../database/database_provider.dart';
-import '../models/cloud_config.dart';
-import '../models/backup_history.dart';
-import '../repositories/backup_config_repository.dart';
-import 'backup_service.dart';
-import 'backup_zip_service.dart';
-import 'error_service.dart';
+import 'package:flutter/foundation.dart';
+import 'package:lurebox/core/database/database_provider.dart';
+import 'package:lurebox/core/models/backup_history.dart';
+import 'package:lurebox/core/models/cloud_config.dart';
+import 'package:lurebox/core/repositories/backup_config_repository.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/services/backup_service.dart';
+import 'package:lurebox/core/services/backup_zip_service.dart';
+import 'package:lurebox/core/services/error_service.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
 /// 增强备份服务
 ///
@@ -22,10 +22,6 @@ import 'error_service.dart';
 /// - 支持云配置持久化
 /// - 自动清理过期备份
 class EnhancedBackupService {
-  final DatabaseProvider _dbProvider;
-  final BackupConfigRepository _configRepo;
-  final BackupService _backupService;
-  final BackupZipService _backupZipService;
 
   /// Constructor for production use.
   ///
@@ -42,6 +38,10 @@ class EnhancedBackupService {
     this._backupService,
     this._backupZipService,
   );
+  final DatabaseProvider _dbProvider;
+  final BackupConfigRepository _configRepo;
+  final BackupService _backupService;
+  final BackupZipService _backupZipService;
 
   // ========== 云配置管理 ==========
 
@@ -74,17 +74,17 @@ class EnhancedBackupService {
 
   /// 获取活跃的 WebDAV 配置
   Future<CloudConfig?> getActiveWebDAVConfig() async {
-    return await _configRepo.getActiveCloudConfig();
+    return _configRepo.getActiveCloudConfig();
   }
 
   /// 获取所有云配置
   Future<List<CloudConfig>> getAllCloudConfigs() async {
-    return await _configRepo.getAllCloudConfigs();
+    return _configRepo.getAllCloudConfigs();
   }
 
   /// 删除云配置
   Future<int> deleteCloudConfig(int id) async {
-    return await _configRepo.deleteCloudConfig(id);
+    return _configRepo.deleteCloudConfig(id);
   }
 
   // ========== 统一导出接口 ==========
@@ -97,21 +97,18 @@ class EnhancedBackupService {
     bool shareAfterExport = true,
   }) async {
     final XFile xFile;
-    final DateTime exportTime = DateTime.now();
+    final exportTime = DateTime.now();
 
     switch (format) {
       case BackupType.json:
         final path = await _backupService.exportToJson();
         xFile = XFile(path);
-        break;
       case BackupType.zipFull:
         xFile = await _backupZipService.exportToZip(
           options: const BackupExportOptions(
-            includePhotos: true,
             createRecoveryPoint: true,
           ),
         );
-        break;
       case BackupType.zipDbOnly:
         xFile = await _backupZipService.exportToZip(
           options: const BackupExportOptions(
@@ -119,7 +116,6 @@ class EnhancedBackupService {
             createRecoveryPoint: true,
           ),
         );
-        break;
     }
 
     // 获取文件大小
@@ -144,7 +140,7 @@ class EnhancedBackupService {
     await _configRepo.addBackupHistory(history);
 
     // 清理旧备份历史（保留最近20条）
-    await cleanupOldBackupHistory(keepCount: 20);
+    await cleanupOldBackupHistory();
 
     // 分享文件
     if (shareAfterExport) {
@@ -175,7 +171,7 @@ class EnhancedBackupService {
       'fish_catches',
       columns: ['image_path'],
     );
-    int photoCount = 0;
+    var photoCount = 0;
     for (final fish in catches) {
       if (fish['image_path'] != null) photoCount++;
     }
@@ -191,7 +187,7 @@ class EnhancedBackupService {
 
   /// 获取备份历史列表
   Future<List<BackupHistory>> getBackupHistory({int limit = 20}) async {
-    return await _configRepo.getBackupHistory(limit: limit);
+    return _configRepo.getBackupHistory(limit: limit);
   }
 
   /// 删除备份历史记录（同时删除文件）
@@ -207,12 +203,12 @@ class EnhancedBackupService {
     }
 
     // 删除数据库记录
-    return await _configRepo.deleteBackupHistory(id);
+    return _configRepo.deleteBackupHistory(id);
   }
 
   /// 清理旧备份历史
   Future<int> cleanupOldBackupHistory({int keepCount = 20}) async {
-    return await _configRepo.cleanupOldBackupHistory(keepCount);
+    return _configRepo.cleanupOldBackupHistory(keepCount);
   }
 
   // ========== 恢复点管理 ==========
@@ -227,7 +223,7 @@ class EnhancedBackupService {
 
     if (!await recoveryDir.exists()) return 0;
 
-    final List<File> files = [];
+    final files = <File>[];
     await for (final entity in recoveryDir.list()) {
       if (entity is File &&
           p.basename(entity.path).startsWith('lurebox_recovery_')) {
@@ -241,7 +237,7 @@ class EnhancedBackupService {
     files.sort((a, b) => p.basename(b.path).compareTo(p.basename(a.path)));
 
     // 删除最旧的（排在后面的）
-    int deletedCount = 0;
+    var deletedCount = 0;
     for (var i = keepCount; i < files.length; i++) {
       try {
         await files[i].delete();
@@ -261,7 +257,7 @@ class EnhancedBackupService {
 
     if (!await recoveryDir.exists()) return [];
 
-    final List<File> files = [];
+    final files = <File>[];
     await for (final entity in recoveryDir.list()) {
       if (entity is File &&
           p.basename(entity.path).startsWith('lurebox_recovery_')) {
@@ -288,7 +284,7 @@ class EnhancedBackupService {
       throw const DatabaseException('No active cloud configuration found');
     }
 
-    return await _backupService.uploadToWebDAV(
+    return _backupService.uploadToWebDAV(
       serverUrl: config.serverUrl,
       username: config.username,
       password: config.password,
@@ -300,7 +296,7 @@ class EnhancedBackupService {
     final config = await getActiveWebDAVConfig();
     if (config == null) return false;
 
-    return await _backupService.testWebDAVConnection(
+    return _backupService.testWebDAVConnection(
       serverUrl: config.serverUrl,
       username: config.username,
       password: config.password,
@@ -313,7 +309,7 @@ class EnhancedBackupService {
   ///
   /// 在导入前检查记录是否已存在，避免重复
   Future<ImportResultWithStats> importFromJsonWithDeduplication(
-      String filePath) async {
+      String filePath,) async {
     final file = File(filePath);
     if (!await file.exists()) {
       throw const DatabaseException('File not found');
@@ -323,9 +319,9 @@ class EnhancedBackupService {
     final backupData = jsonDecode(jsonString) as Map<String, dynamic>;
 
     final db = await _dbProvider.database;
-    int importedCount = 0;
-    int skippedCount = 0;
-    int errorCount = 0;
+    var importedCount = 0;
+    var skippedCount = 0;
+    var errorCount = 0;
 
     await db.transaction((txn) async {
       // 导入渔获记录（基于 catch_time + species 去重）
@@ -333,7 +329,7 @@ class EnhancedBackupService {
         final fishCatches = backupData['fishCatches'] as List;
         for (final fish in fishCatches) {
           try {
-            final map = Map<String, dynamic>.from(fish);
+            final map = Map<String, dynamic>.from(fish as Map);
             final catchTime = map['catch_time'] as String?;
             final species = map['species'] as String?;
 
@@ -365,7 +361,7 @@ class EnhancedBackupService {
         final equipments = backupData['equipments'] as List;
         for (final equipment in equipments) {
           try {
-            final map = Map<String, dynamic>.from(equipment);
+            final map = Map<String, dynamic>.from(equipment as Map);
             final type = map['type'] as String?;
             final brand = map['brand'] as String?;
             final model = map['model'] as String?;
@@ -412,7 +408,7 @@ class EnhancedBackupService {
         final speciesHistory = backupData['speciesHistory'] as List;
         for (final species in speciesHistory) {
           try {
-            final map = Map<String, dynamic>.from(species);
+            final map = Map<String, dynamic>.from(species as Map);
             final name = map['name'] as String?;
 
             if (name != null) {
@@ -441,7 +437,7 @@ class EnhancedBackupService {
         final settings = backupData['settings'] as List;
         for (final setting in settings) {
           try {
-            final map = Map<String, dynamic>.from(setting);
+            final map = Map<String, dynamic>.from(setting as Map);
             await txn.insert(
               'settings',
               map,
@@ -465,15 +461,15 @@ class EnhancedBackupService {
 
 /// 导入结果（带统计信息）
 class ImportResultWithStats {
-  final int importedCount;
-  final int skippedCount;
-  final int errorCount;
 
   const ImportResultWithStats({
     required this.importedCount,
     required this.skippedCount,
     required this.errorCount,
   });
+  final int importedCount;
+  final int skippedCount;
+  final int errorCount;
 
   int get totalCount => importedCount + skippedCount + errorCount;
   bool get hasErrors => errorCount > 0;

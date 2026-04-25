@@ -1,7 +1,6 @@
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/services/app_logger.dart';
 import 'package:open_meteo/open_meteo.dart';
-
-import '../constants/strings.dart';
-import 'app_logger.dart';
 
 /// 天气代码转中文描述（默认行为，兼容旧代码）
 /// 基于 WMO Weather interpretation codes (WW)
@@ -110,12 +109,12 @@ String getLocalizedWeatherDescription(int? code, AppStrings strings) {
 }
 
 /// 天气数据
-class WeatherData {
-  final double? airTemperature; // 气温（摄氏度）
-  final double? pressure; // 气压（hPa）
-  final int? weatherCode; // 天气代码（WMO）
+class WeatherData { // 天气代码（WMO）
 
   const WeatherData({this.airTemperature, this.pressure, this.weatherCode});
+  final double? airTemperature; // 气温（摄氏度）
+  final double? pressure; // 气压（hPa）
+  final int? weatherCode;
 
   bool get isEmpty =>
       airTemperature == null && pressure == null && weatherCode == null;
@@ -161,7 +160,7 @@ class WeatherService {
     } catch (e) {
       AppLogger.e('WeatherService', 'Failed to fetch weather data', e);
       return const WeatherData(
-          airTemperature: null, pressure: null, weatherCode: null);
+          );
     }
   }
 }

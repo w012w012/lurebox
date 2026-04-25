@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/utils/unit_converter.dart';
-import '../../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 class SpeciesDistributionChart extends StatefulWidget {
+
+  const SpeciesDistributionChart({
+    required this.speciesStats, required this.totalCount, super.key,
+    this.speciesWeightStats,
+    this.totalWeight = 0,
+    this.showByWeight = false,
+    this.onToggleShowByWeight,
+    this.strings,
+    this.weightUnit = 'kg',
+    this.isChinese = true,
+  });
   final Map<String, int> speciesStats;
   final Map<String, double>? speciesWeightStats;
   final int totalCount;
@@ -16,19 +27,6 @@ class SpeciesDistributionChart extends StatefulWidget {
   final AppStrings? strings;
   final String weightUnit;
   final bool isChinese;
-
-  const SpeciesDistributionChart({
-    super.key,
-    required this.speciesStats,
-    this.speciesWeightStats,
-    required this.totalCount,
-    this.totalWeight = 0,
-    this.showByWeight = false,
-    this.onToggleShowByWeight,
-    this.strings,
-    this.weightUnit = 'kg',
-    this.isChinese = true,
-  });
 
   @override
   State<SpeciesDistributionChart> createState() =>
@@ -77,7 +75,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
 
     final unitLabel = widget.showByWeight
         ? UnitConverter.getWeightSymbol(widget.weightUnit,
-            isChinese: widget.isChinese)
+            isChinese: widget.isChinese,)
         : (appStrings?.fishCountUnit ?? '');
     final displayTotal =
         widget.showByWeight ? widget.totalWeight : widget.totalCount;
@@ -97,7 +95,6 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
     return FadeTransition(
       opacity: _fadeAnimation,
       child: PremiumCard(
-        variant: PremiumCardVariant.standard,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -228,15 +225,15 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
 }
 
 class _ToggleOption extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
 
   const _ToggleOption({
     required this.label,
     required this.isSelected,
     required this.onTap,
   });
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {

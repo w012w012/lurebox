@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/settings_view_model.dart';
+import 'package:lurebox/core/services/export_service.dart';
+import 'package:lurebox/features/settings/widgets/webdav_config_dialog.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 import 'package:share_plus/share_plus.dart';
-
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../core/providers/settings_view_model.dart';
-import '../../../core/services/export_service.dart';
-import '../../../widgets/common/premium_card.dart';
-import '../../../widgets/common/app_snack_bar.dart';
-import 'webdav_config_dialog.dart';
 
 class SettingsBackupSection extends ConsumerWidget {
   const SettingsBackupSection({super.key});
@@ -154,8 +153,8 @@ class SettingsBackupSection extends ConsumerWidget {
   }
 
   void _showWebDAVDialog(
-      BuildContext context, WidgetRef ref, AppStrings strings) {
-    showDialog(
+      BuildContext context, WidgetRef ref, AppStrings strings,) {
+    showDialog<void>(
       context: context,
       builder: (context) => const WebDAVConfigDialog(),
     );
@@ -163,8 +162,8 @@ class SettingsBackupSection extends ConsumerWidget {
 
   /// 显示完整备份确认对话框（ZIP格式）
   void _showFullBackupDialog(
-      BuildContext context, WidgetRef ref, AppStrings strings) {
-    showDialog(
+      BuildContext context, WidgetRef ref, AppStrings strings,) {
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(strings.fullBackupTitle),
@@ -198,7 +197,7 @@ class SettingsBackupSection extends ConsumerWidget {
     final viewModel = ref.read(settingsViewModelProvider.notifier);
 
     // 显示备份进行中对话框
-    showDialog(
+    showDialog<void>(
       context: context,
       barrierDismissible: false, // 防止用户关闭对话框
       builder: (context) => AlertDialog(
@@ -275,7 +274,7 @@ class SettingsBackupSection extends ConsumerWidget {
 
       if (result.isSuccess) {
         final metadata = result.metadata;
-        String message = strings.restoreSuccessMsg;
+        var message = strings.restoreSuccessMsg;
         if (metadata != null) {
           message = '${strings.restoreSuccessMsg}\n'
               '渔获: ${metadata.fishCatchesCount} 条\n'

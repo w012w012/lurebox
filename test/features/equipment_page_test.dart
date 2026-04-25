@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:lurebox/core/design/theme/animation_constants.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/design/theme/app_theme.dart';
-import 'package:lurebox/core/design/theme/animation_constants.dart';
-import 'package:lurebox/widgets/common/premium_card.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 import 'package:lurebox/widgets/common/premium_input.dart';
 
 void main() {
   group('Design System Verification Tests', () {
     test('AnimationConstants uses correct touch feedback values', () {
       expect(AnimationConstants.touchFeedbackDuration,
-          const Duration(milliseconds: 150));
+          const Duration(milliseconds: 150),);
       expect(AnimationConstants.touchScale, 0.98);
     });
 
@@ -46,7 +45,6 @@ void main() {
           theme: AppTheme.light,
           home: const Scaffold(
             body: PremiumCard(
-              variant: PremiumCardVariant.standard,
               child: Text('Test Content'),
             ),
           ),
@@ -63,7 +61,6 @@ void main() {
           theme: AppTheme.light,
           home: Scaffold(
             body: PremiumCard(
-              variant: PremiumCardVariant.standard,
               onTap: () {},
               child: const Text('Tap Me'),
             ),
@@ -86,7 +83,6 @@ void main() {
           home: const Scaffold(
             body: PremiumCard(
               variant: PremiumCardVariant.flat,
-              showBorder: false,
               child: Text('Flat Card'),
             ),
           ),
@@ -106,7 +102,6 @@ void main() {
             body: Center(
               child: PremiumButton(
                 text: 'Primary',
-                variant: PremiumButtonVariant.primary,
                 onPressed: () {},
               ),
             ),

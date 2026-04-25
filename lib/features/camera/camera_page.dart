@@ -1,34 +1,33 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:lurebox/core/camera/camera_state.dart';
+import 'package:lurebox/core/camera/camera_view_model.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/utils/file_utils.dart';
+import 'package:lurebox/core/utils/image_compressor.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/features/camera/widgets/camera_view_widget.dart';
+import 'package:lurebox/features/catch/widgets/auxiliary_info_row.dart';
+import 'package:lurebox/features/catch/widgets/equipment_rig_card.dart';
+import 'package:lurebox/features/catch/widgets/equipment_selection_sheet.dart';
+import 'package:lurebox/features/catch/widgets/fate_selector_card.dart';
+import 'package:lurebox/features/catch/widgets/length_input_field.dart';
+import 'package:lurebox/features/catch/widgets/species_input_card.dart';
+import 'package:lurebox/features/catch/widgets/weight_input_field.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
+import 'package:lurebox/widgets/common/image_cache_helper.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
-
-import '../../core/constants/strings.dart';
-import '../../core/services/app_logger.dart';
-import '../../core/models/app_settings.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/app_settings_provider.dart';
-import '../../core/utils/file_utils.dart';
-import '../../core/utils/image_compressor.dart';
-import '../../core/utils/unit_converter.dart';
-import '../../core/camera/camera_view_model.dart';
-import '../../core/camera/camera_state.dart';
-
-import '../../widgets/common/image_cache_helper.dart';
-import '../../widgets/common/premium_button.dart';
-import '../../widgets/common/app_snack_bar.dart';
-import '../catch/widgets/auxiliary_info_row.dart';
-import '../catch/widgets/species_input_card.dart';
-import '../catch/widgets/length_input_field.dart';
-import '../catch/widgets/weight_input_field.dart';
-import '../catch/widgets/fate_selector_card.dart';
-import '../catch/widgets/equipment_rig_card.dart';
-import '../catch/widgets/equipment_selection_sheet.dart';
-import 'widgets/camera_view_widget.dart';
 
 class CameraPage extends ConsumerStatefulWidget {
   const CameraPage({super.key});
@@ -101,7 +100,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
   }
 
   Future<bool> _showDiscardDialog(
-      BuildContext context, AppStrings strings) async {
+      BuildContext context, AppStrings strings,) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -435,7 +434,6 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     return PremiumButton(
       text: strings.confirmSave,
       onPressed: isSaving ? null : () => _saveFishCatch(state, vm, strings),
-      variant: PremiumButtonVariant.primary,
       isLoading: isSaving,
       isFullWidth: true,
       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -471,7 +469,6 @@ class _CameraPageState extends ConsumerState<CameraPage> {
       await ImageCompressor.compressImage(
         inputPath: state.imagePath!,
         outputPath: newPath,
-        quality: 85,
         maxWidth: 1920,
         maxHeight: 1920,
       );
@@ -555,8 +552,8 @@ class _CameraPageState extends ConsumerState<CameraPage> {
 
   Future<void> _editCatchTime(CameraState state) async {
     final initialTime = state.catchTime ?? DateTime.now();
-    DateTime selectedDate = initialTime;
-    TimeOfDay selectedTime = TimeOfDay.fromDateTime(initialTime);
+    var selectedDate = initialTime;
+    var selectedTime = TimeOfDay.fromDateTime(initialTime);
 
     final datePicked = await showDatePicker(
       context: context,
@@ -644,7 +641,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                       .map((opt) => DropdownMenuItem(
                             value: opt.$1,
                             child: Text(opt.$2),
-                          ))
+                          ),)
                       .toList(),
                   onChanged: (v) => setState(() => selectedWeatherCode = v),
                 ),
@@ -665,7 +662,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
       ),
     );
 
-    if (confirmed == true && mounted) {
+    if ((confirmed ?? false) && mounted) {
       final temp = double.tryParse(tempController.text);
       final pressure = double.tryParse(pressureController.text);
       final vm = ref.read(cameraViewModelProvider.notifier);

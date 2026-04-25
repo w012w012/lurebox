@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/achievement.dart';
-import '../services/achievement_service.dart';
-import '../di/di.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/achievement.dart';
+import 'package:lurebox/core/services/achievement_service.dart';
 
 enum AchievementCategory {
   all(''),
@@ -17,12 +17,6 @@ enum AchievementCategory {
 }
 
 class AchievementState {
-  final List<Achievement> achievements;
-  final List<Achievement> filteredAchievements;
-  final AchievementCategory category;
-  final bool isLoading;
-  final String? errorMessage;
-  final Map<String, int> progress;
 
   const AchievementState({
     this.achievements = const [],
@@ -32,6 +26,12 @@ class AchievementState {
     this.errorMessage,
     this.progress = const {},
   });
+  final List<Achievement> achievements;
+  final List<Achievement> filteredAchievements;
+  final AchievementCategory category;
+  final bool isLoading;
+  final String? errorMessage;
+  final Map<String, int> progress;
 
   AchievementState copyWith({
     List<Achievement>? achievements,
@@ -58,9 +58,9 @@ class AchievementState {
 }
 
 class AchievementViewModel extends StateNotifier<AchievementState> {
-  final AchievementService _service;
 
   AchievementViewModel(this._service) : super(const AchievementState());
+  final AchievementService _service;
 
   Future<void> loadAchievements() async {
     state = state.copyWith(isLoading: true, errorMessage: () => null);
@@ -82,7 +82,7 @@ class AchievementViewModel extends StateNotifier<AchievementState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: () => e.toString(),
+        errorMessage: e.toString,
       );
     }
   }

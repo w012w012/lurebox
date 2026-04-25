@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../services/app_logger.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/app_settings.dart';
-import '../services/settings_service.dart';
-import '../services/error_service.dart';
-import '../di/di.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/services/error_service.dart';
+import 'package:lurebox/core/services/settings_service.dart';
 
 class AppSettingsNotifier extends StateNotifier<AppSettings> {
-  final SettingsService _service;
 
   AppSettingsNotifier(this._service) : super(const AppSettings()) {
     _loadSettings();
   }
+  final SettingsService _service;
 
   Future<void> _loadSettings() async {
     try {

@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/services/app_logger.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../widgets/common/premium_button.dart';
-import '../../../widgets/common/premium_card.dart';
 
 class SettingsAboutSection extends ConsumerStatefulWidget {
   const SettingsAboutSection({super.key});
@@ -68,7 +67,6 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
                   .bodyMedium
                   ?.copyWith(color: TeslaColors.graphite),
             ),
-            onTap: null,
           ),
         ],
       ),
@@ -82,7 +80,7 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
     required Widget trailing,
     VoidCallback? onTap,
   }) {
-    final accentColor = TeslaColors.electricBlue;
+    const accentColor = TeslaColors.electricBlue;
 
     final child = Padding(
       padding: const EdgeInsets.symmetric(
@@ -105,7 +103,7 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge
-                      ?.copyWith(fontWeight: FontWeight.w500))),
+                      ?.copyWith(fontWeight: FontWeight.w500),),),
           trailing,
         ],
       ),
@@ -118,7 +116,7 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
   }
 
   void _showAboutDialog(BuildContext context, AppStrings strings) {
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Row(

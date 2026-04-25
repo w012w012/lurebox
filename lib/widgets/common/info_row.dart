@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 
 /// 可复用的信息行组件
 class AppInfoRow extends StatelessWidget {
+
+  const AppInfoRow({
+    required this.icon, required this.label, required this.value, super.key,
+  });
   final IconData icon;
   final String label;
   final String value;
-
-  const AppInfoRow({
-    super.key,
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
 
   @override
   Widget build(BuildContext context) {

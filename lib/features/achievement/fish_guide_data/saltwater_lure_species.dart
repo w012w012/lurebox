@@ -1,11 +1,11 @@
-import '../../../core/models/fish_species.dart';
+import 'package:lurebox/core/models/fish_species.dart';
 
 /// saltwaterLure 鱼种数据
 class SaltwaterLureSpecies {
   SaltwaterLureSpecies._();
 
   static const List<FishSpecies> data = [
-    const FishSpecies(
+    FishSpecies(
     id: 'f035',
     standardName: '海鲈',
     scientificName: 'Lateolabrax japonicus',
@@ -18,7 +18,7 @@ class SaltwaterLureSpecies {
     description: '可入淡水的海产鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f036',
     standardName: '黑鲷',
     scientificName: 'Acanthopagrus schlegelii',
@@ -31,7 +31,7 @@ class SaltwaterLureSpecies {
     description: '高级海钓鱼种',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f037',
     standardName: '真鲷',
     scientificName: 'Pagrus major',
@@ -44,7 +44,7 @@ class SaltwaterLureSpecies {
     description: '海钓中的珍贵鱼种',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f038',
     standardName: '石斑鱼',
     scientificName: 'Epinephelus spp.',
@@ -57,7 +57,7 @@ class SaltwaterLureSpecies {
     description: '品种繁多，价值高',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f039',
     standardName: '海鳗',
     scientificName: 'Muraenesox cinereus',
@@ -70,7 +70,7 @@ class SaltwaterLureSpecies {
     description: '凶猛的肉食鱼',
     iconEmoji: '🐍',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f040',
     standardName: 'GT(牛港鲹)',
     scientificName: 'Caranx hippos',
@@ -83,7 +83,7 @@ class SaltwaterLureSpecies {
     description: '路亚钓友最爱的海鱼之一',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f041',
     standardName: '海红钻',
     scientificName: 'Lutjanus sebae',
@@ -96,7 +96,7 @@ class SaltwaterLureSpecies {
     description: '色彩鲜艳的海鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f042',
     standardName: '黄鳍鲷',
     scientificName: 'Acanthopagrus latus',
@@ -109,7 +109,7 @@ class SaltwaterLureSpecies {
     description: '鳍条呈黄色',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f043',
     standardName: '平鲷',
     scientificName: 'Rhabdosargus sarba',
@@ -122,7 +122,7 @@ class SaltwaterLureSpecies {
     description: '体型侧扁',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f044',
     standardName: '黑毛',
     scientificName: 'Girella leonina',
@@ -135,7 +135,7 @@ class SaltwaterLureSpecies {
     description: '礁石区常见鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f045',
     standardName: '鹤鱵',
     scientificName: 'Tylosurus crocodilus',
@@ -148,7 +148,7 @@ class SaltwaterLureSpecies {
     description: '体型细长如针',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f046',
     standardName: '烟仔',
     scientificName: 'Pompanax vacuus',
@@ -161,7 +161,7 @@ class SaltwaterLureSpecies {
     description: '小体型鲹科鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f047',
     standardName: '金目鲈',
     scientificName: 'Priacanthus macracanthus',
@@ -174,7 +174,7 @@ class SaltwaterLureSpecies {
     description: '眼睛呈金色',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f048',
     standardName: '石首鱼',
     scientificName: 'Sciaenops ocellatus',
@@ -187,7 +187,7 @@ class SaltwaterLureSpecies {
     description: '头部有石状突起',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f049',
     standardName: '海鳜',
     scientificName: 'Variola louti',
@@ -200,11 +200,10 @@ class SaltwaterLureSpecies {
     description: '色彩艳丽的大型石斑',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'f050',
     standardName: '蓝鳍金枪鱼',
     scientificName: 'Thunnus thynnus',
-    aliases: [],
     category: FishCategory.saltwaterLure,
     rarity: FishRarity.mythical,
     habitat: '深海海域',

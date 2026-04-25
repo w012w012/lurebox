@@ -2,20 +2,17 @@ import 'package:flutter/material.dart';
 
 /// 可复用的筛选芯片组件
 class AppFilterChip extends StatelessWidget {
+
+  const AppFilterChip({
+    required this.label, required this.isSelected, required this.onTap, super.key,
+    this.color,
+    this.icon,
+  });
   final String label;
   final bool isSelected;
   final Color? color;
   final IconData? icon;
   final VoidCallback onTap;
-
-  const AppFilterChip({
-    super.key,
-    required this.label,
-    required this.isSelected,
-    this.color,
-    this.icon,
-    required this.onTap,
-  });
 
   @override
   Widget build(BuildContext context) {

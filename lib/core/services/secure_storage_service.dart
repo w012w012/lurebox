@@ -1,8 +1,8 @@
 import 'dart:convert' as convert;
-import 'app_logger.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../models/ai_recognition_settings.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/services/app_logger.dart';
 
 /// API 密钥存储服务接口
 ///
@@ -17,7 +17,6 @@ abstract interface class ApiKeyStorage {
 
 /// 生产环境实现：使用 FlutterSecureStorage
 class SecureApiKeyStorage implements ApiKeyStorage {
-  final FlutterSecureStorage _storage;
 
   SecureApiKeyStorage({FlutterSecureStorage? storage})
       : _storage = storage ??
@@ -29,6 +28,7 @@ class SecureApiKeyStorage implements ApiKeyStorage {
                 accessibility: KeychainAccessibility.first_unlock_this_device,
               ),
             );
+  final FlutterSecureStorage _storage;
 
   @override
   Future<void> save(String providerKey, String apiKey) async {
@@ -43,7 +43,7 @@ class SecureApiKeyStorage implements ApiKeyStorage {
   @override
   Future<String?> get(String providerKey) async {
     if (providerKey.isEmpty) return null;
-    return await _storage.read(key: _getKeyName(providerKey));
+    return _storage.read(key: _getKeyName(providerKey));
   }
 
   @override
@@ -119,7 +119,6 @@ abstract interface class CloudPasswordStorage {
 
 /// 生产环境实现：使用 FlutterSecureStorage
 class SecureCloudPasswordStorage implements CloudPasswordStorage {
-  final FlutterSecureStorage _storage;
 
   SecureCloudPasswordStorage({FlutterSecureStorage? storage})
       : _storage = storage ??
@@ -131,6 +130,7 @@ class SecureCloudPasswordStorage implements CloudPasswordStorage {
                 accessibility: KeychainAccessibility.first_unlock_this_device,
               ),
             );
+  final FlutterSecureStorage _storage;
 
   @override
   Future<void> save(int configId, String password) async {
@@ -140,7 +140,7 @@ class SecureCloudPasswordStorage implements CloudPasswordStorage {
 
   @override
   Future<String?> get(int configId) async {
-    return await _storage.read(key: _keyFor(configId));
+    return _storage.read(key: _keyFor(configId));
   }
 
   @override
@@ -188,13 +188,13 @@ class InMemoryCloudPasswordStorage implements CloudPasswordStorage {
 /// await service.saveProviderApiKey('openai', 'sk-xxx');
 /// ```
 class SecureStorageService {
+
+  SecureStorageService({ApiKeyStorage? storage})
+      : _storage = storage ?? _defaultStorage ?? SecureApiKeyStorage();
   static SecureStorageService? _instance;
   static ApiKeyStorage? _defaultStorage;
 
   final ApiKeyStorage _storage;
-
-  SecureStorageService({ApiKeyStorage? storage})
-      : _storage = storage ?? _defaultStorage ?? SecureApiKeyStorage();
 
   /// 单例获取（使用默认存储）
   static SecureStorageService get instance =>
@@ -225,7 +225,7 @@ class SecureStorageService {
   /// [providerKey] 提供商标识符
   /// 返回 API 密钥，如果不存在则返回 null
   Future<String?> getProviderApiKey(String providerKey) async {
-    return await _storage.get(providerKey);
+    return _storage.get(providerKey);
   }
 
   /// 删除提供商 API Key
@@ -255,7 +255,7 @@ class SecureStorageService {
 
   /// 检查提供商是否存在 API Key
   Future<bool> hasProviderApiKey(String providerKey) async {
-    return await _storage.has(providerKey);
+    return _storage.has(providerKey);
   }
 
   /// 删除所有 API Keys
@@ -269,7 +269,7 @@ class SecureStorageService {
   /// 返回清理后的 JSON（不含 API keys）
   Future<String> migrateApiKeysFromJson(String legacyJson) async {
     try {
-      final Map<String, dynamic> json =
+      final json =
           Map<String, dynamic>.from(convert.jsonDecode(legacyJson) as Map);
 
       final configs = json['providerConfigs'] as Map<String, dynamic>?;
@@ -283,7 +283,7 @@ class SecureStorageService {
           if (apiKey != null && apiKey.isNotEmpty) {
             await saveProviderApiKey(entry.key, apiKey);
             AppLogger.i(
-                'SecureStorageService', 'Migrated API key for provider: ${entry.key}');
+                'SecureStorageService', 'Migrated API key for provider: ${entry.key}',);
           }
         }
       }

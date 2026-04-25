@@ -1,10 +1,10 @@
-import 'app_logger.dart';
-import '../models/watermark_settings.dart';
-import '../models/app_settings.dart';
-import '../models/ai_recognition_settings.dart';
-import '../repositories/settings_repository.dart';
-import 'error_service.dart';
-import 'secure_storage_service.dart';
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/models/watermark_settings.dart';
+import 'package:lurebox/core/repositories/settings_repository.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/services/error_service.dart';
+import 'package:lurebox/core/services/secure_storage_service.dart';
 
 /// 设置服务 - 应用配置的持久化管理
 ///
@@ -21,13 +21,13 @@ import 'secure_storage_service.dart';
 /// - 自动从旧的 SQLite 存储迁移 API keys 到安全存储
 
 class SettingsService {
-  final SettingsRepository _repository;
-  final SecureStorageService _secureStorage;
 
   SettingsService(
     this._repository, {
     SecureStorageService? secureStorage,
   }) : _secureStorage = secureStorage ?? SecureStorageService.instance;
+  final SettingsRepository _repository;
+  final SecureStorageService _secureStorage;
 
   Future<void> saveWatermarkSettings(WatermarkSettings settings) async {
     await _repository.set('watermark_settings', settings.encode());

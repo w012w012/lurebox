@@ -2,26 +2,12 @@
 ///
 /// 用于追踪和管理本地备份文件
 class BackupHistory {
-  final int? id;
-  final String filePath;
-  final String fileName;
-  final BackupType backupType;
-  final int fileSize;
-  final int fishCount;
-  final int equipmentCount;
-  final int photoCount;
-  final DateTime createdAt;
 
   const BackupHistory({
-    this.id,
-    required this.filePath,
-    required this.fileName,
-    required this.backupType,
-    required this.fileSize,
+    required this.filePath, required this.fileName, required this.backupType, required this.fileSize, required this.createdAt, this.id,
     this.fishCount = 0,
     this.equipmentCount = 0,
     this.photoCount = 0,
-    required this.createdAt,
   });
 
   /// 从 Map 创建 BackupHistory
@@ -38,6 +24,15 @@ class BackupHistory {
       createdAt: DateTime.parse(map['created_at'] as String),
     );
   }
+  final int? id;
+  final String filePath;
+  final String fileName;
+  final BackupType backupType;
+  final int fileSize;
+  final int fishCount;
+  final int equipmentCount;
+  final int photoCount;
+  final DateTime createdAt;
 
   /// 转换为 Map
   Map<String, dynamic> toMap() {

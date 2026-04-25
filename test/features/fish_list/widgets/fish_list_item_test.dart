@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
 import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
-import 'package:lurebox/core/models/ai_recognition_settings.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/services/settings_service.dart';
 import 'package:lurebox/features/fish_list/widgets/fish_list_item.dart';
+
 import '../../../helpers/test_helpers.dart';
 
 void main() {
-  setUpAll(() {
-    registerFallbackValues();
-  });
+  setUpAll(registerFallbackValues);
 
   /// Mock SettingsService for testing - bypasses database
   const mockSettingsService = MockSettingsService();
@@ -41,8 +40,6 @@ void main() {
       fate: fate,
       catchTime: catchTime ?? DateTime(2024, 6, 15, 14, 30),
       locationName: locationName,
-      latitude: null,
-      longitude: null,
       pendingRecognition: pendingRecognition,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
@@ -87,7 +84,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         fish: fish,
         isSelectionMode: true,
-      ));
+      ),);
       await tester.pump();
 
       expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
@@ -101,7 +98,7 @@ void main() {
         fish: fish,
         isSelectionMode: true,
         isSelected: true,
-      ));
+      ),);
       await tester.pump();
 
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
@@ -114,8 +111,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         fish: fish,
         isSelectionMode: true,
-        isSelected: false,
-      ));
+      ),);
       await tester.pump();
 
       expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
@@ -127,8 +123,7 @@ void main() {
 
       await tester.pumpWidget(createWidgetUnderTest(
         fish: fish,
-        isSelectionMode: false,
-      ));
+      ),);
       await tester.pump();
 
       expect(find.byIcon(Icons.check_circle), findsNothing);
@@ -151,7 +146,7 @@ void main() {
 
     testWidgets('does not show pending recognition badge when false',
         (WidgetTester tester) async {
-      final fish = createFishCatch(pendingRecognition: false);
+      final fish = createFishCatch();
 
       await tester.pumpWidget(createWidgetUnderTest(fish: fish));
       await tester.pump();
@@ -167,7 +162,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         fish: fish,
         onQuickIdentify: () {},
-      ));
+      ),);
       await tester.pump();
 
       expect(find.text(defaultStrings.recognize), findsOneWidget);
@@ -177,12 +172,12 @@ void main() {
     testWidgets(
         'does not show quick identify button when pendingRecognition is false',
         (WidgetTester tester) async {
-      final fish = createFishCatch(pendingRecognition: false);
+      final fish = createFishCatch();
 
       await tester.pumpWidget(createWidgetUnderTest(
         fish: fish,
         onQuickIdentify: () {},
-      ));
+      ),);
       await tester.pump();
 
       expect(find.text(defaultStrings.recognize), findsNothing);
@@ -195,8 +190,7 @@ void main() {
 
       await tester.pumpWidget(createWidgetUnderTest(
         fish: fish,
-        onQuickIdentify: null,
-      ));
+      ),);
       await tester.pump();
 
       expect(find.text(defaultStrings.recognize), findsNothing);
@@ -205,12 +199,12 @@ void main() {
     testWidgets('calls onQuickIdentify when quick identify button is tapped',
         (WidgetTester tester) async {
       final fish = createFishCatch(pendingRecognition: true);
-      bool quickIdentifyCalled = false;
+      var quickIdentifyCalled = false;
 
       await tester.pumpWidget(createWidgetUnderTest(
         fish: fish,
         onQuickIdentify: () => quickIdentifyCalled = true,
-      ));
+      ),);
       await tester.pump();
 
       await tester.tap(find.text(defaultStrings.recognize));
@@ -232,7 +226,7 @@ void main() {
 
     testWidgets('does not show location row when locationName is null',
         (WidgetTester tester) async {
-      final fish = createFishCatch(locationName: null);
+      final fish = createFishCatch();
 
       await tester.pumpWidget(createWidgetUnderTest(fish: fish));
       await tester.pump();
@@ -262,7 +256,7 @@ void main() {
       final imageFinder = find.byType(Image);
       expect(imageFinder, findsOneWidget);
 
-      final Image imageWidget = tester.widget(imageFinder);
+      final imageWidget = tester.widget(imageFinder);
       expect(imageWidget.fit, equals(BoxFit.cover));
     });
 
@@ -282,12 +276,12 @@ void main() {
   group('FishListItem - Interactions', () {
     testWidgets('calls onTap when tapped', (WidgetTester tester) async {
       final fish = createFishCatch();
-      bool tapCalled = false;
+      var tapCalled = false;
 
       await tester.pumpWidget(createWidgetUnderTest(
         fish: fish,
         onTap: () => tapCalled = true,
-      ));
+      ),);
       await tester.pump();
 
       await tester.tap(find.byType(InkWell).first);
@@ -297,12 +291,12 @@ void main() {
     testWidgets('calls onLongPress when long pressed',
         (WidgetTester tester) async {
       final fish = createFishCatch();
-      bool longPressCalled = false;
+      var longPressCalled = false;
 
       await tester.pumpWidget(createWidgetUnderTest(
         fish: fish,
         onLongPress: () => longPressCalled = true,
-      ));
+      ),);
       await tester.pump();
 
       await tester.longPress(find.byType(InkWell).first);
@@ -315,8 +309,7 @@ void main() {
 
       await tester.pumpWidget(createWidgetUnderTest(
         fish: fish,
-        onLongPress: null,
-      ));
+      ),);
       await tester.pump();
 
       // Should not throw
@@ -327,7 +320,7 @@ void main() {
   group('FishListItem - Fate Display', () {
     testWidgets('shows release badge when fate is release',
         (WidgetTester tester) async {
-      final fish = createFishCatch(fate: FishFateType.release);
+      final fish = createFishCatch();
 
       await tester.pumpWidget(createWidgetUnderTest(fish: fish));
       await tester.pump();
@@ -368,7 +361,7 @@ void main() {
 
     testWidgets('displays length and weight when weight is provided',
         (WidgetTester tester) async {
-      final fish = createFishCatch(length: 30.0, weight: 2.5);
+      final fish = createFishCatch(weight: 2.5);
 
       await tester.pumpWidget(createWidgetUnderTest(fish: fish));
       await tester.pump();
@@ -380,7 +373,7 @@ void main() {
 
     testWidgets('displays only length when weight is null',
         (WidgetTester tester) async {
-      final fish = createFishCatch(length: 30.0, weight: null);
+      final fish = createFishCatch();
 
       await tester.pumpWidget(createWidgetUnderTest(fish: fish));
       await tester.pump();
@@ -414,7 +407,7 @@ class MockSettingsService implements SettingsService {
 
   @override
   Future<void> saveAiRecognitionSettings(
-      AiRecognitionSettings settings) async {}
+      AiRecognitionSettings settings,) async {}
 
   @override
   Future<void> deleteAiRecognitionSettings() async {}

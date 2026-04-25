@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 class LocationStatsCard extends StatefulWidget {
+
+  const LocationStatsCard({
+    required this.locationAnalysis, required this.strings, super.key,
+    this.showDetails = true,
+    this.onToggleDetails,
+  });
   final Map<String, Map<String, int>> locationAnalysis;
   final bool showDetails;
   final VoidCallback? onToggleDetails;
   final AppStrings strings;
-
-  const LocationStatsCard({
-    super.key,
-    required this.locationAnalysis,
-    required this.strings,
-    this.showDetails = true,
-    this.onToggleDetails,
-  });
 
   @override
   State<LocationStatsCard> createState() => _LocationStatsCardState();
@@ -66,7 +64,6 @@ class _LocationStatsCardState extends State<LocationStatsCard>
     return FadeTransition(
       opacity: _fadeAnimation,
       child: PremiumCard(
-        variant: PremiumCardVariant.standard,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

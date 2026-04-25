@@ -8,30 +8,30 @@ class TeslaTokens {
   // ─── Spacing (8px base unit) ───────────────────────────────────────────────
 
   /// 8px — micro spacing.
-  static const double spacingMicro = 4.0;
+  static const double spacingMicro = 4;
   /// 8px — small spacing.
-  static const double spacingSm = 8.0;
+  static const double spacingSm = 8;
   /// 16px — medium spacing.
-  static const double spacingMd = 16.0;
+  static const double spacingMd = 16;
   /// 24px — large spacing.
-  static const double spacingLg = 24.0;
+  static const double spacingLg = 24;
   /// 32px — extra large spacing.
-  static const double spacingXl = 32.0;
+  static const double spacingXl = 32;
   /// 48px — section spacing.
-  static const double spacingSection = 48.0;
+  static const double spacingSection = 48;
   /// 64px — hero spacing.
-  static const double spacingHero = 64.0;
+  static const double spacingHero = 64;
 
   // ─── Border Radius ───────────────────────────────────────────────────────────
 
   /// 0px — sharp edges are the default.
-  static const double radiusNone = 0.0;
+  static const double radiusNone = 0;
   /// 4px — buttons (primary, secondary, nav items).
-  static const double radiusMicro = 4.0;
+  static const double radiusMicro = 4;
   /// ~12px — category cards.
-  static const double radiusCard = 12.0;
+  static const double radiusCard = 12;
   /// 50% — carousel dot indicators.
-  static const double radiusFull = 9999.0;
+  static const double radiusFull = 9999;
 
   // ─── Shadows ────────────────────────────────────────────────────────────────
 
@@ -50,9 +50,9 @@ class TeslaTokens {
   // ─── Z-Index / Elevation ────────────────────────────────────────────────────
 
   /// Level 0 (Flat): default state — no shadow, no border.
-  static const double elevationFlat = 0.0;
+  static const double elevationFlat = 0;
   /// Level 1 (Frost): frosted glass nav on scroll.
-  static const double elevationFrost = 1.0;
+  static const double elevationFrost = 1;
   /// Level 2 (Overlay): modal overlays.
-  static const double elevationOverlay = 2.0;
+  static const double elevationOverlay = 2;
 }

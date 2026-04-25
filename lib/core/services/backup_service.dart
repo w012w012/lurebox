@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'app_logger.dart';
+
+import 'package:lurebox/core/database/database_provider.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/services/error_service.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
-import '../database/database_provider.dart';
-import 'error_service.dart';
 
 /// 备份服务 - 数据备份与云同步
 ///
@@ -17,9 +18,9 @@ import 'error_service.dart';
 /// 备份数据包含版本号和导出时间戳，支持数据迁移。
 
 class BackupService {
-  final DatabaseProvider _dbProvider;
 
   BackupService(this._dbProvider);
+  final DatabaseProvider _dbProvider;
 
   Future<String> exportToJson() async {
     final db = await _dbProvider.database;
@@ -62,13 +63,13 @@ class BackupService {
     final backupData = decoded;
 
     final db = await _dbProvider.database;
-    int importedCount = 0;
+    var importedCount = 0;
 
     await db.transaction((txn) async {
       if (backupData.containsKey('fishCatches')) {
         final fishCatches = backupData['fishCatches'] as List;
         for (final fish in fishCatches) {
-          await txn.insert('fish_catches', Map<String, dynamic>.from(fish));
+          await txn.insert('fish_catches', Map<String, dynamic>.from(fish as Map));
           importedCount++;
         }
       }
@@ -76,7 +77,7 @@ class BackupService {
       if (backupData.containsKey('equipments')) {
         final equipments = backupData['equipments'] as List;
         for (final equipment in equipments) {
-          await txn.insert('equipments', Map<String, dynamic>.from(equipment));
+          await txn.insert('equipments', Map<String, dynamic>.from(equipment as Map));
         }
       }
 
@@ -85,7 +86,7 @@ class BackupService {
         for (final species in speciesHistory) {
           await txn.insert(
             'species_history',
-            Map<String, dynamic>.from(species),
+            Map<String, dynamic>.from(species as Map),
           );
         }
       }
@@ -93,7 +94,7 @@ class BackupService {
       if (backupData.containsKey('settings')) {
         final settings = backupData['settings'] as List;
         for (final setting in settings) {
-          final map = Map<String, dynamic>.from(setting);
+          final map = Map<String, dynamic>.from(setting as Map);
           await txn.insert(
             'settings',
             map,

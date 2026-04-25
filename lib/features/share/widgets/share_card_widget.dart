@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/services/share_template.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/services/share_template.dart';
 
 class ShareCardWidget extends StatelessWidget {
+
+  const ShareCardWidget({required this.config, super.key, this.repaintKey});
   final ShareCardConfig config;
   final GlobalKey? repaintKey;
-
-  const ShareCardWidget({super.key, required this.config, this.repaintKey});
 
   @override
   Widget build(BuildContext context) {

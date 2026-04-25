@@ -12,17 +12,17 @@ void main() {
 
     test('fromJson parses valid values', () {
       expect(
-          AchievementLevel.fromJson('bronze'), equals(AchievementLevel.bronze));
+          AchievementLevel.fromJson('bronze'), equals(AchievementLevel.bronze),);
       expect(
-          AchievementLevel.fromJson('silver'), equals(AchievementLevel.silver));
+          AchievementLevel.fromJson('silver'), equals(AchievementLevel.silver),);
       expect(AchievementLevel.fromJson('gold'), equals(AchievementLevel.gold));
       expect(AchievementLevel.fromJson('platinum'),
-          equals(AchievementLevel.platinum));
+          equals(AchievementLevel.platinum),);
     });
 
     test('fromJson returns bronze for unknown values', () {
       expect(AchievementLevel.fromJson('unknown'),
-          equals(AchievementLevel.bronze));
+          equals(AchievementLevel.bronze),);
       expect(AchievementLevel.fromJson(''), equals(AchievementLevel.bronze));
     });
   });
@@ -40,7 +40,7 @@ void main() {
         category: 'catch',
         target: 100,
         current: 75,
-        progress: 75.0,
+        progress: 75,
       );
     });
 
@@ -67,7 +67,7 @@ void main() {
         category: 'catch',
         target: 100,
         current: 100,
-        progress: 100.0,
+        progress: 100,
       );
 
       expect(unlockedAchievement.isUnlocked, isTrue);
@@ -102,7 +102,7 @@ void main() {
     test('copyWith creates new instance with updated fields', () {
       final updated = achievement.copyWith(
         current: 100,
-        progress: 100.0,
+        progress: 100,
         unlockedAt: DateTime(2024, 6, 15),
       );
 
@@ -154,7 +154,7 @@ void main() {
       test('toJson includes unlockedAt when set', () {
         final unlockedAchievement = achievement.copyWith(
           current: 100,
-          progress: 100.0,
+          progress: 100,
           unlockedAt: DateTime(2024, 6, 15, 10, 30),
         );
 
@@ -202,7 +202,7 @@ void main() {
 
         final fromJsonAchievement = Achievement.fromJson(json);
         expect(fromJsonAchievement.unlockedAt,
-            equals(DateTime(2024, 6, 15, 10, 30)));
+            equals(DateTime(2024, 6, 15, 10, 30)),);
       });
 
       test('fromJson handles int progress', () {
@@ -233,8 +233,8 @@ void main() {
           category: 'species',
           target: 20,
           current: 15,
-          unlockedAt: DateTime(2024, 3, 1),
-          progress: 75.0,
+          unlockedAt: DateTime(2024, 3),
+          progress: 75,
         );
 
         final json = original.toJson();
@@ -277,7 +277,7 @@ void main() {
         category: 'test',
         target: 0,
         current: 0,
-        progress: 0.0,
+        progress: 0,
       );
 
       // Should not divide by zero

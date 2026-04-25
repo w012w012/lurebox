@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lurebox/core/widgets/error_view.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/widgets/error_view.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
 
 void main() {
@@ -90,8 +90,8 @@ void main() {
         // ErrorView should contain a Center widget (there may be multiple due to Material widget tree)
         expect(
             find.descendant(
-                of: find.byType(ErrorView), matching: find.byType(Center)),
-            findsWidgets);
+                of: find.byType(ErrorView), matching: find.byType(Center),),
+            findsWidgets,);
       });
 
       testWidgets('has correct padding', (tester) async {
@@ -603,8 +603,8 @@ void main() {
         // EmptyView should contain a Center widget (there may be multiple due to Material widget tree)
         expect(
             find.descendant(
-                of: find.byType(EmptyView), matching: find.byType(Center)),
-            findsWidgets);
+                of: find.byType(EmptyView), matching: find.byType(Center),),
+            findsWidgets,);
       });
 
       testWidgets('has correct padding', (tester) async {

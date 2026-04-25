@@ -1,32 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../core/constants/strings.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../core/providers/app_settings_provider.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/utils/unit_converter.dart';
-import '../../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// 高级极简设备卡片
 class PremiumEquipmentCard extends ConsumerStatefulWidget {
+
+  const PremiumEquipmentCard({
+    required this.equipment, required this.stats, required this.isExpanded, required this.onTap, required this.onSetDefault, required this.onDelete, super.key,
+  });
   final Map<String, dynamic> equipment;
   final Map<String, int> stats;
   final bool isExpanded;
   final VoidCallback onTap;
   final VoidCallback onSetDefault;
   final VoidCallback onDelete;
-
-  const PremiumEquipmentCard({
-    super.key,
-    required this.equipment,
-    required this.stats,
-    required this.isExpanded,
-    required this.onTap,
-    required this.onSetDefault,
-    required this.onDelete,
-  });
 
   @override
   ConsumerState<PremiumEquipmentCard> createState() =>
@@ -57,7 +51,6 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     final typeInfo = _getEquipmentTypeInfo(type);
 
     return PremiumCard(
-      variant: PremiumCardVariant.standard,
       onTap: () => setState(() => _expanded = !_expanded),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,7 +208,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
             const SizedBox(height: TeslaTheme.spacingSm),
             _buildCategoryChip(
               context,
-              _getCategoryName(type, widget.equipment['category']),
+              _getCategoryName(type, widget.equipment['category'] as String),
             ),
           ],
 
@@ -237,7 +230,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
             // 购买日期
             if (widget.equipment['purchase_date'] != null) ...[
               const SizedBox(height: TeslaTheme.spacingSm),
-              _buildPurchaseDate(context, widget.equipment['purchase_date']),
+              _buildPurchaseDate(context, widget.equipment['purchase_date'] as String),
             ],
           ],
         ],
@@ -252,8 +245,8 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     final cleanStr = rangeStr.toLowerCase().replaceAll(' ', '');
 
     // Extract unit from the string (g, gv, oz, lb)
-    String unit = 'g';
-    String numericStr = cleanStr;
+    var unit = 'g';
+    var numericStr = cleanStr;
 
     // Check for known units at the end
     final unitPattern = RegExp(r'(g|gv|oz|lb)$');
@@ -417,34 +410,34 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
   ({List<_InfoItem> items, List<_InfoItem> extra}) _buildRodItems(
     Map<String, dynamic> e,
     AppStrings strings,
-    dynamic displayUnits,
+    UnitSettings displayUnits,
   ) {
     final items = <_InfoItem>[];
     if (e['length'] != null) {
       final lengthValue = double.tryParse(e['length'].toString()) ?? 0;
-      final lengthUnit = e['length_unit'] ?? 'm';
+      final lengthUnit = (e['length_unit'] as String?) ?? 'm';
       final displayLength = UnitConverter.convertLength(
         lengthValue, lengthUnit, displayUnits.rodLengthUnit,
       );
       items.add(_InfoItem(
         strings.rodLength,
         '${displayLength.toStringAsFixed(2)} ${UnitConverter.getLengthSymbol(displayUnits.rodLengthUnit)}',
-      ));
+      ),);
     }
     if (e['sections'] != null) {
       items.add(_InfoItem(strings.sections, '${e['sections']}'));
     }
     if (e['joint_type'] != null) {
-      items.add(_InfoItem(strings.cardJointMethod, _getJointTypeLabel(e['joint_type'], strings)));
+      items.add(_InfoItem(strings.cardJointMethod, _getJointTypeLabel(e['joint_type'] as String, strings)));
     }
     if (e['hardness'] != null) {
-      items.add(_InfoItem(strings.hardness, e['hardness']));
+      items.add(_InfoItem(strings.hardness, e['hardness'] as String));
     }
     if (e['rod_action'] != null) {
-      items.add(_InfoItem(strings.rodAction, e['rod_action']));
+      items.add(_InfoItem(strings.rodAction, e['rod_action'] as String));
     }
     if (e['material'] != null) {
-      items.add(_InfoItem(strings.material, e['material']));
+      items.add(_InfoItem(strings.material, e['material'] as String));
     }
     if (e['weight_range'] != null) {
       final displayWeight = _parseWeightRange(
@@ -460,40 +453,40 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
   ({List<_InfoItem> items, List<_InfoItem> extra}) _buildReelItems(
     Map<String, dynamic> e,
     AppStrings strings,
-    dynamic displayUnits,
+    UnitSettings displayUnits,
   ) {
     final items = <_InfoItem>[];
     final extra = <_InfoItem>[];
     if (e['reel_weight'] != null) {
       final weightValue = double.tryParse(e['reel_weight'].toString()) ?? 0;
-      final weightUnit = e['reel_weight_unit'] ?? 'g';
+      final weightUnit = (e['reel_weight_unit'] as String?) ?? 'g';
       final displayWeight = UnitConverter.convertWeight(
         weightValue, weightUnit, displayUnits.lureWeightUnit,
       );
       items.add(_InfoItem(
         strings.reelWeight,
         '${displayWeight.toStringAsFixed(1)} ${UnitConverter.getWeightSymbol(displayUnits.lureWeightUnit)}',
-      ));
+      ),);
     }
     if (e['reel_ratio'] != null) {
-      items.add(_InfoItem(strings.reelRatio, e['reel_ratio']));
+      items.add(_InfoItem(strings.reelRatio, e['reel_ratio'] as String));
     }
     if (e['reel_capacity'] != null) {
-      items.add(_InfoItem(strings.reelCapacity, e['reel_capacity']));
+      items.add(_InfoItem(strings.reelCapacity, e['reel_capacity'] as String));
     }
     if (e['reel_brake_type'] != null) {
-      items.add(_InfoItem(strings.reelBrakeType, _getBrakeTypeLabel(e['reel_brake_type'], strings)));
+      items.add(_InfoItem(strings.reelBrakeType, _getBrakeTypeLabel(e['reel_brake_type'] as String, strings)));
     }
     if (e['reel_line'] != null) {
       final lineBrand = e['reel_line'] as String? ?? '';
       final lineNumber = e['reel_line_number'] as String? ?? '';
       final lineLength = e['reel_line_length'] as String? ?? '';
       final lineDate = e['reel_line_date'];
-      String lineInfo = lineBrand;
+      var lineInfo = lineBrand;
       if (lineNumber.isNotEmpty) lineInfo += ' / $lineNumber';
       if (lineLength.isNotEmpty) lineInfo += ' / $lineLength';
       if (lineDate != null) {
-        final dateStr = lineDate.toString().split(RegExp(r'[ T]'))[0];
+        final dateStr = lineDate.toString().split(RegExp('[ T]'))[0];
         lineInfo += ' / $dateStr';
       }
       extra.add(_InfoItem(strings.line, lineInfo));
@@ -504,39 +497,39 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
   ({List<_InfoItem> items, List<_InfoItem> extra}) _buildLureItems(
     Map<String, dynamic> e,
     AppStrings strings,
-    dynamic displayUnits,
+    UnitSettings displayUnits,
   ) {
     final items = <_InfoItem>[];
     if (e['lure_type'] != null) {
-      items.add(_InfoItem(strings.lureType, e['lure_type']));
+      items.add(_InfoItem(strings.lureType, e['lure_type'] as String));
     }
     if (e['lure_weight'] != null) {
       final weightValue = double.tryParse(e['lure_weight'].toString()) ?? 0;
-      final weightUnit = e['lure_weight_unit'] ?? 'g';
+      final weightUnit = (e['lure_weight_unit'] as String?) ?? 'g';
       final displayWeight = UnitConverter.convertWeight(
         weightValue, weightUnit, displayUnits.lureWeightUnit,
       );
       items.add(_InfoItem(
         strings.lureWeight,
         '${displayWeight.toStringAsFixed(1)} ${UnitConverter.getWeightSymbol(displayUnits.lureWeightUnit)}',
-      ));
+      ),);
     }
     if (e['lure_size'] != null) {
       final sizeValue = double.tryParse(e['lure_size'].toString()) ?? 0;
-      final sizeUnit = e['lure_size_unit'] ?? 'cm';
+      final sizeUnit = (e['lure_size_unit'] as String?) ?? 'cm';
       final displaySize = UnitConverter.convertLength(
         sizeValue, sizeUnit, displayUnits.lureLengthUnit,
       );
       items.add(_InfoItem(
         strings.lureSize,
         '${displaySize.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.lureLengthUnit)}',
-      ));
+      ),);
     }
     if (e['lure_color'] != null) {
-      items.add(_InfoItem(strings.lureColor, e['lure_color']));
+      items.add(_InfoItem(strings.lureColor, e['lure_color'] as String));
     }
     if (e['lure_action'] != null) {
-      items.add(_InfoItem(strings.cardAction, e['lure_action']));
+      items.add(_InfoItem(strings.cardAction, e['lure_action'] as String));
     }
     return (items: items, extra: <_InfoItem>[]);
   }
@@ -547,16 +540,16 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
   ) {
     final items = <_InfoItem>[];
     if (e['line_type'] != null) {
-      items.add(_InfoItem(strings.lineType, e['line_type']));
+      items.add(_InfoItem(strings.lineType, e['line_type'] as String));
     }
     if (e['line_length'] != null) {
-      items.add(_InfoItem(strings.lineLength, e['line_length']));
+      items.add(_InfoItem(strings.lineLength, e['line_length'] as String));
     }
     if (e['line_strength'] != null) {
-      items.add(_InfoItem(strings.cardStrength, e['line_strength']));
+      items.add(_InfoItem(strings.cardStrength, e['line_strength'] as String));
     }
     if (e['line_color'] != null) {
-      items.add(_InfoItem(strings.cardColor, e['line_color']));
+      items.add(_InfoItem(strings.cardColor, e['line_color'] as String));
     }
     return (items: items, extra: <_InfoItem>[]);
   }
@@ -619,7 +612,6 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
         border: Border.all(
           color: TeslaColors.electricBlue.withValues(alpha: 0.3),
-          width: 1,
         ),
       ),
       child: Row(
@@ -736,20 +728,20 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
 }
 
 class _InfoItem {
-  final String label;
-  final String value;
 
   _InfoItem(this.label, this.value);
+  final String label;
+  final String value;
 }
 
 class _EquipmentTypeInfo {
-  final IconData icon;
-  final Color color;
-  final String label;
 
   _EquipmentTypeInfo({
     required this.icon,
     required this.color,
     required this.label,
   });
+  final IconData icon;
+  final Color color;
+  final String label;
 }

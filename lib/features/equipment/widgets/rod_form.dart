@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../core/providers/language_provider.dart';
-import '../../../core/providers/app_settings_provider.dart';
-import '../../../core/utils/unit_converter.dart';
-import '../../../widgets/common/premium_input.dart';
-import '../../../widgets/common/unit_dropdown.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/widgets/common/premium_input.dart';
+import 'package:lurebox/widgets/common/unit_dropdown.dart';
 
 class RodForm extends ConsumerWidget {
+
+  const RodForm({
+    required this.lengthController, required this.lengthUnit, required this.onLengthUnitChanged, required this.sectionsController, required this.jointType, required this.onJointTypeChanged, required this.materialController, required this.hardness, required this.onHardnessChanged, required this.action, required this.onActionChanged, required this.weightRangeMinController, required this.weightRangeMaxController, super.key,
+  });
   final TextEditingController lengthController;
   final String lengthUnit;
   final ValueChanged<String> onLengthUnitChanged;
@@ -21,23 +24,6 @@ class RodForm extends ConsumerWidget {
   final ValueChanged<String> onActionChanged;
   final TextEditingController weightRangeMinController;
   final TextEditingController weightRangeMaxController;
-
-  const RodForm({
-    super.key,
-    required this.lengthController,
-    required this.lengthUnit,
-    required this.onLengthUnitChanged,
-    required this.sectionsController,
-    required this.jointType,
-    required this.onJointTypeChanged,
-    required this.materialController,
-    required this.hardness,
-    required this.onHardnessChanged,
-    required this.action,
-    required this.onActionChanged,
-    required this.weightRangeMinController,
-    required this.weightRangeMaxController,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

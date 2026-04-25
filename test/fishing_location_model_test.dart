@@ -13,7 +13,7 @@ void main() {
         longitude: -87.6298,
         lastVisit: DateTime(2024, 1, 15, 10, 30),
         fishCount: 25,
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
       );
     });
 
@@ -24,7 +24,7 @@ void main() {
       expect(testLocation.longitude, -87.6298);
       expect(testLocation.lastVisit, DateTime(2024, 1, 15, 10, 30));
       expect(testLocation.fishCount, 25);
-      expect(testLocation.createdAt, DateTime(2024, 1, 1));
+      expect(testLocation.createdAt, DateTime(2024));
     });
 
     test('fromMap creates FishingLocation from map', () {
@@ -45,7 +45,7 @@ void main() {
       expect(location.longitude, -87.6298);
       expect(location.lastVisit, DateTime(2024, 1, 15, 10, 30));
       expect(location.fishCount, 25);
-      expect(location.createdAt, DateTime(2024, 1, 1));
+      expect(location.createdAt, DateTime(2024));
     });
 
     test('fromMap handles null coordinates', () {
@@ -115,7 +115,7 @@ void main() {
       final location = FishingLocation(
         id: 1,
         name: 'Pond',
-        latitude: 41.0,
+        latitude: 41,
         createdAt: DateTime.now(),
       );
 
@@ -174,21 +174,21 @@ void main() {
           name: 'Lake Michigan',
           fishCount: 25,
           lastVisit: DateTime(2024, 1, 15),
-          createdAt: DateTime(2024, 1, 1),
+          createdAt: DateTime(2024),
         ),
         FishingLocation(
           id: 2,
           name: 'Lake Superior',
           fishCount: 50,
-          lastVisit: DateTime(2024, 2, 1),
-          createdAt: DateTime(2024, 1, 1),
+          lastVisit: DateTime(2024, 2),
+          createdAt: DateTime(2024),
         ),
         FishingLocation(
           id: 3,
           name: 'Lake Erie',
           fishCount: 10,
-          lastVisit: DateTime(2024, 1, 1),
-          createdAt: DateTime(2024, 1, 1),
+          lastVisit: DateTime(2024),
+          createdAt: DateTime(2024),
         ),
       ];
     });
@@ -223,7 +223,7 @@ void main() {
         FishingLocation(
           id: 2,
           name: 'Lake B',
-          lastVisit: DateTime(2024, 1, 1),
+          lastVisit: DateTime(2024),
           createdAt: DateTime.now(),
         ),
       ];

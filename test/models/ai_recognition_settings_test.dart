@@ -275,7 +275,6 @@ void main() {
               modelName: 'glm-4v-plus',
             ),
           },
-          autoRecognize: true,
           timeout: Duration(seconds: 15),
         );
 

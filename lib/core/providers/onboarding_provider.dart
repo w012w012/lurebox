@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'app_settings_provider.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
 
 /// Onboarding state provider
 /// - true = onboarding has been completed
@@ -10,12 +10,12 @@ final onboardingCompletedProvider = Provider<bool>((ref) {
 
 /// Onboarding notifier for managing onboarding state
 class OnboardingNotifier extends StateNotifier<bool> {
-  final Ref _ref;
 
   OnboardingNotifier(this._ref) : super(false) {
     // Initialize from AppSettings
     state = _ref.read(appSettingsProvider).hasCompletedOnboarding;
   }
+  final Ref _ref;
 
   /// Mark onboarding as completed
   Future<void> completeOnboarding() async {

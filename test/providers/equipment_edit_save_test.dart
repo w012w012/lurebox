@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/providers/equipment_edit_view_model.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockEquipmentService extends Mock implements EquipmentService {}
 

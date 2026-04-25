@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:lurebox/core/services/location_service.dart';
 import 'package:lurebox/core/providers/location_view_model.dart';
+import 'package:lurebox/core/services/location_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockLocationService extends Mock implements LocationService {}
 
@@ -82,9 +82,9 @@ void main() {
         when(() => mockService.getAllLocations())
             .thenAnswer((_) async => locations);
         when(() => mockService
-            .findSimilarLocations(['Lake A', 'Lake B', 'Lake C'])).thenReturn([
+            .findSimilarLocations(['Lake A', 'Lake B', 'Lake C']),).thenReturn([
           ['Lake A', 'Lake B'],
-          ['Lake C']
+          ['Lake C'],
         ]);
         when(() => mockService.getBestLocationName(['Lake A', 'Lake B']))
             .thenReturn('Lake A/B');
@@ -150,7 +150,7 @@ void main() {
     group('selectAll', () {
       test('selects all locations', () async {
         when(() => mockService.getAllLocations()).thenAnswer(
-            (_) async => createLocations(['Lake A', 'Lake B', 'Lake C']));
+            (_) async => createLocations(['Lake A', 'Lake B', 'Lake C']),);
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
 
         viewModel = LocationManagementViewModel(mockService);
@@ -198,7 +198,7 @@ void main() {
 
       test('merges locations successfully when 2+ selected', () async {
         when(() => mockService.getAllLocations()).thenAnswer(
-            (_) async => createLocations(['Lake A', 'Lake B', 'Lake C']));
+            (_) async => createLocations(['Lake A', 'Lake B', 'Lake C']),);
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
         when(() => mockService.mergeLocations(['Lake A', 'Lake B'], 'New Lake'))
             .thenAnswer((_) async {});
@@ -212,7 +212,7 @@ void main() {
 
         expect(result, true);
         verify(() =>
-                mockService.mergeLocations(['Lake A', 'Lake B'], 'New Lake'))
+                mockService.mergeLocations(['Lake A', 'Lake B'], 'New Lake'),)
             .called(1);
       });
 

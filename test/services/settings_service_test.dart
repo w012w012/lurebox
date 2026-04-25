@@ -1,11 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:lurebox/core/services/settings_service.dart';
-import 'package:lurebox/core/services/secure_storage_service.dart';
-import 'package:lurebox/core/services/error_service.dart';
-import 'package:lurebox/core/models/watermark_settings.dart';
-import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/models/watermark_settings.dart';
+import 'package:lurebox/core/services/error_service.dart';
+import 'package:lurebox/core/services/secure_storage_service.dart';
+import 'package:lurebox/core/services/settings_service.dart';
+import 'package:mocktail/mocktail.dart';
+
 import '../helpers/test_helpers.dart';
 
 void main() {
@@ -13,9 +14,7 @@ void main() {
   late SettingsService settingsService;
   late InMemoryApiKeyStorage mockSecureStorage;
 
-  setUpAll(() {
-    registerFallbackValues();
-  });
+  setUpAll(registerFallbackValues);
 
   setUp(() {
     mockRepository = MockSettingsRepository();
@@ -31,12 +30,10 @@ void main() {
       test('saveWatermarkSettings calls repository.set with encoded JSON',
           () async {
         const settings = WatermarkSettings(
-          enabled: true,
-          style: WatermarkStyle.minimal,
-          blurRadius: 15.0,
+          blurRadius: 15,
           backgroundOpacity: 0.7,
           backgroundColor: 0xFF111111,
-          fontSize: 16.0,
+          fontSize: 16,
           textColor: 0xFF222222,
           position: WatermarkPosition.topRight,
         );
@@ -46,18 +43,17 @@ void main() {
         await settingsService.saveWatermarkSettings(settings);
 
         verify(() =>
-                mockRepository.set('watermark_settings', settings.encode()))
+                mockRepository.set('watermark_settings', settings.encode()),)
             .called(1);
       });
 
       test('getWatermarkSettings decodes JSON from repository', () async {
         const settings = WatermarkSettings(
           enabled: false,
-          style: WatermarkStyle.minimal,
-          blurRadius: 20.0,
+          blurRadius: 20,
           backgroundOpacity: 0.8,
           backgroundColor: 0xFF333333,
-          fontSize: 18.0,
+          fontSize: 18,
           textColor: 0xFF444444,
           position: WatermarkPosition.center,
         );
@@ -126,10 +122,8 @@ void main() {
         const settings = AppSettings(
           units: UnitSettings(
             fishLengthUnit: 'm',
-            fishWeightUnit: 'kg',
           ),
           darkMode: DarkMode.light,
-          language: AppLanguage.chinese,
         );
         final encoded = settings.encode();
 
@@ -207,9 +201,6 @@ void main() {
             AiRecognitionProvider.openai: AiProviderConfig(
               provider: AiRecognitionProvider.openai,
               apiKey: 'sk-from-settings',
-              baseUrl: null,
-              modelName: null,
-              enabled: true,
             ),
           },
         );
@@ -225,7 +216,6 @@ void main() {
       test('getAiRecognitionSettings decodes JSON from repository', () async {
         const settings = AiRecognitionSettings(
           currentProvider: AiRecognitionProvider.minimax,
-          autoRecognize: true,
           timeout: Duration(seconds: 15),
         );
         final encoded = settings.encode();
@@ -251,7 +241,7 @@ void main() {
         final result = await settingsService.getAiRecognitionSettings();
 
         expect(result.currentProvider,
-            equals(AiRecognitionProvider.gemini)); // default
+            equals(AiRecognitionProvider.gemini),); // default
         expect(result.autoRecognize, equals(true)); // default
         expect(result.timeout, equals(const Duration(seconds: 10))); // default
       });
@@ -301,9 +291,9 @@ void main() {
 
         // Verify API keys were migrated to secure storage
         expect(
-            await mockSecureStorage.get('0'), equals('sk-test-gemini'));
+            await mockSecureStorage.get('0'), equals('sk-test-gemini'),);
         expect(
-            await mockSecureStorage.get('1'), equals('sk-test-openai'));
+            await mockSecureStorage.get('1'), equals('sk-test-openai'),);
 
         // Verify saved JSON has API keys removed
         expect(savedJson, isNotNull);
@@ -377,7 +367,7 @@ void main() {
 
         // API keys should be readable from secure storage
         expect(result.providerConfigs[AiRecognitionProvider.gemini]?.apiKey,
-            equals('sk-test-gemini'));
+            equals('sk-test-gemini'),);
       });
 
       test('deleteAiRecognitionSettings clears all storage', () async {

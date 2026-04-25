@@ -1,16 +1,16 @@
 import 'dart:math';
-import '../repositories/fish_catch_repository.dart';
-import 'fish_species_matcher.dart';
+import 'package:lurebox/core/repositories/fish_catch_repository.dart';
+import 'package:lurebox/core/services/fish_species_matcher.dart';
 
 /// 尺寸分布桶
 class SizeBucket {
-  final String range;
-  final int count;
 
   const SizeBucket({
     required this.range,
     required this.count,
   });
+  final String range;
+  final int count;
 
   @override
   String toString() => 'SizeBucket(range: $range, count: $count)';
@@ -29,6 +29,35 @@ class SizeBucket {
 
 /// 鱼种统计 (动态计算，不存储)
 class FishSpeciesStats {
+
+  const FishSpeciesStats({
+    required this.speciesId,
+    required this.speciesName,
+    required this.totalCount,
+    required this.maxLength,
+    required this.minLength,
+    required this.avgLength,
+    required this.isUnlocked, this.maxWeight,
+    this.firstCaughtAt,
+  });
+
+  /// 创建空统计（未解锁/未找到鱼种）
+  ///
+  /// [speciesId] 鱼种ID（未知时为空字符串）
+  /// [speciesName] 鱼种名称
+  factory FishSpeciesStats.empty({
+    required String speciesName, String speciesId = '',
+  }) {
+    return FishSpeciesStats(
+      speciesId: speciesId,
+      speciesName: speciesName,
+      totalCount: 0,
+      maxLength: 0,
+      minLength: 0,
+      avgLength: 0,
+      isUnlocked: false,
+    );
+  }
   final String speciesId;
   final String speciesName;
   final int totalCount;
@@ -38,39 +67,6 @@ class FishSpeciesStats {
   final double? maxWeight;
   final DateTime? firstCaughtAt;
   final bool isUnlocked;
-
-  const FishSpeciesStats({
-    required this.speciesId,
-    required this.speciesName,
-    required this.totalCount,
-    required this.maxLength,
-    required this.minLength,
-    required this.avgLength,
-    this.maxWeight,
-    this.firstCaughtAt,
-    required this.isUnlocked,
-  });
-
-  /// 创建空统计（未解锁/未找到鱼种）
-  ///
-  /// [speciesId] 鱼种ID（未知时为空字符串）
-  /// [speciesName] 鱼种名称
-  factory FishSpeciesStats.empty({
-    String speciesId = '',
-    required String speciesName,
-  }) {
-    return FishSpeciesStats(
-      speciesId: speciesId,
-      speciesName: speciesName,
-      totalCount: 0,
-      maxLength: 0,
-      minLength: 0,
-      avgLength: 0,
-      maxWeight: null,
-      firstCaughtAt: null,
-      isUnlocked: false,
-    );
-  }
 
   @override
   String toString() =>
@@ -118,10 +114,10 @@ class FishSpeciesStats {
 ///
 /// 所有统计均为动态计算，不存储数据。
 class FishSpeciesStatsService {
-  final FishCatchRepository _catchRepo;
-  final FishSpeciesMatcher _matcher;
 
   FishSpeciesStatsService(this._catchRepo, this._matcher);
+  final FishCatchRepository _catchRepo;
+  final FishSpeciesMatcher _matcher;
 
   /// 获取鱼种统计信息
   ///

@@ -79,7 +79,7 @@ void main() {
     });
 
     testWidgets('calls onTap when tapped', (WidgetTester tester) async {
-      int tapCount = 0;
+      var tapCount = 0;
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

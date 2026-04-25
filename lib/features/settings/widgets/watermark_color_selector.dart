@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
 
 class WatermarkColorSelector extends StatelessWidget {
+
+  const WatermarkColorSelector({
+    required this.selectedColor, required this.strings, required this.onColorChanged, super.key,
+  });
   final int selectedColor;
   final AppStrings strings;
   final ValueChanged<int> onColorChanged;
-
-  const WatermarkColorSelector({
-    super.key,
-    required this.selectedColor,
-    required this.strings,
-    required this.onColorChanged,
-  });
 
   @override
   Widget build(BuildContext context) {

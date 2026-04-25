@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:archive/archive.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:archive/archive.dart';
-import 'package:lurebox/core/services/backup_zip_service.dart';
 import 'package:lurebox/core/database/database_provider.dart';
+import 'package:lurebox/core/services/backup_zip_service.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
 // ===== Mock DatabaseProvider =====
@@ -60,7 +61,7 @@ class TestArchive {
         'metadata.json',
         metadataJson.codeUnits.length,
         metadataJson.codeUnits,
-      ));
+      ),);
     }
 
     final zipData = ZipEncoder().encode(archive);
@@ -89,7 +90,7 @@ class TestArchive {
 
     // Add placeholder photos if requested
     if (photoCount > 0) {
-      for (int i = 0; i < photoCount; i++) {
+      for (var i = 0; i < photoCount; i++) {
         files['photos/fish_$i.jpg'] = 'fake photo data $i';
       }
     }
@@ -127,12 +128,12 @@ class TestArchive {
     }
 
     // Append length in bits as 64-bit big-endian
-    for (int i = 7; i >= 0; i--) {
+    for (var i = 7; i >= 0; i--) {
       padded.add((bitLen >> (i * 8)) & 0xff);
     }
 
     // Initialize hash values
-    List<int> h = [
+    final h = <int>[
       0x6a09e667,
       0xbb67ae85,
       0x3c6ef372,
@@ -144,7 +145,7 @@ class TestArchive {
     ];
 
     // Constants
-    final List<int> k = [
+    final k = <int>[
       0x428a2f98,
       0x71374491,
       0xb5c0fbcf,
@@ -212,18 +213,18 @@ class TestArchive {
     ];
 
     // Process each 512-bit (64-byte) chunk
-    for (int chunkStart = 0; chunkStart < padded.length; chunkStart += 64) {
+    for (var chunkStart = 0; chunkStart < padded.length; chunkStart += 64) {
       final chunk = padded.sublist(chunkStart, chunkStart + 64);
 
       // Create message schedule
-      final List<int> w = List<int>.filled(64, 0);
-      for (int i = 0; i < 16; i++) {
+      final w = List<int>.filled(64, 0);
+      for (var i = 0; i < 16; i++) {
         w[i] = (chunk[i * 4] << 24) |
             (chunk[i * 4 + 1] << 16) |
             (chunk[i * 4 + 2] << 8) |
             chunk[i * 4 + 3];
       }
-      for (int i = 16; i < 64; i++) {
+      for (var i = 16; i < 64; i++) {
         final s0 =
             _rotr(w[i - 15], 7) ^ _rotr(w[i - 15], 18) ^ (w[i - 15] >> 3);
         final s1 = _rotr(w[i - 2], 17) ^ _rotr(w[i - 2], 19) ^ (w[i - 2] >> 10);
@@ -231,11 +232,14 @@ class TestArchive {
       }
 
       // Initialize working variables
-      int a = h[0], b = h[1], c = h[2], d = h[3];
-      int e = h[4], f = h[5], g = h[6], hh = h[7];
+      var a = h[0], b = h[1], c = h[2], d = h[3];
+      var e = h[4];
+      var f = h[5];
+      var g = h[6];
+      var hh = h[7];
 
       // Main compression loop
-      for (int i = 0; i < 64; i++) {
+      for (var i = 0; i < 64; i++) {
         final S1 = _rotr(e, 6) ^ _rotr(e, 11) ^ _rotr(e, 25);
         final ch = (e & f) ^ ((~e) & g);
         final temp1 = (hh + S1 + ch + k[i] + w[i]) & 0xffffffff;
@@ -467,7 +471,6 @@ void main() {
 
     test('copyWith preserves unchanged fields', () {
       const original = BackupExportOptions(
-        includePhotos: true,
         createRecoveryPoint: true,
       );
       final updated = original.copyWith(createRecoveryPoint: false);
@@ -488,7 +491,7 @@ void main() {
 
     test('different options have different hashCodes (default object equality)',
         () {
-      const options1 = BackupExportOptions(includePhotos: true);
+      const options1 = BackupExportOptions();
       const options2 = BackupExportOptions(includePhotos: false);
 
       // BackupExportOptions uses default Object equality (identity)
@@ -564,7 +567,6 @@ void main() {
       );
       final result = IntegrityResult(
         isValid: true,
-        errorMessage: null,
         metadata: metadata,
       );
 
@@ -636,7 +638,6 @@ void main() {
       );
       final result = ImportResult(
         isSuccess: true,
-        errorMessage: null,
         metadata: metadata,
       );
 
@@ -808,12 +809,12 @@ void main() {
         'metadata.json',
         'not valid json'.length,
         'not valid json'.codeUnits,
-      ));
+      ),);
       archive.addFile(ArchiveFile(
         'lurebox.db',
         'db content'.length,
         'db content'.codeUnits,
-      ));
+      ),);
 
       final zipData = ZipEncoder().encode(archive);
       final zipFile = File(
@@ -976,8 +977,6 @@ void main() {
       const dbContent = 'database content for checksum';
       final zipFile = await TestArchive.createValidBackupZip(
         dbContent: dbContent,
-        fishCatchesCount: 5,
-        equipmentCount: 3,
       );
 
       try {
@@ -1108,7 +1107,6 @@ void main() {
 
     test('both options can be true', () {
       const options = BackupExportOptions(
-        includePhotos: true,
         createRecoveryPoint: true,
       );
 
@@ -1119,7 +1117,6 @@ void main() {
     test('both options can be false', () {
       const options = BackupExportOptions(
         includePhotos: false,
-        createRecoveryPoint: false,
       );
 
       expect(options.includePhotos, false);

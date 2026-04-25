@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
 
 /// Premium 导航栏组件
 ///
@@ -7,6 +7,12 @@ import '../../core/design/theme/app_colors.dart';
 /// - 标准模式：5 个 Tab 均分宽度
 /// - FAB 模式（showCenterFab=true）：中间 Tab 位置被 FAB 替代，4 个 Tab 分列两侧
 class PremiumNavigationBar extends StatelessWidget {
+
+  const PremiumNavigationBar({
+    required this.selectedIndex, required this.onDestinationSelected, required this.destinations, super.key,
+    this.showCenterFab = false,
+    this.onCenterFabPressed,
+  });
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
   final List<PremiumNavigationDestination> destinations;
@@ -17,15 +23,6 @@ class PremiumNavigationBar extends StatelessWidget {
 
   /// FAB 点击回调（showCenterFab=true 时使用）
   final VoidCallback? onCenterFabPressed;
-
-  const PremiumNavigationBar({
-    super.key,
-    required this.selectedIndex,
-    required this.onDestinationSelected,
-    required this.destinations,
-    this.showCenterFab = false,
-    this.onCenterFabPressed,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -224,12 +221,6 @@ class PremiumNavigationBar extends StatelessWidget {
 
 /// 单个导航 Tab
 class _NavTab extends StatelessWidget {
-  final bool isSelected;
-  final VoidCallback onTap;
-  final IconData icon;
-  final IconData selectedIcon;
-  final String label;
-  final bool isDark;
 
   const _NavTab({
     required this.isSelected,
@@ -239,6 +230,12 @@ class _NavTab extends StatelessWidget {
     required this.label,
     required this.isDark,
   });
+  final bool isSelected;
+  final VoidCallback onTap;
+  final IconData icon;
+  final IconData selectedIcon;
+  final String label;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
@@ -277,13 +274,13 @@ class _NavTab extends StatelessWidget {
 
 /// 导航目标项
 class PremiumNavigationDestination {
-  final IconData icon;
-  final IconData selectedIcon;
-  final String label;
 
   const PremiumNavigationDestination({
     required this.icon,
     required this.selectedIcon,
     required this.label,
   });
+  final IconData icon;
+  final IconData selectedIcon;
+  final String label;
 }

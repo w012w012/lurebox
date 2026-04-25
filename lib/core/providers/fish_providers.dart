@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../di/di.dart';
-import '../models/fish_catch.dart';
-import '../repositories/fish_catch_repository.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 
 final fishCatchesProviderV2 = FutureProvider<List<FishCatch>>((ref) async {
   final service = ref.watch(fishCatchServiceProvider);
-  return await service.getAll();
+  return service.getAll();
 });
 
 final fishCatchByIdProvider = FutureProvider.family<FishCatch?, int>((
@@ -13,7 +13,7 @@ final fishCatchByIdProvider = FutureProvider.family<FishCatch?, int>((
   id,
 ) async {
   final service = ref.watch(fishCatchServiceProvider);
-  return await service.getById(id);
+  return service.getById(id);
 });
 
 final fishCatchesByDateRangeProvider =
@@ -22,20 +22,20 @@ final fishCatchesByDateRangeProvider =
   params,
 ) async {
   final service = ref.watch(fishCatchServiceProvider);
-  return await service.getByDateRange(params.start, params.end);
+  return service.getByDateRange(params.start, params.end);
 });
 
 final fishCatchesByFateProvider =
     FutureProvider.family<List<FishCatch>, FishFateType>((ref, fate) async {
   final service = ref.watch(fishCatchServiceProvider);
-  return await service.getByFate(fate);
+  return service.getByFate(fate);
 });
 
 final paginatedFishCatchesProvider = FutureProvider.family<
     PaginatedResult<FishCatch>,
     ({int page, int pageSize, String? orderBy})>((ref, params) async {
   final service = ref.watch(fishCatchServiceProvider);
-  return await service.getPage(
+  return service.getPage(
     page: params.page,
     pageSize: params.pageSize,
     orderBy: params.orderBy ?? 'catch_time DESC',
@@ -54,7 +54,7 @@ final filteredPaginatedFishCatchesProvider = FutureProvider.family<
       String? orderBy,
     })>((ref, params) async {
   final service = ref.watch(fishCatchServiceProvider);
-  return await service.getFilteredPage(
+  return service.getFilteredPage(
     page: params.page,
     pageSize: params.pageSize,
     startDate: params.startDate,
@@ -67,12 +67,12 @@ final filteredPaginatedFishCatchesProvider = FutureProvider.family<
 
 final fishCatchCountProviderV2 = FutureProvider<int>((ref) async {
   final service = ref.watch(fishCatchServiceProvider);
-  return await service.getCount();
+  return service.getCount();
 });
 
 final top3LongestCatchesProvider = FutureProvider<List<FishCatch>>((ref) async {
   final service = ref.watch(fishCatchServiceProvider);
-  return await service.getTop3LongestCatches();
+  return service.getTop3LongestCatches();
 });
 
 final speciesStatsProvider =
@@ -81,7 +81,7 @@ final speciesStatsProvider =
   params,
 ) async {
   final service = ref.watch(fishCatchServiceProvider);
-  return await service.getSpeciesStats(
+  return service.getSpeciesStats(
     startDate: params.start,
     endDate: params.end,
   );
@@ -91,13 +91,13 @@ final equipmentCatchStatsProvider = FutureProvider<Map<int, Map<String, int>>>((
   ref,
 ) async {
   final service = ref.watch(fishCatchServiceProvider);
-  return await service.getAllEquipmentCatchStats();
+  return service.getAllEquipmentCatchStats();
 });
 
 final equipmentDistributionProvider = FutureProvider.family<Map<String, int>,
     ({String type, DateTime start, DateTime end})>((ref, params) async {
   final service = ref.watch(fishCatchServiceProvider);
-  return await service.getEquipmentDistribution(
+  return service.getEquipmentDistribution(
     params.type,
     startDate: params.start,
     endDate: params.end,

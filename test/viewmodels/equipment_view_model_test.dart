@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/providers/equipment_view_model.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
-import 'package:lurebox/core/providers/equipment_view_model.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockEquipmentService extends Mock implements EquipmentService {}
 
@@ -25,8 +25,8 @@ Equipment _createEquipment({
     brand: brand,
     model: model,
     isDefault: isDefault,
-    createdAt: DateTime(2024, 1, 1),
-    updatedAt: DateTime(2024, 1, 1),
+    createdAt: DateTime(2024),
+    updatedAt: DateTime(2024),
   );
 }
 
@@ -97,8 +97,8 @@ void main() {
       test('loads data successfully with equipment lists', () async {
         // Arrange
         final rods = [
-          _createEquipment(id: 1, type: EquipmentType.rod, brand: 'Shimano'),
-          _createEquipment(id: 2, type: EquipmentType.rod, brand: 'Abu Garcia'),
+          _createEquipment(brand: 'Shimano'),
+          _createEquipment(id: 2, brand: 'Abu Garcia'),
         ];
         final reels = [
           _createEquipment(id: 3, type: EquipmentType.reel, brand: 'Shimano'),
@@ -172,7 +172,7 @@ void main() {
 
         // Assert
         expect(viewModel.state.errorMessage,
-            contains('Database error: rod table not found'));
+            contains('Database error: rod table not found'),);
         expect(viewModel.state.isLoading, false);
       });
 
@@ -268,9 +268,9 @@ void main() {
       test('does not change other state properties when setting selectedType',
           () async {
         // Arrange
-        final rods = [_createEquipment(id: 1, brand: 'Shimano')];
+        final rods = [_createEquipment(brand: 'Shimano')];
         final stats = <int, Map<String, int>>{
-          1: {'_total': 5}
+          1: {'_total': 5},
         };
 
         when(() => mockEquipmentService.getAll(type: 'rod'))
@@ -458,8 +458,8 @@ void main() {
             .thenAnswer((_) async {});
         when(() => mockEquipmentService.getAll(type: 'rod'))
             .thenAnswer((_) async => [
-                  _createEquipment(id: 1, isDefault: true),
-                ]);
+                  _createEquipment(isDefault: true),
+                ],);
         when(() => mockEquipmentService.getAll(type: 'reel'))
             .thenAnswer((_) async => <Equipment>[]);
         when(() => mockEquipmentService.getAll(type: 'lure'))
@@ -532,8 +532,8 @@ void main() {
         when(() => mockEquipmentService.getAll(type: 'reel'))
             .thenAnswer((_) async => [
                   _createEquipment(
-                      id: 2, type: EquipmentType.reel, isDefault: true),
-                ]);
+                      id: 2, type: EquipmentType.reel, isDefault: true,),
+                ],);
         when(() => mockEquipmentService.getAll(type: 'lure'))
             .thenAnswer((_) async => <Equipment>[]);
         when(() => mockFishCatchService.getAllEquipmentCatchStats())
@@ -582,8 +582,8 @@ void main() {
       test('returns rodList when selectedType is rod', () async {
         // Arrange
         final rods = [
-          _createEquipment(id: 1, type: EquipmentType.rod),
-          _createEquipment(id: 2, type: EquipmentType.rod),
+          _createEquipment(),
+          _createEquipment(id: 2),
         ];
         when(() => mockEquipmentService.getAll(type: 'rod'))
             .thenAnswer((_) async => rods);
@@ -603,7 +603,7 @@ void main() {
       test('returns reelList when selectedType is reel', () async {
         // Arrange
         final reels = [
-          _createEquipment(id: 1, type: EquipmentType.reel),
+          _createEquipment(type: EquipmentType.reel),
         ];
         when(() => mockEquipmentService.getAll(type: 'rod'))
             .thenAnswer((_) async => <Equipment>[]);
@@ -624,7 +624,7 @@ void main() {
       test('returns lureList when selectedType is lure', () async {
         // Arrange
         final lures = [
-          _createEquipment(id: 1, type: EquipmentType.lure),
+          _createEquipment(type: EquipmentType.lure),
           _createEquipment(id: 2, type: EquipmentType.lure),
           _createEquipment(id: 3, type: EquipmentType.lure),
         ];

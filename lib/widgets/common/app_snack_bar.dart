@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/services/app_logger.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/services/app_logger.dart';
 
 /// Global SnackBar utilities — replaces all ad-hoc ScaffoldMessenger calls.
 class AppSnackBar {
@@ -58,7 +58,6 @@ class AppSnackBar {
           ],
         ),
         behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 4),
         backgroundColor: TeslaColors.danger,
         margin: EdgeInsets.only(
           left: 16,

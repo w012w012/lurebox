@@ -1,30 +1,26 @@
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:camera/camera.dart';
-
-import '../../../core/constants/strings.dart';
-import '../../../core/camera/camera_state.dart';
-import '../../../core/camera/camera_view_model.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../widgets/common/premium_button.dart';
+import 'package:lurebox/core/camera/camera_state.dart';
+import 'package:lurebox/core/camera/camera_view_model.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
 
 /// Camera view widget - displays camera preview with capture controls.
 class CameraViewWidget extends ConsumerWidget {
+
+  const CameraViewWidget({
+    required this.state, required this.vm, required this.strings, super.key,
+    this.onPickFromGallery,
+    this.onTakePicture,
+  });
   final CameraState state;
   final CameraViewModel vm;
   final AppStrings strings;
   final VoidCallback? onPickFromGallery;
   final VoidCallback? onTakePicture;
-
-  const CameraViewWidget({
-    super.key,
-    required this.state,
-    required this.vm,
-    required this.strings,
-    this.onPickFromGallery,
-    this.onTakePicture,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -80,8 +76,7 @@ class CameraViewWidget extends ConsumerWidget {
             const SizedBox(height: 16),
             PremiumButton(
               text: strings.retry,
-              onPressed: () => vm.initializeCamera(),
-              variant: PremiumButtonVariant.primary,
+              onPressed: vm.initializeCamera,
             ),
           ],
         ),
@@ -104,7 +99,7 @@ class CameraViewWidget extends ConsumerWidget {
 
   Widget _buildCameraControls(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = TeslaColors.electricBlue;
+    const accentColor = TeslaColors.electricBlue;
     final surfaceColor = isDark ? TeslaColors.carbonDark : TeslaColors.white;
 
     return Container(
@@ -164,7 +159,7 @@ class CameraViewWidget extends ConsumerWidget {
             ),
             PremiumIconButton(
               icon: Icons.cameraswitch,
-              onPressed: state.canSwitchCamera ? () => vm.switchCamera() : null,
+              onPressed: state.canSwitchCamera ? vm.switchCamera : null,
               tooltip: strings.switchCamera,
               size: 48,
               variant: PremiumButtonVariant.secondary,

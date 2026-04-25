@@ -1,6 +1,6 @@
+import 'package:lurebox/core/repositories/base_repository.dart';
+import 'package:lurebox/core/repositories/settings_repository.dart';
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
-import 'base_repository.dart';
-import 'settings_repository.dart';
 
 /// SQLite implementation — app settings repository (key-value store).
 ///
@@ -8,13 +8,13 @@ import 'settings_repository.dart';
 
 class SqliteSettingsRepository extends BaseSqliteRepository
     implements SettingsRepository {
-  @override
-  String get tableName => 'settings';
 
   SqliteSettingsRepository();
 
-  SqliteSettingsRepository.withDatabase(Future<Database> testDb)
-      : super.withDatabase(testDb);
+  SqliteSettingsRepository.withDatabase(super.testDb)
+      : super.withDatabase();
+  @override
+  String get tableName => 'settings';
 
   @override
   Future<String?> get(String key) async {
@@ -50,7 +50,7 @@ class SqliteSettingsRepository extends BaseSqliteRepository
             'value': value,
             'updated_at': DateTime.now().toIso8601String(),
           },
-          conflictAlgorithm: ConflictAlgorithm.replace);
+          conflictAlgorithm: ConflictAlgorithm.replace,);
     } catch (e) {
       throwDbError('set setting', e);
     }
@@ -114,7 +114,7 @@ class SqliteSettingsRepository extends BaseSqliteRepository
                 'value': entry.value,
                 'updated_at': DateTime.now().toIso8601String(),
               },
-              conflictAlgorithm: ConflictAlgorithm.replace);
+              conflictAlgorithm: ConflictAlgorithm.replace,);
         }
       });
     } catch (e) {

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../core/providers/language_provider.dart';
-import '../../../core/providers/app_settings_provider.dart';
-import '../../../core/utils/unit_converter.dart';
-import '../../../widgets/common/premium_input.dart';
-import '../../../widgets/common/unit_dropdown.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/widgets/common/premium_input.dart';
+import 'package:lurebox/widgets/common/unit_dropdown.dart';
 
 class ReelForm extends ConsumerWidget {
+
+  const ReelForm({
+    required this.bearingsController, required this.ratioAController, required this.ratioBController, required this.capacityNumberController, required this.capacityLengthController, required this.weightController, required this.weightUnit, required this.onWeightUnitChanged, required this.brakeType, required this.onBrakeTypeChanged, super.key,
+  });
   final TextEditingController bearingsController;
   final TextEditingController ratioAController;
   final TextEditingController ratioBController;
@@ -18,20 +21,6 @@ class ReelForm extends ConsumerWidget {
   final ValueChanged<String> onWeightUnitChanged;
   final String brakeType;
   final ValueChanged<String> onBrakeTypeChanged;
-
-  const ReelForm({
-    super.key,
-    required this.bearingsController,
-    required this.ratioAController,
-    required this.ratioBController,
-    required this.capacityNumberController,
-    required this.capacityLengthController,
-    required this.weightController,
-    required this.weightUnit,
-    required this.onWeightUnitChanged,
-    required this.brakeType,
-    required this.onBrakeTypeChanged,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -25,18 +25,12 @@
 library;
 
 class SpeciesHistory {
-  final int id;
-  final String name;
-  final int useCount;
-  final bool isDeleted;
-  final DateTime createdAt;
 
   const SpeciesHistory({
     required this.id,
     required this.name,
     required this.useCount,
-    this.isDeleted = false,
-    required this.createdAt,
+    required this.createdAt, this.isDeleted = false,
   });
 
   factory SpeciesHistory.fromMap(Map<String, dynamic> map) {
@@ -48,6 +42,11 @@ class SpeciesHistory {
       createdAt: DateTime.parse(map['created_at'] as String),
     );
   }
+  final int id;
+  final String name;
+  final int useCount;
+  final bool isDeleted;
+  final DateTime createdAt;
 
   Map<String, dynamic> toMap() {
     return {

@@ -1,18 +1,17 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:lurebox/core/providers/fish_list_view_model.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/di/di.dart';
-import 'package:lurebox/core/services/fish_catch_service.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
 import 'package:lurebox/core/models/paginated_result.dart';
+import 'package:lurebox/core/providers/fish_list_view_model.dart';
+import 'package:lurebox/core/services/fish_catch_service.dart';
+import 'package:mocktail/mocktail.dart';
+
 import '../helpers/test_helpers.dart';
 
 void main() {
-  setUpAll(() {
-    registerFallbackValues();
-  });
+  setUpAll(registerFallbackValues);
 
   group('Provider Integration Tests', () {
     group('FishListViewModel State Transitions', () {
@@ -44,13 +43,13 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => const PaginatedResult(
+            ),).thenAnswer((_) async => const PaginatedResult(
               items: [],
               totalCount: 0,
               page: 1,
               pageSize: 20,
               hasMore: false,
-            ));
+            ),);
 
         when(() => mockRepository.getFilteredPage(
               page: any(named: 'page'),
@@ -60,13 +59,13 @@ void main() {
               fate: any(named: 'fate'),
               species: any(named: 'species'),
               orderBy: any(named: 'orderBy'),
-            )).thenAnswer((_) async => const PaginatedResult(
+            ),).thenAnswer((_) async => const PaginatedResult(
               items: [],
               totalCount: 0,
               page: 1,
               pageSize: 20,
               hasMore: false,
-            ));
+            ),);
 
         when(() => mockRepository.deleteMultiple(any()))
             .thenAnswer((_) async {});
@@ -90,18 +89,16 @@ void main() {
       });
 
       test('loadCatches transitions: initial → loading → loaded', () async {
-        final fish = TestDataFactory.createFishCatch(id: 1);
+        final fish = TestDataFactory.createFishCatch();
         when(() => mockRepository.getPage(
               page: 1,
-              pageSize: 20,
-              orderBy: 'catch_time DESC',
-            )).thenAnswer((_) async => PaginatedResult(
+            ),).thenAnswer((_) async => PaginatedResult(
               items: [fish],
               totalCount: 1,
               page: 1,
               pageSize: 20,
               hasMore: false,
-            ));
+            ),);
 
         final viewModel = container.read(fishListViewModelProvider.notifier);
 
@@ -120,21 +117,19 @@ void main() {
       });
 
       test('loadCatches with reset=true clears existing catches', () async {
-        final fish1 = TestDataFactory.createFishCatch(id: 1);
+        final fish1 = TestDataFactory.createFishCatch();
         final fish2 = TestDataFactory.createFishCatch(id: 2);
 
         // First load
         when(() => mockRepository.getPage(
               page: 1,
-              pageSize: 20,
-              orderBy: 'catch_time DESC',
-            )).thenAnswer((_) async => PaginatedResult(
+            ),).thenAnswer((_) async => PaginatedResult(
               items: [fish1],
               totalCount: 1,
               page: 1,
               pageSize: 20,
               hasMore: true,
-            ));
+            ),);
 
         final viewModel = container.read(fishListViewModelProvider.notifier);
         await viewModel.loadCatches();
@@ -143,15 +138,13 @@ void main() {
         // Second load with reset
         when(() => mockRepository.getPage(
               page: 1,
-              pageSize: 20,
-              orderBy: 'catch_time DESC',
-            )).thenAnswer((_) async => PaginatedResult(
+            ),).thenAnswer((_) async => PaginatedResult(
               items: [fish2],
               totalCount: 1,
               page: 1,
               pageSize: 20,
               hasMore: false,
-            ));
+            ),);
 
         await viewModel.loadCatches(reset: true);
         expect(container.read(fishListViewModelProvider).catches, [fish2]);
@@ -163,7 +156,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenThrow(Exception('Database error'));
+            ),).thenThrow(Exception('Database error'));
 
         final viewModel = container.read(fishListViewModelProvider.notifier);
         await viewModel.loadCatches();
@@ -181,7 +174,7 @@ void main() {
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            )).thenThrow(Exception('Database error'));
+            ),).thenThrow(Exception('Database error'));
 
         final viewModel = container.read(fishListViewModelProvider.notifier);
         await viewModel.loadCatches();
@@ -191,18 +184,16 @@ void main() {
         );
 
         // Second load succeeds
-        final fish = TestDataFactory.createFishCatch(id: 1);
+        final fish = TestDataFactory.createFishCatch();
         when(() => mockRepository.getPage(
               page: 1,
-              pageSize: 20,
-              orderBy: 'catch_time DESC',
-            )).thenAnswer((_) async => PaginatedResult(
+            ),).thenAnswer((_) async => PaginatedResult(
               items: [fish],
               totalCount: 1,
               page: 1,
               pageSize: 20,
               hasMore: false,
-            ));
+            ),);
 
         await viewModel.loadCatches();
         expect(
@@ -265,21 +256,19 @@ void main() {
       });
 
       test('selectAll selects all filtered catches', () async {
-        final fish1 = TestDataFactory.createFishCatch(id: 1);
+        final fish1 = TestDataFactory.createFishCatch();
         final fish2 = TestDataFactory.createFishCatch(id: 2);
         final fish3 = TestDataFactory.createFishCatch(id: 3);
 
         when(() => mockRepository.getPage(
               page: 1,
-              pageSize: 20,
-              orderBy: 'catch_time DESC',
-            )).thenAnswer((_) async => PaginatedResult(
+            ),).thenAnswer((_) async => PaginatedResult(
               items: [fish1, fish2, fish3],
               totalCount: 3,
               page: 1,
               pageSize: 20,
               hasMore: false,
-            ));
+            ),);
 
         final viewModel = container.read(fishListViewModelProvider.notifier);
         await viewModel.loadCatches();
@@ -292,20 +281,18 @@ void main() {
       });
 
       test('deleteSelected removes items and exits selection mode', () async {
-        final fish1 = TestDataFactory.createFishCatch(id: 1);
+        final fish1 = TestDataFactory.createFishCatch();
         final fish2 = TestDataFactory.createFishCatch(id: 2);
 
         when(() => mockRepository.getPage(
               page: 1,
-              pageSize: 20,
-              orderBy: 'catch_time DESC',
-            )).thenAnswer((_) async => PaginatedResult(
+            ),).thenAnswer((_) async => PaginatedResult(
               items: [fish1, fish2],
               totalCount: 2,
               page: 1,
               pageSize: 20,
               hasMore: false,
-            ));
+            ),);
 
         when(() => mockRepository.getByIds(any()))
             .thenAnswer((_) async => [fish1]);
@@ -358,22 +345,20 @@ void main() {
       });
 
       test('setTimeFilter updates filter and reloads', () async {
-        final fish = TestDataFactory.createFishCatch(id: 1);
+        final fish = TestDataFactory.createFishCatch();
         when(() => mockRepository.getFilteredPage(
               page: 1,
-              pageSize: 20,
               startDate: any(named: 'startDate'),
               endDate: any(named: 'endDate'),
               fate: any(named: 'fate'),
               species: any(named: 'species'),
-              orderBy: 'catch_time DESC',
-            )).thenAnswer((_) async => PaginatedResult(
+            ),).thenAnswer((_) async => PaginatedResult(
               items: [fish],
               totalCount: 1,
               page: 1,
               pageSize: 20,
               hasMore: false,
-            ));
+            ),);
 
         final viewModel = container.read(fishListViewModelProvider.notifier);
         viewModel.setTimeFilter('today');
@@ -442,15 +427,13 @@ void main() {
         // Setup with hasMore = false (0 items returned, less than pageSize)
         when(() => mockRepository.getPage(
               page: 1,
-              pageSize: 20,
-              orderBy: 'catch_time DESC',
-            )).thenAnswer((_) async => const PaginatedResult(
+            ),).thenAnswer((_) async => const PaginatedResult(
               items: [],
               totalCount: 0,
               page: 1,
               pageSize: 20,
               hasMore: false,
-            ));
+            ),);
 
         final viewModel = container.read(fishListViewModelProvider.notifier);
         await viewModel.loadCatches();
@@ -493,21 +476,19 @@ void main() {
       });
 
       test('uniqueSpecies returns sorted unique species', () async {
-        final fish1 = TestDataFactory.createFishCatch(id: 1, species: 'Bass');
+        final fish1 = TestDataFactory.createFishCatch();
         final fish2 = TestDataFactory.createFishCatch(id: 2, species: 'Trout');
-        final fish3 = TestDataFactory.createFishCatch(id: 3, species: 'Bass');
+        final fish3 = TestDataFactory.createFishCatch(id: 3);
 
         when(() => mockRepository.getPage(
               page: 1,
-              pageSize: 20,
-              orderBy: 'catch_time DESC',
-            )).thenAnswer((_) async => PaginatedResult(
+            ),).thenAnswer((_) async => PaginatedResult(
               items: [fish1, fish2, fish3],
               totalCount: 3,
               page: 1,
               pageSize: 20,
               hasMore: false,
-            ));
+            ),);
 
         final viewModel = container.read(fishListViewModelProvider.notifier);
         await viewModel.loadCatches();
@@ -547,7 +528,7 @@ void main() {
       });
 
       test('getAll returns list of catches', () async {
-        final fish1 = TestDataFactory.createFishCatch(id: 1);
+        final fish1 = TestDataFactory.createFishCatch();
         final fish2 = TestDataFactory.createFishCatch(id: 2);
 
         when(() => mockRepository.getAll())
@@ -561,7 +542,7 @@ void main() {
       });
 
       test('getById returns fish catch', () async {
-        final fish = TestDataFactory.createFishCatch(id: 1);
+        final fish = TestDataFactory.createFishCatch();
 
         when(() => mockRepository.getById(1)).thenAnswer((_) async => fish);
 
@@ -582,7 +563,7 @@ void main() {
       });
 
       test('create increments species use count', () async {
-        final fish = TestDataFactory.createFishCatch(id: 1, species: 'Bass');
+        final fish = TestDataFactory.createFishCatch();
 
         when(() => mockRepository.create(fish)).thenAnswer((_) async => 1);
         when(() => mockSpeciesHistoryRepo.incrementUseCount('Bass'))
@@ -600,9 +581,9 @@ void main() {
       test('deleteMultiple deletes from repository', () async {
         when(() => mockRepository.getByIds([1, 2]))
             .thenAnswer((_) async => [
-                  TestDataFactory.createFishCatch(id: 1),
+                  TestDataFactory.createFishCatch(),
                   TestDataFactory.createFishCatch(id: 2),
-                ]);
+                ],);
         when(() => mockRepository.deleteMultiple([1, 2]))
             .thenAnswer((_) async {});
 

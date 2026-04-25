@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/models/ai_recognition_settings.dart';
-import '../../core/providers/ai_recognition_provider.dart';
-import '../../core/providers/language_provider.dart';
-import '../../widgets/common/premium_card.dart';
-import 'widgets/ai_provider_config_dialog.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/providers/ai_recognition_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/features/settings/widgets/ai_provider_config_dialog.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// AI 品种识别设置页面
 ///
@@ -86,7 +85,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
             ),
             const SizedBox(height: TeslaTheme.spacingSm),
             DropdownButtonFormField<AiRecognitionProvider>(
-              value: aiSettings.currentProvider,
+              initialValue: aiSettings.currentProvider,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 contentPadding:
@@ -202,7 +201,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
     AiRecognitionSettings aiSettings,
   ) {
     final config = aiSettings.providerConfigs[provider];
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) => AiProviderConfigDialog(
         provider: provider,

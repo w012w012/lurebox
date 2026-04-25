@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/providers/language_provider.dart';
-import '../equipment/equipment_list_page.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/features/equipment/equipment_list_page.dart';
 
 String _brakeTypeLabel(String key, AppStrings strings) {
   return switch (key) {
@@ -29,6 +29,10 @@ String _jointTypeLabel(String key, AppStrings strings) {
 
 /// 装备选择器组件
 class EquipmentSelector extends ConsumerWidget {
+
+  const EquipmentSelector({
+    required this.rodList, required this.reelList, required this.lureList, required this.selectedRod, required this.selectedReel, required this.selectedLure, required this.onRodSelected, required this.onReelSelected, required this.onLureSelected, required this.onManageEquipment, super.key,
+  });
   final List<Map<String, dynamic>> rodList;
   final List<Map<String, dynamic>> reelList;
   final List<Map<String, dynamic>> lureList;
@@ -39,20 +43,6 @@ class EquipmentSelector extends ConsumerWidget {
   final ValueChanged<Map<String, dynamic>?> onReelSelected;
   final ValueChanged<Map<String, dynamic>?> onLureSelected;
   final VoidCallback onManageEquipment;
-
-  const EquipmentSelector({
-    super.key,
-    required this.rodList,
-    required this.reelList,
-    required this.lureList,
-    required this.selectedRod,
-    required this.selectedReel,
-    required this.selectedLure,
-    required this.onRodSelected,
-    required this.onReelSelected,
-    required this.onLureSelected,
-    required this.onManageEquipment,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -67,11 +57,11 @@ class EquipmentSelector extends ConsumerWidget {
   }
 
   void _showSelector(BuildContext context, AppStrings strings) {
-    Map<String, dynamic>? tempSelectedRod = selectedRod;
-    Map<String, dynamic>? tempSelectedReel = selectedReel;
-    Map<String, dynamic>? tempSelectedLure = selectedLure;
+    var tempSelectedRod = selectedRod;
+    var tempSelectedReel = selectedReel;
+    var tempSelectedLure = selectedLure;
 
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
@@ -104,7 +94,7 @@ class EquipmentSelector extends ConsumerWidget {
                           Navigator.pop(context);
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
+                            MaterialPageRoute<bool>(
                               builder: (context) => const EquipmentListPage(),
                             ),
                           ).then((result) {
@@ -146,7 +136,7 @@ class EquipmentSelector extends ConsumerWidget {
                               final lengthValue =
                                   double.tryParse(length) ?? 0.0;
                               parts.add(
-                                  '${lengthValue.toStringAsFixed(2)}$lengthUnit');
+                                  '${lengthValue.toStringAsFixed(2)}$lengthUnit',);
                             }
                             final hardness = item['hardness'] as String?;
                             if (hardness != null && hardness.isNotEmpty) {
@@ -355,10 +345,10 @@ class EquipmentSelector extends ConsumerWidget {
 
 /// 装备信息行组件 - 显示完整装备参数
 class EquipmentInfoRow extends ConsumerWidget {
+
+  const EquipmentInfoRow({required this.label, super.key, this.equipment});
   final String label;
   final Map<String, dynamic>? equipment;
-
-  const EquipmentInfoRow({super.key, required this.label, this.equipment});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -401,7 +391,7 @@ class EquipmentInfoRow extends ConsumerWidget {
 
   /// 构建装备信息字符串，格式与水印一致
   String _buildEquipmentInfo(
-      Map<String, dynamic> eq, String label, AppStrings strings) {
+      Map<String, dynamic> eq, String label, AppStrings strings,) {
     final parts = <String>[];
 
     // 品牌和型号

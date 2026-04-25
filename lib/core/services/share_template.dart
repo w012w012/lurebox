@@ -12,12 +12,6 @@ library;
 enum ShareTemplate { classic, card, minimal }
 
 class ShareCardConfig {
-  final ShareTemplate template;
-  final bool showStats;
-  final bool showHashtags;
-  final bool showWatermark;
-  final Map<String, dynamic>? statsData;
-  final List<String> customHashtags;
 
   const ShareCardConfig({
     this.template = ShareTemplate.card,
@@ -27,6 +21,12 @@ class ShareCardConfig {
     this.statsData,
     this.customHashtags = const [],
   });
+  final ShareTemplate template;
+  final bool showStats;
+  final bool showHashtags;
+  final bool showWatermark;
+  final Map<String, dynamic>? statsData;
+  final List<String> customHashtags;
 
   ShareCardConfig copyWith({
     ShareTemplate? template,

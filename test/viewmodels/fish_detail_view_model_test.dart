@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
-import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/equipment.dart';
-import 'package:lurebox/core/services/fish_catch_service.dart';
-import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/providers/fish_detail_view_model.dart';
+import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:lurebox/core/services/fish_catch_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockFishCatchService extends Mock implements FishCatchService {}
 
@@ -131,13 +131,11 @@ void main() {
       test('loads fish successfully with all equipment', () async {
         // Arrange
         final fish = _createFishCatch(
-          id: 1,
-          species: 'Bass',
           rodId: 10,
           reelId: 20,
           lureId: 30,
         );
-        final rod = _createEquipment(id: 10, type: EquipmentType.rod);
+        final rod = _createEquipment(id: 10);
         final reel = _createEquipment(id: 20, type: EquipmentType.reel);
         final lure = _createEquipment(id: 30, type: EquipmentType.lure);
 
@@ -227,14 +225,14 @@ void main() {
         // Assert
         expect(viewModel.state.fish, isNull);
         expect(viewModel.state.errorMessage,
-            contains('Database connection failed'));
+            contains('Database connection failed'),);
         expect(viewModel.state.isLoading, false);
       });
 
       test('handles equipment service error by leaving equipment as null',
           () async {
         // Arrange
-        final fish = _createFishCatch(id: 1, rodId: 10);
+        final fish = _createFishCatch(rodId: 10);
 
         when(() => mockFishCatchService.getById(1))
             .thenAnswer((_) async => fish);
@@ -258,7 +256,7 @@ void main() {
       test('loads equipment from equipment_id when rod/reel/lure are null',
           () async {
         // Arrange
-        final fish = _createFishCatch(id: 1, equipmentId: 50);
+        final fish = _createFishCatch(equipmentId: 50);
         final lure = _createEquipment(id: 50, type: EquipmentType.lure);
 
         when(() => mockFishCatchService.getById(1))
@@ -461,7 +459,7 @@ void main() {
         // Arrange
         final fish = _createFishCatch(id: 12, rodId: 100);
         final rod = _createEquipment(
-            id: 100, type: EquipmentType.rod, brand: 'OldBrand');
+            id: 100, brand: 'OldBrand',);
 
         when(() => mockFishCatchService.getById(12))
             .thenAnswer((_) async => fish);
@@ -479,7 +477,7 @@ void main() {
 
         // Act - simulate equipment being updated
         final updatedRod = _createEquipment(
-            id: 100, type: EquipmentType.rod, brand: 'NewBrand');
+            id: 100, brand: 'NewBrand',);
         when(() => mockEquipmentService.getById(100))
             .thenAnswer((_) async => updatedRod);
 

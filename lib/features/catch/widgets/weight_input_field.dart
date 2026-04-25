@@ -1,28 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../core/constants/strings.dart';
-import '../../../core/camera/camera_state.dart';
-import '../../../core/camera/camera_view_model.dart';
-import '../../../core/models/app_settings.dart';
-import '../../../core/providers/app_settings_provider.dart';
-import '../../../core/utils/unit_converter.dart';
-import '../../../widgets/common/premium_input.dart';
+import 'package:lurebox/core/camera/camera_state.dart';
+import 'package:lurebox/core/camera/camera_view_model.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/widgets/common/premium_input.dart';
 
 /// Weight input field with unit dropdown and estimated weight display.
 class WeightInputField extends ConsumerWidget {
+
+  const WeightInputField({
+    required this.state, required this.vm, required this.strings, required this.controller, super.key,
+  });
   final CameraState state;
   final CameraViewModel vm;
   final AppStrings strings;
   final TextEditingController controller;
-
-  const WeightInputField({
-    super.key,
-    required this.state,
-    required this.vm,
-    required this.strings,
-    required this.controller,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

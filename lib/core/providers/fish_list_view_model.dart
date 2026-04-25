@@ -1,24 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/fish_catch.dart';
-import '../models/fish_filter.dart';
-import '../models/app_settings.dart';
-import '../di/di.dart';
-import '../services/fish_catch_service.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/models/fish_filter.dart';
+import 'package:lurebox/core/services/fish_catch_service.dart';
 
 class FishListState {
-  final List<FishCatch> catches;
-  final List<FishCatch> filteredCatches;
-  final FishFilter filter;
-  final bool isLoading;
-  final String? errorMessage;
-  final Set<int> selectedIds;
-  final bool isSelectionMode;
-  final bool filterExpanded;
-  final int currentPage;
-  final bool hasMore;
-  final int totalCount;
-  final UnitSettings? displayUnits;
 
   const FishListState({
     this.catches = const [],
@@ -34,6 +23,18 @@ class FishListState {
     this.totalCount = 0,
     this.displayUnits,
   });
+  final List<FishCatch> catches;
+  final List<FishCatch> filteredCatches;
+  final FishFilter filter;
+  final bool isLoading;
+  final String? errorMessage;
+  final Set<int> selectedIds;
+  final bool isSelectionMode;
+  final bool filterExpanded;
+  final int currentPage;
+  final bool hasMore;
+  final int totalCount;
+  final UnitSettings? displayUnits;
 
   FishListState copyWith({
     List<FishCatch>? catches,
@@ -93,13 +94,13 @@ class FishListState {
 }
 
 class FishListViewModel extends StateNotifier<FishListState> {
+
+  FishListViewModel(this._fishCatchService) : super(const FishListState());
   static const int _defaultPageSize = 20;
 
   final FishCatchService _fishCatchService;
   int _loadGeneration = 0;
   Timer? _filterDebounce;
-
-  FishListViewModel(this._fishCatchService) : super(const FishListState());
 
   Future<void> loadCatches({bool reset = false, UnitSettings? units}) async {
     final generation = ++_loadGeneration;
@@ -130,7 +131,6 @@ class FishListViewModel extends StateNotifier<FishListState> {
       if (state.hasFilters) {
         final result = await _fishCatchService.getFilteredPageByFilter(
           page: page,
-          pageSize: pageSize,
           filter: state.filter,
         );
         newCatches = result.items;
@@ -138,7 +138,6 @@ class FishListViewModel extends StateNotifier<FishListState> {
       } else {
         final result = await _fishCatchService.getPage(
           page: page,
-          pageSize: pageSize,
           orderBy: _getOrderBy(state.filter.sortBy, state.filter.sortAsc),
         );
         newCatches = result.items;
@@ -163,7 +162,7 @@ class FishListViewModel extends StateNotifier<FishListState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: () => e.toString(),
+        errorMessage: e.toString,
       );
     }
   }
@@ -213,7 +212,7 @@ class FishListViewModel extends StateNotifier<FishListState> {
     final newFilter = state.filter.copyWith(
       sortBy: sortBy,
       sortAsc: ascending ??
-          (state.filter.sortBy == sortBy ? !state.filter.sortAsc : false),
+          (state.filter.sortBy == sortBy && !state.filter.sortAsc),
     );
     _updateFilter(newFilter);
   }
@@ -289,7 +288,7 @@ class FishListViewModel extends StateNotifier<FishListState> {
       state = state.copyWith(selectedIds: <int>{}, isSelectionMode: false);
       await loadCatches(units: state.displayUnits);
     } catch (e) {
-      state = state.copyWith(errorMessage: () => e.toString());
+      state = state.copyWith(errorMessage: e.toString);
     }
   }
 

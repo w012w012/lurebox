@@ -1,6 +1,21 @@
 // Core library barrel export
 // This file provides a single point of import for all core modules
 
+// Constants
+export 'constants/achievements.dart';
+export 'constants/constants.dart';
+export 'constants/price_ranges.dart';
+export 'constants/strings.dart';
+// Database
+export 'database/database.dart';
+export 'database/database_provider.dart';
+export 'design/responsive/responsive_utils.dart';
+// Design
+export 'design/theme/app_colors.dart';
+export 'design/theme/app_theme.dart';
+export 'design/theme/theme_wrapper.dart';
+// DI
+export 'di/di.dart';
 // Models
 export 'models/achievement.dart';
 export 'models/ai_recognition_settings.dart';
@@ -16,7 +31,6 @@ export 'models/paginated_result.dart';
 export 'models/species_history.dart';
 export 'models/stats_models.dart';
 export 'models/watermark_settings.dart';
-
 // Providers
 export 'providers/achievement_provider.dart';
 export 'providers/achievement_view_model.dart';
@@ -38,26 +52,6 @@ export 'providers/settings_view_model.dart';
 export 'providers/stats_provider.dart' hide top3LongestCatchesProvider;
 export 'providers/stats_view_model.dart';
 export 'providers/watermark_provider.dart';
-
-// Services
-export 'services/achievement_service.dart';
-export 'services/backup_service.dart';
-export 'services/backup_zip_service.dart';
-export 'services/csv_exporter.dart';
-export 'services/enhanced_backup_service.dart';
-export 'services/equipment_service.dart';
-export 'services/error_service.dart';
-export 'services/export_options.dart' hide ExportFormat;
-export 'services/export_service.dart';
-export 'services/fish_catch_service.dart';
-export 'services/fish_recognition_service.dart';
-export 'services/location_service.dart';
-export 'services/settings_service.dart';
-export 'services/secure_storage_service.dart';
-export 'services/share_card_service.dart';
-export 'services/share_template.dart';
-export 'services/weather_service.dart';
-
 // Repositories
 export 'repositories/backup_config_repository.dart';
 export 'repositories/equipment_repository.dart';
@@ -72,34 +66,30 @@ export 'repositories/species_history_repository.dart';
 export 'repositories/species_history_repository_impl.dart';
 export 'repositories/stats_repository.dart';
 export 'repositories/stats_repository_impl.dart';
-
-// Database
-export 'database/database.dart';
-export 'database/database_provider.dart';
-
-// Constants
-export 'constants/achievements.dart';
-export 'constants/constants.dart';
-export 'constants/price_ranges.dart';
-export 'constants/strings.dart';
-
-// Design
-export 'design/theme/app_colors.dart';
-export 'design/theme/app_theme.dart';
-export 'design/theme/theme_wrapper.dart';
-export 'design/responsive/responsive_utils.dart';
-
+// Router
+export 'router/app_router.dart';
+// Services
+export 'services/achievement_service.dart';
+export 'services/backup_service.dart';
+export 'services/backup_zip_service.dart';
+export 'services/csv_exporter.dart';
+export 'services/enhanced_backup_service.dart';
+export 'services/equipment_service.dart';
+export 'services/error_service.dart';
+export 'services/export_options.dart' hide ExportFormat;
+export 'services/export_service.dart';
+export 'services/fish_catch_service.dart';
+export 'services/fish_recognition_service.dart';
+export 'services/location_service.dart';
+export 'services/secure_storage_service.dart';
+export 'services/settings_service.dart';
+export 'services/share_card_service.dart';
+export 'services/share_template.dart';
+export 'services/weather_service.dart';
 // Utils
 export 'utils/date_utils.dart';
 export 'utils/file_utils.dart';
 export 'utils/image_compressor.dart';
 export 'utils/unit_converter.dart';
-
 // Widgets
 export 'widgets/error_view.dart';
-
-// Router
-export 'router/app_router.dart';
-
-// DI
-export 'di/di.dart';

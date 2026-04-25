@@ -1,5 +1,5 @@
 import 'dart:convert';
-import '../utils/legacy_value_migrator.dart';
+import 'package:lurebox/core/utils/legacy_value_migrator.dart';
 
 /// 应用全局设置数据模型
 ///
@@ -35,7 +35,36 @@ import '../utils/legacy_value_migrator.dart';
 /// - 多语言支持
 
 /// 单位设置 - 按物品类型分组
-class UnitSettings {
+class UnitSettings { // C, F
+
+  const UnitSettings({
+    this.fishLengthUnit = 'cm',
+    this.fishWeightUnit = 'kg',
+    this.rodLengthUnit = 'm',
+    this.lineLengthUnit = 'm',
+    this.lureWeightUnit = 'g',
+    this.lureLengthUnit = 'cm',
+    this.lureQuantityUnit = 'piece',
+    this.temperatureUnit = 'C',
+  });
+
+  factory UnitSettings.fromJson(Map<String, dynamic> json) {
+    return UnitSettings(
+      fishLengthUnit: json['fishLengthUnit'] as String? ?? 'cm',
+      fishWeightUnit: json['fishWeightUnit'] as String? ?? 'kg',
+      rodLengthUnit: json['rodLengthUnit'] as String? ?? 'm',
+      lineLengthUnit: json['lineLengthUnit'] as String? ?? 'm',
+      lureWeightUnit: json['lureWeightUnit'] as String? ?? 'g',
+      lureLengthUnit: json['lureLengthUnit'] as String? ?? 'cm',
+      lureQuantityUnit: LegacyValueMigrator.migrateValue(
+        'lure_quantity_unit',
+        json['lureQuantityUnit'] as String? ?? 'piece',
+      ),
+      temperatureUnit: json['temperatureUnit'] as String? ?? 'C',
+    );
+  }
+  factory UnitSettings.decode(String source) =>
+      UnitSettings.fromJson(jsonDecode(source) as Map<String, dynamic>);
   // 渔获相关
   final String fishLengthUnit; // cm, m, inch, ft
   final String fishWeightUnit; // kg, lb, oz, g
@@ -50,18 +79,7 @@ class UnitSettings {
   final String lureQuantityUnit; // 条、只、个、包、盒
 
   // 温度
-  final String temperatureUnit; // C, F
-
-  const UnitSettings({
-    this.fishLengthUnit = 'cm',
-    this.fishWeightUnit = 'kg',
-    this.rodLengthUnit = 'm',
-    this.lineLengthUnit = 'm',
-    this.lureWeightUnit = 'g',
-    this.lureLengthUnit = 'cm',
-    this.lureQuantityUnit = 'piece',
-    this.temperatureUnit = 'C',
-  });
+  final String temperatureUnit;
 
   UnitSettings copyWith({
     String? fishLengthUnit,
@@ -96,25 +114,7 @@ class UnitSettings {
         'temperatureUnit': temperatureUnit,
       };
 
-  factory UnitSettings.fromJson(Map<String, dynamic> json) {
-    return UnitSettings(
-      fishLengthUnit: json['fishLengthUnit'] as String? ?? 'cm',
-      fishWeightUnit: json['fishWeightUnit'] as String? ?? 'kg',
-      rodLengthUnit: json['rodLengthUnit'] as String? ?? 'm',
-      lineLengthUnit: json['lineLengthUnit'] as String? ?? 'm',
-      lureWeightUnit: json['lureWeightUnit'] as String? ?? 'g',
-      lureLengthUnit: json['lureLengthUnit'] as String? ?? 'cm',
-      lureQuantityUnit: LegacyValueMigrator.migrateValue(
-        'lure_quantity_unit',
-        json['lureQuantityUnit'] as String? ?? 'piece',
-      ),
-      temperatureUnit: json['temperatureUnit'] as String? ?? 'C',
-    );
-  }
-
   String encode() => jsonEncode(toJson());
-  factory UnitSettings.decode(String source) =>
-      UnitSettings.fromJson(jsonDecode(source));
 }
 
 /// 深色模式
@@ -125,10 +125,6 @@ enum AppLanguage { chinese, english }
 
 /// 应用设置
 class AppSettings {
-  final UnitSettings units;
-  final DarkMode darkMode;
-  final AppLanguage language;
-  final bool hasCompletedOnboarding;
 
   const AppSettings({
     this.units = const UnitSettings(),
@@ -136,6 +132,29 @@ class AppSettings {
     this.language = AppLanguage.chinese,
     this.hasCompletedOnboarding = false,
   });
+
+  factory AppSettings.fromJson(Map<String, dynamic> json) {
+    return AppSettings(
+      units: json['units'] != null
+          ? UnitSettings.fromJson(json['units'] as Map<String, dynamic>)
+          : const UnitSettings(),
+      darkMode: DarkMode.values.firstWhere(
+        (e) => e.name == json['darkMode'],
+        orElse: () => DarkMode.system,
+      ),
+      language: AppLanguage.values.firstWhere(
+        (e) => e.name == json['language'],
+        orElse: () => AppLanguage.chinese,
+      ),
+      hasCompletedOnboarding: json['hasCompletedOnboarding'] as bool? ?? false,
+    );
+  }
+  factory AppSettings.decode(String source) =>
+      AppSettings.fromJson(jsonDecode(source) as Map<String, dynamic>);
+  final UnitSettings units;
+  final DarkMode darkMode;
+  final AppLanguage language;
+  final bool hasCompletedOnboarding;
 
   AppSettings copyWith({
     UnitSettings? units,
@@ -159,24 +178,5 @@ class AppSettings {
         'hasCompletedOnboarding': hasCompletedOnboarding,
       };
 
-  factory AppSettings.fromJson(Map<String, dynamic> json) {
-    return AppSettings(
-      units: json['units'] != null
-          ? UnitSettings.fromJson(json['units'] as Map<String, dynamic>)
-          : const UnitSettings(),
-      darkMode: DarkMode.values.firstWhere(
-        (e) => e.name == json['darkMode'],
-        orElse: () => DarkMode.system,
-      ),
-      language: AppLanguage.values.firstWhere(
-        (e) => e.name == json['language'],
-        orElse: () => AppLanguage.chinese,
-      ),
-      hasCompletedOnboarding: json['hasCompletedOnboarding'] as bool? ?? false,
-    );
-  }
-
   String encode() => jsonEncode(toJson());
-  factory AppSettings.decode(String source) =>
-      AppSettings.fromJson(jsonDecode(source));
 }

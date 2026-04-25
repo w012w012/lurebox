@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:http/http.dart' as http;
-import '../fish_recognition_service.dart';
-import '../../models/ai_recognition_settings.dart';
-import 'fish_recognition_shared.dart';
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/services/adapters/fish_recognition_shared.dart';
+import 'package:lurebox/core/services/fish_recognition_service.dart';
 
 /// URL 路径策略枚举
 ///
@@ -32,12 +33,12 @@ enum UrlPathStrategy {
 /// 子类只需提供默认配置（baseUrl、model、URL策略），
 /// 无需重复实现识别逻辑。
 abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
-  /// HTTP client for making requests (injectable for testing)
-  final http.Client? _client;
 
   /// Creates an OpenAI compatible provider with optional HTTP client injection
   /// If no client is provided, uses the default http.Client
   OpenAICompatibleProvider({http.Client? client}) : _client = client;
+  /// HTTP client for making requests (injectable for testing)
+  final http.Client? _client;
 
   /// Protected getter for HTTP client (allows subclasses to use injected client)
   http.Client? get client => _client;
@@ -97,7 +98,7 @@ abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
 
     // 确定使用的模型名称
     final modelName =
-        config.modelName?.isNotEmpty == true ? config.modelName! : defaultModel;
+        config.modelName?.isNotEmpty ?? false ? config.modelName! : defaultModel;
 
     // 构建请求体 - 使用 vision API
     final requestBody = {
@@ -130,7 +131,7 @@ abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
 
     // 确定 baseUrl
     final effectiveBaseUrl =
-        config.baseUrl?.isNotEmpty == true ? config.baseUrl! : defaultBaseUrl;
+        config.baseUrl?.isNotEmpty ?? false ? config.baseUrl! : defaultBaseUrl;
 
     // 构建请求 URL
     final url = buildUrl(effectiveBaseUrl);

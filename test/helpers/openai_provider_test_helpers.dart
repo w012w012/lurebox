@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
-import 'package:lurebox/core/services/fish_recognition_service.dart';
 import 'package:lurebox/core/services/adapters/openai_compatible_provider.dart';
+import 'package:lurebox/core/services/fish_recognition_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
 
@@ -92,8 +93,8 @@ void runOpenAICompatibleProviderTests({
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer(
-          (_) async => createUtf8Response(successResponse(), 200));
+          ),).thenAnswer(
+          (_) async => createUtf8Response(successResponse(), 200),);
 
       final config = AiProviderConfig(
         provider: aiProvider,
@@ -106,7 +107,7 @@ void runOpenAICompatibleProviderTests({
             captureAny(),
             headers: captureAny(named: 'headers'),
             body: captureAny(named: 'body'),
-          )).captured;
+          ),).captured;
 
       final url = captured[0] as Uri;
       expect(url.toString(), contains(expectedUrlFragment));
@@ -125,13 +126,13 @@ void runOpenAICompatibleProviderTests({
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async => createUtf8Response(
+          ),).thenAnswer((_) async => createUtf8Response(
           successResponse(
             chineseName: chineseName,
             scientificName: scientificName,
             confidence: confidence,
           ),
-          200));
+          200,),);
 
       final config = AiProviderConfig(
         provider: aiProvider,
@@ -150,8 +151,8 @@ void runOpenAICompatibleProviderTests({
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer(
-          (_) async => createUtf8Response({'error': 'Unauthorized'}, 401));
+          ),).thenAnswer(
+          (_) async => createUtf8Response({'error': 'Unauthorized'}, 401),);
 
       final config = AiProviderConfig(
         provider: aiProvider,
@@ -169,8 +170,8 @@ void runOpenAICompatibleProviderTests({
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async =>
-          createUtf8Response({'error': 'Rate limited'}, 429));
+          ),).thenAnswer((_) async =>
+          createUtf8Response({'error': 'Rate limited'}, 429),);
 
       final config = AiProviderConfig(
         provider: aiProvider,
@@ -188,8 +189,8 @@ void runOpenAICompatibleProviderTests({
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async => createUtf8Response(
-          {'error': 'Internal Server Error'}, 500));
+          ),).thenAnswer((_) async => createUtf8Response(
+          {'error': 'Internal Server Error'}, 500,),);
 
       final config = AiProviderConfig(
         provider: aiProvider,

@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ShimmerPlaceholder extends StatelessWidget {
-  final double? width;
-  final double? height;
-  final BorderRadius? borderRadius;
 
   const ShimmerPlaceholder({
     super.key,
@@ -12,6 +9,9 @@ class ShimmerPlaceholder extends StatelessWidget {
     this.height,
     this.borderRadius,
   });
+  final double? width;
+  final double? height;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {

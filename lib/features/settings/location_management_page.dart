@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/location_view_model.dart';
-import '../../widgets/common/app_snack_bar.dart';
-import '../location/widgets/location_list_tile.dart';
-import '../location/widgets/location_group_card.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/location_view_model.dart';
+import 'package:lurebox/features/location/widgets/location_group_card.dart';
+import 'package:lurebox/features/location/widgets/location_list_tile.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
 
 /// 钓点管理页面
 class LocationManagementPage extends ConsumerStatefulWidget {
@@ -42,13 +42,13 @@ class _LocationManagementPageState
           if (state.selectedLocations.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.clear_all),
-              onPressed: () => viewModel.clearSelection(),
+              onPressed: viewModel.clearSelection,
               tooltip: strings.locationCancelSelect,
             ),
           if (state.selectedLocations.isEmpty)
             IconButton(
               icon: const Icon(Icons.select_all),
-              onPressed: () => viewModel.selectAll(),
+              onPressed: viewModel.selectAll,
               tooltip: strings.selectAll,
             ),
         ],
@@ -332,7 +332,7 @@ class _LocationManagementPageState
       final success = await viewModel.renameLocation(oldName, result);
       if (!context.mounted) return;
       AppSnackBar.showInfo(
-          context, success ? strings.locationEditSuccess : strings.locationEditFailed);
+          context, success ? strings.locationEditSuccess : strings.locationEditFailed,);
     }
     controller.dispose();
   }
@@ -366,17 +366,17 @@ class _LocationManagementPageState
       ),
     );
 
-    if (confirmed == true) {
+    if (confirmed ?? false) {
       final success = await viewModel.mergeLocations(targetName);
       if (!mounted) return;
       AppSnackBar.showInfo(
-          context, success ? strings.mergeSuccess : strings.mergeFailed);
+          context, success ? strings.mergeSuccess : strings.mergeFailed,);
     }
   }
 
   Future<void> _confirmAutoMerge(
     LocationManagementViewModel viewModel,
-    dynamic group,
+    LocationGroup group,
   ) async {
     final strings = ref.read(currentStringsProvider);
     final confirmed = await showDialog<bool>(
@@ -399,11 +399,11 @@ class _LocationManagementPageState
       ),
     );
 
-    if (confirmed == true) {
+    if (confirmed ?? false) {
       final success = await viewModel.autoMergeGroup(group);
       if (!mounted) return;
       AppSnackBar.showInfo(
-          context, success ? strings.mergeSuccess : strings.mergeFailed);
+          context, success ? strings.mergeSuccess : strings.mergeFailed,);
     }
   }
 }

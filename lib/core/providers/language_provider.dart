@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/app_settings.dart';
-import '../constants/strings.dart';
-import '../providers/app_settings_provider.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
 
 /// 语言 provider
 final appLanguageProvider = Provider<AppLanguage>((ref) {

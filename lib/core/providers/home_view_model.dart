@@ -1,8 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../di/di.dart';
-import '../repositories/stats_repository.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/repositories/stats_repository.dart';
 
 class HomeState {
+
+  const HomeState({
+    this.isLoading = true,
+    this.errorMessage,
+    this.todayStats = const CatchStats(total: 0, release: 0, keep: 0),
+    this.todaySpecies = const {},
+    this.monthStats = const CatchStats(total: 0, release: 0, keep: 0),
+    this.monthSpecies = const {},
+    this.yearStats = const CatchStats(total: 0, release: 0, keep: 0),
+    this.yearSpecies = const {},
+    this.allStats = const CatchStats(total: 0, release: 0, keep: 0),
+    this.allSpecies = const {},
+    this.top3Fishes = const [],
+    this.monthTrend = const [],
+  });
   final bool isLoading;
   final String? errorMessage;
 
@@ -20,21 +35,6 @@ class HomeState {
 
   final List<Map<String, dynamic>> top3Fishes;
   final List<Map<String, dynamic>> monthTrend;
-
-  const HomeState({
-    this.isLoading = true,
-    this.errorMessage,
-    this.todayStats = const CatchStats(total: 0, release: 0, keep: 0),
-    this.todaySpecies = const {},
-    this.monthStats = const CatchStats(total: 0, release: 0, keep: 0),
-    this.monthSpecies = const {},
-    this.yearStats = const CatchStats(total: 0, release: 0, keep: 0),
-    this.yearSpecies = const {},
-    this.allStats = const CatchStats(total: 0, release: 0, keep: 0),
-    this.allSpecies = const {},
-    this.top3Fishes = const [],
-    this.monthTrend = const [],
-  });
 
   int get todayCount => todayStats.total;
   int get todayRelease => todayStats.release;
@@ -84,11 +84,11 @@ class HomeState {
 }
 
 class HomeViewModel extends StateNotifier<HomeState> {
-  final StatsRepository _statsRepo;
 
   HomeViewModel(this._statsRepo) : super(const HomeState()) {
     loadData();
   }
+  final StatsRepository _statsRepo;
 
   Future<void> loadData() async {
     // 如果已经在加载中，跳过（防止重复调用）
@@ -114,7 +114,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
         monthTrend: dashboard.monthTrend,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: () => e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: e.toString);
     }
   }
 

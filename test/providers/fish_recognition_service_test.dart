@@ -16,7 +16,6 @@ void main() {
         // Arrange
         final service = FishRecognitionService();
         final settings = AiRecognitionSettings(
-          currentProvider: AiRecognitionProvider.gemini,
           providerConfigs: {}, // Empty - no config for any provider
         );
 
@@ -34,10 +33,8 @@ void main() {
         final config = AiProviderConfig(
           provider: AiRecognitionProvider.gemini,
           apiKey: '', // Empty API key
-          enabled: true,
         );
         final settings = AiRecognitionSettings(
-          currentProvider: AiRecognitionProvider.gemini,
           providerConfigs: {AiRecognitionProvider.gemini: config},
         );
 
@@ -58,7 +55,6 @@ void main() {
           enabled: false, // Disabled
         );
         final settings = AiRecognitionSettings(
-          currentProvider: AiRecognitionProvider.gemini,
           providerConfigs: {AiRecognitionProvider.gemini: config},
         );
 
@@ -76,10 +72,8 @@ void main() {
         final config = AiProviderConfig(
           provider: AiRecognitionProvider.gemini,
           apiKey: '',
-          enabled: true,
         );
         final settings = AiRecognitionSettings(
-          currentProvider: AiRecognitionProvider.gemini,
           providerConfigs: {AiRecognitionProvider.gemini: config},
         );
 
@@ -104,7 +98,6 @@ void main() {
           enabled: false,
         );
         final settings = AiRecognitionSettings(
-          currentProvider: AiRecognitionProvider.gemini,
           providerConfigs: {AiRecognitionProvider.gemini: config},
         );
 
@@ -131,7 +124,6 @@ void main() {
             AiRecognitionProvider.gemini: const AiProviderConfig(
               provider: AiRecognitionProvider.gemini,
               apiKey: 'gemini-key',
-              enabled: true,
             ),
           },
         );
@@ -160,7 +152,6 @@ void main() {
         final config = AiProviderConfig(
           provider: AiRecognitionProvider.deepseek,
           apiKey: 'test-api-key',
-          enabled: true,
         );
         final settings = AiRecognitionSettings(
           currentProvider: AiRecognitionProvider.deepseek,
@@ -175,7 +166,7 @@ void main() {
             (e) => e.message,
             'message',
             contains('视觉'),
-          )),
+          ),),
         );
       });
 
@@ -327,15 +318,15 @@ void main() {
       test('FishRecognitionErrorType enum has all expected values', () {
         expect(FishRecognitionErrorType.values.length, equals(5));
         expect(FishRecognitionErrorType.values,
-            contains(FishRecognitionErrorType.apiKeyInvalid));
+            contains(FishRecognitionErrorType.apiKeyInvalid),);
         expect(FishRecognitionErrorType.values,
-            contains(FishRecognitionErrorType.timeout));
+            contains(FishRecognitionErrorType.timeout),);
         expect(FishRecognitionErrorType.values,
-            contains(FishRecognitionErrorType.networkError));
+            contains(FishRecognitionErrorType.networkError),);
         expect(FishRecognitionErrorType.values,
-            contains(FishRecognitionErrorType.rateLimited));
+            contains(FishRecognitionErrorType.rateLimited),);
         expect(FishRecognitionErrorType.values,
-            contains(FishRecognitionErrorType.unknown));
+            contains(FishRecognitionErrorType.unknown),);
       });
     });
 
@@ -357,7 +348,6 @@ void main() {
         const original = AiProviderConfig(
           provider: AiRecognitionProvider.gemini,
           apiKey: 'original-key',
-          enabled: true,
         );
 
         final updated = original.copyWith(
@@ -368,7 +358,7 @@ void main() {
         expect(updated.apiKey, equals('new-key'));
         expect(updated.enabled, isFalse);
         expect(updated.provider,
-            equals(AiRecognitionProvider.gemini)); // unchanged
+            equals(AiRecognitionProvider.gemini),); // unchanged
       });
 
       test('can be serialized and deserialized', () {
@@ -421,7 +411,6 @@ void main() {
             AiRecognitionProvider.claude: const AiProviderConfig(
               provider: AiRecognitionProvider.claude,
               apiKey: 'claude-key',
-              enabled: true,
             ),
           },
           autoRecognize: false,
@@ -451,7 +440,6 @@ void main() {
             AiRecognitionProvider.minimax: const AiProviderConfig(
               provider: AiRecognitionProvider.minimax,
               apiKey: 'minimax-key',
-              enabled: true,
             ),
           },
         );

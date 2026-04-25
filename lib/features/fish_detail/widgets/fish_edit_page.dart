@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/di/di.dart';
-import '../../../core/models/app_settings.dart';
-import '../../../core/models/fish_catch.dart';
-import '../../../core/models/equipment.dart';
-import '../../../core/providers/app_settings_provider.dart';
-import '../../../core/services/app_logger.dart';
-import '../../../core/utils/unit_converter.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
 
 class FishEditPage extends ConsumerStatefulWidget {
+
+  const FishEditPage({required this.fish, required this.strings, super.key});
   final Map<String, dynamic> fish;
   final AppStrings strings;
-
-  const FishEditPage({super.key, required this.fish, required this.strings});
 
   @override
   ConsumerState<FishEditPage> createState() => _FishEditPageState();
@@ -78,7 +77,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
           _lures = lures;
         });
       }
-    } catch (e, st) {
+    } catch (e) {
       AppLogger.e('FishEditPage', 'Failed to load equipment', e);
     }
   }
@@ -286,7 +285,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
         border: const OutlineInputBorder(),
       ),
       items: [
-        DropdownMenuItem<int?>(value: null, child: Text(widget.strings.notUsing)),
+        DropdownMenuItem<int?>(child: Text(widget.strings.notUsing)),
         ...items.map(
           (e) =>
               DropdownMenuItem<int?>(value: e.id, child: Text(e.displayName)),
@@ -374,7 +373,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
     final temperatureUnit = appSettings.units.temperatureUnit;
     final isChinese = appSettings.language == AppLanguage.chinese;
     final tempSymbol = UnitConverter.getTemperatureSymbol(temperatureUnit,
-        isChinese: isChinese);
+        isChinese: isChinese,);
     final tempController = TextEditingController(
       text: _airTemperature?.toStringAsFixed(1) ?? '',
     );
@@ -431,7 +430,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
                     .map((opt) => DropdownMenuItem(
                           value: opt.$1,
                           child: Text(opt.$2),
-                        ))
+                        ),)
                     .toList(),
                 onChanged: (v) => setState(() => selectedWeatherCode = v),
               ),
@@ -451,7 +450,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
       ),
     );
 
-    if (confirmed == true && mounted) {
+    if ((confirmed ?? false) && mounted) {
       final temp = double.tryParse(tempController.text);
       final pressure = double.tryParse(pressureController.text);
       setState(() {
@@ -476,7 +475,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
     final parts = <String>[];
     if (_airTemperature != null) {
       parts.add(
-          '${s.airTemperature}: ${UnitConverter.formatTemperature(_airTemperature!, temperatureUnit)}');
+          '${s.airTemperature}: ${UnitConverter.formatTemperature(_airTemperature!, temperatureUnit)}',);
     }
     if (_pressure != null) {
       parts.add('${s.pressure}: ${_pressure!.toStringAsFixed(0)}hPa');

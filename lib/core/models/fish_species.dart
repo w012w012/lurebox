@@ -58,25 +58,12 @@ enum FishRarity {
 ///
 /// 代表一个具体的鱼类物种，包含学名、分类、稀有度、习性等信息
 class FishSpecies {
-  final String id;
-  final String standardName;
-  final String? scientificName;
-  final List<String> aliases;
-  final FishCategory category;
-  final FishRarity rarity;
-  final String? habitat;
-  final String? behavior;
-  final String? fishingMethod;
-  final String? description;
-  final String? iconEmoji;
 
   const FishSpecies({
     required this.id,
     required this.standardName,
-    this.scientificName,
+    required this.category, required this.rarity, this.scientificName,
     this.aliases = const [],
-    required this.category,
-    required this.rarity,
     this.habitat,
     this.behavior,
     this.fishingMethod,
@@ -103,6 +90,17 @@ class FishSpecies {
       iconEmoji: map['icon_emoji'] as String?,
     );
   }
+  final String id;
+  final String standardName;
+  final String? scientificName;
+  final List<String> aliases;
+  final FishCategory category;
+  final FishRarity rarity;
+  final String? habitat;
+  final String? behavior;
+  final String? fishingMethod;
+  final String? description;
+  final String? iconEmoji;
 
   Map<String, dynamic> toMap() {
     return {

@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// Collapsible achievement card with expand/collapse functionality.
 /// Displays category title, count, icon, and expandable child items.
 class AchievementCollapseCard extends ConsumerStatefulWidget {
+
+  const AchievementCollapseCard({
+    required this.title, required this.currentCount, required this.totalCount, required this.icon, super.key,
+    this.isCompleted = false,
+    this.children = const [],
+    this.initiallyExpanded = false,
+  });
   final String title;
   final int currentCount;
   final int totalCount;
@@ -16,17 +23,6 @@ class AchievementCollapseCard extends ConsumerStatefulWidget {
   final bool isCompleted;
   final List<Widget> children;
   final bool initiallyExpanded;
-
-  const AchievementCollapseCard({
-    super.key,
-    required this.title,
-    required this.currentCount,
-    required this.totalCount,
-    required this.icon,
-    this.isCompleted = false,
-    this.children = const [],
-    this.initiallyExpanded = false,
-  });
 
   @override
   ConsumerState<AchievementCollapseCard> createState() =>
@@ -49,12 +45,12 @@ class _AchievementCollapseCardState
       vsync: this,
     );
     _rotationAnimation = Tween<double>(
-      begin: 0.0,
+      begin: 0,
       end: 0.5,
     ).animate(CurvedAnimation(
       parent: _rotationController,
       curve: TeslaTheme.transitionCurve,
-    ));
+    ),);
 
     if (_isExpanded) {
       _rotationController.value = 1.0;
@@ -216,7 +212,7 @@ class _AchievementCollapseCardState
               final index = entry.key;
               final child = entry.value;
               return TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0.0, end: 1.0),
+                tween: Tween(begin: 0, end: 1),
                 duration: Duration(
                   milliseconds:
                       TeslaTheme.transitionDuration.inMilliseconds * (index + 1),
@@ -246,20 +242,17 @@ class _AchievementCollapseCardState
 
 /// Child achievement item for use within AchievementCollapseCard
 class AchievementChildItem extends StatelessWidget {
+
+  const AchievementChildItem({
+    required this.title, required this.currentCount, required this.totalCount, super.key,
+    this.isCompleted = false,
+    this.subtitle,
+  });
   final String title;
   final int currentCount;
   final int totalCount;
   final bool isCompleted;
   final String? subtitle;
-
-  const AchievementChildItem({
-    super.key,
-    required this.title,
-    required this.currentCount,
-    required this.totalCount,
-    this.isCompleted = false,
-    this.subtitle,
-  });
 
   @override
   Widget build(BuildContext context) {

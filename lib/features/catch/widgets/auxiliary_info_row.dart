@@ -1,34 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-
-import '../../../core/constants/constants.dart';
-import '../../../core/constants/strings.dart';
-import '../../../core/camera/camera_state.dart';
-import '../../../core/camera/camera_view_model.dart';
-import '../../../core/providers/app_settings_provider.dart';
-import '../../../core/services/weather_service.dart';
-import '../../../core/utils/unit_converter.dart';
+import 'package:lurebox/core/camera/camera_state.dart';
+import 'package:lurebox/core/camera/camera_view_model.dart';
+import 'package:lurebox/core/constants/constants.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/services/weather_service.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
 
 /// An expanded info row displaying location, weather, and time.
 /// Each item is displayed in a card-like container with clear icon and text.
 class AuxiliaryInfoRow extends ConsumerWidget {
+
+  const AuxiliaryInfoRow({
+    required this.state, required this.vm, required this.strings, super.key,
+    this.onEditLocation,
+    this.onEditTime,
+    this.onEditWeather,
+  });
   final CameraState state;
   final CameraViewModel vm;
   final AppStrings strings;
   final VoidCallback? onEditLocation;
   final VoidCallback? onEditTime;
   final VoidCallback? onEditWeather;
-
-  const AuxiliaryInfoRow({
-    super.key,
-    required this.state,
-    required this.vm,
-    required this.strings,
-    this.onEditLocation,
-    this.onEditTime,
-    this.onEditWeather,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -46,7 +42,7 @@ class AuxiliaryInfoRow extends ConsumerWidget {
               context: context,
               icon: Icons.location_on,
               label: strings.address,
-              text: state.locationName?.isNotEmpty == true
+              text: state.locationName?.isNotEmpty ?? false
                   ? state.locationName!
                   : strings.tapToSet,
               onTap: onEditLocation,
@@ -89,7 +85,7 @@ class AuxiliaryInfoRow extends ConsumerWidget {
       parts.add(UnitConverter.formatTemperature(
         state.airTemperature!,
         temperatureUnit,
-      ));
+      ),);
     }
     if (parts.isEmpty) return strings.tapToSet;
     return parts.join(' · ');

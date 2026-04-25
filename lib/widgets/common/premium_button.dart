@@ -1,23 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/animation_constants.dart';
-import '../../core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/animation_constants.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
 
 /// 高级极简按钮组件
 /// 提供多种样式的按钮，符合Premium Minimalist设计系统
 class PremiumButton extends StatefulWidget {
-  final String text;
-  final VoidCallback? onPressed;
-  final PremiumButtonVariant variant;
-  final IconData? icon;
-  final bool isLoading;
-  final bool isFullWidth;
-  final EdgeInsets? padding;
-  final double? borderRadius;
 
   const PremiumButton({
-    super.key,
-    required this.text,
+    required this.text, super.key,
     this.onPressed,
     this.variant = PremiumButtonVariant.primary,
     this.icon,
@@ -26,6 +17,14 @@ class PremiumButton extends StatefulWidget {
     this.padding,
     this.borderRadius,
   });
+  final String text;
+  final VoidCallback? onPressed;
+  final PremiumButtonVariant variant;
+  final IconData? icon;
+  final bool isLoading;
+  final bool isFullWidth;
+  final EdgeInsets? padding;
+  final double? borderRadius;
 
   @override
   State<PremiumButton> createState() => _PremiumButtonState();
@@ -114,7 +113,7 @@ class _PremiumButtonState extends State<PremiumButton> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),
             ),
-            side: BorderSide(color: colors.borderColor!, width: 1),
+            side: BorderSide(color: colors.borderColor!),
             textStyle: _textStyle,
           ),
           child: _buildButtonChild(),
@@ -222,18 +221,9 @@ enum PremiumButtonVariant {
 
 /// 图标按钮
 class PremiumIconButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback? onPressed;
-  final String? tooltip;
-  final String? accessibilityLabel;
-  final PremiumButtonVariant variant;
-  final double size;
-  final Color? color;
-  final Color? backgroundColor;
 
   const PremiumIconButton({
-    super.key,
-    required this.icon,
+    required this.icon, super.key,
     this.onPressed,
     this.tooltip,
     this.accessibilityLabel,
@@ -242,6 +232,14 @@ class PremiumIconButton extends StatelessWidget {
     this.color,
     this.backgroundColor,
   });
+  final IconData icon;
+  final VoidCallback? onPressed;
+  final String? tooltip;
+  final String? accessibilityLabel;
+  final PremiumButtonVariant variant;
+  final double size;
+  final Color? color;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -273,7 +271,6 @@ class PremiumIconButton extends StatelessWidget {
             ),
           ),
         );
-        break;
       case PremiumButtonVariant.secondary:
         button = Semantics(
           button: true,
@@ -297,7 +294,6 @@ class PremiumIconButton extends StatelessWidget {
             ),
           ),
         );
-        break;
       case PremiumButtonVariant.outline:
         button = Semantics(
           button: true,
@@ -308,7 +304,6 @@ class PremiumIconButton extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border.all(
                 color: TeslaColors.electricBlue,
-                width: 1,
               ),
               borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
             ),
@@ -320,7 +315,6 @@ class PremiumIconButton extends StatelessWidget {
             ),
           ),
         );
-        break;
       case PremiumButtonVariant.text:
         button = Semantics(
           button: true,
@@ -336,7 +330,6 @@ class PremiumIconButton extends StatelessWidget {
             ),
           ),
         );
-        break;
       case PremiumButtonVariant.danger:
         button = Semantics(
           button: true,
@@ -356,7 +349,6 @@ class PremiumIconButton extends StatelessWidget {
             ),
           ),
         );
-        break;
       case PremiumButtonVariant.success:
         button = Semantics(
           button: true,
@@ -376,11 +368,10 @@ class PremiumIconButton extends StatelessWidget {
             ),
           ),
         );
-        break;
     }
 
     if (tooltip != null) {
-      return Tooltip(message: tooltip!, child: button);
+      return Tooltip(message: tooltip, child: button);
     }
 
     return button;
@@ -389,22 +380,21 @@ class PremiumIconButton extends StatelessWidget {
 
 /// 浮动操作按钮
 class PremiumFAB extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback? onPressed;
-  final String? tooltip;
-  final bool mini;
-  final Color? backgroundColor;
-  final Color? foregroundColor;
 
   const PremiumFAB({
-    super.key,
-    required this.icon,
+    required this.icon, super.key,
     this.onPressed,
     this.tooltip,
     this.mini = false,
     this.backgroundColor,
     this.foregroundColor,
   });
+  final IconData icon;
+  final VoidCallback? onPressed;
+  final String? tooltip;
+  final bool mini;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
 
   @override
   Widget build(BuildContext context) {

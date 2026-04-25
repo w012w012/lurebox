@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:image/image.dart' as img;
-import '../services/app_logger.dart';
-import '../services/error_service.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/services/error_service.dart';
 
 /// 图像压缩工具
 ///
@@ -51,8 +51,8 @@ class ImageCompressor {
       }
 
       // 计算新的尺寸
-      int newWidth = image.width;
-      int newHeight = image.height;
+      var newWidth = image.width;
+      var newHeight = image.height;
 
       final targetMaxWidth = maxWidth ?? ImageCompressor.maxWidth;
       final targetMaxHeight = maxHeight ?? ImageCompressor.maxHeight;
@@ -166,7 +166,7 @@ class ImageCompressor {
       }
 
       final cutoffDate = DateTime.now().subtract(Duration(days: daysToKeep));
-      int deletedCount = 0;
+      var deletedCount = 0;
 
       await for (final entity in directory.list()) {
         if (entity is File && entity.path.endsWith('.jpg')) {

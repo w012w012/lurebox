@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart' as perm_handler;
 import 'package:geolocator/geolocator.dart';
-
-import '../constants/strings.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:permission_handler/permission_handler.dart' as perm_handler;
 
 /// 权限请求结果
 class PermissionResult {
-  final bool granted;
-  final bool permanentlyDenied;
-  final String? errorMessage;
 
   const PermissionResult({
     required this.granted,
     required this.permanentlyDenied,
     this.errorMessage,
   });
+  final bool granted;
+  final bool permanentlyDenied;
+  final String? errorMessage;
 }
 
 /// Abstracts the permission_handler and geolocator platform calls so
@@ -51,11 +50,6 @@ class _RealPermissionPlatform extends PermissionPlatform {
 
 /// 权限类型信息
 class PermissionInfo {
-  final perm_handler.Permission permission;
-  final String title;
-  final String description;
-  final String benefit;
-  final IconData icon;
 
   const PermissionInfo({
     required this.permission,
@@ -64,14 +58,19 @@ class PermissionInfo {
     required this.benefit,
     required this.icon,
   });
+  final perm_handler.Permission permission;
+  final String title;
+  final String description;
+  final String benefit;
+  final IconData icon;
 }
 
 /// 权限服务 - 统一处理权限请求和用户引导
 class PermissionService {
-  static final PermissionService _instance = PermissionService._();
   factory PermissionService() => _instance;
   PermissionService._([PermissionPlatform? platform])
       : _platform = platform ?? PermissionPlatform.real;
+  static final PermissionService _instance = PermissionService._();
 
   PermissionPlatform _platform;
 
@@ -180,7 +179,7 @@ class PermissionService {
     // 首次或已拒绝 - 显示教育引导后请求
     if (context.mounted) {
       final shouldRequest = await _showEducationDialog(context, info, strings: strings);
-      if (shouldRequest == true) {
+      if (shouldRequest ?? false) {
         final newStatus = await _platform.request(info.permission);
 
         if (newStatus.isGranted || newStatus.isLimited) {
@@ -207,7 +206,7 @@ class PermissionService {
 
   /// 显示权限教育对话框
   Future<bool?> _showEducationDialog(
-      BuildContext context, PermissionInfo info, {AppStrings? strings}) {
+      BuildContext context, PermissionInfo info, {AppStrings? strings,}) {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(

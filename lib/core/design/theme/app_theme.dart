@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
 
 /// Premium Minimalist 主题配置
 class AppTheme {
   // 间距系统 (4px基础单位)
-  static const double spacingXs = 4.0;
-  static const double spacingSm = 8.0;
-  static const double spacingMd = 12.0;
-  static const double spacingLg = 16.0;
-  static const double spacingXl = 24.0;
-  static const double spacingXxl = 32.0;
+  static const double spacingXs = 4;
+  static const double spacingSm = 8;
+  static const double spacingMd = 12;
+  static const double spacingLg = 16;
+  static const double spacingXl = 24;
+  static const double spacingXxl = 32;
 
   // 圆角系统
-  static const double radiusSm = 6.0;
-  static const double radiusMd = 12.0;
-  static const double radiusLg = 16.0;
-  static const double radiusXl = 24.0;
-  static const double radiusFull = 9999.0;
+  static const double radiusSm = 6;
+  static const double radiusMd = 12;
+  static const double radiusLg = 16;
+  static const double radiusXl = 24;
+  static const double radiusFull = 9999;
 
   // 阴影系统
   static List<BoxShadow> get shadowSm => [
@@ -54,7 +54,6 @@ class AppTheme {
 
       // 基础配置
       scaffoldBackgroundColor: AppColors.backgroundLight,
-      fontFamily: null, // 使用系统字体
       // AppBar 主题
       appBarTheme: const AppBarTheme(
         centerTitle: true,
@@ -158,7 +157,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusMd),
           ),
-          side: const BorderSide(color: AppColors.accentLight, width: 1),
+          side: const BorderSide(color: AppColors.accentLight),
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -203,7 +202,7 @@ class AppTheme {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.error, width: 1),
+          borderSide: const BorderSide(color: AppColors.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
@@ -343,7 +342,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusSm),
         ),
-        side: const BorderSide(color: AppColors.borderLight, width: 1),
+        side: const BorderSide(color: AppColors.borderLight),
         padding: const EdgeInsets.symmetric(
           horizontal: spacingMd,
           vertical: spacingSm,
@@ -401,7 +400,6 @@ class AppTheme {
 
 // 基础配置
       scaffoldBackgroundColor: AppColors.backgroundDark,
-      fontFamily: null, // 使用系统字体
       // AppBar 主题
       appBarTheme: const AppBarTheme(
         centerTitle: true,
@@ -505,7 +503,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusMd),
           ),
-          side: const BorderSide(color: AppColors.accentDark, width: 1),
+          side: const BorderSide(color: AppColors.accentDark),
           textStyle: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -550,7 +548,7 @@ class AppTheme {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: AppColors.error, width: 1),
+          borderSide: const BorderSide(color: AppColors.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
@@ -690,7 +688,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusSm),
         ),
-        side: const BorderSide(color: AppColors.borderDark, width: 1),
+        side: const BorderSide(color: AppColors.borderDark),
         padding: const EdgeInsets.symmetric(
           horizontal: spacingMd,
           vertical: spacingSm,

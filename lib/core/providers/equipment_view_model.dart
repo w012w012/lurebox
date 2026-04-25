@@ -1,19 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../di/di.dart';
-import '../models/equipment.dart';
-import '../services/equipment_service.dart';
-import '../services/fish_catch_service.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:lurebox/core/services/fish_catch_service.dart';
 
 class EquipmentListState {
-  final bool isLoading;
-  final String? errorMessage;
-  final List<Equipment> rodList;
-  final List<Equipment> reelList;
-  final List<Equipment> lureList;
-  final Map<int, Map<String, int>> equipmentStats;
-  final String selectedType;
-  final bool allExpanded;
-  final int? expandedId;
 
   const EquipmentListState({
     this.isLoading = true,
@@ -26,6 +17,15 @@ class EquipmentListState {
     this.allExpanded = true,
     this.expandedId,
   });
+  final bool isLoading;
+  final String? errorMessage;
+  final List<Equipment> rodList;
+  final List<Equipment> reelList;
+  final List<Equipment> lureList;
+  final Map<int, Map<String, int>> equipmentStats;
+  final String selectedType;
+  final bool allExpanded;
+  final int? expandedId;
 
   EquipmentListState copyWith({
     bool? isLoading,
@@ -66,13 +66,13 @@ class EquipmentListState {
 }
 
 class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
-  final EquipmentService _equipmentService;
-  final FishCatchService _fishCatchService;
 
   EquipmentListViewModel(this._equipmentService, this._fishCatchService)
       : super(const EquipmentListState()) {
     loadData();
   }
+  final EquipmentService _equipmentService;
+  final FishCatchService _fishCatchService;
 
   Future<void> loadData() async {
     state = state.copyWith(isLoading: true, errorMessage: () => null);
@@ -92,7 +92,7 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
         equipmentStats: (results[3] as Map).cast<int, Map<String, int>>(),
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, errorMessage: () => e.toString());
+      state = state.copyWith(isLoading: false, errorMessage: e.toString);
     }
   }
 
@@ -102,7 +102,7 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
 
   void toggleExpanded(int id) {
     if (state.expandedId == id) {
-      state = state.copyWith(expandedId: null);
+      state = state.copyWith();
     } else {
       state = state.copyWith(expandedId: id);
     }
@@ -117,7 +117,7 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
       await _equipmentService.delete(id);
       await loadData();
     } catch (e) {
-      state = state.copyWith(errorMessage: () => e.toString());
+      state = state.copyWith(errorMessage: e.toString);
     }
   }
 
@@ -128,7 +128,7 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
       await _equipmentService.setDefaultEquipment(id, type);
       await loadData();
     } catch (e) {
-      state = state.copyWith(errorMessage: () => e.toString());
+      state = state.copyWith(errorMessage: e.toString);
     }
   }
 }

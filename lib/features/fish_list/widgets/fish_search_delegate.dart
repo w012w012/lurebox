@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/strings.dart';
-import '../../../core/models/fish_catch.dart';
-import '../../../widgets/common/image_cache_helper.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/widgets/common/image_cache_helper.dart';
 
 class FishSearchDelegate extends SearchDelegate<FishCatch> {
-  final List<FishCatch> allCatches;
-  final AppStrings strings;
-  final Function(FishCatch) onTap;
 
   FishSearchDelegate(this.allCatches, this.strings, this.onTap);
+  final List<FishCatch> allCatches;
+  final AppStrings strings;
+  final void Function(FishCatch) onTap;
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -85,7 +85,7 @@ class FishSearchDelegate extends SearchDelegate<FishCatch> {
                     height: 100,
                   ),
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Container(
+                  errorBuilder: (_, __, ___) => ColoredBox(
                     color: Theme.of(
                       context,
                     ).colorScheme.surfaceContainerHighest,

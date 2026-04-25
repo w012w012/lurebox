@@ -2,7 +2,7 @@ import 'dart:collection';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '../../core/services/app_logger.dart';
+import 'package:lurebox/core/services/app_logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -19,7 +19,7 @@ class ImageCacheHelper {
   // 根据设备内存动态计算缓存大小
   static int _calculateCacheSize() {
     // 默认缓存大小
-    int cacheSize = 50;
+    var cacheSize = 50;
 
     // 在Web平台上使用较小的缓存
     if (kIsWeb) {
@@ -154,7 +154,7 @@ class ImageCacheHelper {
       }
 
       final cutoffDate = DateTime.now().subtract(Duration(days: daysToKeep));
-      int deletedCount = 0;
+      var deletedCount = 0;
 
       await for (final entity in imageDir.list()) {
         if (entity is File && entity.path.endsWith('.jpg')) {
@@ -198,7 +198,7 @@ class ImageCacheHelper {
         final key = _getCacheKey(path, width, height);
         if (!_memoryCache.containsKey(key)) {
           futures.add(
-              precacheThumbnail(context, path, width: width, height: height));
+              precacheThumbnail(context, path, width: width, height: height),);
         }
       }
     }
@@ -269,10 +269,10 @@ class ImageCacheHelper {
 }
 
 class LRUMap<K, V> {
-  final int _maxSize;
-  final LinkedHashMap<K, V> _map = LinkedHashMap<K, V>();
 
   LRUMap({int maxSize = 50}) : _maxSize = maxSize;
+  final int _maxSize;
+  final LinkedHashMap<K, V> _map = LinkedHashMap<K, V>();
 
   int get maxSize => _maxSize;
   set maxSize(int size) {
@@ -318,12 +318,6 @@ class LRUMap<K, V> {
 }
 
 class CachedNetworkImage extends StatelessWidget {
-  final String? imagePath;
-  final double? width;
-  final double? height;
-  final BoxFit fit;
-  final int? cacheWidth;
-  final int? cacheHeight;
 
   const CachedNetworkImage({
     super.key,
@@ -334,6 +328,12 @@ class CachedNetworkImage extends StatelessWidget {
     this.cacheWidth,
     this.cacheHeight,
   });
+  final String? imagePath;
+  final double? width;
+  final double? height;
+  final BoxFit fit;
+  final int? cacheWidth;
+  final int? cacheHeight;
 
   @override
   Widget build(BuildContext context) {

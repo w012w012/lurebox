@@ -224,19 +224,19 @@ class UnitConverter {
 
   /// 格式化长度显示
   static String formatLength(double value, String unit,
-      {int decimals = 1, bool isChinese = true}) {
+      {int decimals = 1, bool isChinese = true,}) {
     return '${value.toStringAsFixed(decimals)} ${getLengthSymbol(unit, isChinese: isChinese)}';
   }
 
   /// 格式化重量显示
   static String formatWeight(double value, String unit,
-      {int decimals = 2, bool isChinese = true}) {
+      {int decimals = 2, bool isChinese = true,}) {
     return '${value.toStringAsFixed(decimals)} ${getWeightSymbol(unit, isChinese: isChinese)}';
   }
 
   /// 格式化距离显示
   static String formatDistance(double value, String unit,
-      {int decimals = 1, bool isChinese = true}) {
+      {int decimals = 1, bool isChinese = true,}) {
     return '${value.toStringAsFixed(decimals)} ${getDistanceSymbol(unit, isChinese: isChinese)}';
   }
 

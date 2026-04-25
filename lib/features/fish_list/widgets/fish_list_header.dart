@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/strings.dart';
+import 'package:lurebox/core/constants/strings.dart';
 
 class FishListHeader extends StatelessWidget {
+
+  const FishListHeader({
+    required this.strings, required this.hasFilters, required this.filterLabel, required this.onSearchTap, required this.onFilterTap, super.key,
+    this.onClearFilters,
+  });
   final AppStrings strings;
   final bool hasFilters;
   final String filterLabel;
   final VoidCallback onSearchTap;
   final VoidCallback onFilterTap;
   final VoidCallback? onClearFilters;
-
-  const FishListHeader({
-    super.key,
-    required this.strings,
-    required this.hasFilters,
-    required this.filterLabel,
-    required this.onSearchTap,
-    required this.onFilterTap,
-    this.onClearFilters,
-  });
 
   @override
   Widget build(BuildContext context) {

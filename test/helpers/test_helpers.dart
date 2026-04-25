@@ -1,14 +1,14 @@
-import 'package:sqflite_common_ffi/sqflite_ffi.dart' hide Database;
-import 'package:mocktail/mocktail.dart';
-import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/database/database.dart';
 import 'package:lurebox/core/models/equipment.dart';
-import 'package:lurebox/core/repositories/fish_catch_repository.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/repositories/equipment_repository.dart';
-import 'package:lurebox/core/repositories/species_history_repository.dart';
+import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 import 'package:lurebox/core/repositories/location_repository.dart';
 import 'package:lurebox/core/repositories/settings_repository.dart';
+import 'package:lurebox/core/repositories/species_history_repository.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
-import 'package:lurebox/core/database/database.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart' hide Database;
 
 void setUpDatabaseForTesting() {
   sqfliteFfiInit();

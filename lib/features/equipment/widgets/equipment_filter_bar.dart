@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../../core/providers/language_provider.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
 
 class EquipmentFilterBar extends ConsumerWidget {
-  final bool allExpanded;
-  final VoidCallback onToggleExpand;
 
   const EquipmentFilterBar({
-    super.key,
-    required this.allExpanded,
-    required this.onToggleExpand,
+    required this.allExpanded, required this.onToggleExpand, super.key,
   });
+  final bool allExpanded;
+  final VoidCallback onToggleExpand;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

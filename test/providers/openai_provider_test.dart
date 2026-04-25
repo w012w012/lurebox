@@ -1,7 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
-import 'package:lurebox/core/services/adapters/openai_provider.dart';
 import 'package:lurebox/core/services/adapters/openai_compatible_provider.dart';
+import 'package:lurebox/core/services/adapters/openai_provider.dart';
+
 import '../helpers/openai_provider_test_helpers.dart';
 
 void main() {

@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
+import 'package:lurebox/core/providers/stats_view_model.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 import 'package:lurebox/core/repositories/species_history_repository.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
-import 'package:lurebox/core/providers/stats_view_model.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockFishCatchRepository extends Mock implements FishCatchRepository {}
 
@@ -60,7 +60,7 @@ void main() {
   late MockStatsRepository mockStatsRepo;
   late FishCatchService fishCatchService;
 
-  final testStartDate = DateTime(2024, 1, 1);
+  final testStartDate = DateTime(2024);
   final testEndDate = DateTime(2024, 12, 31);
   const testTitle = 'Test Stats';
 
@@ -79,7 +79,7 @@ void main() {
           page: any(named: 'page'),
           pageSize: any(named: 'pageSize'),
           orderBy: any(named: 'orderBy'),
-        )).thenAnswer(
+        ),).thenAnswer(
       (_) async => const PaginatedResult<FishCatch>(
         items: [],
         totalCount: 0,
@@ -96,7 +96,7 @@ void main() {
           fate: any(named: 'fate'),
           species: any(named: 'species'),
           orderBy: any(named: 'orderBy'),
-        )).thenAnswer(
+        ),).thenAnswer(
       (_) async => const PaginatedResult<FishCatch>(
         items: [],
         totalCount: 0,
@@ -189,17 +189,13 @@ void main() {
         // Arrange
         final fishList = [
           _createFishCatch(
-            id: 1,
-            species: 'Bass',
             weight: 2.5,
-            fate: FishFateType.release,
             catchTime: DateTime(2024, 6, 15, 10, 30),
             locationName: 'Lake A',
           ),
           _createFishCatch(
             id: 2,
-            species: 'Bass',
-            weight: 3.0,
+            weight: 3,
             fate: FishFateType.keep,
             catchTime: DateTime(2024, 6, 15, 14, 45),
             locationName: 'Lake A',
@@ -208,16 +204,14 @@ void main() {
             id: 3,
             species: 'Trout',
             weight: 1.5,
-            fate: FishFateType.release,
             catchTime: DateTime(2024, 7, 20, 8, 15),
             locationName: 'River B',
           ),
           _createFishCatch(
             id: 4,
             species: 'Pike',
-            weight: 4.0,
-            fate: FishFateType.release,
-            catchTime: DateTime(2024, 8, 10, 16, 0),
+            weight: 4,
+            catchTime: DateTime(2024, 8, 10, 16),
             locationName: 'Lake C',
           ),
         ];
@@ -323,8 +317,8 @@ void main() {
       test('loadData() calculates releaseRate correctly', () async {
         // Arrange - 2 release, 2 keep = 50% release rate
         final fishList = [
-          _createFishCatch(id: 1, fate: FishFateType.release),
-          _createFishCatch(id: 2, fate: FishFateType.release),
+          _createFishCatch(),
+          _createFishCatch(id: 2),
           _createFishCatch(id: 3, fate: FishFateType.keep),
           _createFishCatch(id: 4, fate: FishFateType.keep),
         ];
@@ -353,9 +347,9 @@ void main() {
       test('loadData() handles null weight in fish catches', () async {
         // Arrange
         final fishList = [
-          _createFishCatch(id: 1, weight: 2.5, fate: FishFateType.release),
-          _createFishCatch(id: 2, weight: null, fate: FishFateType.release),
-          _createFishCatch(id: 3, weight: 3.0, fate: FishFateType.keep),
+          _createFishCatch(weight: 2.5),
+          _createFishCatch(id: 2),
+          _createFishCatch(id: 3, weight: 3, fate: FishFateType.keep),
         ];
 
         when(() => mockRepository.getByDateRange(testStartDate, testEndDate))
@@ -380,19 +374,14 @@ void main() {
         // Arrange
         final fishList = [
           _createFishCatch(
-            id: 1,
             locationName: 'Lake A',
-            fate: FishFateType.release,
           ),
           _createFishCatch(
             id: 2,
-            locationName: null,
-            fate: FishFateType.release,
           ),
           _createFishCatch(
             id: 3,
             locationName: '',
-            fate: FishFateType.release,
           ),
         ];
 
@@ -438,7 +427,7 @@ void main() {
         // Assert
         expect(viewModel.state.isLoading, false);
         expect(viewModel.state.errorMessage,
-            contains('Database connection failed'));
+            contains('Database connection failed'),);
         expect(viewModel.state.totalCount, 0);
         expect(viewModel.state.catches, isEmpty);
       });
@@ -592,8 +581,8 @@ void main() {
         // Arrange - now return some data
         when(() => mockRepository.getByDateRange(testStartDate, testEndDate))
             .thenAnswer((_) async => [
-                  _createFishCatch(id: 1, species: 'Bass'),
-                ]);
+                  _createFishCatch(),
+                ],);
 
         // Act
         await viewModel.refresh();
@@ -607,7 +596,7 @@ void main() {
       test('refresh() preserves existing state while loading', () async {
         // Arrange - start with some data
         final fishList = [
-          _createFishCatch(id: 1, species: 'Bass', weight: 2.5),
+          _createFishCatch(weight: 2.5),
         ];
 
         when(() => mockRepository.getByDateRange(testStartDate, testEndDate))
@@ -628,7 +617,7 @@ void main() {
             .thenAnswer((_) async {
           await Future.delayed(const Duration(milliseconds: 50));
           return [
-            _createFishCatch(id: 1, species: 'Bass', weight: 2.5),
+            _createFishCatch(weight: 2.5),
             _createFishCatch(id: 2, species: 'Trout', weight: 1.5),
           ];
         });
@@ -670,9 +659,9 @@ void main() {
       test('releaseRate returns 1.0 when all catches are released', () async {
         // Arrange
         final fishList = [
-          _createFishCatch(id: 1, fate: FishFateType.release),
-          _createFishCatch(id: 2, fate: FishFateType.release),
-          _createFishCatch(id: 3, fate: FishFateType.release),
+          _createFishCatch(),
+          _createFishCatch(id: 2),
+          _createFishCatch(id: 3),
         ];
 
         when(() => mockRepository.getByDateRange(testStartDate, testEndDate))
@@ -694,7 +683,7 @@ void main() {
       test('releaseRate returns 0.0 when all catches are kept', () async {
         // Arrange
         final fishList = [
-          _createFishCatch(id: 1, fate: FishFateType.keep),
+          _createFishCatch(fate: FishFateType.keep),
           _createFishCatch(id: 2, fate: FishFateType.keep),
         ];
 
@@ -717,9 +706,9 @@ void main() {
       test('releaseRate calculates correct fraction', () async {
         // Arrange - 3 released out of 4 total = 0.75
         final fishList = [
-          _createFishCatch(id: 1, fate: FishFateType.release),
-          _createFishCatch(id: 2, fate: FishFateType.release),
-          _createFishCatch(id: 3, fate: FishFateType.release),
+          _createFishCatch(),
+          _createFishCatch(id: 2),
+          _createFishCatch(id: 3),
           _createFishCatch(id: 4, fate: FishFateType.keep),
         ];
 

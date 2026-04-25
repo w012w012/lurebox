@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/models/app_settings.dart';
-import '../../../core/providers/app_settings_provider.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../widgets/common/premium_card.dart';
-import '../../../widgets/common/premium_input.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
+import 'package:lurebox/widgets/common/premium_input.dart';
 
 class MeSettingsPage extends ConsumerWidget {
   const MeSettingsPage({super.key});
@@ -71,7 +71,6 @@ class MeSettingsPage extends ConsumerWidget {
                       },
                     ),
                   ),
-                  onTap: null,
                 ),
                 const Divider(height: 1),
                 // Language - inline dropdown
@@ -104,7 +103,6 @@ class MeSettingsPage extends ConsumerWidget {
                       },
                     ),
                   ),
-                  onTap: null,
                 ),
                 const Divider(height: 1),
                 // Unit Settings - navigation tile
@@ -143,7 +141,7 @@ class MeSettingsPage extends ConsumerWidget {
     required Widget trailing,
     VoidCallback? onTap,
   }) {
-    final accentColor = TeslaColors.electricBlue;
+    const accentColor = TeslaColors.electricBlue;
 
     return InkWell(
       onTap: onTap,
@@ -188,7 +186,7 @@ class MeSettingsPage extends ConsumerWidget {
     required String subtitle,
     required VoidCallback onTap,
   }) {
-    final accentColor = TeslaColors.electricBlue;
+    const accentColor = TeslaColors.electricBlue;
 
     return InkWell(
       onTap: onTap,

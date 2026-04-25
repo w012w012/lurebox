@@ -1,8 +1,8 @@
-import '../../core/models/fish_species.dart';
-import 'fish_guide_data/freshwater_lure_species.dart';
-import 'fish_guide_data/saltwater_lure_species.dart';
-import 'fish_guide_data/freshwater_general_species.dart';
-import 'fish_guide_data/saltwater_general_species.dart';
+import 'package:lurebox/core/models/fish_species.dart';
+import 'package:lurebox/features/achievement/fish_guide_data/freshwater_general_species.dart';
+import 'package:lurebox/features/achievement/fish_guide_data/freshwater_lure_species.dart';
+import 'package:lurebox/features/achievement/fish_guide_data/saltwater_general_species.dart';
+import 'package:lurebox/features/achievement/fish_guide_data/saltwater_lure_species.dart';
 
 /// 鱼类图鉴数据
 ///

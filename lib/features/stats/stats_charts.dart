@@ -1,26 +1,22 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fl_chart/fl_chart.dart';
-
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/providers/language_provider.dart';
-import '../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// 概览项组件
 class OverviewItem extends ConsumerWidget {
+
+  const OverviewItem({
+    required this.label, required this.count, required this.color, super.key,
+    this.isPercent = false,
+  });
   final String label;
   final int count;
   final Color color;
   final bool isPercent;
-
-  const OverviewItem({
-    super.key,
-    required this.label,
-    required this.count,
-    required this.color,
-    this.isPercent = false,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -48,16 +44,13 @@ class OverviewItem extends ConsumerWidget {
 
 /// 装备饼图组件
 class EquipmentPieChart extends StatelessWidget {
+
+  const EquipmentPieChart({
+    required this.title, required this.data, required this.color, super.key,
+  });
   final String title;
   final Map<String, int> data;
   final Color color;
-
-  const EquipmentPieChart({
-    super.key,
-    required this.title,
-    required this.data,
-    required this.color,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +69,6 @@ class EquipmentPieChart extends StatelessWidget {
     ];
 
     return PremiumCard(
-      variant: PremiumCardVariant.standard,
       margin: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,14 +162,12 @@ class EquipmentPieChart extends StatelessWidget {
 
 /// 品种分布饼图组件
 class SpeciesPieChart extends ConsumerWidget {
-  final Map<String, int> speciesStats;
-  final int totalCount;
 
   const SpeciesPieChart({
-    super.key,
-    required this.speciesStats,
-    required this.totalCount,
+    required this.speciesStats, required this.totalCount, super.key,
   });
+  final Map<String, int> speciesStats;
+  final int totalCount;
 
   static const _chartColors = [
     Color(0xFF3E6AE1), // electric blue
@@ -195,7 +185,6 @@ class SpeciesPieChart extends ConsumerWidget {
     if (speciesStats.isEmpty) return const SizedBox();
 
     return PremiumCard(
-      variant: PremiumCardVariant.standard,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -264,20 +253,18 @@ class SpeciesPieChart extends ConsumerWidget {
 
 /// 趋势柱状图组件
 class TrendBarChart extends ConsumerWidget {
+
+  const TrendBarChart({
+    required this.trendData, required this.trendTitle, super.key,
+    this.showDropdown = false,
+    this.trendType,
+    this.onTrendTypeChanged,
+  });
   final Map<String, int> trendData;
   final String trendTitle;
   final bool showDropdown;
   final String? trendType;
   final ValueChanged<String>? onTrendTypeChanged;
-
-  const TrendBarChart({
-    super.key,
-    required this.trendData,
-    required this.trendTitle,
-    this.showDropdown = false,
-    this.trendType,
-    this.onTrendTypeChanged,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -287,7 +274,6 @@ class TrendBarChart extends ConsumerWidget {
     const accentColor = TeslaColors.electricBlue;
 
     return PremiumCard(
-      variant: PremiumCardVariant.standard,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -352,7 +338,7 @@ class TrendBarChart extends ConsumerWidget {
                     ? 10
                     : (trendData.values.reduce((a, b) => a > b ? a : b) * 1.3 +
                             1)
-                        .toDouble(),
+                        ,
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
@@ -366,7 +352,7 @@ class TrendBarChart extends ConsumerWidget {
                     ),
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       final keys = trendData.keys.toList();
-                      final label = keys[group.x.toInt()];
+                      final label = keys[group.x];
                       final value = rod.toY.toInt();
                       return BarTooltipItem(
                         '$label\n$value ${strings.fishCountUnit}',
@@ -382,7 +368,6 @@ class TrendBarChart extends ConsumerWidget {
                   ),
                 ),
                 titlesData: FlTitlesData(
-                  show: true,
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -394,7 +379,7 @@ class TrendBarChart extends ConsumerWidget {
                           if (value.toInt() % step == 0) {
                             return Padding(
                               padding: const EdgeInsets.only(
-                                  top: TeslaTheme.spacingMicro),
+                                  top: TeslaTheme.spacingMicro,),
                               child: Text(
                                 keys[value.toInt()],
                                 style: Theme.of(
@@ -413,13 +398,13 @@ class TrendBarChart extends ConsumerWidget {
                     ),
                   ),
                   leftTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    
                   ),
                   topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    
                   ),
                   rightTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                    
                   ),
                 ),
                 borderData: FlBorderData(show: false),

@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
-import 'package:lurebox/core/services/fish_recognition_service.dart';
 import 'package:lurebox/core/services/adapters/minimax_provider.dart';
+import 'package:lurebox/core/services/fish_recognition_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
 
@@ -55,13 +56,13 @@ void main() {
               },
             },
           ],
-        }, 200);
+        }, 200,);
 
         when(() => mockHttpClient.post(
               any(),
               headers: any(named: 'headers'),
               body: any(named: 'body'),
-            )).thenAnswer((_) async => mockResponse);
+            ),).thenAnswer((_) async => mockResponse);
 
         // Act
         final result = await provider.identifySpecies(testImage, testConfig);
@@ -70,7 +71,7 @@ void main() {
         expect(result, isA<FishRecognitionResult>());
         expect(result.primarySpecies.chineseName, equals('鲈鱼'));
         expect(result.primarySpecies.scientificName,
-            equals('Lateolabrax japonicus'));
+            equals('Lateolabrax japonicus'),);
         expect(result.confidence, equals(85));
       });
 
@@ -88,14 +89,14 @@ void main() {
               },
             },
           ],
-        }, 200);
+        }, 200,);
 
         Uri? capturedUri;
         when(() => mockHttpClient.post(
               any(),
               headers: any(named: 'headers'),
               body: any(named: 'body'),
-            )).thenAnswer((invocation) async {
+            ),).thenAnswer((invocation) async {
           capturedUri = invocation.positionalArguments[0] as Uri;
           return mockResponse;
         });
@@ -122,7 +123,7 @@ void main() {
               },
             },
           ],
-        }, 200);
+        }, 200,);
 
         Map<String, String>? capturedHeaders;
         String? capturedBody;
@@ -131,7 +132,7 @@ void main() {
               any(),
               headers: any(named: 'headers'),
               body: any(named: 'body'),
-            )).thenAnswer((invocation) async {
+            ),).thenAnswer((invocation) async {
           capturedHeaders = invocation.namedArguments[const Symbol('headers')]
               as Map<String, String>?;
           capturedBody =
@@ -146,7 +147,7 @@ void main() {
         expect(capturedHeaders, isNotNull);
         expect(capturedHeaders!['Content-Type'], equals('application/json'));
         expect(
-            capturedHeaders!['Authorization'], equals('Bearer test-api-key'));
+            capturedHeaders!['Authorization'], equals('Bearer test-api-key'),);
 
         expect(capturedBody, isNotNull);
         final requestBody = jsonDecode(capturedBody!) as Map<String, dynamic>;
@@ -176,7 +177,7 @@ void main() {
         // Image URL part
         expect(userContent[1]['type'], equals('image_url'));
         expect(userContent[1]['image_url']['url'],
-            startsWith('data:image/jpeg;base64,'));
+            startsWith('data:image/jpeg;base64,'),);
       });
 
       test('parses response with alternatives correctly', () async {
@@ -193,13 +194,13 @@ void main() {
               },
             },
           ],
-        }, 200);
+        }, 200,);
 
         when(() => mockHttpClient.post(
               any(),
               headers: any(named: 'headers'),
               body: any(named: 'body'),
-            )).thenAnswer((_) async => mockResponse);
+            ),).thenAnswer((_) async => mockResponse);
 
         // Act
         final result = await provider.identifySpecies(testImage, testConfig);
@@ -219,13 +220,13 @@ void main() {
         final testImage = File('test/fixtures/test_fish.jpg');
         final mockResponse = createUtf8Response({
           'base_resp': {'status_code': 1003, 'status_msg': 'invalid api_key'},
-        }, 200);
+        }, 200,);
 
         when(() => mockHttpClient.post(
               any(),
               headers: any(named: 'headers'),
               body: any(named: 'body'),
-            )).thenAnswer((_) async => mockResponse);
+            ),).thenAnswer((_) async => mockResponse);
 
         // Act & Assert
         expect(
@@ -234,7 +235,7 @@ void main() {
             (e) => e.type,
             'type',
             equals(FishRecognitionErrorType.apiKeyInvalid),
-          )),
+          ),),
         );
       });
 
@@ -244,15 +245,15 @@ void main() {
         final mockResponse = createUtf8Response({
           'base_resp': {
             'status_code': 1004,
-            'status_msg': 'rate limit exceeded'
+            'status_msg': 'rate limit exceeded',
           },
-        }, 200);
+        }, 200,);
 
         when(() => mockHttpClient.post(
               any(),
               headers: any(named: 'headers'),
               body: any(named: 'body'),
-            )).thenAnswer((_) async => mockResponse);
+            ),).thenAnswer((_) async => mockResponse);
 
         // Act & Assert
         expect(
@@ -261,7 +262,7 @@ void main() {
             (e) => e.type,
             'type',
             equals(FishRecognitionErrorType.rateLimited),
-          )),
+          ),),
         );
       });
 
@@ -279,13 +280,13 @@ void main() {
               },
             },
           ],
-        }, 200);
+        }, 200,);
 
         when(() => mockHttpClient.post(
               any(),
               headers: any(named: 'headers'),
               body: any(named: 'body'),
-            )).thenAnswer((_) async => mockResponse);
+            ),).thenAnswer((_) async => mockResponse);
 
         // Act
         final result = await provider.identifySpecies(testImage, testConfig);
@@ -312,14 +313,14 @@ void main() {
               },
             },
           ],
-        }, 200);
+        }, 200,);
 
         Uri? capturedUri;
         when(() => mockHttpClient.post(
               any(),
               headers: any(named: 'headers'),
               body: any(named: 'body'),
-            )).thenAnswer((invocation) async {
+            ),).thenAnswer((invocation) async {
           capturedUri = invocation.positionalArguments[0] as Uri;
           return mockResponse;
         });
@@ -330,7 +331,7 @@ void main() {
         // Assert
         expect(capturedUri, isNotNull);
         expect(capturedUri.toString(),
-            startsWith('https://custom-api.example.com'));
+            startsWith('https://custom-api.example.com'),);
         expect(capturedUri.toString(), contains('/v1/text/chatcompletion_v2'));
       });
     });

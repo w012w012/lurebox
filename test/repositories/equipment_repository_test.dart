@@ -1,7 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/repositories/equipment_repository_impl.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
 import '../helpers/test_helpers.dart';
 
 void main() {
@@ -97,8 +98,6 @@ CREATE TABLE equipments (
     group('getAll', () {
       test('returns all non-deleted equipments', () async {
         final equipment1 = TestDataFactory.createEquipment(
-          id: 1,
-          type: EquipmentType.rod,
           brand: 'Brand1',
           model: 'Model1',
         );
@@ -119,8 +118,6 @@ CREATE TABLE equipments (
 
       test('excludes deleted equipments', () async {
         final equipment1 = TestDataFactory.createEquipment(
-          id: 1,
-          type: EquipmentType.rod,
           brand: 'Brand1',
           model: 'Model1',
         );
@@ -143,8 +140,6 @@ CREATE TABLE equipments (
 
       test('filters by type when provided', () async {
         final rod = TestDataFactory.createEquipment(
-          id: 1,
-          type: EquipmentType.rod,
           brand: 'RodBrand',
           model: 'RodModel',
         );
@@ -174,8 +169,6 @@ CREATE TABLE equipments (
     group('getById', () {
       test('returns equipment when it exists', () async {
         final equipment = TestDataFactory.createEquipment(
-          id: 1,
-          type: EquipmentType.rod,
           brand: 'Brand1',
           model: 'Model1',
         );
@@ -196,8 +189,6 @@ CREATE TABLE equipments (
 
       test('returns null for deleted equipment', () async {
         final equipment = TestDataFactory.createEquipment(
-          id: 1,
-          type: EquipmentType.rod,
           brand: 'Brand1',
           model: 'Model1',
         );
@@ -214,7 +205,6 @@ CREATE TABLE equipments (
       test('inserts equipment and returns id', () async {
         final equipment = TestDataFactory.createEquipment(
           id: 0, // id will be auto-generated
-          type: EquipmentType.rod,
           brand: 'Brand1',
           model: 'Model1',
         );
@@ -244,7 +234,6 @@ CREATE TABLE equipments (
         final defaultEquipment = Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Default',
             model: 'Rod',
           ).toMap(),
@@ -262,7 +251,6 @@ CREATE TABLE equipments (
       test('updates existing equipment', () async {
         final equipment = TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'OldBrand',
           model: 'OldModel',
         );
@@ -285,7 +273,6 @@ CREATE TABLE equipments (
       test('preserves other fields when updating', () async {
         final equipment = TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Brand',
           model: 'Model',
         );
@@ -309,7 +296,6 @@ CREATE TABLE equipments (
       test('sets is_deleted to 1', () async {
         final equipment = TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Brand1',
           model: 'Model1',
         );
@@ -330,7 +316,6 @@ CREATE TABLE equipments (
       test('excludes deleted equipment from getAll', () async {
         final equipment1 = TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Brand1',
           model: 'Model1',
         );
@@ -353,7 +338,6 @@ CREATE TABLE equipments (
       test('does not affect other equipments when deleting one', () async {
         final equipment1 = TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Brand1',
           model: 'Model1',
         );
@@ -379,7 +363,6 @@ CREATE TABLE equipments (
         final rod = Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Rod',
             model: 'Model',
           ).toMap(),
@@ -404,7 +387,6 @@ CREATE TABLE equipments (
         final rod = Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Rod',
             model: 'Model',
           ).toMap(),
@@ -423,13 +405,11 @@ CREATE TABLE equipments (
       test('sets equipment as default for its type', () async {
         final rod1 = TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Rod1',
           model: 'Model1',
         );
         final rod2 = TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Rod2',
           model: 'Model2',
         );
@@ -446,7 +426,6 @@ CREATE TABLE equipments (
         final rod1 = Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Rod1',
             model: 'Model1',
           ).toMap(),
@@ -454,7 +433,6 @@ CREATE TABLE equipments (
         });
         final rod2 = TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Rod2',
           model: 'Model2',
         );
@@ -471,7 +449,6 @@ CREATE TABLE equipments (
       test('works independently for different types', () async {
         final rod = TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Rod',
           model: 'Model',
         );
@@ -497,13 +474,12 @@ CREATE TABLE equipments (
 
     group('getPage', () {
       test('returns paginated results', () async {
-        for (int i = 0; i < 25; i++) {
+        for (var i = 0; i < 25; i++) {
           await repository.create(TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Brand$i',
             model: 'Model$i',
-          ));
+          ),);
         }
 
         final result = await repository.getPage(page: 1, pageSize: 10);
@@ -516,13 +492,12 @@ CREATE TABLE equipments (
       });
 
       test('returns hasMore false when on last page', () async {
-        for (int i = 0; i < 5; i++) {
+        for (var i = 0; i < 5; i++) {
           await repository.create(TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Brand$i',
             model: 'Model$i',
-          ));
+          ),);
         }
 
         final result = await repository.getPage(page: 1, pageSize: 10);
@@ -534,16 +509,15 @@ CREATE TABLE equipments (
       test('filters by type', () async {
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Rod',
           model: 'Model',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
           type: EquipmentType.reel,
           brand: 'Reel',
           model: 'Model',
-        ));
+        ),);
 
         final result = await repository.getPage(page: 1, type: 'rod');
 
@@ -554,16 +528,14 @@ CREATE TABLE equipments (
       test('respects custom orderBy', () async {
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'AAA',
           model: 'Model',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'ZZZ',
           model: 'Model',
-        ));
+        ),);
 
         final result = await repository.getPage(
           page: 1,
@@ -578,16 +550,14 @@ CREATE TABLE equipments (
       test('filters by brand', () async {
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Shimano',
           model: 'Model1',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Daiwa',
           model: 'Model2',
-        ));
+        ),);
 
         final result = await repository.getFilteredPage(
           page: 1,
@@ -601,16 +571,14 @@ CREATE TABLE equipments (
       test('filters by model', () async {
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Brand',
           model: 'Tournament',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Brand',
           model: 'Competitor',
-        ));
+        ),);
 
         final result = await repository.getFilteredPage(
           page: 1,
@@ -625,21 +593,19 @@ CREATE TABLE equipments (
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Brand',
             model: 'Model',
           ).toMap(),
           'category': 'Spinning',
-        }));
+        }),);
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Brand',
             model: 'Model',
           ).toMap(),
           'category': 'Casting',
-        }));
+        }),);
 
         final result = await repository.getFilteredPage(
           page: 1,
@@ -654,30 +620,27 @@ CREATE TABLE equipments (
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Shimano',
             model: 'Tournament',
           ).toMap(),
           'category': 'Spinning',
-        }));
+        }),);
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Shimano',
             model: 'Competitor',
           ).toMap(),
           'category': 'Spinning',
-        }));
+        }),);
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Daiwa',
             model: 'Tournament',
           ).toMap(),
           'category': 'Spinning',
-        }));
+        }),);
 
         final result = await repository.getFilteredPage(
           page: 1,
@@ -695,22 +658,20 @@ CREATE TABLE equipments (
       test('returns count per type', () async {
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Brand',
           model: 'Model',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Brand',
           model: 'Model',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
           type: EquipmentType.reel,
           brand: 'Brand',
           model: 'Model',
-        ));
+        ),);
 
         final stats = await repository.getStats();
 
@@ -721,16 +682,14 @@ CREATE TABLE equipments (
       test('excludes deleted equipment from stats', () async {
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Brand',
           model: 'Model',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Brand',
           model: 'Model',
-        ));
+        ),);
         await repository.delete(1);
 
         final stats = await repository.getStats();
@@ -749,22 +708,20 @@ CREATE TABLE equipments (
       test('returns distinct brands', () async {
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Shimano',
           model: 'Model1',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
           type: EquipmentType.reel,
           brand: 'Shimano',
           model: 'Model2',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Daiwa',
           model: 'Model3',
-        ));
+        ),);
 
         final brands = await repository.getBrands();
 
@@ -775,16 +732,14 @@ CREATE TABLE equipments (
       test('excludes deleted equipment', () async {
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Shimano',
           model: 'Model1',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Daiwa',
           model: 'Model2',
-        ));
+        ),);
         await repository.delete(2);
 
         final brands = await repository.getBrands();
@@ -795,18 +750,16 @@ CREATE TABLE equipments (
       test('excludes empty brands', () async {
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Shimano',
           model: 'Model1',
-        ));
+        ),);
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             model: 'Model2',
           ).toMap(),
           'brand': null,
-        }));
+        }),);
 
         final brands = await repository.getBrands();
 
@@ -816,16 +769,14 @@ CREATE TABLE equipments (
       test('returns sorted brands', () async {
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Zebra',
           model: 'Model',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Alpha',
           model: 'Model',
-        ));
+        ),);
 
         final brands = await repository.getBrands();
 
@@ -837,22 +788,19 @@ CREATE TABLE equipments (
       test('returns models for specific brand', () async {
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Shimano',
           model: 'Stradic',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Shimano',
           model: 'Sustainer',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Daiwa',
           model: 'Certate',
-        ));
+        ),);
 
         final models = await repository.getModelsByBrand('Shimano');
 
@@ -863,16 +811,14 @@ CREATE TABLE equipments (
       test('excludes deleted equipment', () async {
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Shimano',
           model: 'Stradic',
-        ));
+        ),);
         await repository.create(TestDataFactory.createEquipment(
           id: 0,
-          type: EquipmentType.rod,
           brand: 'Shimano',
           model: 'Sustainer',
-        ));
+        ),);
         await repository.delete(2);
 
         final models = await repository.getModelsByBrand('Shimano');
@@ -892,30 +838,27 @@ CREATE TABLE equipments (
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Brand',
             model: 'Model',
           ).toMap(),
           'category': 'Spinning',
-        }));
+        }),);
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Brand',
             model: 'Model',
           ).toMap(),
           'category': 'Spinning',
-        }));
+        }),);
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Brand',
             model: 'Model',
           ).toMap(),
           'category': 'Casting',
-        }));
+        }),);
 
         final distribution = await repository.getCategoryDistribution('rod');
 
@@ -927,21 +870,19 @@ CREATE TABLE equipments (
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Brand',
             model: 'Model',
           ).toMap(),
           'category': 'Spinning',
-        }));
+        }),);
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Brand',
             model: 'Model',
           ).toMap(),
           'category': 'Spinning',
-        }));
+        }),);
         await repository.delete(1);
 
         final distribution = await repository.getCategoryDistribution('rod');
@@ -953,12 +894,11 @@ CREATE TABLE equipments (
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Brand',
             model: 'Model',
           ).toMap(),
           'category': null,
-        }));
+        }),);
 
         final distribution = await repository.getCategoryDistribution('rod');
 
@@ -969,30 +909,27 @@ CREATE TABLE equipments (
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Brand',
             model: 'Model',
           ).toMap(),
           'category': 'Rare',
-        }));
+        }),);
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Brand',
             model: 'Model',
           ).toMap(),
           'category': 'Common',
-        }));
+        }),);
         await repository.create(Equipment.fromMap({
           ...TestDataFactory.createEquipment(
             id: 0,
-            type: EquipmentType.rod,
             brand: 'Brand',
             model: 'Model',
           ).toMap(),
           'category': 'Common',
-        }));
+        }),);
 
         final distribution = await repository.getCategoryDistribution('rod');
 

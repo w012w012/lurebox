@@ -20,7 +20,7 @@ void main() {
 
     testWidgets('calls onTap callback when tapped',
         (WidgetTester tester) async {
-      bool tapped = false;
+      var tapped = false;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -133,7 +133,6 @@ void main() {
           const MaterialApp(
             home: Scaffold(
               body: PremiumCard(
-                variant: PremiumCardVariant.standard,
                 child: Text('Standard Card'),
               ),
             ),
@@ -211,7 +210,7 @@ void main() {
       });
 
       testWidgets('calls onTap when tapped', (WidgetTester tester) async {
-        bool tapped = false;
+        var tapped = false;
 
         await tester.pumpWidget(
           MaterialApp(
@@ -282,7 +281,7 @@ void main() {
       });
 
       testWidgets('calls onTap when tapped', (WidgetTester tester) async {
-        bool tapped = false;
+        var tapped = false;
 
         await tester.pumpWidget(
           MaterialApp(
@@ -341,7 +340,7 @@ void main() {
       });
 
       testWidgets('calls onTap when tapped', (WidgetTester tester) async {
-        bool tapped = false;
+        var tapped = false;
 
         await tester.pumpWidget(
           MaterialApp(
@@ -382,7 +381,7 @@ void main() {
       });
 
       testWidgets('calls onTap when tapped', (WidgetTester tester) async {
-        bool tapped = false;
+        var tapped = false;
 
         await tester.pumpWidget(
           MaterialApp(

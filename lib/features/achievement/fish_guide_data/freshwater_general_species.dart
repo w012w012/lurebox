@@ -1,11 +1,11 @@
-import '../../../core/models/fish_species.dart';
+import 'package:lurebox/core/models/fish_species.dart';
 
 /// freshwaterGeneral 鱼种数据
 class FreshwaterGeneralSpecies {
   FreshwaterGeneralSpecies._();
 
   static const List<FishSpecies> data = [
-    const FishSpecies(
+    FishSpecies(
     id: 'g001',
     standardName: '鲤鱼',
     scientificName: 'Cyprinus carpio',
@@ -18,7 +18,7 @@ class FreshwaterGeneralSpecies {
     description: '常见淡水鱼，品种繁多',
     iconEmoji: '🐉',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g002',
     standardName: '鲫鱼',
     scientificName: 'Carassius auratus',
@@ -31,7 +31,7 @@ class FreshwaterGeneralSpecies {
     description: '最常见的淡水鱼之一',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g003',
     standardName: '草鱼',
     scientificName: 'Ctenopharyngodon idella',
@@ -44,7 +44,7 @@ class FreshwaterGeneralSpecies {
     description: '体型大，生长快',
     iconEmoji: '🐉',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g004',
     standardName: '青鱼',
     scientificName: 'Mylopharyngodon piceus',
@@ -57,7 +57,7 @@ class FreshwaterGeneralSpecies {
     description: '喜食贝类',
     iconEmoji: '🐉',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g005',
     standardName: '鲢鱼',
     scientificName: 'Hypophthalmichthys molitrix',
@@ -70,7 +70,7 @@ class FreshwaterGeneralSpecies {
     description: '性活泼，善跳跃',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g006',
     standardName: '鳙鱼',
     scientificName: 'Hypophthalmichthys nobilis',
@@ -83,7 +83,7 @@ class FreshwaterGeneralSpecies {
     description: '头部较大',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g007',
     standardName: '鳜鱼',
     scientificName: 'Siniperca chuatsi',
@@ -96,7 +96,7 @@ class FreshwaterGeneralSpecies {
     description: '常见淡水肉食鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g008',
     standardName: '鲇鱼',
     scientificName: 'Silurus asotus',
@@ -109,7 +109,7 @@ class FreshwaterGeneralSpecies {
     description: '常见底层鱼类',
     iconEmoji: '🐱',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g010',
     standardName: '罗非鱼',
     scientificName: 'Tilapia spp.',
@@ -122,7 +122,7 @@ class FreshwaterGeneralSpecies {
     description: '外来物种，繁殖快',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g011',
     standardName: '鲮鱼',
     scientificName: 'Cirrhinus molitorella',
@@ -135,7 +135,7 @@ class FreshwaterGeneralSpecies {
     description: '华南地区常见鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g012',
     standardName: '鳜鱼',
     scientificName: 'Butis spp.',
@@ -148,7 +148,7 @@ class FreshwaterGeneralSpecies {
     description: '笋壳鱼的一种',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g013',
     standardName: '溪石斑',
     scientificName: 'Roccus saxatilis',
@@ -161,7 +161,7 @@ class FreshwaterGeneralSpecies {
     description: '引进的冷水鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g014',
     standardName: '红眼马口',
     scientificName: 'Opsariichthys spp.',
@@ -174,7 +174,7 @@ class FreshwaterGeneralSpecies {
     description: '眼睛呈红色',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g016',
     standardName: '河鲤',
     scientificName: 'Cyprinus spp.',
@@ -187,10 +187,9 @@ class FreshwaterGeneralSpecies {
     description: '野生状态的鲤鱼',
     iconEmoji: '🐉',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g017',
     standardName: '青鲇',
-    scientificName: null,
     aliases: ['青鱼'],
     category: FishCategory.freshwaterGeneral,
     rarity: FishRarity.uncommon,
@@ -200,7 +199,7 @@ class FreshwaterGeneralSpecies {
     description: '青色系大型鱼',
     iconEmoji: '🐉',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g019',
     standardName: '凤鲚',
     scientificName: 'Coilia nasus',
@@ -213,7 +212,7 @@ class FreshwaterGeneralSpecies {
     description: '刀鱼的一种',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g022',
     standardName: '鲟鱼',
     scientificName: 'Acipenser sinensis',
@@ -226,7 +225,7 @@ class FreshwaterGeneralSpecies {
     description: '国家一级保护动物',
     iconEmoji: '🦈',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g023',
     standardName: '鳜鱼',
     scientificName: 'Siniperca scherzeri',
@@ -239,7 +238,7 @@ class FreshwaterGeneralSpecies {
     description: '小型鳜鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g024',
     standardName: '沙塘鳢',
     scientificName: 'Odontobutis obscura',
@@ -252,7 +251,7 @@ class FreshwaterGeneralSpecies {
     description: '小型淡水鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g025',
     standardName: '黄鳝',
     scientificName: 'Monopterus albus',
@@ -265,7 +264,7 @@ class FreshwaterGeneralSpecies {
     description: '无鳞淡水鱼',
     iconEmoji: '🐍',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g026',
     standardName: '鳗鲡',
     scientificName: 'Anguilla japonica',
@@ -278,7 +277,7 @@ class FreshwaterGeneralSpecies {
     description: '洄游性鱼类',
     iconEmoji: '🐍',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g027',
     standardName: '河鳗',
     scientificName: 'Anguilla japonica',
@@ -291,11 +290,10 @@ class FreshwaterGeneralSpecies {
     description: '鳗鲡的淡水形态',
     iconEmoji: '🐍',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g029',
     standardName: '凤尾鱼',
     scientificName: 'Coilia nasus',
-    aliases: [],
     category: FishCategory.freshwaterGeneral,
     rarity: FishRarity.uncommon,
     habitat: '长江口',
@@ -304,7 +302,7 @@ class FreshwaterGeneralSpecies {
     description: '常见小型鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g031',
     standardName: '弹涂鱼',
     scientificName: 'Periophthalmus spp.',
@@ -317,7 +315,7 @@ class FreshwaterGeneralSpecies {
     description: '能爬行跳跃',
     iconEmoji: '🐸',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g032',
     standardName: '斗鱼',
     scientificName: 'Macropodus opercularis',
@@ -330,7 +328,7 @@ class FreshwaterGeneralSpecies {
     description: '色彩艳丽的小型鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g033',
     standardName: '刺鳅',
     scientificName: 'Mastacembelus aculeatus',
@@ -343,7 +341,7 @@ class FreshwaterGeneralSpecies {
     description: '背鳍有刺',
     iconEmoji: '🐍',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g034',
     standardName: '鳜鱼',
     scientificName: 'Siniperca scherzeri',
@@ -356,7 +354,7 @@ class FreshwaterGeneralSpecies {
     description: '眼睛较大',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g035',
     standardName: '暗纹东方鲀',
     scientificName: 'Takifugu fasciatus',
@@ -369,11 +367,10 @@ class FreshwaterGeneralSpecies {
     description: '有河豚毒素',
     iconEmoji: '🐡',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g042',
     standardName: '中颌鲑鲤',
     scientificName: 'Rafael & Goodes',
-    aliases: [],
     category: FishCategory.freshwaterGeneral,
     rarity: FishRarity.rare,
     habitat: '淡水',
@@ -382,7 +379,7 @@ class FreshwaterGeneralSpecies {
     description: '中型淡水鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g043',
     standardName: '圆口铜鱼',
     scientificName: 'Coreius guichenoti',
@@ -395,7 +392,7 @@ class FreshwaterGeneralSpecies {
     description: '体色铜黄',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g044',
     standardName: '中华细鲫',
     scientificName: 'Aphyocypris chinensis',
@@ -408,7 +405,7 @@ class FreshwaterGeneralSpecies {
     description: '常见小型淡水鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g045',
     standardName: '须鲫',
     scientificName: 'Carassius carassius',
@@ -421,7 +418,7 @@ class FreshwaterGeneralSpecies {
     description: '口须明显',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g050',
     standardName: '弓斑东方鲀',
     scientificName: 'Takifugu ocellatus',

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lurebox/core/models/app_settings.dart';
-import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/providers/fish_list_view_model.dart';
-import 'package:lurebox/core/models/fish_catch.dart';
-import 'package:lurebox/core/models/fish_filter.dart';
 import 'package:lurebox/core/services/settings_service.dart';
 import 'package:lurebox/features/fish_list/fish_list_page.dart';
 import 'package:lurebox/features/fish_list/widgets/fish_filter_panel.dart';
 import 'package:lurebox/features/fish_list/widgets/fish_list_item.dart';
+
 import '../helpers/test_helpers.dart';
 
 void main() {
@@ -24,13 +24,6 @@ void main() {
 
   setUp(() {
     baseState = const FishListState(
-      catches: [],
-      filteredCatches: [],
-      filter: FishFilter(),
-      isLoading: false,
-      errorMessage: null,
-      selectedIds: {},
-      isSelectionMode: false,
       hasMore: false,
     );
   });
@@ -65,13 +58,7 @@ void main() {
     testWidgets('shows loading indicator when isLoading is true',
         (tester) async {
       const loadingState = FishListState(
-        catches: [],
-        filteredCatches: [],
-        filter: FishFilter(),
         isLoading: true,
-        errorMessage: null,
-        selectedIds: {},
-        isSelectionMode: false,
         hasMore: false,
       );
 
@@ -84,13 +71,7 @@ void main() {
     testWidgets('shows error view when errorMessage is present',
         (tester) async {
       const errorState = FishListState(
-        catches: [],
-        filteredCatches: [],
-        filter: FishFilter(),
-        isLoading: false,
         errorMessage: 'Failed to load catches',
-        selectedIds: {},
-        isSelectionMode: false,
         hasMore: false,
       );
 
@@ -105,11 +86,6 @@ void main() {
       final stateWithCatches = FishListState(
         catches: catches,
         filteredCatches: catches,
-        filter: const FishFilter(),
-        isLoading: false,
-        errorMessage: null,
-        selectedIds: const {},
-        isSelectionMode: false,
         hasMore: false,
       );
 
@@ -133,9 +109,6 @@ void main() {
       final selectionState = FishListState(
         catches: catches,
         filteredCatches: catches,
-        filter: const FishFilter(),
-        isLoading: false,
-        errorMessage: null,
         selectedIds: const {1},
         isSelectionMode: true,
         hasMore: false,
@@ -153,9 +126,6 @@ void main() {
       final selectionState = FishListState(
         catches: catches,
         filteredCatches: catches,
-        filter: const FishFilter(),
-        isLoading: false,
-        errorMessage: null,
         selectedIds: const {1, 2},
         isSelectionMode: true,
         hasMore: false,
@@ -184,12 +154,6 @@ void main() {
       final expandedFilterState = FishListState(
         catches: catches,
         filteredCatches: catches,
-        filter: const FishFilter(timeFilter: 'all'),
-        isLoading: false,
-        errorMessage: null,
-        selectedIds: const {},
-        isSelectionMode: false,
-        filterExpanded: true,
         hasMore: false,
       );
 
@@ -210,11 +174,6 @@ void main() {
       final stateWithCatches = FishListState(
         catches: catches,
         filteredCatches: catches,
-        filter: const FishFilter(),
-        isLoading: false,
-        errorMessage: null,
-        selectedIds: const {},
-        isSelectionMode: false,
         hasMore: false,
       );
 
@@ -232,11 +191,6 @@ void main() {
       final stateWithCatches = FishListState(
         catches: catches,
         filteredCatches: catches,
-        filter: const FishFilter(),
-        isLoading: false,
-        errorMessage: null,
-        selectedIds: const {},
-        isSelectionMode: false,
         hasMore: false,
       );
 
@@ -252,11 +206,6 @@ void main() {
       final stateWithCatches = FishListState(
         catches: catches,
         filteredCatches: catches,
-        filter: const FishFilter(),
-        isLoading: false,
-        errorMessage: null,
-        selectedIds: const {},
-        isSelectionMode: false,
         hasMore: false,
       );
 
@@ -292,7 +241,7 @@ class MockSettingsService implements SettingsService {
 
   @override
   Future<void> saveAiRecognitionSettings(
-      AiRecognitionSettings settings) async {}
+      AiRecognitionSettings settings,) async {}
 
   @override
   Future<void> deleteAiRecognitionSettings() async {}

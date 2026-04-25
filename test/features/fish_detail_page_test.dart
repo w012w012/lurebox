@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/providers/fish_detail_view_model.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
-import 'package:lurebox/core/providers/watermark_provider.dart';
 import 'package:lurebox/core/services/settings_service.dart';
-import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/features/fish_detail/fish_detail_page.dart';
+
 import '../helpers/test_helpers.dart';
 
 class MockSettingsService implements SettingsService {
@@ -35,7 +35,7 @@ class MockSettingsService implements SettingsService {
 
   @override
   Future<void> saveAiRecognitionSettings(
-      AiRecognitionSettings settings) async {}
+      AiRecognitionSettings settings,) async {}
 
   @override
   Future<void> deleteAiRecognitionSettings() async {}
@@ -43,7 +43,7 @@ class MockSettingsService implements SettingsService {
 
 class MockFishDetailViewModel extends StateNotifier<FishDetailState>
     implements FishDetailViewModel {
-  MockFishDetailViewModel(FishDetailState initialState) : super(initialState);
+  MockFishDetailViewModel(super.initialState);
 
   @override
   int get fishId => 1;
@@ -90,10 +90,10 @@ void main() {
       await tester.pumpWidget(_buildPage([
         fishDetailViewModelProvider(1).overrideWith(
           (ref) => MockFishDetailViewModel(
-            const FishDetailState(isLoading: true),
+            const FishDetailState(),
           ),
         ),
-      ]));
+      ]),);
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -110,7 +110,7 @@ void main() {
             ),
           ),
         ),
-      ]));
+      ]),);
       await tester.pump();
 
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
@@ -139,7 +139,7 @@ void main() {
             ),
           ),
         ),
-      ]));
+      ]),);
       await tester.pump();
 
       expect(find.text('Bass'), findsOneWidget);
@@ -174,7 +174,7 @@ void main() {
             ),
           ),
         ),
-      ]));
+      ]),);
       await tester.pump();
 
       expect(find.text('Trout'), findsOneWidget);
@@ -187,11 +187,10 @@ void main() {
           (ref) => MockFishDetailViewModel(
             const FishDetailState(
               isLoading: false,
-              fish: null,
             ),
           ),
         ),
-      ]));
+      ]),);
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsNothing);
@@ -219,7 +218,7 @@ void main() {
             ),
           ),
         ),
-      ]));
+      ]),);
       await tester.pump();
 
       expect(find.text('Pike'), findsOneWidget);

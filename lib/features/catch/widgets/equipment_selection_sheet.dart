@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../core/constants/strings.dart';
-import '../../../core/models/equipment.dart';
-import '../../../core/camera/camera_state.dart';
-import '../../../core/camera/camera_view_model.dart';
-import '../../../widgets/common/premium_button.dart';
+import 'package:lurebox/core/camera/camera_state.dart';
+import 'package:lurebox/core/camera/camera_view_model.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
 
 /// Equipment selection sheet - modal bottom sheet for selecting rod, reel, lure.
 class EquipmentSelectionSheet extends StatelessWidget {
+
+  const EquipmentSelectionSheet({
+    required this.state, required this.vm, required this.strings, super.key,
+  });
   final CameraState state;
   final CameraViewModel vm;
   final AppStrings strings;
-
-  const EquipmentSelectionSheet({
-    super.key,
-    required this.state,
-    required this.vm,
-    required this.strings,
-  });
 
   /// Show the equipment selection bottom sheet.
   static Future<void> show(
@@ -52,15 +48,15 @@ class EquipmentSelectionSheet extends StatelessWidget {
 }
 
 class _EquipmentSelectionContent extends StatefulWidget {
-  final CameraState state;
-  final CameraViewModel vm;
-  final AppStrings strings;
 
   const _EquipmentSelectionContent({
     required this.state,
     required this.vm,
     required this.strings,
   });
+  final CameraState state;
+  final CameraViewModel vm;
+  final AppStrings strings;
 
   @override
   State<_EquipmentSelectionContent> createState() =>

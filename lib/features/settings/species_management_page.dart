@@ -1,20 +1,21 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/pending_recognition_providers.dart';
-import '../../core/providers/ai_recognition_provider.dart';
-import '../../core/di/di.dart';
-import '../../core/services/fish_recognition_service.dart';
-import '../../core/models/fish_catch.dart';
-import '../../widgets/common/premium_card.dart';
-import '../../widgets/common/premium_button.dart';
-import '../../widgets/common/app_snack_bar.dart';
-import 'widgets/pending_queue_widget.dart';
-import 'widgets/species_management_helpers.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/providers/ai_recognition_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/pending_recognition_providers.dart';
+import 'package:lurebox/core/services/fish_recognition_service.dart';
+import 'package:lurebox/features/settings/widgets/pending_queue_widget.dart';
+import 'package:lurebox/features/settings/widgets/species_management_helpers.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// 品种管理页面 — 待识别列表 + 品种列表 + 批量识别
 class SpeciesManagementPage extends ConsumerStatefulWidget {
@@ -178,7 +179,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           speciesName: result.primarySpecies.chineseName,
           confidence: result.primarySpecies.confidence / 100.0,
           providerName: s.speciesAiResultTitle,
-        ));
+        ),);
       }
 
       // 添加备选结果
@@ -189,7 +190,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
               speciesName: alt.chineseName,
               confidence: alt.confidence / 100.0,
               providerName: s.speciesAlternative,
-            ));
+            ),);
           }
         }
       }
@@ -206,14 +207,12 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
 
       setState(() {
         _recognitionStates[fish.id] = SingleRecognitionState(
-          isRecognizing: false,
           options: options,
         );
       });
     } catch (e) {
       setState(() {
         _recognitionStates[fish.id] = SingleRecognitionState(
-          isRecognizing: false,
           error: ref.read(currentStringsProvider).speciesRecognitionFailed.replaceFirst('%s', '$e'),
         );
       });
@@ -221,7 +220,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
   }
 
   Future<void> _showConfirmDialog(
-      FishCatch fish, AiRecognitionOption option) async {
+      FishCatch fish, AiRecognitionOption option,) async {
     final strings = ref.read(currentStringsProvider);
     final speciesName =
         await SpeciesManagementDialogs.showConfirmRecognitionDialog(
@@ -281,7 +280,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
   }
 
   Future<void> _showDeleteDialog(
-      BuildContext context, String speciesName, int count) async {
+      BuildContext context, String speciesName, int count,) async {
     final strings = ref.read(currentStringsProvider);
     final confirmed = await SpeciesManagementDialogs.showDeleteDialog(
       context,
@@ -301,7 +300,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         if (!context.mounted) return;
         final s = ref.read(currentStringsProvider);
         AppSnackBar.showSuccess(
-            context, s.speciesDeleted.replaceFirst('%s', speciesName).replaceFirst('%d', '$count'));
+            context, s.speciesDeleted.replaceFirst('%s', speciesName).replaceFirst('%d', '$count'),);
       } catch (e) {
         if (!context.mounted) return;
         final s = ref.read(currentStringsProvider);
@@ -349,7 +348,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
 
           if (result.primarySpecies.chineseName.isNotEmpty) {
             await repository.updateSpecies(
-                fish.id, result.primarySpecies.chineseName);
+                fish.id, result.primarySpecies.chineseName,);
             setState(() => _batchSuccess++);
           } else {
             setState(() => _batchFailed++);
@@ -367,7 +366,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       if (mounted) {
         final s = ref.read(currentStringsProvider);
         AppSnackBar.showInfo(
-            context, s.speciesRecognitionComplete.replaceFirst('%d', '$_batchSuccess').replaceFirst('%d', '$_batchFailed'));
+            context, s.speciesRecognitionComplete.replaceFirst('%d', '$_batchSuccess').replaceFirst('%d', '$_batchFailed'),);
       }
     } finally {
       setState(() => _isBatchRecognizing = false);
@@ -383,19 +382,19 @@ final speciesCountsProvider = FutureProvider<Map<String, int>>((ref) async {
 
 /// 已保存品种列表 Widget
 class _SpeciesListSection extends ConsumerWidget {
-  final Function(BuildContext, String) onRename;
-  final Function(BuildContext, String, int) onDelete;
 
   const _SpeciesListSection({
     required this.onRename,
     required this.onDelete,
   });
+  final void Function(BuildContext, String) onRename;
+  final void Function(BuildContext, String, int) onDelete;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final speciesCountsAsync = ref.watch(speciesCountsProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = TeslaColors.electricBlue;
+    const accentColor = TeslaColors.electricBlue;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -492,11 +491,6 @@ class _SpeciesListSection extends ConsumerWidget {
 
 /// 品种列表单项 Widget
 class _SpeciesListItem extends StatelessWidget {
-  final String speciesName;
-  final int count;
-  final String countLabel;
-  final VoidCallback onRename;
-  final VoidCallback onDelete;
 
   const _SpeciesListItem({
     required this.speciesName,
@@ -505,10 +499,15 @@ class _SpeciesListItem extends StatelessWidget {
     required this.onRename,
     required this.onDelete,
   });
+  final String speciesName;
+  final int count;
+  final String countLabel;
+  final VoidCallback onRename;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
-    final accentColor = TeslaColors.electricBlue;
+    const accentColor = TeslaColors.electricBlue;
 
     return InkWell(
       onTap: () {}, // Placeholder for future expansion
@@ -558,14 +557,12 @@ class _SpeciesListItem extends StatelessWidget {
             PremiumIconButton(
               icon: Icons.edit,
               onPressed: onRename,
-              variant: PremiumButtonVariant.text,
               size: 44,
               color: accentColor,
             ),
             PremiumIconButton(
               icon: Icons.delete,
               onPressed: onDelete,
-              variant: PremiumButtonVariant.text,
               size: 44,
               color: TeslaColors.electricBlue,
             ),

@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
-
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/models/watermark_settings.dart';
-import '../../../widgets/common/premium_card.dart';
-import '../../common/watermarked_image.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/watermark_settings.dart';
+import 'package:lurebox/features/common/watermarked_image.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 class WatermarkPreviewCard extends StatelessWidget {
-  final WatermarkSettings settings;
-  final AppStrings strings;
 
   const WatermarkPreviewCard({
-    super.key,
-    required this.settings,
-    required this.strings,
+    required this.settings, required this.strings, super.key,
   });
+  final WatermarkSettings settings;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -61,13 +58,13 @@ class WatermarkPreviewCard extends StatelessWidget {
 }
 
 class _LiveWatermarkPreview extends StatelessWidget {
-  final WatermarkSettings settings;
-  final AppStrings strings;
 
   const _LiveWatermarkPreview({
     required this.settings,
     required this.strings,
   });
+  final WatermarkSettings settings;
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -88,13 +85,13 @@ class _LiveWatermarkPreview extends StatelessWidget {
 }
 
 class _WatermarkPreviewPainter extends CustomPainter {
-  final WatermarkSettings settings;
-  final AppStrings strings;
 
   _WatermarkPreviewPainter({
     required this.settings,
     required this.strings,
   });
+  final WatermarkSettings settings;
+  final AppStrings strings;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -127,7 +124,6 @@ class _WatermarkPreviewPainter extends CustomPainter {
     const displayTemperatureUnit = 'C';
 
     final previewSettings = WatermarkSettings(
-      enabled: true,
       style: settings.style,
       infoTypes: settings.infoTypes,
       blurRadius: settings.blurRadius,

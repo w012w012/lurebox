@@ -10,8 +10,7 @@ void main() {
         id: 1,
         name: 'Bass',
         useCount: 5,
-        isDeleted: false,
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
       );
     });
 
@@ -20,7 +19,7 @@ void main() {
       expect(testInstance.name, equals('Bass'));
       expect(testInstance.useCount, equals(5));
       expect(testInstance.isDeleted, equals(false));
-      expect(testInstance.createdAt, equals(DateTime(2024, 1, 1)));
+      expect(testInstance.createdAt, equals(DateTime(2024)));
     });
 
     test('fromMap creates SpeciesHistory from map', () {
@@ -38,7 +37,7 @@ void main() {
       expect(result.name, equals('Trout'));
       expect(result.useCount, equals(3));
       expect(result.isDeleted, equals(true));
-      expect(result.createdAt, equals(DateTime(2024, 2, 1)));
+      expect(result.createdAt, equals(DateTime(2024, 2)));
     });
 
     test('toMap converts SpeciesHistory to map', () {
@@ -73,7 +72,7 @@ void main() {
         name: 'Different',
         useCount: 99,
         isDeleted: true,
-        createdAt: DateTime(2020, 1, 1),
+        createdAt: DateTime(2020),
       );
 
       expect(testInstance, equals(other));
@@ -85,7 +84,7 @@ void main() {
         name: 'Different',
         useCount: 99,
         isDeleted: true,
-        createdAt: DateTime(2020, 1, 1),
+        createdAt: DateTime(2020),
       );
 
       expect(testInstance.hashCode, equals(other.hashCode));

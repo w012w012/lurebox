@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 class MonthlyStatsCard extends ConsumerStatefulWidget {
+
+  const MonthlyStatsCard({
+    required this.releaseCount, required this.keepCount, required this.releaseRate, required this.title, required this.totalCount, super.key,
+  });
   final int releaseCount;
   final int keepCount;
   final double releaseRate;
   final String title;
   final int totalCount;
-
-  const MonthlyStatsCard({
-    super.key,
-    required this.releaseCount,
-    required this.keepCount,
-    required this.releaseRate,
-    required this.title,
-    required this.totalCount,
-  });
 
   @override
   ConsumerState<MonthlyStatsCard> createState() => _MonthlyStatsCardState();
@@ -41,11 +36,11 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
     );
     _scaleAnimation = Tween<double>(
       begin: 0.8,
-      end: 1.0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: TeslaTheme.transitionCurve,
-    ));
+    ),);
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
       curve: TeslaTheme.transitionCurve,
@@ -69,7 +64,6 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: PremiumCard(
-          variant: PremiumCardVariant.standard,
           padding: const EdgeInsets.all(TeslaTheme.spacingLg),
           child: Column(
             children: [
@@ -86,7 +80,7 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
                   fontSize: 56,
                   fontWeight: FontWeight.w500,
                   color: accentColor,
-                  height: 1.0,
+                  height: 1,
                 ),
               ),
               const SizedBox(height: TeslaTheme.spacingSm),
@@ -130,11 +124,6 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
 }
 
 class _AnimatedStatItem extends StatefulWidget {
-  final int index;
-  final String label;
-  final int count;
-  final Color color;
-  final bool isPercent;
 
   const _AnimatedStatItem({
     required this.index,
@@ -143,6 +132,11 @@ class _AnimatedStatItem extends StatefulWidget {
     required this.color,
     this.isPercent = false,
   });
+  final int index;
+  final String label;
+  final int count;
+  final Color color;
+  final bool isPercent;
 
   @override
   State<_AnimatedStatItem> createState() => _AnimatedStatItemState();

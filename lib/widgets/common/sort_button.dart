@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
 
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
 
 /// 可复用的排序按钮组件
 class AppSortButton extends StatelessWidget {
+
+  const AppSortButton({
+    required this.label, required this.isSelected, required this.isAsc, required this.onTap, super.key,
+    this.strings,
+  });
   final String label;
   final bool isSelected;
   final bool isAsc;
   final VoidCallback onTap;
   final AppStrings? strings;
-
-  const AppSortButton({
-    super.key,
-    required this.label,
-    required this.isSelected,
-    required this.isAsc,
-    required this.onTap,
-    this.strings,
-  });
 
   @override
   Widget build(BuildContext context) {

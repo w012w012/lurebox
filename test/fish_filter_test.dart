@@ -115,7 +115,7 @@ void main() {
     });
 
     test('setCustomDateRange sets all date-related fields', () {
-      final start = DateTime(2024, 1, 1);
+      final start = DateTime(2024);
       final end = DateTime(2024, 12, 31);
 
       notifier.setCustomDateRange(start, end);

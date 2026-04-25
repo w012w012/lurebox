@@ -1,26 +1,21 @@
 import 'package:flutter/material.dart';
-
-import '../../../core/constants/strings.dart';
-import '../../../core/models/fish_catch.dart';
-import '../../../core/camera/camera_state.dart';
-import '../../../core/camera/camera_view_model.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/camera/camera_state.dart';
+import 'package:lurebox/core/camera/camera_view_model.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 
 /// A reusable fate selection button component.
 class FateButton extends StatelessWidget {
+
+  const FateButton({
+    required this.label, required this.isSelected, required this.color, required this.onTap, super.key,
+  });
   final String label;
   final bool isSelected;
   final Color color;
   final VoidCallback onTap;
-
-  const FateButton({
-    super.key,
-    required this.label,
-    required this.isSelected,
-    required this.color,
-    required this.onTap,
-  });
 
   @override
   Widget build(BuildContext context) {
@@ -60,16 +55,13 @@ class FateButton extends StatelessWidget {
 
 /// Fate selector card displaying release/keep options.
 class FateSelectorCard extends StatelessWidget {
+
+  const FateSelectorCard({
+    required this.state, required this.vm, required this.strings, super.key,
+  });
   final CameraState state;
   final CameraViewModel vm;
   final AppStrings strings;
-
-  const FateSelectorCard({
-    super.key,
-    required this.state,
-    required this.vm,
-    required this.strings,
-  });
 
   @override
   Widget build(BuildContext context) {

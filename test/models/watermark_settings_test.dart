@@ -20,12 +20,11 @@ void main() {
     test('creates with custom values', () {
       const settings = WatermarkSettings(
         enabled: false,
-        style: WatermarkStyle.minimal,
         infoTypes: [WatermarkInfoType.species, WatermarkInfoType.length],
-        blurRadius: 20.0,
+        blurRadius: 20,
         backgroundOpacity: 0.8,
         backgroundColor: 0xFF123456,
-        fontSize: 18.0,
+        fontSize: 18,
         textColor: 0xFF000000,
         position: WatermarkPosition.topRight,
       );
@@ -39,7 +38,7 @@ void main() {
       const original = WatermarkSettings();
       final updated = original.copyWith(
         enabled: false,
-        fontSize: 20.0,
+        fontSize: 20,
       );
 
       expect(updated.enabled, isFalse);
@@ -52,13 +51,11 @@ void main() {
     group('serialization', () {
       test('toJson creates correct map', () {
         const settings = WatermarkSettings(
-          enabled: true,
-          style: WatermarkStyle.minimal,
           infoTypes: [WatermarkInfoType.species, WatermarkInfoType.length],
-          blurRadius: 15.0,
+          blurRadius: 15,
           backgroundOpacity: 0.7,
           backgroundColor: 0xFF999999,
-          fontSize: 16.0,
+          fontSize: 16,
           textColor: 0xFF111111,
           position: WatermarkPosition.center,
         );
@@ -133,12 +130,12 @@ void main() {
         final settings = WatermarkSettings.fromJson(json);
 
         expect(
-            settings.position, equals(WatermarkPosition.bottomLeft)); // default
+            settings.position, equals(WatermarkPosition.bottomLeft),); // default
       });
 
       test('fromJson handles unknown infoType', () {
         final json = {
-          'infoTypes': ['species', 'unknown_type', 'length']
+          'infoTypes': ['species', 'unknown_type', 'length'],
         };
 
         final settings = WatermarkSettings.fromJson(json);
@@ -151,12 +148,11 @@ void main() {
       test('round-trip serialization preserves data', () {
         const original = WatermarkSettings(
           enabled: false,
-          style: WatermarkStyle.minimal,
           infoTypes: [WatermarkInfoType.weather, WatermarkInfoType.pressure],
-          blurRadius: 30.0,
+          blurRadius: 30,
           backgroundOpacity: 0.6,
           backgroundColor: 0xFFFEDCBA,
-          fontSize: 22.0,
+          fontSize: 22,
           textColor: 0xFF123456,
           position: WatermarkPosition.bottomRight,
         );
@@ -188,7 +184,7 @@ void main() {
       test('decode creates settings from JSON string', () {
         const original = WatermarkSettings(
           enabled: false,
-          fontSize: 25.0,
+          fontSize: 25,
           position: WatermarkPosition.center,
         );
 
@@ -227,7 +223,7 @@ void main() {
     test('has corresponding presets', () {
       for (final style in WatermarkStyle.values) {
         expect(watermarkStylePresets[style], isNotNull,
-            reason: 'Style $style should have a preset');
+            reason: 'Style $style should have a preset',);
       }
     });
   });

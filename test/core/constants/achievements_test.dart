@@ -34,35 +34,35 @@ void main() {
       final ids = AchievementConfig.definitions.map((d) => d.id).toList();
       final uniqueIds = ids.toSet();
       expect(uniqueIds.length, equals(ids.length),
-          reason: 'All achievement IDs should be unique');
+          reason: 'All achievement IDs should be unique',);
     });
 
     test('all definitions have non-empty required fields', () {
       for (final definition in AchievementConfig.definitions) {
         expect(definition.id, isNotEmpty,
-            reason: 'Definition ${definition.id} has empty id');
+            reason: 'Definition ${definition.id} has empty id',);
         expect(definition.title, isNotEmpty,
-            reason: 'Definition ${definition.id} has empty title');
+            reason: 'Definition ${definition.id} has empty title',);
         expect(definition.description, isNotEmpty,
-            reason: 'Definition ${definition.id} has empty description');
+            reason: 'Definition ${definition.id} has empty description',);
         expect(definition.icon, isNotEmpty,
-            reason: 'Definition ${definition.id} has empty icon');
+            reason: 'Definition ${definition.id} has empty icon',);
         expect(definition.category, isNotEmpty,
-            reason: 'Definition ${definition.id} has empty category');
+            reason: 'Definition ${definition.id} has empty category',);
       }
     });
 
     test('all definitions have valid AchievementLevel', () {
       for (final definition in AchievementConfig.definitions) {
         expect(AchievementLevel.values, contains(definition.level),
-            reason: 'Definition ${definition.id} has invalid level');
+            reason: 'Definition ${definition.id} has invalid level',);
       }
     });
 
     test('all definitions have positive target', () {
       for (final definition in AchievementConfig.definitions) {
         expect(definition.target, greaterThan(0),
-            reason: 'Definition ${definition.id} has non-positive target');
+            reason: 'Definition ${definition.id} has non-positive target',);
       }
     });
 
@@ -92,22 +92,22 @@ void main() {
         expect(
             catchAchievements
                 .any((d) => d.id == 'catch_first' && d.target == 1),
-            isTrue);
+            isTrue,);
         expect(
             catchAchievements.any((d) => d.id == 'catch_10' && d.target == 10),
-            isTrue);
+            isTrue,);
         expect(
             catchAchievements
                 .any((d) => d.id == 'catch_100' && d.target == 100),
-            isTrue);
+            isTrue,);
         expect(
             catchAchievements
                 .any((d) => d.id == 'catch_500' && d.target == 500),
-            isTrue);
+            isTrue,);
         expect(
             catchAchievements
                 .any((d) => d.id == 'catch_1000' && d.target == 1000),
-            isTrue);
+            isTrue,);
       });
 
       test('targets are in ascending order', () {
@@ -136,7 +136,7 @@ void main() {
       test('all have target of 1 (one-time achievements)', () {
         for (final achievement in lengthAchievements) {
           expect(achievement.target, equals(1),
-              reason: '${achievement.id} should have target of 1');
+              reason: '${achievement.id} should have target of 1',);
         }
       });
 
@@ -284,7 +284,7 @@ void main() {
           categoryDefs.sort((a, b) => a.target.compareTo(b.target));
 
           // Each subsequent achievement should have >= level (allowing same level)
-          for (int i = 0; i < categoryDefs.length - 1; i++) {
+          for (var i = 0; i < categoryDefs.length - 1; i++) {
             final current = categoryDefs[i];
             final next = categoryDefs[i + 1];
             expect(

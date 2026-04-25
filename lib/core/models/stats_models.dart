@@ -22,17 +22,12 @@
 library;
 
 class CatchStats {
-  final int total;
-  final int release;
-  final int keep;
 
   const CatchStats({
     required this.total,
     required this.release,
     required this.keep,
   });
-
-  double get releaseRate => total > 0 ? release / total : 0.0;
 
   factory CatchStats.fromMap(Map<String, dynamic> map) {
     return CatchStats(
@@ -41,6 +36,11 @@ class CatchStats {
       keep: map['keep'] as int? ?? 0,
     );
   }
+  final int total;
+  final int release;
+  final int keep;
+
+  double get releaseRate => total > 0 ? release / total : 0.0;
 
   Map<String, dynamic> toMap() {
     return {'total': total, 'release': release, 'keep': keep};
@@ -68,16 +68,6 @@ class CatchStats {
 }
 
 class DashboardData {
-  final CatchStats todayStats;
-  final Map<String, int> todaySpecies;
-  final CatchStats monthStats;
-  final Map<String, int> monthSpecies;
-  final CatchStats yearStats;
-  final Map<String, int> yearSpecies;
-  final CatchStats allStats;
-  final Map<String, int> allSpecies;
-  final List<Map<String, dynamic>> top3Longest;
-  final List<Map<String, dynamic>> monthTrend;
 
   const DashboardData({
     required this.todayStats,
@@ -91,14 +81,19 @@ class DashboardData {
     required this.top3Longest,
     this.monthTrend = const [],
   });
+  final CatchStats todayStats;
+  final Map<String, int> todaySpecies;
+  final CatchStats monthStats;
+  final Map<String, int> monthSpecies;
+  final CatchStats yearStats;
+  final Map<String, int> yearSpecies;
+  final CatchStats allStats;
+  final Map<String, int> allSpecies;
+  final List<Map<String, dynamic>> top3Longest;
+  final List<Map<String, dynamic>> monthTrend;
 }
 
 class EquipmentCatchStats {
-  final int equipmentId;
-  final int catchCount;
-  final double? avgLength;
-  final double? avgWeight;
-  final int releaseCount;
 
   const EquipmentCatchStats({
     required this.equipmentId,
@@ -117,6 +112,11 @@ class EquipmentCatchStats {
       releaseCount: map['release_count'] as int? ?? 0,
     );
   }
+  final int equipmentId;
+  final int catchCount;
+  final double? avgLength;
+  final double? avgWeight;
+  final int releaseCount;
 
   Map<String, dynamic> toMap() {
     return {
@@ -166,24 +166,6 @@ class EquipmentCatchStats {
 }
 
 class AchievementMetrics {
-  final int totalCatches;
-  final double maxLength;
-  final int speciesCount;
-  final int equipmentCount;
-  final int locationCount;
-  final int releaseCount;
-  final double releaseRate;
-  final int consecutiveDays;
-  final int monthlyMax;
-  final int dailyMax;
-  final int morningCatches;
-  final int nightCatches;
-  final int photoCount;
-  final double totalWeight;
-  final int equipmentComboMax;
-  final bool equipmentFull;
-  final bool newRecord;
-  final int shareCount;
 
   const AchievementMetrics({
     this.totalCatches = 0,
@@ -205,6 +187,24 @@ class AchievementMetrics {
     this.newRecord = false,
     this.shareCount = 0,
   });
+  final int totalCatches;
+  final double maxLength;
+  final int speciesCount;
+  final int equipmentCount;
+  final int locationCount;
+  final int releaseCount;
+  final double releaseRate;
+  final int consecutiveDays;
+  final int monthlyMax;
+  final int dailyMax;
+  final int morningCatches;
+  final int nightCatches;
+  final int photoCount;
+  final double totalWeight;
+  final int equipmentComboMax;
+  final bool equipmentFull;
+  final bool newRecord;
+  final int shareCount;
 
   AchievementMetrics copyWith({
     int? totalCatches,

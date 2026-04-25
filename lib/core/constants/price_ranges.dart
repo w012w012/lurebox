@@ -25,9 +25,9 @@ class PriceRanges {
 
 /// 价格区间
 class PriceRange {
+
+  const PriceRange({required this.label, required this.min, required this.max});
   final String label;
   final double min;
   final double max;
-
-  const PriceRange({required this.label, required this.min, required this.max});
 }

@@ -1,20 +1,52 @@
 import 'dart:io';
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/models/watermark_settings.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/watermark_provider.dart';
+import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/features/common/watermarked_image.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
 import 'package:share_plus/share_plus.dart';
-
-import '../../core/constants/strings.dart';
-import '../../core/models/watermark_settings.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/watermark_provider.dart';
-import '../../core/services/app_logger.dart';
-import '../../widgets/common/app_snack_bar.dart';
-import '../common/watermarked_image.dart';
-import '../../core/design/theme/app_colors.dart';
 
 /// 分享预览参数
 class PreviewData {
+
+  const PreviewData({
+    required this.imagePath,
+    required this.species,
+    required this.length,
+    required this.lengthUnit, required this.weightUnit, required this.catchTime, required this.displayLength, required this.displayLengthUnit, required this.displayWeightUnit, required this.displayTemperatureUnit, required this.shareText, this.weight,
+    this.locationName,
+    this.rodName,
+    this.reelName,
+    this.lureName,
+    this.rodBrand,
+    this.rodModel,
+    this.rodMaterial,
+    this.rodLength,
+    this.rodLengthUnit,
+    this.rodHardness,
+    this.rodAction,
+    this.reelBrand,
+    this.reelModel,
+    this.reelRatio,
+    this.lureBrand,
+    this.lureModel,
+    this.lureSize,
+    this.lureSizeUnit,
+    this.lureColor,
+    this.lureWeight,
+    this.lureWeightUnit,
+    this.airTemperature,
+    this.pressure,
+    this.weatherCode,
+    this.displayWeight,
+  });
   final String imagePath;
   final String species;
   final double length;
@@ -52,53 +84,13 @@ class PreviewData {
   final String displayWeightUnit;
   final String displayTemperatureUnit;
   final String shareText;
-
-  const PreviewData({
-    required this.imagePath,
-    required this.species,
-    required this.length,
-    this.weight,
-    required this.lengthUnit,
-    required this.weightUnit,
-    this.locationName,
-    required this.catchTime,
-    this.rodName,
-    this.reelName,
-    this.lureName,
-    this.rodBrand,
-    this.rodModel,
-    this.rodMaterial,
-    this.rodLength,
-    this.rodLengthUnit,
-    this.rodHardness,
-    this.rodAction,
-    this.reelBrand,
-    this.reelModel,
-    this.reelRatio,
-    this.lureBrand,
-    this.lureModel,
-    this.lureSize,
-    this.lureSizeUnit,
-    this.lureColor,
-    this.lureWeight,
-    this.lureWeightUnit,
-    this.airTemperature,
-    this.pressure,
-    this.weatherCode,
-    required this.displayLength,
-    this.displayWeight,
-    required this.displayLengthUnit,
-    required this.displayWeightUnit,
-    required this.displayTemperatureUnit,
-    required this.shareText,
-  });
 }
 
 /// 水印分享预览页 — 可拖拽水印位置，确认后分享
 class WatermarkSharePreviewPage extends ConsumerStatefulWidget {
-  final PreviewData data;
 
-  const WatermarkSharePreviewPage({super.key, required this.data});
+  const WatermarkSharePreviewPage({required this.data, super.key});
+  final PreviewData data;
 
   @override
   ConsumerState<WatermarkSharePreviewPage> createState() =>
@@ -109,8 +101,8 @@ class _WatermarkSharePreviewPageState
     extends ConsumerState<WatermarkSharePreviewPage> {
   Offset? _watermarkOffset;
   bool _isSharing = false;
-  double _watermarkScale = 1.0;
-  double _baseScale = 1.0;
+  double _watermarkScale = 1;
+  double _baseScale = 1;
 
   Rect _imageRect = Rect.zero;
   Size _imageSize = Size.zero;
@@ -142,7 +134,8 @@ class _WatermarkSharePreviewPageState
     if (container == Size.zero || image == Size.zero) return Rect.zero;
     final containerAspect = container.width / container.height;
     final imageAspect = image.width / image.height;
-    double displayWidth, displayHeight;
+    double displayWidth;
+    double displayHeight;
     if (imageAspect > containerAspect) {
       displayWidth = container.width;
       displayHeight = container.width / imageAspect;
@@ -325,7 +318,7 @@ class _WatermarkSharePreviewPageState
             children: [
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: () => _resetPosition(),
+                  onPressed: _resetPosition,
                   icon: const Icon(Icons.refresh),
                   label: Text(strings.resetPosition),
                   style: OutlinedButton.styleFrom(

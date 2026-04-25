@@ -1,4 +1,4 @@
-import 'openai_compatible_provider.dart';
+import 'package:lurebox/core/services/adapters/openai_compatible_provider.dart';
 
 /// Baidu AI 鱼类识别提供者
 ///

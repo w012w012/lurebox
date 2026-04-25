@@ -1,5 +1,5 @@
-import '../models/fish_species.dart';
-import '../../features/achievement/fish_guide_data.dart';
+import 'package:lurebox/core/models/fish_species.dart';
+import 'package:lurebox/features/achievement/fish_guide_data.dart';
 
 /// 鱼类物种匹配服务
 ///
@@ -9,7 +9,6 @@ import '../../features/achievement/fish_guide_data.dart';
 /// 3. 部分匹配（输入包含在名称或别名中）
 /// 4. 相似度匹配（Levenshtein距离）
 class FishSpeciesMatcher {
-  final List<FishSpecies> _allSpecies;
 
   /// 创建鱼类物种匹配服务
   ///
@@ -19,6 +18,7 @@ class FishSpeciesMatcher {
   /// 使用指定物种列表创建匹配器
   FishSpeciesMatcher.withSpecies(List<FishSpecies> species)
       : _allSpecies = species;
+  final List<FishSpecies> _allSpecies;
 
   /// 根据别名查找物种
   ///
@@ -94,7 +94,7 @@ class FishSpeciesMatcher {
     if (input.isEmpty || candidates.isEmpty) return null;
 
     String? bestMatch;
-    int bestDistance = 2; // 阈值（Levenshtein距离 <= 2视为相似）
+    var bestDistance = 2; // 阈值（Levenshtein距离 <= 2视为相似）
 
     for (final candidate in candidates) {
       final distance = _levenshteinDistance(input, candidate);
@@ -115,7 +115,7 @@ class FishSpeciesMatcher {
   /// 返回最相似的物种，如果没有匹配则返回 null
   FishSpecies? _findSimilar(String input) {
     FishSpecies? best;
-    int bestDistance = 2; // 阈值（Levenshtein距离 <= 2视为相似）
+    var bestDistance = 2; // 阈值（Levenshtein距离 <= 2视为相似）
 
     for (final species in _allSpecies) {
       // 计算与标准名称的距离

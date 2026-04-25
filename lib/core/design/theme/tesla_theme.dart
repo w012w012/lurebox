@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
-import 'tesla_typography.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_typography.dart';
 
 /// Tesla-inspired ThemeData.
 /// Reference: DESIGN.md Tesla Visual Theme & Component Styling.
@@ -16,19 +16,19 @@ class TeslaTheme {
   TeslaTheme._();
 
   /// Spacing: 8px base unit.
-  static const double spacingMicro = 4.0;
-  static const double spacingSm = 8.0;
-  static const double spacingMd = 16.0;
-  static const double spacingLg = 24.0;
-  static const double spacingXl = 32.0;
+  static const double spacingMicro = 4;
+  static const double spacingSm = 8;
+  static const double spacingMd = 16;
+  static const double spacingLg = 24;
+  static const double spacingXl = 32;
 
   /// Border radius: 4px buttons, 12px cards, 0px default.
-  static const double radiusMicro = 4.0;
-  static const double radiusCard = 12.0;
+  static const double radiusMicro = 4;
+  static const double radiusCard = 12;
 
   /// 0.33s cubic-bezier(0.16, 1, 0.3, 1) — Tesla's universal transition.
   static const Duration transitionDuration = Duration(milliseconds: 330);
-  static const Curve transitionCurve = Cubic(0.16, 1.0, 0.3, 1.0);
+  static const Curve transitionCurve = Cubic(0.16, 1, 0.3, 1);
 
   // ─── Light Theme ──────────────────────────────────────────────────────────
 
@@ -38,9 +38,7 @@ class TeslaTheme {
       brightness: Brightness.light,
       colorScheme: const ColorScheme.light(
         primary: TeslaColors.electricBlue,
-        onPrimary: TeslaColors.white,
         onSurface: TeslaColors.carbonDark,
-        surface: TeslaColors.white,
         outline: TeslaColors.cloudGray,
       ),
       scaffoldBackgroundColor: TeslaColors.white,
@@ -128,7 +126,7 @@ class TeslaTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusMicro),
           ),
-          side: const BorderSide(color: TeslaColors.graphite, width: 1),
+          side: const BorderSide(color: TeslaColors.graphite),
           textStyle: TeslaTypography.buttonLabel(color: TeslaColors.graphite),
         ),
       ),
@@ -212,7 +210,6 @@ class TeslaTheme {
       colorScheme: const ColorScheme.dark(
         primary: TeslaColors.electricBlue,
         onPrimary: TeslaColors.white,
-        onSurface: TeslaColors.white,
         surface: TeslaColors.carbonDark,
         outline: Color(0xFF2A2D30),
       ),
@@ -303,7 +300,7 @@ class TeslaTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(radiusMicro),
           ),
-          side: const BorderSide(color: Color(0xFF5A5A5A), width: 1),
+          side: const BorderSide(color: Color(0xFF5A5A5A)),
           textStyle: TeslaTypography.buttonLabel(color: TeslaColors.white),
         ),
       ),

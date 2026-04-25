@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:lurebox/core/services/backup_service.dart';
 import 'package:lurebox/core/database/database_provider.dart';
+import 'package:lurebox/core/services/backup_service.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
   late Database db;
@@ -663,7 +664,7 @@ void main() {
         'length': 45.0,
         'length_unit': 'cm',
         'fate': 0,
-        'catch_time': DateTime(2024, 8, 1).toIso8601String(),
+        'catch_time': DateTime(2024, 8).toIso8601String(),
         'created_at': now.toIso8601String(),
         'updated_at': now.toIso8601String(),
       });
@@ -707,7 +708,7 @@ void main() {
       expect(fishCatches.length, equals(1));
       expect(fishCatches.first['species'], equals('Walleye'));
       expect(
-          equipments.length, equals(0)); // Equipment was not in partial backup
+          equipments.length, equals(0),); // Equipment was not in partial backup
 
       // Cleanup
       await File(exportPath).delete();
@@ -765,7 +766,7 @@ void main() {
         'length': 30.0,
         'length_unit': 'cm',
         'fate': 0, // release
-        'catch_time': DateTime(2024, 9, 1).toIso8601String(),
+        'catch_time': DateTime(2024, 9).toIso8601String(),
         'created_at': now.toIso8601String(),
         'updated_at': now.toIso8601String(),
       });
@@ -858,9 +859,9 @@ void main() {
 
 /// Test DatabaseProvider that wraps a real Database instance
 class _TestDatabaseProvider implements DatabaseProvider {
-  final Database _database;
 
   _TestDatabaseProvider(this._database);
+  final Database _database;
 
   @override
   Future<Database> get database async => _database;

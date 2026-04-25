@@ -1,5 +1,5 @@
-import '../models/fish_catch.dart';
-import '../models/stats_models.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/models/stats_models.dart';
 
 export '../models/stats_models.dart';
 

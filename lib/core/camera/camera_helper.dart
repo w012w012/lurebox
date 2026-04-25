@@ -1,12 +1,12 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/services/error_service.dart' as error_service;
+import 'package:lurebox/core/services/permission_service.dart';
+import 'package:lurebox/core/services/weather_service.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../services/error_service.dart' as error_service;
-import '../services/permission_service.dart';
-import '../services/weather_service.dart';
-import '../constants/strings.dart';
 
 class CameraHelper {
   AppStrings? _strings;
@@ -61,7 +61,7 @@ class CameraHelper {
           return;
         }
         await _initCameraController(_cameras[_currentCameraIndex]);
-      }, context: '初始化相机');
+      }, context: '初始化相机',);
     } catch (e) {
       _errorMessage = '${_strings?.cameraInitFailed ?? 'Camera initialization failed'}: $e';
       _isInitialized = false;
@@ -95,7 +95,7 @@ class CameraHelper {
       await error_service.ErrorService().wrap(() async {
         _currentCameraIndex = (_currentCameraIndex + 1) % _cameras.length;
         await _initCameraController(_cameras[_currentCameraIndex]);
-      }, context: '切换相机');
+      }, context: '切换相机',);
       return _isInitialized;
     } catch (e) {
       return false;
@@ -108,7 +108,7 @@ class CameraHelper {
       return await error_service.ErrorService().wrap(() async {
         final image = await _cameraController!.takePicture();
         return image.path;
-      }, context: '拍照');
+      }, context: '拍照',);
     } catch (e) {
       _errorMessage = '${_strings?.cameraTakePictureFailed ?? 'Take picture failed'}: $e';
       return null;
@@ -181,7 +181,7 @@ class CameraHelper {
         } catch (e) {
           _locationName = '未知位置';
         }
-      }, context: '获取位置信息');
+      }, context: '获取位置信息',);
     } catch (e) {
       _locationName = _strings?.errorLocationFetch ?? 'Location fetch failed';
     }

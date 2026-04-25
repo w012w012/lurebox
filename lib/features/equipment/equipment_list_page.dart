@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/models/equipment.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/equipment_view_model.dart';
-import '../../widgets/common/premium_button.dart';
-import 'widgets/equipment_type_tabs.dart';
-import 'widgets/equipment_filter_bar.dart';
-import 'widgets/premium_equipment_card.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/providers/equipment_view_model.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/features/equipment/widgets/equipment_filter_bar.dart';
+import 'package:lurebox/features/equipment/widgets/equipment_type_tabs.dart';
+import 'package:lurebox/features/equipment/widgets/premium_equipment_card.dart';
+import 'package:lurebox/widgets/common/premium_button.dart';
 
 class EquipmentListPage extends ConsumerWidget {
   const EquipmentListPage({super.key});
@@ -47,9 +46,8 @@ class EquipmentListPage extends ConsumerWidget {
                       Text('Error: ${state.errorMessage}'),
                       const SizedBox(height: 16),
                       PremiumButton(
-                        onPressed: () => viewModel.refresh(),
+                        onPressed: viewModel.refresh,
                         text: 'Retry',
-                        variant: PremiumButtonVariant.primary,
                       ),
                     ],
                   ),
@@ -155,7 +153,7 @@ class EquipmentListPage extends ConsumerWidget {
     );
   }
 
-  void _navigateToEdit(
+  Future<void> _navigateToEdit(
     BuildContext context,
     WidgetRef ref,
     String type, {
@@ -164,12 +162,12 @@ class EquipmentListPage extends ConsumerWidget {
     final result = await context.push<bool>(
       '/equipment/edit?type=$type${equipmentId != null ? '&id=$equipmentId' : ''}',
     );
-    if (result == true) {
+    if (result ?? false) {
       ref.read(equipmentListViewModelProvider.notifier).refresh();
     }
   }
 
-  void _setDefault(
+  Future<void> _setDefault(
     BuildContext context,
     WidgetRef ref,
     int id,
@@ -180,7 +178,7 @@ class EquipmentListPage extends ConsumerWidget {
         .setDefaultEquipment(id, type);
   }
 
-  void _confirmDelete(
+  Future<void> _confirmDelete(
     BuildContext context,
     WidgetRef ref,
     int id,
@@ -205,7 +203,7 @@ class EquipmentListPage extends ConsumerWidget {
         ],
       ),
     );
-    if (confirm == true) {
+    if (confirm ?? false) {
       await ref
           .read(equipmentListViewModelProvider.notifier)
           .deleteEquipment(id);

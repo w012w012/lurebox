@@ -1,11 +1,11 @@
-import '../../../core/models/fish_species.dart';
+import 'package:lurebox/core/models/fish_species.dart';
 
 /// saltwaterGeneral 鱼种数据
 class SaltwaterGeneralSpecies {
   SaltwaterGeneralSpecies._();
 
   static const List<FishSpecies> data = [
-    const FishSpecies(
+    FishSpecies(
     id: 'g009',
     standardName: '梭鱼',
     scientificName: 'Mugil cephalus',
@@ -18,11 +18,10 @@ class SaltwaterGeneralSpecies {
     description: '可入淡水的海鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g015',
     standardName: '柳叶鱼',
     scientificName: 'Engraulis japonicus',
-    aliases: [],
     category: FishCategory.saltwaterGeneral,
     rarity: FishRarity.uncommon,
     habitat: '沿海海域',
@@ -31,7 +30,7 @@ class SaltwaterGeneralSpecies {
     description: '小型鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g018',
     standardName: '银鲳',
     scientificName: 'Pampus argenteus',
@@ -44,11 +43,10 @@ class SaltwaterGeneralSpecies {
     description: '体型侧扁银白色',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g020',
     standardName: '斑鰶',
     scientificName: 'Konosirus punctatus',
-    aliases: [],
     category: FishCategory.saltwaterGeneral,
     rarity: FishRarity.uncommon,
     habitat: '沿海海域',
@@ -57,7 +55,7 @@ class SaltwaterGeneralSpecies {
     description: '小型海水鱼',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g021',
     standardName: '舌鳎',
     scientificName: 'Solea spp.',
@@ -70,11 +68,10 @@ class SaltwaterGeneralSpecies {
     description: '体型扁平如舌',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g028',
     standardName: '七丝鲚',
     scientificName: 'Coilia grayii',
-    aliases: [],
     category: FishCategory.saltwaterGeneral,
     rarity: FishRarity.uncommon,
     habitat: '沿海海域',
@@ -83,7 +80,7 @@ class SaltwaterGeneralSpecies {
     description: '小型鱼类',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g030',
     standardName: '遮目鱼',
     scientificName: 'Chanos chanos',
@@ -96,7 +93,7 @@ class SaltwaterGeneralSpecies {
     description: '重要养殖鱼种',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g036',
     standardName: '黄鳍东方鲀',
     scientificName: 'Takifugu xanthopterus',
@@ -109,7 +106,7 @@ class SaltwaterGeneralSpecies {
     description: '鳍条黄色',
     iconEmoji: '🐡',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g037',
     standardName: '菊黄东方鲀',
     scientificName: 'Takifugu flavidus',
@@ -122,7 +119,7 @@ class SaltwaterGeneralSpecies {
     description: '体色菊黄',
     iconEmoji: '🐡',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g038',
     standardName: '斑点鸡笼鲳',
     scientificName: 'Drepane punctata',
@@ -135,7 +132,7 @@ class SaltwaterGeneralSpecies {
     description: '体有斑点',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g039',
     standardName: '灰鲳',
     scientificName: 'Pampus cinereus',
@@ -148,7 +145,7 @@ class SaltwaterGeneralSpecies {
     description: '体色灰白',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g040',
     standardName: '刺鲳',
     scientificName: 'Psenopsis anomala',
@@ -161,7 +158,7 @@ class SaltwaterGeneralSpecies {
     description: '背鳍有刺',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g041',
     standardName: '乌鲳',
     scientificName: 'Parastromateus niger',
@@ -174,7 +171,7 @@ class SaltwaterGeneralSpecies {
     description: '体色深灰',
     iconEmoji: '🐟',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g046',
     standardName: '短棘鲀',
     scientificName: 'Diodon spp.',
@@ -187,7 +184,7 @@ class SaltwaterGeneralSpecies {
     description: '体有短刺',
     iconEmoji: '🐡',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g047',
     standardName: '六斑刺鲀',
     scientificName: 'Diodon holocanthus',
@@ -200,7 +197,7 @@ class SaltwaterGeneralSpecies {
     description: '体有六斑',
     iconEmoji: '🐡',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g048',
     standardName: '纹腹叉鼻鲀',
     scientificName: 'Arothron hispidus',
@@ -213,7 +210,7 @@ class SaltwaterGeneralSpecies {
     description: '腹部有纹',
     iconEmoji: '🐡',
     ),
-    const FishSpecies(
+    FishSpecies(
     id: 'g049',
     standardName: '星点东方鲀',
     scientificName: 'Takifugu niphyperion',

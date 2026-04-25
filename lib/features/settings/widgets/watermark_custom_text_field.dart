@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/models/watermark_settings.dart';
-import '../../../core/providers/watermark_provider.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/watermark_settings.dart';
+import 'package:lurebox/core/providers/watermark_provider.dart';
 
 class WatermarkCustomTextField extends ConsumerStatefulWidget {
-  final WatermarkSettings settings;
-  final AppStrings strings;
 
   const WatermarkCustomTextField({
-    super.key,
-    required this.settings,
-    required this.strings,
+    required this.settings, required this.strings, super.key,
   });
+  final WatermarkSettings settings;
+  final AppStrings strings;
 
   @override
   ConsumerState<WatermarkCustomTextField> createState() =>

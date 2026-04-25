@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 
 void main() {
   group('AppTheme', () {
@@ -54,7 +54,7 @@ void main() {
       group('CardTheme (iOS-style subtle shadows)', () {
         test('should have no border side', () {
           final cardShape =
-              lightTheme.cardTheme.shape as RoundedRectangleBorder;
+              lightTheme.cardTheme.shape! as RoundedRectangleBorder;
           // iOS style: no border, just rounded corners
           expect(cardShape.side, BorderSide.none);
         });
@@ -65,16 +65,16 @@ void main() {
 
         test('should use correct border radius', () {
           final cardShape =
-              lightTheme.cardTheme.shape as RoundedRectangleBorder;
+              lightTheme.cardTheme.shape! as RoundedRectangleBorder;
           expect(
-              cardShape.borderRadius, BorderRadius.circular(AppTheme.radiusMd));
+              cardShape.borderRadius, BorderRadius.circular(AppTheme.radiusMd),);
         });
       });
 
       group('ButtonTheme (iOS-style blue)', () {
         test('elevated button should use accent light color', () {
           final elevatedStyle =
-              lightTheme.elevatedButtonTheme.style as ButtonStyle;
+              lightTheme.elevatedButtonTheme.style!;
           expect(
             elevatedStyle.backgroundColor?.resolve({}),
             AppColors.accentLight,
@@ -83,7 +83,7 @@ void main() {
 
         test('outlined button should use accent light color', () {
           final outlinedStyle =
-              lightTheme.outlinedButtonTheme.style as ButtonStyle;
+              lightTheme.outlinedButtonTheme.style!;
           expect(
             outlinedStyle.foregroundColor?.resolve({}),
             AppColors.accentLight,
@@ -91,7 +91,7 @@ void main() {
         });
 
         test('text button should use accent light color', () {
-          final textStyle = lightTheme.textButtonTheme.style as ButtonStyle;
+          final textStyle = lightTheme.textButtonTheme.style!;
           expect(
             textStyle.foregroundColor?.resolve({}),
             AppColors.accentLight,
@@ -109,13 +109,13 @@ void main() {
         });
 
         test('enabled border should have no side (iOS style)', () {
-          final enabledBorder = lightTheme.inputDecorationTheme.enabledBorder
+          final enabledBorder = lightTheme.inputDecorationTheme.enabledBorder!
               as OutlineInputBorder;
           expect(enabledBorder.borderSide, BorderSide.none);
         });
 
         test('focused border should use accent light', () {
-          final focusedBorder = lightTheme.inputDecorationTheme.focusedBorder
+          final focusedBorder = lightTheme.inputDecorationTheme.focusedBorder!
               as OutlineInputBorder;
           expect(focusedBorder.borderSide.color, AppColors.accentLight);
         });
@@ -124,14 +124,14 @@ void main() {
       group('ChipTheme (iOS-style)', () {
         test('selected color should use accent light opacity', () {
           expect(lightTheme.chipTheme.selectedColor,
-              AppColors.accentLight.withValues(alpha: 0.12));
+              AppColors.accentLight.withValues(alpha: 0.12),);
         });
       });
 
       group('SnackbarTheme (iOS-style blue)', () {
         test('should use accent light background', () {
           expect(
-              lightTheme.snackBarTheme.backgroundColor, AppColors.accentLight);
+              lightTheme.snackBarTheme.backgroundColor, AppColors.accentLight,);
         });
       });
     });
@@ -185,7 +185,7 @@ void main() {
 
       group('CardTheme (iOS-style True Black)', () {
         test('should have no border side', () {
-          final cardShape = darkTheme.cardTheme.shape as RoundedRectangleBorder;
+          final cardShape = darkTheme.cardTheme.shape! as RoundedRectangleBorder;
           expect(cardShape.side, BorderSide.none);
         });
 
@@ -195,16 +195,16 @@ void main() {
         });
 
         test('should use correct border radius', () {
-          final cardShape = darkTheme.cardTheme.shape as RoundedRectangleBorder;
+          final cardShape = darkTheme.cardTheme.shape! as RoundedRectangleBorder;
           expect(
-              cardShape.borderRadius, BorderRadius.circular(AppTheme.radiusMd));
+              cardShape.borderRadius, BorderRadius.circular(AppTheme.radiusMd),);
         });
       });
 
       group('ButtonTheme (iOS-style blue)', () {
         test('elevated button should use accent dark color', () {
           final elevatedStyle =
-              darkTheme.elevatedButtonTheme.style as ButtonStyle;
+              darkTheme.elevatedButtonTheme.style!;
           expect(
             elevatedStyle.backgroundColor?.resolve({}),
             AppColors.accentDark,
@@ -213,7 +213,7 @@ void main() {
 
         test('outlined button should use accent dark color', () {
           final outlinedStyle =
-              darkTheme.outlinedButtonTheme.style as ButtonStyle;
+              darkTheme.outlinedButtonTheme.style!;
           expect(
             outlinedStyle.foregroundColor?.resolve({}),
             AppColors.accentDark,
@@ -221,7 +221,7 @@ void main() {
         });
 
         test('text button should use accent dark color', () {
-          final textStyle = darkTheme.textButtonTheme.style as ButtonStyle;
+          final textStyle = darkTheme.textButtonTheme.style!;
           expect(
             textStyle.foregroundColor?.resolve({}),
             AppColors.accentDark,
@@ -236,19 +236,19 @@ void main() {
 
         test('should use surface dark fill color (True Black)', () {
           expect(
-              darkTheme.inputDecorationTheme.fillColor, AppColors.surfaceDark);
+              darkTheme.inputDecorationTheme.fillColor, AppColors.surfaceDark,);
           expect(darkTheme.inputDecorationTheme.fillColor,
-              const Color(0xFF0A0A0A));
+              const Color(0xFF0A0A0A),);
         });
 
         test('enabled border should have no side (iOS style)', () {
-          final enabledBorder = darkTheme.inputDecorationTheme.enabledBorder
+          final enabledBorder = darkTheme.inputDecorationTheme.enabledBorder!
               as OutlineInputBorder;
           expect(enabledBorder.borderSide, BorderSide.none);
         });
 
         test('focused border should use accent dark', () {
-          final focusedBorder = darkTheme.inputDecorationTheme.focusedBorder
+          final focusedBorder = darkTheme.inputDecorationTheme.focusedBorder!
               as OutlineInputBorder;
           expect(focusedBorder.borderSide.color, AppColors.accentDark);
         });
@@ -257,7 +257,7 @@ void main() {
       group('ChipTheme (iOS-style)', () {
         test('selected color should use accent dark opacity', () {
           expect(darkTheme.chipTheme.selectedColor,
-              AppColors.accentDark.withValues(alpha: 0.15));
+              AppColors.accentDark.withValues(alpha: 0.15),);
         });
       });
 

@@ -605,9 +605,9 @@ void main() {
 
       test('formats with custom decimals', () {
         expect(UnitConverter.formatLength(100.556, 'cm', decimals: 2),
-            '100.56 厘米');
+            '100.56 厘米',);
         expect(
-            UnitConverter.formatLength(100.556, 'cm', decimals: 0), '101 厘米');
+            UnitConverter.formatLength(100.556, 'cm', decimals: 0), '101 厘米',);
       });
 
       test('formats negative values', () {
@@ -635,7 +635,7 @@ void main() {
       test('formats with custom decimals', () {
         expect(UnitConverter.formatWeight(1.556, 'kg', decimals: 1), '1.6 千克');
         expect(
-            UnitConverter.formatWeight(1.556, 'kg', decimals: 3), '1.556 千克');
+            UnitConverter.formatWeight(1.556, 'kg', decimals: 3), '1.556 千克',);
       });
 
       test('formats negative values', () {
@@ -714,12 +714,12 @@ void main() {
     test('very small non-zero values', () {
       expect(UnitConverter.toBaseCm(0.001, 'mm'), closeTo(0.0001, 0.000001));
       expect(
-          UnitConverter.toBaseKg(0.001, 'g'), closeTo(0.000001, 0.000000001));
+          UnitConverter.toBaseKg(0.001, 'g'), closeTo(0.000001, 0.000000001),);
     });
 
     test('very large values', () {
-      expect(UnitConverter.toBaseCm(1e15, 'm'), 1e17);
-      expect(UnitConverter.toBaseKg(1e10, 'lb'), closeTo(4.53592e9, 1e6));
+      expect(UnitConverter.toBaseCm(1000000000000000, 'm'), 1e17);
+      expect(UnitConverter.toBaseKg(10000000000, 'lb'), closeTo(4.53592e9, 1e6));
     });
 
     test('decimal precision in conversions', () {

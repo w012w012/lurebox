@@ -18,11 +18,6 @@
 library;
 
 class LocationWithStats {
-  final String name;
-  final double latitude;
-  final double longitude;
-  final int fishCount;
-  final DateTime? lastCatchTime;
 
   const LocationWithStats({
     required this.name,
@@ -43,6 +38,11 @@ class LocationWithStats {
           : null,
     );
   }
+  final String name;
+  final double latitude;
+  final double longitude;
+  final int fishCount;
+  final DateTime? lastCatchTime;
 
   Map<String, dynamic> toMap() {
     return {
@@ -89,12 +89,6 @@ class LocationWithStats {
 }
 
 class LocationStats {
-  final int totalCatches;
-  final int releaseCount;
-  final int keepCount;
-  final Map<String, int> speciesDistribution;
-  final double? avgLength;
-  final double? avgWeight;
 
   const LocationStats({
     required this.totalCatches,
@@ -104,9 +98,6 @@ class LocationStats {
     this.avgLength,
     this.avgWeight,
   });
-
-  double get releaseRate =>
-      totalCatches > 0 ? releaseCount / totalCatches : 0.0;
 
   factory LocationStats.fromMap(Map<String, dynamic> map) {
     return LocationStats(
@@ -118,6 +109,15 @@ class LocationStats {
       avgWeight: map['avg_weight'] as double?,
     );
   }
+  final int totalCatches;
+  final int releaseCount;
+  final int keepCount;
+  final Map<String, int> speciesDistribution;
+  final double? avgLength;
+  final double? avgWeight;
+
+  double get releaseRate =>
+      totalCatches > 0 ? releaseCount / totalCatches : 0.0;
 
   /// 安全地将 dynamic Map 转换为 Map<String, int>
   ///
@@ -195,7 +195,7 @@ class LocationStats {
         releaseCount,
         keepCount,
         Object.hashAll(speciesDistribution.entries
-            .map((e) => Object.hash(e.key, e.value))),
+            .map((e) => Object.hash(e.key, e.value)),),
         avgLength,
         avgWeight,
       );

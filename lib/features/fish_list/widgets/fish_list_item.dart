@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/widgets/common/image_cache_helper.dart';
 import 'package:shimmer/shimmer.dart';
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/models/app_settings.dart';
-import '../../../core/models/fish_catch.dart';
-import '../../../core/providers/app_settings_provider.dart';
-import '../../../core/utils/unit_converter.dart';
-import '../../../widgets/common/image_cache_helper.dart';
 
 class FishListItem extends ConsumerWidget {
+
+  const FishListItem({
+    required this.fish, required this.strings, required this.onTap, super.key,
+    this.isSelected = false,
+    this.isSelectionMode = false,
+    this.onLongPress,
+    this.onQuickIdentify,
+  });
   final FishCatch fish;
   final AppStrings strings;
   final bool isSelected;
@@ -17,17 +25,6 @@ class FishListItem extends ConsumerWidget {
   final VoidCallback onTap;
   final VoidCallback? onLongPress;
   final VoidCallback? onQuickIdentify;
-
-  const FishListItem({
-    super.key,
-    required this.fish,
-    required this.strings,
-    this.isSelected = false,
-    this.isSelectionMode = false,
-    required this.onTap,
-    this.onLongPress,
-    this.onQuickIdentify,
-  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -109,7 +106,7 @@ class FishListItem extends ConsumerWidget {
                           ),
                         );
                       },
-                      errorBuilder: (_, __, ___) => Container(
+                      errorBuilder: (_, __, ___) => ColoredBox(
                         color: Theme.of(
                           context,
                         ).colorScheme.surfaceContainerHighest,

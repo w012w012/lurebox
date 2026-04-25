@@ -1,23 +1,24 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:http/http.dart' as http;
-import '../fish_recognition_service.dart';
-import '../../models/ai_recognition_settings.dart';
-import 'fish_recognition_shared.dart';
+import 'package:lurebox/core/models/ai_recognition_settings.dart';
+import 'package:lurebox/core/services/adapters/fish_recognition_shared.dart';
+import 'package:lurebox/core/services/fish_recognition_service.dart';
 
 /// MiniMax 鱼类识别提供者
 ///
 /// 使用 MiniMax 多模态 API 进行鱼类识别
 class MiniMaxFishRecognitionProvider implements FishRecognitionProvider {
-  static const String _systemPrompt = fishRecognitionSystemPrompt;
-
-  /// HTTP client for making requests (injectable for testing)
-  final http.Client? _client;
 
   /// Creates a MiniMax provider with optional HTTP client injection
   /// If no client is provided, uses the default http.Client
   MiniMaxFishRecognitionProvider({http.Client? client}) : _client = client;
+  static const String _systemPrompt = fishRecognitionSystemPrompt;
+
+  /// HTTP client for making requests (injectable for testing)
+  final http.Client? _client;
 
   @override
   Future<FishRecognitionResult> identifySpecies(

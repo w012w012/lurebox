@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/providers/app_settings_provider.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../widgets/common/premium_card.dart';
-import '../../../widgets/common/premium_input.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
+import 'package:lurebox/widgets/common/premium_input.dart';
 
 class SettingsUnitsSection extends ConsumerWidget {
   const SettingsUnitsSection({super.key});
@@ -39,11 +39,9 @@ class SettingsUnitsSection extends ConsumerWidget {
     required BuildContext context,
     required IconData icon,
     required String title,
-    String? subtitle,
-    required Widget trailing,
-    required VoidCallback onTap,
+    required Widget trailing, required VoidCallback onTap, String? subtitle,
   }) {
-    final accentColor = TeslaColors.electricBlue;
+    const accentColor = TeslaColors.electricBlue;
 
     return InkWell(
       onTap: onTap,

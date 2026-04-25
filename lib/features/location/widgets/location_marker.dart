@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/app_theme.dart';
-import '../../../core/design/theme/animation_constants.dart';
+import 'package:lurebox/core/design/theme/animation_constants.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 
 /// Location marker widget with blue accent styling and iOS-style touch feedback.
 class LocationMarker extends StatefulWidget {
+
+  const LocationMarker({
+    required this.name, required this.fishCount, required this.isSelected, required this.onTap, super.key,
+  });
   final String name;
   final int fishCount;
   final bool isSelected;
   final VoidCallback onTap;
-
-  const LocationMarker({
-    super.key,
-    required this.name,
-    required this.fishCount,
-    required this.isSelected,
-    required this.onTap,
-  });
 
   @override
   State<LocationMarker> createState() => _LocationMarkerState();
@@ -125,9 +121,9 @@ class _LocationMarkerState extends State<LocationMarker> {
 }
 
 class _TrianglePainter extends CustomPainter {
-  final Color color;
 
   _TrianglePainter({required this.color});
+  final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {

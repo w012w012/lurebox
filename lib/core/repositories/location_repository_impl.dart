@@ -1,7 +1,6 @@
-import 'package:sqflite/sqflite.dart' hide DatabaseException;
-import '../models/fish_catch.dart';
-import 'base_repository.dart';
-import 'location_repository.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/repositories/base_repository.dart';
+import 'package:lurebox/core/repositories/location_repository.dart';
 
 /// SQLite 实现 - 钓点位置仓储层
 ///
@@ -9,18 +8,18 @@ import 'location_repository.dart';
 
 class SqliteLocationRepository extends BaseSqliteRepository
     implements LocationRepository {
-  /// Approximate km per degree of latitude (varies ~110.57 at equator to ~111.70 at poles)
-  static const double _kmPerDegreeLatitude = 111.0;
-
-  @override
-  String get tableName => 'fish_catches';
 
   /// 无参构造函数（使用默认 DatabaseService）
   SqliteLocationRepository();
 
   /// 带数据库的构造函数（用于测试）
-  SqliteLocationRepository.withDatabase(Future<Database> testDb)
-      : super.withDatabase(testDb);
+  SqliteLocationRepository.withDatabase(super.testDb)
+      : super.withDatabase();
+  /// Approximate km per degree of latitude (varies ~110.57 at equator to ~111.70 at poles)
+  static const double _kmPerDegreeLatitude = 111;
+
+  @override
+  String get tableName => 'fish_catches';
 
   @override
   Future<List<LocationWithStats>> getAllWithStats() async {
@@ -42,7 +41,7 @@ class SqliteLocationRepository extends BaseSqliteRepository
         ORDER BY fish_count DESC
       ''');
       return List<LocationWithStats>.from(results.map(
-          (map) => LocationWithStats.fromMap(map as Map<String, dynamic>)));
+          (map) => LocationWithStats.fromMap(map as Map<String, dynamic>),),);
     } catch (e) {
       throwDbError('get all locations with stats', e);
     }
@@ -110,7 +109,7 @@ class SqliteLocationRepository extends BaseSqliteRepository
         ],
       );
       return List<LocationWithStats>.from(results.map(
-          (map) => LocationWithStats.fromMap(map as Map<String, dynamic>)));
+          (map) => LocationWithStats.fromMap(map as Map<String, dynamic>),),);
     } catch (e) {
       throwDbError('get nearby locations', e);
     }

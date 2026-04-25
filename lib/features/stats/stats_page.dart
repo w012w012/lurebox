@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/constants/strings.dart';
-import '../../core/design/theme/app_colors.dart';
-import '../../core/design/theme/app_theme.dart';
-import '../../core/design/theme/tesla_theme.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/stats_provider.dart';
-import '../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/stats_provider.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// 统计页
 class StatsPage extends ConsumerWidget {
@@ -78,8 +78,8 @@ class StatsPage extends ConsumerWidget {
                     _navigateToDetail(
                       context,
                       strings.monthCatch,
-                      startOfDay: DateTime(now.year, now.month, 1),
-                      endOfDay: DateTime(now.year, now.month + 1, 1),
+                      startOfDay: DateTime(now.year, now.month),
+                      endOfDay: DateTime(now.year, now.month + 1),
                     );
                   },
                 ),
@@ -99,8 +99,8 @@ class StatsPage extends ConsumerWidget {
                     _navigateToDetail(
                       context,
                       strings.yearCatch,
-                      startOfDay: DateTime(now.year, 1, 1),
-                      endOfDay: DateTime(now.year + 1, 1, 1),
+                      startOfDay: DateTime(now.year),
+                      endOfDay: DateTime(now.year + 1),
                     );
                   },
                 ),
@@ -120,8 +120,8 @@ class StatsPage extends ConsumerWidget {
                     _navigateToDetail(
                       context,
                       strings.allCatch,
-                      startOfDay: DateTime(2000, 1, 1),
-                      endOfDay: DateTime(now.year + 1, 1, 1),
+                      startOfDay: DateTime(2000),
+                      endOfDay: DateTime(now.year + 1),
                     );
                   },
                 ),
@@ -171,13 +171,13 @@ class StatsPage extends ConsumerWidget {
 
 /// Staggered animation wrapper for stat cards
 class _AnimatedStatCard extends StatefulWidget {
-  final int index;
-  final Widget child;
 
   const _AnimatedStatCard({
     required this.index,
     required this.child,
   });
+  final int index;
+  final Widget child;
 
   @override
   State<_AnimatedStatCard> createState() => _AnimatedStatCardState();
@@ -198,12 +198,12 @@ class _AnimatedStatCardState extends State<_AnimatedStatCard>
     );
 
     _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
+      begin: 0,
+      end: 1,
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: TeslaTheme.transitionCurve,
-    ));
+    ),);
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.15),
@@ -211,7 +211,7 @@ class _AnimatedStatCardState extends State<_AnimatedStatCard>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: TeslaTheme.transitionCurve,
-    ));
+    ),);
 
     // Stagger the animation start
     Future.delayed(
@@ -244,14 +244,13 @@ class _AnimatedStatCardState extends State<_AnimatedStatCard>
 
 /// Loading state for stat card
 class _StatCardLoading extends StatelessWidget {
-  final String title;
 
   const _StatCardLoading({required this.title});
+  final String title;
 
   @override
   Widget build(BuildContext context) {
     return PremiumCard(
-      onTap: null,
       child: Row(
         children: [
           Text(
@@ -277,14 +276,13 @@ class _StatCardLoading extends StatelessWidget {
 
 /// Error state for stat card
 class _StatCardError extends StatelessWidget {
-  final String title;
 
   const _StatCardError({required this.title});
+  final String title;
 
   @override
   Widget build(BuildContext context) {
     return PremiumCard(
-      onTap: null,
       child: Row(
         children: [
           Text(
@@ -302,6 +300,14 @@ class _StatCardError extends StatelessWidget {
 }
 
 class _StatCard extends StatefulWidget {
+
+  const _StatCard({
+    required this.title,
+    required this.count,
+    required this.release,
+    required this.keep,
+    required this.onTap, required this.strings, this.species,
+  });
   final String title;
   final int count;
   final int release;
@@ -309,16 +315,6 @@ class _StatCard extends StatefulWidget {
   final Map<String, int>? species;
   final VoidCallback onTap;
   final AppStrings strings;
-
-  const _StatCard({
-    required this.title,
-    required this.count,
-    required this.release,
-    required this.keep,
-    this.species,
-    required this.onTap,
-    required this.strings,
-  });
 
   @override
   State<_StatCard> createState() => _StatCardState();
@@ -344,7 +340,6 @@ class _StatCardState extends State<_StatCard> {
         duration: TeslaTheme.transitionDuration,
         curve: TeslaTheme.transitionCurve,
         child: PremiumCard(
-          variant: PremiumCardVariant.standard,
           padding: const EdgeInsets.all(AppTheme.spacingLg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -404,10 +399,6 @@ class _StatCardState extends State<_StatCard> {
 }
 
 class _StatItem extends StatelessWidget {
-  final IconData icon;
-  final int count;
-  final String label;
-  final Color color;
 
   const _StatItem({
     required this.icon,
@@ -415,6 +406,10 @@ class _StatItem extends StatelessWidget {
     required this.label,
     required this.color,
   });
+  final IconData icon;
+  final int count;
+  final String label;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {

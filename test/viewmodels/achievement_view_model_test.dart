@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/achievement.dart';
-import 'package:lurebox/core/services/achievement_service.dart';
 import 'package:lurebox/core/providers/achievement_view_model.dart';
+import 'package:lurebox/core/services/achievement_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 class MockAchievementService extends Mock implements AchievementService {}
 
@@ -73,9 +73,8 @@ void main() {
           createAchievement(
               id: 'catch_1',
               current: 10,
-              target: 10,
-              unlockedAt: DateTime.now()),
-          createAchievement(id: 'catch_2', current: 5, target: 10),
+              unlockedAt: DateTime.now(),),
+          createAchievement(id: 'catch_2'),
           createAchievement(id: 'length_1', current: 3, target: 30),
         ];
 
@@ -108,8 +107,8 @@ void main() {
       test('filters achievements by category when setCategory is called',
           () async {
         final achievements = [
-          createAchievement(id: 'catch_1', category: 'catch'),
-          createAchievement(id: 'catch_2', category: 'catch'),
+          createAchievement(id: 'catch_1'),
+          createAchievement(id: 'catch_2'),
           createAchievement(id: 'species_1', category: 'species'),
           createAchievement(id: 'equipment_1', category: 'equipment'),
         ];
@@ -126,13 +125,13 @@ void main() {
         expect(
             viewModel.state.filteredAchievements
                 .every((a) => a.category == 'catch'),
-            true);
+            true,);
         expect(viewModel.state.category, AchievementCategory.catchCount);
       });
 
       test('shows all achievements when category is all', () async {
         final achievements = [
-          createAchievement(id: 'catch_1', category: 'catch'),
+          createAchievement(id: 'catch_1'),
           createAchievement(id: 'species_1', category: 'species'),
         ];
 
@@ -151,9 +150,9 @@ void main() {
     group('AchievementState getters', () {
       test('unlockedCount returns correct count', () async {
         final achievements = [
-          createAchievement(id: 'a1', current: 10, target: 10),
-          createAchievement(id: 'a2', current: 5, target: 10),
-          createAchievement(id: 'a3', current: 10, target: 10),
+          createAchievement(id: 'a1', current: 10),
+          createAchievement(id: 'a2'),
+          createAchievement(id: 'a3', current: 10),
         ];
 
         when(() => mockService.getAllAchievements())
@@ -168,8 +167,8 @@ void main() {
 
       test('unlockProgress returns correct percentage', () async {
         final achievements = [
-          createAchievement(id: 'a1', current: 10, target: 10),
-          createAchievement(id: 'a2', current: 5, target: 10),
+          createAchievement(id: 'a1', current: 10),
+          createAchievement(id: 'a2'),
         ];
 
         when(() => mockService.getAllAchievements())
@@ -195,7 +194,7 @@ void main() {
     group('getProgress', () {
       test('returns progress for existing achievement id', () async {
         final achievements = [
-          createAchievement(id: 'catch_1', current: 7, target: 10),
+          createAchievement(id: 'catch_1', current: 7),
         ];
 
         when(() => mockService.getAllAchievements())
@@ -221,7 +220,7 @@ void main() {
     group('isUnlocked', () {
       test('returns true for unlocked achievement', () async {
         final achievements = [
-          createAchievement(id: 'catch_1', current: 10, target: 10),
+          createAchievement(id: 'catch_1', current: 10),
         ];
 
         when(() => mockService.getAllAchievements())
@@ -235,7 +234,7 @@ void main() {
 
       test('returns false for locked achievement', () async {
         final achievements = [
-          createAchievement(id: 'catch_1', current: 5, target: 10),
+          createAchievement(id: 'catch_1'),
         ];
 
         when(() => mockService.getAllAchievements())
@@ -262,17 +261,17 @@ void main() {
       test('has all category values', () {
         expect(AchievementCategory.values, contains(AchievementCategory.all));
         expect(AchievementCategory.values,
-            contains(AchievementCategory.catchCount));
+            contains(AchievementCategory.catchCount),);
         expect(
-            AchievementCategory.values, contains(AchievementCategory.species));
+            AchievementCategory.values, contains(AchievementCategory.species),);
         expect(AchievementCategory.values,
-            contains(AchievementCategory.equipment));
+            contains(AchievementCategory.equipment),);
         expect(
-            AchievementCategory.values, contains(AchievementCategory.location));
+            AchievementCategory.values, contains(AchievementCategory.location),);
         expect(
-            AchievementCategory.values, contains(AchievementCategory.release));
+            AchievementCategory.values, contains(AchievementCategory.release),);
         expect(
-            AchievementCategory.values, contains(AchievementCategory.special));
+            AchievementCategory.values, contains(AchievementCategory.special),);
       });
 
       test('category values have correct string representations', () {
@@ -289,12 +288,12 @@ void main() {
 
   group('Achievement model', () {
     test('isUnlocked returns true when current >= target', () {
-      final achievement = createAchievement(current: 10, target: 10);
+      final achievement = createAchievement(current: 10);
       expect(achievement.isUnlocked, true);
     });
 
     test('isLocked returns true when current < target', () {
-      final achievement = createAchievement(current: 5, target: 10);
+      final achievement = createAchievement();
       expect(achievement.isLocked, true);
     });
 
@@ -309,12 +308,12 @@ void main() {
     });
 
     test('progressPercent returns 0 when target is 0', () {
-      final achievement = createAchievement(current: 5, target: 0);
+      final achievement = createAchievement(target: 0);
       expect(achievement.progressPercent, 0.0);
     });
 
     test('copyWith creates new instance with updated values', () {
-      final original = createAchievement(id: 'original', current: 5);
+      final original = createAchievement(id: 'original');
       final copied = original.copyWith(current: 10);
 
       expect(copied.id, 'original');

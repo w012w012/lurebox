@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/strings.dart';
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/app_theme.dart';
-import '../../../core/design/theme/animation_constants.dart';
-import '../../../core/providers/location_view_model.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/animation_constants.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
+import 'package:lurebox/core/providers/location_view_model.dart';
 
 /// Similar fishing location group card with iOS aesthetics and PremiumCard styling.
 class LocationGroupCard extends StatefulWidget {
+
+  const LocationGroupCard({
+    required this.group, required this.locationFishCounts, super.key,
+    this.strings,
+    this.onAutoMerge,
+  });
   final LocationGroup group;
   final Map<String, int> locationFishCounts;
   final AppStrings? strings;
   final VoidCallback? onAutoMerge;
-
-  const LocationGroupCard({
-    super.key,
-    required this.group,
-    required this.locationFishCounts,
-    this.strings,
-    this.onAutoMerge,
-  });
 
   @override
   State<LocationGroupCard> createState() => _LocationGroupCardState();
@@ -49,7 +47,7 @@ class _LocationGroupCardState extends State<LocationGroupCard> {
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-        border: Border.all(color: borderColor, width: 1),
+        border: Border.all(color: borderColor),
         boxShadow: AppTheme.shadowSm,
       ),
       child: Material(

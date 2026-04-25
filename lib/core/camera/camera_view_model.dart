@@ -1,32 +1,33 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lurebox/core/camera/camera_helper.dart';
+import 'package:lurebox/core/camera/camera_state.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:lurebox/core/services/error_service.dart' as error_service;
+import 'package:lurebox/core/services/fish_catch_service.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
-import '../models/fish_catch.dart';
-import '../models/equipment.dart';
-import '../models/app_settings.dart';
-import '../utils/unit_converter.dart';
-import '../di/di.dart';
-import '../services/fish_catch_service.dart';
-import '../services/equipment_service.dart';
-import '../services/error_service.dart' as error_service;
-import '../constants/strings.dart';
-import '../providers/language_provider.dart';
-import 'camera_helper.dart';
-import 'camera_state.dart';
 
 class CameraViewModel extends StateNotifier<CameraState> {
-  final CameraHelper _cameraHelper = CameraHelper();
-  final FishCatchService _fishCatchService;
-  final EquipmentService _equipmentService;
-  final AppStrings _strings;
-  BuildContext? _context;
 
   CameraViewModel(this._fishCatchService, this._equipmentService, this._strings)
       : super(const CameraState()) {
     _cameraHelper.setStrings(_strings);
   }
+  final CameraHelper _cameraHelper = CameraHelper();
+  final FishCatchService _fishCatchService;
+  final EquipmentService _equipmentService;
+  final AppStrings _strings;
+  BuildContext? _context;
 
   CameraHelper get cameraHelper => _cameraHelper;
 
@@ -40,7 +41,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
     try {
       await error_service.ErrorService().wrap(() async {
         await _cameraHelper.initCamera(context: _context);
-      }, context: '初始化相机');
+      }, context: '初始化相机',);
 
       state = state.copyWith(
         isCameraInitialized: _cameraHelper.isInitialized,
@@ -54,7 +55,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: () => e.toString(),
+        errorMessage: e.toString,
       );
     }
   }
@@ -69,9 +70,9 @@ class CameraViewModel extends StateNotifier<CameraState> {
             errorMessage: () => _cameraHelper.errorMessage,
           );
         }
-      }, context: '切换相机');
+      }, context: '切换相机',);
     } catch (e) {
-      state = state.copyWith(errorMessage: () => e.toString());
+      state = state.copyWith(errorMessage: e.toString);
     }
   }
 
@@ -95,7 +96,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
           return newPath;
         }
         return path;
-      }, context: '拍照');
+      }, context: '拍照',);
     } finally {
       state = state.copyWith(isTakingPicture: false);
     }
@@ -113,9 +114,9 @@ class CameraViewModel extends StateNotifier<CameraState> {
           _cameraHelper.weatherData?.pressure,
           _cameraHelper.weatherData?.weatherCode,
         );
-      }, context: '获取位置');
+      }, context: '获取位置',);
     } catch (e) {
-      state = state.copyWith(errorMessage: () => e.toString());
+      state = state.copyWith(errorMessage: e.toString);
     }
   }
 
@@ -124,9 +125,9 @@ class CameraViewModel extends StateNotifier<CameraState> {
       await error_service.ErrorService().wrap(() async {
         final history = await _fishCatchService.getSpeciesHistory();
         state = state.copyWith(speciesHistory: history);
-      }, context: '加载历史品种');
+      }, context: '加载历史品种',);
     } catch (e) {
-      state = state.copyWith(errorMessage: () => e.toString());
+      state = state.copyWith(errorMessage: e.toString);
     }
   }
 
@@ -167,9 +168,9 @@ class CameraViewModel extends StateNotifier<CameraState> {
           selectedReel: () => defaultReel,
           selectedLure: () => defaultLure,
         );
-      }, context: '加载装备');
+      }, context: '加载装备',);
     } catch (e) {
-      state = state.copyWith(errorMessage: () => e.toString());
+      state = state.copyWith(errorMessage: e.toString);
     }
   }
 
@@ -177,13 +178,13 @@ class CameraViewModel extends StateNotifier<CameraState> {
     state = state.copyWith(
       imagePath: () => path,
       captureState: CameraCaptureState.pictureTaken,
-      catchTime: () => DateTime.now(), // 自动设置当前时间为默认钓获时间
+      catchTime: DateTime.now, // 自动设置当前时间为默认钓获时间
     );
   }
 
   void setSpecies(String species) {
-    final bool keepPending =
-        species.isNotEmpty ? false : state.pendingRecognition;
+    final keepPending =
+        !species.isNotEmpty && state.pendingRecognition;
     state = state.copyWith(species: species, pendingRecognition: keepPending);
   }
 
@@ -329,7 +330,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
           isLoading: false,
         );
         return fishId;
-      }, context: '保存鱼获');
+      }, context: '保存鱼获',);
     } catch (e) {
       state = state.copyWith(
         captureState: CameraCaptureState.error,

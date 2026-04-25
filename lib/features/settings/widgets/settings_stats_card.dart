@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../core/design/theme/app_colors.dart';
-import '../../../core/design/theme/tesla_theme.dart';
-import '../../../core/providers/language_provider.dart';
-import '../../../core/providers/settings_view_model.dart';
-import '../../../widgets/common/premium_card.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/settings_view_model.dart';
+import 'package:lurebox/widgets/common/premium_card.dart';
 
 class SettingsStatsCard extends ConsumerWidget {
   const SettingsStatsCard({super.key});
@@ -14,7 +14,7 @@ class SettingsStatsCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settingsState = ref.watch(settingsViewModelProvider);
     final strings = ref.watch(currentStringsProvider);
-    final accentColor = TeslaColors.electricBlue;
+    const accentColor = TeslaColors.electricBlue;
 
     return PremiumCard(
       margin: const EdgeInsets.symmetric(

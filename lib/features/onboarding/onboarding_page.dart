@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:permission_handler/permission_handler.dart';
-import '../../core/constants/strings.dart';
-import '../../core/providers/language_provider.dart';
-import '../../core/providers/onboarding_provider.dart';
-import '../../core/design/theme/app_colors.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/design/theme/app_colors.dart';
+import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/onboarding_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
   const OnboardingPage({super.key});
@@ -35,7 +35,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   void _nextPage() {
     if (_currentPage < 4) {
       _pageController.nextPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut,);
     } else {
       _completeOnboarding();
     }
@@ -107,8 +107,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
 }
 
 class _WelcomePage extends StatelessWidget {
-  final AppStrings strings;
   const _WelcomePage({required this.strings});
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +117,7 @@ class _WelcomePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.water_drop,
-              size: 100, color: TeslaColors.electricBlue),
+              size: 100, color: TeslaColors.electricBlue,),
           const SizedBox(height: 24),
           Text(strings.onboardingWelcomeTitle, style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
@@ -129,8 +129,8 @@ class _WelcomePage extends StatelessWidget {
 }
 
 class _FeaturesPage extends StatelessWidget {
-  final AppStrings strings;
   const _FeaturesPage({required this.strings});
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -147,13 +147,13 @@ class _FeaturesPage extends StatelessWidget {
               crossAxisSpacing: 16,
               children: [
                 _FeatureCard(
-                    icon: Icons.camera_alt, title: strings.onboardingFeatureCameraTitle, desc: strings.onboardingFeatureCameraDesc),
+                    icon: Icons.camera_alt, title: strings.onboardingFeatureCameraTitle, desc: strings.onboardingFeatureCameraDesc,),
                 _FeatureCard(
-                    icon: Icons.inventory_2, title: strings.onboardingFeatureEquipmentTitle, desc: strings.onboardingFeatureEquipmentDesc),
+                    icon: Icons.inventory_2, title: strings.onboardingFeatureEquipmentTitle, desc: strings.onboardingFeatureEquipmentDesc,),
                 _FeatureCard(
-                    icon: Icons.bar_chart, title: strings.onboardingFeatureStatsTitle, desc: strings.onboardingFeatureStatsDesc),
+                    icon: Icons.bar_chart, title: strings.onboardingFeatureStatsTitle, desc: strings.onboardingFeatureStatsDesc,),
                 _FeatureCard(
-                    icon: Icons.backup, title: strings.onboardingFeatureBackupTitle, desc: strings.onboardingFeatureBackupDesc),
+                    icon: Icons.backup, title: strings.onboardingFeatureBackupTitle, desc: strings.onboardingFeatureBackupDesc,),
               ],
             ),
           ),
@@ -164,11 +164,11 @@ class _FeaturesPage extends StatelessWidget {
 }
 
 class _FeatureCard extends StatelessWidget {
+  const _FeatureCard(
+      {required this.icon, required this.title, required this.desc,});
   final IconData icon;
   final String title;
   final String desc;
-  const _FeatureCard(
-      {required this.icon, required this.title, required this.desc});
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +183,7 @@ class _FeatureCard extends StatelessWidget {
             Text(title, style: Theme.of(context).textTheme.titleMedium),
             Text(desc,
                 style: Theme.of(context).textTheme.bodySmall,
-                textAlign: TextAlign.center),
+                textAlign: TextAlign.center,),
           ],
         ),
       ),
@@ -192,8 +192,8 @@ class _FeatureCard extends StatelessWidget {
 }
 
 class _PermissionsPage extends StatefulWidget {
-  final AppStrings strings;
   const _PermissionsPage({required this.strings});
+  final AppStrings strings;
 
   @override
   State<_PermissionsPage> createState() => _PermissionsPageState();
@@ -241,7 +241,7 @@ class _PermissionsPageState extends State<_PermissionsPage> {
       child: Column(
         children: [
           Text(widget.strings.onboardingPermissionsTitle,
-              style: Theme.of(context).textTheme.headlineSmall),
+              style: Theme.of(context).textTheme.headlineSmall,),
           const SizedBox(height: 32),
           Expanded(
             child: SingleChildScrollView(
@@ -281,7 +281,7 @@ class _PermissionsPageState extends State<_PermissionsPage> {
                     : const Icon(Icons.security),
                 label: Text(_isRequesting
                     ? widget.strings.onboardingPermissionsRequesting
-                    : widget.strings.onboardingPermissionsGrant),
+                    : widget.strings.onboardingPermissionsGrant,),
               ),
             ),
           if (_cameraGranted && _locationGranted)
@@ -291,7 +291,7 @@ class _PermissionsPageState extends State<_PermissionsPage> {
                 const Icon(Icons.check_circle, color: TeslaColors.success, size: 20),
                 const SizedBox(width: 8),
                 Text(widget.strings.onboardingPermissionsGranted,
-                    style: TextStyle(color: TeslaColors.success)),
+                    style: TextStyle(color: TeslaColors.success),),
               ],
             ),
           const SizedBox(height: 8),
@@ -303,17 +303,17 @@ class _PermissionsPageState extends State<_PermissionsPage> {
 }
 
 class _PermissionCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String desc;
-  final String example;
-  final bool granted;
   const _PermissionCard(
       {required this.icon,
       required this.title,
       required this.desc,
       required this.example,
-      this.granted = false});
+      this.granted = false,});
+  final IconData icon;
+  final String title;
+  final String desc;
+  final String example;
+  final bool granted;
 
   @override
   Widget build(BuildContext context) {
@@ -329,15 +329,15 @@ class _PermissionCard extends StatelessWidget {
                     color: granted
                         ? TeslaColors.success
                         : TeslaColors.electricBlue,
-                    size: 32),
+                    size: 32,),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(title,
-                      style: Theme.of(context).textTheme.titleMedium),
+                      style: Theme.of(context).textTheme.titleMedium,),
                 ),
                 if (granted)
                   const Icon(Icons.check_circle,
-                      color: TeslaColors.success, size: 20),
+                      color: TeslaColors.success, size: 20,),
               ],
             ),
             const SizedBox(height: 8),
@@ -347,7 +347,7 @@ class _PermissionCard extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.grey,
                       fontStyle: FontStyle.italic,
-                    )),
+                    ),),
           ],
         ),
       ),
@@ -356,8 +356,8 @@ class _PermissionCard extends StatelessWidget {
 }
 
 class _SettingsPage extends StatelessWidget {
-  final AppStrings strings;
   const _SettingsPage({required this.strings});
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -378,8 +378,8 @@ class _SettingsPage extends StatelessWidget {
 }
 
 class _CompletePage extends StatelessWidget {
-  final AppStrings strings;
   const _CompletePage({required this.strings});
+  final AppStrings strings;
 
   @override
   Widget build(BuildContext context) {
@@ -388,7 +388,7 @@ class _CompletePage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(Icons.check_circle,
-              size: 100, color: TeslaColors.electricBlue),
+              size: 100, color: TeslaColors.electricBlue,),
           const SizedBox(height: 24),
           Text(strings.onboardingReadyTitle, style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),

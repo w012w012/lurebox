@@ -1,14 +1,15 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:mocktail/mocktail.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
-import 'package:lurebox/core/services/fish_recognition_service.dart';
 import 'package:lurebox/core/services/adapters/custom_provider.dart';
 import 'package:lurebox/core/services/adapters/fish_recognition_shared.dart';
 import 'package:lurebox/core/services/adapters/openai_compatible_provider.dart';
+import 'package:lurebox/core/services/fish_recognition_service.dart';
+import 'package:mocktail/mocktail.dart';
 
 /// Mock HTTP Client for testing
 class MockHttpClient extends Mock implements http.Client {}
@@ -88,25 +89,25 @@ void main() {
       final uri =
           provider.buildUrl('https://api.custom.com/v1/chat/completions');
       expect(
-          uri.toString(), equals('https://api.custom.com/v1/chat/completions'));
+          uri.toString(), equals('https://api.custom.com/v1/chat/completions'),);
     });
 
     test('buildUrl with /v1 suffix appends /chat/completions', () {
       final uri = provider.buildUrl('https://api.custom.com/v1');
       expect(
-          uri.toString(), equals('https://api.custom.com/v1/chat/completions'));
+          uri.toString(), equals('https://api.custom.com/v1/chat/completions'),);
     });
 
     test('buildUrl with trailing slash appends v1/chat/completions', () {
       final uri = provider.buildUrl('https://api.custom.com/');
       expect(
-          uri.toString(), equals('https://api.custom.com/v1/chat/completions'));
+          uri.toString(), equals('https://api.custom.com/v1/chat/completions'),);
     });
 
     test('buildUrl standard case appends /v1/chat/completions', () {
       final uri = provider.buildUrl('https://api.custom.com');
       expect(
-          uri.toString(), equals('https://api.custom.com/v1/chat/completions'));
+          uri.toString(), equals('https://api.custom.com/v1/chat/completions'),);
     });
   });
 
@@ -132,7 +133,7 @@ void main() {
               (e) => e.message,
               'message',
               contains('Base URL'),
-            )),
+            ),),
       );
     });
 
@@ -140,7 +141,6 @@ void main() {
       final configWithNullBaseUrl = AiProviderConfig(
         provider: AiRecognitionProvider.custom,
         apiKey: 'test-api-key',
-        baseUrl: null,
         modelName: 'custom-model',
       );
 
@@ -150,7 +150,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.apiKeyInvalid),
-        )),
+        ),),
       );
     });
 
@@ -168,7 +168,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async => mockResponse);
+          ),).thenAnswer((_) async => mockResponse);
 
       final result = await provider.identifySpecies(testImage, testConfig);
 
@@ -193,7 +193,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((invocation) async {
+          ),).thenAnswer((invocation) async {
         capturedBody =
             invocation.namedArguments[const Symbol('body')] as String?;
         return mockResponse;
@@ -224,7 +224,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((invocation) async {
+          ),).thenAnswer((invocation) async {
         capturedBody =
             invocation.namedArguments[const Symbol('body')] as String?;
         return mockResponse;
@@ -253,7 +253,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((invocation) async {
+          ),).thenAnswer((invocation) async {
         capturedBody =
             invocation.namedArguments[const Symbol('body')] as String?;
         return mockResponse;
@@ -285,7 +285,7 @@ void main() {
       expect(userContent[0]['text'], contains('识别'));
       expect(userContent[1]['type'], equals('image_url'));
       expect(userContent[1]['image_url']['url'],
-          startsWith('data:image/jpeg;base64,'));
+          startsWith('data:image/jpeg;base64,'),);
     });
 
     test('sets correct headers including Authorization', () async {
@@ -303,7 +303,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((invocation) async {
+          ),).thenAnswer((invocation) async {
         capturedHeaders = invocation.namedArguments[const Symbol('headers')]
             as Map<String, String>?;
         return mockResponse;
@@ -333,7 +333,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((invocation) async {
+          ),).thenAnswer((invocation) async {
         capturedUri = invocation.positionalArguments[0] as Uri;
         return mockResponse;
       });
@@ -343,7 +343,7 @@ void main() {
       // CustomProvider appends /chat/completions when baseUrl ends with /v1
       expect(capturedUri, isNotNull);
       expect(capturedUri.toString(),
-          equals('https://custom.api.com/v1/chat/completions'));
+          equals('https://custom.api.com/v1/chat/completions'),);
     });
   });
 
@@ -359,7 +359,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenThrow(TimeoutException('Connection timed out'));
+          ),).thenThrow(TimeoutException('Connection timed out'));
 
       expect(
         () => provider.identifySpecies(testImage, testConfig),
@@ -367,7 +367,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.timeout),
-        )),
+        ),),
       );
     });
 
@@ -376,7 +376,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenThrow(http.ClientException('Network is unreachable'));
+          ),).thenThrow(http.ClientException('Network is unreachable'));
 
       expect(
         () => provider.identifySpecies(testImage, testConfig),
@@ -384,7 +384,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.networkError),
-        )),
+        ),),
       );
     });
 
@@ -395,7 +395,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async => errorResponse);
+          ),).thenAnswer((_) async => errorResponse);
 
       expect(
         () => provider.identifySpecies(testImage, testConfig),
@@ -403,7 +403,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.apiKeyInvalid),
-        )),
+        ),),
       );
     });
 
@@ -414,7 +414,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async => errorResponse);
+          ),).thenAnswer((_) async => errorResponse);
 
       expect(
         () => provider.identifySpecies(testImage, testConfig),
@@ -422,7 +422,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.apiKeyInvalid),
-        )),
+        ),),
       );
     });
 
@@ -433,7 +433,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async => errorResponse);
+          ),).thenAnswer((_) async => errorResponse);
 
       expect(
         () => provider.identifySpecies(testImage, testConfig),
@@ -441,7 +441,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.rateLimited),
-        )),
+        ),),
       );
     });
 
@@ -452,7 +452,7 @@ void main() {
             any(),
             headers: any(named: 'headers'),
             body: any(named: 'body'),
-          )).thenAnswer((_) async => errorResponse);
+          ),).thenAnswer((_) async => errorResponse);
 
       expect(
         () => provider.identifySpecies(testImage, testConfig),
@@ -460,7 +460,7 @@ void main() {
           (e) => e.type,
           'type',
           equals(FishRecognitionErrorType.networkError),
-        )),
+        ),),
       );
     });
   });
