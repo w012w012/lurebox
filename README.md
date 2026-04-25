@@ -32,7 +32,9 @@
 
 | ![功能预览1](screenshots/1.jpg) | ![功能预览2](screenshots/2.jpg) | ![功能预览3](screenshots/3.jpg) |
 |:---:|:---:|:---:|
-| ![功能预览4](screenshots/4.jpg) | | |
+| ![功能预览4](screenshots/4.jpg) | ![功能预览5](screenshots/5.jpg) | ![功能预览6](screenshots/6.jpg) |
+|:---:|:---:|:---:|
+| ![功能预览7](screenshots/7.jpg) | ![功能预览8](screenshots/8.jpg) | ![功能预览9](screenshots/9.png) |
 
 ## 功能特点
 
