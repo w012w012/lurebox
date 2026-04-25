@@ -390,6 +390,7 @@ const AppStrings englishStrings = AppStrings(
     resetPosition: 'Reset Position',
     confirmShare: 'Confirm Share',
     dragToAdjustWatermark: 'Drag watermark to adjust position',
+    pinchToZoomWatermark: 'Pinch to zoom watermark',
     rodDistribution: 'Rod Distribution',
     reelDistribution: 'Reel Distribution',
     lureDistribution: 'Lure Distribution',
