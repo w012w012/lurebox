@@ -109,6 +109,7 @@ class FishImageGallery extends StatelessWidget {
           airTemperature: airTemperature,
           pressure: pressure,
           weatherCode: weatherCode,
+          showWatermark: false,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stack) => Container(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -167,6 +168,7 @@ class FishImageGallery extends StatelessWidget {
                 airTemperature: airTemperature,
                 pressure: pressure,
                 weatherCode: weatherCode,
+                showWatermark: false,
                 fit: BoxFit.contain,
               ),
             ),

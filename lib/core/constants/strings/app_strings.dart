@@ -412,6 +412,10 @@ class AppStrings extends StringsBase with
   final String watermarkCustomTextPlaceholder;
   final String watermarkPreviewSpecies;
   final String watermarkPreviewLocation;
+  final String sharePreview;
+  final String resetPosition;
+  final String confirmShare;
+  final String dragToAdjustWatermark;
   final String rodDistribution;
   final String reelDistribution;
   final String lureDistribution;
@@ -1207,6 +1211,10 @@ class AppStrings extends StringsBase with
     required this.watermarkCustomTextPlaceholder,
     required this.watermarkPreviewSpecies,
     required this.watermarkPreviewLocation,
+    required this.sharePreview,
+    required this.resetPosition,
+    required this.confirmShare,
+    required this.dragToAdjustWatermark,
     required this.rodDistribution,
     required this.reelDistribution,
     required this.lureDistribution,

@@ -50,6 +50,7 @@ class WatermarkedImage extends ConsumerWidget {
   final int? cacheWidth;
   final int? cacheHeight;
   final Widget Function(BuildContext, Object, StackTrace?)? errorBuilder;
+  final bool showWatermark;
 
   const WatermarkedImage({
     super.key,
@@ -88,6 +89,7 @@ class WatermarkedImage extends ConsumerWidget {
     this.cacheWidth,
     this.cacheHeight,
     this.errorBuilder,
+    this.showWatermark = true,
   });
 
   @override
@@ -129,7 +131,7 @@ class WatermarkedImage extends ConsumerWidget {
               errorBuilder: errorBuilder,
             ),
             // 水印层
-            if (settings.enabled)
+            if (settings.enabled && showWatermark)
               CustomPaint(
                 size: Size(constraints.maxWidth, constraints.maxHeight),
                 painter: WatermarkPainter(
@@ -218,6 +220,8 @@ class WatermarkPainter extends CustomPainter {
   final String displayLengthUnit;
   final String displayWeightUnit;
   final String displayTemperatureUnit;
+  final double? referenceWidth;
+  final Offset? dragOffset;
 
   WatermarkPainter({
     required this.species,
@@ -257,6 +261,8 @@ class WatermarkPainter extends CustomPainter {
     required this.displayLengthUnit,
     required this.displayWeightUnit,
     required this.displayTemperatureUnit,
+    this.referenceWidth,
+    this.dragOffset,
   });
 
   @override
@@ -419,10 +425,19 @@ class WatermarkPainter extends CustomPainter {
 
   /// 简约左下水印（逐行显示）
   void _drawMinimal(Canvas canvas, Size size, List<String> lines) {
-    // 使用图片宽度作为基准计算字号，确保水印大小与图片比例一致
+    // 根据 referenceWidth 缩放字号，确保不同画布尺寸下视觉比例一致
+    final double scale = referenceWidth != null && referenceWidth! > 0
+        ? size.width / referenceWidth!
+        : 1.0;
     final baseFontSize =
-        settings.fontSize > 0 ? settings.fontSize : size.width * 0.032;
+        (settings.fontSize > 0 ? settings.fontSize : 14.0) * scale;
     final lineHeight = baseFontSize * 1.5;
+
+    // 如果有 dragOffset，直接使用偏移量绘制，忽略 preset position
+    if (dragOffset != null) {
+      _drawAtOffset(canvas, size, lines, dragOffset!, baseFontSize, lineHeight);
+      return;
+    }
 
     // 根据位置设置计算padding
     double paddingBottom, paddingLeft, paddingRight, paddingTop;
@@ -574,6 +589,60 @@ class WatermarkPainter extends CustomPainter {
     }
   }
 
+  /// 在指定偏移位置绘制水印（用于拖拽定位）
+  void _drawAtOffset(Canvas canvas, Size size, List<String> lines,
+      Offset offset, double baseFontSize, double lineHeight) {
+    if (lines.isEmpty) return;
+
+    final textColor = Color(settings.textColor);
+    final textStyle = TextStyle(
+      color: textColor,
+      fontSize: baseFontSize,
+      fontWeight: FontWeight.w500,
+      shadows: [
+        Shadow(
+          color: Colors.black.withValues(alpha: 0.6),
+          blurRadius: size.width * 0.01,
+        ),
+      ],
+    );
+
+    // 计算文字区域大小
+    double bgWidth = 0;
+    for (final line in lines) {
+      final tp = TextPainter(
+        text: TextSpan(text: line, style: textStyle),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      bgWidth = bgWidth > tp.width ? bgWidth : tp.width;
+    }
+    final bgHeight = lines.length * lineHeight + 16;
+
+    // 绘制背景
+    if (settings.blurRadius > 0 || settings.backgroundOpacity > 0) {
+      final bgColor = Color(settings.backgroundColor)
+          .withValues(alpha: settings.backgroundOpacity);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(offset.dx - 8, offset.dy - 8, bgWidth + 16, bgHeight),
+          Radius.circular(settings.blurRadius),
+        ),
+        Paint()..color = bgColor,
+      );
+    }
+
+    // 绘制文字
+    double y = offset.dy;
+    for (final line in lines) {
+      final tp = TextPainter(
+        text: TextSpan(text: line, style: textStyle),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      tp.paint(canvas, Offset(offset.dx, y));
+      y += lineHeight;
+    }
+  }
+
   @override
   bool shouldRepaint(covariant WatermarkPainter oldDelegate) {
     return settings != oldDelegate.settings ||
@@ -588,7 +657,9 @@ class WatermarkPainter extends CustomPainter {
         strings != oldDelegate.strings ||
         displayTemperatureUnit != oldDelegate.displayTemperatureUnit ||
         displayLengthUnit != oldDelegate.displayLengthUnit ||
-        displayWeightUnit != oldDelegate.displayWeightUnit;
+        displayWeightUnit != oldDelegate.displayWeightUnit ||
+        dragOffset != oldDelegate.dragOffset ||
+        referenceWidth != oldDelegate.referenceWidth;
   }
 }
 
@@ -634,6 +705,8 @@ class WatermarkExporter {
     required String displayLengthUnit,
     required String displayWeightUnit,
     required String displayTemperatureUnit,
+    double referenceWidth = 400.0,
+    Offset? dragOffset,
   }) async {
     try {
       // 读取原图
@@ -690,6 +763,8 @@ class WatermarkExporter {
         displayLengthUnit: displayLengthUnit,
         displayWeightUnit: displayWeightUnit,
         displayTemperatureUnit: displayTemperatureUnit,
+        referenceWidth: referenceWidth,
+        dragOffset: dragOffset,
       );
       painter.paint(canvas, size);
 
