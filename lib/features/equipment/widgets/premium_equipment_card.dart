@@ -482,7 +482,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       items.add(_InfoItem(strings.reelCapacity, e['reel_capacity']));
     }
     if (e['reel_brake_type'] != null) {
-      items.add(_InfoItem(strings.reelBrakeType, e['reel_brake_type']));
+      items.add(_InfoItem(strings.reelBrakeType, _getBrakeTypeLabel(e['reel_brake_type'], strings)));
     }
     if (e['reel_line'] != null) {
       final lineBrand = e['reel_line'] as String? ?? '';
@@ -647,6 +647,17 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         ],
       ),
     );
+  }
+
+  String _getBrakeTypeLabel(String key, AppStrings strings) {
+    return switch (key) {
+      'traditional_magnetic' => strings.brakeTypeTraditionalMagnetic,
+      'centrifugal'          => strings.brakeTypeCentrifugal,
+      'dc'                   => strings.brakeTypeDC,
+      'floating_magnetic'    => strings.brakeTypeFloatingMagnetic,
+      'innovative'           => strings.brakeTypeInnovative,
+      _                      => key,
+    };
   }
 
   String _getCategoryName(String type, String category) {

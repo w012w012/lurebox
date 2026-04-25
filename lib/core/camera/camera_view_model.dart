@@ -323,7 +323,6 @@ class CameraViewModel extends StateNotifier<CameraState> {
         );
 
         final fishId = await _fishCatchService.create(fish);
-        await _fishCatchService.updateSpeciesHistory(state.species);
 
         state = state.copyWith(
           captureState: CameraCaptureState.saved,

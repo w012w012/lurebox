@@ -405,7 +405,7 @@ class _SpeciesListSection extends ConsumerWidget {
             Icon(Icons.category, size: 20, color: accentColor),
             const SizedBox(width: TeslaTheme.spacingSm),
             Text(
-              'Saved Species',
+              ref.read(currentStringsProvider).speciesSaved,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
