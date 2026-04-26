@@ -9,16 +9,7 @@ import 'package:lurebox/core/repositories/stats_repository.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockFishCatchRepository extends Mock implements FishCatchRepository {}
-
-class MockSpeciesHistoryRepository extends Mock
-    implements SpeciesHistoryRepository {}
-
-class MockStatsRepository extends Mock implements StatsRepository {}
-
-class FakeFishCatch extends Fake implements FishCatch {}
-
-class FakeSpeciesHistory extends Fake implements SpeciesHistory {}
+import '../helpers/test_helpers.dart';
 
 void main() {
   late FishCatchService service;
