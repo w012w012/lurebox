@@ -11,9 +11,8 @@ import 'package:lurebox/core/services/app_logger.dart';
 import 'package:lurebox/core/utils/unit_converter.dart';
 
 class FishEditPage extends ConsumerStatefulWidget {
-
   const FishEditPage({required this.fish, required this.strings, super.key});
-  final Map<String, dynamic> fish;
+  final FishCatch fish;
   final AppStrings strings;
 
   @override
@@ -44,7 +43,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
   @override
   void initState() {
     super.initState();
-    final fish = FishCatch.fromMap(widget.fish);
+    final fish = widget.fish;
     _speciesController = TextEditingController(text: fish.species);
     _lengthController = TextEditingController(text: fish.length.toString());
     _weightController = TextEditingController(
@@ -105,7 +104,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
 
     setState(() => _isSaving = true);
     try {
-      final originalFish = FishCatch.fromMap(widget.fish);
+      final originalFish = widget.fish;
       final updatedFish = originalFish.copyWith(
         species: species,
         length: length,
@@ -201,7 +200,8 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
                     children: [
                       const Icon(Icons.wb_sunny, size: 20),
                       const SizedBox(width: 8),
-                      Text(s.weather, style: const TextStyle(fontWeight: FontWeight.w500)),
+                      Text(s.weather,
+                          style: const TextStyle(fontWeight: FontWeight.w500)),
                       const Spacer(),
                       IconButton(
                         icon: const Icon(Icons.edit, size: 20),
@@ -372,8 +372,10 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
     final appSettings = ref.read(appSettingsProvider);
     final temperatureUnit = appSettings.units.temperatureUnit;
     final isChinese = appSettings.language == AppLanguage.chinese;
-    final tempSymbol = UnitConverter.getTemperatureSymbol(temperatureUnit,
-        isChinese: isChinese,);
+    final tempSymbol = UnitConverter.getTemperatureSymbol(
+      temperatureUnit,
+      isChinese: isChinese,
+    );
     final tempController = TextEditingController(
       text: _airTemperature?.toStringAsFixed(1) ?? '',
     );
@@ -427,10 +429,12 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
                   border: const OutlineInputBorder(),
                 ),
                 items: weatherOptions
-                    .map((opt) => DropdownMenuItem(
-                          value: opt.$1,
-                          child: Text(opt.$2),
-                        ),)
+                    .map(
+                      (opt) => DropdownMenuItem(
+                        value: opt.$1,
+                        child: Text(opt.$2),
+                      ),
+                    )
                     .toList(),
                 onChanged: (v) => setState(() => selectedWeatherCode = v),
               ),
@@ -475,7 +479,8 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
     final parts = <String>[];
     if (_airTemperature != null) {
       parts.add(
-          '${s.airTemperature}: ${UnitConverter.formatTemperature(_airTemperature!, temperatureUnit)}',);
+        '${s.airTemperature}: ${UnitConverter.formatTemperature(_airTemperature!, temperatureUnit)}',
+      );
     }
     if (_pressure != null) {
       parts.add('${s.pressure}: ${_pressure!.toStringAsFixed(0)}hPa');

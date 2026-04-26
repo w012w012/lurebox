@@ -4,7 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
 import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
+import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/providers/fish_detail_view_model.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
@@ -35,7 +37,8 @@ class MockSettingsService implements SettingsService {
 
   @override
   Future<void> saveAiRecognitionSettings(
-      AiRecognitionSettings settings,) async {}
+    AiRecognitionSettings settings,
+  ) async {}
 
   @override
   Future<void> deleteAiRecognitionSettings() async {}
@@ -87,13 +90,15 @@ void main() {
   group('FishDetailPage', () {
     testWidgets('shows loading indicator when state is loading',
         (tester) async {
-      await tester.pumpWidget(_buildPage([
-        fishDetailViewModelProvider(1).overrideWith(
-          (ref) => MockFishDetailViewModel(
-            const FishDetailState(),
+      await tester.pumpWidget(
+        _buildPage([
+          fishDetailViewModelProvider(1).overrideWith(
+            (ref) => MockFishDetailViewModel(
+              const FishDetailState(),
+            ),
           ),
-        ),
-      ]),);
+        ]),
+      );
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -101,16 +106,18 @@ void main() {
     });
 
     testWidgets('shows error state with message', (tester) async {
-      await tester.pumpWidget(_buildPage([
-        fishDetailViewModelProvider(1).overrideWith(
-          (ref) => MockFishDetailViewModel(
-            const FishDetailState(
-              isLoading: false,
-              errorMessage: 'Fish not found',
+      await tester.pumpWidget(
+        _buildPage([
+          fishDetailViewModelProvider(1).overrideWith(
+            (ref) => MockFishDetailViewModel(
+              const FishDetailState(
+                isLoading: false,
+                errorMessage: 'Fish not found',
+              ),
             ),
           ),
-        ),
-      ]),);
+        ]),
+      );
       await tester.pump();
 
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
@@ -119,27 +126,28 @@ void main() {
     });
 
     testWidgets('shows fish data when loaded', (tester) async {
-      await tester.pumpWidget(_buildPage([
-        fishDetailViewModelProvider(1).overrideWith(
-          (ref) => MockFishDetailViewModel(
-            const FishDetailState(
-              isLoading: false,
-              fish: {
-                'id': 1,
-                'species': 'Bass',
-                'length': 35.5,
-                'length_unit': 'cm',
-                'weight': 2.5,
-                'weight_unit': 'kg',
-                'fate': 0,
-                'catch_time': '2024-01-15T10:30:00.000',
-                'location_name': 'Lake Michigan',
-                'image_path': '/test/fish.jpg',
-              },
+      await tester.pumpWidget(
+        _buildPage([
+          fishDetailViewModelProvider(1).overrideWith(
+            (ref) => MockFishDetailViewModel(
+              FishDetailState(
+                isLoading: false,
+                fish: FishCatch(
+                  id: 1,
+                  imagePath: '/test/fish.jpg',
+                  species: 'Bass',
+                  length: 35.5,
+                  fate: FishFateType.release,
+                  catchTime: DateTime(2024, 1, 15, 10, 30),
+                  createdAt: DateTime.now(),
+                  updatedAt: DateTime.now(),
+                  locationName: 'Lake Michigan',
+                ),
+              ),
             ),
           ),
-        ),
-      ]),);
+        ]),
+      );
       await tester.pump();
 
       expect(find.text('Bass'), findsOneWidget);
@@ -149,32 +157,36 @@ void main() {
     });
 
     testWidgets('shows fish with equipment info', (tester) async {
-      await tester.pumpWidget(_buildPage([
-        fishDetailViewModelProvider(1).overrideWith(
-          (ref) => MockFishDetailViewModel(
-            const FishDetailState(
-              isLoading: false,
-              fish: {
-                'id': 1,
-                'species': 'Trout',
-                'length': 40.0,
-                'length_unit': 'cm',
-                'weight': 3.0,
-                'weight_unit': 'kg',
-                'fate': 0,
-                'catch_time': '2024-01-15T10:30:00.000',
-                'location_name': 'River',
-                'image_path': '/test/fish.jpg',
-              },
-              rodEquipment: {
-                'type': 'rod',
-                'brand': 'Shimano',
-                'model': 'Expride',
-              },
+      await tester.pumpWidget(
+        _buildPage([
+          fishDetailViewModelProvider(1).overrideWith(
+            (ref) => MockFishDetailViewModel(
+              FishDetailState(
+                isLoading: false,
+                fish: FishCatch(
+                  id: 1,
+                  imagePath: '/test/fish.jpg',
+                  species: 'Trout',
+                  length: 40.0,
+                  fate: FishFateType.release,
+                  catchTime: DateTime(2024, 1, 15, 10, 30),
+                  createdAt: DateTime.now(),
+                  updatedAt: DateTime.now(),
+                  locationName: 'River',
+                ),
+                rodEquipment: Equipment(
+                  id: 1,
+                  type: EquipmentType.rod,
+                  brand: 'Shimano',
+                  model: 'Expride',
+                  createdAt: DateTime.now(),
+                  updatedAt: DateTime.now(),
+                ),
+              ),
             ),
           ),
-        ),
-      ]),);
+        ]),
+      );
       await tester.pump();
 
       expect(find.text('Trout'), findsOneWidget);
@@ -182,15 +194,17 @@ void main() {
     });
 
     testWidgets('shows null fish as error state', (tester) async {
-      await tester.pumpWidget(_buildPage([
-        fishDetailViewModelProvider(1).overrideWith(
-          (ref) => MockFishDetailViewModel(
-            const FishDetailState(
-              isLoading: false,
+      await tester.pumpWidget(
+        _buildPage([
+          fishDetailViewModelProvider(1).overrideWith(
+            (ref) => MockFishDetailViewModel(
+              const FishDetailState(
+                isLoading: false,
+              ),
             ),
           ),
-        ),
-      ]),);
+        ]),
+      );
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsNothing);
@@ -199,26 +213,27 @@ void main() {
     });
 
     testWidgets('shows kept catch', (tester) async {
-      await tester.pumpWidget(_buildPage([
-        fishDetailViewModelProvider(1).overrideWith(
-          (ref) => MockFishDetailViewModel(
-            const FishDetailState(
-              isLoading: false,
-              fish: {
-                'id': 1,
-                'species': 'Pike',
-                'length': 50.0,
-                'length_unit': 'cm',
-                'weight': 5.0,
-                'weight_unit': 'kg',
-                'fate': 1,
-                'catch_time': '2024-06-15T14:30:00.000',
-                'image_path': '/test/fish.jpg',
-              },
+      await tester.pumpWidget(
+        _buildPage([
+          fishDetailViewModelProvider(1).overrideWith(
+            (ref) => MockFishDetailViewModel(
+              FishDetailState(
+                isLoading: false,
+                fish: FishCatch(
+                  id: 1,
+                  imagePath: '/test/fish.jpg',
+                  species: 'Pike',
+                  length: 50.0,
+                  fate: FishFateType.keep,
+                  catchTime: DateTime(2024, 6, 15, 14, 30),
+                  createdAt: DateTime.now(),
+                  updatedAt: DateTime.now(),
+                ),
+              ),
             ),
           ),
-        ),
-      ]),);
+        ]),
+      );
       await tester.pump();
 
       expect(find.text('Pike'), findsOneWidget);

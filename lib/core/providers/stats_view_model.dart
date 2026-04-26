@@ -4,9 +4,11 @@ import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 
 class StatsDetailState {
-
   const StatsDetailState({
-    required this.title, required this.startDate, required this.endDate, this.isLoading = true,
+    required this.title,
+    required this.startDate,
+    required this.endDate,
+    this.isLoading = true,
     this.errorMessage,
     this.totalCount = 0,
     this.releaseCount = 0,
@@ -40,7 +42,7 @@ class StatsDetailState {
   final Map<int, int> hourlyDistribution;
   final Map<int, int> dailyDistribution;
   final Map<int, int> monthlyDistribution;
-  final List<Map<String, dynamic>> catches;
+  final List<FishCatch> catches;
   final bool isSharing;
 
   StatsDetailState copyWith({
@@ -61,7 +63,7 @@ class StatsDetailState {
     Map<int, int>? hourlyDistribution,
     Map<int, int>? dailyDistribution,
     Map<int, int>? monthlyDistribution,
-    List<Map<String, dynamic>>? catches,
+    List<FishCatch>? catches,
     bool? isSharing,
   }) {
     return StatsDetailState(
@@ -94,7 +96,6 @@ class StatsDetailState {
 }
 
 class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
-
   StatsDetailViewModel({
     required FishCatchService fishCatchService,
     required String title,
@@ -103,7 +104,10 @@ class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
   })  : _fishCatchService = fishCatchService,
         super(
           StatsDetailState(
-              title: title, startDate: startDate, endDate: endDate,),
+            title: title,
+            startDate: startDate,
+            endDate: endDate,
+          ),
         ) {
     loadData();
   }
@@ -117,7 +121,6 @@ class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
         state.startDate,
         state.endDate,
       );
-      final catches = fishList.map((f) => f.toMap()).toList();
 
       var releaseCount = 0;
       var keepCount = 0;
@@ -153,8 +156,8 @@ class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
 
       state = state.copyWith(
         isLoading: false,
-        catches: catches,
-        totalCount: catches.length,
+        catches: fishList,
+        totalCount: fishList.length,
         releaseCount: releaseCount,
         keepCount: keepCount,
         totalWeight: totalWeight,

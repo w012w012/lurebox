@@ -6,25 +6,30 @@ import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/core/models/app_settings.dart';
+import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
-import 'package:lurebox/core/services/weather_service.dart' show getLocalizedWeatherDescription;
+import 'package:lurebox/core/services/weather_service.dart'
+    show getLocalizedWeatherDescription;
 import 'package:lurebox/core/utils/unit_converter.dart';
 
-String _buildRodDisplay(Map<String, dynamic>? rod, String displayUnit,
-    {bool isChinese = true,}) {
+String _buildRodDisplay(
+  Equipment? rod,
+  String displayUnit, {
+  bool isChinese = true,
+}) {
   if (rod == null) return '';
   final parts = <String>[];
-  if (rod['brand'] != null && (rod['brand'] as String).isNotEmpty) {
-    parts.add(rod['brand'] as String);
+  if (rod.brand != null && rod.brand!.isNotEmpty) {
+    parts.add(rod.brand!);
   }
-  if (rod['model'] != null && (rod['model'] as String).isNotEmpty) {
-    parts.add(rod['model'] as String);
+  if (rod.model != null && rod.model!.isNotEmpty) {
+    parts.add(rod.model!);
   }
-  if (rod['length'] != null && (rod['length'] as String).isNotEmpty) {
-    final lengthStr = rod['length'] as String;
+  if (rod.length != null && rod.length!.isNotEmpty) {
+    final lengthStr = rod.length!;
     final lengthValue = double.tryParse(lengthStr) ?? 0.0;
-    final lengthUnit = (rod['length_unit'] as String?) ?? 'm';
+    final lengthUnit = rod.lengthUnit;
     if (lengthValue > 0) {
       final convertedLength = UnitConverter.convertLength(
         lengthValue,
@@ -38,61 +43,73 @@ String _buildRodDisplay(Map<String, dynamic>? rod, String displayUnit,
       parts.add(lengthStr);
     }
   }
-  if (rod['hardness'] != null && (rod['hardness'] as String).isNotEmpty) {
-    parts.add(rod['hardness'] as String);
+  if (rod.hardness != null && rod.hardness!.isNotEmpty) {
+    parts.add(rod.hardness!);
   }
-  if (rod['rod_action'] != null && (rod['rod_action'] as String).isNotEmpty) {
-    parts.add(rod['rod_action'] as String);
+  if (rod.rodAction != null && rod.rodAction!.isNotEmpty) {
+    parts.add(rod.rodAction!);
   }
   return parts.join(' / ');
 }
 
-String _buildReelDisplay(Map<String, dynamic>? reel) {
+String _buildReelDisplay(Equipment? reel) {
   if (reel == null) return '';
   final parts = <String>[];
-  if (reel['brand'] != null && (reel['brand'] as String).isNotEmpty) {
-    parts.add(reel['brand'] as String);
+  if (reel.brand != null && reel.brand!.isNotEmpty) {
+    parts.add(reel.brand!);
   }
-  if (reel['model'] != null && (reel['model'] as String).isNotEmpty) {
-    parts.add(reel['model'] as String);
+  if (reel.model != null && reel.model!.isNotEmpty) {
+    parts.add(reel.model!);
   }
-  if (reel['reel_ratio'] != null && (reel['reel_ratio'] as String).isNotEmpty) {
-    parts.add('${reel['reel_ratio']}');
+  if (reel.reelRatio != null && reel.reelRatio!.isNotEmpty) {
+    parts.add('${reel.reelRatio}');
   }
   return parts.join(' / ');
 }
 
-String _buildLureDisplay(Map<String, dynamic>? lure, String displayUnit,
-    {bool isChinese = true,}) {
+String _buildLureDisplay(
+  Equipment? lure,
+  String displayUnit, {
+  bool isChinese = true,
+}) {
   if (lure == null) return '';
   final parts = <String>[];
-  if (lure['brand'] != null && (lure['brand'] as String).isNotEmpty) {
-    parts.add(lure['brand'] as String);
+  if (lure.brand != null && lure.brand!.isNotEmpty) {
+    parts.add(lure.brand!);
   }
-  if (lure['model'] != null && (lure['model'] as String).isNotEmpty) {
-    parts.add(lure['model'] as String);
+  if (lure.model != null && lure.model!.isNotEmpty) {
+    parts.add(lure.model!);
   }
-  if (lure['lure_size'] != null && (lure['lure_size'] as String).isNotEmpty) {
-    final sizeValue = double.tryParse(lure['lure_size'] as String) ?? 0;
-    final sizeUnit = (lure['lure_size_unit'] as String?) ?? 'cm';
+  if (lure.lureSize != null && lure.lureSize!.isNotEmpty) {
+    final sizeValue = double.tryParse(lure.lureSize!) ?? 0;
+    final sizeUnit = lure.lureSizeUnit;
     final convertedSize = UnitConverter.convertLength(
       sizeValue,
       sizeUnit,
       displayUnit,
     );
     parts.add(
-        '${convertedSize.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnit, isChinese: isChinese)}',);
+      '${convertedSize.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnit, isChinese: isChinese)}',
+    );
   }
-  if (lure['lure_color'] != null && (lure['lure_color'] as String).isNotEmpty) {
-    parts.add(lure['lure_color'] as String);
+  if (lure.lureColor != null && lure.lureColor!.isNotEmpty) {
+    parts.add(lure.lureColor!);
   }
   return parts.join(' / ');
 }
 
 class FishInfoCard extends ConsumerWidget {
-
   const FishInfoCard({
-    required this.species, required this.length, required this.lengthUnit, required this.weight, required this.weightUnit, required this.fate, required this.catchTime, required this.locationName, required this.strings, super.key,
+    required this.species,
+    required this.length,
+    required this.lengthUnit,
+    required this.weight,
+    required this.weightUnit,
+    required this.fate,
+    required this.catchTime,
+    required this.locationName,
+    required this.strings,
+    super.key,
     this.rodEquipment,
     this.reelEquipment,
     this.lureEquipment,
@@ -108,9 +125,9 @@ class FishInfoCard extends ConsumerWidget {
   final int fate;
   final DateTime catchTime;
   final String? locationName;
-  final Map<String, dynamic>? rodEquipment;
-  final Map<String, dynamic>? reelEquipment;
-  final Map<String, dynamic>? lureEquipment;
+  final Equipment? rodEquipment;
+  final Equipment? reelEquipment;
+  final Equipment? lureEquipment;
   final double? airTemperature;
   final double? pressure;
   final int? weatherCode;
@@ -288,7 +305,6 @@ class FishInfoCard extends ConsumerWidget {
 }
 
 class _InfoRow extends StatelessWidget {
-
   const _InfoRow({
     required this.icon,
     required this.label,
@@ -340,7 +356,6 @@ class _IOSDivider extends StatelessWidget {
 }
 
 class _EquipmentInfoRow extends StatelessWidget {
-
   const _EquipmentInfoRow({required this.label, required this.value});
   final String label;
   final String value;

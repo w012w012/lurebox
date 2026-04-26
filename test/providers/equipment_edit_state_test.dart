@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/providers/equipment_edit_state.dart';
 
 void main() {
@@ -32,9 +33,15 @@ void main() {
 
     group('constructor with custom values', () {
       test('accepts all custom values', () {
-        const state = RodEditState(
+        final testEquipment = Equipment(
+          id: 1,
+          type: EquipmentType.rod,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+        final state = RodEditState(
           type: 'rod',
-          equipment: {'id': 1},
+          equipment: testEquipment,
           isSaving: true,
           errorMessage: 'Error',
           brand: 'Shimano',
@@ -55,7 +62,7 @@ void main() {
         );
 
         expect(state.type, 'rod');
-        expect(state.equipment, {'id': 1});
+        expect(state.equipment, testEquipment);
         expect(state.isSaving, true);
         expect(state.errorMessage, 'Error');
         expect(state.brand, 'Shimano');
@@ -242,18 +249,30 @@ void main() {
       });
 
       test('returns true when equipment is provided', () {
+        final testEquipment = Equipment(
+          id: 1,
+          type: EquipmentType.rod,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
         final state = RodEditState(
           type: 'rod',
-          equipment: {'id': 1, 'brand': 'Shimano'},
+          equipment: testEquipment,
         );
 
         expect(state.isEdit, true);
       });
 
       test('returns true even with empty equipment map', () {
+        final testEquipment = Equipment(
+          id: 1,
+          type: EquipmentType.rod,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
         final state = RodEditState(
           type: 'rod',
-          equipment: {},
+          equipment: testEquipment,
         );
 
         expect(state.isEdit, true);
@@ -294,9 +313,15 @@ void main() {
 
     group('constructor with custom values', () {
       test('accepts all custom values', () {
-        const state = ReelEditState(
+        final testEquipment = Equipment(
+          id: 2,
+          type: EquipmentType.reel,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+        final state = ReelEditState(
           type: 'reel',
-          equipment: {'id': 2},
+          equipment: testEquipment,
           isSaving: true,
           errorMessage: 'Reel error',
           brand: 'Shimano',
@@ -320,7 +345,7 @@ void main() {
         );
 
         expect(state.type, 'reel');
-        expect(state.equipment, {'id': 2});
+        expect(state.equipment, testEquipment);
         expect(state.isSaving, true);
         expect(state.errorMessage, 'Reel error');
         expect(state.brand, 'Shimano');
@@ -471,9 +496,15 @@ void main() {
       });
 
       test('returns true when equipment is provided', () {
+        final testEquipment = Equipment(
+          id: 2,
+          type: EquipmentType.reel,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
         final state = ReelEditState(
           type: 'reel',
-          equipment: {'id': 2},
+          equipment: testEquipment,
         );
 
         expect(state.isEdit, true);
@@ -511,9 +542,15 @@ void main() {
 
     group('constructor with custom values', () {
       test('accepts all custom values', () {
-        const state = LureEditState(
+        final testEquipment = Equipment(
+          id: 3,
+          type: EquipmentType.lure,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+        final state = LureEditState(
           type: 'lure',
-          equipment: {'id': 3},
+          equipment: testEquipment,
           isSaving: true,
           errorMessage: 'Lure error',
           brand: 'Rapala',
@@ -534,7 +571,7 @@ void main() {
         );
 
         expect(state.type, 'lure');
-        expect(state.equipment, {'id': 3});
+        expect(state.equipment, testEquipment);
         expect(state.isSaving, true);
         expect(state.errorMessage, 'Lure error');
         expect(state.brand, 'Rapala');
@@ -681,9 +718,15 @@ void main() {
       });
 
       test('returns true when equipment is provided', () {
+        final testEquipment = Equipment(
+          id: 3,
+          type: EquipmentType.lure,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
         final state = LureEditState(
           type: 'lure',
-          equipment: {'id': 3},
+          equipment: testEquipment,
         );
 
         expect(state.isEdit, true);
@@ -735,9 +778,15 @@ void main() {
 
     group('isDefault toggle works', () {
       test('RodEditState', () {
+        final testEquipment = Equipment(
+          id: 1,
+          type: EquipmentType.rod,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
         final state = RodEditState(
           type: 'rod',
-          equipment: {'id': 1},
+          equipment: testEquipment,
           isDefault: false,
         );
 

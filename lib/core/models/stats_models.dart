@@ -21,8 +21,15 @@
 /// - AchievementMetrics 使用默认值，支持增量更新
 library;
 
-class CatchStats {
+import 'package:lurebox/core/models/fish_catch.dart';
 
+class DailyTrend {
+  const DailyTrend({required this.date, required this.count});
+  final DateTime date;
+  final int count;
+}
+
+class CatchStats {
   const CatchStats({
     required this.total,
     required this.release,
@@ -68,7 +75,6 @@ class CatchStats {
 }
 
 class DashboardData {
-
   const DashboardData({
     required this.todayStats,
     required this.todaySpecies,
@@ -89,12 +95,11 @@ class DashboardData {
   final Map<String, int> yearSpecies;
   final CatchStats allStats;
   final Map<String, int> allSpecies;
-  final List<Map<String, dynamic>> top3Longest;
-  final List<Map<String, dynamic>> monthTrend;
+  final List<FishCatch> top3Longest;
+  final List<DailyTrend> monthTrend;
 }
 
 class EquipmentCatchStats {
-
   const EquipmentCatchStats({
     required this.equipmentId,
     required this.catchCount,
@@ -166,7 +171,6 @@ class EquipmentCatchStats {
 }
 
 class AchievementMetrics {
-
   const AchievementMetrics({
     this.totalCatches = 0,
     this.maxLength = 0.0,

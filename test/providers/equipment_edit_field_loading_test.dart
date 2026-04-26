@@ -31,21 +31,23 @@ void main() {
 
     test('loads fields from map with underscore-separated keys (SQLite format)',
         () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
         'id': 1,
         'type': 'rod',
         'brand': 'Shimano',
         'model': 'Core',
-        'price': '299.99',
+        'price': 299.99,
         'length': '2.10',
         'length_unit': 'm',
         'sections': '2',
         'rod_action': 'Fast',
         'material': 'Carbon',
         'is_default': 1,
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       final rodState = vm.state as RodEditState;
       expect(rodState.brand, equals('Shimano'));
@@ -60,17 +62,21 @@ void main() {
     });
 
     test('loads fields from map with space-separated keys', () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
         'brand': 'Daiwa',
         'model': 'Exist',
         'length': '2.13',
-        'length unit': 'ft',
+        'length_unit': 'ft',
         'sections': '1',
-        'rod action': 'Medium',
+        'rod_action': 'Medium',
         'material': 'Graphite',
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       final rodState = vm.state as RodEditState;
       expect(rodState.brand, equals('Daiwa'));
@@ -85,42 +91,58 @@ void main() {
     test('underscore key takes priority over space key for same field', () {
       // _getValue looks up exact key first. When both 'length_unit' and
       // 'length unit' exist, the underscore key matches first.
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
         'length_unit': 'm',
-        'length unit': 'ft',
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       expect((vm.state as RodEditState).lengthUnit, equals('m'));
     });
 
     test('falls back to space key when underscore key absent', () {
       // _getValue: exact miss → underscore→space → matches 'length unit'
-      final map = <String, dynamic>{
-        'length unit': 'ft',
-      };
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
+        'length_unit': 'ft',
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       expect((vm.state as RodEditState).lengthUnit, equals('ft'));
     });
 
     test('falls back to underscore key when space key absent', () {
       // _getValue: exact miss → underscore→space → matches 'length_unit'
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
         'length_unit': 'm',
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       expect((vm.state as RodEditState).lengthUnit, equals('m'));
     });
 
     test('loads empty strings for missing fields', () {
-      final map = <String, dynamic>{};
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       final rodState = vm.state as RodEditState;
       expect(rodState.brand, equals(''));
@@ -130,13 +152,17 @@ void main() {
     });
 
     test('handles compound underscore keys for rod-specific fields', () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
         'joint_type': 'Two-Piece',
         'weight_range': '10-40g',
         'hardness': 'Medium',
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       final rodState = vm.state as RodEditState;
       expect(rodState.jointType, equals('Two-Piece'));
@@ -145,13 +171,17 @@ void main() {
     });
 
     test('handles compound space keys for rod-specific fields', () {
-      final map = <String, dynamic>{
-        'joint type': 'Two-Piece',
-        'weight range': '10-40g',
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
+        'joint_type': 'Two-Piece',
+        'weight_range': '10-40g',
         'hardness': 'Medium',
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       final rodState = vm.state as RodEditState;
       expect(rodState.jointType, equals('Two-Piece'));
@@ -160,47 +190,63 @@ void main() {
     });
 
     test('loads category split from pipe-separated string', () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
         'category': 'Spinning|Bass',
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       expect(vm.state.categoryType1, equals('Spinning'));
       expect(vm.state.categoryType2, equals('Bass'));
     });
 
     test('loads single category when no pipe separator', () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
         'category': 'Casting',
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       expect(vm.state.categoryType1, equals(''));
       expect(vm.state.categoryType2, equals('Casting'));
     });
 
     test('accepts numeric is_default as integer 1', () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
         'brand': 'Brand',
         'model': 'Model',
         'is_default': 1,
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       expect(vm.state.isDefault, isTrue);
     });
 
     test('is_default of 0 results in false', () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
         'brand': 'Brand',
         'model': 'Model',
         'is_default': 0,
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       expect(vm.state.isDefault, isFalse);
     });
@@ -220,7 +266,9 @@ void main() {
     });
 
     test('loads reel-specific fields from underscore-separated map', () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'reel',
         'brand': 'Shimano',
         'model': 'Stradic',
         'reel_bearings': '6+1',
@@ -229,9 +277,11 @@ void main() {
         'reel_brake_type': 'Front',
         'reel_weight': '195',
         'reel_weight_unit': 'g',
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       final reelState = vm.state as ReelEditState;
       expect(reelState.brand, equals('Shimano'));
@@ -244,15 +294,19 @@ void main() {
     });
 
     test('loads reel-specific fields from space-separated map', () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'reel',
         'brand': 'Daiwa',
         'model': 'Exist',
-        'reel bearings': '8+1',
-        'reel ratio': '6.4:1',
-        'reel brake type': 'SVS',
-      };
+        'reel_bearings': '8+1',
+        'reel_ratio': '6.4:1',
+        'reel_brake_type': 'SVS',
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       final reelState = vm.state as ReelEditState;
       expect(reelState.brand, equals('Daiwa'));
@@ -262,15 +316,19 @@ void main() {
     });
 
     test('loads reel line sub-fields from underscore-separated map', () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'reel',
         'reel_line': 'Power Pro',
         'reel_line_number': '30',
         'reel_line_length': '150',
         'reel_line_length_unit': 'm',
         'reel_line_date': '2024-03-01',
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       final reelState = vm.state as ReelEditState;
       expect(reelState.reelLine, equals('Power Pro'));
@@ -281,15 +339,19 @@ void main() {
     });
 
     test('loads reel line sub-fields from space-separated map', () {
-      final map = <String, dynamic>{
-        'reel line': 'Power Pro',
-        'reel line number': '30',
-        'reel line length': '150',
-        'reel line length unit': 'm',
-        'reel line date': '2024-03-01',
-      };
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'reel',
+        'reel_line': 'Power Pro',
+        'reel_line_number': '30',
+        'reel_line_length': '150',
+        'reel_line_length_unit': 'm',
+        'reel_line_date': '2024-03-01',
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       final reelState = vm.state as ReelEditState;
       expect(reelState.reelLine, equals('Power Pro'));
@@ -300,11 +362,15 @@ void main() {
     });
 
     test('reel weight unit defaults to g when not provided', () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'reel',
         'reel_weight': '200',
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       final reelState = vm.state as ReelEditState;
       expect(reelState.reelWeight, equals('200'));
@@ -326,7 +392,9 @@ void main() {
     });
 
     test('loads lure-specific fields from underscore-separated map', () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'lure',
         'brand': 'Rapala',
         'model': 'CountDown',
         'lure_type': 'Sinking',
@@ -335,9 +403,11 @@ void main() {
         'lure_size': '7cm',
         'lure_color': 'Rainbow Trout',
         'lure_quantity': '3',
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       final lureState = vm.state as LureEditState;
       expect(lureState.brand, equals('Rapala'));
@@ -350,17 +420,21 @@ void main() {
     });
 
     test('loads lure-specific fields from space-separated map', () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'lure',
         'brand': 'Megabass',
         'model': 'Vision',
-        'lure type': 'Floating',
-        'lure weight': '8',
-        'lure size': '5cm',
-        'lure color': 'Ghost Shiner',
-        'lure quantity': '5',
-      };
+        'lure_type': 'Floating',
+        'lure_weight': '8',
+        'lure_size': '5cm',
+        'lure_color': 'Ghost Shiner',
+        'lure_quantity': '5',
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       final lureState = vm.state as LureEditState;
       expect(lureState.lureType, equals('Floating'));
@@ -371,12 +445,15 @@ void main() {
     });
 
     test('lure size and quantity units use defaults when not provided', () {
-      final map = <String, dynamic>{
+      final equipment = Equipment.fromMap({
+        'id': 0,
+        'type': 'lure',
         'lure_size': '10cm',
-        // lure_size_unit and lure_quantity_unit omitted
-      };
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
-      vm.loadDataFromMap(map);
+      vm.loadFromEquipment(equipment);
 
       final lureState = vm.state as LureEditState;
       expect(lureState.lureSize, equals('10cm'));
@@ -414,21 +491,27 @@ void main() {
 
     test('returns error message for non-numeric price', () {
       vm.updatePrice('abc');
-      expect(vm.validatePrice(AppStrings.english),
-          equals(AppStrings.english.invalidPrice),);
+      expect(
+        vm.validatePrice(AppStrings.english),
+        equals(AppStrings.english.invalidPrice),
+      );
     });
 
     test('returns error message for negative price', () {
       vm.updatePrice('-50');
-      expect(vm.validatePrice(AppStrings.english),
-          equals(AppStrings.english.invalidPrice),);
+      expect(
+        vm.validatePrice(AppStrings.english),
+        equals(AppStrings.english.invalidPrice),
+      );
     });
 
     test('returns error message for price exceeding maximum', () {
       const maxPrice = 1000000.0;
       vm.updatePrice('${maxPrice + 1}');
-      expect(vm.validatePrice(AppStrings.english),
-          equals(AppStrings.english.priceTooHigh),);
+      expect(
+        vm.validatePrice(AppStrings.english),
+        equals(AppStrings.english.priceTooHigh),
+      );
     });
 
     test('returns null for price at maximum boundary', () {
@@ -479,8 +562,7 @@ void main() {
     });
 
     test('isSaving is false after save completes', () async {
-      when(() => mockService.create(any()))
-          .thenAnswer((_) async => 1);
+      when(() => mockService.create(any())).thenAnswer((_) async => 1);
 
       vm.updateBrand('Brand');
       vm.updateModel('Model');
@@ -532,20 +614,28 @@ void main() {
     });
 
     test('loads brand and model from map', () {
-      vm.loadDataFromMap({
+      vm.loadFromEquipment(Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
         'brand': 'G. Loomis',
         'model': 'E6X',
-      });
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      }));
 
       expect(vm.state.brand, equals('G. Loomis'));
       expect(vm.state.model, equals('E6X'));
     });
 
     test('loads price and purchaseDate from map', () {
-      vm.loadDataFromMap({
-        'price': '450.00',
+      vm.loadFromEquipment(Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
+        'price': 450.00,
         'purchase_date': '2024-01-15',
-      });
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      }));
 
       expect(vm.state.price, equals('450.00'));
       expect(vm.state.purchaseDate, equals('2024-01-15'));
@@ -553,9 +643,13 @@ void main() {
 
     test('loads purchase_date with underscore fallback', () {
       // The method looks up 'purchase_date' exactly; map has underscore format
-      vm.loadDataFromMap({
+      vm.loadFromEquipment(Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
         'purchase_date': '2024-06-20',
-      });
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      }));
 
       expect(vm.state.purchaseDate, equals('2024-06-20'));
     });

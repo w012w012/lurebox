@@ -25,9 +25,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class StatsDetailPage extends ConsumerStatefulWidget {
-
   const StatsDetailPage({
-    required this.title, required this.startDate, required this.endDate, super.key,
+    required this.title,
+    required this.startDate,
+    required this.endDate,
+    super.key,
     this.speciesStats,
   });
   final String title;
@@ -48,19 +50,20 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
   List<Map<String, dynamic>> _speciesSummary = [];
 
   /// Safe accessors for Map values — avoid `as` crash on null/wrong type
-  static String _s(Map<String, dynamic> m, String k) =>
-      m[k]?.toString() ?? '';
+  static String _s(Map<String, dynamic> m, String k) => m[k]?.toString() ?? '';
   static double? _d(Map<String, dynamic> m, String k) {
     final v = m[k];
     if (v is num) return v.toDouble();
     return null;
   }
+
   static int _i(Map<String, dynamic> m, String k) {
     final v = m[k];
     if (v is int) return v;
     if (v is num) return v.toInt();
     return 0;
   }
+
   static DateTime? _dt(Map<String, dynamic> m, String k) {
     final v = m[k]?.toString();
     if (v == null || v.isEmpty) return null;
@@ -130,8 +133,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
             'totalWeight': 0.0,
           };
         }
-        speciesData[species]!['count'] =
-            _i(speciesData[species]!, 'count') + 1;
+        speciesData[species]!['count'] = _i(speciesData[species]!, 'count') + 1;
         final weight = _d(fish, 'weight');
         final weightUnit =
             _s(fish, 'weight_unit').isEmpty ? 'kg' : _s(fish, 'weight_unit');
@@ -196,9 +198,8 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
   void _calculateLocationAnalysis(List<Map<String, dynamic>> catches) {
     final locationMap = <String, Map<String, int>>{};
     for (final fish in catches) {
-      final location = _s(fish, 'location_name').isEmpty
-          ? null
-          : _s(fish, 'location_name');
+      final location =
+          _s(fish, 'location_name').isEmpty ? null : _s(fish, 'location_name');
       if (location == null || location.isEmpty) continue;
       final species = _s(fish, 'species');
       if (!locationMap.containsKey(location)) {
@@ -437,9 +438,11 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline, size: 48, color: Colors.grey),
+                      const Icon(Icons.error_outline,
+                          size: 48, color: Colors.grey),
                       const SizedBox(height: 16),
-                      Text(strings.error, style: Theme.of(context).textTheme.titleMedium),
+                      Text(strings.error,
+                          style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(height: 8),
                       TextButton(
                         onPressed: _loadDetail,
@@ -449,50 +452,51 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                   ),
                 )
               : FadeTransition(
-              opacity: _fadeAnimation,
-              child: Stack(
-                children: [
-                  SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.all(TeslaTheme.spacingMd),
-                    child: _buildContent(
-                      totalCount,
-                      releaseCount,
-                      keepCount,
-                      releaseRate,
-                      strings,
-                      displayUnits.fishWeightUnit,
-                      isChinese,
-                    ),
-                  ),
-                  Positioned(
-                    left: -9999,
-                    top: 0,
-                    child: RepaintBoundary(
-                      key: _repaintBoundaryKey,
-                      child: Material(
-                        color: TeslaColors.white,
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: Padding(
-                            padding: const EdgeInsets.all(TeslaTheme.spacingMd),
-                            child: _buildContent(
-                              totalCount,
-                              releaseCount,
-                              keepCount,
-                              releaseRate,
-                              strings,
-                              displayUnits.fishWeightUnit,
-                              isChinese,
+                  opacity: _fadeAnimation,
+                  child: Stack(
+                    children: [
+                      SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.all(TeslaTheme.spacingMd),
+                        child: _buildContent(
+                          totalCount,
+                          releaseCount,
+                          keepCount,
+                          releaseRate,
+                          strings,
+                          displayUnits.fishWeightUnit,
+                          isChinese,
+                        ),
+                      ),
+                      Positioned(
+                        left: -9999,
+                        top: 0,
+                        child: RepaintBoundary(
+                          key: _repaintBoundaryKey,
+                          child: Material(
+                            color: TeslaColors.white,
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.all(TeslaTheme.spacingMd),
+                                child: _buildContent(
+                                  totalCount,
+                                  releaseCount,
+                                  keepCount,
+                                  releaseRate,
+                                  strings,
+                                  displayUnits.fishWeightUnit,
+                                  isChinese,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
     );
   }
 

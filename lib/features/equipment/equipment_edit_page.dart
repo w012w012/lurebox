@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/providers/equipment_edit_state.dart';
 import 'package:lurebox/core/providers/equipment_edit_view_model.dart';
@@ -28,11 +29,11 @@ class EquipmentEditPage extends ConsumerStatefulWidget {
 class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
-  Map<String, dynamic>? _loadedEquipment;
+  Equipment? _loadedEquipment;
   bool _isLoadingEquipment = false;
 
   // _params is computed dynamically to always match widget.type
-  ({String type, Map<String, dynamic>? equipment}) get _params =>
+  ({String type, Equipment? equipment}) get _params =>
       (type: widget.type, equipment: null);
 
   @override
@@ -55,29 +56,36 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       // Equipment not found - just return, don't show error for edit
       if (equipment == null) return;
 
+      // Apply legacy migration to get English values
       final equipmentMap = LegacyValueMigrator.migrateEquipmentMap(
         equipment.toMap(),
       );
-      _loadedEquipment = equipmentMap;
+      // Create Equipment from migrated map to use with loadFromEquipment
+      final migratedEquipment = Equipment.fromMap(equipmentMap);
+      _loadedEquipment = migratedEquipment;
 
       // Update ViewModel with loaded data
       ref
           .read(equipmentEditViewModelProvider(_params).notifier)
-          .loadDataFromMap(equipmentMap);
+          .loadFromEquipment(migratedEquipment);
 
       // Create/update controllers with loaded values
-      _getOrCreateController('brand', equipment.brand ?? '');
-      _getOrCreateController('model', equipment.model ?? '');
-      _getOrCreateController('price', equipment.price?.toString() ?? '');
-      _getOrCreateController('purchaseDate',
-          equipment.purchaseDate?.toIso8601String().split('T').first ?? '',);
+      _getOrCreateController('brand', migratedEquipment.brand ?? '');
+      _getOrCreateController('model', migratedEquipment.model ?? '');
+      _getOrCreateController(
+          'price', migratedEquipment.price?.toString() ?? '');
+      _getOrCreateController(
+        'purchaseDate',
+        migratedEquipment.purchaseDate?.toIso8601String().split('T').first ??
+            '',
+      );
 
-      // Sync type-specific controllers from equipment map
-      _syncTypeSpecificControllers(equipmentMap);
+      // Sync type-specific controllers from equipment
+      _syncTypeSpecificControllers(migratedEquipment);
 
       if (mounted) {
         setState(() {
-          _loadedEquipment = equipmentMap;
+          _loadedEquipment = migratedEquipment;
         });
       }
     } finally {
@@ -95,39 +103,45 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
   TextEditingController _getOrCreateController(String field, String value) {
     final controller = _controllers.putIfAbsent(
-        field, () => TextEditingController(text: value),);
+      field,
+      () => TextEditingController(text: value),
+    );
     if (value.isNotEmpty && controller.text != value) {
       controller.text = value;
     }
     return controller;
   }
 
-  void _syncTypeSpecificControllers(Map<String, dynamic> equipment) {
+  void _syncTypeSpecificControllers(Equipment equipment) {
     switch (widget.type) {
       case 'rod':
-        _getOrCreateController('length', equipment['length']?.toString() ?? '');
-        _getOrCreateController('sections', equipment['sections']?.toString() ?? '');
-        _getOrCreateController('material', equipment['material']?.toString() ?? '');
-        final wr = equipment['weight_range']?.toString() ?? '';
+        _getOrCreateController('length', equipment.length ?? '');
+        _getOrCreateController('sections', equipment.sections ?? '');
+        _getOrCreateController('material', equipment.material ?? '');
+        final wr = equipment.weightRange ?? '';
         _getOrCreateController('weightRangeMin', _parseWeightRange(wr).$1);
         _getOrCreateController('weightRangeMax', _parseWeightRange(wr).$2);
       case 'reel':
-        _getOrCreateController('reelBearings', equipment['reel_bearings']?.toString() ?? '');
-        final ratio = equipment['reel_ratio']?.toString() ?? '';
+        _getOrCreateController(
+            'reelBearings', equipment.reelBearings?.toString() ?? '');
+        final ratio = equipment.reelRatio ?? '';
         _getOrCreateController('reelRatioA', _parseRatio(ratio).$1);
         _getOrCreateController('reelRatioB', _parseRatio(ratio).$2);
-        final cap = equipment['reel_capacity']?.toString() ?? '';
+        final cap = equipment.reelCapacity ?? '';
         _getOrCreateController('reelCapacityNumber', _parseCapacity(cap).$1);
         _getOrCreateController('reelCapacityLength', _parseCapacity(cap).$2);
-        _getOrCreateController('reelWeight', equipment['reel_weight']?.toString() ?? '');
-        _getOrCreateController('reelLine', equipment['reel_line']?.toString() ?? '');
-        _getOrCreateController('reelLineNumber', equipment['reel_line_number']?.toString() ?? '');
-        _getOrCreateController('reelLineLength', equipment['reel_line_length']?.toString() ?? '');
+        _getOrCreateController('reelWeight', equipment.reelWeight ?? '');
+        _getOrCreateController('reelLine', equipment.reelLine ?? '');
+        _getOrCreateController(
+            'reelLineNumber', equipment.reelLineNumber ?? '');
+        _getOrCreateController(
+            'reelLineLength', equipment.reelLineLength ?? '');
       case 'lure':
-        _getOrCreateController('lureWeight', equipment['lure_weight']?.toString() ?? '');
-        _getOrCreateController('lureSize', equipment['lure_size']?.toString() ?? '');
-        _getOrCreateController('lureColor', equipment['lure_color']?.toString() ?? '');
-        _getOrCreateController('lureQuantity', equipment['lure_quantity']?.toString() ?? '');
+        _getOrCreateController('lureWeight', equipment.lureWeight ?? '');
+        _getOrCreateController('lureSize', equipment.lureSize ?? '');
+        _getOrCreateController('lureColor', equipment.lureColor ?? '');
+        _getOrCreateController(
+            'lureQuantity', equipment.lureQuantity?.toString() ?? '');
     }
   }
 
@@ -533,13 +547,16 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       Navigator.pop(context, true);
     } else if (mounted) {
       final s = ref.read(
-        equipmentEditViewModelProvider((
-          type: widget.type,
-          equipment: _loadedEquipment,
-        ),),
+        equipmentEditViewModelProvider(
+          (
+            type: widget.type,
+            equipment: _loadedEquipment,
+          ),
+        ),
       );
       if (s.errorMessage != null) {
-        AppSnackBar.showError(context, strings.saveFailed, debugError: s.errorMessage);
+        AppSnackBar.showError(context, strings.saveFailed,
+            debugError: s.errorMessage);
       }
     }
   }
@@ -705,7 +722,6 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
 /// 包裹 Autocomplete 文本字段，处理点击外部关闭
 class _DismissibleAutocompleteField extends StatefulWidget {
-
   const _DismissibleAutocompleteField({
     required this.focusNode,
     required this.child,
@@ -747,7 +763,6 @@ class _DismissibleAutocompleteFieldState
 
 /// 可关闭的下拉选项面板 - 支持点击外部关闭
 class _DismissibleAutocompleteOptions<T> extends StatelessWidget {
-
   const _DismissibleAutocompleteOptions({
     required this.onSelected,
     required this.options,
@@ -790,9 +805,8 @@ class _DismissibleAutocompleteOptions<T> extends StatelessWidget {
                     title: Text(
                       option.toString(),
                       style: TextStyle(
-                        color: isDark
-                            ? TeslaColors.white
-                            : TeslaColors.carbonDark,
+                        color:
+                            isDark ? TeslaColors.white : TeslaColors.carbonDark,
                       ),
                     ),
                     onTap: () {

@@ -12,6 +12,7 @@ import 'package:lurebox/features/equipment/equipment_list_page.dart';
 import 'package:lurebox/features/equipment/equipment_overview_page.dart';
 import 'package:lurebox/features/fish_detail/fish_detail_page.dart';
 import 'package:lurebox/features/fish_detail/widgets/fish_edit_page.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/features/fish_list/fish_list_page.dart';
 import 'package:lurebox/features/home/home_page.dart';
 import 'package:lurebox/features/me/backup_export_page.dart';
@@ -172,16 +173,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         builder: (context, state) => const _UnitSettingsPageWrapper(),
       ),
-  GoRoute(
-      path: '/me/settings',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const MeSettingsPage(),
-    ),
-  GoRoute(
-      path: '/me/backup-export',
-      parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const BackupExportPage(),
-    ),
+      GoRoute(
+        path: '/me/settings',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const MeSettingsPage(),
+      ),
+      GoRoute(
+        path: '/me/backup-export',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (context, state) => const BackupExportPage(),
+      ),
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
         builder: (context, state, child) {
@@ -211,7 +212,6 @@ final routerProvider = Provider<GoRouter>((ref) {
 });
 
 class MainShell extends ConsumerWidget {
-
   const MainShell({required this.child, super.key});
   final Widget child;
 
@@ -279,7 +279,6 @@ class MainShell extends ConsumerWidget {
 }
 
 class _FishEditPageWrapper extends ConsumerWidget {
-
   const _FishEditPageWrapper({required this.fishId});
   final int fishId;
 
@@ -301,9 +300,8 @@ class _FishEditPageWrapper extends ConsumerWidget {
 }
 
 class _FishEditPage extends StatelessWidget {
-
   const _FishEditPage({required this.fish, required this.strings});
-  final Map<String, dynamic> fish;
+  final FishCatch fish;
   final AppStrings strings;
 
   @override

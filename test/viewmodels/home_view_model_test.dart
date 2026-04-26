@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/providers/home_view_model.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
 import 'package:mocktail/mocktail.dart';
@@ -17,7 +18,7 @@ DashboardData _createDashboardData({
   Map<String, int> yearSpecies = const {},
   CatchStats allStats = const CatchStats(total: 0, release: 0, keep: 0),
   Map<String, int> allSpecies = const {},
-  List<Map<String, dynamic>> top3Longest = const [],
+  List<FishCatch> top3Longest = const [],
 }) {
   return DashboardData(
     todayStats: todayStats,
@@ -63,17 +64,25 @@ void main() {
 
         expect(newViewModel.state.isLoading, isTrue);
         expect(newViewModel.state.errorMessage, isNull);
-        expect(newViewModel.state.todayStats,
-            const CatchStats(total: 0, release: 0, keep: 0),);
+        expect(
+          newViewModel.state.todayStats,
+          const CatchStats(total: 0, release: 0, keep: 0),
+        );
         expect(newViewModel.state.todaySpecies, isEmpty);
-        expect(newViewModel.state.monthStats,
-            const CatchStats(total: 0, release: 0, keep: 0),);
+        expect(
+          newViewModel.state.monthStats,
+          const CatchStats(total: 0, release: 0, keep: 0),
+        );
         expect(newViewModel.state.monthSpecies, isEmpty);
-        expect(newViewModel.state.yearStats,
-            const CatchStats(total: 0, release: 0, keep: 0),);
+        expect(
+          newViewModel.state.yearStats,
+          const CatchStats(total: 0, release: 0, keep: 0),
+        );
         expect(newViewModel.state.yearSpecies, isEmpty);
-        expect(newViewModel.state.allStats,
-            const CatchStats(total: 0, release: 0, keep: 0),);
+        expect(
+          newViewModel.state.allStats,
+          const CatchStats(total: 0, release: 0, keep: 0),
+        );
         expect(newViewModel.state.allSpecies, isEmpty);
         expect(newViewModel.state.top3Fishes, isEmpty);
       });
@@ -95,9 +104,39 @@ void main() {
           allStats: const CatchStats(total: 500, release: 350, keep: 150),
           allSpecies: {'Bass': 200, 'Trout': 180, 'Pike': 120},
           top3Longest: [
-            {'species': 'Bass', 'length': 50.5},
-            {'species': 'Trout', 'length': 45.0},
-            {'species': 'Pike', 'length': 42.0},
+            FishCatch(
+              id: 1,
+              imagePath: '/test/fish_1.jpg',
+              species: 'Bass',
+              length: 50.5,
+              weight: 4.5,
+              fate: FishFateType.release,
+              catchTime: DateTime.now(),
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            ),
+            FishCatch(
+              id: 2,
+              imagePath: '/test/fish_2.jpg',
+              species: 'Trout',
+              length: 45.0,
+              weight: 3.2,
+              fate: FishFateType.release,
+              catchTime: DateTime.now(),
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            ),
+            FishCatch(
+              id: 3,
+              imagePath: '/test/fish_3.jpg',
+              species: 'Pike',
+              length: 42.0,
+              weight: 5.0,
+              fate: FishFateType.release,
+              catchTime: DateTime.now(),
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            ),
           ],
         );
 
@@ -141,8 +180,10 @@ void main() {
         expect(viewModel.state.todayStats.total, 10);
         expect(viewModel.state.todayStats.release, 7);
         expect(viewModel.state.todayStats.keep, 3);
-        expect(viewModel.state.todaySpecies,
-            {'Bass': 5, 'Crappie': 3, 'Bluegill': 2},);
+        expect(
+          viewModel.state.todaySpecies,
+          {'Bass': 5, 'Crappie': 3, 'Bluegill': 2},
+        );
       });
 
       test('updates monthStats and monthSpecies correctly', () async {
@@ -164,8 +205,10 @@ void main() {
         expect(viewModel.state.monthStats.total, 50);
         expect(viewModel.state.monthStats.release, 35);
         expect(viewModel.state.monthStats.keep, 15);
-        expect(viewModel.state.monthSpecies,
-            {'Bass': 25, 'Trout': 15, 'Crappie': 10},);
+        expect(
+          viewModel.state.monthSpecies,
+          {'Bass': 25, 'Trout': 15, 'Crappie': 10},
+        );
       });
 
       test('updates yearStats and yearSpecies correctly', () async {
@@ -187,8 +230,10 @@ void main() {
         expect(viewModel.state.yearStats.total, 200);
         expect(viewModel.state.yearStats.release, 140);
         expect(viewModel.state.yearStats.keep, 60);
-        expect(viewModel.state.yearSpecies,
-            {'Bass': 100, 'Trout': 60, 'Pike': 40},);
+        expect(
+          viewModel.state.yearSpecies,
+          {'Bass': 100, 'Trout': 60, 'Pike': 40},
+        );
       });
 
       test('updates allStats and allSpecies correctly', () async {
@@ -210,16 +255,48 @@ void main() {
         expect(viewModel.state.allStats.total, 1000);
         expect(viewModel.state.allStats.release, 700);
         expect(viewModel.state.allStats.keep, 300);
-        expect(viewModel.state.allSpecies,
-            {'Bass': 400, 'Trout': 350, 'Pike': 250},);
+        expect(
+          viewModel.state.allSpecies,
+          {'Bass': 400, 'Trout': 350, 'Pike': 250},
+        );
       });
 
       test('updates top3Fishes correctly', () async {
         // Arrange
         final top3 = [
-          {'species': 'Bass', 'length': 55.5, 'weight': 4.5},
-          {'species': 'Trout', 'length': 48.0, 'weight': 3.2},
-          {'species': 'Pike', 'length': 45.0, 'weight': 5.0},
+          FishCatch(
+            id: 1,
+            imagePath: '/test/fish_1.jpg',
+            species: 'Bass',
+            length: 55.5,
+            weight: 4.5,
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 1, 15),
+            createdAt: DateTime(2024, 1, 15),
+            updatedAt: DateTime(2024, 1, 15),
+          ),
+          FishCatch(
+            id: 2,
+            imagePath: '/test/fish_2.jpg',
+            species: 'Trout',
+            length: 48.0,
+            weight: 3.2,
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 1, 15),
+            createdAt: DateTime(2024, 1, 15),
+            updatedAt: DateTime(2024, 1, 15),
+          ),
+          FishCatch(
+            id: 3,
+            imagePath: '/test/fish_3.jpg',
+            species: 'Pike',
+            length: 45.0,
+            weight: 5.0,
+            fate: FishFateType.keep,
+            catchTime: DateTime(2024, 1, 15),
+            createdAt: DateTime(2024, 1, 15),
+            updatedAt: DateTime(2024, 1, 15),
+          ),
         ];
 
         when(() => mockRepository.getDashboardData()).thenAnswer(
@@ -231,10 +308,10 @@ void main() {
 
         // Assert
         expect(viewModel.state.top3Fishes.length, 3);
-        expect(viewModel.state.top3Fishes[0]['species'], 'Bass');
-        expect(viewModel.state.top3Fishes[0]['length'], 55.5);
-        expect(viewModel.state.top3Fishes[1]['species'], 'Trout');
-        expect(viewModel.state.top3Fishes[2]['species'], 'Pike');
+        expect(viewModel.state.top3Fishes[0].species, 'Bass');
+        expect(viewModel.state.top3Fishes[0].length, 55.5);
+        expect(viewModel.state.top3Fishes[1].species, 'Trout');
+        expect(viewModel.state.top3Fishes[2].species, 'Pike');
       });
 
       test('calls getDashboardData once during initialization', () async {
@@ -378,22 +455,32 @@ void main() {
     // ============================================================
     group('HomeState copyWith', () {
       test('copyWith creates new instance with updated fields', () {
-        const state = HomeState(
-          todayStats: CatchStats(total: 5, release: 3, keep: 2),
-          todaySpecies: {'Bass': 3},
-          monthStats: CatchStats(total: 20, release: 15, keep: 5),
-          monthSpecies: {'Bass': 10},
-          yearStats: CatchStats(total: 100, release: 70, keep: 30),
-          yearSpecies: {'Bass': 50},
-          allStats: CatchStats(total: 500, release: 350, keep: 150),
-          allSpecies: {'Bass': 200},
+        final state = HomeState(
+          todayStats: const CatchStats(total: 5, release: 3, keep: 2),
+          todaySpecies: const {'Bass': 3},
+          monthStats: const CatchStats(total: 20, release: 15, keep: 5),
+          monthSpecies: const {'Bass': 10},
+          yearStats: const CatchStats(total: 100, release: 70, keep: 30),
+          yearSpecies: const {'Bass': 50},
+          allStats: const CatchStats(total: 500, release: 350, keep: 150),
+          allSpecies: const {'Bass': 200},
           top3Fishes: [
-            {'species': 'Bass', 'length': 45.0},
+            FishCatch(
+              id: 1,
+              imagePath: '/test/fish_1.jpg',
+              species: 'Bass',
+              length: 45.0,
+              fate: FishFateType.release,
+              catchTime: DateTime(2024, 1, 15),
+              createdAt: DateTime(2024, 1, 15),
+              updatedAt: DateTime(2024, 1, 15),
+            ),
           ],
         );
 
         final newState = state.copyWith(
-            todayStats: const CatchStats(total: 10, release: 8, keep: 2),);
+          todayStats: const CatchStats(total: 10, release: 8, keep: 2),
+        );
 
         expect(newState.isLoading, state.isLoading);
         expect(newState.todayStats.total, 10);
