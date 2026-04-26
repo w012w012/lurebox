@@ -117,7 +117,7 @@ void main() {
 
         viewModel.toggleSelection('Lake A');
 
-        expect(viewModel.state.selectedLocations.contains('Lake A'), true);
+        expect(viewModel.state.selectedLocations, contains('Lake A'));
       });
 
       test('removes location from selection when already selected', () async {
@@ -129,10 +129,10 @@ void main() {
         await Future.delayed(const Duration(milliseconds: 10));
 
         viewModel.toggleSelection('Lake A');
-        expect(viewModel.state.selectedLocations.contains('Lake A'), true);
+        expect(viewModel.state.selectedLocations, contains('Lake A'));
 
         viewModel.toggleSelection('Lake A');
-        expect(viewModel.state.selectedLocations.contains('Lake A'), false);
+        expect(viewModel.state.selectedLocations, isNot(contains('Lake A')));
       });
     });
 
@@ -167,9 +167,7 @@ void main() {
         viewModel.selectAll();
 
         expect(viewModel.state.selectedLocations.length, 3);
-        expect(viewModel.state.selectedLocations.contains('Lake A'), true);
-        expect(viewModel.state.selectedLocations.contains('Lake B'), true);
-        expect(viewModel.state.selectedLocations.contains('Lake C'), true);
+        expect(viewModel.state.selectedLocations, containsAll(['Lake A', 'Lake B', 'Lake C']));
       });
     });
 

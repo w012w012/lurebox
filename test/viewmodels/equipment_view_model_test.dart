@@ -70,14 +70,14 @@ void main() {
         // Wait for initial loadData() to complete
         await Future.delayed(Duration.zero);
 
-        expect(viewModel.state.isLoading, false);
+        expect(viewModel.state.isLoading, isFalse);
         expect(viewModel.state.errorMessage, isNull);
         expect(viewModel.state.rodList, isEmpty);
         expect(viewModel.state.reelList, isEmpty);
         expect(viewModel.state.lureList, isEmpty);
         expect(viewModel.state.equipmentStats, isEmpty);
         expect(viewModel.state.selectedType, 'rod');
-        expect(viewModel.state.allExpanded, true);
+        expect(viewModel.state.allExpanded, isTrue);
         expect(viewModel.state.expandedId, isNull);
       });
 
@@ -90,7 +90,7 @@ void main() {
 
         // The constructor calls loadData() synchronously which sets isLoading = true
         // but since it's async, the initial state shows isLoading = true
-        expect(newViewModel.state.isLoading, true);
+        expect(newViewModel.state.isLoading, isTrue);
       });
     });
 
@@ -134,7 +134,7 @@ void main() {
         expect(viewModel.state.reelList, equals(reels));
         expect(viewModel.state.lureList, equals(lures));
         expect(viewModel.state.equipmentStats, equals(stats));
-        expect(viewModel.state.isLoading, false);
+        expect(viewModel.state.isLoading, isFalse);
         expect(viewModel.state.errorMessage, isNull);
       });
 
@@ -157,7 +157,7 @@ void main() {
         expect(viewModel.state.reelList, isEmpty);
         expect(viewModel.state.lureList, isEmpty);
         expect(viewModel.state.equipmentStats, isEmpty);
-        expect(viewModel.state.isLoading, false);
+        expect(viewModel.state.isLoading, isFalse);
       });
 
       test('sets errorMessage when getAll for rod fails', () async {
@@ -177,7 +177,7 @@ void main() {
         // Assert
         expect(viewModel.state.errorMessage,
             contains('Database error: rod table not found'),);
-        expect(viewModel.state.isLoading, false);
+        expect(viewModel.state.isLoading, isFalse);
       });
 
       test('sets errorMessage when getAll for reel fails', () async {
@@ -196,7 +196,7 @@ void main() {
 
         // Assert
         expect(viewModel.state.errorMessage, contains('Reel query failed'));
-        expect(viewModel.state.isLoading, false);
+        expect(viewModel.state.isLoading, isFalse);
       });
 
       test('sets errorMessage when getAll for lure fails', () async {
@@ -215,7 +215,7 @@ void main() {
 
         // Assert
         expect(viewModel.state.errorMessage, contains('Lure query failed'));
-        expect(viewModel.state.isLoading, false);
+        expect(viewModel.state.isLoading, isFalse);
       });
 
       test('sets errorMessage when getAllEquipmentCatchStats fails', () async {
@@ -234,7 +234,7 @@ void main() {
 
         // Assert
         expect(viewModel.state.errorMessage, contains('Stats query failed'));
-        expect(viewModel.state.isLoading, false);
+        expect(viewModel.state.isLoading, isFalse);
       });
     });
 
@@ -294,7 +294,7 @@ void main() {
         // Assert - other properties unchanged
         expect(viewModel.state.rodList, equals(rods));
         expect(viewModel.state.equipmentStats, equals(stats));
-        expect(viewModel.state.allExpanded, true);
+        expect(viewModel.state.allExpanded, isTrue);
       });
     });
 
@@ -356,22 +356,22 @@ void main() {
       test('sets allExpanded to false', () async {
         await Future.delayed(Duration.zero);
 
-        expect(viewModel.state.allExpanded, true);
+        expect(viewModel.state.allExpanded, isTrue);
 
         viewModel.setAllExpanded(false);
 
-        expect(viewModel.state.allExpanded, false);
+        expect(viewModel.state.allExpanded, isFalse);
       });
 
       test('sets allExpanded to true', () async {
         await Future.delayed(Duration.zero);
 
         viewModel.setAllExpanded(false);
-        expect(viewModel.state.allExpanded, false);
+        expect(viewModel.state.allExpanded, isFalse);
 
         viewModel.setAllExpanded(true);
 
-        expect(viewModel.state.allExpanded, true);
+        expect(viewModel.state.allExpanded, isTrue);
       });
     });
 

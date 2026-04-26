@@ -256,7 +256,7 @@ void main() {
       final imageFinder = find.byType(Image);
       expect(imageFinder, findsOneWidget);
 
-      final imageWidget = tester.widget(imageFinder);
+      final imageWidget = tester.widget<Image>(imageFinder);
       expect(imageWidget.fit, equals(BoxFit.cover));
     });
 

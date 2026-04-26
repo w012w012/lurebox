@@ -1,6 +1,9 @@
 import 'package:lurebox/core/database/database.dart';
+import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/models/fish_filter.dart';
+import 'package:lurebox/core/models/fishing_location.dart';
 import 'package:lurebox/core/repositories/equipment_repository.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 import 'package:lurebox/core/repositories/location_repository.dart';
@@ -276,5 +279,61 @@ class TestDataFactory {
     int keep = 3,
   }) {
     return CatchStats(total: total, release: release, keep: keep);
+  }
+
+  static FishFilter createFishFilter({
+    String timeFilter = 'all',
+    FishFateType? fateFilter,
+    String? speciesFilter,
+    String sortBy = 'time',
+    bool sortAsc = false,
+    DateTime? customStartDate,
+    DateTime? customEndDate,
+    String? searchQuery,
+  }) {
+    return FishFilter(
+      timeFilter: timeFilter,
+      fateFilter: fateFilter,
+      speciesFilter: speciesFilter,
+      sortBy: sortBy,
+      sortAsc: sortAsc,
+      customStartDate: customStartDate,
+      customEndDate: customEndDate,
+      searchQuery: searchQuery,
+    );
+  }
+
+  static FishingLocation createFishingLocation({
+    int id = 1,
+    String name = 'Test Location',
+    double? latitude = 35.0,
+    double? longitude = 139.0,
+    DateTime? lastVisit,
+    int fishCount = 5,
+    DateTime? createdAt,
+  }) {
+    return FishingLocation(
+      id: id,
+      name: name,
+      latitude: latitude,
+      longitude: longitude,
+      lastVisit: lastVisit,
+      fishCount: fishCount,
+      createdAt: createdAt ?? DateTime.now(),
+    );
+  }
+
+  static AppSettings createAppSettings({
+    UnitSettings? units,
+    DarkMode darkMode = DarkMode.system,
+    AppLanguage language = AppLanguage.chinese,
+    bool hasCompletedOnboarding = false,
+  }) {
+    return AppSettings(
+      units: units ?? const UnitSettings(),
+      darkMode: darkMode,
+      language: language,
+      hasCompletedOnboarding: hasCompletedOnboarding,
+    );
   }
 }

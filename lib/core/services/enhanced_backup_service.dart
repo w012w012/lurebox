@@ -333,8 +333,15 @@ class EnhancedBackupService {
             final catchTime = map['catch_time'] as String?;
             final species = map['species'] as String?;
 
+            // Can't insert with null species - skip as error
+            if (species == null) {
+              errorCount++;
+              AppLogger.e('EnhancedBackupService', 'Failed to import fish catch: species is null', null);
+              continue;
+            }
+
             // 检查是否已存在相同时间和物种的记录
-            if (catchTime != null && species != null) {
+            if (catchTime != null) {
               final existing = await txn.query(
                 'fish_catches',
                 where: 'catch_time = ? AND species = ?',
@@ -366,33 +373,38 @@ class EnhancedBackupService {
             final brand = map['brand'] as String?;
             final model = map['model'] as String?;
 
-            // 检查是否已存在
-            if (type != null) {
-              final where = <String>[];
-              final whereArgs = <dynamic>[];
+            // Can't insert with null type - skip as error
+            if (type == null) {
+              errorCount++;
+              AppLogger.e('EnhancedBackupService', 'Failed to import equipment: type is null', null);
+              continue;
+            }
 
-              where.add('type = ?');
-              whereArgs.add(type);
+            // 检查是否已存在（type is guaranteed non-null here）
+            final where = <String>[];
+            final whereArgs = <dynamic>[];
 
-              if (brand != null && brand.isNotEmpty) {
-                where.add('brand = ?');
-                whereArgs.add(brand);
-              }
-              if (model != null && model.isNotEmpty) {
-                where.add('model = ?');
-                whereArgs.add(model);
-              }
+            where.add('type = ?');
+            whereArgs.add(type);
 
-              final existing = await txn.query(
-                'equipments',
-                where: where.join(' AND '),
-                whereArgs: whereArgs,
-                limit: 1,
-              );
-              if (existing.isNotEmpty) {
-                skippedCount++;
-                continue;
-              }
+            if (brand != null && brand.isNotEmpty) {
+              where.add('brand = ?');
+              whereArgs.add(brand);
+            }
+            if (model != null && model.isNotEmpty) {
+              where.add('model = ?');
+              whereArgs.add(model);
+            }
+
+            final existing = await txn.query(
+              'equipments',
+              where: where.join(' AND '),
+              whereArgs: whereArgs,
+              limit: 1,
+            );
+            if (existing.isNotEmpty) {
+              skippedCount++;
+              continue;
             }
 
             await txn.insert('equipments', map);

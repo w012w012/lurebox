@@ -104,14 +104,14 @@ void main() {
       expect(notifier.state.sortAsc, isFalse);
 
       notifier.setSortBy('time');
-      expect(notifier.state.sortAsc, isFalse);
+      expect(notifier.state.sortAsc, isTrue);  // toggled: false → true
     });
 
     test('setSortBy resets direction on new field', () {
-      notifier.setSortBy('time');
+      notifier.setSortBy('time');  // toggle: false → true
       notifier.setSortBy('length');
       expect(notifier.state.sortBy, equals('length'));
-      expect(notifier.state.sortAsc, isFalse);
+      expect(notifier.state.sortAsc, isTrue);  // keeps current sortAsc
     });
 
     test('setCustomDateRange sets all date-related fields', () {

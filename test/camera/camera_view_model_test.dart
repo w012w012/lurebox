@@ -469,8 +469,6 @@ void main() {
       viewModel.setSelectedLure(_lure(id: 30));
 
       when(() => mockFishCatchService.create(any())).thenAnswer((_) async => 42);
-      when(() => mockFishCatchService.updateSpeciesHistory(any()))
-          .thenAnswer((_) async {});
 
       // Act
       final result = await viewModel.saveFishCatch();
@@ -497,7 +495,8 @@ void main() {
       expect(fish.lureId, 30);
       expect(fish.pendingRecognition, false);
 
-      verify(() => mockFishCatchService.updateSpeciesHistory('Bass')).called(1);
+      // Note: Species history update is handled inside FishCatchService.create()
+      // via _speciesHistoryRepo.incrementUseCount(), not via a separate call
     });
 
     test('uses pendingRecognition string when species is empty', () async {
@@ -507,8 +506,6 @@ void main() {
       // species is '' but pendingRecognition is true → canSave == true
 
       when(() => mockFishCatchService.create(any())).thenAnswer((_) async => 1);
-      when(() => mockFishCatchService.updateSpeciesHistory(any()))
-          .thenAnswer((_) async {});
 
       await viewModel.saveFishCatch();
 
@@ -531,8 +528,6 @@ void main() {
         stateDuringSave = viewModel.state.captureState;
         return 1;
       });
-      when(() => mockFishCatchService.updateSpeciesHistory(any()))
-          .thenAnswer((_) async {});
 
       await viewModel.saveFishCatch();
 
@@ -556,22 +551,6 @@ void main() {
       expect(viewModel.state.errorMessage, contains('DB write failed'));
     });
 
-    test('handles species history update error gracefully', () async {
-      viewModel.setImagePath('/photos/test.jpg');
-      viewModel.setSpecies('Bass');
-      viewModel.setLength(30);
-
-      when(() => mockFishCatchService.create(any())).thenAnswer((_) async => 1);
-      when(() => mockFishCatchService.updateSpeciesHistory(any()))
-          .thenThrow(Exception('history update failed'));
-
-      final result = await viewModel.saveFishCatch();
-
-      // Error is caught by ErrorService.wrap and outer catch
-      expect(result, isNull);
-      expect(viewModel.state.captureState, CameraCaptureState.error);
-    });
-
     test('sets estimatedWeight as fallback when weight is null', () async {
       viewModel.setImagePath('/photos/test.jpg');
       viewModel.setSpecies('Bass');
@@ -579,8 +558,6 @@ void main() {
       // weight is null, but estimatedWeight should be computed
 
       when(() => mockFishCatchService.create(any())).thenAnswer((_) async => 1);
-      when(() => mockFishCatchService.updateSpeciesHistory(any()))
-          .thenAnswer((_) async {});
 
       await viewModel.saveFishCatch();
 

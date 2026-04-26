@@ -34,12 +34,12 @@ void main() {
       final state = notifier.state as RodEditState;
 
       expect(state.type, 'rod');
-      expect(state.isEdit, false);
+      expect(state.isEdit, isFalse);
       expect(state.brand, '');
       expect(state.model, '');
       expect(state.length, '');
       expect(state.lengthUnit, 'm');
-      expect(state.isSaving, false);
+      expect(state.isSaving, isFalse);
       expect(state.errorMessage, isNull);
     });
 
@@ -72,7 +72,7 @@ void main() {
     test('updateIsDefault updates default flag', () {
       final notifier = RodEditNotifier(mockService, 'rod', null);
       notifier.updateIsDefault(true);
-      expect(notifier.state.isDefault, true);
+      expect(notifier.state.isDefault, isTrue);
     });
 
     test('loadDataFromMap populates rod fields', () {
@@ -99,8 +99,8 @@ void main() {
       expect(state.material, 'carbon');
       expect(state.hardness, 'M');
       expect(state.rodAction, 'fast');
-      expect(state.isDefault, true);
-      expect(state.isEdit, true);
+      expect(state.isDefault, isTrue);
+      expect(state.isEdit, isTrue);
     });
 
     test('validatePrice returns null for valid price', () {
@@ -129,8 +129,8 @@ void main() {
 
       final result = await notifier.save();
 
-      expect(result, true);
-      expect(notifier.state.isSaving, false);
+      expect(result, isTrue);
+      expect(notifier.state.isSaving, isFalse);
       expect(notifier.state.errorMessage, isNull);
       verify(() => mockService.create(any())).called(1);
     });
@@ -159,8 +159,8 @@ void main() {
       final notifier = RodEditNotifier(mockService, 'rod', null);
       final result = await notifier.save();
 
-      expect(result, false);
-      expect(notifier.state.isSaving, false);
+      expect(result, isFalse);
+      expect(notifier.state.isSaving, isFalse);
       expect(notifier.state.errorMessage, contains('DB error'));
     });
 
