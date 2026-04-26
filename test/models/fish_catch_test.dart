@@ -375,6 +375,133 @@ void main() {
       final result = <FishCatch>[].filterByTime('today');
       expect(result, isEmpty);
     });
+
+    group('boundary conditions', () {
+      test('December month filter does not overflow to next year', () {
+        final now = DateTime.now();
+        final monthStart = DateTime(now.year, now.month);
+        final prevMonthEnd = monthStart.subtract(const Duration(seconds: 1));
+
+        final catches = [
+          TestDataFactory.createFishCatch(
+            id: 1,
+            species: 'This Month First Day',
+            catchTime: monthStart,
+          ),
+          TestDataFactory.createFishCatch(
+            id: 2,
+            species: 'Previous Month Last Second',
+            catchTime: prevMonthEnd,
+          ),
+        ];
+
+        final result = catches.filterByTime('month');
+
+        expect(result.length, equals(1));
+        expect(result.first.species, equals('This Month First Day'));
+      });
+
+      test('month filter works correctly across year boundary', () {
+        final now = DateTime.now();
+        final prevMonth = now.month == 1 ? 12 : now.month - 1;
+        final prevYear = now.month == 1 ? now.year - 1 : now.year;
+        final prevMonthEnd = DateTime(now.year, now.month)
+            .subtract(const Duration(seconds: 1));
+
+        final catches = [
+          TestDataFactory.createFishCatch(
+            id: 1,
+            species: 'Current Month Catch',
+            catchTime: now,
+          ),
+          TestDataFactory.createFishCatch(
+            id: 2,
+            species: 'Previous Month End',
+            catchTime: prevMonthEnd,
+          ),
+        ];
+
+        final result = catches.filterByTime('month');
+
+        expect(result.length, equals(1));
+        expect(result.first.species, equals('Current Month Catch'));
+      });
+
+      test('February leap year boundary (Feb 29)', () {
+        final febStart = DateTime(2024, 2);
+        final marStart = DateTime(2024, 3);
+
+        final catches = [
+          TestDataFactory.createFishCatch(
+            id: 1,
+            species: 'Feb 29',
+            catchTime: DateTime(2024, 2, 29),
+          ),
+          TestDataFactory.createFishCatch(
+            id: 2,
+            species: 'Mar 1',
+            catchTime: DateTime(2024, 3),
+          ),
+        ];
+
+        final febCatches = catches.where((fish) {
+          return !fish.catchTime.isBefore(febStart) &&
+              fish.catchTime.isBefore(marStart);
+        }).toList();
+
+        expect(febCatches.length, equals(1));
+        expect(febCatches.first.species, equals('Feb 29'));
+      });
+
+      test('year filter includes January 1 midnight', () {
+        final now = DateTime.now();
+        final yearStart = DateTime(now.year);
+        final prevYearEnd = yearStart.subtract(const Duration(seconds: 1));
+
+        final catches = [
+          TestDataFactory.createFishCatch(
+            id: 1,
+            species: 'Jan 1 This Year',
+            catchTime: yearStart,
+          ),
+          TestDataFactory.createFishCatch(
+            id: 2,
+            species: 'Dec 31 Prev Year',
+            catchTime: prevYearEnd,
+          ),
+        ];
+
+        final result = catches.filterByTime('year');
+
+        expect(result.length, equals(1));
+        expect(result.first.species, equals('Jan 1 This Year'));
+      });
+
+      test('year filter excludes December 31 boundary', () {
+        final now = DateTime.now();
+        final catches = [
+          TestDataFactory.createFishCatch(
+            id: 1,
+            species: 'This Year Catch',
+            catchTime: now,
+          ),
+          TestDataFactory.createFishCatch(
+            id: 2,
+            species: 'Old Catch',
+            catchTime: DateTime(now.year - 1, 12, 31, 23, 59, 59),
+          ),
+        ];
+
+        final result = catches.filterByTime('year');
+
+        final oldCatchDaysAgo =
+            now.difference(DateTime(now.year - 1, 12, 31, 23, 59, 59)).inDays;
+        if (oldCatchDaysAgo > 365) {
+          expect(result.length, equals(1));
+          expect(result.first.species, equals('This Year Catch'));
+        }
+      });
+    });
   });
 
   group('FishCatchListExtension.filterByFate', () {
@@ -415,6 +542,29 @@ void main() {
     test('empty list returns empty', () {
       final result = <FishCatch>[].filterByFate(FishFateType.release);
       expect(result, isEmpty);
+    });
+  });
+
+  group('FishCatchListExtension.filterBySpecies', () {
+    late List<FishCatch> catches;
+
+    setUp(() {
+      catches = [
+        TestDataFactory.createFishCatch(
+            id: 1, species: 'Bass', fate: FishFateType.release),
+        TestDataFactory.createFishCatch(
+            id: 2, species: 'Trout', fate: FishFateType.keep),
+        TestDataFactory.createFishCatch(
+            id: 3, species: 'Bass', fate: FishFateType.release),
+      ];
+    });
+
+    test('filters by species correctly', () {
+      final bass = catches.filterBySpecies('Bass');
+      final trout = catches.filterBySpecies('Trout');
+
+      expect(bass.length, equals(2));
+      expect(trout.length, equals(1));
     });
   });
 

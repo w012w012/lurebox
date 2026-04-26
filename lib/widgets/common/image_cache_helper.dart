@@ -271,11 +271,12 @@ class ImageCacheHelper {
 class LRUMap<K, V> {
 
   LRUMap({int maxSize = 50}) : _maxSize = maxSize;
-  final int _maxSize;
+  int _maxSize;
   final LinkedHashMap<K, V> _map = LinkedHashMap<K, V>();
 
   int get maxSize => _maxSize;
   set maxSize(int size) {
+    _maxSize = size;
     while (_map.length > size) {
       _map.remove(_map.keys.first);
     }
