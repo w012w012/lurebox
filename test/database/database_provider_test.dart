@@ -66,14 +66,14 @@ void main() {
       });
     });
 
-    group('Schema Creation (v22)', () {
+    group('Schema Creation (v23)', () {
       test('creates all required tables', () async {
-        final dbPath = _createTempDbPath('schema_v22');
+        final dbPath = _createTempDbPath('schema_v23');
 
         try {
           final freshDb = await openDatabase(
             dbPath,
-            version: 22,
+            version: 23,
             onConfigure: (db) async {
               await db.execute('PRAGMA foreign_keys = ON');
             },
@@ -107,7 +107,7 @@ void main() {
         try {
           final freshDb = await openDatabase(
             dbPath,
-            version: 22,
+            version: 23,
             onConfigure: (db) async {
               await db.execute('PRAGMA foreign_keys = ON');
             },
@@ -141,7 +141,7 @@ void main() {
         try {
           final freshDb = await openDatabase(
             dbPath,
-            version: 22,
+            version: 23,
             onConfigure: (db) async {
               await db.execute('PRAGMA foreign_keys = ON');
             },
@@ -531,8 +531,54 @@ void main() {
         }
       });
 
-      test('full migration from v1 to v22 works correctly', () async {
-        final dbPath = _createTempDbPath('migrate_v1_v22_full');
+      test('migrates v22 to v23 - adds reel_drag columns', () async {
+        final dbPath = _createTempDbPath('migrate_v22_v23');
+
+        try {
+          final dbv22 = await openDatabase(
+            dbPath,
+            version: 22,
+            onConfigure: (db) async {
+              await db.execute('PRAGMA foreign_keys = ON');
+            },
+            onCreate: (db, version) async {
+              await _createSchemaV1(db);
+            },
+            onUpgrade: (db, oldVersion, newVersion) async {
+              await _migrateDatabase(db, oldVersion, newVersion);
+            },
+          );
+          await dbv22.close();
+
+          final dbv23 = await openDatabase(
+            dbPath,
+            version: 23,
+            onConfigure: (db) async {
+              await db.execute('PRAGMA foreign_keys = ON');
+            },
+            onUpgrade: (db, oldVersion, newVersion) async {
+              await _migrateDatabase(db, oldVersion, newVersion);
+            },
+          );
+
+          try {
+            final columns = await dbv23.rawQuery(
+              'PRAGMA table_info(equipments)',
+            );
+            final columnNames =
+                columns.map((c) => c['name'] as String).toSet();
+            expect(columnNames, contains('reel_drag'));
+            expect(columnNames, contains('reel_drag_unit'));
+          } finally {
+            await dbv23.close();
+          }
+        } finally {
+          _deleteDb(dbPath);
+        }
+      });
+
+      test('full migration from v1 to v23 works correctly', () async {
+        final dbPath = _createTempDbPath('migrate_v1_v23_full');
 
         try {
           // Create v1 with some test data
@@ -564,10 +610,10 @@ void main() {
           });
           await dbv1.close();
 
-          // Migrate all the way to v22
+          // Migrate all the way to v23
           final dbv22 = await openDatabase(
             dbPath,
-            version: 22,
+            version: 23,
             onConfigure: (db) async {
               await db.execute('PRAGMA foreign_keys = ON');
             },
@@ -606,6 +652,15 @@ void main() {
               "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='fish_catches'",
             );
             expect(fishIndexes.length, greaterThanOrEqualTo(4));
+
+            // Verify reel_drag columns exist
+            final columns = await dbv22.rawQuery(
+              'PRAGMA table_info(equipments)',
+            );
+            final columnNames =
+                columns.map((c) => c['name'] as String).toSet();
+            expect(columnNames, contains('reel_drag'));
+            expect(columnNames, contains('reel_drag_unit'));
           } finally {
             await dbv22.close();
           }
@@ -622,7 +677,7 @@ void main() {
         try {
           final db = await openDatabase(
             dbPath,
-            version: 22,
+            version: 23,
             onConfigure: (db) async {
               await db.execute('PRAGMA foreign_keys = ON');
             },
@@ -659,7 +714,7 @@ void main() {
         try {
           final db = await openDatabase(
             dbPath,
-            version: 22,
+            version: 23,
             onConfigure: (db) async {
               await db.execute('PRAGMA foreign_keys = ON');
             },
@@ -695,7 +750,7 @@ void main() {
           // Create v22 database
           final dbv22 = await openDatabase(
             dbPath,
-            version: 22,
+            version: 23,
             onConfigure: (db) async {
               await db.execute('PRAGMA foreign_keys = ON');
             },
@@ -736,7 +791,7 @@ void main() {
           // Create v22 database with data
           final dbv22 = await openDatabase(
             dbPath,
-            version: 22,
+            version: 23,
             onConfigure: (db) async {
               await db.execute('PRAGMA foreign_keys = ON');
             },
@@ -794,7 +849,7 @@ void main() {
         try {
           await openDatabase(
             dbPath,
-            version: 22,
+            version: 23,
             onConfigure: (db) async {
               await db.execute('PRAGMA foreign_keys = ON');
             },
@@ -1260,6 +1315,15 @@ Future<void> _migrateDatabase(
     );
     await db.execute(
       'CREATE INDEX IF NOT EXISTS idx_equipments_is_deleted ON equipments(is_deleted)',
+    );
+  }
+  if (oldVersion < 23) {
+    await _addColumnIfNotExists(db, 'equipments', 'reel_drag', 'TEXT');
+    await _addColumnIfNotExists(
+      db,
+      'equipments',
+      'reel_drag_unit',
+      "TEXT DEFAULT 'kg'",
     );
   }
 }
