@@ -8,6 +8,7 @@ import 'package:lurebox/features/equipment/equipment_list_page.dart';
 
 String _brakeTypeLabel(String key, AppStrings strings) {
   return switch (key) {
+    'none'                 => strings.brakeTypeNone,
     'traditional_magnetic' => strings.brakeTypeTraditionalMagnetic,
     'centrifugal'          => strings.brakeTypeCentrifugal,
     'dc'                   => strings.brakeTypeDC,
@@ -188,6 +189,11 @@ class EquipmentSelector extends ConsumerWidget {
                                 item['reel_brake_type'] as String?;
                             if (brakeType != null && brakeType.isNotEmpty) {
                               parts.add(_brakeTypeLabel(brakeType, strings));
+                            }
+                            final drag = item['reel_drag'] as String?;
+                            if (drag != null && drag.isNotEmpty) {
+                              final dragUnit = (item['reel_drag_unit'] as String?) ?? 'kg';
+                              parts.add('${strings.reelDrag}: $drag$dragUnit');
                             }
                             final weight = item['reel_weight'] as String?;
                             if (weight != null && weight.isNotEmpty) {

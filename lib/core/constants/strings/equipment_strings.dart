@@ -148,6 +148,10 @@ mixin EquipmentStringsMixin {
   String get brakeTypeDC;
   String get brakeTypeFloatingMagnetic;
   String get brakeTypeInnovative;
+  String get brakeTypeNone;
+  String get reelDrag;
+  String get reelDragHint;
+  String get reelDragUnit;
   String get quantityUnitPiece;
   String get quantityUnitItem;
   String get quantityUnitPack;

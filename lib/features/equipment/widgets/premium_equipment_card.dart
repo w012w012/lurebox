@@ -477,6 +477,10 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     if (e['reel_brake_type'] != null) {
       items.add(_InfoItem(strings.reelBrakeType, _getBrakeTypeLabel(e['reel_brake_type'] as String, strings)));
     }
+    if (e['reel_drag'] != null && (e['reel_drag'] as String).isNotEmpty) {
+      final dragUnit = (e['reel_drag_unit'] as String?) ?? 'kg';
+      items.add(_InfoItem(strings.reelDrag, '${e['reel_drag']} $dragUnit'));
+    }
     if (e['reel_line'] != null) {
       final lineBrand = e['reel_line'] as String? ?? '';
       final lineNumber = e['reel_line_number'] as String? ?? '';
@@ -643,6 +647,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
 
   String _getBrakeTypeLabel(String key, AppStrings strings) {
     return switch (key) {
+      'none'                 => strings.brakeTypeNone,
       'traditional_magnetic' => strings.brakeTypeTraditionalMagnetic,
       'centrifugal'          => strings.brakeTypeCentrifugal,
       'dc'                   => strings.brakeTypeDC,

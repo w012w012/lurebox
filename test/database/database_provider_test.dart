@@ -896,6 +896,8 @@ Future<void> _createSchema(Database db) async {
       reel_bearings INTEGER,
       reel_capacity TEXT,
       reel_brake_type TEXT,
+      reel_drag TEXT,
+      reel_drag_unit TEXT DEFAULT 'kg',
       reel_weight TEXT,
       reel_weight_unit TEXT DEFAULT 'g',
       line_weight TEXT,

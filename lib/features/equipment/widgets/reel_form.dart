@@ -9,7 +9,7 @@ import 'package:lurebox/widgets/common/unit_dropdown.dart';
 class ReelForm extends ConsumerWidget {
 
   const ReelForm({
-    required this.bearingsController, required this.ratioAController, required this.ratioBController, required this.capacityNumberController, required this.capacityLengthController, required this.weightController, required this.weightUnit, required this.onWeightUnitChanged, required this.brakeType, required this.onBrakeTypeChanged, super.key,
+    required this.bearingsController, required this.ratioAController, required this.ratioBController, required this.capacityNumberController, required this.capacityLengthController, required this.weightController, required this.weightUnit, required this.onWeightUnitChanged, required this.dragController, required this.dragUnit, required this.onDragUnitChanged, required this.brakeType, required this.onBrakeTypeChanged, super.key,
   });
   final TextEditingController bearingsController;
   final TextEditingController ratioAController;
@@ -19,6 +19,9 @@ class ReelForm extends ConsumerWidget {
   final TextEditingController weightController;
   final String weightUnit;
   final ValueChanged<String> onWeightUnitChanged;
+  final TextEditingController dragController;
+  final String dragUnit;
+  final ValueChanged<String> onDragUnitChanged;
   final String brakeType;
   final ValueChanged<String> onBrakeTypeChanged;
 
@@ -100,6 +103,7 @@ class ReelForm extends ConsumerWidget {
           label: strings.reelBrakeType,
           value: brakeType.isEmpty ? null : brakeType,
           items: [
+            PremiumDropdownItem(value: 'none', label: strings.brakeTypeNone),
             PremiumDropdownItem(value: 'traditional_magnetic', label: strings.brakeTypeTraditionalMagnetic),
             PremiumDropdownItem(value: 'centrifugal', label: strings.brakeTypeCentrifugal),
             PremiumDropdownItem(value: 'dc', label: strings.brakeTypeDC),
@@ -111,6 +115,30 @@ class ReelForm extends ConsumerWidget {
               onBrakeTypeChanged(value);
             }
           },
+        ),
+        const SizedBox(height: 10),
+        // 卸力值 (kg/lb)
+        Row(
+          children: [
+            Expanded(
+              flex: 3,
+              child: PremiumTextField(
+                controller: dragController,
+                label: strings.reelDrag,
+                hint: strings.reelDragHint,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              flex: 2,
+              child: UnitDropdown(
+                value: dragUnit,
+                options: const ['kg', 'lb'],
+                label: strings.reelDragUnit,
+                onUnitChanged: onDragUnitChanged,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
         // 渔轮重量

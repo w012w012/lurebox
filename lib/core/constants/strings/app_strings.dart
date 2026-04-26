@@ -798,6 +798,10 @@ class AppStrings extends StringsBase with
     required this.brakeTypeDC,
     required this.brakeTypeFloatingMagnetic,
     required this.brakeTypeInnovative,
+    required this.brakeTypeNone,
+    required this.reelDrag,
+    required this.reelDragHint,
+    required this.reelDragUnit,
     required this.quantityUnitPiece,
     required this.quantityUnitItem,
     required this.quantityUnitPack,
@@ -2363,6 +2367,14 @@ class AppStrings extends StringsBase with
   final String brakeTypeFloatingMagnetic;
   @override
   final String brakeTypeInnovative;
+  @override
+  final String brakeTypeNone;
+  @override
+  final String reelDrag;
+  @override
+  final String reelDragHint;
+  @override
+  final String reelDragUnit;
   @override
   final String quantityUnitPiece;
   @override

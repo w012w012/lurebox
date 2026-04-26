@@ -69,6 +69,8 @@ void main() {
               reel_ratio TEXT,
               reel_capacity TEXT,
               reel_brake_type TEXT,
+              reel_drag TEXT,
+              reel_drag_unit TEXT DEFAULT 'kg',
               lure_type TEXT,
               lure_weight TEXT,
               lure_color TEXT,

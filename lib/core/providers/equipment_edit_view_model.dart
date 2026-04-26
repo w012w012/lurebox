@@ -112,6 +112,8 @@ class _BaseEquipmentEditNotifier {
   void updateReelRatio(String value) {}
   void updateReelCapacity(String value) {}
   void updateReelBrakeType(String value) {}
+  void updateReelDrag(String value) {}
+  void updateReelDragUnit(String value) {}
   void updateReelWeight(String value) {}
   void updateReelWeightUnit(String value) {}
   void updateReelLine(String value) {}
@@ -351,6 +353,8 @@ class ReelEditNotifier extends _BaseEquipmentEditNotifier {
         reelRatio: e.reelRatio ?? '',
         reelCapacity: e.reelCapacity ?? '',
         reelBrakeType: e.reelBrakeType ?? '',
+        reelDrag: e.reelDrag ?? '',
+        reelDragUnit: e.reelDragUnit,
         reelWeight: e.reelWeight ?? '',
         reelWeightUnit: e.reelWeightUnit,
         reelLine: e.reelLine ?? '',
@@ -380,6 +384,12 @@ class ReelEditNotifier extends _BaseEquipmentEditNotifier {
   @override
   void updateReelBrakeType(String value) =>
       _updateState(reelState.copyWith(reelBrakeType: value));
+  @override
+  void updateReelDrag(String value) =>
+      _updateState(reelState.copyWith(reelDrag: value));
+  @override
+  void updateReelDragUnit(String value) =>
+      _updateState(reelState.copyWith(reelDragUnit: value));
   @override
   void updateReelWeight(String value) =>
       _updateState(reelState.copyWith(reelWeight: value));
@@ -415,6 +425,10 @@ class ReelEditNotifier extends _BaseEquipmentEditNotifier {
     }
     if (reelState.reelBrakeType.isNotEmpty) {
       data['reel_brake_type'] = reelState.reelBrakeType.trim();
+    }
+    if (reelState.reelDrag.isNotEmpty) {
+      data['reel_drag'] = reelState.reelDrag.trim();
+      data['reel_drag_unit'] = reelState.reelDragUnit;
     }
     if (reelState.reelWeight.isNotEmpty) {
       data['reel_weight'] = reelState.reelWeight.trim();
@@ -665,6 +679,16 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
 
   void updateReelBrakeType(String value) {
     _delegate.updateReelBrakeType(value);
+    state = _delegate.state;
+  }
+
+  void updateReelDrag(String value) {
+    _delegate.updateReelDrag(value);
+    state = _delegate.state;
+  }
+
+  void updateReelDragUnit(String value) {
+    _delegate.updateReelDragUnit(value);
     state = _delegate.state;
   }
 
