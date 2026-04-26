@@ -43,8 +43,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         ref.read(onboardingCompletedProvider) ? '/' : '/onboarding',
     redirect: (context, state) {
       final onboardingCompleted = ref.read(onboardingCompletedProvider);
-      if (state.matchedLocation == '/onboarding') return null;
-      if (!onboardingCompleted) return '/onboarding';
+      if (!onboardingCompleted) {
+        return state.matchedLocation == '/onboarding' ? null : '/onboarding';
+      }
+      if (state.matchedLocation == '/onboarding') return '/';
       return null;
     },
     routes: [
