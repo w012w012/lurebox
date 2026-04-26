@@ -12,13 +12,14 @@ import 'package:lurebox/core/services/fish_recognition_service.dart';
 /// 使用 Anthropic Claude Messages API (Claude 3.5) 进行鱼类识别
 class ClaudeFishRecognitionProvider implements FishRecognitionProvider {
 
-  /// Creates a Claude provider with optional HTTP client injection
-  /// If no client is provided, uses the default http.Client
-  ClaudeFishRecognitionProvider({http.Client? client}) : _client = client;
+  /// Creates a Claude provider with optional HTTP client injection.
+  /// If no client is provided, uses a shared static client to avoid socket leaks.
+  ClaudeFishRecognitionProvider({http.Client? client})
+      : _client = client ?? sharedHttpClient;
   static const String _systemPrompt = fishRecognitionSystemPrompt;
 
   /// HTTP client for making requests (injectable for testing)
-  final http.Client? _client;
+  final http.Client _client;
 
   @override
   Future<FishRecognitionResult> identifySpecies(
@@ -46,7 +47,7 @@ class ClaudeFishRecognitionProvider implements FishRecognitionProvider {
               'type': 'image',
               'source': {
                 'type': 'base64',
-                'media_type': 'image/jpeg',
+                'media_type': detectImageMediaType(image),
                 'data': base64Image,
               },
             },
@@ -61,7 +62,7 @@ class ClaudeFishRecognitionProvider implements FishRecognitionProvider {
 
     try {
       // 发送请求，设置 10 秒超时
-      final response = await (_client ?? http.Client())
+      final response = await _client
           .post(
             url,
             headers: {

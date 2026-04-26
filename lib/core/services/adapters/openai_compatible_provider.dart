@@ -34,14 +34,15 @@ enum UrlPathStrategy {
 /// 无需重复实现识别逻辑。
 abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
 
-  /// Creates an OpenAI compatible provider with optional HTTP client injection
-  /// If no client is provided, uses the default http.Client
-  OpenAICompatibleProvider({http.Client? client}) : _client = client;
+  /// Creates an OpenAI compatible provider with optional HTTP client injection.
+  /// If no client is provided, uses a shared static client to avoid socket leaks.
+  OpenAICompatibleProvider({http.Client? client})
+      : _client = client ?? sharedHttpClient;
   /// HTTP client for making requests (injectable for testing)
-  final http.Client? _client;
+  final http.Client _client;
 
   /// Protected getter for HTTP client (allows subclasses to use injected client)
-  http.Client? get client => _client;
+  http.Client get client => _client;
 
   /// 默认 Base URL
   ///
@@ -100,6 +101,9 @@ abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
     final modelName =
         config.modelName?.isNotEmpty ?? false ? config.modelName! : defaultModel;
 
+    // 自动检测图片 MIME 类型
+    final mediaType = detectImageMediaType(image);
+
     // 构建请求体 - 使用 vision API
     final requestBody = {
       'model': modelName,
@@ -118,7 +122,7 @@ abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
             {
               'type': 'image_url',
               'image_url': {
-                'url': 'data:image/jpeg;base64,$base64Image',
+                'url': 'data:$mediaType;base64,$base64Image',
               },
             },
           ],
@@ -138,7 +142,7 @@ abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
 
     try {
       // 发送请求，设置 10 秒超时
-      final response = await (_client ?? http.Client())
+      final response = await _client
           .post(
             url,
             headers: {

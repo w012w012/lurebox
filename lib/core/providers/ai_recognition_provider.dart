@@ -28,6 +28,7 @@ class AiRecognitionSettingsNotifier
 
   Future<void> updateSettings(AiRecognitionSettings settings) async {
     await _service.saveAiRecognitionSettings(settings);
+    if (!mounted) return;
     state = settings;
   }
 

@@ -66,6 +66,7 @@ class AchievementViewModel extends StateNotifier<AchievementState> {
     state = state.copyWith(isLoading: true, errorMessage: () => null);
     try {
       final achievements = await _service.getAllAchievements();
+      if (!mounted) return;
       final progress = <String, int>{};
       for (final a in achievements) {
         progress[a.id] = a.current;
@@ -79,7 +80,8 @@ class AchievementViewModel extends StateNotifier<AchievementState> {
         progress: progress,
         isLoading: false,
       );
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return;
       state = state.copyWith(
         isLoading: false,
         errorMessage: e.toString,

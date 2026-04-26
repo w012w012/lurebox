@@ -143,6 +143,11 @@ class BackupService {
       if (uri.host.isEmpty) {
         throw const DatabaseException('Invalid server URL: missing host');
       }
+      if (uri.scheme != 'https') {
+        throw const DatabaseException(
+          'WebDAV URL must use HTTPS for security',
+        );
+      }
 
       client = HttpClient();
       client.connectionTimeout = const Duration(seconds: 30);
@@ -183,6 +188,7 @@ class BackupService {
 
       final uri = Uri.parse(url);
       if (uri.host.isEmpty) return false;
+      if (uri.scheme != 'https') return false;
 
       client = HttpClient();
       client.connectionTimeout = const Duration(seconds: 15);
@@ -211,6 +217,11 @@ class BackupService {
   }) async {
     HttpClient? client;
     try {
+      // Validate fileName to prevent path traversal
+      if (!RegExp(r'^[\w\-.]+$').hasMatch(fileName)) {
+        throw const DatabaseException('Invalid backup file name');
+      }
+
       final baseUrl = serverUrl.endsWith('/')
           ? serverUrl.substring(0, serverUrl.length - 1)
           : serverUrl;
@@ -218,6 +229,11 @@ class BackupService {
 
       final uri = Uri.parse(url);
       if (uri.host.isEmpty) return null;
+      if (uri.scheme != 'https') {
+        throw const DatabaseException(
+          'WebDAV URL must use HTTPS for security',
+        );
+      }
 
       client = HttpClient();
       client.connectionTimeout = const Duration(seconds: 30);
@@ -226,7 +242,12 @@ class BackupService {
       final credentials = base64Encode(utf8.encode('$username:$password'));
       request.headers.set('Authorization', 'Basic $credentials');
 
-      final response = await request.close();
+      final response = await request.close()
+          .timeout(const Duration(seconds: 60));
+
+      if (response.contentLength > 50 * 1024 * 1024) {
+        throw const DatabaseException('Backup file too large (>50MB)');
+      }
 
       if (response.statusCode == 200) {
         final responseBody = await response.transform(utf8.decoder).join();

@@ -76,11 +76,14 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
   final FishCatchService _fishCatchService;
 
   Future<void> loadStats() async {
+    if (!mounted) return;
     state = state.copyWith(isLoading: true, errorMessage: () => null);
     try {
       final count = await _fishCatchService.getCount();
+      if (!mounted) return;
       state = state.copyWith(isLoading: false, totalCount: count);
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return;
       state = state.copyWith(isLoading: false, errorMessage: e.toString);
     }
   }
@@ -89,9 +92,11 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     state = state.copyWith(isExporting: true, errorMessage: () => null);
     try {
       final path = await _backupService.exportToJson();
+      if (!mounted) return path;
       state = state.copyWith(isExporting: false, exportPath: () => path);
       return path;
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return null;
       state = state.copyWith(isExporting: false, errorMessage: e.toString);
       return null;
     }
@@ -102,13 +107,16 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     state = state.copyWith(isExporting: true, errorMessage: () => null);
     try {
       final catches = await _fishCatchService.getAll();
+      if (!mounted) return null;
       final xFile = await ExportService.exportToFile(
         catches: catches,
         format: format,
       );
+      if (!mounted) return xFile;
       state = state.copyWith(isExporting: false);
       return xFile;
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return null;
       state = state.copyWith(isExporting: false, errorMessage: e.toString);
       return null;
     }
@@ -118,10 +126,12 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     state = state.copyWith(isImporting: true, errorMessage: () => null);
     try {
       final count = await _backupService.importFromJson(filePath);
+      if (!mounted) return count;
       state = state.copyWith(isImporting: false);
       await loadStats();
       return count;
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return null;
       state = state.copyWith(isImporting: false, errorMessage: e.toString);
       return null;
     }
@@ -139,9 +149,11 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
         username: username,
         password: password,
       );
+      if (!mounted) return url;
       state = state.copyWith(isUploading: false);
       return url;
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return null;
       state = state.copyWith(isUploading: false, errorMessage: e.toString);
       return null;
     }
@@ -155,9 +167,11 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
         createRecoveryPoint: true,
       );
       final xFile = await _backupZipService.exportToZip(options: options);
+      if (!mounted) return xFile;
       state = state.copyWith(isCreatingZipBackup: false);
       return xFile;
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return null;
       state = state.copyWith(
         isCreatingZipBackup: false,
         errorMessage: e.toString,
@@ -178,9 +192,11 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       );
       final savedPath =
           await _backupZipService.exportToZipAndSave(options: options);
+      if (!mounted) return savedPath;
       state = state.copyWith(isCreatingZipBackup: false);
       return savedPath;
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return null;
       state = state.copyWith(
         isCreatingZipBackup: false,
         errorMessage: e.toString,
@@ -193,10 +209,12 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     state = state.copyWith(isRestoringZipBackup: true, errorMessage: () => null);
     try {
       final result = await _backupZipService.importFromZip();
+      if (!mounted) return result;
       state = state.copyWith(isRestoringZipBackup: false);
       await loadStats();
       return result;
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return ImportResult.failure(e.toString());
       state = state.copyWith(
         isRestoringZipBackup: false,
         errorMessage: e.toString,

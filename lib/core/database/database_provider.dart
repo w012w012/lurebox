@@ -488,12 +488,16 @@ CREATE TABLE user_species_alias (
   }
 
   /// 安全添加列（如果不存在）
+  ///
+  /// [critical] 为 true 时，添加失败会抛出异常阻止迁移继续。
+  /// 默认 false — 可选列添加失败时仅记录警告。
   Future<void> _addColumnIfNotExists(
     Database db,
     String table,
     String column,
-    String type,
-  ) async {
+    String type, {
+    bool critical = false,
+  }) async {
     try {
       final result = await db.rawQuery(
         'PRAGMA table_info($table)',
@@ -506,6 +510,7 @@ CREATE TABLE user_species_alias (
         AppLogger.i('DatabaseProvider', 'Added column $column to $table');
       }
     } catch (e) {
+      if (critical) rethrow;
       AppLogger.w('DatabaseProvider', 'Failed to add column $column to $table', e);
     }
   }

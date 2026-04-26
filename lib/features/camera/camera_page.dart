@@ -75,24 +75,30 @@ class _CameraPageState extends ConsumerState<CameraPage> {
 
     // 并行初始化，提高启动速度
     final strings = ref.read(currentStringsProvider);
-    await Future.wait([
-      vm.initializeCamera().timeout(
-            const Duration(seconds: 10),
-            onTimeout: () => throw Exception(strings.cameraInitTimeout),
-          ),
-      vm.loadSpeciesHistory().timeout(
-            const Duration(seconds: 5),
-            onTimeout: () => throw Exception(strings.speciesHistoryTimeout),
-          ),
-      vm.loadEquipments().timeout(
-            const Duration(seconds: 5),
-            onTimeout: () => throw Exception(strings.equipmentLoadTimeout),
-          ),
-      vm.getLocation().timeout(
-            const Duration(seconds: 15),
-            onTimeout: () => throw Exception(strings.locationFetchTimeout),
-          ),
-    ]);
+    try {
+      await Future.wait([
+        vm.initializeCamera().timeout(
+              const Duration(seconds: 10),
+              onTimeout: () => throw Exception(strings.cameraInitTimeout),
+            ),
+        vm.loadSpeciesHistory().timeout(
+              const Duration(seconds: 5),
+              onTimeout: () => throw Exception(strings.speciesHistoryTimeout),
+            ),
+        vm.loadEquipments().timeout(
+              const Duration(seconds: 5),
+              onTimeout: () => throw Exception(strings.equipmentLoadTimeout),
+            ),
+        vm.getLocation().timeout(
+              const Duration(seconds: 15),
+              onTimeout: () => throw Exception(strings.locationFetchTimeout),
+            ),
+      ]);
+    } on Exception catch (e) {
+      AppLogger.e('CameraPage', 'Initialization failed', e);
+      // 相机初始化的错误由各 VM 内部状态处理，
+      // 这里只记录日志，不阻断页面
+    }
   }
 
   bool _hasUnsavedData(CameraState state) {

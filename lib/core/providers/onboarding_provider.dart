@@ -22,6 +22,7 @@ class OnboardingNotifier extends StateNotifier<bool> {
     final currentSettings = _ref.read(appSettingsProvider);
     final newSettings = currentSettings.copyWith(hasCompletedOnboarding: true);
     await _ref.read(appSettingsProvider.notifier).updateSettings(newSettings);
+    if (!mounted) return;
     state = true;
   }
 
@@ -30,6 +31,7 @@ class OnboardingNotifier extends StateNotifier<bool> {
     final currentSettings = _ref.read(appSettingsProvider);
     final newSettings = currentSettings.copyWith(hasCompletedOnboarding: false);
     await _ref.read(appSettingsProvider.notifier).updateSettings(newSettings);
+    if (!mounted) return;
     state = false;
   }
 }

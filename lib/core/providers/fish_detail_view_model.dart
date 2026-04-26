@@ -65,6 +65,7 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
 
     try {
       final fishModel = await _fishCatchService.getById(fishId);
+      if (!mounted) return;
       if (fishModel == null) {
         state = state.copyWith(
           isLoading: false,
@@ -81,20 +82,41 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
       Equipment? reelEquipment;
       Equipment? lureEquipment;
 
+      final futures = <Future<Equipment?>>[];
+      final futureLabels = <String>[];
       if (rodId != null) {
-        rodEquipment = await _equipmentService.getById(rodId);
+        futures.add(_equipmentService.getById(rodId));
+        futureLabels.add('rod');
       }
       if (reelId != null) {
-        reelEquipment = await _equipmentService.getById(reelId);
+        futures.add(_equipmentService.getById(reelId));
+        futureLabels.add('reel');
       }
       if (lureId != null) {
-        lureEquipment = await _equipmentService.getById(lureId);
+        futures.add(_equipmentService.getById(lureId));
+        futureLabels.add('lure');
+      }
+
+      if (futures.isNotEmpty) {
+        final results = await Future.wait(futures);
+        if (!mounted) return;
+        for (var i = 0; i < results.length; i++) {
+          switch (futureLabels[i]) {
+            case 'rod':
+              rodEquipment = results[i];
+            case 'reel':
+              reelEquipment = results[i];
+            case 'lure':
+              lureEquipment = results[i];
+          }
+        }
       }
 
       if ((rodId == null && reelId == null && lureId == null) &&
           fishModel.equipmentId != null) {
         final equipmentId = fishModel.equipmentId!;
         final eq = await _equipmentService.getById(equipmentId);
+        if (!mounted) return;
         if (eq != null) {
           final type = eq.type;
           if (type == EquipmentType.rod) {
@@ -114,7 +136,8 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
         reelEquipment: reelEquipment,
         lureEquipment: lureEquipment,
       );
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return;
       state = state.copyWith(isLoading: false, errorMessage: e.toString);
     }
   }
@@ -123,8 +146,11 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
     state = state.copyWith(isDeleting: true);
     try {
       await _fishCatchService.delete(fishId);
+      if (!mounted) return true;
+      state = state.copyWith(isDeleting: false);
       return true;
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return false;
       state = state.copyWith(isDeleting: false, errorMessage: e.toString);
       return false;
     }

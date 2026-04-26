@@ -1,3 +1,4 @@
+import 'package:lurebox/core/constants/constants.dart';
 import 'package:lurebox/core/constants/pagination_constants.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
@@ -625,7 +626,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
           COUNT(*) as catch_count
         FROM fish_catches fc
         INNER JOIN equipments e ON fc.lure_id = e.id
-        WHERE e.lure_type = '软虫'
+        WHERE e.lure_type = '${LureTypes.softBait}'
           AND fc.rig_type IS NOT NULL
         GROUP BY fc.rig_type, fc.hook_type, fc.hook_size, fc.hook_weight
       ''');

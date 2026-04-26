@@ -98,6 +98,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
 
     try {
       final dashboard = await _statsRepo.getDashboardData();
+      if (!mounted) return;
 
       state = state.copyWith(
         isLoading: false,
@@ -112,7 +113,8 @@ class HomeViewModel extends StateNotifier<HomeState> {
         top3Fishes: dashboard.top3Longest,
         monthTrend: dashboard.monthTrend,
       );
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return;
       state = state.copyWith(isLoading: false, errorMessage: e.toString);
     }
   }

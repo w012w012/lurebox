@@ -33,22 +33,18 @@ final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final onboardingCompleted = ref.watch(onboardingCompletedProvider);
+  final notifier = _RouterRefreshNotifier(ref);
+  ref.onDispose(notifier.dispose);
 
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
-    initialLocation: onboardingCompleted ? '/' : '/onboarding',
+    refreshListenable: notifier,
+    initialLocation:
+        ref.read(onboardingCompletedProvider) ? '/' : '/onboarding',
     redirect: (context, state) {
-      // Already on onboarding page - don't redirect
-      if (state.matchedLocation == '/onboarding') {
-        return null;
-      }
-
-      // If not completed, redirect to onboarding
-      if (!onboardingCompleted) {
-        return '/onboarding';
-      }
-
+      final onboardingCompleted = ref.read(onboardingCompletedProvider);
+      if (state.matchedLocation == '/onboarding') return null;
+      if (!onboardingCompleted) return '/onboarding';
       return null;
     },
     routes: [
@@ -316,5 +312,21 @@ class _UnitSettingsPageWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const UnitSettingsPage();
+  }
+}
+
+/// Listens for onboarding state changes to trigger GoRouter redirect re-evaluation.
+class _RouterRefreshNotifier extends ChangeNotifier {
+  _RouterRefreshNotifier(Ref ref) {
+    _sub = ref.listen<bool>(onboardingCompletedProvider, (_, __) {
+      notifyListeners();
+    });
+  }
+  late final ProviderSubscription<bool> _sub;
+
+  @override
+  void dispose() {
+    _sub.close();
+    super.dispose();
   }
 }
