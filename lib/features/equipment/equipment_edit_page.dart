@@ -556,14 +556,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     if (ok && mounted) {
       Navigator.pop(context, true);
     } else if (mounted) {
-      final s = ref.read(
-        equipmentEditViewModelProvider(
-          (
-            type: widget.type,
-            equipment: _loadedEquipment,
-          ),
-        ),
-      );
+      final s = ref.read(equipmentEditViewModelProvider(_params));
       if (s.errorMessage != null) {
         AppSnackBar.showError(context, strings.saveFailed,
             debugError: s.errorMessage);

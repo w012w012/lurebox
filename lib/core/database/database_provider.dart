@@ -13,7 +13,7 @@ class DatabaseProvider {
   static DatabaseProvider get instance => _instance ??= DatabaseProvider._();
 
   static const String _databaseName = 'lurebox.db';
-  static const int _databaseVersion = 22;
+  static const int _databaseVersion = 23;
 
   Database? _database;
   Completer<Database>? _initCompleter;
@@ -485,6 +485,16 @@ CREATE TABLE user_species_alias (
       );
       await db.execute(
         'CREATE INDEX IF NOT EXISTS idx_equipments_is_deleted ON equipments(is_deleted)',
+      );
+    }
+    if (oldVersion < 23) {
+      // 渔轮卸力值字段
+      await _addColumnIfNotExists(db, 'equipments', 'reel_drag', 'TEXT');
+      await _addColumnIfNotExists(
+        db,
+        'equipments',
+        'reel_drag_unit',
+        "TEXT DEFAULT 'kg'",
       );
     }
   }
