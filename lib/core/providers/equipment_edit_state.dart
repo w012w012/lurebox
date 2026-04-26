@@ -187,6 +187,8 @@ class ReelEditState extends EquipmentEditState {
     this.reelRatio = '',
     this.reelCapacity = '',
     this.reelBrakeType = '',
+    this.reelDrag = '',
+    this.reelDragUnit = 'kg',
     this.reelWeight = '',
     this.reelWeightUnit = 'g',
     this.reelLine = '',
@@ -199,6 +201,8 @@ class ReelEditState extends EquipmentEditState {
   final String reelRatio;
   final String reelCapacity;
   final String reelBrakeType;
+  final String reelDrag;
+  final String reelDragUnit;
   final String reelWeight;
   final String reelWeightUnit;
   final String reelLine;
@@ -223,6 +227,8 @@ class ReelEditState extends EquipmentEditState {
     String? reelRatio,
     String? reelCapacity,
     String? reelBrakeType,
+    String? reelDrag,
+    String? reelDragUnit,
     String? reelWeight,
     String? reelWeightUnit,
     String? reelLine,
@@ -247,6 +253,8 @@ class ReelEditState extends EquipmentEditState {
       reelRatio: reelRatio ?? this.reelRatio,
       reelCapacity: reelCapacity ?? this.reelCapacity,
       reelBrakeType: reelBrakeType ?? this.reelBrakeType,
+      reelDrag: reelDrag ?? this.reelDrag,
+      reelDragUnit: reelDragUnit ?? this.reelDragUnit,
       reelWeight: reelWeight ?? this.reelWeight,
       reelWeightUnit: reelWeightUnit ?? this.reelWeightUnit,
       reelLine: reelLine ?? this.reelLine,
@@ -274,6 +282,8 @@ class ReelEditState extends EquipmentEditState {
     String? reelRatio,
     String? reelCapacity,
     String? reelBrakeType,
+    String? reelDrag,
+    String? reelDragUnit,
     String? reelWeight,
     String? reelWeightUnit,
     String? reelLine,
@@ -298,6 +308,8 @@ class ReelEditState extends EquipmentEditState {
       reelRatio: reelRatio ?? this.reelRatio,
       reelCapacity: reelCapacity ?? this.reelCapacity,
       reelBrakeType: reelBrakeType ?? this.reelBrakeType,
+      reelDrag: reelDrag ?? this.reelDrag,
+      reelDragUnit: reelDragUnit ?? this.reelDragUnit,
       reelWeight: reelWeight ?? this.reelWeight,
       reelWeightUnit: reelWeightUnit ?? this.reelWeightUnit,
       reelLine: reelLine ?? this.reelLine,

@@ -310,7 +310,7 @@ class DatabaseHelper {
       INSERT INTO $tableEquipments (
         type, brand, model, lure_type, lure_quantity, lure_quantity_unit,
         rod_power, rod_action, rod_length, rod_weight, reel_size, reel_ratio,
-        reel_bearings, reel_capacity, reel_brake_type, reel_weight, reel_weight_unit,
+        reel_bearings, reel_capacity, reel_brake_type, reel_drag, reel_drag_unit, reel_weight, reel_weight_unit,
         joint_type, lure_weight, lure_weight_unit, lure_size, lure_size_unit,
         lure_color, notes, price, purchase_date, is_default, is_deleted,
         category, reel_line, reel_line_date, reel_line_number, reel_line_length,

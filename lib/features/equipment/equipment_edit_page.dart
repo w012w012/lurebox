@@ -131,6 +131,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
         _getOrCreateController('reelCapacityNumber', _parseCapacity(cap).$1);
         _getOrCreateController('reelCapacityLength', _parseCapacity(cap).$2);
         _getOrCreateController('reelWeight', equipment.reelWeight ?? '');
+        _getOrCreateController('reelDrag', equipment.reelDrag ?? '');
         _getOrCreateController('reelLine', equipment.reelLine ?? '');
         _getOrCreateController(
             'reelLineNumber', equipment.reelLineNumber ?? '');
@@ -355,6 +356,13 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                                 weightUnit: reelState.reelWeightUnit,
                                 onWeightUnitChanged:
                                     notifier.updateReelWeightUnit,
+                                dragController: _getOrCreateController(
+                                  'reelDrag',
+                                  reelState.reelDrag,
+                                ),
+                                dragUnit: reelState.reelDragUnit,
+                                onDragUnitChanged:
+                                    notifier.updateReelDragUnit,
                                 brakeType: reelState.reelBrakeType,
                                 onBrakeTypeChanged:
                                     notifier.updateReelBrakeType,
@@ -514,6 +522,8 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
           notifier.updateReelBrakeType(value);
         case 'reelWeight':
           notifier.updateReelWeight(value);
+        case 'reelDrag':
+          notifier.updateReelDrag(value);
         case 'reelLine':
           notifier.updateReelLine(value);
         case 'reelLineNumber':
@@ -707,14 +717,12 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     return ('', '');
   }
 
-  // 解析线杯容量格式 "a号/b米"
+  // 解析线杯容量格式 "a-b" (与保存格式一致)
   (String, String) _parseCapacity(String? value) {
     if (value == null || value.isEmpty) return ('', '');
-    final parts = value.split('/');
+    final parts = value.split('-');
     if (parts.length == 2) {
-      final number = parts[0].replaceAll('号', '');
-      final length = parts[1].replaceAll('米', '');
-      return (number, length);
+      return (parts[0], parts[1]);
     }
     return ('', '');
   }

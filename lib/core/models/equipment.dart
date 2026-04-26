@@ -54,6 +54,8 @@ class Equipment {
     this.reelRatio,
     this.reelCapacity,
     this.reelBrakeType,
+    this.reelDrag,
+    this.reelDragUnit = 'kg',
     this.reelWeight,
     this.reelWeightUnit = 'g',
     this.lureType,
@@ -95,6 +97,8 @@ class Equipment {
       reelRatio: _getField(map, 'reel_ratio') as String?,
       reelCapacity: _getField(map, 'reel_capacity') as String?,
       reelBrakeType: _getField(map, 'reel_brake_type') as String?,
+      reelDrag: _getField(map, 'reel_drag') as String?,
+      reelDragUnit: _getField(map, 'reel_drag_unit') as String? ?? 'kg',
       reelWeight: _getField(map, 'reel_weight') as String?,
       reelWeightUnit: _getField(map, 'reel_weight_unit') as String? ?? 'g',
       lureType: _getField(map, 'lure_type') as String?,
@@ -140,6 +144,8 @@ class Equipment {
   final String? reelRatio;
   final String? reelCapacity;
   final String? reelBrakeType;
+  final String? reelDrag;
+  final String reelDragUnit; // 渔轮卸力单位 (kg, lb)
   final String? reelWeight;
   final String reelWeightUnit; // 渔轮重量单位 (g, oz)
   final String? lureType;
@@ -189,6 +195,8 @@ class Equipment {
       'reel_ratio': reelRatio,
       'reel_capacity': reelCapacity,
       'reel_brake_type': reelBrakeType,
+      'reel_drag': reelDrag,
+      'reel_drag_unit': reelDragUnit,
       'reel_weight': reelWeight,
       'reel_weight_unit': reelWeightUnit,
       'lure_type': lureType,
@@ -272,6 +280,8 @@ class ReelParams {
     this.ratio,
     this.capacity,
     this.brakeType,
+    this.drag,
+    this.dragUnit = 'kg',
     this.weight,
     this.weightUnit = 'g',
     this.line,
@@ -285,6 +295,8 @@ class ReelParams {
   final String? ratio;
   final String? capacity;
   final String? brakeType;
+  final String? drag;
+  final String dragUnit;
   final String? weight;
   final String weightUnit;
   final String? line;
@@ -342,6 +354,8 @@ extension EquipmentParamsX on Equipment {
           ratio: reelRatio,
           capacity: reelCapacity,
           brakeType: reelBrakeType,
+          drag: reelDrag,
+          dragUnit: reelDragUnit,
           weight: reelWeight,
           weightUnit: reelWeightUnit,
           line: reelLine,
