@@ -121,6 +121,7 @@ class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
         state.startDate,
         state.endDate,
       );
+      if (!mounted) return;
 
       var releaseCount = 0;
       var keepCount = 0;
@@ -167,7 +168,8 @@ class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
         dailyDistribution: dailyMap,
         monthlyDistribution: monthlyMap,
       );
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return;
       state = state.copyWith(isLoading: false, errorMessage: e.toString);
     }
   }

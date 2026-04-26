@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -31,16 +32,31 @@ import 'package:lurebox/core/services/app_logger.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // 同步异常：打印日志
+  // 同步异常：打印日志和堆栈
   FlutterError.onError = (details) {
     AppLogger.e(
-        'FlutterError', 'Flutter Error: ${details.exceptionAsString()}');
+      'FlutterError',
+      'Flutter Error: ${details.exceptionAsString()}',
+      details.exception,
+      details.stack,
+    );
+  };
+
+  // 异步异常：捕获 Dart zone 中未处理的错误
+  PlatformDispatcher.instance.onError = (error, stackTrace) {
+    AppLogger.e('ZoneError', 'Uncaught async error', error, stackTrace);
+    return true;
   };
 
   // 启动时清理残留的临时水印文件（不阻塞启动）
   _cleanupLegacyTempFiles();
 
-  await DatabaseProvider.instance.database;
+  try {
+    await DatabaseProvider.instance.database;
+  } catch (e, stackTrace) {
+    AppLogger.e('Main', 'Database initialization failed', e, stackTrace);
+    // 仍然启动 app，让各 feature 的 DB 操作自行处理错误，避免白屏
+  }
 
   runApp(const ProviderScope(child: LuYuHuApp()));
 }
@@ -53,8 +69,7 @@ Future<void> _cleanupLegacyTempFiles() async {
     if (!await tempDir.exists()) return;
 
     await for (final entity in tempDir.list()) {
-      if (entity is Directory && entity.path.contains('watermark_')) {
-        // 解析文件名中的时间戳，判断是否超过 7 天
+      if (entity is Directory) {
         final name = entity.path.split('/').last;
         if (name.contains('watermark_')) {
           final timestampMatch = RegExp(r'watermark_(\d+)').firstMatch(name);
@@ -72,7 +87,7 @@ Future<void> _cleanupLegacyTempFiles() async {
         }
       }
     }
-  } catch (_) {
+  } on Exception catch (_) {
     // 静默失败，不影响启动
   }
 }

@@ -83,6 +83,7 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
         _equipmentService.getAll(type: 'lure'),
         _fishCatchService.getAllEquipmentCatchStats(),
       ]);
+      if (!mounted) return;
 
       state = state.copyWith(
         isLoading: false,
@@ -91,7 +92,8 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
         lureList: results[2] as List<Equipment>,
         equipmentStats: (results[3] as Map).cast<int, Map<String, int>>(),
       );
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return;
       state = state.copyWith(isLoading: false, errorMessage: e.toString);
     }
   }
@@ -115,8 +117,10 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
   Future<void> deleteEquipment(int id) async {
     try {
       await _equipmentService.delete(id);
+      if (!mounted) return;
       await loadData();
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return;
       state = state.copyWith(errorMessage: e.toString);
     }
   }
@@ -126,8 +130,10 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
   Future<void> setDefaultEquipment(int id, String type) async {
     try {
       await _equipmentService.setDefaultEquipment(id, type);
+      if (!mounted) return;
       await loadData();
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return;
       state = state.copyWith(errorMessage: e.toString);
     }
   }

@@ -18,20 +18,22 @@ class AppLogger {
   static void i(String tag, String message) =>
       _log(LogLevel.info, tag, message);
 
-  static void w(String tag, String message, [Object? error]) =>
-      _log(LogLevel.warning, tag, message, error);
+  static void w(String tag, String message, [Object? error, StackTrace? stackTrace]) =>
+      _log(LogLevel.warning, tag, message, error, stackTrace);
 
-  static void e(String tag, String message, [Object? error]) =>
-      _log(LogLevel.error, tag, message, error);
+  static void e(String tag, String message, [Object? error, StackTrace? stackTrace]) =>
+      _log(LogLevel.error, tag, message, error, stackTrace);
 
   static void _log(
     LogLevel level,
     String tag,
     String message, [
     Object? error,
+    StackTrace? stackTrace,
   ]) {
     if (kReleaseMode) return;
     final suffix = error != null ? '\n$error' : '';
-    debugPrint('[$level][$tag] $message$suffix');
+    final stackSuffix = stackTrace != null ? '\n$stackTrace' : '';
+    debugPrint('[$level][$tag] $message$suffix$stackSuffix');
   }
 }

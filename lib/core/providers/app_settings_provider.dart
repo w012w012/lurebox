@@ -16,11 +16,12 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
   Future<void> _loadSettings() async {
     try {
       final settings = await _service.getAppSettings();
+      if (!mounted) return;
       state = settings;
     } on SettingsCorruptedException catch (e) {
       // 记录损坏状态但不崩溃：让应用以默认值启动
       AppLogger.w('AppSettingsNotifier', 'Settings corrupted, using defaults: $e');
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('AppSettingsNotifier', 'Unexpected error loading settings: $e');
     }
   }

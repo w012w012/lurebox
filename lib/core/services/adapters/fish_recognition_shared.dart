@@ -1,6 +1,29 @@
 
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'package:lurebox/core/services/fish_recognition_service.dart';
+
+/// Shared HTTP client for AI recognition providers.
+///
+/// Reuses a single connection pool instead of creating a new client per request,
+/// which leaks sockets. Disposed when the app process exits.
+final http.Client sharedHttpClient = http.Client();
+
+/// Detect image MIME type from file extension.
+String detectImageMediaType(File image) {
+  final ext = image.path.split('.').last.toLowerCase();
+  switch (ext) {
+    case 'png':
+      return 'image/png';
+    case 'webp':
+      return 'image/webp';
+    case 'gif':
+      return 'image/gif';
+    default:
+      return 'image/jpeg';
+  }
+}
 
 /// 系统提示词 - 用于指导模型识别鱼类物种
 const String fishRecognitionSystemPrompt = '''
@@ -42,19 +65,28 @@ const String fishRecognitionSystemPrompt = '''
 
 /// 从 AI 响应内容中提取 JSON 字符串
 ///
-/// 移除可能的 markdown 代码块标记
+/// Handles ```json\n...\n``` fence variants, with or without language tag,
+/// optional newlines after opening fence, and extra whitespace.
 String extractJsonFromResponse(String content) {
-  var jsonText = content.trim();
-  if (jsonText.startsWith('```json')) {
-    jsonText = jsonText.substring(7);
+  var text = content.trim();
+  // Try matching full fenced block: opening ```json + body + closing ```
+  final fullFence = RegExp(
+    r'^```(?:json)?\s*\n?(.*?)\n?\s*```$',
+    dotAll: true,
+  );
+  final fullMatch = fullFence.firstMatch(text);
+  if (fullMatch != null) {
+    return fullMatch.group(1)!.trim();
   }
-  if (jsonText.startsWith('```')) {
-    jsonText = jsonText.substring(3);
+  // Opening fence without closing
+  if (text.startsWith('```')) {
+    text = text.replaceFirst(RegExp(r'^```(?:json)?\s*\n?'), '');
   }
-  if (jsonText.endsWith('```')) {
-    jsonText = jsonText.substring(0, jsonText.length - 3);
+  // Trailing fence without opening
+  if (text.endsWith('```')) {
+    text = text.substring(0, text.length - 3).trimRight();
   }
-  return jsonText.trim();
+  return text.trim();
 }
 
 /// 解析 HTTP 响应状态码，返回 (错误类型, 错误消息)

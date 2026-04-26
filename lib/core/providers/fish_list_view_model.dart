@@ -143,6 +143,7 @@ class FishListViewModel extends StateNotifier<FishListState> {
         newCatches = result.items;
         totalCount = result.totalCount;
       }
+      if (!mounted) return;
       final allCatches = reset ? newCatches : [...state.catches, ...newCatches];
       if (generation != _loadGeneration) return;
       final filtered = _applyFilters(
@@ -159,7 +160,8 @@ class FishListViewModel extends StateNotifier<FishListState> {
         hasMore: newCatches.length == pageSize,
         totalCount: totalCount,
       );
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return;
       state = state.copyWith(
         isLoading: false,
         errorMessage: e.toString,
@@ -248,7 +250,7 @@ class FishListViewModel extends StateNotifier<FishListState> {
     _filterDebounce?.cancel();
     state = state.copyWith(filter: filter);
     _filterDebounce = Timer(const Duration(milliseconds: 300), () {
-      loadCatches(reset: true);
+      if (mounted) loadCatches(reset: true);
     });
   }
 
@@ -287,7 +289,8 @@ class FishListViewModel extends StateNotifier<FishListState> {
       await _fishCatchService.deleteMultiple(state.selectedIds.toList());
       state = state.copyWith(selectedIds: <int>{}, isSelectionMode: false);
       await loadCatches(units: state.displayUnits);
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return;
       state = state.copyWith(errorMessage: e.toString);
     }
   }

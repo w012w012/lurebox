@@ -62,6 +62,7 @@ class LocationManagementViewModel
     state = state.copyWith(isLoading: true, errorMessage: () => null);
     try {
       final locations = await _locationService.getAllLocations();
+      if (!mounted) return;
 
       final locationNames =
           locations.map((l) => l['location_name'] as String).toList();
@@ -81,7 +82,8 @@ class LocationManagementViewModel
         locations: locations,
         locationGroups: groups,
       );
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return;
       state = state.copyWith(isLoading: false, errorMessage: e.toString);
     }
   }
@@ -119,10 +121,12 @@ class LocationManagementViewModel
         state.selectedLocations.toList(),
         targetName,
       );
+      if (!mounted) return true;
       state = state.copyWith(isMerging: false, selectedLocations: {});
       await loadData();
       return true;
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return false;
       state = state.copyWith(isMerging: false, errorMessage: e.toString);
       return false;
     }
@@ -137,10 +141,12 @@ class LocationManagementViewModel
         group.locations,
         group.representative,
       );
+      if (!mounted) return true;
       await loadData();
       state = state.copyWith(isMerging: false);
       return true;
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return false;
       state = state.copyWith(isMerging: false, errorMessage: e.toString);
       return false;
     }
@@ -152,10 +158,12 @@ class LocationManagementViewModel
     state = state.copyWith(isMerging: true, errorMessage: () => null);
     try {
       await _locationService.renameLocation(oldName, newName);
+      if (!mounted) return true;
       state = state.copyWith(isMerging: false);
       await loadData();
       return true;
-    } catch (e) {
+    } on Exception catch (e) {
+      if (!mounted) return false;
       state = state.copyWith(isMerging: false, errorMessage: e.toString);
       return false;
     }
