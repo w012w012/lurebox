@@ -271,7 +271,7 @@ void main() {
         'type': 'reel',
         'brand': 'Shimano',
         'model': 'Stradic',
-        'reel_bearings': '6+1',
+        'reel_bearings': 7,
         'reel_ratio': '5.2:1',
         'reel_capacity': '150m/0.285mm',
         'reel_brake_type': 'Front',
@@ -285,7 +285,7 @@ void main() {
 
       final reelState = vm.state as ReelEditState;
       expect(reelState.brand, equals('Shimano'));
-      expect(reelState.reelBearings, equals('6+1'));
+      expect(reelState.reelBearings, equals('7'));
       expect(reelState.reelRatio, equals('5.2:1'));
       expect(reelState.reelCapacity, equals('150m/0.285mm'));
       expect(reelState.reelBrakeType, equals('Front'));
@@ -299,7 +299,7 @@ void main() {
         'type': 'reel',
         'brand': 'Daiwa',
         'model': 'Exist',
-        'reel_bearings': '8+1',
+        'reel_bearings': 9,
         'reel_ratio': '6.4:1',
         'reel_brake_type': 'SVS',
         'created_at': DateTime.now().toIso8601String(),
@@ -310,7 +310,7 @@ void main() {
 
       final reelState = vm.state as ReelEditState;
       expect(reelState.brand, equals('Daiwa'));
-      expect(reelState.reelBearings, equals('8+1'));
+      expect(reelState.reelBearings, equals('9'));
       expect(reelState.reelRatio, equals('6.4:1'));
       expect(reelState.reelBrakeType, equals('SVS'));
     });
@@ -402,7 +402,7 @@ void main() {
         'lure_weight_unit': 'g',
         'lure_size': '7cm',
         'lure_color': 'Rainbow Trout',
-        'lure_quantity': '3',
+        'lure_quantity': 3,
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
       });
@@ -429,7 +429,7 @@ void main() {
         'lure_weight': '8',
         'lure_size': '5cm',
         'lure_color': 'Ghost Shiner',
-        'lure_quantity': '5',
+        'lure_quantity': 5,
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
       });
