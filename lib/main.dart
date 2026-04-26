@@ -33,10 +33,9 @@ void main() async {
 
   // 同步异常：打印日志
   FlutterError.onError = (details) {
-    AppLogger.e('FlutterError', 'Flutter Error: ${details.exceptionAsString()}');
+    AppLogger.e(
+        'FlutterError', 'Flutter Error: ${details.exceptionAsString()}');
   };
-
-  await _ensureWidgetErrorReporting();
 
   // 启动时清理残留的临时水印文件（不阻塞启动）
   _cleanupLegacyTempFiles();
@@ -44,11 +43,6 @@ void main() async {
   await DatabaseProvider.instance.database;
 
   runApp(const ProviderScope(child: LuYuHuApp()));
-}
-
-/// 在平台支持的情况下设置未捕获异常的兜底处理
-Future<void> _ensureWidgetErrorReporting() async {
-  // 静默初始化，不阻塞启动
 }
 
 /// 清理旧版遗留的系统临时文件（防御性清理）
@@ -70,7 +64,8 @@ Future<void> _cleanupLegacyTempFiles() async {
               final fileTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
               if (DateTime.now().difference(fileTime).inDays > 7) {
                 await entity.delete(recursive: true);
-                AppLogger.i('Main', 'Cleaned up stale watermark temp: ${entity.path}');
+                AppLogger.i(
+                    'Main', 'Cleaned up stale watermark temp: ${entity.path}');
               }
             }
           }

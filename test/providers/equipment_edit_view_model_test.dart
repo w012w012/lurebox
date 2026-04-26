@@ -14,14 +14,16 @@ void main() {
 
   setUp(() {
     mockService = MockEquipmentService();
-    registerFallbackValue(Equipment.fromMap({
-      'id': 0,
-      'type': 'rod',
-      'brand': '',
-      'model': '',
-      'created_at': DateTime.now().toIso8601String(),
-      'updated_at': DateTime.now().toIso8601String(),
-    }),);
+    registerFallbackValue(
+      Equipment.fromMap({
+        'id': 0,
+        'type': 'rod',
+        'brand': '',
+        'model': '',
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      }),
+    );
   });
 
   tearDown(() {
@@ -77,7 +79,7 @@ void main() {
 
     test('loadDataFromMap populates rod fields', () {
       final notifier = RodEditNotifier(mockService, 'rod', null);
-      notifier.loadDataFromMap({
+      notifier.loadFromEquipment(Equipment.fromMap({
         'id': 1,
         'type': 'rod',
         'brand': 'Daiwa',
@@ -88,9 +90,11 @@ void main() {
         'hardness': 'M',
         'rod_action': 'fast',
         'is_default': 1,
-        'price': '500',
+        'price': 500,
         'purchase_date': '2024-01-15',
-      });
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      }));
 
       final state = notifier.state as RodEditState;
       expect(state.brand, 'Daiwa');
@@ -138,13 +142,17 @@ void main() {
     test('save updates existing equipment', () async {
       when(() => mockService.update(any())).thenAnswer((_) async {});
 
-      final notifier = RodEditNotifier(mockService, 'rod', {
-        'id': 10,
-        'type': 'rod',
-        'brand': 'Old',
-        'model': 'Rod',
-        'created_at': '2024-01-01',
-      });
+      final notifier = RodEditNotifier(
+          mockService,
+          'rod',
+          Equipment.fromMap({
+            'id': 10,
+            'type': 'rod',
+            'brand': 'Old',
+            'model': 'Rod',
+            'created_at': DateTime.now().toIso8601String(),
+            'updated_at': DateTime.now().toIso8601String(),
+          }));
       notifier.updateBrand('Updated');
 
       final result = await notifier.save();
@@ -189,7 +197,7 @@ void main() {
 
     test('loadDataFromMap populates reel fields', () {
       final notifier = ReelEditNotifier(mockService, 'reel', null);
-      notifier.loadDataFromMap({
+      notifier.loadFromEquipment(Equipment.fromMap({
         'id': 2,
         'type': 'reel',
         'brand': 'Shimano',
@@ -199,7 +207,9 @@ void main() {
         'reel_weight_unit': 'g',
         'reel_capacity': 'PE 1.0 - 200m',
         'reel_brake_type': 'magnetic',
-      });
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      }));
 
       final state = notifier.state as ReelEditState;
       expect(state.brand, 'Shimano');
@@ -228,7 +238,7 @@ void main() {
 
     test('loadDataFromMap populates lure fields', () {
       final notifier = LureEditNotifier(mockService, 'lure', null);
-      notifier.loadDataFromMap({
+      notifier.loadFromEquipment(Equipment.fromMap({
         'id': 3,
         'type': 'lure',
         'brand': 'Megabass',
@@ -239,7 +249,9 @@ void main() {
         'lure_size': '11',
         'lure_size_unit': 'cm',
         'lure_color': 'sexy shad',
-      });
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      }));
 
       final state = notifier.state as LureEditState;
       expect(state.brand, 'Megabass');
@@ -259,10 +271,13 @@ void main() {
   group('Category parsing', () {
     test('category with pipe is split into type1 and type2', () {
       final notifier = RodEditNotifier(mockService, 'rod', null);
-      notifier.loadDataFromMap({
+      notifier.loadFromEquipment(Equipment.fromMap({
+        'id': 0,
         'type': 'rod',
         'category': 'spinning|M',
-      });
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      }));
 
       expect(notifier.state.categoryType1, 'spinning');
       expect(notifier.state.categoryType2, 'M');
@@ -270,10 +285,13 @@ void main() {
 
     test('category without pipe sets type2 only', () {
       final notifier = RodEditNotifier(mockService, 'rod', null);
-      notifier.loadDataFromMap({
+      notifier.loadFromEquipment(Equipment.fromMap({
+        'id': 0,
         'type': 'rod',
         'category': 'spinning',
-      });
+        'created_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      }));
 
       expect(notifier.state.categoryType1, '');
       expect(notifier.state.categoryType2, 'spinning');

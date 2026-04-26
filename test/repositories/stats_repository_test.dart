@@ -82,11 +82,14 @@ void main() {
           ''');
 
           await db.execute(
-              'CREATE INDEX idx_fish_catches_time ON fish_catches(catch_time)',);
+            'CREATE INDEX idx_fish_catches_time ON fish_catches(catch_time)',
+          );
           await db.execute(
-              'CREATE INDEX idx_fish_catches_fate ON fish_catches(fate)',);
+            'CREATE INDEX idx_fish_catches_fate ON fish_catches(fate)',
+          );
           await db.execute(
-              'CREATE INDEX idx_fish_catches_species ON fish_catches(species)',);
+            'CREATE INDEX idx_fish_catches_species ON fish_catches(species)',
+          );
         },
       ),
     );
@@ -101,7 +104,9 @@ void main() {
   Future<int> insertCatch({
     required String species,
     required double length,
-    required FishFateType fate, required DateTime catchTime, double? weight,
+    required FishFateType fate,
+    required DateTime catchTime,
+    double? weight,
     String? locationName,
     int? equipmentId,
     int? rodId,
@@ -206,18 +211,36 @@ void main() {
 
   group('DashboardData Model', () {
     test('creates DashboardData with all fields', () {
-      const dashboard = DashboardData(
-        todayStats: CatchStats(total: 5, release: 3, keep: 2),
-        todaySpecies: {'Bass': 3, 'Trout': 2},
-        monthStats: CatchStats(total: 50, release: 35, keep: 15),
-        monthSpecies: {'Bass': 30, 'Trout': 20},
-        yearStats: CatchStats(total: 200, release: 140, keep: 60),
-        yearSpecies: {'Bass': 120, 'Trout': 80},
-        allStats: CatchStats(total: 500, release: 350, keep: 150),
-        allSpecies: {'Bass': 300, 'Trout': 200},
+      final dashboard = DashboardData(
+        todayStats: const CatchStats(total: 5, release: 3, keep: 2),
+        todaySpecies: const {'Bass': 3, 'Trout': 2},
+        monthStats: const CatchStats(total: 50, release: 35, keep: 15),
+        monthSpecies: const {'Bass': 30, 'Trout': 20},
+        yearStats: const CatchStats(total: 200, release: 140, keep: 60),
+        yearSpecies: const {'Bass': 120, 'Trout': 80},
+        allStats: const CatchStats(total: 500, release: 350, keep: 150),
+        allSpecies: const {'Bass': 300, 'Trout': 200},
         top3Longest: [
-          {'id': 1, 'length': 50.0},
-          {'id': 2, 'length': 45.0},
+          FishCatch(
+            id: 1,
+            imagePath: '/test/fish_1.jpg',
+            species: 'Bass',
+            length: 50.0,
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 1, 15),
+            createdAt: DateTime(2024, 1, 15),
+            updatedAt: DateTime(2024, 1, 15),
+          ),
+          FishCatch(
+            id: 2,
+            imagePath: '/test/fish_2.jpg',
+            species: 'Trout',
+            length: 45.0,
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 1, 15),
+            createdAt: DateTime(2024, 1, 15),
+            updatedAt: DateTime(2024, 1, 15),
+          ),
         ],
       );
 
@@ -324,30 +347,35 @@ void main() {
       final now = DateTime.now();
       // 3 released, 2 kept
       await insertCatch(
-          species: 'Bass',
-          length: 30,
-          fate: FishFateType.release,
-          catchTime: now,);
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
       await insertCatch(
-          species: 'Bass',
-          length: 28,
-          fate: FishFateType.release,
-          catchTime: now,);
+        species: 'Bass',
+        length: 28,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
       await insertCatch(
-          species: 'Trout',
-          length: 25,
-          fate: FishFateType.release,
-          catchTime: now,);
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
       await insertCatch(
-          species: 'Bass',
-          length: 22,
-          fate: FishFateType.keep,
-          catchTime: now,);
+        species: 'Bass',
+        length: 22,
+        fate: FishFateType.keep,
+        catchTime: now,
+      );
       await insertCatch(
-          species: 'Trout',
-          length: 20,
-          fate: FishFateType.keep,
-          catchTime: now,);
+        species: 'Trout',
+        length: 20,
+        fate: FishFateType.keep,
+        catchTime: now,
+      );
     });
 
     test('getCatchStats returns correct counts', () async {
@@ -383,23 +411,26 @@ void main() {
       // Bass: 3 catches, Trout: 2, Perch: 1
       for (var i = 0; i < 3; i++) {
         await insertCatch(
-            species: 'Bass',
-            length: 25 + i * 2,
-            fate: FishFateType.release,
-            catchTime: now,);
+          species: 'Bass',
+          length: 25 + i * 2,
+          fate: FishFateType.release,
+          catchTime: now,
+        );
       }
       for (var i = 0; i < 2; i++) {
         await insertCatch(
-            species: 'Trout',
-            length: 20 + i * 3,
-            fate: FishFateType.keep,
-            catchTime: now,);
+          species: 'Trout',
+          length: 20 + i * 3,
+          fate: FishFateType.keep,
+          catchTime: now,
+        );
       }
       await insertCatch(
-          species: 'Perch',
-          length: 18,
-          fate: FishFateType.release,
-          catchTime: now,);
+        species: 'Perch',
+        length: 18,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
     });
 
     test('getSpeciesStats returns species map ordered by count', () async {
@@ -425,28 +456,32 @@ void main() {
     setUp(() async {
       final now = DateTime.now();
       await insertCatch(
-          species: 'Bass',
-          length: 30,
-          fate: FishFateType.release,
-          catchTime: now,
-          locationName: 'Lake A',);
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: now,
+        locationName: 'Lake A',
+      );
       await insertCatch(
-          species: 'Trout',
-          length: 25,
-          fate: FishFateType.release,
-          catchTime: now,
-          locationName: 'Lake A',);
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.release,
+        catchTime: now,
+        locationName: 'Lake A',
+      );
       await insertCatch(
-          species: 'Bass',
-          length: 28,
-          fate: FishFateType.release,
-          catchTime: now,
-          locationName: 'River B',);
+        species: 'Bass',
+        length: 28,
+        fate: FishFateType.release,
+        catchTime: now,
+        locationName: 'River B',
+      );
       await insertCatch(
-          species: 'Perch',
-          length: 20,
-          fate: FishFateType.keep,
-          catchTime: now,);
+        species: 'Perch',
+        length: 20,
+        fate: FishFateType.keep,
+        catchTime: now,
+      );
     });
 
     test('getLocationCount counts distinct non-null locations', () async {
@@ -460,22 +495,25 @@ void main() {
     setUp(() async {
       final now = DateTime.now();
       await insertCatch(
-          species: 'Bass',
-          length: 35.5,
-          weight: 3.2,
-          fate: FishFateType.release,
-          catchTime: now,);
+        species: 'Bass',
+        length: 35.5,
+        weight: 3.2,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
       await insertCatch(
-          species: 'Trout',
-          length: 28,
-          weight: 2.1,
-          fate: FishFateType.keep,
-          catchTime: now,);
+        species: 'Trout',
+        length: 28,
+        weight: 2.1,
+        fate: FishFateType.keep,
+        catchTime: now,
+      );
       await insertCatch(
-          species: 'Perch',
-          length: 18,
-          fate: FishFateType.release,
-          catchTime: now,);
+        species: 'Perch',
+        length: 18,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
     });
 
     test('getMaxLength returns the maximum length', () async {
@@ -501,15 +539,17 @@ void main() {
       final now = DateTime.now();
       final morning = DateTime(now.year, now.month, now.day, 6);
       await insertCatch(
-          species: 'Bass',
-          length: 30,
-          fate: FishFateType.release,
-          catchTime: morning,);
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: morning,
+      );
       await insertCatch(
-          species: 'Trout',
-          length: 25,
-          fate: FishFateType.release,
-          catchTime: DateTime(now.year, now.month, now.day, 7),);
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.release,
+        catchTime: DateTime(now.year, now.month, now.day, 7),
+      );
 
       final count = await repository.getMorningCatchCount();
       expect(count, equals(2));
@@ -520,10 +560,11 @@ void main() {
       // Night: hour >= 21 or < 5
       final lateNight = DateTime(now.year, now.month, now.day, 22);
       await insertCatch(
-          species: 'Bass',
-          length: 30,
-          fate: FishFateType.release,
-          catchTime: lateNight,);
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: lateNight,
+      );
 
       final count = await repository.getNightCatchCount();
       expect(count, equals(1));
@@ -534,17 +575,19 @@ void main() {
       // Day 1: 3 catches
       for (var i = 0; i < 3; i++) {
         await insertCatch(
-            species: 'Bass',
-            length: 25,
-            fate: FishFateType.release,
-            catchTime: now,);
+          species: 'Bass',
+          length: 25,
+          fate: FishFateType.release,
+          catchTime: now,
+        );
       }
       // Day 2: 1 catch
       await insertCatch(
-          species: 'Trout',
-          length: 20,
-          fate: FishFateType.keep,
-          catchTime: now.subtract(const Duration(days: 1)),);
+        species: 'Trout',
+        length: 20,
+        fate: FishFateType.keep,
+        catchTime: now.subtract(const Duration(days: 1)),
+      );
 
       expect(await repository.getDailyMax(), equals(3));
     });
@@ -554,10 +597,11 @@ void main() {
       // All in current month
       for (var i = 0; i < 4; i++) {
         await insertCatch(
-            species: 'Bass',
-            length: 25,
-            fate: FishFateType.release,
-            catchTime: now,);
+          species: 'Bass',
+          length: 25,
+          fate: FishFateType.release,
+          catchTime: now,
+        );
       }
 
       expect(await repository.getMonthlyMax(), equals(4));
@@ -570,25 +614,29 @@ void main() {
     test('returns top 3 by length descending', () async {
       final now = DateTime.now();
       await insertCatch(
-          species: 'Small Perch',
-          length: 15,
-          fate: FishFateType.release,
-          catchTime: now,);
+        species: 'Small Perch',
+        length: 15,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
       await insertCatch(
-          species: 'Big Bass',
-          length: 50,
-          fate: FishFateType.release,
-          catchTime: now,);
+        species: 'Big Bass',
+        length: 50,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
       await insertCatch(
-          species: 'Medium Trout',
-          length: 35,
-          fate: FishFateType.keep,
-          catchTime: now,);
+        species: 'Medium Trout',
+        length: 35,
+        fate: FishFateType.keep,
+        catchTime: now,
+      );
       await insertCatch(
-          species: 'Trophy Pike',
-          length: 45,
-          fate: FishFateType.release,
-          catchTime: now,);
+        species: 'Trophy Pike',
+        length: 45,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
 
       final top3 = await repository.getTop3LongestCatches();
       expect(top3.length, equals(3));
@@ -603,10 +651,11 @@ void main() {
     test('returns fewer than 3 when less data exists', () async {
       final now = DateTime.now();
       await insertCatch(
-          species: 'Only Fish',
-          length: 30,
-          fate: FishFateType.release,
-          catchTime: now,);
+        species: 'Only Fish',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
 
       final top3 = await repository.getTop3LongestCatches();
       expect(top3.length, equals(1));
@@ -616,12 +665,13 @@ void main() {
     test('returns FishCatch objects with correct data', () async {
       final now = DateTime.now();
       await insertCatch(
-          species: 'Bass',
-          length: 40,
-          weight: 2.5,
-          fate: FishFateType.keep,
-          catchTime: now,
-          locationName: 'Lake Test',);
+        species: 'Bass',
+        length: 40,
+        weight: 2.5,
+        fate: FishFateType.keep,
+        catchTime: now,
+        locationName: 'Lake Test',
+      );
 
       final top3 = await repository.getTop3LongestCatches();
       final fish = top3.first;
@@ -645,36 +695,41 @@ void main() {
 
       // Today: 2 catches
       await insertCatch(
-          species: 'Bass',
-          length: 30,
-          fate: FishFateType.release,
-          catchTime: today,);
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: today,
+      );
       await insertCatch(
-          species: 'Trout',
-          length: 25,
-          fate: FishFateType.keep,
-          catchTime: today,);
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.keep,
+        catchTime: today,
+      );
 
       // This month (but not today): 1 catch
       await insertCatch(
-          species: 'Perch',
-          length: 20,
-          fate: FishFateType.release,
-          catchTime: thisMonth,);
+        species: 'Perch',
+        length: 20,
+        fate: FishFateType.release,
+        catchTime: thisMonth,
+      );
 
       // This year (different month): 1 catch
       await insertCatch(
-          species: 'Bass',
-          length: 28,
-          fate: FishFateType.release,
-          catchTime: thisYear,);
+        species: 'Bass',
+        length: 28,
+        fate: FishFateType.release,
+        catchTime: thisYear,
+      );
 
       // Old date: 1 catch
       await insertCatch(
-          species: 'Pike',
-          length: 45,
-          fate: FishFateType.release,
-          catchTime: oldDate,);
+        species: 'Pike',
+        length: 45,
+        fate: FishFateType.release,
+        catchTime: oldDate,
+      );
 
       final dashboard = await repository.getDashboardData();
 
@@ -690,8 +745,8 @@ void main() {
 
       // Top 3 longest
       expect(dashboard.top3Longest.length, equals(3));
-      expect(dashboard.top3Longest.first['species'], equals('Pike'));
-      expect(dashboard.top3Longest.first['length'], equals(45.0));
+      expect(dashboard.top3Longest.first.species, equals('Pike'));
+      expect(dashboard.top3Longest.first.length, equals(45.0));
     });
   });
 
@@ -705,19 +760,21 @@ void main() {
 
       // Insert catches linked to equipment_id = 1
       await insertCatch(
-          species: 'Bass',
-          length: 30,
-          weight: 2,
-          fate: FishFateType.release,
-          catchTime: now,
-          equipmentId: 1,);
+        species: 'Bass',
+        length: 30,
+        weight: 2,
+        fate: FishFateType.release,
+        catchTime: now,
+        equipmentId: 1,
+      );
       await insertCatch(
-          species: 'Trout',
-          length: 25,
-          weight: 1.5,
-          fate: FishFateType.keep,
-          catchTime: now,
-          equipmentId: 1,);
+        species: 'Trout',
+        length: 25,
+        weight: 1.5,
+        fate: FishFateType.keep,
+        catchTime: now,
+        equipmentId: 1,
+      );
 
       final stats = await repository.getEquipmentCatchStats();
       expect(stats.containsKey(1), isTrue);
@@ -725,22 +782,23 @@ void main() {
       expect(stats[1]!.releaseCount, equals(1));
     });
 
-    test(
-        'getEquipmentCatchStats aggregates across rod/reel/lure ID columns',
+    test('getEquipmentCatchStats aggregates across rod/reel/lure ID columns',
         () async {
       final now = DateTime.now();
       await insertCatch(
-          species: 'Bass',
-          length: 30,
-          fate: FishFateType.release,
-          catchTime: now,
-          rodId: 5,);
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: now,
+        rodId: 5,
+      );
       await insertCatch(
-          species: 'Trout',
-          length: 25,
-          fate: FishFateType.keep,
-          catchTime: now,
-          reelId: 3,);
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.keep,
+        catchTime: now,
+        reelId: 3,
+      );
 
       final stats = await repository.getEquipmentCatchStats();
       expect(stats.containsKey(5), isTrue);
@@ -757,23 +815,26 @@ void main() {
       await insertEquipment(type: 'lure', lureType: 'Crankbait');
 
       await insertCatch(
-          species: 'Bass',
-          length: 30,
-          fate: FishFateType.release,
-          catchTime: now,
-          lureId: 1,);
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: now,
+        lureId: 1,
+      );
       await insertCatch(
-          species: 'Bass',
-          length: 28,
-          fate: FishFateType.release,
-          catchTime: now,
-          lureId: 1,);
+        species: 'Bass',
+        length: 28,
+        fate: FishFateType.release,
+        catchTime: now,
+        lureId: 1,
+      );
       await insertCatch(
-          species: 'Trout',
-          length: 25,
-          fate: FishFateType.keep,
-          catchTime: now,
-          lureId: 2,);
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.keep,
+        catchTime: now,
+        lureId: 2,
+      );
 
       final dist = await repository.getEquipmentDistribution('lure');
       expect(dist['Soft Plastic'], equals(2));
@@ -787,28 +848,30 @@ void main() {
     test('getDailyCatchCount returns daily aggregates', () async {
       final now = DateTime.now();
       final today = DateTime(now.year, now.month, now.day, 10);
-      final yesterday =
-          DateTime(now.year, now.month, now.day, 10)
-              .subtract(const Duration(days: 1));
+      final yesterday = DateTime(now.year, now.month, now.day, 10)
+          .subtract(const Duration(days: 1));
 
       // Today: 2 catches
       await insertCatch(
-          species: 'Bass',
-          length: 30,
-          fate: FishFateType.release,
-          catchTime: today,);
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: today,
+      );
       await insertCatch(
-          species: 'Trout',
-          length: 25,
-          fate: FishFateType.keep,
-          catchTime: today,);
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.keep,
+        catchTime: today,
+      );
 
       // Yesterday: 1 catch
       await insertCatch(
-          species: 'Perch',
-          length: 20,
-          fate: FishFateType.release,
-          catchTime: yesterday,);
+        species: 'Perch',
+        length: 20,
+        fate: FishFateType.release,
+        catchTime: yesterday,
+      );
 
       final dailyCounts = await repository.getDailyCatchCount(
         startDate: yesterday.subtract(const Duration(hours: 1)),
@@ -818,7 +881,10 @@ void main() {
       expect(dailyCounts.length, equals(2));
       // Check today has 2 catches
       final todayEntry = dailyCounts.lastWhere(
-          (d) => d['date'] == '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}',);
+        (d) =>
+            d['date'] ==
+            '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}',
+      );
       expect(todayEntry['count'], equals(2));
       expect(todayEntry['release'], equals(1));
       expect(todayEntry['keep'], equals(1));
@@ -832,27 +898,30 @@ void main() {
       final now = DateTime.now();
       // Catches with equipment_id
       await insertCatch(
-          species: 'Bass',
-          length: 30,
-          fate: FishFateType.release,
-          catchTime: now,
-          equipmentId: 1,);
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: now,
+        equipmentId: 1,
+      );
       // Catch with full rig (rod+reel+lure)
       await insertCatch(
-          species: 'Trout',
-          length: 25,
-          fate: FishFateType.release,
-          catchTime: now,
-          rodId: 1,
-          reelId: 1,
-          lureId: 1,);
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.release,
+        catchTime: now,
+        rodId: 1,
+        reelId: 1,
+        lureId: 1,
+      );
       // Catch with partial equipment (should not count)
       await insertCatch(
-          species: 'Perch',
-          length: 20,
-          fate: FishFateType.keep,
-          catchTime: now,
-          rodId: 1,);
+        species: 'Perch',
+        length: 20,
+        fate: FishFateType.keep,
+        catchTime: now,
+        rodId: 1,
+      );
 
       final count = await repository.getEquipmentFullStatus();
       expect(count, equals(2));
@@ -866,20 +935,23 @@ void main() {
       final now = DateTime.now();
       // 2 catches this week, 1 catch last month
       await insertCatch(
-          species: 'Bass',
-          length: 30,
-          fate: FishFateType.release,
-          catchTime: now,);
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
       await insertCatch(
-          species: 'Trout',
-          length: 25,
-          fate: FishFateType.keep,
-          catchTime: now.subtract(const Duration(days: 2)),);
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.keep,
+        catchTime: now.subtract(const Duration(days: 2)),
+      );
       await insertCatch(
-          species: 'Pike',
-          length: 45,
-          fate: FishFateType.release,
-          catchTime: now.subtract(const Duration(days: 40)),);
+        species: 'Pike',
+        length: 45,
+        fate: FishFateType.release,
+        catchTime: now.subtract(const Duration(days: 40)),
+      );
     });
 
     test('getCatchStats with date range filters correctly', () async {
@@ -916,15 +988,17 @@ void main() {
     test('getPhotoCount counts catches with image paths', () async {
       final now = DateTime.now();
       await insertCatch(
-          species: 'Bass',
-          length: 30,
-          fate: FishFateType.release,
-          catchTime: now,);
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
       await insertCatch(
-          species: 'Trout',
-          length: 25,
-          fate: FishFateType.release,
-          catchTime: now,);
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
 
       final count = await repository.getPhotoCount();
       expect(count, equals(2));

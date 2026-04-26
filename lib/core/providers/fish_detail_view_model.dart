@@ -1,10 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/equipment.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 
 class FishDetailState {
-
   const FishDetailState({
     this.isLoading = true,
     this.errorMessage,
@@ -17,20 +18,20 @@ class FishDetailState {
   });
   final bool isLoading;
   final String? errorMessage;
-  final Map<String, dynamic>? fish;
-  final Map<String, dynamic>? rodEquipment;
-  final Map<String, dynamic>? reelEquipment;
-  final Map<String, dynamic>? lureEquipment;
+  final FishCatch? fish;
+  final Equipment? rodEquipment;
+  final Equipment? reelEquipment;
+  final Equipment? lureEquipment;
   final bool isDeleting;
   final bool isSharing;
 
   FishDetailState copyWith({
     bool? isLoading,
     String? Function()? errorMessage,
-    Map<String, dynamic>? fish,
-    Map<String, dynamic>? rodEquipment,
-    Map<String, dynamic>? reelEquipment,
-    Map<String, dynamic>? lureEquipment,
+    FishCatch? fish,
+    Equipment? rodEquipment,
+    Equipment? reelEquipment,
+    Equipment? lureEquipment,
     bool? isDeleting,
     bool? isSharing,
   }) {
@@ -48,7 +49,6 @@ class FishDetailState {
 }
 
 class FishDetailViewModel extends StateNotifier<FishDetailState> {
-
   FishDetailViewModel(
     this.fishId,
     this._fishCatchService,
@@ -72,27 +72,23 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
         );
         return;
       }
-      final fish = fishModel.toMap();
 
       final rodId = fishModel.rodId;
       final reelId = fishModel.reelId;
       final lureId = fishModel.lureId;
 
-      Map<String, dynamic>? rodEquipment;
-      Map<String, dynamic>? reelEquipment;
-      Map<String, dynamic>? lureEquipment;
+      Equipment? rodEquipment;
+      Equipment? reelEquipment;
+      Equipment? lureEquipment;
 
       if (rodId != null) {
-        final eq = await _equipmentService.getById(rodId);
-        rodEquipment = eq?.toMap();
+        rodEquipment = await _equipmentService.getById(rodId);
       }
       if (reelId != null) {
-        final eq = await _equipmentService.getById(reelId);
-        reelEquipment = eq?.toMap();
+        reelEquipment = await _equipmentService.getById(reelId);
       }
       if (lureId != null) {
-        final eq = await _equipmentService.getById(lureId);
-        lureEquipment = eq?.toMap();
+        lureEquipment = await _equipmentService.getById(lureId);
       }
 
       if ((rodId == null && reelId == null && lureId == null) &&
@@ -100,21 +96,20 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
         final equipmentId = fishModel.equipmentId!;
         final eq = await _equipmentService.getById(equipmentId);
         if (eq != null) {
-          final equipment = eq.toMap();
-          final type = (equipment['type'] as String?) ?? '';
-          if (type == 'rod') {
-            rodEquipment = equipment;
-          } else if (type == 'reel') {
-            reelEquipment = equipment;
-          } else if (type == 'lure') {
-            lureEquipment = equipment;
+          final type = eq.type;
+          if (type == EquipmentType.rod) {
+            rodEquipment = eq;
+          } else if (type == EquipmentType.reel) {
+            reelEquipment = eq;
+          } else if (type == EquipmentType.lure) {
+            lureEquipment = eq;
           }
         }
       }
 
       state = state.copyWith(
         isLoading: false,
-        fish: fish,
+        fish: fishModel,
         rodEquipment: rodEquipment,
         reelEquipment: reelEquipment,
         lureEquipment: lureEquipment,

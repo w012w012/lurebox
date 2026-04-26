@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/stats_models.dart';
 
 void main() {
@@ -212,19 +213,46 @@ void main() {
       const monthSpecies = {'Bass': 30, 'Trout': 20};
       const yearSpecies = {'Bass': 120, 'Trout': 80};
       const allSpecies = {'Bass': 300, 'Trout': 200};
-      const top3Longest = [
-        {'id': 1, 'length': 50.0},
-        {'id': 2, 'length': 45.0},
-        {'id': 3, 'length': 40.0},
+      final top3Longest = [
+        FishCatch(
+          id: 1,
+          imagePath: '/test/fish1.jpg',
+          species: 'Bass',
+          length: 50.0,
+          fate: FishFateType.release,
+          catchTime: DateTime(2024, 1, 15),
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+        FishCatch(
+          id: 2,
+          imagePath: '/test/fish2.jpg',
+          species: 'Bass',
+          length: 45.0,
+          fate: FishFateType.release,
+          catchTime: DateTime(2024, 1, 15),
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+        FishCatch(
+          id: 3,
+          imagePath: '/test/fish3.jpg',
+          species: 'Bass',
+          length: 40.0,
+          fate: FishFateType.release,
+          catchTime: DateTime(2024, 1, 15),
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
       ];
-      const dashboard = DashboardData(
-        todayStats: CatchStats(total: 5, release: 3, keep: 2),
+      final dashboard = DashboardData(
+        todayStats: const CatchStats(total: 5, release: 3, keep: 2),
         todaySpecies: todaySpecies,
-        monthStats: CatchStats(total: 50, release: 35, keep: 15),
+        monthStats: const CatchStats(total: 50, release: 35, keep: 15),
         monthSpecies: monthSpecies,
-        yearStats: CatchStats(total: 200, release: 140, keep: 60),
+        yearStats: const CatchStats(total: 200, release: 140, keep: 60),
         yearSpecies: yearSpecies,
-        allStats: CatchStats(total: 500, release: 350, keep: 150),
+        allStats: const CatchStats(total: 500, release: 350, keep: 150),
         allSpecies: allSpecies,
         top3Longest: top3Longest,
       );
@@ -251,9 +279,12 @@ void main() {
       );
 
       // Verify species counts increase over time periods
-      expect(dashboard.todaySpecies.length, lessThan(dashboard.monthSpecies.length));
-      expect(dashboard.monthSpecies.length, lessThan(dashboard.yearSpecies.length));
-      expect(dashboard.yearSpecies.length, lessThan(dashboard.allSpecies.length));
+      expect(dashboard.todaySpecies.length,
+          lessThan(dashboard.monthSpecies.length));
+      expect(dashboard.monthSpecies.length,
+          lessThan(dashboard.yearSpecies.length));
+      expect(
+          dashboard.yearSpecies.length, lessThan(dashboard.allSpecies.length));
     });
 
     test('calculates release rates for all time periods', () {
@@ -292,28 +323,53 @@ void main() {
     });
 
     test('top3Longest contains id and length for each entry', () {
-      const top3Longest = [
-        {'id': 1, 'length': 50.0},
-        {'id': 2, 'length': 45.0},
-        {'id': 3, 'length': 40.0},
+      final top3Longest = [
+        FishCatch(
+          id: 1,
+          imagePath: '/test/fish1.jpg',
+          species: 'Bass',
+          length: 50.0,
+          fate: FishFateType.release,
+          catchTime: DateTime(2024, 1, 15),
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+        FishCatch(
+          id: 2,
+          imagePath: '/test/fish2.jpg',
+          species: 'Bass',
+          length: 45.0,
+          fate: FishFateType.release,
+          catchTime: DateTime(2024, 1, 15),
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
+        FishCatch(
+          id: 3,
+          imagePath: '/test/fish3.jpg',
+          species: 'Bass',
+          length: 40.0,
+          fate: FishFateType.release,
+          catchTime: DateTime(2024, 1, 15),
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        ),
       ];
-      const dashboard = DashboardData(
-        todayStats: CatchStats(total: 3, release: 2, keep: 1),
-        todaySpecies: {'Bass': 3},
-        monthStats: CatchStats(total: 3, release: 2, keep: 1),
-        monthSpecies: {'Bass': 3},
-        yearStats: CatchStats(total: 3, release: 2, keep: 1),
-        yearSpecies: {'Bass': 3},
-        allStats: CatchStats(total: 3, release: 2, keep: 1),
-        allSpecies: {'Bass': 3},
+      final dashboard = DashboardData(
+        todayStats: const CatchStats(total: 3, release: 2, keep: 1),
+        todaySpecies: const {'Bass': 3},
+        monthStats: const CatchStats(total: 3, release: 2, keep: 1),
+        monthSpecies: const {'Bass': 3},
+        yearStats: const CatchStats(total: 3, release: 2, keep: 1),
+        yearSpecies: const {'Bass': 3},
+        allStats: const CatchStats(total: 3, release: 2, keep: 1),
+        allSpecies: const {'Bass': 3},
         top3Longest: top3Longest,
       );
 
       for (final entry in dashboard.top3Longest) {
-        expect(entry.containsKey('id'), isTrue);
-        expect(entry.containsKey('length'), isTrue);
-        expect(entry['id'], isA<int>());
-        expect(entry['length'], isA<double>());
+        expect(entry.id, isA<int>());
+        expect(entry.length, isA<double>());
       }
     });
   });

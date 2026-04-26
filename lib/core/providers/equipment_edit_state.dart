@@ -1,9 +1,8 @@
-// No imports needed - pure Dart classes
+import 'package:lurebox/core/models/equipment.dart';
 
 /// Sealed class hierarchy for equipment edit states.
 /// Each equipment type (rod/reel/lure) has its own subclass with type-specific fields.
 sealed class EquipmentEditState {
-
   const EquipmentEditState({
     required this.type,
     this.equipment,
@@ -18,7 +17,7 @@ sealed class EquipmentEditState {
     this.categoryType2 = '',
   });
   final String type;
-  final Map<String, dynamic>? equipment;
+  final Equipment? equipment;
   final bool isSaving;
   final String? errorMessage;
   final String brand;
@@ -35,7 +34,7 @@ sealed class EquipmentEditState {
   /// Apply common field updates - each subclass provides its own copyWith
   EquipmentEditState withUpdates({
     String? type,
-    Map<String, dynamic>? equipment,
+    Equipment? equipment,
     bool? isSaving,
     String? errorMessage,
     String? brand,
@@ -50,7 +49,6 @@ sealed class EquipmentEditState {
 
 /// Rod-specific edit state
 class RodEditState extends EquipmentEditState {
-
   const RodEditState({
     required super.type,
     super.equipment,
@@ -83,7 +81,7 @@ class RodEditState extends EquipmentEditState {
 
   RodEditState copyWith({
     String? type,
-    Map<String, dynamic>? equipment,
+    Equipment? equipment,
     bool? isSaving,
     String? errorMessage,
     String? brand,
@@ -128,7 +126,7 @@ class RodEditState extends EquipmentEditState {
   @override
   RodEditState withUpdates({
     String? type,
-    Map<String, dynamic>? equipment,
+    Equipment? equipment,
     bool? isSaving,
     String? errorMessage,
     String? brand,
@@ -173,7 +171,6 @@ class RodEditState extends EquipmentEditState {
 
 /// Reel-specific edit state
 class ReelEditState extends EquipmentEditState {
-
   const ReelEditState({
     required super.type,
     super.equipment,
@@ -212,7 +209,7 @@ class ReelEditState extends EquipmentEditState {
 
   ReelEditState copyWith({
     String? type,
-    Map<String, dynamic>? equipment,
+    Equipment? equipment,
     bool? isSaving,
     String? errorMessage,
     String? brand,
@@ -263,7 +260,7 @@ class ReelEditState extends EquipmentEditState {
   @override
   ReelEditState withUpdates({
     String? type,
-    Map<String, dynamic>? equipment,
+    Equipment? equipment,
     bool? isSaving,
     String? errorMessage,
     String? brand,
@@ -314,7 +311,6 @@ class ReelEditState extends EquipmentEditState {
 
 /// Lure-specific edit state
 class LureEditState extends EquipmentEditState {
-
   const LureEditState({
     required super.type,
     super.equipment,
@@ -347,7 +343,7 @@ class LureEditState extends EquipmentEditState {
 
   LureEditState copyWith({
     String? type,
-    Map<String, dynamic>? equipment,
+    Equipment? equipment,
     bool? isSaving,
     String? errorMessage,
     String? brand,
@@ -392,7 +388,7 @@ class LureEditState extends EquipmentEditState {
   @override
   LureEditState withUpdates({
     String? type,
-    Map<String, dynamic>? equipment,
+    Equipment? equipment,
     bool? isSaving,
     String? errorMessage,
     String? brand,

@@ -9,11 +9,9 @@ import 'package:lurebox/core/repositories/stats_repository.dart';
 
 class SqliteStatsRepository extends BaseSqliteRepository
     implements StatsRepository {
-
   SqliteStatsRepository();
 
-  SqliteStatsRepository.withDatabase(super.testDb)
-      : super.withDatabase();
+  SqliteStatsRepository.withDatabase(super.testDb) : super.withDatabase();
   @override
   String get tableName => 'fish_catches';
 
@@ -33,14 +31,17 @@ class SqliteStatsRepository extends BaseSqliteRepository
         whereArgs = [startDate.toIso8601String(), endDate.toIso8601String()];
       }
 
-      final results = await db.rawQuery('''
+      final results = await db.rawQuery(
+        '''
         SELECT
           COUNT(*) as total,
           SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as release,
           SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as keep
         FROM $tableName
         $whereClause
-        ''', [FishFateType.release.value, FishFateType.keep.value, ...whereArgs],);
+        ''',
+        [FishFateType.release.value, FishFateType.keep.value, ...whereArgs],
+      );
 
       if (results.isEmpty) {
         return const CatchStats(total: 0, release: 0, keep: 0);
@@ -190,12 +191,15 @@ class SqliteStatsRepository extends BaseSqliteRepository
     try {
       final db = await database;
       // 优化：单次查询获取总数和放流数
-      final results = await db.rawQuery('''
+      final results = await db.rawQuery(
+        '''
         SELECT
           COUNT(*) as total,
           SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as release
         FROM $tableName
-      ''', [FishFateType.release.value],);
+      ''',
+        [FishFateType.release.value],
+      );
       final total = results.first['total'] as int? ?? 0;
       if (total == 0) return 0.0;
       final release = results.first['release'] as int? ?? 0;
@@ -210,13 +214,16 @@ class SqliteStatsRepository extends BaseSqliteRepository
     try {
       final db = await database;
       final cutoff = DateTime.now().subtract(const Duration(days: 365));
-      final results = await db.rawQuery('''
+      final results = await db.rawQuery(
+        '''
         SELECT DATE(catch_time) as catch_date, COUNT(*) as count
         FROM $tableName
         WHERE catch_time >= ?
         GROUP BY catch_date
         ORDER BY catch_date DESC
-      ''', [cutoff.toIso8601String()],);
+      ''',
+        [cutoff.toIso8601String()],
+      );
 
       if (results.isEmpty) return 0;
 
@@ -295,11 +302,14 @@ class SqliteStatsRepository extends BaseSqliteRepository
   Future<int> getMorningCatchCount() async {
     try {
       final db = await database;
-      final results = await db.rawQuery('''
+      final results = await db.rawQuery(
+        '''
         SELECT COUNT(*) as count FROM $tableName
         WHERE strftime('%H', catch_time) >= ?
           AND strftime('%H', catch_time) < ?
-      ''', [TimeConstants.morningStart, TimeConstants.morningEnd],);
+      ''',
+        [TimeConstants.morningStart, TimeConstants.morningEnd],
+      );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
       throwDbError('get morning catch count', e);
@@ -310,11 +320,14 @@ class SqliteStatsRepository extends BaseSqliteRepository
   Future<int> getNightCatchCount() async {
     try {
       final db = await database;
-      final results = await db.rawQuery('''
+      final results = await db.rawQuery(
+        '''
         SELECT COUNT(*) as count FROM $tableName
         WHERE strftime('%H', catch_time) >= ?
            OR strftime('%H', catch_time) < ?
-      ''', [TimeConstants.nightStart, TimeConstants.nightEnd],);
+      ''',
+        [TimeConstants.nightStart, TimeConstants.nightEnd],
+      );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
       throwDbError('get night catch count', e);
@@ -408,9 +421,13 @@ class SqliteStatsRepository extends BaseSqliteRepository
         yearSpecies: speciesStats['year'] ?? {},
         allStats: catchStats['all']!,
         allSpecies: speciesStats['all'] ?? {},
-        top3Longest:
-            (results[2] as List<FishCatch>).map((f) => f.toMap()).toList(),
-        monthTrend: results[3] as List<Map<String, dynamic>>,
+        top3Longest: results[2] as List<FishCatch>,
+        monthTrend: (results[3] as List<Map<String, dynamic>>)
+            .map((row) => DailyTrend(
+                  date: DateTime.parse(row['date'] as String),
+                  count: row['count'] as int,
+                ))
+            .toList(),
       );
     } catch (e) {
       throwDbError('get dashboard data', e);
@@ -558,7 +575,8 @@ class SqliteStatsRepository extends BaseSqliteRepository
   Future<Map<int, EquipmentCatchStats>> getEquipmentCatchStats() async {
     try {
       final db = await database;
-      final results = await db.rawQuery('''
+      final results = await db.rawQuery(
+        '''
 SELECT
   eq_id as equipment_id,
   COUNT(*) as catch_count,
@@ -575,7 +593,9 @@ FROM (
   SELECT lure_id as eq_id, species, length, weight, fate FROM $tableName WHERE lure_id IS NOT NULL
 )
 GROUP BY eq_id
-''', [FishFateType.release.value],);
+''',
+        [FishFateType.release.value],
+      );
 
       final stats = <int, EquipmentCatchStats>{};
       for (final row in results) {
@@ -652,7 +672,8 @@ GROUP BY eq_id, species
         whereArgs = [startDate.toIso8601String(), endDate.toIso8601String()];
       }
 
-      final results = await db.rawQuery('''
+      final results = await db.rawQuery(
+        '''
         SELECT e.brand, e.model, e.lure_type, COUNT(*) as count
         FROM $tableName f
         LEFT JOIN equipments e ON f.$column = e.id
@@ -660,7 +681,9 @@ GROUP BY eq_id, species
         GROUP BY f.$column
         ORDER BY count DESC
         LIMIT 8
-        ''', whereArgs,);
+        ''',
+        whereArgs,
+      );
 
       final distribution = <String, int>{};
       for (final row in results) {
@@ -691,7 +714,8 @@ GROUP BY eq_id, species
         limit: 3,
       );
       return List<FishCatch>.from(
-          results.map((map) => FishCatch.fromMap(map as Map<String, dynamic>)),);
+        results.map((map) => FishCatch.fromMap(map as Map<String, dynamic>)),
+      );
     } catch (e) {
       throwDbError('get top 3 longest catches', e);
     }

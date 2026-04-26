@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
 
 class HomeState {
-
   const HomeState({
     this.isLoading = true,
     this.errorMessage,
@@ -33,8 +33,8 @@ class HomeState {
   final CatchStats allStats;
   final Map<String, int> allSpecies;
 
-  final List<Map<String, dynamic>> top3Fishes;
-  final List<Map<String, dynamic>> monthTrend;
+  final List<FishCatch> top3Fishes;
+  final List<DailyTrend> monthTrend;
 
   int get todayCount => todayStats.total;
   int get todayRelease => todayStats.release;
@@ -63,8 +63,8 @@ class HomeState {
     Map<String, int>? yearSpecies,
     CatchStats? allStats,
     Map<String, int>? allSpecies,
-    List<Map<String, dynamic>>? top3Fishes,
-    List<Map<String, dynamic>>? monthTrend,
+    List<FishCatch>? top3Fishes,
+    List<DailyTrend>? monthTrend,
   }) {
     return HomeState(
       isLoading: isLoading ?? this.isLoading,
@@ -84,7 +84,6 @@ class HomeState {
 }
 
 class HomeViewModel extends StateNotifier<HomeState> {
-
   HomeViewModel(this._statsRepo) : super(const HomeState()) {
     loadData();
   }

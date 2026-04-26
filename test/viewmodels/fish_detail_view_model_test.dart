@@ -125,8 +125,8 @@ void main() {
 
         // Assert
         expect(viewModel.state.fish, isNotNull);
-        expect(viewModel.state.fish!['id'], 42);
-        expect(viewModel.state.fish!['species'], 'Pike');
+        expect(viewModel.state.fish!.id, 42);
+        expect(viewModel.state.fish!.species, 'Pike');
         expect(viewModel.state.isLoading, false);
         expect(viewModel.state.errorMessage, isNull);
       });
@@ -167,7 +167,7 @@ void main() {
 
         // Assert
         expect(viewModel.state.fish, isNotNull);
-        expect(viewModel.state.fish!['species'], 'Bass');
+        expect(viewModel.state.fish!.species, 'Bass');
         expect(viewModel.state.rodEquipment, isNotNull);
         expect(viewModel.state.reelEquipment, isNotNull);
         expect(viewModel.state.lureEquipment, isNotNull);
@@ -192,7 +192,7 @@ void main() {
 
         // Assert
         expect(viewModel.state.fish, isNotNull);
-        expect(viewModel.state.fish!['species'], 'Trout');
+        expect(viewModel.state.fish!.species, 'Trout');
         expect(viewModel.state.rodEquipment, isNull);
         expect(viewModel.state.reelEquipment, isNull);
         expect(viewModel.state.lureEquipment, isNull);
@@ -232,8 +232,10 @@ void main() {
 
         // Assert
         expect(viewModel.state.fish, isNull);
-        expect(viewModel.state.errorMessage,
-            contains('Database connection failed'),);
+        expect(
+          viewModel.state.errorMessage,
+          contains('Database connection failed'),
+        );
         expect(viewModel.state.isLoading, false);
       });
 
@@ -283,7 +285,7 @@ void main() {
         // Assert
         expect(viewModel.state.fish, isNotNull);
         expect(viewModel.state.lureEquipment, isNotNull);
-        expect(viewModel.state.lureEquipment!['id'], 50);
+        expect(viewModel.state.lureEquipment!.id, 50);
       });
     });
 
@@ -449,7 +451,7 @@ void main() {
         );
         await Future.delayed(const Duration(milliseconds: 10));
 
-        expect(viewModel.state.fish!['species'], 'Pike');
+        expect(viewModel.state.fish!.species, 'Pike');
 
         // Act - simulate fish being updated in DB
         final updatedFish = _createFishCatch(id: 11, species: 'Muskie');
@@ -459,7 +461,7 @@ void main() {
         await viewModel.refresh();
 
         // Assert
-        expect(viewModel.state.fish!['species'], 'Muskie');
+        expect(viewModel.state.fish!.species, 'Muskie');
         verify(() => mockFishCatchService.getById(11)).called(2);
       });
 
@@ -467,7 +469,9 @@ void main() {
         // Arrange
         final fish = _createFishCatch(id: 12, rodId: 100);
         final rod = _createEquipment(
-            id: 100, brand: 'OldBrand',);
+          id: 100,
+          brand: 'OldBrand',
+        );
 
         when(() => mockFishCatchService.getById(12))
             .thenAnswer((_) async => fish);
@@ -481,18 +485,20 @@ void main() {
         );
         await Future.delayed(const Duration(milliseconds: 10));
 
-        expect(viewModel.state.rodEquipment!['brand'], 'OldBrand');
+        expect(viewModel.state.rodEquipment!.brand, 'OldBrand');
 
         // Act - simulate equipment being updated
         final updatedRod = _createEquipment(
-            id: 100, brand: 'NewBrand',);
+          id: 100,
+          brand: 'NewBrand',
+        );
         when(() => mockEquipmentService.getById(100))
             .thenAnswer((_) async => updatedRod);
 
         await viewModel.refresh();
 
         // Assert
-        expect(viewModel.state.rodEquipment!['brand'], 'NewBrand');
+        expect(viewModel.state.rodEquipment!.brand, 'NewBrand');
       });
     });
   });

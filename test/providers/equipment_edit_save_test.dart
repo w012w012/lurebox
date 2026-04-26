@@ -65,13 +65,14 @@ void main() {
 
     test('updates existing rod with correct data', () async {
       // Arrange
-      final existingEquipment = {
+      final existingEquipment = Equipment.fromMap({
         'id': 5,
         'type': 'rod',
         'brand': 'OldBrand',
         'model': 'OldModel',
         'created_at': DateTime.now().toIso8601String(),
-      };
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
       when(() => mockService.update(any())).thenAnswer((_) async {});
       when(() => mockService.setDefaultEquipment(any(), any()))
@@ -191,11 +192,12 @@ void main() {
 
     test('updates existing reel with correct data', () async {
       // Arrange
-      final existingEquipment = {
+      final existingEquipment = Equipment.fromMap({
         'id': 10,
         'type': 'reel',
         'created_at': DateTime.now().toIso8601String(),
-      };
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
       when(() => mockService.update(any())).thenAnswer((_) async {});
       when(() => mockService.setDefaultEquipment(any(), any()))
@@ -312,11 +314,12 @@ void main() {
 
     test('updates existing lure with correct data', () async {
       // Arrange
-      final existingEquipment = {
+      final existingEquipment = Equipment.fromMap({
         'id': 15,
         'type': 'lure',
         'created_at': DateTime.now().toIso8601String(),
-      };
+        'updated_at': DateTime.now().toIso8601String(),
+      });
 
       when(() => mockService.update(any())).thenAnswer((_) async {});
       when(() => mockService.setDefaultEquipment(any(), any()))
