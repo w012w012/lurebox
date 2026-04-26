@@ -6,6 +6,7 @@ import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/animation_constants.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/providers/home_view_model.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/pending_recognition_providers.dart';
@@ -287,11 +288,8 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
       );
     }
 
-    final fishes = List<Map<String, dynamic>>.from(widget.state.top3Fishes);
-    fishes.sort(
-      (a, b) => ((b['length'] as double?) ?? 0.0)
-          .compareTo((a['length'] as double?) ?? 0.0),
-    );
+    final fishes = List<FishCatch>.from(widget.state.top3Fishes)
+      ..sort((a, b) => b.length.compareTo(a.length));
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -382,13 +380,13 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
 
   Widget _buildMedalCard(
     BuildContext context,
-    Map<String, dynamic> fish,
+    FishCatch fish,
     int rank,
     Color mainColor,
     Color textColor,
   ) {
-    final species = fish['species'] as String;
-    final length = fish['length'] as double;
+    final species = fish.species;
+    final length = fish.length;
 
     return SizedBox(
       width: 80,
