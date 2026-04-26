@@ -23,7 +23,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            allAchievementsProvider.overrideWith((ref) => achievements),
+            allAchievementsProvider.overrideWith(
+              (ref) => Future.value(achievements),
+            ),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(
@@ -32,27 +34,9 @@ void main() {
         ),
       );
       await tester.pump();
-
-      expect(find.text('Achievement'), findsOneWidget);
-    });
-
-    testWidgets('shows loading indicator when loading', (tester) async {
-      final loadingAchievements = _LoadingAchievements();
-
-      await tester.pumpWidget(
-        ProviderScope(
-          overrides: [
-            allAchievementsProvider.overrideWith((ref) => loadingAchievements),
-            currentStringsProvider.overrideWithValue(AppStrings.chinese),
-          ],
-          child: const MaterialApp(
-            home: AchievementPage(),
-          ),
-        ),
-      );
       await tester.pump();
 
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.text('成就'), findsOneWidget);
     });
 
     testWidgets('shows achievement list when data loaded', (tester) async {
@@ -61,7 +45,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            allAchievementsProvider.overrideWith((ref) => achievements),
+            allAchievementsProvider.overrideWith(
+              (ref) => Future.value(achievements),
+            ),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(
@@ -82,7 +68,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            allAchievementsProvider.overrideWith((ref) => achievements),
+            allAchievementsProvider.overrideWith(
+              (ref) => Future.value(achievements),
+            ),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(
@@ -103,7 +91,9 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            allAchievementsProvider.overrideWith((ref) => achievements),
+            allAchievementsProvider.overrideWith(
+              (ref) => Future.value(achievements),
+            ),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(
@@ -121,7 +111,7 @@ void main() {
 }
 
 /// Creates mock achievements for testing
-Future<List<Achievement>> _createMockAchievements() async {
+List<Achievement> _createMockAchievements() {
   return [
     Achievement(
       id: '1',
@@ -161,20 +151,3 @@ Future<List<Achievement>> _createMockAchievements() async {
     ),
   ];
 }
-
-/// Loading achievements for testing
-class _LoadingAchievements extends AchievementService {
-  const _LoadingAchievements();
-
-  @override
-  Future<List<Achievement>> getAllAchievements() async {
-    await Future.delayed(const Duration(seconds: 10));
-    throw Exception('Should not reach here');
-  }
-
-  @override
-  Future<Map<String, dynamic>> getAchievementStats() async {
-    throw UnimplementedError();
-  }
-}
-

@@ -34,7 +34,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('My Equipment'), findsOneWidget);
+      expect(find.text('我的装备'), findsOneWidget);
     });
 
     testWidgets('shows loading indicator when isLoading is true',
@@ -80,7 +80,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('No equipment yet'), findsOneWidget);
+      expect(find.text('还没有'), findsOneWidget);
     });
 
     testWidgets('shows equipment list when data loaded', (tester) async {
@@ -184,6 +184,31 @@ class _MockEquipmentListState implements EquipmentListState {
       default:
         return [];
     }
+  }
+
+  @override
+  EquipmentListState copyWith({
+    bool? isLoading,
+    String? Function()? errorMessage,
+    List<Equipment>? rodList,
+    List<Equipment>? reelList,
+    List<Equipment>? lureList,
+    Map<int, Map<String, int>>? equipmentStats,
+    String? selectedType,
+    bool? allExpanded,
+    int? expandedId,
+  }) {
+    return _MockEquipmentListState(
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
+      rodList: rodList ?? this.rodList,
+      reelList: reelList ?? this.reelList,
+      lureList: lureList ?? this.lureList,
+      equipmentStats: equipmentStats ?? this.equipmentStats,
+      selectedType: selectedType ?? this.selectedType,
+      allExpanded: allExpanded ?? this.allExpanded,
+      expandedId: expandedId,
+    );
   }
 }
 

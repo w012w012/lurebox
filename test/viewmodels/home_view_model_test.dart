@@ -61,7 +61,7 @@ void main() {
         // Create a new viewModel to test initial state without triggering loadData
         final newViewModel = HomeViewModel(mockRepository);
 
-        expect(newViewModel.state.isLoading, true);
+        expect(newViewModel.state.isLoading, isTrue);
         expect(newViewModel.state.errorMessage, isNull);
         expect(newViewModel.state.todayStats,
             const CatchStats(total: 0, release: 0, keep: 0),);
@@ -109,7 +109,7 @@ void main() {
         await viewModel.loadData();
 
         // Assert
-        expect(viewModel.state.isLoading, false);
+        expect(viewModel.state.isLoading, isFalse);
         expect(viewModel.state.errorMessage, isNull);
         expect(viewModel.state.todayStats, dashboardData.todayStats);
         expect(viewModel.state.todaySpecies, dashboardData.todaySpecies);
@@ -257,7 +257,7 @@ void main() {
         await viewModel.loadData();
 
         // Assert
-        expect(viewModel.state.isLoading, false);
+        expect(viewModel.state.isLoading, isFalse);
         expect(viewModel.state.errorMessage, contains('Database error'));
       });
 
@@ -271,7 +271,7 @@ void main() {
         await viewModel.loadData();
 
         // Assert
-        expect(viewModel.state.isLoading, false);
+        expect(viewModel.state.isLoading, isFalse);
         expect(viewModel.state.errorMessage, contains('Network failure'));
       });
 
@@ -318,7 +318,7 @@ void main() {
 
         // Assert - Error is set
         expect(viewModel.state.errorMessage, contains('New error'));
-        expect(viewModel.state.isLoading, false);
+        expect(viewModel.state.isLoading, isFalse);
       });
     });
 
@@ -369,7 +369,7 @@ void main() {
 
         // Assert
         expect(viewModel.state.errorMessage, contains('Refresh failed'));
-        expect(viewModel.state.isLoading, false);
+        expect(viewModel.state.isLoading, isFalse);
       });
     });
 

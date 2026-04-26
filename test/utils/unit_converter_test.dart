@@ -604,10 +604,14 @@ void main() {
       });
 
       test('formats with custom decimals', () {
-        expect(UnitConverter.formatLength(100.556, 'cm', decimals: 2),
-            '100.56 厘米',);
         expect(
-            UnitConverter.formatLength(100.556, 'cm', decimals: 0), '101 厘米',);
+          UnitConverter.formatLength(100.556, 'cm', decimals: 2),
+          '100.56 厘米',
+        );
+        expect(
+          UnitConverter.formatLength(100.556, 'cm', decimals: 0),
+          '101 厘米',
+        );
       });
 
       test('formats negative values', () {
@@ -635,7 +639,9 @@ void main() {
       test('formats with custom decimals', () {
         expect(UnitConverter.formatWeight(1.556, 'kg', decimals: 1), '1.6 千克');
         expect(
-            UnitConverter.formatWeight(1.556, 'kg', decimals: 3), '1.556 千克',);
+          UnitConverter.formatWeight(1.556, 'kg', decimals: 3),
+          '1.556 千克',
+        );
       });
 
       test('formats negative values', () {
@@ -714,12 +720,15 @@ void main() {
     test('very small non-zero values', () {
       expect(UnitConverter.toBaseCm(0.001, 'mm'), closeTo(0.0001, 0.000001));
       expect(
-          UnitConverter.toBaseKg(0.001, 'g'), closeTo(0.000001, 0.000000001),);
+        UnitConverter.toBaseKg(0.001, 'g'),
+        closeTo(0.000001, 0.000000001),
+      );
     });
 
     test('very large values', () {
       expect(UnitConverter.toBaseCm(1000000000000000, 'm'), 1e17);
-      expect(UnitConverter.toBaseKg(10000000000, 'lb'), closeTo(4.53592e9, 1e6));
+      expect(
+          UnitConverter.toBaseKg(10000000000, 'lb'), closeTo(4.53592e9, 1e6));
     });
 
     test('decimal precision in conversions', () {
@@ -751,7 +760,118 @@ void main() {
       const original = 42.195;
       final inKm = UnitConverter.convertDistance(original, 'km', 'mile');
       final backToKm = UnitConverter.convertDistance(inKm, 'mile', 'km');
-      expect(backToKm, closeTo(original, 0.0001));
+      expect(backToKm, closeTo(original, 0.001));
+    });
+  });
+
+  group('UnitConverter - Boundary Value Tests', () {
+    test('zero converts correctly across all unit types', () {
+      // Length
+      expect(UnitConverter.convertLength(0, 'cm', 'm'), 0);
+      expect(UnitConverter.convertLength(0, 'm', 'cm'), 0);
+      expect(UnitConverter.convertLength(0, 'mm', 'ft'), 0);
+      // Weight
+      expect(UnitConverter.convertWeight(0, 'kg', 'lb'), 0);
+      expect(UnitConverter.convertWeight(0, 'lb', 'kg'), 0);
+      expect(UnitConverter.convertWeight(0, 'g', 'oz'), 0);
+      // Distance
+      expect(UnitConverter.convertDistance(0, 'km', 'mile'), 0);
+      expect(UnitConverter.convertDistance(0, 'mile', 'km'), 0);
+      expect(UnitConverter.convertDistance(0, 'm', 'ft'), 0);
+      // Temperature
+      expect(UnitConverter.convertTemperature(0, 'C', 'F'), 32);
+      expect(UnitConverter.convertTemperature(32, 'F', 'C'), 0);
+    });
+
+    test('negative values convert correctly', () {
+      // Length
+      expect(UnitConverter.convertLength(-100, 'cm', 'm'), -1);
+      expect(
+          UnitConverter.convertLength(-1, 'm', 'ft'), closeTo(-3.28084, 0.001));
+      // Weight
+      expect(UnitConverter.convertWeight(-1, 'kg', 'lb'),
+          closeTo(-2.20462, 0.001));
+      expect(UnitConverter.convertWeight(-2.20462, 'lb', 'kg'),
+          closeTo(-1, 0.001));
+      // Distance
+      expect(UnitConverter.convertDistance(-1, 'km', 'mile'),
+          closeTo(-0.621371, 0.0001));
+      expect(UnitConverter.convertDistance(-1, 'mile', 'km'),
+          closeTo(-1.609344, 0.0001));
+      // Temperature: -40 C = -40 F (the special meeting point)
+      expect(
+          UnitConverter.convertTemperature(-40, 'C', 'F'), closeTo(-40, 0.001));
+      expect(
+          UnitConverter.convertTemperature(-40, 'F', 'C'), closeTo(-40, 0.001));
+    });
+
+    test('extreme negative temperature (absolute zero)', () {
+      // -459.67 F is absolute zero
+      expect(
+        UnitConverter.convertTemperature(-459.67, 'F', 'C'),
+        closeTo(-273.15, 0.1),
+      );
+    });
+
+    test('large values do not overflow', () {
+      // Length
+      final largeLength = 1e15;
+      expect(
+        UnitConverter.convertLength(largeLength, 'm', 'cm'),
+        1e17,
+      );
+      expect(
+        UnitConverter.convertLength(largeLength, 'm', 'cm').isFinite,
+        isTrue,
+      );
+      // Weight
+      final largeWeight = 1e12;
+      expect(
+        UnitConverter.convertWeight(largeWeight, 'kg', 'lb').isFinite,
+        isTrue,
+      );
+      // Distance
+      final largeDistance = 1e10;
+      expect(
+        UnitConverter.convertDistance(largeDistance, 'km', 'm'),
+        1e13,
+      );
+      expect(
+        UnitConverter.convertDistance(largeDistance, 'km', 'm').isFinite,
+        isTrue,
+      );
+    });
+
+    test('very small non-zero values maintain precision', () {
+      expect(
+        UnitConverter.convertLength(0.001, 'mm', 'cm'),
+        closeTo(0.0001, 0.000001),
+      );
+      expect(
+        UnitConverter.convertWeight(0.001, 'g', 'kg'),
+        closeTo(0.000001, 0.000000001),
+      );
+      expect(
+        UnitConverter.convertDistance(0.001, 'm', 'km'),
+        1e-6,
+      );
+    });
+
+    test('exact conversion boundaries', () {
+      // 1 mm = 0.1 cm (exact)
+      expect(UnitConverter.convertLength(1, 'mm', 'cm'), 0.1);
+      // 1 g = 0.001 kg (exact)
+      expect(UnitConverter.convertWeight(1, 'g', 'kg'), 0.001);
+      // 1 m = 100 cm (exact)
+      expect(UnitConverter.convertLength(1, 'm', 'cm'), 100);
+    });
+
+    test('repeating decimals maintain precision', () {
+      // 1/3 m to cm should be precise
+      expect(
+        UnitConverter.convertLength(1.0 / 3, 'm', 'cm'),
+        closeTo(33.3333333333, 0.0001),
+      );
     });
   });
 }

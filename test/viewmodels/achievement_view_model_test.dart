@@ -135,7 +135,7 @@ void main() {
         expect(
             viewModel.state.filteredAchievements
                 .every((a) => a.category == 'catch'),
-            true,);
+            isTrue,);
         expect(viewModel.state.category, AchievementCategory.catchCount);
       });
 
@@ -239,7 +239,7 @@ void main() {
         viewModel = AchievementViewModel(mockService);
         await viewModel.loadAchievements();
 
-        expect(viewModel.isUnlocked('catch_1'), true);
+        expect(viewModel.isUnlocked('catch_1'), isTrue);
       });
 
       test('returns false for locked achievement', () async {
@@ -253,7 +253,7 @@ void main() {
         viewModel = AchievementViewModel(mockService);
         await viewModel.loadAchievements();
 
-        expect(viewModel.isUnlocked('catch_1'), false);
+        expect(viewModel.isUnlocked('catch_1'), isFalse);
       });
 
       test('returns false for non-existing achievement id', () async {
@@ -263,7 +263,7 @@ void main() {
         viewModel = AchievementViewModel(mockService);
         await viewModel.loadAchievements();
 
-        expect(viewModel.isUnlocked('non_existing'), false);
+        expect(viewModel.isUnlocked('non_existing'), isFalse);
       });
     });
 
@@ -299,12 +299,12 @@ void main() {
   group('Achievement model', () {
     test('isUnlocked returns true when current >= target', () {
       final achievement = createAchievement(current: 10);
-      expect(achievement.isUnlocked, true);
+      expect(achievement.isUnlocked, isTrue);
     });
 
     test('isLocked returns true when current < target', () {
       final achievement = createAchievement();
-      expect(achievement.isLocked, true);
+      expect(achievement.isLocked, isTrue);
     });
 
     test('progressPercent calculates correctly', () {

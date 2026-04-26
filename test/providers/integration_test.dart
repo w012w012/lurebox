@@ -78,12 +78,12 @@ void main() {
       test('initial state is correct', () {
         final state = container.read(fishListViewModelProvider);
         expect(state.catches, isEmpty);
-        expect(state.isLoading, false);
+        expect(state.isLoading, isFalse);
         expect(state.errorMessage, isNull);
         expect(state.selectedIds, isEmpty);
-        expect(state.isSelectionMode, false);
+        expect(state.isSelectionMode, isFalse);
         expect(state.currentPage, 0);
-        expect(state.hasMore, true);
+        expect(state.hasMore, isTrue);
         expect(state.totalCount, 0);
         expect(state.filter, const FishFilter());
       });
@@ -103,17 +103,17 @@ void main() {
         final viewModel = container.read(fishListViewModelProvider.notifier);
 
         // Initial state
-        expect(container.read(fishListViewModelProvider).isLoading, false);
+        expect(container.read(fishListViewModelProvider).isLoading, isFalse);
 
         // Load
         final loadFuture = viewModel.loadCatches();
-        expect(container.read(fishListViewModelProvider).isLoading, true);
+        expect(container.read(fishListViewModelProvider).isLoading, isTrue);
 
         await loadFuture;
-        expect(container.read(fishListViewModelProvider).isLoading, false);
+        expect(container.read(fishListViewModelProvider).isLoading, isFalse);
         expect(container.read(fishListViewModelProvider).catches, [fish]);
         expect(container.read(fishListViewModelProvider).currentPage, 1);
-        expect(container.read(fishListViewModelProvider).hasMore, false);
+        expect(container.read(fishListViewModelProvider).hasMore, isFalse);
       });
 
       test('loadCatches with reset=true clears existing catches', () async {
@@ -165,7 +165,7 @@ void main() {
           container.read(fishListViewModelProvider).errorMessage,
           contains('Database error'),
         );
-        expect(container.read(fishListViewModelProvider).isLoading, false);
+        expect(container.read(fishListViewModelProvider).isLoading, isFalse);
       });
 
       test('error state is cleared on subsequent load', () async {
@@ -412,13 +412,13 @@ void main() {
 
         // Start loading
         final loadFuture = viewModel.loadCatches();
-        expect(container.read(fishListViewModelProvider).isLoading, true);
+        expect(container.read(fishListViewModelProvider).isLoading, isTrue);
 
         // Try loadMore while loading
         viewModel.loadMore();
 
         // Should still be loading, not start another load
-        expect(container.read(fishListViewModelProvider).isLoading, true);
+        expect(container.read(fishListViewModelProvider).isLoading, isTrue);
 
         await loadFuture;
       });
@@ -439,7 +439,7 @@ void main() {
         await viewModel.loadCatches();
 
         // Verify hasMore is false (because 0 items < pageSize of 20)
-        expect(container.read(fishListViewModelProvider).hasMore, false);
+        expect(container.read(fishListViewModelProvider).hasMore, isFalse);
 
         // Get current state
         final stateBefore = container.read(fishListViewModelProvider);

@@ -468,10 +468,10 @@ void main() {
         viewModel.toggleSelectionMode();
 
         viewModel.toggleSelection(1);
-        expect(viewModel.state.selectedIds.contains(1), true);
+        expect(viewModel.state.selectedIds, contains(1));
 
         viewModel.toggleSelection(2);
-        expect(viewModel.state.selectedIds.contains(2), true);
+        expect(viewModel.state.selectedIds, contains(2));
         expect(viewModel.state.selectedIds.length, 2);
       });
 
@@ -483,7 +483,7 @@ void main() {
         expect(viewModel.state.selectedIds.length, 2);
 
         viewModel.toggleSelection(1);
-        expect(viewModel.state.selectedIds.contains(1), false);
+        expect(viewModel.state.selectedIds, isNot(contains(1)));
         expect(viewModel.state.selectedIds.length, 1);
       });
 
