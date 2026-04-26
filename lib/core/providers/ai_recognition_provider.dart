@@ -15,10 +15,14 @@ class AiRecognitionSettingsNotifier
   Future<void> _loadSettings() async {
     try {
       final settings = await _service.getAiRecognitionSettings();
-      state = settings;
+      if (mounted) {
+        state = settings;
+      }
     } catch (_) {
       // 安全降级：使用默认设置，不阻塞应用启动
-      state = const AiRecognitionSettings();
+      if (mounted) {
+        state = const AiRecognitionSettings();
+      }
     }
   }
 

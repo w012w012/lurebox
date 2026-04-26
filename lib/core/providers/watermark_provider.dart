@@ -12,7 +12,9 @@ class WatermarkSettingsNotifier extends StateNotifier<WatermarkSettings> {
 
   Future<void> _loadSettings() async {
     final settings = await _service.getWatermarkSettings();
-    state = settings;
+    if (mounted) {
+      state = settings;
+    }
   }
 
   Future<void> updateSettings(WatermarkSettings settings) async {

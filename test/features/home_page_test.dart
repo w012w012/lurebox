@@ -102,8 +102,14 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
 
-      // Stats cards should be visible
-      expect(find.byType(HomePage), findsOneWidget);
+      // Verify today stats are displayed: total "5 条", release "放流: 3", keep "保留: 2"
+      expect(find.text('5 条'), findsOneWidget);
+      expect(find.text('放流: 3'), findsOneWidget);
+      expect(find.text('保留: 2'), findsOneWidget);
+      // Verify month stats are displayed: total "20 条", release "放流: 15", keep "保留: 5"
+      expect(find.text('20 条'), findsOneWidget);
+      expect(find.text('放流: 15'), findsOneWidget);
+      expect(find.text('保留: 5'), findsOneWidget);
     });
 
     testWidgets('shows today stats card when data loaded', (tester) async {
@@ -129,8 +135,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
 
-      // Page should render without errors
-      expect(find.byType(HomePage), findsOneWidget);
+      // Verify today stats are displayed: total "3 条", release "放流: 2", keep "保留: 1"
+      expect(find.text('3 条'), findsOneWidget);
+      expect(find.text('放流: 2'), findsOneWidget);
+      expect(find.text('保留: 1'), findsOneWidget);
     });
 
     testWidgets('shows month stats card when data loaded', (tester) async {
@@ -156,8 +164,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
 
-      // Page should render without errors
-      expect(find.byType(HomePage), findsOneWidget);
+      // Verify month stats are displayed: total "15 条", release "放流: 10", keep "保留: 5"
+      expect(find.text('15 条'), findsOneWidget);
+      expect(find.text('放流: 10'), findsOneWidget);
+      expect(find.text('保留: 5'), findsOneWidget);
     });
   });
 }
