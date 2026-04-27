@@ -471,9 +471,6 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     if (e['reel_ratio'] != null) {
       items.add(_InfoItem(strings.reelRatio, e['reel_ratio'] as String));
     }
-    if (e['reel_capacity'] != null) {
-      items.add(_InfoItem(strings.reelCapacity, e['reel_capacity'] as String));
-    }
     if (e['reel_brake_type'] != null) {
       items.add(_InfoItem(strings.reelBrakeType, _getBrakeTypeLabel(e['reel_brake_type'] as String, strings)));
     }
