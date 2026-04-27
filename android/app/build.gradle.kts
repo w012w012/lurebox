@@ -14,6 +14,15 @@ if (localPropertiesFile.exists()) {
     FileInputStream(localPropertiesFile).use { localProperties.load(it) }
 }
 
+// Read version from pubspec.yaml
+val pubspecFile = File(rootProject.rootDir.parent, "pubspec.yaml")
+val pubspecVersion = pubspecFile.readLines()
+    .firstOrNull { it.trimStart().startsWith("version:") }
+    ?.substringAfter("version:")?.trim() ?: "1.0.0"
+val versionParts = pubspecVersion.split("+")
+val flutterVersionName = versionParts.getOrElse(0) { "1.0.0" }
+val flutterVersionCode = versionParts.getOrElse(1) { "1" }.toIntOrNull() ?: 1
+
 android {
     namespace = "com.lurebox.lurebox"
     compileSdk = 36
@@ -32,8 +41,8 @@ android {
         applicationId = "com.lurebox.lurebox"
         minSdk = flutter.minSdkVersion
         targetSdk = 34
-        versionCode = project.property("flutter.versionCode").toString().toInt()
-        versionName = project.property("flutter.versionName").toString()
+        versionCode = flutterVersionCode
+        versionName = flutterVersionName
     }
 
     signingConfigs {
