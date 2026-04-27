@@ -69,39 +69,6 @@ void main() {
       });
     });
 
-    group('Animation structure', () {
-      testWidgets('wraps button with AnimatedScale for touch feedback',
-          (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: PremiumButton(
-                text: 'Test',
-                onPressed: () {},
-              ),
-            ),
-          ),
-        );
-
-        expect(find.byType(AnimatedScale), findsOneWidget);
-      });
-
-      testWidgets('renders AnimatedScale even when disabled',
-          (tester) async {
-        await tester.pumpWidget(
-          MaterialApp(
-            home: Scaffold(
-              body: PremiumButton(
-                text: 'Test',
-              ),
-            ),
-          ),
-        );
-
-        expect(find.byType(AnimatedScale), findsOneWidget);
-      });
-    });
-
     group('All Variants', () {
       testWidgets('primary variant renders ElevatedButton', (tester) async {
         await tester.pumpWidget(

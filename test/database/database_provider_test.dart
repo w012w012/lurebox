@@ -861,7 +861,7 @@ void main() {
           // Close should not throw
           await expectLater(provider.close(), completes);
         } finally {
-          _deleteDb(dbPath);
+          await _deleteDb(dbPath);
         }
       });
     });
@@ -877,10 +877,24 @@ String _createTempDbPath(String suffix) {
   return '${tempDir.path}/lurebox_test_$suffix.db';
 }
 
-void _deleteDb(String path) {
+Future<void> _deleteDb(String path) async {
   final file = File(path);
-  if (file.existsSync()) {
+  if (!file.existsSync()) return;
+
+  // Wait for OS to release file lock after db.close()
+  await Future.delayed(const Duration(milliseconds: 100));
+
+  try {
     file.deleteSync();
+  } on PathAccessException {
+    // Retry once after longer delay if file is still locked
+    await Future.delayed(const Duration(milliseconds: 200));
+    try {
+      file.deleteSync();
+    } catch (e) {
+      // Log warning but don't throw - test cleanup is best-effort
+      print('Warning: Failed to delete test DB at $path after retry: $e');
+    }
   }
 }
 
