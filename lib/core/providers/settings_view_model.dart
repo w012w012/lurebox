@@ -4,6 +4,7 @@ import 'package:lurebox/core/services/backup_service.dart';
 import 'package:lurebox/core/services/backup_zip_service.dart';
 import 'package:lurebox/core/services/export_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 
 class SettingsState {
@@ -12,7 +13,7 @@ class SettingsState {
     this.isLoading = false,
     this.errorMessage,
     this.totalCount = 0,
-    this.appVersion = '1.0.5',
+    this.appVersion = '',
     this.isExporting = false,
     this.isImporting = false,
     this.isUploading = false,
@@ -79,9 +80,18 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     if (!mounted) return;
     state = state.copyWith(isLoading: true, errorMessage: () => null);
     try {
-      final count = await _fishCatchService.getCount();
+      final results = await Future.wait([
+        _fishCatchService.getCount(),
+        PackageInfo.fromPlatform(),
+      ]);
       if (!mounted) return;
-      state = state.copyWith(isLoading: false, totalCount: count);
+      final count = results[0] as int;
+      final packageInfo = results[1] as PackageInfo;
+      state = state.copyWith(
+        isLoading: false,
+        totalCount: count,
+        appVersion: '${packageInfo.version}+${packageInfo.buildNumber}',
+      );
     } on Exception catch (e) {
       if (!mounted) return;
       state = state.copyWith(isLoading: false, errorMessage: e.toString);
