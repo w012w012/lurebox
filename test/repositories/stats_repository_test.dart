@@ -1006,4 +1006,173 @@ void main() {
       expect(count, equals(2));
     });
   });
+
+  // ─── getConsecutiveDays ───
+
+  group('getConsecutiveDays', () {
+    test('returns 3 for consecutive 3 days (today, yesterday, day before)',
+        () async {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day, 10);
+      final yesterday = DateTime(now.year, now.month, now.day - 1, 14);
+      final dayBefore = DateTime(now.year, now.month, now.day - 2, 9);
+
+      await insertCatch(
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: today,
+      );
+      await insertCatch(
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.release,
+        catchTime: yesterday,
+      );
+      await insertCatch(
+        species: 'Perch',
+        length: 20,
+        fate: FishFateType.keep,
+        catchTime: dayBefore,
+      );
+
+      expect(await repository.getConsecutiveDays(), equals(3));
+    });
+
+    test(
+        'returns 2 when streak breaks (today, yesterday, 3 days ago, skip day before)',
+        () async {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day, 10);
+      final yesterday = DateTime(now.year, now.month, now.day - 1, 14);
+      final threeDaysAgo = DateTime(now.year, now.month, now.day - 3, 9);
+
+      await insertCatch(
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: today,
+      );
+      await insertCatch(
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.release,
+        catchTime: yesterday,
+      );
+      await insertCatch(
+        species: 'Perch',
+        length: 20,
+        fate: FishFateType.keep,
+        catchTime: threeDaysAgo,
+      );
+
+      expect(await repository.getConsecutiveDays(), equals(2));
+    });
+
+    test('returns 1 when no catch today but last entry is yesterday',
+        () async {
+      final now = DateTime.now();
+      final yesterday = DateTime(now.year, now.month, now.day - 1, 14);
+
+      await insertCatch(
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: yesterday,
+      );
+
+      expect(await repository.getConsecutiveDays(), equals(1));
+    });
+
+    test('returns 0 for empty database', () async {
+      expect(await repository.getConsecutiveDays(), equals(0));
+    });
+
+    test('returns 1 when multiple catches on same day', () async {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day, 10);
+
+      await insertCatch(
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: today,
+      );
+      await insertCatch(
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.release,
+        catchTime: today,
+      );
+      await insertCatch(
+        species: 'Perch',
+        length: 20,
+        fate: FishFateType.keep,
+        catchTime: today,
+      );
+
+      expect(await repository.getConsecutiveDays(), equals(1));
+    });
+
+    test('returns correct count for cross-month consecutive streak',
+        () async {
+      // Simulate: April 28, 29, 30 + May 1, 2 = 5 consecutive days across months
+      final now = DateTime.now();
+      final currentMonth = now.month;
+      final currentYear = now.year;
+
+      // Handle year rollover for January
+      int targetMonth = currentMonth;
+      int targetYear = currentYear;
+      if (currentMonth == 1) {
+        targetMonth = 12;
+        targetYear = currentYear - 1;
+      }
+
+      // Use a date in the previous month
+      final day28 = DateTime(targetYear, targetMonth, 28, 10);
+      final day29 = DateTime(targetYear, targetMonth, 29, 11);
+      final day30 = DateTime(targetYear, targetMonth, 30, 12);
+
+      // Insert 3 days in previous month
+      await insertCatch(
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: day28,
+      );
+      await insertCatch(
+        species: 'Trout',
+        length: 25,
+        fate: FishFateType.release,
+        catchTime: day29,
+      );
+      await insertCatch(
+        species: 'Perch',
+        length: 20,
+        fate: FishFateType.keep,
+        catchTime: day30,
+      );
+
+      // Now add consecutive days in current month
+      final today = DateTime(now.year, now.month, now.day, 10);
+      final yesterday = DateTime(now.year, now.month, now.day - 1, 10);
+
+      await insertCatch(
+        species: 'Pike',
+        length: 40,
+        fate: FishFateType.release,
+        catchTime: yesterday,
+      );
+      await insertCatch(
+        species: 'Walleye',
+        length: 35,
+        fate: FishFateType.release,
+        catchTime: today,
+      );
+
+      // Expected: 5 consecutive days (day30, day29, day28, yesterday, today)
+      expect(await repository.getConsecutiveDays(), equals(5));
+    });
+  });
 }

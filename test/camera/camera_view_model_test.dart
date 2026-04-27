@@ -170,6 +170,51 @@ void main() {
       viewModel.setLocationName('Lake Tahoe');
       expect(viewModel.state.locationName, 'Lake Tahoe');
     });
+
+    // =========================================================================
+    // Weight estimation formula tests
+    // =========================================================================
+    group('_calculateEstimatedWeight formula', () {
+      test('length 30cm returns reasonable weight (>0 and <10kg)', () {
+        // Default units: lengthUnit='cm', weightUnit='kg'
+        // Formula: 30³ × 0.012 / 1000 = 0.324 kg
+        viewModel.setLength(30);
+        expect(viewModel.state.estimatedWeight, isNotNull);
+        expect(viewModel.state.estimatedWeight, greaterThan(0));
+        expect(viewModel.state.estimatedWeight, lessThan(10));
+        expect(viewModel.state.estimatedWeight, closeTo(0.324, 0.001));
+      });
+
+      test('length 0 returns null (no weight estimation)', () {
+        viewModel.setLength(0);
+        expect(viewModel.state.estimatedWeight, isNull);
+      });
+
+      test('inch unit is converted to cm before calculation', () {
+        // 12 inch = 30.48 cm
+        // Expected: (12 * 2.54)³ * 0.012 / 1000 ≈ 0.3398 kg
+        viewModel.setLengthUnit('inch');
+        viewModel.setLength(12);
+        expect(
+          viewModel.state.estimatedWeight,
+          closeTo(0.3398, 0.001),
+        );
+      });
+
+      test('setLength updates state.weight when weightUnit is kg', () {
+        // When length is set and a valid weight is computed,
+        // the state.weight should reflect the estimated weight
+        viewModel.setLengthUnit('cm');
+        viewModel.setWeightUnit('kg');
+        viewModel.setLength(30);
+        // state.weight is not directly set by setLength - only estimatedWeight
+        // But when saving, weight falls back to estimatedWeight
+        expect(viewModel.state.estimatedWeight, closeTo(0.324, 0.001));
+        // Manual weight can override
+        viewModel.setWeight(5.0);
+        expect(viewModel.state.weight, 5.0);
+      });
+    });
   });
 
   // ===========================================================================

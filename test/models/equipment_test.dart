@@ -90,6 +90,146 @@ void main() {
     });
   });
 
+  group('Equipment._getField fallback behavior', () {
+    test('parses underscore key when underscore format exists (length_unit)', () {
+      final equipment = Equipment.fromMap({
+        'id': 1,
+        'type': 'rod',
+        'brand': 'Test',
+        'model': 'Model',
+        'length': '2.4',
+        'length_unit': 'm',
+        'sections': null,
+        'joint_type': null,
+        'material': null,
+        'hardness': null,
+        'weight_range': null,
+        'reel_bearings': null,
+        'reel_ratio': null,
+        'reel_capacity': null,
+        'reel_brake_type': null,
+        'reel_weight': null,
+        'reel_weight_unit': 'g',
+        'lure_type': null,
+        'lure_weight': null,
+        'lure_weight_unit': 'g',
+        'lure_size': null,
+        'lure_size_unit': 'cm',
+        'lure_color': null,
+        'lure_quantity': null,
+        'lure_quantity_unit': null,
+        'price': null,
+        'purchase_date': null,
+        'is_default': 0,
+        'is_deleted': 0,
+        'category': null,
+        'rod_action': null,
+        'reel_line': null,
+        'reel_line_date': null,
+        'reel_line_number': null,
+        'reel_line_length': null,
+        'line_length_unit': 'm',
+        'line_weight_unit': 'kg',
+        'created_at': '2024-01-01T00:00:00.000',
+        'updated_at': '2024-01-01T00:00:00.000',
+      });
+      expect(equipment.length, equals('2.4'));
+      expect(equipment.lengthUnit, equals('m'));
+    });
+
+    test('parses space key when only space format exists (length unit)', () {
+      final equipment = Equipment.fromMap({
+        'id': 1,
+        'type': 'rod',
+        'brand': 'Test',
+        'model': 'Model',
+        'length': '2.7',
+        'length unit': 'ft',
+        'sections': null,
+        'joint_type': null,
+        'material': null,
+        'hardness': null,
+        'weight_range': null,
+        'reel_bearings': null,
+        'reel_ratio': null,
+        'reel_capacity': null,
+        'reel_brake_type': null,
+        'reel_weight': null,
+        'reel_weight_unit': 'g',
+        'lure_type': null,
+        'lure_weight': null,
+        'lure_weight_unit': 'g',
+        'lure_size': null,
+        'lure_size_unit': 'cm',
+        'lure_color': null,
+        'lure_quantity': null,
+        'lure_quantity_unit': null,
+        'price': null,
+        'purchase_date': null,
+        'is_default': 0,
+        'is_deleted': 0,
+        'category': null,
+        'rod_action': null,
+        'reel_line': null,
+        'reel_line_date': null,
+        'reel_line_number': null,
+        'reel_line_length': null,
+        'line_length_unit': 'm',
+        'line_weight_unit': 'kg',
+        'created_at': '2024-01-01T00:00:00.000',
+        'updated_at': '2024-01-01T00:00:00.000',
+      });
+      // _getField falls back to space format when underscore not found
+      expect(equipment.length, equals('2.7'));
+      expect(equipment.lengthUnit, equals('ft'));
+    });
+
+    test('uses default value when neither underscore nor space key exists', () {
+      final equipment = Equipment.fromMap({
+        'id': 1,
+        'type': 'rod',
+        'brand': 'Test',
+        'model': 'Model',
+        'length': '2.4',
+        'sections': null,
+        'joint_type': null,
+        'material': null,
+        'hardness': null,
+        'weight_range': null,
+        'reel_bearings': null,
+        'reel_ratio': null,
+        'reel_capacity': null,
+        'reel_brake_type': null,
+        'reel_weight': null,
+        'reel_weight_unit': 'g',
+        'lure_type': null,
+        'lure_weight': null,
+        'lure_weight_unit': 'g',
+        'lure_size': null,
+        'lure_size_unit': 'cm',
+        'lure_color': null,
+        'lure_quantity': null,
+        'lure_quantity_unit': null,
+        'price': null,
+        'purchase_date': null,
+        'is_default': 0,
+        'is_deleted': 0,
+        'category': null,
+        'rod_action': null,
+        'reel_line': null,
+        'reel_line_date': null,
+        'reel_line_number': null,
+        'reel_line_length': null,
+        'line_length_unit': 'm',
+        'line_weight_unit': 'kg',
+        'created_at': '2024-01-01T00:00:00.000',
+        'updated_at': '2024-01-01T00:00:00.000',
+      });
+      // Both length_unit and length unit missing - uses default 'm'
+      expect(equipment.lengthUnit, equals('m'));
+    });
+  });
+
   group('Equipment.fromMap with standard keys', () {
     test('parses all standard fields correctly', () {
       final equipment = createTestEquipment(id: 42, type: EquipmentType.reel);
