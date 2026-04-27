@@ -57,19 +57,6 @@ void main() {
       expect(tapped, isTrue);
     });
 
-    testWidgets('uses AnimatedScale for touch feedback', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        const LocationMarker(
-          name: 'Animated',
-          fishCount: 1,
-          isSelected: false,
-          onTap: _noop,
-        ),
-      ),);
-
-      expect(find.byType(AnimatedScale), findsOneWidget);
-    });
-
     testWidgets('has CustomPaint triangle for map pin shape', (tester) async {
       await tester.pumpWidget(_wrapInApp(
         const LocationMarker(

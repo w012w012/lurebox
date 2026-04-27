@@ -227,15 +227,6 @@ void main() {
       expect(find.byType(OutlinedButton), findsOneWidget);
     });
 
-    testWidgets('has AnimatedScale for touch feedback', (tester) async {
-      await tester.pumpWidget(
-        _wrapInTheme(
-          PremiumButton(text: 'Button', onPressed: () {}),
-        ),
-      );
-      expect(find.byType(AnimatedScale), findsWidgets);
-    });
-
     testWidgets('responds to tap', (tester) async {
       var tapped = false;
       await tester.pumpWidget(

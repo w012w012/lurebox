@@ -430,6 +430,142 @@ void main() {
       });
     });
 
+    group('setSearchQuery', () {
+      test('updates searchQuery in filter', () async {
+        when(() => mockRepository.getFilteredPage(
+              page: any(named: 'page'),
+              pageSize: any(named: 'pageSize'),
+              startDate: any(named: 'startDate'),
+              endDate: any(named: 'endDate'),
+              fate: any(named: 'fate'),
+              species: any(named: 'species'),
+              orderBy: any(named: 'orderBy'),
+            ),).thenAnswer(
+          (_) async => const PaginatedResult(
+            items: [],
+            totalCount: 0,
+            page: 1,
+            pageSize: 20,
+            hasMore: false,
+          ),
+        );
+
+        viewModel.setSearchQuery('bass');
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        expect(viewModel.state.filter.searchQuery, equals('bass'));
+      });
+
+      test('clears searchQuery when null is passed', () async {
+        when(() => mockRepository.getFilteredPage(
+              page: any(named: 'page'),
+              pageSize: any(named: 'pageSize'),
+              startDate: any(named: 'startDate'),
+              endDate: any(named: 'endDate'),
+              fate: any(named: 'fate'),
+              species: any(named: 'species'),
+              orderBy: any(named: 'orderBy'),
+            ),).thenAnswer(
+          (_) async => const PaginatedResult(
+            items: [],
+            totalCount: 0,
+            page: 1,
+            pageSize: 20,
+            hasMore: false,
+          ),
+        );
+
+        viewModel.setSearchQuery(null);
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        expect(viewModel.state.filter.searchQuery, isNull);
+      });
+
+      test('hasFilters returns true when searchQuery is set', () async {
+        when(() => mockRepository.getFilteredPage(
+              page: any(named: 'page'),
+              pageSize: any(named: 'pageSize'),
+              startDate: any(named: 'startDate'),
+              endDate: any(named: 'endDate'),
+              fate: any(named: 'fate'),
+              species: any(named: 'species'),
+              orderBy: any(named: 'orderBy'),
+            ),).thenAnswer(
+          (_) async => const PaginatedResult(
+            items: [],
+            totalCount: 0,
+            page: 1,
+            pageSize: 20,
+            hasMore: false,
+          ),
+        );
+
+        viewModel.setSearchQuery('test');
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        expect(viewModel.state.hasFilters, isTrue);
+      });
+    });
+
+    group('setCustomDateRange', () {
+      test('sets custom date range and timeFilter to custom', () async {
+        when(() => mockRepository.getFilteredPage(
+              page: any(named: 'page'),
+              pageSize: any(named: 'pageSize'),
+              startDate: any(named: 'startDate'),
+              endDate: any(named: 'endDate'),
+              fate: any(named: 'fate'),
+              species: any(named: 'species'),
+              orderBy: any(named: 'orderBy'),
+            ),).thenAnswer(
+          (_) async => const PaginatedResult(
+            items: [],
+            totalCount: 0,
+            page: 1,
+            pageSize: 20,
+            hasMore: false,
+          ),
+        );
+
+        final startDate = DateTime(2024, 1, 1);
+        final endDate = DateTime(2024, 12, 31);
+
+        viewModel.setCustomDateRange(startDate, endDate);
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        expect(viewModel.state.filter.timeFilter, equals('custom'));
+        expect(viewModel.state.filter.customStartDate, equals(startDate));
+        expect(viewModel.state.filter.customEndDate, equals(endDate));
+      });
+
+      test('can clear custom date range by passing nulls', () async {
+        when(() => mockRepository.getFilteredPage(
+              page: any(named: 'page'),
+              pageSize: any(named: 'pageSize'),
+              startDate: any(named: 'startDate'),
+              endDate: any(named: 'endDate'),
+              fate: any(named: 'fate'),
+              species: any(named: 'species'),
+              orderBy: any(named: 'orderBy'),
+            ),).thenAnswer(
+          (_) async => const PaginatedResult(
+            items: [],
+            totalCount: 0,
+            page: 1,
+            pageSize: 20,
+            hasMore: false,
+          ),
+        );
+
+        viewModel.setCustomDateRange(null, null);
+        await Future.delayed(const Duration(milliseconds: 50));
+
+        expect(viewModel.state.filter.timeFilter, equals('custom'));
+        expect(viewModel.state.filter.customStartDate, isNull);
+        expect(viewModel.state.filter.customEndDate, isNull);
+      });
+    });
+
     group('clearFilters', () {
       test('resets all filters to default', () {
         // clearFilters directly sets state.filter to FishFilter()

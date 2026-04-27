@@ -413,5 +413,99 @@ void main() {
         await tempDir.delete();
       });
     });
+
+    group('WebDAV Error Handling', () {
+      // Test validation error paths that don't require HTTP mocking
+      // Note: downloadFromWebDAV catches ALL exceptions and returns null
+      // So error cases for download return null, not throw
+
+      test(
+        'testWebDAVConnection returns false when URL has empty host',
+        () async {
+          // This validation happens BEFORE any HTTP call
+          final result = await backupService.testWebDAVConnection(
+            serverUrl: 'https://',  // No host, just scheme
+            username: 'testuser',
+            password: 'testpass',
+          );
+
+          expect(result, isFalse);
+        },
+      );
+
+      test(
+        'testWebDAVConnection returns false when URL does not use HTTPS',
+        () async {
+          final result = await backupService.testWebDAVConnection(
+            serverUrl: 'http://example.com/webdav',  // HTTP, not HTTPS
+            username: 'testuser',
+            password: 'testpass',
+          );
+
+          expect(result, isFalse);
+        },
+      );
+
+      test(
+        'downloadFromWebDAV returns null for path traversal filename',
+        () async {
+          // Path traversal attempt - downloadFromWebDAV catches exception and returns null
+          final result = await backupService.downloadFromWebDAV(
+            serverUrl: 'https://example.com/webdav',
+            username: 'testuser',
+            password: 'testpass',
+            fileName: '../etc/passwd',  // Path traversal attempt
+          );
+
+          // downloadFromWebDAV catches all exceptions and returns null
+          expect(result, isNull);
+        },
+      );
+
+      test(
+        'downloadFromWebDAV returns null for multiple path traversal in filename',
+        () async {
+          final result = await backupService.downloadFromWebDAV(
+            serverUrl: 'https://example.com/webdav',
+            username: 'testuser',
+            password: 'testpass',
+            fileName: '../../../backup.json',  // Multiple path traversal
+          );
+
+          // downloadFromWebDAV catches all exceptions and returns null
+          expect(result, isNull);
+        },
+      );
+
+      test(
+        'downloadFromWebDAV returns null when URL has empty host',
+        () async {
+          final result = await backupService.downloadFromWebDAV(
+            serverUrl: 'https://',  // No host
+            username: 'testuser',
+            password: 'testpass',
+            fileName: 'backup.json',
+          );
+
+          expect(result, isNull);
+        },
+      );
+
+      test(
+        'downloadFromWebDAV returns null when URL does not use HTTPS',
+        () async {
+          // downloadFromWebDAV catches HTTPS exception and returns null
+          final result = await backupService.downloadFromWebDAV(
+            serverUrl: 'http://example.com/webdav',  // HTTP, not HTTPS
+            username: 'testuser',
+            password: 'testpass',
+            fileName: 'backup.json',
+          );
+
+          // downloadFromWebDAV catches all exceptions and returns null
+          expect(result, isNull);
+        },
+      );
+    });
   });
 }

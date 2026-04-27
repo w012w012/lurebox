@@ -701,14 +701,17 @@ void main() {
       test('handles ZIP with truncated file content', () async {
         final archive = Archive();
 
-        // Create a file that claims size 1 but has more data
-        // This simulates a truncated file - the content doesn't match expected
+        // Create truncated content - only first 5 bytes instead of full content
+        final fullContent = 'valid content'.codeUnits;
+        final truncatedContent = fullContent.sublist(0, 5);
         archive.addFile(ArchiveFile(
           'lurebox.db',
-          1, // Claims size 1 but has more data
-          'valid content'.codeUnits,
+          truncatedContent.length,
+          truncatedContent,
         ));
 
+        // Metadata claims checksum of FULL content, but ZIP contains truncated
+        // This causes checksum mismatch during import validation
         final metadata = {
           'version': 1,
           'exportTime': DateTime.now().toIso8601String(),

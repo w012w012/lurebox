@@ -77,21 +77,6 @@ void main() {
     );
   }
 
-  /// The FAB-mode _NavTab Column overflows by ~10px in the test environment
-  /// because Positioned(bottom:25, top:25) inside the 80px Stack yields only
-  /// 30px of height for content that needs ~40px (icon 24 + gap 2 + text ~14).
-  /// This helper drains those overflow exceptions so they don't fail the test.
-  void drainOverflowErrors(WidgetTester tester) {
-    while (true) {
-      try {
-        final exception = tester.takeException();
-        if (exception == null) break;
-      } catch (_) {
-        break;
-      }
-    }
-  }
-
   group('PremiumNavigationBar — Standard Mode', () {
     testWidgets('renders all destination labels', (tester) async {
       await tester.pumpWidget(
@@ -201,7 +186,6 @@ void main() {
           showCenterFab: true,
         ),
       );
-      drainOverflowErrors(tester);
 
       for (final dest in fabDestinations) {
         expect(find.text(dest.label), findsOneWidget);
@@ -218,7 +202,6 @@ void main() {
           onCenterFabPressed: () {},
         ),
       );
-      drainOverflowErrors(tester);
 
       expect(find.byIcon(Icons.camera_alt), findsOneWidget);
     });
@@ -233,7 +216,6 @@ void main() {
           onCenterFabPressed: () {},
         ),
       );
-      drainOverflowErrors(tester);
 
       expect(
         find.byWidgetPredicate(
@@ -254,11 +236,9 @@ void main() {
           onCenterFabPressed: () => fabPressed = true,
         ),
       );
-      drainOverflowErrors(tester);
 
       await tester.tap(find.byIcon(Icons.camera_alt));
       await tester.pumpAndSettle();
-      drainOverflowErrors(tester);
 
       expect(fabPressed, isTrue);
     });
@@ -273,7 +253,6 @@ void main() {
           showCenterFab: true,
         ),
       );
-      drainOverflowErrors(tester);
 
       // Index 0 is selected → selectedIcon shown
       expect(find.byIcon(fabDestinations[0].selectedIcon), findsOneWidget);
@@ -297,7 +276,6 @@ void main() {
           showCenterFab: true,
         ),
       );
-      drainOverflowErrors(tester);
 
       // Tap via the InkWell ancestor — the text overflows its constraints
       // so tapping the Text directly doesn't register in the hit-test area.
@@ -308,7 +286,6 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      drainOverflowErrors(tester);
 
       expect(tapped, contains(1));
     });
@@ -323,7 +300,6 @@ void main() {
           showCenterFab: true,
         ),
       );
-      drainOverflowErrors(tester);
 
       for (final dest in fabDestinations) {
         await tester.tap(
@@ -333,7 +309,6 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        drainOverflowErrors(tester);
       }
 
       expect(tapped, orderedEquals([0, 1, 2, 3]));
@@ -349,7 +324,6 @@ void main() {
           showCenterFab: true,
         ),
       );
-      drainOverflowErrors(tester);
 
       // Index 2 is selected → its selectedIcon is shown
       expect(find.byIcon(fabDestinations[2].selectedIcon), findsOneWidget);
@@ -370,7 +344,6 @@ void main() {
           showCenterFab: true,
         ),
       );
-      drainOverflowErrors(tester);
 
       // FAB mode uses custom _NavTab via InkWell, not Material NavigationBar
       expect(find.byType(NavigationBar), findsNothing);
@@ -386,7 +359,6 @@ void main() {
           showCenterFab: true,
         ),
       );
-      drainOverflowErrors(tester);
 
       // The SizedBox(height: 80) holds the Stack layout
       final sizedBoxFinder = find.byWidgetPredicate(

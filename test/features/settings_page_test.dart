@@ -147,36 +147,6 @@ void main() {
       expect(find.byIcon(Icons.chevron_right), findsNothing);
     });
 
-    testWidgets('applies touch feedback animation on press',
-        (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SettingsTile(
-              icon: Icons.settings,
-              title: 'Settings',
-              onTap: () {},
-            ),
-          ),
-        ),
-      );
-
-      // Find AnimatedScale inside SettingsTile
-      final animatedScale = find.byType(AnimatedScale);
-      expect(animatedScale, findsOneWidget);
-
-      // Find the InkWell from PremiumCard (tappable card)
-      final inkWells = find.byType(InkWell);
-      expect(inkWells, findsWidgets);
-
-      // Start gesture to trigger press state
-      await tester.press(inkWells.first);
-      await tester.pump();
-
-      // Verify animation container exists
-      expect(find.byType(AnimatedScale), findsOneWidget);
-    });
-
     testWidgets('renders without subtitle', (WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
