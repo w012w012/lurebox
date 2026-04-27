@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:lurebox/core/database/database_provider.dart';
 import 'package:lurebox/core/services/app_logger.dart';
 import 'package:lurebox/core/services/error_service.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -282,6 +283,17 @@ class BackupZipService {
   BackupZipService(this._dbProvider);
   final DatabaseProvider _dbProvider;
 
+  /// 获取当前 app 版本号（从 pubspec.yaml 读取）
+  Future<String> _getAppVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      return '${packageInfo.version}+${packageInfo.buildNumber}';
+    } on Exception catch (e) {
+      AppLogger.w('BackupZipService', 'Failed to get app version: $e');
+      return 'unknown';
+    }
+  }
+
   /// 导出数据库和照片到 ZIP 文件
   ///
   /// 步骤：
@@ -339,7 +351,7 @@ class BackupZipService {
         photoCount: photoCount,
         fishCatchesCount: stats['fishCatchesCount']!,
         equipmentCount: stats['equipmentCount']!,
-        appVersion: '1.0.5',
+        appVersion: await _getAppVersion(),
       );
 
       final metadataJson =
@@ -415,7 +427,7 @@ class BackupZipService {
         photoCount: photoCount,
         fishCatchesCount: stats['fishCatchesCount']!,
         equipmentCount: stats['equipmentCount']!,
-        appVersion: '1.0.5',
+        appVersion: await _getAppVersion(),
       );
 
       final metadataJson =

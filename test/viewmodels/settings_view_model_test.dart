@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/providers/settings_view_model.dart';
 import 'package:lurebox/core/services/backup_service.dart';
@@ -24,6 +25,23 @@ void main() {
   late MockFishCatchService mockFishCatchService;
 
   setUpAll(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      const MethodChannel('dev.fluttercommunity.plus/package_info'),
+      (MethodCall methodCall) async {
+        if (methodCall.method == 'getAll') {
+          return {
+            'appName': 'LureBox',
+            'packageName': 'com.lurebox.app',
+            'version': '1.0.6',
+            'buildNumber': '6',
+          };
+        }
+        return null;
+      },
+    );
+
     registerFallbackValue(FakeBackupExportOptions());
     registerFallbackValue(FakeImportResult());
     registerFallbackValue(const BackupExportOptions());
@@ -67,11 +85,13 @@ void main() {
     // Initial State Tests
     // ============================================================
     group('initial state', () {
-      test('has correct default values after construction', () {
+      test('has correct default values after construction', () async {
+        // Wait for loadStats() to complete (called in constructor)
+        await Future<void>.delayed(Duration.zero);
         expect(viewModel.state.isLoading, false);
         expect(viewModel.state.errorMessage, isNull);
         expect(viewModel.state.totalCount, 0);
-        expect(viewModel.state.appVersion, '1.0.5');
+        expect(viewModel.state.appVersion, '1.0.6+6');
         expect(viewModel.state.isExporting, false);
         expect(viewModel.state.isImporting, false);
         expect(viewModel.state.isUploading, false);
