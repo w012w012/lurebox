@@ -45,6 +45,8 @@ void main() {
       'is_deleted': 0,
       'category': '路亚',
       'rod_action': '快调',
+      'rod_power': 'MH',
+      'notes': '测试备注',
       'reel_line': 'PE线',
       'reel_line_date': '2024-03-01T00:00:00.000',
       'reel_line_number': '0.8',
@@ -264,6 +266,8 @@ void main() {
       expect(equipment.isDeleted, isFalse);
       expect(equipment.category, equals('路亚'));
       expect(equipment.rodAction, equals('快调'));
+      expect(equipment.rodPower, equals('MH'));
+      expect(equipment.notes, equals('测试备注'));
       expect(equipment.reelLine, equals('PE线'));
       expect(equipment.reelLineNumber, equals('0.8'));
       expect(equipment.reelLineLength, equals('100'));
@@ -304,6 +308,8 @@ void main() {
         'is_deleted': 0,
         'category': null,
         'rod_action': null,
+        'rod_power': null,
+        'notes': null,
         'reel_line': null,
         'reel_line_date': null,
         'reel_line_number': null,
@@ -341,6 +347,8 @@ void main() {
       expect(equipment.purchaseDate, isNull);
       expect(equipment.category, isNull);
       expect(equipment.rodAction, isNull);
+      expect(equipment.rodPower, isNull);
+      expect(equipment.notes, isNull);
       expect(equipment.reelLine, isNull);
       expect(equipment.reelLineDate, isNull);
       expect(equipment.reelLineNumber, isNull);
@@ -598,6 +606,7 @@ void main() {
       expect(params.material, equals('碳纤维'));
       expect(params.hardness, equals('MH'));
       expect(params.rodAction, equals('快调'));
+      expect(params.rodPower, equals('MH'));
       expect(params.weightRange, equals('10-30g'));
     });
 
@@ -998,6 +1007,8 @@ void main() {
       expect(restored.isDeleted, equals(original.isDeleted));
       expect(restored.category, equals(original.category));
       expect(restored.rodAction, equals(original.rodAction));
+      expect(restored.rodPower, equals(original.rodPower));
+      expect(restored.notes, equals(original.notes));
       expect(restored.reelLine, equals(original.reelLine));
       expect(restored.lineLengthUnit, equals(original.lineLengthUnit));
       expect(restored.lineWeightUnit, equals(original.lineWeightUnit));
@@ -1016,6 +1027,7 @@ void main() {
       expect(params.hardness, isNull);
       expect(params.rodAction, isNull);
       expect(params.weightRange, isNull);
+      expect(params.rodPower, isNull);
     });
   });
 

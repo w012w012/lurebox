@@ -426,7 +426,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
           List<FishCatch>.from(results.map(FishCatch.fromMap));
 
       // Correct hasMore calculation based on total filtered count
-      final hasMore = (page + 1) * pageSize < totalCount;
+      final hasMore = page * pageSize < totalCount;
 
       return PaginatedResult(
         items: items,

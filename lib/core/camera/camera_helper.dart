@@ -38,32 +38,37 @@ class CameraHelper {
 
   Future<void> initCamera({BuildContext? context}) async {
     try {
-      await error_service.ErrorService().wrap(() async {
-        // Request camera permission with education dialog
-        if (context != null) {
-          final result =
-              await PermissionService().requestCameraPermission(context);
-          if (!result.granted) {
-            _errorMessage = _strings?.cameraPermissionRequired ?? 'Camera permission required';
+      await error_service.ErrorService().wrap(
+        () async {
+          // Request camera permission with education dialog
+          if (context != null) {
+            final result =
+                await PermissionService().requestCameraPermission(context);
+            if (!result.granted) {
+              _errorMessage = _strings?.cameraPermissionRequired ??
+                  'Camera permission required';
+              return;
+            }
+          } else {
+            // Fallback: direct request without education
+            final status = await Permission.camera.status;
+            if (!status.isGranted) {
+              await Permission.camera.request();
+            }
+          }
+
+          _cameras = await availableCameras();
+          if (_cameras.isEmpty) {
+            _errorMessage = _strings?.noCameraFound ?? 'No cameras available';
             return;
           }
-        } else {
-          // Fallback: direct request without education
-          final status = await Permission.camera.status;
-          if (!status.isGranted) {
-            await Permission.camera.request();
-          }
-        }
-
-        _cameras = await availableCameras();
-        if (_cameras.isEmpty) {
-          _errorMessage = _strings?.noCameraFound ?? 'No cameras available';
-          return;
-        }
-        await _initCameraController(_cameras[_currentCameraIndex]);
-      }, context: '初始化相机',);
+          await _initCameraController(_cameras[_currentCameraIndex]);
+        },
+        context: '初始化相机',
+      );
     } catch (e) {
-      _errorMessage = '${_strings?.cameraInitFailed ?? 'Camera initialization failed'}: $e';
+      _errorMessage =
+          '${_strings?.cameraInitFailed ?? 'Camera initialization failed'}: $e';
       _isInitialized = false;
     }
   }
@@ -84,7 +89,8 @@ class CameraHelper {
       _isInitialized = true;
       _errorMessage = null;
     } catch (e) {
-      _errorMessage = '${_strings?.cameraControllerInitFailed ?? 'Camera controller initialization failed'}: $e';
+      _errorMessage =
+          '${_strings?.cameraControllerInitFailed ?? 'Camera controller initialization failed'}: $e';
       _isInitialized = false;
     }
   }
@@ -92,10 +98,13 @@ class CameraHelper {
   Future<bool> switchCamera() async {
     if (_cameras.length <= 1) return false;
     try {
-      await error_service.ErrorService().wrap(() async {
-        _currentCameraIndex = (_currentCameraIndex + 1) % _cameras.length;
-        await _initCameraController(_cameras[_currentCameraIndex]);
-      }, context: '切换相机',);
+      await error_service.ErrorService().wrap(
+        () async {
+          _currentCameraIndex = (_currentCameraIndex + 1) % _cameras.length;
+          await _initCameraController(_cameras[_currentCameraIndex]);
+        },
+        context: '切换相机',
+      );
       return _isInitialized;
     } catch (e) {
       return false;
@@ -105,83 +114,91 @@ class CameraHelper {
   Future<String?> takePicture() async {
     if (!_isInitialized || _cameraController == null) return null;
     try {
-      return await error_service.ErrorService().wrap(() async {
-        final image = await _cameraController!.takePicture();
-        return image.path;
-      }, context: '拍照',);
+      return await error_service.ErrorService().wrap(
+        () async {
+          final image = await _cameraController!.takePicture();
+          return image.path;
+        },
+        context: '拍照',
+      );
     } catch (e) {
-      _errorMessage = '${_strings?.cameraTakePictureFailed ?? 'Take picture failed'}: $e';
+      _errorMessage =
+          '${_strings?.cameraTakePictureFailed ?? 'Take picture failed'}: $e';
       return null;
     }
   }
 
   Future<void> getLocation({BuildContext? context}) async {
     try {
-      await error_service.ErrorService().wrap(() async {
-        // Request location permission with education dialog
-        if (context != null) {
-          final result =
-              await PermissionService().requestLocationPermission(context);
-          if (!result.granted) {
-            _locationName = _strings?.locationPermissionDenied ?? 'Location permission denied';
-            return;
-          }
-        } else {
-          // Fallback: direct request without education
-          var status = await Permission.locationWhenInUse.status;
-          if (!status.isGranted) {
-            status = await Permission.locationWhenInUse.request();
-            if (!status.isGranted) {
-              _locationName = _strings?.locationPermissionDenied ?? 'Location permission denied';
+      await error_service.ErrorService().wrap(
+        () async {
+          // Request location permission with education dialog
+          if (context != null) {
+            final result =
+                await PermissionService().requestLocationPermission(context);
+            if (!result.granted) {
+              _locationName = _strings?.locationPermissionDenied ??
+                  'Location permission denied';
               return;
             }
+          } else {
+            // Fallback: direct request without education
+            var status = await Permission.locationWhenInUse.status;
+            if (!status.isGranted) {
+              status = await Permission.locationWhenInUse.request();
+              if (!status.isGranted) {
+                _locationName = _strings?.locationPermissionDenied ??
+                    'Location permission denied';
+                return;
+              }
+            }
           }
-        }
 
-        try {
-          final position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.medium,
-          ).timeout(
-            const Duration(seconds: 10),
-            onTimeout: () =>
-                throw const error_service.LocationException('定位超时'),
-          );
-          _latitude = position.latitude;
-          _longitude = position.longitude;
-          _position = position;
-        } catch (e) {
-          _locationName = _strings?.locationFailed ?? 'Location fetch failed';
-          return;
-        }
+          try {
+            final position = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.medium,
+            ).timeout(
+              const Duration(seconds: 10),
+              onTimeout: () =>
+                  throw const error_service.LocationException('定位超时'),
+            );
+            _latitude = position.latitude;
+            _longitude = position.longitude;
+            _position = position;
+          } catch (e) {
+            _locationName = _strings?.locationFailed ?? 'Location fetch failed';
+            return;
+          }
 
-        final lat = _latitude;
-        final lng = _longitude;
-        if (lat == null || lng == null) return;
+          final lat = _latitude;
+          final lng = _longitude;
+          if (lat == null || lng == null) return;
 
-        // 获取天气数据
-        _weatherData = await _weatherService.getWeather(lat, lng);
+          // 获取天气数据
+          _weatherData = await _weatherService.getWeather(lat, lng);
 
-        try {
-          final placemarks =
-              await placemarkFromCoordinates(lat, lng).timeout(
-            const Duration(seconds: 5),
-            onTimeout: () =>
-                throw const error_service.LocationException('地址解析超时'),
-          );
-          if (placemarks.isNotEmpty) {
-            final place = placemarks[0];
-            _locationName =
-                '${place.administrativeArea ?? ''}${place.locality ?? ''}${place.name ?? ''}';
-            if (_locationName == null || _locationName!.isEmpty) {
+          try {
+            final placemarks = await placemarkFromCoordinates(lat, lng).timeout(
+              const Duration(seconds: 5),
+              onTimeout: () =>
+                  throw const error_service.LocationException('地址解析超时'),
+            );
+            if (placemarks.isNotEmpty) {
+              final place = placemarks[0];
+              _locationName =
+                  '${place.administrativeArea ?? ''}${place.locality ?? ''}${place.name ?? ''}';
+              if (_locationName == null || _locationName!.isEmpty) {
+                _locationName = _strings?.unknownLocation ?? 'Unknown location';
+              }
+            } else {
               _locationName = _strings?.unknownLocation ?? 'Unknown location';
             }
-          } else {
-            _locationName = '未知位置';
+          } catch (e) {
+            _locationName = _strings?.unknownLocation ?? 'Unknown location';
           }
-        } catch (e) {
-          _locationName = '未知位置';
-        }
-      }, context: '获取位置信息',);
+        },
+        context: '获取位置信息',
+      );
     } catch (e) {
       _locationName = _strings?.errorLocationFetch ?? 'Location fetch failed';
     }

@@ -283,6 +283,9 @@ class BackupZipService {
   BackupZipService(this._dbProvider);
   final DatabaseProvider _dbProvider;
 
+  /// 最大允许导入的 ZIP 文件大小 (100 MB)
+  static const int _maxImportSizeBytes = 100 * 1024 * 1024;
+
   /// 获取当前 app 版本号（从 pubspec.yaml 读取）
   Future<String> _getAppVersion() async {
     try {
@@ -635,6 +638,13 @@ class BackupZipService {
 
       try {
         final zipFile = File(zipPath);
+        final fileLength = await zipFile.length();
+        if (fileLength > _maxImportSizeBytes) {
+          return ImportResult.failure(
+            'Backup file too large (${(fileLength / 1024 / 1024).toStringAsFixed(1)} MB, '
+            'max ${(_maxImportSizeBytes / 1024 / 1024).toStringAsFixed(0)} MB)',
+          );
+        }
         final zipBytes = await zipFile.readAsBytes();
         final archive = ZipDecoder().decodeBytes(zipBytes);
 

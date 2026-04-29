@@ -109,7 +109,7 @@ class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
 
     try {
       // 发送请求，设置 10 秒超时
-      final response = await (client ?? http.Client())
+      final response = await client
           .post(
             url,
             headers: {

@@ -29,7 +29,6 @@ class EquipmentEditPage extends ConsumerStatefulWidget {
 class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
-  Equipment? _loadedEquipment;
   bool _isLoadingEquipment = false;
 
   // _params is computed dynamically to always match widget.type
@@ -62,7 +61,6 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       );
       // Create Equipment from migrated map to use with loadFromEquipment
       final migratedEquipment = Equipment.fromMap(equipmentMap);
-      _loadedEquipment = migratedEquipment;
 
       // Update ViewModel with loaded data
       ref
@@ -82,12 +80,6 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
       // Sync type-specific controllers from equipment
       _syncTypeSpecificControllers(migratedEquipment);
-
-      if (mounted) {
-        setState(() {
-          _loadedEquipment = migratedEquipment;
-        });
-      }
     } finally {
       _isLoadingEquipment = false;
     }
@@ -165,7 +157,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
             children: [
               const CircularProgressIndicator(),
               const SizedBox(height: 16),
-              Text('Loading... equipmentId=${widget.equipmentId}'),
+              Text(strings.loading),
             ],
           ),
         ),
@@ -361,8 +353,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
                                   reelState.reelDrag,
                                 ),
                                 dragUnit: reelState.reelDragUnit,
-                                onDragUnitChanged:
-                                    notifier.updateReelDragUnit,
+                                onDragUnitChanged: notifier.updateReelDragUnit,
                                 brakeType: reelState.reelBrakeType,
                                 onBrakeTypeChanged:
                                     notifier.updateReelBrakeType,

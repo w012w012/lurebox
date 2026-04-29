@@ -41,7 +41,9 @@ class Equipment {
   const Equipment({
     required this.id,
     required this.type,
-    required this.createdAt, required this.updatedAt, this.brand,
+    required this.createdAt,
+    required this.updatedAt,
+    this.brand,
     this.model,
     this.length,
     this.lengthUnit = 'm',
@@ -50,6 +52,8 @@ class Equipment {
     this.material,
     this.hardness,
     this.weightRange,
+    this.rodPower,
+    this.notes,
     this.reelBearings,
     this.reelRatio,
     this.reelCapacity,
@@ -93,6 +97,8 @@ class Equipment {
       material: _getField(map, 'material') as String?,
       hardness: _getField(map, 'hardness') as String?,
       weightRange: _getField(map, 'weight_range') as String?,
+      rodPower: _getField(map, 'rod_power') as String?,
+      notes: _getField(map, 'notes') as String?,
       reelBearings: _getField(map, 'reel_bearings') as int?,
       reelRatio: _getField(map, 'reel_ratio') as String?,
       reelCapacity: _getField(map, 'reel_capacity') as String?,
@@ -140,6 +146,8 @@ class Equipment {
   final String? material;
   final String? hardness;
   final String? weightRange;
+  final String? rodPower;
+  final String? notes;
   final int? reelBearings;
   final String? reelRatio;
   final String? reelCapacity;
@@ -191,6 +199,8 @@ class Equipment {
       'material': material,
       'hardness': hardness,
       'weight_range': weightRange,
+      'rod_power': rodPower,
+      'notes': notes,
       'reel_bearings': reelBearings,
       'reel_ratio': reelRatio,
       'reel_capacity': reelCapacity,
@@ -260,6 +270,7 @@ class RodParams {
     this.hardness,
     this.rodAction,
     this.weightRange,
+    this.rodPower,
   });
   final String? length;
   final String lengthUnit;
@@ -269,6 +280,7 @@ class RodParams {
   final String? hardness;
   final String? rodAction;
   final String? weightRange;
+  final String? rodPower;
 }
 
 /// Type-safe accessor for reel-specific parameters.
@@ -344,6 +356,7 @@ extension EquipmentParamsX on Equipment {
           hardness: hardness,
           rodAction: rodAction,
           weightRange: weightRange,
+          rodPower: rodPower,
         )
       : null;
 

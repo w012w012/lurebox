@@ -796,6 +796,78 @@ void main() {
       expect(result.items.length, equals(1));
       expect(result.items[0].species, equals('Bass'));
     });
+
+    test(
+      'hasMore is correct when totalCount is exactly divisible by pageSize',
+      () async {
+        // 20 items, pageSize=10 → 2 exact pages
+        for (var i = 0; i < 20; i++) {
+          await repository.create(TestDataFactory.createFishCatch(
+            id: i + 1,
+            species: 'Fish_$i',
+            catchTime: DateTime(2024, 1, i + 1),
+          ),);
+        }
+
+        const filter = FishFilter();
+
+        final page1 = await repository.getFilteredPageByFilter(
+          page: 1,
+          pageSize: 10,
+          filter: filter,
+        );
+        expect(page1.items.length, equals(10));
+        expect(page1.hasMore, isTrue);
+
+        final page2 = await repository.getFilteredPageByFilter(
+          page: 2,
+          pageSize: 10,
+          filter: filter,
+        );
+        expect(page2.items.length, equals(10));
+        expect(page2.hasMore, isFalse);
+      },
+    );
+
+    test('hasMore is false when totalCount < pageSize', () async {
+      for (var i = 0; i < 5; i++) {
+        await repository.create(TestDataFactory.createFishCatch(
+          id: i + 1,
+          species: 'Fish_$i',
+          catchTime: DateTime(2024, 1, i + 1),
+        ),);
+      }
+
+      const filter = FishFilter();
+
+      final result = await repository.getFilteredPageByFilter(
+        page: 1,
+        pageSize: 10,
+        filter: filter,
+      );
+      expect(result.items.length, equals(5));
+      expect(result.hasMore, isFalse);
+    });
+
+    test('hasMore is false when totalCount equals pageSize', () async {
+      for (var i = 0; i < 10; i++) {
+        await repository.create(TestDataFactory.createFishCatch(
+          id: i + 1,
+          species: 'Fish_$i',
+          catchTime: DateTime(2024, 1, i + 1),
+        ),);
+      }
+
+      const filter = FishFilter();
+
+      final result = await repository.getFilteredPageByFilter(
+        page: 1,
+        pageSize: 10,
+        filter: filter,
+      );
+      expect(result.items.length, equals(10));
+      expect(result.hasMore, isFalse);
+    });
   });
 
   group('FishCatchRepository - getSoftWormRigAnalytics', () {

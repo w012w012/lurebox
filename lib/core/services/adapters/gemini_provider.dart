@@ -13,12 +13,13 @@ import 'package:lurebox/core/services/fish_recognition_service.dart';
 class GeminiFishRecognitionProvider implements FishRecognitionProvider {
 
   /// Creates a Gemini provider with optional HTTP client injection
-  /// If no client is provided, uses the default http.Client
-  GeminiFishRecognitionProvider({http.Client? client}) : _client = client;
+  /// If no client is provided, uses a shared static client to avoid socket leaks
+  GeminiFishRecognitionProvider({http.Client? client})
+      : _client = client ?? sharedHttpClient;
   static const String _systemPrompt = fishRecognitionSystemPrompt;
 
   /// HTTP client for making requests (injectable for testing)
-  final http.Client? _client;
+  final http.Client _client;
 
   @override
   Future<FishRecognitionResult> identifySpecies(
@@ -64,7 +65,7 @@ class GeminiFishRecognitionProvider implements FishRecognitionProvider {
 
     try {
       // 发送请求，设置 10 秒超时
-      final response = await (_client ?? http.Client())
+      final response = await _client
           .post(
             url,
             headers: {

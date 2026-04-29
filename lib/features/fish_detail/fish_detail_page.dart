@@ -101,8 +101,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
     final lureName = state.lureEquipment?.model;
 
     // 获取用户设置的单位
-    final appSettings = ref.watch(appSettingsProvider);
-    final units = appSettings.units;
+    ref.watch(appSettingsProvider);
 
     // 获取渔获记录时的单位（用于换算显示）
     final fishLengthUnit = fish.lengthUnit;
@@ -231,7 +230,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
     String? lureName,
   ) {
     return FishImageGallery(
-      imagePath: fish.imagePath ?? '',
+      imagePath: fish.imagePath,
       species: fish.species,
       length: fish.length,
       weight: fish.weight,
@@ -326,7 +325,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
     DateTime catchTime,
   ) async {
     final imagePath = fish.imagePath;
-    if (imagePath == null || imagePath.isEmpty) {
+    if (imagePath.isEmpty) {
       AppSnackBar.showError(context, strings.takePhotoFirst);
       return;
     }
