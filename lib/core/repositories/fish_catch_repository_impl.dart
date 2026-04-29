@@ -617,7 +617,8 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
     try {
       final db = await database;
       // Use INNER JOIN since we only want catches with a lure of type '杞櫕'
-      final results = await db.rawQuery('''
+      final results = await db.rawQuery(
+        '''
         SELECT
           fc.rig_type,
           fc.hook_type,
@@ -626,10 +627,12 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
           COUNT(*) as catch_count
         FROM fish_catches fc
         INNER JOIN equipments e ON fc.lure_id = e.id
-        WHERE e.lure_type = '${LureTypes.softBait}'
+        WHERE e.lure_type = ?
           AND fc.rig_type IS NOT NULL
         GROUP BY fc.rig_type, fc.hook_type, fc.hook_size, fc.hook_weight
-      ''');
+        ''',
+        [LureTypes.softBait],
+      );
 
       final rigTypeStats = <String, int>{};
       final hookTypeStats = <String, int>{};

@@ -14,6 +14,7 @@ import 'package:lurebox/features/fish_list/widgets/fish_filter_panel.dart';
 import 'package:lurebox/features/fish_list/widgets/fish_list_item.dart';
 import 'package:lurebox/features/fish_list/widgets/fish_search_delegate.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
+import 'package:lurebox/widgets/common/staggered_reveal.dart';
 
 class FishListPage extends ConsumerStatefulWidget {
   const FishListPage({super.key});
@@ -447,7 +448,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
                   return null;
                 }
                 final fish = state.filteredCatches[index];
-                return _AnimatedListItem(
+                return StaggeredReveal.withAnimation(
                   animation: _getItemAnimation(index),
                   child: FishListItem(
                     fish: fish,
@@ -488,7 +489,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
     }
 
     final fish = state.filteredCatches[index];
-    return _AnimatedListItem(
+    return StaggeredReveal.withAnimation(
       animation: _getItemAnimation(index),
       child: FishListItem(
         fish: fish,
@@ -626,33 +627,3 @@ class _SortButton extends StatelessWidget {
   }
 }
 
-/// Animated wrapper for list items with staggered fade + slide effect
-class _AnimatedListItem extends StatelessWidget {
-
-  const _AnimatedListItem({
-    required this.animation,
-    required this.child,
-  });
-  final Animation<double> animation;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: animation,
-      builder: (context, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 0.15),
-              end: Offset.zero,
-            ).animate(animation),
-            child: child,
-          ),
-        );
-      },
-      child: child,
-    );
-  }
-}

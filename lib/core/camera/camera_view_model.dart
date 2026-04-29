@@ -55,7 +55,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: e.toString,
+        errorMessage: () => error_service.ErrorService.toUserMessage(e),
       );
     }
   }
@@ -72,7 +72,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
         }
       }, context: '切换相机',);
     } catch (e) {
-      state = state.copyWith(errorMessage: e.toString);
+      state = state.copyWith(errorMessage: () => error_service.ErrorService.toUserMessage(e));
     }
   }
 
@@ -116,7 +116,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
         );
       }, context: '获取位置',);
     } catch (e) {
-      state = state.copyWith(errorMessage: e.toString);
+      state = state.copyWith(errorMessage: () => error_service.ErrorService.toUserMessage(e));
     }
   }
 
@@ -127,7 +127,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
         state = state.copyWith(speciesHistory: history);
       }, context: '加载历史品种',);
     } catch (e) {
-      state = state.copyWith(errorMessage: e.toString);
+      state = state.copyWith(errorMessage: () => error_service.ErrorService.toUserMessage(e));
     }
   }
 
@@ -170,7 +170,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
         );
       }, context: '加载装备',);
     } catch (e) {
-      state = state.copyWith(errorMessage: e.toString);
+      state = state.copyWith(errorMessage: () => error_service.ErrorService.toUserMessage(e));
     }
   }
 
@@ -334,7 +334,8 @@ class CameraViewModel extends StateNotifier<CameraState> {
     } catch (e) {
       state = state.copyWith(
         captureState: CameraCaptureState.error,
-        errorMessage: () => '${_strings.errorSaveFailed}: $e',
+        errorMessage: () =>
+            '${_strings.errorSaveFailed}: ${error_service.ErrorService.toUserMessage(e)}',
         isLoading: false,
       );
       return null;

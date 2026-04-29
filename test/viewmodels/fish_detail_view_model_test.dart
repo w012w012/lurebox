@@ -121,7 +121,7 @@ void main() {
 
         // Wait for async loadFish to complete by using Future.delayed
         // and check state until loaded OR use a simple pump
-        await Future.delayed(const Duration(milliseconds: 10));
+        await viewModel.loadFish();
 
         // Assert
         expect(viewModel.state.fish, isNotNull);
@@ -163,7 +163,7 @@ void main() {
         );
 
         // Wait for all async operations to complete
-        await Future.delayed(const Duration(milliseconds: 10));
+        await viewModel.loadFish();
 
         // Assert
         expect(viewModel.state.fish, isNotNull);
@@ -188,7 +188,7 @@ void main() {
           mockEquipmentService,
         );
 
-        await Future.delayed(const Duration(milliseconds: 10));
+        await viewModel.loadFish();
 
         // Assert
         expect(viewModel.state.fish, isNotNull);
@@ -209,7 +209,7 @@ void main() {
           mockEquipmentService,
         );
 
-        await Future.delayed(const Duration(milliseconds: 10));
+        await viewModel.loadFish();
 
         // Assert
         expect(viewModel.state.fish, isNull);
@@ -228,7 +228,7 @@ void main() {
           mockEquipmentService,
         );
 
-        await Future.delayed(const Duration(milliseconds: 10));
+        await viewModel.loadFish();
 
         // Assert
         expect(viewModel.state.fish, isNull);
@@ -255,7 +255,7 @@ void main() {
           mockEquipmentService,
         );
 
-        await Future.delayed(const Duration(milliseconds: 10));
+        await viewModel.loadFish();
 
         // Assert - equipment errors propagate up to catch block which sets errorMessage
         // and leaves fish null because the state assignment never happens
@@ -280,7 +280,7 @@ void main() {
           mockEquipmentService,
         );
 
-        await Future.delayed(const Duration(milliseconds: 10));
+        await viewModel.loadFish();
 
         // Assert
         expect(viewModel.state.fish, isNotNull);
@@ -306,7 +306,7 @@ void main() {
           mockFishCatchService,
           mockEquipmentService,
         );
-        await Future.delayed(const Duration(milliseconds: 10));
+        await viewModel.loadFish();
         final result = await viewModel.deleteFish();
 
         // Assert
@@ -326,7 +326,7 @@ void main() {
           mockFishCatchService,
           mockEquipmentService,
         );
-        await Future.delayed(const Duration(milliseconds: 10));
+        await viewModel.loadFish();
 
         // Act - call deleteFish and wait for completion
         final result = await viewModel.deleteFish();
@@ -348,7 +348,7 @@ void main() {
           mockFishCatchService,
           mockEquipmentService,
         );
-        await Future.delayed(const Duration(milliseconds: 10));
+        await viewModel.loadFish();
 
         // Act
         final result = await viewModel.deleteFish();
@@ -374,7 +374,7 @@ void main() {
           mockFishCatchService,
           mockEquipmentService,
         );
-        await Future.delayed(const Duration(milliseconds: 10));
+        await viewModel.loadFish();
 
         expect(viewModel.state.isSharing, false);
 
@@ -396,7 +396,7 @@ void main() {
           mockFishCatchService,
           mockEquipmentService,
         );
-        await Future.delayed(const Duration(milliseconds: 10));
+        await viewModel.loadFish();
 
         viewModel.setSharing(true);
         expect(viewModel.state.isSharing, true);
@@ -419,7 +419,7 @@ void main() {
           mockFishCatchService,
           mockEquipmentService,
         );
-        await Future.delayed(const Duration(milliseconds: 10));
+        await viewModel.loadFish();
 
         // Initial state
         expect(viewModel.state.isSharing, false);
@@ -449,7 +449,8 @@ void main() {
           mockFishCatchService,
           mockEquipmentService,
         );
-        await Future.delayed(const Duration(milliseconds: 10));
+        // Let the constructor's loadFish() complete (mocks resolve immediately)
+        await Future(() {});
 
         expect(viewModel.state.fish!.species, 'Pike');
 
@@ -483,7 +484,8 @@ void main() {
           mockFishCatchService,
           mockEquipmentService,
         );
-        await Future.delayed(const Duration(milliseconds: 10));
+        // Let the constructor's loadFish() complete (mocks resolve immediately)
+        await Future(() {});
 
         expect(viewModel.state.rodEquipment!.brand, 'OldBrand');
 

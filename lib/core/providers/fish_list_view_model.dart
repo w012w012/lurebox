@@ -5,6 +5,7 @@ import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
+import 'package:lurebox/core/services/error_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 
 class FishListState {
@@ -164,7 +165,7 @@ class FishListViewModel extends StateNotifier<FishListState> {
       if (!mounted) return;
       state = state.copyWith(
         isLoading: false,
-        errorMessage: e.toString,
+        errorMessage: () => ErrorService.toUserMessage(e),
       );
     }
   }
@@ -291,7 +292,7 @@ class FishListViewModel extends StateNotifier<FishListState> {
       await loadCatches(units: state.displayUnits);
     } on Exception catch (e) {
       if (!mounted) return;
-      state = state.copyWith(errorMessage: e.toString);
+      state = state.copyWith(errorMessage: () => ErrorService.toUserMessage(e));
     }
   }
 

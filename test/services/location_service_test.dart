@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/database/database_provider.dart';
 import 'package:lurebox/core/services/location_service.dart';
+import 'package:lurebox/core/utils/input_validator.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -534,7 +535,7 @@ void main() {
         expect(locationNames, equals(['新名称', '新名称']));
       });
 
-      test('handles rename to empty string', () async {
+      test('rejects rename to empty string', () async {
         await db.insert('fish_catches', {
           'species': 'TestFish',
           'length': 30.0,
@@ -544,15 +545,10 @@ void main() {
           'updated_at': DateTime.now().toIso8601String(),
         });
 
-        await service.renameLocation('待清空地点', '');
-
-        final results = await db.query(
-          'fish_catches',
-          columns: ['location_name'],
+        expect(
+          () => service.renameLocation('待清空地点', ''),
+          throwsA(isA<ValidationException>()),
         );
-        final locationNames = results.map((r) => r['location_name'] as String?).toList();
-
-        expect(locationNames, equals(['']));
       });
 
       test('does not affect other locations when renaming', () async {

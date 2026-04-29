@@ -35,6 +35,7 @@ class CsvExporter {
   static Future<String> exportFishCatches({
     required List<FishCatch> catches,
     bool includeImagePaths = true,
+    bool includeLocation = true,
     String lengthUnit = 'cm',
     String weightUnit = 'kg',
     String temperatureUnit = 'C',
@@ -54,9 +55,7 @@ class CsvExporter {
       '长度($lengthSymbol)',
       '重量($weightSymbol)',
       '命运',
-      '钓点',
-      '经度',
-      '纬度',
+      if (includeLocation) ...['钓点', '经度', '纬度'],
       '气温($tempSymbol)',
       '气压(hPa)',
       '天气',
@@ -110,9 +109,11 @@ class CsvExporter {
         escapeCsvField(displayWeight?.toStringAsFixed(2) ?? ''),
         escapeCsvField(fish.fate.label),
         // 位置信息
-        escapeCsvField(fish.locationName ?? ''),
-        escapeCsvField(fish.longitude?.toString() ?? ''),
-        escapeCsvField(fish.latitude?.toString() ?? ''),
+        if (includeLocation) ...[
+          escapeCsvField(fish.locationName ?? ''),
+          escapeCsvField(fish.longitude?.toString() ?? ''),
+          escapeCsvField(fish.latitude?.toString() ?? ''),
+        ],
         // 天气信息
         escapeCsvField(displayTemp?.toStringAsFixed(1) ?? ''),
         escapeCsvField(fish.pressure?.toString() ?? ''),

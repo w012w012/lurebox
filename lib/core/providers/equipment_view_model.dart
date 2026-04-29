@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:lurebox/core/services/error_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 
 class EquipmentListState {
@@ -94,7 +95,7 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
       );
     } on Exception catch (e) {
       if (!mounted) return;
-      state = state.copyWith(isLoading: false, errorMessage: e.toString);
+      state = state.copyWith(isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
     }
   }
 
@@ -121,7 +122,7 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
       await loadData();
     } on Exception catch (e) {
       if (!mounted) return;
-      state = state.copyWith(errorMessage: e.toString);
+      state = state.copyWith(errorMessage: () => ErrorService.toUserMessage(e));
     }
   }
 
@@ -134,7 +135,7 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
       await loadData();
     } on Exception catch (e) {
       if (!mounted) return;
-      state = state.copyWith(errorMessage: e.toString);
+      state = state.copyWith(errorMessage: () => ErrorService.toUserMessage(e));
     }
   }
 }

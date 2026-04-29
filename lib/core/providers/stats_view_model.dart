@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
+import 'package:lurebox/core/services/error_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 
 class StatsDetailState {
@@ -170,7 +171,7 @@ class StatsDetailViewModel extends StateNotifier<StatsDetailState> {
       );
     } on Exception catch (e) {
       if (!mounted) return;
-      state = state.copyWith(isLoading: false, errorMessage: e.toString);
+      state = state.copyWith(isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
     }
   }
 

@@ -9,6 +9,7 @@ import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/stats_provider.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
+import 'package:lurebox/widgets/common/staggered_reveal.dart';
 
 /// 统计页
 class StatsPage extends ConsumerWidget {
@@ -41,7 +42,7 @@ class StatsPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // 今日渔获卡片
-              _AnimatedStatCard(
+              StaggeredReveal(
                 index: 0,
                 child: _buildStatCard(
                   context,
@@ -66,7 +67,7 @@ class StatsPage extends ConsumerWidget {
               const SizedBox(height: TeslaTheme.spacingMd),
 
               // 本月渔获卡片
-              _AnimatedStatCard(
+              StaggeredReveal(
                 index: 1,
                 child: _buildStatCard(
                   context,
@@ -87,7 +88,7 @@ class StatsPage extends ConsumerWidget {
               const SizedBox(height: TeslaTheme.spacingMd),
 
               // 本年渔获卡片
-              _AnimatedStatCard(
+              StaggeredReveal(
                 index: 2,
                 child: _buildStatCard(
                   context,
@@ -108,7 +109,7 @@ class StatsPage extends ConsumerWidget {
               const SizedBox(height: TeslaTheme.spacingMd),
 
               // 全部渔获卡片
-              _AnimatedStatCard(
+              StaggeredReveal(
                 index: 3,
                 child: _buildStatCard(
                   context,
@@ -169,78 +170,6 @@ class StatsPage extends ConsumerWidget {
   }
 }
 
-/// Staggered animation wrapper for stat cards
-class _AnimatedStatCard extends StatefulWidget {
-
-  const _AnimatedStatCard({
-    required this.index,
-    required this.child,
-  });
-  final int index;
-  final Widget child;
-
-  @override
-  State<_AnimatedStatCard> createState() => _AnimatedStatCardState();
-}
-
-class _AnimatedStatCardState extends State<_AnimatedStatCard>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _fadeAnimation;
-  late final Animation<Offset> _slideAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: TeslaTheme.transitionDuration,
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: TeslaTheme.transitionCurve,
-    ),);
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.15),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: TeslaTheme.transitionCurve,
-    ),);
-
-    // Stagger the animation start
-    Future.delayed(
-      TeslaTheme.transitionDuration * widget.index,
-      () {
-        if (mounted) {
-          _controller.forward();
-        }
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: SlideTransition(
-        position: _slideAnimation,
-        child: widget.child,
-      ),
-    );
-  }
-}
 
 /// Loading state for stat card
 class _StatCardLoading extends StatelessWidget {

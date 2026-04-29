@@ -587,6 +587,64 @@ void main() {
         expect(csv, contains('30.123456'));
         expect(csv, contains('120.654321'));
       });
+
+      test('includes location columns by default', () async {
+        final catches = [
+          FishCatch(
+            id: 1,
+            imagePath: '/test/fish.jpg',
+            species: 'Bass',
+            length: 30,
+            latitude: 30.123456,
+            longitude: 120.654321,
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 6, 15),
+            createdAt: DateTime(2024, 6, 15),
+            updatedAt: DateTime(2024, 6, 15),
+          ),
+        ];
+
+        final csv = await CsvExporter.exportFishCatches(catches: catches);
+        final lines = csv.split('\n');
+
+        expect(lines[0], contains('经度'));
+        expect(lines[0], contains('纬度'));
+        expect(lines[1], contains('30.123456'));
+        expect(lines[1], contains('120.654321'));
+      });
+
+      test('excludes location columns when includeLocation is false', () async {
+        final catches = [
+          FishCatch(
+            id: 1,
+            imagePath: '/test/fish.jpg',
+            species: 'Bass',
+            length: 30,
+            locationName: 'Lake',
+            latitude: 30.123456,
+            longitude: 120.654321,
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 6, 15),
+            createdAt: DateTime(2024, 6, 15),
+            updatedAt: DateTime(2024, 6, 15),
+          ),
+        ];
+
+        final csv = await CsvExporter.exportFishCatches(
+          catches: catches,
+          includeLocation: false,
+        );
+        final lines = csv.split('\n');
+
+        // Header should not contain any location columns
+        expect(lines[0], isNot(contains('钓点')));
+        expect(lines[0], isNot(contains('经度')));
+        expect(lines[0], isNot(contains('纬度')));
+        // Data row should not contain any location data
+        expect(lines[1], isNot(contains('Lake')));
+        expect(lines[1], isNot(contains('30.123456')));
+        expect(lines[1], isNot(contains('120.654321')));
+      });
     });
   });
 }

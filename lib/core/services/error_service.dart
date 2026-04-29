@@ -198,6 +198,31 @@ class ErrorService {
     final type = classifyError(error);
     return getLocalizedMessage(type, strings);
   }
+
+  /// Extract a clean error message suitable for end users.
+  ///
+  /// Strips exception type prefixes (e.g. "Exception: ..." → "...")
+  /// and bracketed error codes (e.g. `[E001] message` → `message`).
+  /// Falls back to [fallback] when the cleaned message is empty.
+  /// Use getUserMessage instead when AppStrings is available.
+  static String toUserMessage(
+    Object error, {
+    String fallback = 'Unknown error',
+  }) {
+    final raw = error.toString();
+    // Strip bracketed error codes (e.g. "[E001] message" → "message")
+    // and common Dart exception prefixes in a single pass
+    final cleaned = raw
+        .replaceFirst(RegExp(r'^\[[\w.-]+\]\s*'), '')
+        .replaceFirst(
+          RegExp(
+            r'^(?:App|Database|Network|File|Validation|Camera|Location|SettingsCorrupted|Timeout|Socket|Format)Exception:\s*',
+          ),
+          '',
+        )
+        .replaceFirst(RegExp(r'^Exception:\s*'), '');
+    return cleaned.isEmpty ? fallback : cleaned;
+  }
 }
 
 class AppException implements Exception {

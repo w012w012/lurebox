@@ -1,5 +1,9 @@
 import 'package:lurebox/core/models/equipment.dart';
 
+// Sentinel value: distinguishes "not provided" from "explicitly null"
+// in withUpdates() so errorMessage is preserved by default.
+const _preserve = '\x00_PRESERVE_\x00';
+
 /// Sealed class hierarchy for equipment edit states.
 /// Each equipment type (rod/reel/lure) has its own subclass with type-specific fields.
 sealed class EquipmentEditState {
@@ -31,12 +35,15 @@ sealed class EquipmentEditState {
   /// Whether this is an edit (vs create) operation.
   bool get isEdit => equipment != null;
 
-  /// Apply common field updates - each subclass provides its own copyWith
+  /// Apply common field updates - each subclass provides its own copyWith.
+  ///
+  /// By default [errorMessage] is preserved (not cleared).
+  /// Pass `errorMessage: null` explicitly to clear it.
   EquipmentEditState withUpdates({
     String? type,
     Equipment? equipment,
     bool? isSaving,
-    String? errorMessage,
+    String? errorMessage = _preserve,
     String? brand,
     String? model,
     String? price,
@@ -104,7 +111,8 @@ class RodEditState extends EquipmentEditState {
       type: type ?? this.type,
       equipment: equipment ?? this.equipment,
       isSaving: isSaving ?? this.isSaving,
-      errorMessage: errorMessage,
+      errorMessage:
+          errorMessage == _preserve ? this.errorMessage : errorMessage,
       brand: brand ?? this.brand,
       model: model ?? this.model,
       price: price ?? this.price,
@@ -128,7 +136,7 @@ class RodEditState extends EquipmentEditState {
     String? type,
     Equipment? equipment,
     bool? isSaving,
-    String? errorMessage,
+    String? errorMessage = _preserve,
     String? brand,
     String? model,
     String? price,
@@ -241,7 +249,8 @@ class ReelEditState extends EquipmentEditState {
       type: type ?? this.type,
       equipment: equipment ?? this.equipment,
       isSaving: isSaving ?? this.isSaving,
-      errorMessage: errorMessage,
+      errorMessage:
+          errorMessage == _preserve ? this.errorMessage : errorMessage,
       brand: brand ?? this.brand,
       model: model ?? this.model,
       price: price ?? this.price,
@@ -270,7 +279,7 @@ class ReelEditState extends EquipmentEditState {
     String? type,
     Equipment? equipment,
     bool? isSaving,
-    String? errorMessage,
+    String? errorMessage = _preserve,
     String? brand,
     String? model,
     String? price,
@@ -378,7 +387,8 @@ class LureEditState extends EquipmentEditState {
       type: type ?? this.type,
       equipment: equipment ?? this.equipment,
       isSaving: isSaving ?? this.isSaving,
-      errorMessage: errorMessage,
+      errorMessage:
+          errorMessage == _preserve ? this.errorMessage : errorMessage,
       brand: brand ?? this.brand,
       model: model ?? this.model,
       price: price ?? this.price,
@@ -402,7 +412,7 @@ class LureEditState extends EquipmentEditState {
     String? type,
     Equipment? equipment,
     bool? isSaving,
-    String? errorMessage,
+    String? errorMessage = _preserve,
     String? brand,
     String? model,
     String? price,

@@ -7,6 +7,7 @@ import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 import 'package:lurebox/core/repositories/species_history_repository.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
 import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/utils/input_validator.dart';
 
 /// 渔获服务 - 渔获记录的业务逻辑层
 ///
@@ -37,13 +38,15 @@ class FishCatchService {
   }
 
   Future<int> create(FishCatch fish) async {
-    final id = await _repository.create(fish);
-    await _speciesHistoryRepo.incrementUseCount(fish.species);
+    final validated = _validateFishCatch(fish);
+    final id = await _repository.create(validated);
+    await _speciesHistoryRepo.incrementUseCount(validated.species);
     return id;
   }
 
   Future<void> update(FishCatch fish) async {
-    await _repository.update(fish);
+    final validated = _validateFishCatch(fish);
+    await _repository.update(validated);
   }
 
   Future<void> delete(int id) async {
@@ -198,6 +201,24 @@ class FishCatchService {
   }
 
   // ===== Private Helpers =====
+
+  FishCatch _validateFishCatch(FishCatch fish) {
+    final species = InputValidator.validateName(
+      fish.species,
+      fieldName: 'species',
+    );
+    final locationName = InputValidator.validateOptionalName(
+      fish.locationName,
+      fieldName: 'locationName',
+    );
+    if (species == fish.species && locationName == fish.locationName) {
+      return fish;
+    }
+    return fish.copyWith(
+      species: species,
+      locationName: () => locationName,
+    );
+  }
 
   Future<void> _deleteImageFiles(FishCatch fish) async {
     final files = <String?>[fish.imagePath, fish.watermarkedImagePath];

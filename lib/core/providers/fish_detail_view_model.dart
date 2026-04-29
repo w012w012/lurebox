@@ -3,6 +3,7 @@ import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:lurebox/core/services/error_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 
 class FishDetailState {
@@ -138,7 +139,7 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
       );
     } on Exception catch (e) {
       if (!mounted) return;
-      state = state.copyWith(isLoading: false, errorMessage: e.toString);
+      state = state.copyWith(isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
     }
   }
 
@@ -151,7 +152,7 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
       return true;
     } on Exception catch (e) {
       if (!mounted) return false;
-      state = state.copyWith(isDeleting: false, errorMessage: e.toString);
+      state = state.copyWith(isDeleting: false, errorMessage: () => ErrorService.toUserMessage(e));
       return false;
     }
   }

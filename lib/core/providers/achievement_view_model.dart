@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/models/achievement.dart';
 import 'package:lurebox/core/services/achievement_service.dart';
+import 'package:lurebox/core/services/error_service.dart';
 
 enum AchievementCategory {
   all(''),
@@ -84,7 +85,7 @@ class AchievementViewModel extends StateNotifier<AchievementState> {
       if (!mounted) return;
       state = state.copyWith(
         isLoading: false,
-        errorMessage: e.toString,
+        errorMessage: () => ErrorService.toUserMessage(e),
       );
     }
   }

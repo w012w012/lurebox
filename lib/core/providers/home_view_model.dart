@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
+import 'package:lurebox/core/services/error_service.dart';
 
 class HomeState {
   const HomeState({
@@ -115,7 +116,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
       );
     } on Exception catch (e) {
       if (!mounted) return;
-      state = state.copyWith(isLoading: false, errorMessage: e.toString);
+      state = state.copyWith(isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
     }
   }
 

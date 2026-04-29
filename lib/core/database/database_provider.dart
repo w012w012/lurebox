@@ -74,6 +74,8 @@ class DatabaseProvider {
   Future<void> _onConfigure(Database db) async {
     // 启用外键约束
     await db.execute('PRAGMA foreign_keys = ON');
+    // WAL 模式：提升并发读写性能
+    await db.execute('PRAGMA journal_mode = WAL');
   }
 
   /// 数据库创建回调

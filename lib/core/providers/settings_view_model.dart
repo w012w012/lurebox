@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/services/backup_service.dart';
 import 'package:lurebox/core/services/backup_zip_service.dart';
+import 'package:lurebox/core/services/error_service.dart';
 import 'package:lurebox/core/services/export_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -94,7 +95,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       );
     } on Exception catch (e) {
       if (!mounted) return;
-      state = state.copyWith(isLoading: false, errorMessage: e.toString);
+      state = state.copyWith(isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
     }
   }
 
@@ -107,7 +108,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       return path;
     } on Exception catch (e) {
       if (!mounted) return null;
-      state = state.copyWith(isExporting: false, errorMessage: e.toString);
+      state = state.copyWith(isExporting: false, errorMessage: () => ErrorService.toUserMessage(e));
       return null;
     }
   }
@@ -127,7 +128,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       return xFile;
     } on Exception catch (e) {
       if (!mounted) return null;
-      state = state.copyWith(isExporting: false, errorMessage: e.toString);
+      state = state.copyWith(isExporting: false, errorMessage: () => ErrorService.toUserMessage(e));
       return null;
     }
   }
@@ -142,7 +143,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       return count;
     } on Exception catch (e) {
       if (!mounted) return null;
-      state = state.copyWith(isImporting: false, errorMessage: e.toString);
+      state = state.copyWith(isImporting: false, errorMessage: () => ErrorService.toUserMessage(e));
       return null;
     }
   }
@@ -164,7 +165,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       return url;
     } on Exception catch (e) {
       if (!mounted) return null;
-      state = state.copyWith(isUploading: false, errorMessage: e.toString);
+      state = state.copyWith(isUploading: false, errorMessage: () => ErrorService.toUserMessage(e));
       return null;
     }
   }
@@ -184,7 +185,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       if (!mounted) return null;
       state = state.copyWith(
         isCreatingZipBackup: false,
-        errorMessage: e.toString,
+        errorMessage: () => ErrorService.toUserMessage(e),
       );
       return null;
     }
@@ -209,7 +210,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       if (!mounted) return null;
       state = state.copyWith(
         isCreatingZipBackup: false,
-        errorMessage: e.toString,
+        errorMessage: () => ErrorService.toUserMessage(e),
       );
       return null;
     }
@@ -224,12 +225,12 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       await loadStats();
       return result;
     } on Exception catch (e) {
-      if (!mounted) return ImportResult.failure(e.toString());
+      if (!mounted) return ImportResult.failure(ErrorService.toUserMessage(e));
       state = state.copyWith(
         isRestoringZipBackup: false,
-        errorMessage: e.toString,
+        errorMessage: () => ErrorService.toUserMessage(e),
       );
-      return ImportResult.failure(e.toString());
+      return ImportResult.failure(ErrorService.toUserMessage(e));
     }
   }
 

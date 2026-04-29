@@ -1,4 +1,5 @@
 import 'package:lurebox/core/database/database_provider.dart';
+import 'package:lurebox/core/utils/input_validator.dart';
 
 /// 位置服务 - 钓点管理的业务逻辑层
 ///
@@ -40,12 +41,16 @@ class LocationService {
     List<String> oldLocations,
     String newLocation,
   ) async {
+    final validatedName = InputValidator.validateName(
+      newLocation,
+      fieldName: 'locationName',
+    );
     final db = await _dbProvider.database;
     await db.transaction((txn) async {
       for (final oldLocation in oldLocations) {
         await txn.update(
           'fish_catches',
-          {'location_name': newLocation},
+          {'location_name': validatedName},
           where: 'location_name = ?',
           whereArgs: [oldLocation],
         );
@@ -54,10 +59,14 @@ class LocationService {
   }
 
   Future<void> renameLocation(String oldName, String newName) async {
+    final validatedName = InputValidator.validateName(
+      newName,
+      fieldName: 'locationName',
+    );
     final db = await _dbProvider.database;
     await db.update(
       'fish_catches',
-      {'location_name': newName},
+      {'location_name': validatedName},
       where: 'location_name = ?',
       whereArgs: [oldName],
     );

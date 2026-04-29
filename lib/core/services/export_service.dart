@@ -42,6 +42,7 @@ class ExportService {
       final content = await CsvExporter.exportFishCatches(
         catches: catches,
         includeImagePaths: includeImagePaths,
+        includeLocation: includeLocation,
         lengthUnit: lengthUnit,
         weightUnit: weightUnit,
         temperatureUnit: temperatureUnit,
@@ -51,11 +52,19 @@ class ExportService {
     } else {
       // JSON format
       filePath = '${directory.path}/fish_catches_$timestamp.json';
+      final fishMaps = catches.map((f) {
+        final map = f.toMap();
+        if (!includeLocation) {
+          map.remove('latitude');
+          map.remove('longitude');
+        }
+        return map;
+      }).toList();
       final jsonData = {
         'version': 1,
         'exportTime': DateTime.now().toIso8601String(),
         'dateRange': dateRange,
-        'fishCatches': catches.map((f) => f.toMap()).toList(),
+        'fishCatches': fishMaps,
       };
       final jsonString = const JsonEncoder.withIndent('  ').convert(jsonData);
       await File(filePath).writeAsString(jsonString);

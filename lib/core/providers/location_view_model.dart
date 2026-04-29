@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/services/error_service.dart';
 import 'package:lurebox/core/services/location_service.dart';
 
 class LocationGroup {
@@ -84,7 +85,7 @@ class LocationManagementViewModel
       );
     } on Exception catch (e) {
       if (!mounted) return;
-      state = state.copyWith(isLoading: false, errorMessage: e.toString);
+      state = state.copyWith(isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
     }
   }
 
@@ -127,7 +128,7 @@ class LocationManagementViewModel
       return true;
     } on Exception catch (e) {
       if (!mounted) return false;
-      state = state.copyWith(isMerging: false, errorMessage: e.toString);
+      state = state.copyWith(isMerging: false, errorMessage: () => ErrorService.toUserMessage(e));
       return false;
     }
   }
@@ -147,7 +148,7 @@ class LocationManagementViewModel
       return true;
     } on Exception catch (e) {
       if (!mounted) return false;
-      state = state.copyWith(isMerging: false, errorMessage: e.toString);
+      state = state.copyWith(isMerging: false, errorMessage: () => ErrorService.toUserMessage(e));
       return false;
     }
   }
@@ -164,7 +165,7 @@ class LocationManagementViewModel
       return true;
     } on Exception catch (e) {
       if (!mounted) return false;
-      state = state.copyWith(isMerging: false, errorMessage: e.toString);
+      state = state.copyWith(isMerging: false, errorMessage: () => ErrorService.toUserMessage(e));
       return false;
     }
   }

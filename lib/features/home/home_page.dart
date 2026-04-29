@@ -12,6 +12,7 @@ import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/pending_recognition_providers.dart';
 import 'package:lurebox/core/widgets/error_view.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
+import 'package:lurebox/widgets/common/staggered_reveal.dart';
 
 class HomePage extends ConsumerWidget {
   const HomePage({super.key});
@@ -45,9 +46,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
     with TickerProviderStateMixin {
   late final List<AnimationController> _controllers;
   late final List<Animation<double>> _fadeAnimations;
-  late final List<Animation<Offset>> _slideAnimations;
-
-  static const int _itemCount = 7; // pending, fish guide, podium, 4 stat cards
+  static const int _itemCount = 7; // pending, podium, (index 2 reserved), 4 stat cards
 
   @override
   void initState() {
@@ -67,15 +66,6 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
 
     _fadeAnimations = _controllers.map((controller) {
       return Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(parent: controller, curve: TeslaTheme.transitionCurve),
-      );
-    }).toList();
-
-    _slideAnimations = _controllers.map((controller) {
-      return Tween<Offset>(
-        begin: const Offset(0, 0.15),
-        end: Offset.zero,
-      ).animate(
         CurvedAnimation(parent: controller, curve: TeslaTheme.transitionCurve),
       );
     }).toList();
@@ -125,15 +115,15 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
         padding: const EdgeInsets.all(16),
         children: [
           // Item 0: Pending recognition card
-          _buildAnimatedItem(0, _buildPendingRecognitionCard(context, ref)),
+          StaggeredReveal.withAnimation(animation: _fadeAnimations[0], child: _buildPendingRecognitionCard(context, ref)),
           const SizedBox(height: 12),
           // Item 1: Podium
-          _buildAnimatedItem(1, _buildPodium(context)),
+          StaggeredReveal.withAnimation(animation: _fadeAnimations[1], child: _buildPodium(context)),
           const SizedBox(height: 12),
           // Item 3: Today stat card
-          _buildAnimatedItem(
-              3,
-              _buildStatCard(
+          StaggeredReveal.withAnimation(
+              animation: _fadeAnimations[3],
+              child: _buildStatCard(
                 context,
                 widget.strings,
                 widget.strings.todayCatch,
@@ -157,9 +147,9 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
               ),),
           const SizedBox(height: 12),
           // Item 4: Month stat card
-          _buildAnimatedItem(
-              4,
-              _buildStatCard(
+          StaggeredReveal.withAnimation(
+              animation: _fadeAnimations[4],
+              child: _buildStatCard(
                 context,
                 widget.strings,
                 widget.strings.monthCatch,
@@ -179,9 +169,9 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
               ),),
           const SizedBox(height: 12),
           // Item 5: Year stat card
-          _buildAnimatedItem(
-              5,
-              _buildStatCard(
+          StaggeredReveal.withAnimation(
+              animation: _fadeAnimations[5],
+              child: _buildStatCard(
                 context,
                 widget.strings,
                 widget.strings.yearCatch,
@@ -201,9 +191,9 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
               ),),
           const SizedBox(height: 12),
           // Item 6: All catch stat card
-          _buildAnimatedItem(
-              6,
-              _buildStatCard(
+          StaggeredReveal.withAnimation(
+              animation: _fadeAnimations[6],
+              child: _buildStatCard(
                 context,
                 widget.strings,
                 widget.strings.allCatch,
@@ -227,15 +217,6 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
     );
   }
 
-  Widget _buildAnimatedItem(int index, Widget child) {
-    return FadeTransition(
-      opacity: _fadeAnimations[index],
-      child: SlideTransition(
-        position: _slideAnimations[index],
-        child: child,
-      ),
-    );
-  }
 
   void _navigateToDetail(
     BuildContext context,

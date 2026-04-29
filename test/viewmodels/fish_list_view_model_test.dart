@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/fish_filter.dart';
@@ -321,7 +323,6 @@ void main() {
         );
 
         viewModel.setFateFilter(FishFateType.release);
-        await Future.delayed(const Duration(milliseconds: 50));
 
         expect(viewModel.state.filter.fateFilter, equals(FishFateType.release));
       });
@@ -346,7 +347,6 @@ void main() {
         );
 
         viewModel.setFateFilter(null);
-        await Future.delayed(const Duration(milliseconds: 50));
 
         expect(viewModel.state.filter.fateFilter, isNull);
       });
@@ -373,7 +373,6 @@ void main() {
         );
 
         viewModel.setSpeciesFilter('Bass');
-        await Future.delayed(const Duration(milliseconds: 50));
 
         expect(viewModel.state.filter.speciesFilter, equals('Bass'));
       });
@@ -396,7 +395,6 @@ void main() {
         );
 
         viewModel.setSortBy('length');
-        await Future.delayed(const Duration(milliseconds: 50));
 
         expect(viewModel.state.filter.sortBy, equals('length'));
       });
@@ -451,7 +449,6 @@ void main() {
         );
 
         viewModel.setSearchQuery('bass');
-        await Future.delayed(const Duration(milliseconds: 50));
 
         expect(viewModel.state.filter.searchQuery, equals('bass'));
       });
@@ -476,7 +473,6 @@ void main() {
         );
 
         viewModel.setSearchQuery(null);
-        await Future.delayed(const Duration(milliseconds: 50));
 
         expect(viewModel.state.filter.searchQuery, isNull);
       });
@@ -501,7 +497,6 @@ void main() {
         );
 
         viewModel.setSearchQuery('test');
-        await Future.delayed(const Duration(milliseconds: 50));
 
         expect(viewModel.state.hasFilters, isTrue);
       });
@@ -531,7 +526,6 @@ void main() {
         final endDate = DateTime(2024, 12, 31);
 
         viewModel.setCustomDateRange(startDate, endDate);
-        await Future.delayed(const Duration(milliseconds: 50));
 
         expect(viewModel.state.filter.timeFilter, equals('custom'));
         expect(viewModel.state.filter.customStartDate, equals(startDate));
@@ -558,7 +552,6 @@ void main() {
         );
 
         viewModel.setCustomDateRange(null, null);
-        await Future.delayed(const Duration(milliseconds: 50));
 
         expect(viewModel.state.filter.timeFilter, equals('custom'));
         expect(viewModel.state.filter.customStartDate, isNull);
@@ -722,28 +715,26 @@ void main() {
 
     group('loadMore', () {
       test('does nothing when already loading', () async {
+        final completer = Completer<PaginatedResult<FishCatch>>();
         when(() => mockRepository.getPage(
               page: any(named: 'page'),
               pageSize: any(named: 'pageSize'),
               orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async {
-          await Future.delayed(const Duration(seconds: 1));
-          return const PaginatedResult(
-            items: [],
-            totalCount: 0,
-            page: 1,
-            pageSize: 20,
-            hasMore: false,
-          );
-        });
+            ),).thenAnswer((_) => completer.future);
 
         final load1 = viewModel.loadCatches(reset: true);
-        final load2 = viewModel.loadMore();
+        // loadMore should be skipped because isLoading is true
+        await viewModel.loadMore();
 
-        await Future.delayed(const Duration(milliseconds: 50));
-
+        // Now complete the first load
+        completer.complete(const PaginatedResult(
+          items: [],
+          totalCount: 0,
+          page: 1,
+          pageSize: 20,
+          hasMore: false,
+        ));
         await load1;
-        await load2;
 
         // Should only be called once because loadMore should be skipped during loading
         verify(() => mockRepository.getPage(

@@ -6,6 +6,7 @@ import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/providers/equipment_edit_state.dart';
 import 'package:lurebox/core/services/app_logger.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:lurebox/core/services/error_service.dart';
 
 // =============================================================================
 // Base Notifier (Handles Shared Fields)
@@ -192,7 +193,7 @@ class _BaseEquipmentEditNotifier {
     } catch (e) {
       AppLogger.e('EquipmentEditViewModel', 'Failed to save equipment', e);
       _updateState(
-        _state.withUpdates(isSaving: false, errorMessage: e.toString()),
+        _state.withUpdates(isSaving: false, errorMessage: ErrorService.toUserMessage(e)),
       );
       return false;
     }
@@ -547,6 +548,13 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
   final EquipmentService _equipmentService;
   late _BaseEquipmentEditNotifier _delegate;
 
+  /// Call a delegate method and sync state back.
+  T _delegateAndSync<T>(T Function() fn) {
+    final result = fn();
+    state = _delegate.state;
+    return result;
+  }
+
   static EquipmentEditState _buildInitial(
     String type,
     Equipment? equipment,
@@ -573,204 +581,59 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
     }
   }
 
-  void loadFromEquipment(Equipment equipment) {
-    _delegate.loadFromEquipment(equipment);
-    state = _delegate.state;
-  }
+  void loadFromEquipment(Equipment equipment) =>
+      _delegateAndSync(() => _delegate.loadFromEquipment(equipment));
 
-  // Shared update methods
-  void updateBrand(String value) {
-    _delegate.updateBrand(value);
-    state = _delegate.state;
-  }
-
-  void updateModel(String value) {
-    _delegate.updateModel(value);
-    state = _delegate.state;
-  }
-
-  void updatePrice(String value) {
-    _delegate.updatePrice(value);
-    state = _delegate.state;
-  }
-
-  void updatePurchaseDate(String value) {
-    _delegate.updatePurchaseDate(value);
-    state = _delegate.state;
-  }
-
-  void updateIsDefault(bool value) {
-    _delegate.updateIsDefault(value);
-    state = _delegate.state;
-  }
+  // Shared fields
+  void updateBrand(String value) => _delegateAndSync(() => _delegate.updateBrand(value));
+  void updateModel(String value) => _delegateAndSync(() => _delegate.updateModel(value));
+  void updatePrice(String value) => _delegateAndSync(() => _delegate.updatePrice(value));
+  void updatePurchaseDate(String value) => _delegateAndSync(() => _delegate.updatePurchaseDate(value));
+  void updateIsDefault(bool value) => _delegateAndSync(() => _delegate.updateIsDefault(value));
 
   void resetState() {
-    // Re-create the delegate with fresh state for add mode
     _delegate = _createDelegate(state.type, null);
     state = _delegate.state;
   }
 
-  // Rod-specific update methods
-  void updateCategoryType1(String value) {
-    _delegate.updateCategoryType1(value);
-    state = _delegate.state;
-  }
+  // Rod-specific
+  void updateCategoryType1(String value) => _delegateAndSync(() => _delegate.updateCategoryType1(value));
+  void updateCategoryType2(String value) => _delegateAndSync(() => _delegate.updateCategoryType2(value));
+  void updateLength(String value) => _delegateAndSync(() => _delegate.updateLength(value));
+  void updateLengthUnit(String value) => _delegateAndSync(() => _delegate.updateLengthUnit(value));
+  void updateSections(String value) => _delegateAndSync(() => _delegate.updateSections(value));
+  void updateJointType(String value) => _delegateAndSync(() => _delegate.updateJointType(value));
+  void updateMaterial(String value) => _delegateAndSync(() => _delegate.updateMaterial(value));
+  void updateHardness(String value) => _delegateAndSync(() => _delegate.updateHardness(value));
+  void updateRodAction(String value) => _delegateAndSync(() => _delegate.updateRodAction(value));
+  void updateWeightRange(String value) => _delegateAndSync(() => _delegate.updateWeightRange(value));
 
-  void updateCategoryType2(String value) {
-    _delegate.updateCategoryType2(value);
-    state = _delegate.state;
-  }
+  // Reel-specific
+  void updateReelBearings(String value) => _delegateAndSync(() => _delegate.updateReelBearings(value));
+  void updateReelRatio(String value) => _delegateAndSync(() => _delegate.updateReelRatio(value));
+  void updateReelCapacity(String value) => _delegateAndSync(() => _delegate.updateReelCapacity(value));
+  void updateReelBrakeType(String value) => _delegateAndSync(() => _delegate.updateReelBrakeType(value));
+  void updateReelDrag(String value) => _delegateAndSync(() => _delegate.updateReelDrag(value));
+  void updateReelDragUnit(String value) => _delegateAndSync(() => _delegate.updateReelDragUnit(value));
+  void updateReelWeight(String value) => _delegateAndSync(() => _delegate.updateReelWeight(value));
+  void updateReelWeightUnit(String value) => _delegateAndSync(() => _delegate.updateReelWeightUnit(value));
+  void updateReelLine(String value) => _delegateAndSync(() => _delegate.updateReelLine(value));
+  void updateReelLineNumber(String value) => _delegateAndSync(() => _delegate.updateReelLineNumber(value));
+  void updateReelLineLength(String value) => _delegateAndSync(() => _delegate.updateReelLineLength(value));
+  void updateReelLineLengthUnit(String value) => _delegateAndSync(() => _delegate.updateReelLineLengthUnit(value));
+  void updateReelLineDate(String value) => _delegateAndSync(() => _delegate.updateReelLineDate(value));
 
-  void updateLength(String value) {
-    _delegate.updateLength(value);
-    state = _delegate.state;
-  }
+  // Lure-specific
+  void updateLureType(String value) => _delegateAndSync(() => _delegate.updateLureType(value));
+  void updateLureWeight(String value) => _delegateAndSync(() => _delegate.updateLureWeight(value));
+  void updateLureWeightUnit(String value) => _delegateAndSync(() => _delegate.updateLureWeightUnit(value));
+  void updateLureSize(String value) => _delegateAndSync(() => _delegate.updateLureSize(value));
+  void updateLureSizeUnit(String value) => _delegateAndSync(() => _delegate.updateLureSizeUnit(value));
+  void updateLureColor(String value) => _delegateAndSync(() => _delegate.updateLureColor(value));
+  void updateLureQuantity(String value) => _delegateAndSync(() => _delegate.updateLureQuantity(value));
+  void updateLureQuantityUnit(String? value) => _delegateAndSync(() => _delegate.updateLureQuantityUnit(value));
 
-  void updateLengthUnit(String value) {
-    _delegate.updateLengthUnit(value);
-    state = _delegate.state;
-  }
-
-  void updateSections(String value) {
-    _delegate.updateSections(value);
-    state = _delegate.state;
-  }
-
-  void updateJointType(String value) {
-    _delegate.updateJointType(value);
-    state = _delegate.state;
-  }
-
-  void updateMaterial(String value) {
-    _delegate.updateMaterial(value);
-    state = _delegate.state;
-  }
-
-  void updateHardness(String value) {
-    _delegate.updateHardness(value);
-    state = _delegate.state;
-  }
-
-  void updateRodAction(String value) {
-    _delegate.updateRodAction(value);
-    state = _delegate.state;
-  }
-
-  void updateWeightRange(String value) {
-    _delegate.updateWeightRange(value);
-    state = _delegate.state;
-  }
-
-  // Reel-specific update methods
-  void updateReelBearings(String value) {
-    _delegate.updateReelBearings(value);
-    state = _delegate.state;
-  }
-
-  void updateReelRatio(String value) {
-    _delegate.updateReelRatio(value);
-    state = _delegate.state;
-  }
-
-  void updateReelCapacity(String value) {
-    _delegate.updateReelCapacity(value);
-    state = _delegate.state;
-  }
-
-  void updateReelBrakeType(String value) {
-    _delegate.updateReelBrakeType(value);
-    state = _delegate.state;
-  }
-
-  void updateReelDrag(String value) {
-    _delegate.updateReelDrag(value);
-    state = _delegate.state;
-  }
-
-  void updateReelDragUnit(String value) {
-    _delegate.updateReelDragUnit(value);
-    state = _delegate.state;
-  }
-
-  void updateReelWeight(String value) {
-    _delegate.updateReelWeight(value);
-    state = _delegate.state;
-  }
-
-  void updateReelWeightUnit(String value) {
-    _delegate.updateReelWeightUnit(value);
-    state = _delegate.state;
-  }
-
-  void updateReelLine(String value) {
-    _delegate.updateReelLine(value);
-    state = _delegate.state;
-  }
-
-  void updateReelLineNumber(String value) {
-    _delegate.updateReelLineNumber(value);
-    state = _delegate.state;
-  }
-
-  void updateReelLineLength(String value) {
-    _delegate.updateReelLineLength(value);
-    state = _delegate.state;
-  }
-
-  void updateReelLineLengthUnit(String value) {
-    _delegate.updateReelLineLengthUnit(value);
-    state = _delegate.state;
-  }
-
-  void updateReelLineDate(String value) {
-    _delegate.updateReelLineDate(value);
-    state = _delegate.state;
-  }
-
-  // Lure-specific update methods
-  void updateLureType(String value) {
-    _delegate.updateLureType(value);
-    state = _delegate.state;
-  }
-
-  void updateLureWeight(String value) {
-    _delegate.updateLureWeight(value);
-    state = _delegate.state;
-  }
-
-  void updateLureWeightUnit(String value) {
-    _delegate.updateLureWeightUnit(value);
-    state = _delegate.state;
-  }
-
-  void updateLureSize(String value) {
-    _delegate.updateLureSize(value);
-    state = _delegate.state;
-  }
-
-  void updateLureSizeUnit(String value) {
-    _delegate.updateLureSizeUnit(value);
-    state = _delegate.state;
-  }
-
-  void updateLureColor(String value) {
-    _delegate.updateLureColor(value);
-    state = _delegate.state;
-  }
-
-  void updateLureQuantity(String value) {
-    _delegate.updateLureQuantity(value);
-    state = _delegate.state;
-  }
-
-  void updateLureQuantityUnit(String? value) {
-    _delegate.updateLureQuantityUnit(value);
-    state = _delegate.state;
-  }
-
-  String? validatePrice(AppStrings strings) {
-    return _delegate.validatePrice(strings);
-  }
+  String? validatePrice(AppStrings strings) => _delegate.validatePrice(strings);
 
   Future<bool> save() async {
     final result = await _delegate.save();
