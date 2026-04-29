@@ -75,7 +75,8 @@ class DatabaseProvider {
     // 启用外键约束
     await db.execute('PRAGMA foreign_keys = ON');
     // WAL 模式：提升并发读写性能
-    await db.execute('PRAGMA journal_mode = WAL');
+    // 必须用 rawQuery：Android 上 PRAGMA journal_mode 返回结果集
+    await db.rawQuery('PRAGMA journal_mode = WAL');
   }
 
   /// 数据库创建回调
