@@ -17,6 +17,7 @@ class OnboardingPage extends ConsumerStatefulWidget {
 class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
+  bool _isCompleting = false;
 
   List<Widget> _buildPages(AppStrings strings) => [
         _WelcomePage(strings: strings),
@@ -35,20 +36,32 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   void _nextPage() {
     if (_currentPage < 4) {
       _pageController.nextPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut,);
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     } else {
       _completeOnboarding();
     }
   }
 
   Future<void> _completeOnboarding() async {
-    await ref.read(onboardingNotifierProvider.notifier).completeOnboarding();
-    if (mounted) context.go('/');
+    if (_isCompleting) return;
+    setState(() => _isCompleting = true);
+    try {
+      await ref.read(onboardingNotifierProvider.notifier).completeOnboarding();
+      if (mounted) context.go('/');
+    } on Object catch (e) {
+      if (!mounted) return;
+      final errorStrings = ref.read(currentStringsProvider);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${errorStrings.errorSaveFailed}: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isCompleting = false);
+    }
   }
 
-  void _skip() {
-    _completeOnboarding();
-  }
+  Future<void> _skip() => _completeOnboarding();
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +74,10 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
           children: [
             Align(
               alignment: Alignment.topRight,
-              child: TextButton(onPressed: _skip, child: Text(strings.onboardingSkip)),
+              child: TextButton(
+                onPressed: _isCompleting ? null : _skip,
+                child: Text(strings.onboardingSkip),
+              ),
             ),
             Expanded(
               child: PageView(
@@ -93,9 +109,21 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _nextPage,
-                  child:
-                      Text(_currentPage == pages.length - 1 ? strings.onboardingGetStarted : strings.onboardingNext),
+                  onPressed: _isCompleting ? null : _nextPage,
+                  child: _isCompleting
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          _currentPage == pages.length - 1
+                              ? strings.onboardingGetStarted
+                              : strings.onboardingNext,
+                        ),
                 ),
               ),
             ),
@@ -116,12 +144,17 @@ class _WelcomePage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.water_drop,
-              size: 100, color: TeslaColors.electricBlue,),
+          const Icon(
+            Icons.water_drop,
+            size: 100,
+            color: TeslaColors.electricBlue,
+          ),
           const SizedBox(height: 24),
-          Text(strings.onboardingWelcomeTitle, style: Theme.of(context).textTheme.headlineMedium),
+          Text(strings.onboardingWelcomeTitle,
+              style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
-          Text(strings.onboardingWelcomeDesc, style: Theme.of(context).textTheme.bodyLarge),
+          Text(strings.onboardingWelcomeDesc,
+              style: Theme.of(context).textTheme.bodyLarge),
         ],
       ),
     );
@@ -138,7 +171,8 @@ class _FeaturesPage extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          Text(strings.onboardingFeaturesTitle, style: Theme.of(context).textTheme.headlineSmall),
+          Text(strings.onboardingFeaturesTitle,
+              style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 24),
           Expanded(
             child: GridView.count(
@@ -147,13 +181,25 @@ class _FeaturesPage extends StatelessWidget {
               crossAxisSpacing: 16,
               children: [
                 _FeatureCard(
-                    icon: Icons.camera_alt, title: strings.onboardingFeatureCameraTitle, desc: strings.onboardingFeatureCameraDesc,),
+                  icon: Icons.camera_alt,
+                  title: strings.onboardingFeatureCameraTitle,
+                  desc: strings.onboardingFeatureCameraDesc,
+                ),
                 _FeatureCard(
-                    icon: Icons.inventory_2, title: strings.onboardingFeatureEquipmentTitle, desc: strings.onboardingFeatureEquipmentDesc,),
+                  icon: Icons.inventory_2,
+                  title: strings.onboardingFeatureEquipmentTitle,
+                  desc: strings.onboardingFeatureEquipmentDesc,
+                ),
                 _FeatureCard(
-                    icon: Icons.bar_chart, title: strings.onboardingFeatureStatsTitle, desc: strings.onboardingFeatureStatsDesc,),
+                  icon: Icons.bar_chart,
+                  title: strings.onboardingFeatureStatsTitle,
+                  desc: strings.onboardingFeatureStatsDesc,
+                ),
                 _FeatureCard(
-                    icon: Icons.backup, title: strings.onboardingFeatureBackupTitle, desc: strings.onboardingFeatureBackupDesc,),
+                  icon: Icons.backup,
+                  title: strings.onboardingFeatureBackupTitle,
+                  desc: strings.onboardingFeatureBackupDesc,
+                ),
               ],
             ),
           ),
@@ -164,8 +210,11 @@ class _FeaturesPage extends StatelessWidget {
 }
 
 class _FeatureCard extends StatelessWidget {
-  const _FeatureCard(
-      {required this.icon, required this.title, required this.desc,});
+  const _FeatureCard({
+    required this.icon,
+    required this.title,
+    required this.desc,
+  });
   final IconData icon;
   final String title;
   final String desc;
@@ -181,9 +230,11 @@ class _FeatureCard extends StatelessWidget {
             Icon(icon, size: 48, color: TeslaColors.electricBlue),
             const SizedBox(height: 8),
             Text(title, style: Theme.of(context).textTheme.titleMedium),
-            Text(desc,
-                style: Theme.of(context).textTheme.bodySmall,
-                textAlign: TextAlign.center,),
+            Text(
+              desc,
+              style: Theme.of(context).textTheme.bodySmall,
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),
@@ -240,8 +291,10 @@ class _PermissionsPageState extends State<_PermissionsPage> {
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          Text(widget.strings.onboardingPermissionsTitle,
-              style: Theme.of(context).textTheme.headlineSmall,),
+          Text(
+            widget.strings.onboardingPermissionsTitle,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
           const SizedBox(height: 32),
           Expanded(
             child: SingleChildScrollView(
@@ -279,19 +332,24 @@ class _PermissionsPageState extends State<_PermissionsPage> {
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
                     : const Icon(Icons.security),
-                label: Text(_isRequesting
-                    ? widget.strings.onboardingPermissionsRequesting
-                    : widget.strings.onboardingPermissionsGrant,),
+                label: Text(
+                  _isRequesting
+                      ? widget.strings.onboardingPermissionsRequesting
+                      : widget.strings.onboardingPermissionsGrant,
+                ),
               ),
             ),
           if (_cameraGranted && _locationGranted)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.check_circle, color: TeslaColors.success, size: 20),
+                const Icon(Icons.check_circle,
+                    color: TeslaColors.success, size: 20),
                 const SizedBox(width: 8),
-                Text(widget.strings.onboardingPermissionsGranted,
-                    style: TextStyle(color: TeslaColors.success),),
+                Text(
+                  widget.strings.onboardingPermissionsGranted,
+                  style: TextStyle(color: TeslaColors.success),
+                ),
               ],
             ),
           const SizedBox(height: 8),
@@ -303,12 +361,13 @@ class _PermissionsPageState extends State<_PermissionsPage> {
 }
 
 class _PermissionCard extends StatelessWidget {
-  const _PermissionCard(
-      {required this.icon,
-      required this.title,
-      required this.desc,
-      required this.example,
-      this.granted = false,});
+  const _PermissionCard({
+    required this.icon,
+    required this.title,
+    required this.desc,
+    required this.example,
+    this.granted = false,
+  });
   final IconData icon;
   final String title;
   final String desc;
@@ -325,29 +384,37 @@ class _PermissionCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon,
-                    color: granted
-                        ? TeslaColors.success
-                        : TeslaColors.electricBlue,
-                    size: 32,),
+                Icon(
+                  icon,
+                  color:
+                      granted ? TeslaColors.success : TeslaColors.electricBlue,
+                  size: 32,
+                ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(title,
-                      style: Theme.of(context).textTheme.titleMedium,),
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ),
                 if (granted)
-                  const Icon(Icons.check_circle,
-                      color: TeslaColors.success, size: 20,),
+                  const Icon(
+                    Icons.check_circle,
+                    color: TeslaColors.success,
+                    size: 20,
+                  ),
               ],
             ),
             const SizedBox(height: 8),
             Text(desc, style: Theme.of(context).textTheme.bodyMedium),
             const SizedBox(height: 4),
-            Text(example,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey,
-                      fontStyle: FontStyle.italic,
-                    ),),
+            Text(
+              example,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey,
+                    fontStyle: FontStyle.italic,
+                  ),
+            ),
           ],
         ),
       ),
@@ -365,11 +432,14 @@ class _SettingsPage extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          Text(strings.onboardingSettingsTitle, style: Theme.of(context).textTheme.headlineSmall),
+          Text(strings.onboardingSettingsTitle,
+              style: Theme.of(context).textTheme.headlineSmall),
           const SizedBox(height: 16),
-          Text(strings.onboardingSettingsDesc, style: Theme.of(context).textTheme.bodyMedium),
+          Text(strings.onboardingSettingsDesc,
+              style: Theme.of(context).textTheme.bodyMedium),
           const Spacer(),
-          Text(strings.onboardingSettingsItems, style: Theme.of(context).textTheme.titleMedium),
+          Text(strings.onboardingSettingsItems,
+              style: Theme.of(context).textTheme.titleMedium),
           const Spacer(),
         ],
       ),
@@ -387,12 +457,17 @@ class _CompletePage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.check_circle,
-              size: 100, color: TeslaColors.electricBlue,),
+          const Icon(
+            Icons.check_circle,
+            size: 100,
+            color: TeslaColors.electricBlue,
+          ),
           const SizedBox(height: 24),
-          Text(strings.onboardingReadyTitle, style: Theme.of(context).textTheme.headlineMedium),
+          Text(strings.onboardingReadyTitle,
+              style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
-          Text(strings.onboardingReadyDesc, style: Theme.of(context).textTheme.bodyLarge),
+          Text(strings.onboardingReadyDesc,
+              style: Theme.of(context).textTheme.bodyLarge),
         ],
       ),
     );
