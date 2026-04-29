@@ -31,7 +31,7 @@ core/
 | Add service | `services/` - async methods, try-catch |
 | Add repository | `repositories/` - interface + impl in same dir |
 | DI configuration | `di/di.dart` - override providers here |
-| Database schema | `database/database_provider.dart` - schema v22 |
+| Database schema | `database/database_provider.dart` - schema v23 |
 | Theme/colors | `design/theme/` - AppColors, AppTheme |
 | String constants | `constants/strings.dart` - AppStrings class |
 

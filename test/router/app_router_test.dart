@@ -584,4 +584,338 @@ void main() {
       expect(router.routeInformationProvider.value.uri.path, '/onboarding');
     });
   });
+
+  // ============================================================
+  // 7. Additional Routes (me/backup-export, settings subroutes,
+  //    achievements, species, equipment/overview)
+  // ============================================================
+  group('additional route coverage', () {
+    late GoRouter testRouter;
+
+    setUp(() {
+      testRouter = GoRouter(
+        initialLocation: '/',
+        redirect: (_, __) => null,
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const Text('home'),
+          ),
+          GoRoute(
+            path: '/onboarding',
+            builder: (_, __) => const Text('onboarding'),
+          ),
+          GoRoute(
+            path: '/fish/:id',
+            builder: (_, state) {
+              final fishId = int.tryParse(state.pathParameters['id'] ?? '');
+              return Text('fish:${fishId ?? "null"}');
+            },
+          ),
+          GoRoute(
+            path: '/fish/:id/edit',
+            builder: (_, state) {
+              final fishId = int.tryParse(state.pathParameters['id'] ?? '');
+              return Text('fishEdit:${fishId ?? "null"}');
+            },
+          ),
+          GoRoute(
+            path: '/equipment/edit',
+            builder: (_, state) {
+              const allowedTypes = {'rod', 'reel', 'lure', 'line'};
+              final rawType = state.uri.queryParameters['type'] ?? 'rod';
+              final type = allowedTypes.contains(rawType) ? rawType : 'rod';
+              final idStr = state.uri.queryParameters['id'];
+              final equipmentId = idStr != null ? int.tryParse(idStr) : null;
+              return Text('equipmentEdit:type=$type,id=$equipmentId');
+            },
+          ),
+          GoRoute(
+            path: '/stats',
+            builder: (_, state) {
+              final title = state.uri.queryParameters['title'] ?? '';
+              return Text('stats:title=$title');
+            },
+          ),
+          GoRoute(
+            path: '/camera',
+            builder: (_, __) => const Text('camera'),
+          ),
+          GoRoute(
+            path: '/achievements',
+            builder: (_, __) => const Text('achievements'),
+          ),
+          GoRoute(
+            path: '/settings',
+            builder: (_, __) => const Text('settings'),
+          ),
+          GoRoute(
+            path: '/species',
+            builder: (_, __) => const Text('species'),
+          ),
+          GoRoute(
+            path: '/equipment/overview',
+            builder: (_, __) => const Text('equipmentOverview'),
+          ),
+          GoRoute(
+            path: '/settings/watermark',
+            builder: (_, __) => const Text('settingsWatermark'),
+          ),
+          GoRoute(
+            path: '/settings/ai',
+            builder: (_, __) => const Text('settingsAi'),
+          ),
+          GoRoute(
+            path: '/settings/locations',
+            builder: (_, __) => const Text('settingsLocations'),
+          ),
+          GoRoute(
+            path: '/settings/export-backup',
+            builder: (_, __) => const Text('settingsExportBackup'),
+          ),
+          GoRoute(
+            path: '/settings/units',
+            builder: (_, __) => const Text('settingsUnits'),
+          ),
+          GoRoute(
+            path: '/me/settings',
+            builder: (_, __) => const Text('meSettings'),
+          ),
+          GoRoute(
+            path: '/me/backup-export',
+            builder: (_, __) => const Text('meBackupExport'),
+          ),
+        ],
+      );
+    });
+
+    tearDown(() => testRouter.dispose());
+
+    testWidgets('matches /me/backup-export route', (tester) async {
+      await tester.pumpWidget(_testApp(testRouter));
+      testRouter.go('/me/backup-export');
+      await tester.pumpAndSettle();
+      expect(find.text('meBackupExport'), findsOneWidget);
+    });
+
+    testWidgets('matches /settings route', (tester) async {
+      await tester.pumpWidget(_testApp(testRouter));
+      testRouter.go('/settings');
+      await tester.pumpAndSettle();
+      expect(find.text('settings'), findsOneWidget);
+    });
+
+    testWidgets('matches /settings/watermark route', (tester) async {
+      await tester.pumpWidget(_testApp(testRouter));
+      testRouter.go('/settings/watermark');
+      await tester.pumpAndSettle();
+      expect(find.text('settingsWatermark'), findsOneWidget);
+    });
+
+    testWidgets('matches /settings/ai route', (tester) async {
+      await tester.pumpWidget(_testApp(testRouter));
+      testRouter.go('/settings/ai');
+      await tester.pumpAndSettle();
+      expect(find.text('settingsAi'), findsOneWidget);
+    });
+
+    testWidgets('matches /settings/locations route', (tester) async {
+      await tester.pumpWidget(_testApp(testRouter));
+      testRouter.go('/settings/locations');
+      await tester.pumpAndSettle();
+      expect(find.text('settingsLocations'), findsOneWidget);
+    });
+
+    testWidgets('matches /settings/export-backup route', (tester) async {
+      await tester.pumpWidget(_testApp(testRouter));
+      testRouter.go('/settings/export-backup');
+      await tester.pumpAndSettle();
+      expect(find.text('settingsExportBackup'), findsOneWidget);
+    });
+
+    testWidgets('matches /settings/units route', (tester) async {
+      await tester.pumpWidget(_testApp(testRouter));
+      testRouter.go('/settings/units');
+      await tester.pumpAndSettle();
+      expect(find.text('settingsUnits'), findsOneWidget);
+    });
+
+    testWidgets('matches /me/settings route', (tester) async {
+      await tester.pumpWidget(_testApp(testRouter));
+      testRouter.go('/me/settings');
+      await tester.pumpAndSettle();
+      expect(find.text('meSettings'), findsOneWidget);
+    });
+
+    testWidgets('matches /achievements route', (tester) async {
+      await tester.pumpWidget(_testApp(testRouter));
+      testRouter.go('/achievements');
+      await tester.pumpAndSettle();
+      expect(find.text('achievements'), findsOneWidget);
+    });
+
+    testWidgets('matches /species route', (tester) async {
+      await tester.pumpWidget(_testApp(testRouter));
+      testRouter.go('/species');
+      await tester.pumpAndSettle();
+      expect(find.text('species'), findsOneWidget);
+    });
+
+    testWidgets('matches /equipment/overview route', (tester) async {
+      await tester.pumpWidget(_testApp(testRouter));
+      testRouter.go('/equipment/overview');
+      await tester.pumpAndSettle();
+      expect(find.text('equipmentOverview'), findsOneWidget);
+    });
+  });
+
+  // ============================================================
+  // 8. Invalid Route Handling
+  // ============================================================
+  group('invalid route handling', () {
+    testWidgets('unknown route shows no matching widget', (tester) async {
+      final router = GoRouter(
+        initialLocation: '/',
+        redirect: (_, __) => null,
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const Text('home'),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(_testApp(router));
+      router.go('/nonexistent/route');
+      await tester.pumpAndSettle();
+      // No Text widget should match 'home' since we're on an unknown route
+      // The router won't match any route, so no builder is called
+      expect(find.text('home'), findsNothing);
+    });
+
+    testWidgets('deeply nested unknown route falls through', (tester) async {
+      final router = GoRouter(
+        initialLocation: '/',
+        redirect: (_, __) => null,
+        routes: [
+          GoRoute(
+            path: '/',
+            builder: (_, __) => const Text('home'),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(_testApp(router));
+      router.go('/foo/bar/baz/qux');
+      await tester.pumpAndSettle();
+      expect(find.text('home'), findsNothing);
+    });
+  });
+
+  // ============================================================
+  // 9. Shell FAB Navigation
+  // ============================================================
+  group('shell FAB navigation', () {
+    testWidgets('FAB navigation to /camera is accessible', (tester) async {
+      final capture = ValueNotifier<int>(-1);
+      final rootKey = GlobalKey<NavigatorState>();
+      final shellKey = GlobalKey<NavigatorState>();
+
+      // Create router with shell and separate camera route
+      final router = GoRouter(
+        initialLocation: '/',
+        navigatorKey: rootKey,
+        routes: [
+          ShellRoute(
+            navigatorKey: shellKey,
+            builder: (context, state, child) {
+              return _NavCaptureShell(
+                capture: capture,
+                child: child,
+              );
+            },
+            routes: [
+              GoRoute(path: '/', builder: (_, __) => const Text('home')),
+              GoRoute(
+                  path: '/fish', builder: (_, __) => const Text('fishList')),
+              GoRoute(
+                  path: '/equipment',
+                  builder: (_, __) => const Text('equipmentList')),
+              GoRoute(path: '/me', builder: (_, __) => const Text('mePage')),
+            ],
+          ),
+          GoRoute(
+            path: '/camera',
+            builder: (_, __) => const Text('camera'),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(_testApp(router));
+      await tester.pumpAndSettle();
+      expect(capture.value, 0);
+
+      // Navigate to /camera (simulating FAB press)
+      // The FAB is inside MainShell but /camera is a root route
+      router.go('/camera');
+      await tester.pumpAndSettle();
+      expect(find.text('camera'), findsOneWidget);
+    });
+
+    testWidgets('shell FAB press navigates away from shell', (tester) async {
+      final capture = ValueNotifier<int>(-1);
+      final rootKey = GlobalKey<NavigatorState>();
+      final shellKey = GlobalKey<NavigatorState>();
+
+      // Create router with explicit root navigator for non-shell routes
+      final router = GoRouter(
+        initialLocation: '/',
+        navigatorKey: rootKey,
+        routes: [
+          ShellRoute(
+            navigatorKey: shellKey,
+            builder: (context, state, child) {
+              return _NavCaptureShell(
+                capture: capture,
+                child: child,
+              );
+            },
+            routes: [
+              GoRoute(path: '/', builder: (_, __) => const Text('home')),
+              GoRoute(
+                  path: '/fish', builder: (_, __) => const Text('fishList')),
+              GoRoute(
+                  path: '/equipment',
+                  builder: (_, __) => const Text('equipmentList')),
+              GoRoute(path: '/me', builder: (_, __) => const Text('mePage')),
+            ],
+          ),
+          GoRoute(
+            path: '/camera',
+            builder: (_, __) => const Text('camera'),
+          ),
+        ],
+      );
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(_testApp(router));
+      await tester.pumpAndSettle();
+
+      // Should be on home (shell route)
+      expect(find.text('home'), findsOneWidget);
+      expect(find.byType(_NavCaptureShell), findsOneWidget);
+
+      // Navigate to /camera (simulating FAB press from shell)
+      router.go('/camera');
+      await tester.pumpAndSettle();
+
+      // Should be on camera page (outside shell)
+      expect(find.text('camera'), findsOneWidget);
+      // Shell should no longer be visible since /camera is not a shell route
+      expect(find.byType(_NavCaptureShell), findsNothing);
+    });
+  });
 }

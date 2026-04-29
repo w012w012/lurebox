@@ -21,6 +21,7 @@ import 'package:lurebox/features/stats/widgets/monthly_stats_card.dart';
 import 'package:lurebox/features/stats/widgets/species_distribution_chart.dart';
 import 'package:lurebox/features/stats/widgets/stats_summary_card.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -378,9 +379,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
     } catch (e) {
       AppLogger.e('StatsDetailPage', 'Failed to share stats', e);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(strings.shareFailed)),
-        );
+        AppSnackBar.showError(context, strings.shareFailed);
       }
     } finally {
       if (mounted) setState(() => _isSharing = false);

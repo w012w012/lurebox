@@ -33,7 +33,6 @@ export 'models/stats_models.dart';
 export 'models/watermark_settings.dart';
 // Providers
 export 'providers/achievement_provider.dart';
-export 'providers/achievement_view_model.dart';
 export 'providers/ai_recognition_provider.dart'
     hide aiRecognitionSettingsProvider;
 export 'providers/app_settings_provider.dart';

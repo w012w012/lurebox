@@ -9,6 +9,7 @@ import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/services/app_logger.dart';
 import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
 
 class FishEditPage extends ConsumerStatefulWidget {
   const FishEditPage({required this.fish, required this.strings, super.key});
@@ -134,9 +135,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    AppSnackBar.showError(context, message);
   }
 
   @override

@@ -22,7 +22,7 @@ test/
 ├── repositories/     # Repository integration tests (9 files)
 ├── services/         # Service tests (17 files)
 ├── utils/            # Utility tests
-├── viewmodels/       # ViewModel tests (8 files)
+├── viewmodels/       # ViewModel tests (7 files)
 └── widgets/common/   # Widget tests (7 files)
 ```
 
@@ -68,5 +68,5 @@ flutter test --coverage                # Generate coverage report
 ## NOTES
 - 20 provider test files — largest test category
 - AI provider tests share `runOpenAICompatibleProviderTests()` helper
-- Database tests create full schema in `setUp()` — version 22
+- Database tests create full schema in `setUp()` — version 23
 - `test/fixtures/` has test images for photo-related tests

@@ -13,6 +13,7 @@ import 'package:lurebox/core/providers/equipment_view_model.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/services/app_logger.dart';
 import 'package:lurebox/core/utils/file_utils.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
 import 'package:lurebox/widgets/common/distribution_chart.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
@@ -61,9 +62,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
       AppLogger.e('EquipmentOverview', 'Failed to share equipment overview', e);
       if (mounted) {
         final strings = ref.read(currentStringsProvider);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(strings.shareFailed)),
-        );
+        AppSnackBar.showError(context, strings.shareFailed);
       }
     } finally {
       if (mounted) setState(() => _isSharing = false);

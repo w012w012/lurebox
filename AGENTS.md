@@ -103,7 +103,7 @@ test/                         # 99 test files, ~39k lines
 ## Database
 - SQLite via sqflite
 - Schema versioning in `DatabaseProvider._onUpgrade`
-- Current version: **22** (defined in `database_provider.dart`)
+- Current version: **23** (defined in `database_provider.dart`)
 - Tables: `fish_catches`, `equipments`, `species_history`, `settings`
 - Foreign keys enabled via `PRAGMA foreign_keys = ON`
 - Downgrade: no-op (preserves data)

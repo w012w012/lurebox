@@ -5,6 +5,7 @@ import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/onboarding_provider.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class OnboardingPage extends ConsumerStatefulWidget {
@@ -53,9 +54,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     } on Object catch (e) {
       if (!mounted) return;
       final errorStrings = ref.read(currentStringsProvider);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${errorStrings.errorSaveFailed}: $e')),
-      );
+      AppSnackBar.showError(context, errorStrings.errorSaveFailed, debugError: e);
     } finally {
       if (mounted) setState(() => _isCompleting = false);
     }
