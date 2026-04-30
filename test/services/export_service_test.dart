@@ -352,11 +352,11 @@ void main() {
         // Species data is always present
         expect(content, contains('品种'));
         expect(content, contains('Bass'));
-        // Location data is excluded
+        // Location data is excluded — verify column name and location name are absent
+        // Note: numeric values (35, 120) are NOT checked because they can appear
+        // in timestamps (e.g., 19:19:35.064222), making the assertion flaky.
         expect(content, isNot(contains('钓点')));
         expect(content, isNot(contains('Lake')));
-        expect(content, isNot(contains('35')));
-        expect(content, isNot(contains('120')));
       });
 
       test('includeLocation=true exports with location data', () async {

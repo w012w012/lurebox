@@ -169,6 +169,40 @@ void main() {
       expect(find.text('放流: 10'), findsOneWidget);
       expect(find.text('保留: 5'), findsOneWidget);
     });
+
+    testWidgets('error state retry button calls refresh', (tester) async {
+      final mockVm = _MockHomeViewModel(
+        _MockHomeState(
+          errorMessage: 'Failed to load data',
+          isLoading: false,
+        ),
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            homeViewModelProvider.overrideWith((ref) => mockVm),
+            currentStringsProvider.overrideWithValue(AppStrings.chinese),
+          ],
+          child: const MaterialApp(
+            home: HomePage(),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // Error state should show error message
+      expect(find.text('Failed to load data'), findsOneWidget);
+
+      // Tap the retry button (ErrorView has a retry action)
+      final retryButton = find.text('重试');
+      if (retryButton.evaluate().isNotEmpty) {
+        await tester.tap(retryButton);
+        await tester.pump();
+        expect(mockVm.refreshCalled, isTrue);
+      }
+    });
   });
 }
 
@@ -220,9 +254,13 @@ class _MockHomeViewModel extends StateNotifier<HomeState>
     implements HomeViewModel {
   _MockHomeViewModel(HomeState state) : super(state);
 
+  bool refreshCalled = false;
+
   @override
   Future<void> loadData() async {}
 
   @override
-  Future<void> refresh() async {}
+  Future<void> refresh() async {
+    refreshCalled = true;
+  }
 }

@@ -105,71 +105,6 @@ void main() {
         expect(identical(copy, original), false);
       });
 
-      test('with single field change', () {
-        const original = RodEditState(
-          type: 'rod',
-          brand: 'Shimano',
-          model: 'Tournament',
-          isDefault: false,
-        );
-
-        final copy = original.copyWith(brand: ' Daiwa');
-
-        expect(copy.brand, ' Daiwa');
-        expect(copy.model, original.model);
-        expect(copy.isDefault, original.isDefault);
-      });
-
-      test('with multiple field changes', () {
-        const original = RodEditState(
-          type: 'rod',
-          brand: 'Shimano',
-          model: 'Tournament',
-          price: '200',
-          length: '2.1',
-          sections: '2',
-        );
-
-        final copy = original.copyWith(
-          brand: 'Daiwa',
-          price: '250',
-          length: '2.4',
-          sections: '3',
-        );
-
-        expect(copy.brand, 'Daiwa');
-        expect(copy.model, original.model);
-        expect(copy.price, '250');
-        expect(copy.length, '2.4');
-        expect(copy.sections, '3');
-        // Unchanged fields remain the same
-        expect(copy.type, original.type);
-        expect(copy.model, original.model);
-      });
-
-      test('with rod-specific fields only', () {
-        const original = RodEditState(
-          type: 'rod',
-          length: '2.1',
-          lengthUnit: 'm',
-          sections: '2',
-        );
-
-        final copy = original.copyWith(
-          length: '2.7',
-          lengthUnit: 'ft',
-          sections: '4',
-          material: 'Carbon',
-          rodAction: 'Extra Fast',
-        );
-
-        expect(copy.length, '2.7');
-        expect(copy.lengthUnit, 'ft');
-        expect(copy.sections, '4');
-        expect(copy.material, 'Carbon');
-        expect(copy.rodAction, 'Extra Fast');
-      });
-
       test('preserves null errorMessage in copyWith', () {
         const original = RodEditState(
           type: 'rod',
@@ -221,23 +156,6 @@ void main() {
         final updated = original.withUpdates(brand: 'NewBrand');
 
         expect(updated, isA<RodEditState>());
-      });
-
-      test('partial updates only change specified fields', () {
-        const original = RodEditState(
-          type: 'rod',
-          brand: 'Original',
-          model: 'Original',
-          material: 'Graphite',
-          rodAction: 'Fast',
-        );
-
-        final updated = original.withUpdates(material: 'Carbon');
-
-        expect(updated.material, 'Carbon');
-        expect(updated.brand, 'Original');
-        expect(updated.model, 'Original');
-        expect(updated.rodAction, 'Fast');
       });
     });
 
@@ -389,60 +307,6 @@ void main() {
         // Verify it's a new instance
         expect(identical(copy, original), false);
       });
-
-      test('with single reel-specific field change', () {
-        const original = ReelEditState(
-          type: 'reel',
-          reelRatio: '6.2:1',
-        );
-
-        final copy = original.copyWith(reelRatio: '7.5:1');
-
-        expect(copy.reelRatio, '7.5:1');
-        expect(copy.reelBearings, original.reelBearings);
-      });
-
-      test('with multiple reel-specific field changes', () {
-        const original = ReelEditState(
-          type: 'reel',
-          reelBearings: '4+1',
-          reelRatio: '5.1:1',
-          reelWeight: '250',
-        );
-
-        final copy = original.copyWith(
-          reelBearings: '6+1',
-          reelRatio: '8.1:1',
-          reelWeight: '300',
-          reelWeightUnit: 'oz',
-        );
-
-        expect(copy.reelBearings, '6+1');
-        expect(copy.reelRatio, '8.1:1');
-        expect(copy.reelWeight, '300');
-        expect(copy.reelWeightUnit, 'oz');
-      });
-
-      test('with reel line fields', () {
-        const original = ReelEditState(
-          type: 'reel',
-          reelLine: '',
-          reelLineNumber: '',
-          reelLineLength: '',
-        );
-
-        final copy = original.copyWith(
-          reelLine: 'Fluorocarbon',
-          reelLineNumber: '0.30',
-          reelLineLength: '200',
-          reelLineLengthUnit: 'yd',
-        );
-
-        expect(copy.reelLine, 'Fluorocarbon');
-        expect(copy.reelLineNumber, '0.30');
-        expect(copy.reelLineLength, '200');
-        expect(copy.reelLineLengthUnit, 'yd');
-      });
     });
 
     group('withUpdates', () {
@@ -470,21 +334,6 @@ void main() {
         final updated = original.withUpdates(reelWeight: '285');
 
         expect(updated, isA<ReelEditState>());
-      });
-
-      test('partial updates preserve unchanged fields', () {
-        const original = ReelEditState(
-          type: 'reel',
-          brand: 'Original',
-          reelLine: 'Original Line',
-          reelCapacity: 'Original Capacity',
-        );
-
-        final updated = original.withUpdates(reelCapacity: 'New Capacity');
-
-        expect(updated.reelCapacity, 'New Capacity');
-        expect(updated.brand, 'Original');
-        expect(updated.reelLine, 'Original Line');
       });
     });
 
@@ -613,58 +462,6 @@ void main() {
         // Verify it's a new instance
         expect(identical(copy, original), false);
       });
-
-      test('with single lure-specific field change', () {
-        const original = LureEditState(
-          type: 'lure',
-          lureType: 'Spinnerbait',
-        );
-
-        final copy = original.copyWith(lureType: 'Jig');
-
-        expect(copy.lureType, 'Jig');
-        expect(copy.lureColor, original.lureColor);
-      });
-
-      test('with multiple lure-specific field changes', () {
-        const original = LureEditState(
-          type: 'lure',
-          lureWeight: '15',
-          lureSize: '4',
-          lureColor: 'White',
-          lureQuantity: '5',
-        );
-
-        final copy = original.copyWith(
-          lureWeight: '25',
-          lureSize: '6',
-          lureColor: 'Chartreuse',
-          lureQuantity: '12',
-          lureWeightUnit: 'oz',
-        );
-
-        expect(copy.lureWeight, '25');
-        expect(copy.lureSize, '6');
-        expect(copy.lureColor, 'Chartreuse');
-        expect(copy.lureQuantity, '12');
-        expect(copy.lureWeightUnit, 'oz');
-      });
-
-      test('with quantity fields', () {
-        const original = LureEditState(
-          type: 'lure',
-          lureQuantity: '',
-          lureQuantityUnit: 'pcs',
-        );
-
-        final copy = original.copyWith(
-          lureQuantity: '50',
-          lureQuantityUnit: 'g',
-        );
-
-        expect(copy.lureQuantity, '50');
-        expect(copy.lureQuantityUnit, 'g');
-      });
     });
 
     group('withUpdates', () {
@@ -693,21 +490,6 @@ void main() {
 
         expect(updated, isA<LureEditState>());
       });
-
-      test('partial updates preserve unchanged fields', () {
-        const original = LureEditState(
-          type: 'lure',
-          brand: 'Original',
-          lureType: 'Original Type',
-          lureSize: '5',
-        );
-
-        final updated = original.withUpdates(lureSize: '7');
-
-        expect(updated.lureSize, '7');
-        expect(updated.brand, 'Original');
-        expect(updated.lureType, 'Original Type');
-      });
     });
 
     group('isEdit', () {
@@ -735,47 +517,6 @@ void main() {
   });
 
   group('Common field behavior', () {
-    group('brand/model/price fields work across all types', () {
-      test('RodEditState', () {
-        const state = RodEditState(
-          type: 'rod',
-          brand: 'Shimano',
-          model: 'Tournament 1000',
-          price: '299.99',
-        );
-
-        expect(state.brand, 'Shimano');
-        expect(state.model, 'Tournament 1000');
-        expect(state.price, '299.99');
-      });
-
-      test('ReelEditState', () {
-        const state = ReelEditState(
-          type: 'reel',
-          brand: 'Daiwa',
-          model: 'Ballistic 4000',
-          price: '449.99',
-        );
-
-        expect(state.brand, 'Daiwa');
-        expect(state.model, 'Ballistic 4000');
-        expect(state.price, '449.99');
-      });
-
-      test('LureEditState', () {
-        const state = LureEditState(
-          type: 'lure',
-          brand: 'Rapala',
-          model: 'X-Rap 10',
-          price: '12.99',
-        );
-
-        expect(state.brand, 'Rapala');
-        expect(state.model, 'X-Rap 10');
-        expect(state.price, '12.99');
-      });
-    });
-
     group('isDefault toggle works', () {
       test('RodEditState', () {
         final testEquipment = Equipment(

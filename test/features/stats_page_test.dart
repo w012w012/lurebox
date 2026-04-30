@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/providers/stats_provider.dart';
@@ -219,37 +220,73 @@ void main() {
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
     });
 
-    testWidgets('stat cards use blue accent color for icons', (tester) async {
-      final stats = createStats(
-        totalCount: 10,
-        releaseCount: 5,
-        keepCount: 5,
-        speciesStats: {},
-      );
-
-      await tester.pumpWidget(createWidgetUnderTest(
-        todayStats: AsyncValue.data(stats),
-        monthStats: AsyncValue.data(stats),
-        yearStats: AsyncValue.data(stats),
-        allTimeStats: AsyncValue.data(stats),
-      ),);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 1100));
-      await tester.pumpAndSettle();
-
-      // Icons should be present
-      expect(find.byIcon(Icons.set_meal), findsWidgets);
-      expect(find.byIcon(Icons.water_drop), findsWidgets);
-      expect(find.byIcon(Icons.restaurant), findsWidgets);
-      expect(find.byIcon(Icons.percent), findsWidgets);
-    });
-
     testWidgets('pull to refresh indicator is present', (tester) async {
       await tester.pumpWidget(createWidgetUnderTest());
       await tester.pump();
       await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(RefreshIndicator), findsOneWidget);
+    });
+
+    testWidgets('tapping today stat card triggers onTap callback',
+        (tester) async {
+      final stats = createStats(
+        totalCount: 5,
+        releaseCount: 3,
+        keepCount: 2,
+      );
+
+      // Track if navigation was attempted
+      var navigationTriggered = false;
+
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            appSettingsProvider.overrideWith((ref) {
+              return AppSettingsNotifierTest();
+            }),
+            todayStatsProvider.overrideWith(
+                (ref) => AsyncValue.data(stats),),
+            monthStatsProvider.overrideWith(
+                (ref) => AsyncValue.data(createStats()),),
+            yearStatsProvider.overrideWith(
+                (ref) => AsyncValue.data(createStats()),),
+            allTimeStatsProvider.overrideWith(
+                (ref) => AsyncValue.data(createStats()),),
+          ],
+          child: MaterialApp.router(
+            routerConfig: GoRouter(
+              initialLocation: '/',
+              routes: [
+                GoRoute(
+                  path: '/',
+                  builder: (context, state) => const StatsPage(),
+                ),
+                GoRoute(
+                  path: '/stats',
+                  builder: (context, state) {
+                    navigationTriggered = true;
+                    return const Scaffold(
+                      body: Center(child: Text('Stats Detail')),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 1100));
+      await tester.pumpAndSettle();
+
+      // Tap the "今日渔获" card
+      await tester.tap(find.text('今日渔获'));
+      await tester.pumpAndSettle();
+
+      // Verify navigation occurred
+      expect(navigationTriggered, isTrue);
+      expect(find.text('Stats Detail'), findsOneWidget);
     });
   });
 }

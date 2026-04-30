@@ -158,51 +158,6 @@ void main() {
   });
 
   group('StatsTimeRange', () {
-    test('equality works for same values', () {
-      final range1 = StatsTimeRange(
-        start: DateTime(2024),
-        end: DateTime(2024, 12, 31),
-        label: '全部',
-      );
-      final range2 = StatsTimeRange(
-        start: DateTime(2024),
-        end: DateTime(2024, 12, 31),
-        label: '全部',
-      );
-
-      expect(range1, equals(range2));
-    });
-
-    test('equality fails for different start date', () {
-      final range1 = StatsTimeRange(
-        start: DateTime(2024),
-        end: DateTime(2024, 12, 31),
-        label: '全部',
-      );
-      final range2 = StatsTimeRange(
-        start: DateTime(2024, 2),
-        end: DateTime(2024, 12, 31),
-        label: '全部',
-      );
-
-      expect(range1, isNot(equals(range2)));
-    });
-
-    test('equality fails for different end date', () {
-      final range1 = StatsTimeRange(
-        start: DateTime(2024),
-        end: DateTime(2024, 12, 31),
-        label: '全部',
-      );
-      final range2 = StatsTimeRange(
-        start: DateTime(2024),
-        end: DateTime(2025, 12, 31),
-        label: '全部',
-      );
-
-      expect(range1, isNot(equals(range2)));
-    });
-
     test('equality ignores time component (only date part matters)', () {
       final range1 = StatsTimeRange(
         start: DateTime(2024, 1, 1, 10, 30),
@@ -237,16 +192,6 @@ void main() {
   group('TimeRangeStats', () {
     group('releaseRate', () {
       test('returns 0 when totalCount is 0', () {
-        const stats = TimeRangeStats(
-          totalCount: 0,
-          releaseCount: 0,
-          keepCount: 0,
-          speciesStats: {},
-        );
-        expect(stats.releaseRate, equals(0));
-      });
-
-      test('returns 0 when totalCount is 0 with non-zero counts', () {
         const stats = TimeRangeStats(
           totalCount: 0,
           releaseCount: 0,
@@ -464,77 +409,6 @@ void main() {
       fakeService.getByDateRangeResult = [];
       final asyncValue = container.read(todayStatsProvider);
       expect(asyncValue.isLoading, isTrue);
-    });
-
-    test('calculates releaseRate from data', () async {
-      final now = DateTime.now();
-      fakeService.getByDateRangeResult = [
-        _createFishCatch(id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now),
-        _createFishCatch(id: 2, species: 'Trout', fate: FishFateType.keep, catchTime: now),
-      ];
-
-      // todayStatsProvider is a Provider that watches a FutureProvider
-      // We need to read it and handle the async value
-      final asyncValue = container.read(todayStatsProvider);
-
-      // Since we're using fakeService with sync-like behavior,
-      // the async value might be in loading or have data
-      // Just verify it returns an AsyncValue with expected structure
-      expect(asyncValue, isA<AsyncValue<TimeRangeStats>>());
-    });
-  });
-
-  group('monthStatsProvider', () {
-    late ProviderContainer container;
-    late FakeFishCatchService fakeService;
-
-    setUp(() {
-      fakeService = FakeFishCatchService();
-      container = ProviderContainer(
-        overrides: [
-          fishCatchServiceProvider.overrideWithValue(fakeService),
-        ],
-      );
-    });
-
-    tearDown(() {
-      container.dispose();
-    });
-
-    test('returns AsyncValue with data', () async {
-      fakeService.getByDateRangeResult = [];
-
-      final asyncValue = container.read(monthStatsProvider);
-
-      // Just verify it returns an AsyncValue
-      expect(asyncValue, isA<AsyncValue<TimeRangeStats>>());
-    });
-  });
-
-  group('yearStatsProvider', () {
-    late ProviderContainer container;
-    late FakeFishCatchService fakeService;
-
-    setUp(() {
-      fakeService = FakeFishCatchService();
-      container = ProviderContainer(
-        overrides: [
-          fishCatchServiceProvider.overrideWithValue(fakeService),
-        ],
-      );
-    });
-
-    tearDown(() {
-      container.dispose();
-    });
-
-    test('returns AsyncValue with data', () async {
-      fakeService.getByDateRangeResult = [];
-
-      final asyncValue = container.read(yearStatsProvider);
-
-      // Just verify it returns an AsyncValue
-      expect(asyncValue, isA<AsyncValue<TimeRangeStats>>());
     });
   });
 

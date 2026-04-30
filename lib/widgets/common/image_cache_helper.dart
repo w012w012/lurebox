@@ -11,11 +11,6 @@ class ImageCacheHelper {
   static final LRUMap<String, ImageProvider> _memoryCache = LRUMap(
     maxSize: _calculateCacheSize(),
   );
-  // 缩略图缓存使用 LRU 策略，防止无限增长
-  static final LRUMap<String, ImageProvider> _thumbnailCache = LRUMap(
-    maxSize: 200,
-  );
-
   // 根据设备内存动态计算缓存大小
   static int _calculateCacheSize() {
     // 默认缓存大小
@@ -126,16 +121,10 @@ class ImageCacheHelper {
 
   static void removeFromCache(String imagePath) {
     _memoryCache.remove(imagePath);
-    _thumbnailCache.removeWhere((key, _) => key.startsWith(imagePath));
   }
 
   static void clearCache() {
     _memoryCache.clear();
-    _thumbnailCache.clear();
-  }
-
-  static void clearThumbnailCache() {
-    _thumbnailCache.clear();
   }
 
   static int get cacheSize => _memoryCache.length;
