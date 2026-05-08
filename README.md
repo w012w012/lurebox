@@ -162,3 +162,7 @@ flutter test --coverage
 ## 许可证
 
 [GPL-3.0 License](LICENSE)
+
+## 感谢
+
+[linux.do](https://linux.do)
