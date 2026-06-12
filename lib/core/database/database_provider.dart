@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:lurebox/core/services/app_logger.dart';
+import 'package:meta/meta.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -537,6 +538,23 @@ CREATE TABLE user_species_alias (
       _database = null;
     }
   }
+
+  /// 暴露真实的建表逻辑给测试（schema 等价性测试需要穿透私有方法）
+  @visibleForTesting
+  Future<void> createSchemaForTesting(Database db) => _createSchema(db);
+
+  /// 暴露真实的迁移逻辑给测试
+  @visibleForTesting
+  Future<void> migrateDatabaseForTesting(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) =>
+      _migrateDatabase(db, oldVersion, newVersion);
+
+  /// 暴露当前 schema 版本给测试
+  @visibleForTesting
+  static int get databaseVersionForTesting => _databaseVersion;
 
   /// 重置数据库（用于测试）
   Future<void> resetForTesting() async {
