@@ -8,13 +8,16 @@ import 'package:sqflite/sqflite.dart';
 /// 数据库提供者
 /// 负责数据库的初始化和连接管理
 class DatabaseProvider {
-
   DatabaseProvider._();
   static DatabaseProvider? _instance;
   static DatabaseProvider get instance => _instance ??= DatabaseProvider._();
 
   static const String _databaseName = 'lurebox.db';
-  static const int _databaseVersion = 23;
+
+  /// v24: schema 修复版本 —— 历史上 _createSchema 与迁移链产出的 schema 不一致
+  /// （全新安装缺 cloud_configs/backup_history/fish_species/user_species_alias
+  /// 表与 v16 钓组列），v24 用幂等修复补齐所有存量安装。
+  static const int _databaseVersion = 24;
 
   Database? _database;
   Completer<Database>? _initCompleter;
@@ -88,13 +91,15 @@ class DatabaseProvider {
 
   /// 数据库升级回调
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    AppLogger.i('DatabaseProvider', 'Upgrading database from $oldVersion to $newVersion');
+    AppLogger.i('DatabaseProvider',
+        'Upgrading database from $oldVersion to $newVersion');
     await _migrateDatabase(db, oldVersion, newVersion);
   }
 
   /// 数据库降级回调
   Future<void> _onDowngrade(Database db, int oldVersion, int newVersion) async {
-    AppLogger.i('DatabaseProvider', 'Downgrading database from $oldVersion to $newVersion');
+    AppLogger.i('DatabaseProvider',
+        'Downgrading database from $oldVersion to $newVersion');
     // 降级时保留数据，不执行任何操作
   }
 
@@ -128,7 +133,13 @@ class DatabaseProvider {
         weather_code INTEGER,
         pending_recognition INTEGER DEFAULT 0,
         created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL
+        updated_at TEXT NOT NULL,
+        rig_type TEXT,
+        sinker_weight TEXT,
+        sinker_position TEXT,
+        hook_type TEXT,
+        hook_size TEXT,
+        hook_weight TEXT
       )
     ''');
 
@@ -205,6 +216,61 @@ class DatabaseProvider {
       )
     ''');
 
+    // 云备份配置表（历史上由 v11 迁移引入）
+    await db.execute('''
+      CREATE TABLE cloud_configs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        provider TEXT NOT NULL,
+        server_url TEXT NOT NULL,
+        username TEXT NOT NULL,
+        password TEXT NOT NULL,
+        is_active INTEGER DEFAULT 0,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      )
+    ''');
+
+    // 本地备份历史表（历史上由 v11 迁移引入）
+    await db.execute('''
+      CREATE TABLE backup_history (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        file_path TEXT NOT NULL,
+        file_name TEXT NOT NULL,
+        backup_type TEXT NOT NULL,
+        file_size INTEGER NOT NULL,
+        fish_count INTEGER DEFAULT 0,
+        equipment_count INTEGER DEFAULT 0,
+        photo_count INTEGER DEFAULT 0,
+        created_at TEXT NOT NULL
+      )
+    ''');
+
+    // 预定义鱼种表（历史上由 v17 迁移引入，只读，通过 FishGuideData 访问）
+    await db.execute('''
+      CREATE TABLE fish_species (
+        id TEXT PRIMARY KEY,
+        standard_name TEXT NOT NULL,
+        scientific_name TEXT,
+        category INTEGER NOT NULL,
+        rarity INTEGER NOT NULL,
+        habitat TEXT,
+        behavior TEXT,
+        fishing_method TEXT,
+        description TEXT,
+        icon_emoji TEXT
+      )
+    ''');
+
+    // 用户鱼种别名表（历史上由 v17 迁移引入）
+    await db.execute('''
+      CREATE TABLE user_species_alias (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_alias TEXT NOT NULL UNIQUE,
+        species_id TEXT NOT NULL,
+        created_at INTEGER NOT NULL
+      )
+    ''');
+
 // 创建索引
     await db.execute(
       'CREATE INDEX idx_fish_catches_fate ON fish_catches(fate)',
@@ -237,6 +303,10 @@ class DatabaseProvider {
     await db.execute(
       'CREATE INDEX idx_fish_catches_pending ON fish_catches(pending_recognition)',
     );
+    // 钓点筛选索引
+    await db.execute(
+      'CREATE INDEX idx_fish_catches_location ON fish_catches(location_name)',
+    );
 
     // 装备表索引：按类型查询
     await db.execute(
@@ -253,6 +323,17 @@ class DatabaseProvider {
     // 品种历史表索引：按名称查询
     await db.execute(
       'CREATE INDEX idx_species_history_name ON species_history(name)',
+    );
+    // 备份历史表索引：按时间查询
+    await db.execute(
+      'CREATE INDEX idx_backup_history_created_at ON backup_history(created_at)',
+    );
+    // 鱼种别名索引
+    await db.execute(
+      'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)',
+    );
+    await db.execute(
+      'CREATE INDEX idx_alias_species ON user_species_alias(species_id)',
     );
   }
 
@@ -431,7 +512,11 @@ CREATE TABLE backup_history (
       await _addColumnIfNotExists(db, 'fish_catches', 'rig_type', 'TEXT');
       await _addColumnIfNotExists(db, 'fish_catches', 'sinker_weight', 'TEXT');
       await _addColumnIfNotExists(
-          db, 'fish_catches', 'sinker_position', 'TEXT',);
+        db,
+        'fish_catches',
+        'sinker_position',
+        'TEXT',
+      );
       await _addColumnIfNotExists(db, 'fish_catches', 'hook_type', 'TEXT');
       await _addColumnIfNotExists(db, 'fish_catches', 'hook_size', 'TEXT');
       await _addColumnIfNotExists(db, 'fish_catches', 'hook_weight', 'TEXT');
@@ -465,9 +550,11 @@ CREATE TABLE user_species_alias (
 
       // 创建索引
       await db.execute(
-          'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)',);
+        'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)',
+      );
       await db.execute(
-          'CREATE INDEX idx_alias_species ON user_species_alias(species_id)',);
+        'CREATE INDEX idx_alias_species ON user_species_alias(species_id)',
+      );
     }
     if (oldVersion < 21) {
       // 添加 catch_time 索引以优化按时间排序的查询
@@ -501,6 +588,134 @@ CREATE TABLE user_species_alias (
         "TEXT DEFAULT 'kg'",
       );
     }
+    if (oldVersion < 24) {
+      // v24: schema 修复迁移（幂等）。
+      // 历史 bug：_createSchema 与迁移链长期不一致 ——
+      // - 在 v12~v23 期间全新安装的用户缺 cloud_configs/backup_history
+      //   （v11 迁移对他们不会执行）；
+      // - 在 v23 全新安装的用户还缺 fish_species/user_species_alias 表
+      //   和 fish_catches 的 6 个钓组列（编辑渔获必失败）。
+      // 此处用 IF NOT EXISTS / _addColumnIfNotExists 补齐一切，治愈全部存量安装。
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS cloud_configs (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          provider TEXT NOT NULL,
+          server_url TEXT NOT NULL,
+          username TEXT NOT NULL,
+          password TEXT NOT NULL,
+          is_active INTEGER DEFAULT 0,
+          created_at TEXT NOT NULL,
+          updated_at TEXT NOT NULL
+        )
+      ''');
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS backup_history (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          file_path TEXT NOT NULL,
+          file_name TEXT NOT NULL,
+          backup_type TEXT NOT NULL,
+          file_size INTEGER NOT NULL,
+          fish_count INTEGER DEFAULT 0,
+          equipment_count INTEGER DEFAULT 0,
+          photo_count INTEGER DEFAULT 0,
+          created_at TEXT NOT NULL
+        )
+      ''');
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS fish_species (
+          id TEXT PRIMARY KEY,
+          standard_name TEXT NOT NULL,
+          scientific_name TEXT,
+          category INTEGER NOT NULL,
+          rarity INTEGER NOT NULL,
+          habitat TEXT,
+          behavior TEXT,
+          fishing_method TEXT,
+          description TEXT,
+          icon_emoji TEXT
+        )
+      ''');
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS user_species_alias (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          user_alias TEXT NOT NULL UNIQUE,
+          species_id TEXT NOT NULL,
+          created_at INTEGER NOT NULL
+        )
+      ''');
+
+      // 钓组列：缺失会导致渔获编辑直接失败，必须 critical（失败时中止迁移，
+      // 版本号不提升，下次启动重试）
+      await _addColumnIfNotExists(
+        db,
+        'fish_catches',
+        'rig_type',
+        'TEXT',
+        critical: true,
+      );
+      await _addColumnIfNotExists(
+        db,
+        'fish_catches',
+        'sinker_weight',
+        'TEXT',
+        critical: true,
+      );
+      await _addColumnIfNotExists(
+        db,
+        'fish_catches',
+        'sinker_position',
+        'TEXT',
+        critical: true,
+      );
+      await _addColumnIfNotExists(
+        db,
+        'fish_catches',
+        'hook_type',
+        'TEXT',
+        critical: true,
+      );
+      await _addColumnIfNotExists(
+        db,
+        'fish_catches',
+        'hook_size',
+        'TEXT',
+        critical: true,
+      );
+      await _addColumnIfNotExists(
+        db,
+        'fish_catches',
+        'hook_weight',
+        'TEXT',
+        critical: true,
+      );
+
+      // 索引补齐：与 _createSchema 对齐（老安装从未获得其中大部分索引）
+      const repairIndexes = [
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_fate ON fish_catches(fate)',
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_equipment_id ON fish_catches(equipment_id)',
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_rod_id ON fish_catches(rod_id)',
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_reel_id ON fish_catches(reel_id)',
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_lure_id ON fish_catches(lure_id)',
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_catch_time ON fish_catches(catch_time)',
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_time_fate ON fish_catches(catch_time, fate)',
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_species ON fish_catches(species)',
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_pending ON fish_catches(pending_recognition)',
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_location ON fish_catches(location_name)',
+        'CREATE INDEX IF NOT EXISTS idx_equipments_type ON equipments(type)',
+        'CREATE INDEX IF NOT EXISTS idx_equipments_category ON equipments(category)',
+        'CREATE INDEX IF NOT EXISTS idx_equipments_is_deleted ON equipments(is_deleted)',
+        'CREATE INDEX IF NOT EXISTS idx_species_history_name ON species_history(name)',
+        'CREATE INDEX IF NOT EXISTS idx_backup_history_created_at ON backup_history(created_at)',
+        'CREATE INDEX IF NOT EXISTS idx_alias_user_alias ON user_species_alias(user_alias)',
+        'CREATE INDEX IF NOT EXISTS idx_alias_species ON user_species_alias(species_id)',
+      ];
+      for (final sql in repairIndexes) {
+        await db.execute(sql);
+      }
+
+      // 清理 v12 时代的旧命名索引（已被 v22 的 idx_equipments_type 取代）
+      await db.execute('DROP INDEX IF EXISTS idx_equipment_type');
+    }
   }
 
   /// 安全添加列（如果不存在）
@@ -527,7 +742,8 @@ CREATE TABLE user_species_alias (
       }
     } catch (e) {
       if (critical) rethrow;
-      AppLogger.w('DatabaseProvider', 'Failed to add column $column to $table', e);
+      AppLogger.w(
+          'DatabaseProvider', 'Failed to add column $column to $table', e);
     }
   }
 
@@ -539,18 +755,20 @@ CREATE TABLE user_species_alias (
     }
   }
 
-  /// 暴露真实的建表逻辑给测试（schema 等价性测试需要穿透私有方法）
+  /// 暴露真实的建表逻辑给测试（schema 等价性测试需要穿透私有方法）。
+  /// 静态方法：避免给 implements DatabaseProvider 的测试替身增加抽象成员。
   @visibleForTesting
-  Future<void> createSchemaForTesting(Database db) => _createSchema(db);
+  static Future<void> createSchemaForTesting(Database db) =>
+      instance._createSchema(db);
 
   /// 暴露真实的迁移逻辑给测试
   @visibleForTesting
-  Future<void> migrateDatabaseForTesting(
+  static Future<void> migrateDatabaseForTesting(
     Database db,
     int oldVersion,
     int newVersion,
   ) =>
-      _migrateDatabase(db, oldVersion, newVersion);
+      instance._migrateDatabase(db, oldVersion, newVersion);
 
   /// 暴露当前 schema 版本给测试
   @visibleForTesting

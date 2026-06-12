@@ -25,7 +25,6 @@ void main() {
     databaseFactory = databaseFactoryFfi;
   });
 
-  final provider = DatabaseProvider.instance;
   final currentVersion = DatabaseProvider.databaseVersionForTesting;
 
   /// 仓储层实际引用的全部表（来源：lib/core/repositories/ 各 impl）
@@ -82,7 +81,7 @@ void main() {
 
     setUp(() async {
       dbPath = _tempDbPath('fresh_completeness');
-      db = await _openFresh(dbPath, provider, currentVersion);
+      db = await _openFresh(dbPath, currentVersion);
     });
 
     tearDown(() async {
@@ -100,7 +99,8 @@ void main() {
     test('fish_catches 包含 FishCatch.toMap() 的全部列', () async {
       final columns = await _columnNames(db, 'fish_catches');
       for (final column in requiredFishCatchColumns) {
-        expect(columns, contains(column), reason: '全新安装 fish_catches 缺列: $column');
+        expect(columns, contains(column),
+            reason: '全新安装 fish_catches 缺列: $column');
       }
     });
 
@@ -141,7 +141,7 @@ void main() {
 
     setUp(() async {
       dbPath = _tempDbPath('upgrade_completeness');
-      db = await _openUpgradedFromV12(dbPath, provider, currentVersion);
+      db = await _openUpgradedFromV12(dbPath, currentVersion);
     });
 
     tearDown(() async {
@@ -159,7 +159,8 @@ void main() {
     test('升级后 fish_catches 包含全部必需列', () async {
       final columns = await _columnNames(db, 'fish_catches');
       for (final column in requiredFishCatchColumns) {
-        expect(columns, contains(column), reason: 'v12 升级后 fish_catches 缺列: $column');
+        expect(columns, contains(column),
+            reason: 'v12 升级后 fish_catches 缺列: $column');
       }
     });
   });
@@ -169,9 +170,8 @@ void main() {
       final freshPath = _tempDbPath('equiv_fresh');
       final upgradedPath = _tempDbPath('equiv_upgraded');
 
-      final fresh = await _openFresh(freshPath, provider, currentVersion);
-      final upgraded =
-          await _openUpgradedFromV12(upgradedPath, provider, currentVersion);
+      final fresh = await _openFresh(freshPath, currentVersion);
+      final upgraded = await _openUpgradedFromV12(upgradedPath, currentVersion);
 
       try {
         final freshSchema = await _normalizedSchema(fresh);
@@ -224,14 +224,13 @@ Future<void> _deleteDb(String path) async {
 /// 用【真实的】_createSchema 建一个全新安装的库
 Future<Database> _openFresh(
   String path,
-  DatabaseProvider provider,
   int version,
 ) {
   return openDatabase(
     path,
     version: version,
     onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
-    onCreate: (db, v) => provider.createSchemaForTesting(db),
+    onCreate: (db, v) => DatabaseProvider.createSchemaForTesting(db),
   );
 }
 
@@ -239,7 +238,6 @@ Future<Database> _openFresh(
 /// 不会随源码演进 —— 这是合法的镜像），再用【真实的】_migrateDatabase 升级。
 Future<Database> _openUpgradedFromV12(
   String path,
-  DatabaseProvider provider,
   int version,
 ) async {
   final v12 = await openDatabase(
@@ -255,7 +253,7 @@ Future<Database> _openUpgradedFromV12(
     version: version,
     onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
     onUpgrade: (db, oldV, newV) =>
-        provider.migrateDatabaseForTesting(db, oldV, newV),
+        DatabaseProvider.migrateDatabaseForTesting(db, oldV, newV),
   );
 }
 

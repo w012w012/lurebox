@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
@@ -6,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/database/database_provider.dart';
 import 'package:lurebox/core/design/theme/app_theme.dart';
+import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
@@ -100,6 +102,14 @@ class LuYuHuApp extends ConsumerStatefulWidget {
 }
 
 class _LuYuHuAppState extends ConsumerState<LuYuHuApp> {
+  @override
+  void initState() {
+    super.initState();
+    // 启动期一次性迁移：明文 WebDAV 密码 / AI apiKey → 安全存储。
+    // run() 内部吞掉所有异常，只记日志，不会阻断启动。
+    unawaited(ref.read(startupMigrationServiceProvider).run());
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(flutterThemeModeProvider);

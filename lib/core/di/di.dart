@@ -25,6 +25,7 @@ import 'package:lurebox/core/services/fish_species_matcher.dart';
 import 'package:lurebox/core/services/location_service.dart';
 import 'package:lurebox/core/services/secure_storage_service.dart';
 import 'package:lurebox/core/services/settings_service.dart';
+import 'package:lurebox/core/services/startup_migration_service.dart';
 
 // ===== 核心依赖 =====
 
@@ -130,4 +131,16 @@ final backupConfigRepositoryProvider = Provider<BackupConfigRepository>((ref) {
 
 final fishRecognitionServiceProvider = Provider<FishRecognitionService>((ref) {
   return FishRecognitionService();
+});
+
+// ===== Startup Migration Service =====
+
+/// 启动期一次性迁移（明文 WebDAV 密码 / AI apiKey → 安全存储）
+final startupMigrationServiceProvider = Provider<StartupMigrationService>((
+  ref,
+) {
+  return StartupMigrationService(
+    backupConfigRepository: ref.watch(backupConfigRepositoryProvider),
+    settingsService: ref.watch(settingsServiceProvider),
+  );
 });

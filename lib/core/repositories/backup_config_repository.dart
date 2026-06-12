@@ -35,6 +35,9 @@ abstract class BackupConfigRepository {
 
   /// 清理旧备份历史（保留最近N条）
   Future<int> cleanupOldBackupHistory(int keepCount);
+
+  /// 将旧版 DB 中的明文密码迁移到安全存储（App 启动时执行一次）
+  Future<void> migrateExistingPasswords();
 }
 
 /// SQLite 备份配置仓库实现
@@ -198,6 +201,7 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
   ///
   /// 调用时机：App 启动时执行一次。读取所有 DB 中仍有明文密码的配置，
   /// 将密码迁移到 flutter_secure_storage，然后清空 DB 中的 password 字段。
+  @override
   Future<void> migrateExistingPasswords() async {
     final db = await _db;
     final results = await db.query('cloud_configs');
