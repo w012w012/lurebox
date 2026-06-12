@@ -98,6 +98,68 @@ void main() {
         expect(await service.create(fish), equals(2));
         verify(() => mockRepository.create(fish)).called(1);
       });
+
+      test(
+          'allows empty species and skips species history when pendingRecognition is true',
+          () async {
+        // Arrange - 待识别记录以空鱼种持久化，不能污染鱼种历史
+        final now = DateTime.now();
+        final fish = FishCatch(
+          id: 1,
+          imagePath: '/test/pending.jpg',
+          species: '',
+          length: 30.0,
+          fate: FishFateType.release,
+          catchTime: now,
+          pendingRecognition: true,
+          createdAt: now,
+          updatedAt: now,
+        );
+        when(() => mockRepository.create(any())).thenAnswer((_) async => 7);
+
+        // Act
+        final result = await service.create(fish);
+
+        // Assert
+        expect(result, equals(7));
+        verify(() => mockRepository.create(any())).called(1);
+        verifyNever(() => mockSpeciesHistoryRepo.incrementUseCount(any()));
+      });
+
+      test(
+          'does not record species history when pendingRecognition catch has species text',
+          () async {
+        // Arrange - 即使状态异常携带了鱼种文本，待识别记录也不应计入历史
+        final now = DateTime.now();
+        final fish = FishCatch(
+          id: 1,
+          imagePath: '/test/pending.jpg',
+          species: 'Bass',
+          length: 30.0,
+          fate: FishFateType.release,
+          catchTime: now,
+          pendingRecognition: true,
+          createdAt: now,
+          updatedAt: now,
+        );
+        when(() => mockRepository.create(any())).thenAnswer((_) async => 8);
+
+        // Act
+        await service.create(fish);
+
+        // Assert
+        verifyNever(() => mockSpeciesHistoryRepo.incrementUseCount(any()));
+      });
+
+      test('still rejects empty species for non-pending catch', () async {
+        // Arrange - 非待识别记录仍要求鱼种非空
+        final fish = createFishCatch(species: '');
+
+        // Act & Assert
+        await expectLater(service.create(fish), throwsException);
+        verifyNever(() => mockRepository.create(any()));
+        verifyNever(() => mockSpeciesHistoryRepo.incrementUseCount(any()));
+      });
     });
 
     group('delete', () {
@@ -153,7 +215,8 @@ void main() {
         }
       });
 
-      test('deletes imagePath file when fish has a non-empty image path', () async {
+      test('deletes imagePath file when fish has a non-empty image path',
+          () async {
         // Arrange — create a real temp file
         final imageFile = File('${tempDir.path}/fish_5.jpg');
         await imageFile.writeAsString('fake image data');
@@ -174,7 +237,8 @@ void main() {
         verify(() => mockRepository.delete(5)).called(1);
       });
 
-      test('deletes both imagePath and watermarkedImagePath when both exist', () async {
+      test('deletes both imagePath and watermarkedImagePath when both exist',
+          () async {
         final imageFile = File('${tempDir.path}/fish_6.jpg');
         final watermarkedFile = File('${tempDir.path}/fish_6_wm.jpg');
         await imageFile.writeAsString('original');
@@ -248,8 +312,11 @@ void main() {
         when(() => mockRepository.delete(9)).thenAnswer((_) async {
           // When repository.delete is called, the file should already be gone
           repositoryDeleteCalled = true;
-          expect(await imageFile.exists(), isFalse,
-              reason: 'image should be deleted BEFORE repository.delete()',);
+          expect(
+            await imageFile.exists(),
+            isFalse,
+            reason: 'image should be deleted BEFORE repository.delete()',
+          );
         });
 
         await service.delete(9);
@@ -297,7 +364,8 @@ void main() {
         }
       });
 
-      test('deletes image files for all fish before deleting records', () async {
+      test('deletes image files for all fish before deleting records',
+          () async {
         final file1 = File('${tempDir.path}/fish_1.jpg');
         final file2 = File('${tempDir.path}/fish_2.jpg');
         await file1.writeAsString('img1');
@@ -307,14 +375,24 @@ void main() {
 
         final now = DateTime.now();
         final fish1 = FishCatch(
-          id: 1, imagePath: file1.path, species: 'Bass',
-          length: 30, fate: FishFateType.release,
-          catchTime: now, createdAt: now, updatedAt: now,
+          id: 1,
+          imagePath: file1.path,
+          species: 'Bass',
+          length: 30,
+          fate: FishFateType.release,
+          catchTime: now,
+          createdAt: now,
+          updatedAt: now,
         );
         final fish2 = FishCatch(
-          id: 2, imagePath: file2.path, species: 'Trout',
-          length: 25, fate: FishFateType.release,
-          catchTime: now, createdAt: now, updatedAt: now,
+          id: 2,
+          imagePath: file2.path,
+          species: 'Trout',
+          length: 25,
+          fate: FishFateType.release,
+          catchTime: now,
+          createdAt: now,
+          updatedAt: now,
         );
 
         when(() => mockRepository.getByIds([1, 2]))
@@ -331,11 +409,12 @@ void main() {
 
       test('skips deletion for fish not returned by getByIds', () async {
         // getByIds returns only fish that exist — fish 1 and 2, not 3
-        when(() => mockRepository.getByIds([1, 2, 3]))
-            .thenAnswer((_) async => [
-                  createFishCatch(),
-                  createFishCatch(id: 2, species: 'Trout'),
-                ],);
+        when(() => mockRepository.getByIds([1, 2, 3])).thenAnswer(
+          (_) async => [
+            createFishCatch(),
+            createFishCatch(id: 2, species: 'Trout'),
+          ],
+        );
         when(() => mockRepository.deleteMultiple([1, 2, 3]))
             .thenAnswer((_) async {});
 
@@ -390,15 +469,17 @@ void main() {
           hasMore: false,
         );
 
-        when(() => mockRepository.getFilteredPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              fate: any(named: 'fate'),
-              species: any(named: 'species'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => paginatedResult);
+        when(
+          () => mockRepository.getFilteredPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            fate: any(named: 'fate'),
+            species: any(named: 'species'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => paginatedResult);
 
         // Act
         final result = await service.getFilteredPage(
@@ -409,10 +490,12 @@ void main() {
         // Assert
         expect(result.items.length, equals(2));
         expect(result.totalCount, equals(2));
-        verify(() => mockRepository.getFilteredPage(
-              page: 1,
-              species: 'Bass',
-            ),).called(1);
+        verify(
+          () => mockRepository.getFilteredPage(
+            page: 1,
+            species: 'Bass',
+          ),
+        ).called(1);
       });
 
       test('passes all filter parameters to repository', () async {
@@ -427,15 +510,17 @@ void main() {
           hasMore: false,
         );
 
-        when(() => mockRepository.getFilteredPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              fate: any(named: 'fate'),
-              species: any(named: 'species'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => paginatedResult);
+        when(
+          () => mockRepository.getFilteredPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            fate: any(named: 'fate'),
+            species: any(named: 'species'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => paginatedResult);
 
         // Act
         await service.getFilteredPage(
@@ -449,15 +534,17 @@ void main() {
         );
 
         // Assert
-        verify(() => mockRepository.getFilteredPage(
-              page: 2,
-              pageSize: 10,
-              startDate: startDate,
-              endDate: endDate,
-              fate: FishFateType.keep,
-              species: 'Trout',
-              orderBy: 'length DESC',
-            ),).called(1);
+        verify(
+          () => mockRepository.getFilteredPage(
+            page: 2,
+            pageSize: 10,
+            startDate: startDate,
+            endDate: endDate,
+            fate: FishFateType.keep,
+            species: 'Trout',
+            orderBy: 'length DESC',
+          ),
+        ).called(1);
       });
     });
 
@@ -557,18 +644,22 @@ void main() {
           pageSize: 20,
           hasMore: false,
         );
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => paginatedResult);
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => paginatedResult);
 
         final result = await service.getPage(page: 1);
 
         expect(result.items.length, equals(1));
-        verify(() => mockRepository.getPage(
-              page: 1,
-            ),).called(1);
+        verify(
+          () => mockRepository.getPage(
+            page: 1,
+          ),
+        ).called(1);
       });
 
       test('passes custom parameters to repository', () async {
@@ -579,11 +670,13 @@ void main() {
           pageSize: 10,
           hasMore: false,
         );
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => paginatedResult);
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => paginatedResult);
 
         await service.getPage(
           page: 2,
@@ -591,11 +684,13 @@ void main() {
           orderBy: 'length ASC',
         );
 
-        verify(() => mockRepository.getPage(
-              page: 2,
-              pageSize: 10,
-              orderBy: 'length ASC',
-            ),).called(1);
+        verify(
+          () => mockRepository.getPage(
+            page: 2,
+            pageSize: 10,
+            orderBy: 'length ASC',
+          ),
+        ).called(1);
       });
     });
 
@@ -639,52 +734,60 @@ void main() {
     group('getSpeciesStats', () {
       test('delegates to stats repository without date range', () async {
         final stats = {'Bass': 10, 'Trout': 5};
-        when(() => mockStatsRepo.getSpeciesStats(
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-            ),).thenAnswer((_) async => stats);
+        when(
+          () => mockStatsRepo.getSpeciesStats(
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+          ),
+        ).thenAnswer((_) async => stats);
 
         final result = await service.getSpeciesStats();
 
         expect(result, equals(stats));
-        verify(() => mockStatsRepo.getSpeciesStats(
-              
-            ),).called(1);
+        verify(
+          () => mockStatsRepo.getSpeciesStats(),
+        ).called(1);
       });
 
       test('passes date range to stats repository', () async {
         final startDate = DateTime(2024);
         final endDate = DateTime(2024, 6, 30);
-        when(() => mockStatsRepo.getSpeciesStats(
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-            ),).thenAnswer((_) async => {});
+        when(
+          () => mockStatsRepo.getSpeciesStats(
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+          ),
+        ).thenAnswer((_) async => {});
 
         await service.getSpeciesStats(startDate: startDate, endDate: endDate);
 
-        verify(() => mockStatsRepo.getSpeciesStats(
-              startDate: startDate,
-              endDate: endDate,
-            ),).called(1);
+        verify(
+          () => mockStatsRepo.getSpeciesStats(
+            startDate: startDate,
+            endDate: endDate,
+          ),
+        ).called(1);
       });
     });
 
     group('getAllEquipmentCatchStats', () {
       test('builds combined stats map', () async {
-        when(() => mockStatsRepo.getEquipmentCatchStats())
-            .thenAnswer((_) async => {
-                  1: const EquipmentCatchStats(
-                    equipmentId: 1,
-                    catchCount: 5,
-                    avgLength: 30,
-                    avgWeight: 2,
-                    releaseCount: 3,
-                  ),
-                },);
-        when(() => mockStatsRepo.getAllEquipmentSpeciesStats())
-            .thenAnswer((_) async => {
-                  1: {'Bass': 3, 'Trout': 2},
-                },);
+        when(() => mockStatsRepo.getEquipmentCatchStats()).thenAnswer(
+          (_) async => {
+            1: const EquipmentCatchStats(
+              equipmentId: 1,
+              catchCount: 5,
+              avgLength: 30,
+              avgWeight: 2,
+              releaseCount: 3,
+            ),
+          },
+        );
+        when(() => mockStatsRepo.getAllEquipmentSpeciesStats()).thenAnswer(
+          (_) async => {
+            1: {'Bass': 3, 'Trout': 2},
+          },
+        );
 
         final result = await service.getAllEquipmentCatchStats();
 
@@ -706,11 +809,13 @@ void main() {
     group('getEquipmentDistribution', () {
       test('delegates to stats repository', () async {
         final distribution = {'spinning': 10, 'casting': 5};
-        when(() => mockStatsRepo.getEquipmentDistribution(
-              any(),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-            ),).thenAnswer((_) async => distribution);
+        when(
+          () => mockStatsRepo.getEquipmentDistribution(
+            any(),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+          ),
+        ).thenAnswer((_) async => distribution);
 
         final result = await service.getEquipmentDistribution('rod');
 
@@ -720,16 +825,17 @@ void main() {
 
     group('getEquipmentCatchStats', () {
       test('delegates to stats repository', () async {
-        when(() => mockStatsRepo.getEquipmentCatchStats())
-            .thenAnswer((_) async => {
-                  1: const EquipmentCatchStats(
-                    equipmentId: 1,
-                    catchCount: 5,
-                    avgLength: 30,
-                    avgWeight: 2,
-                    releaseCount: 3,
-                  ),
-                },);
+        when(() => mockStatsRepo.getEquipmentCatchStats()).thenAnswer(
+          (_) async => {
+            1: const EquipmentCatchStats(
+              equipmentId: 1,
+              catchCount: 5,
+              avgLength: 30,
+              avgWeight: 2,
+              releaseCount: 3,
+            ),
+          },
+        );
 
         final result = await service.getEquipmentCatchStats(1);
 
@@ -819,11 +925,13 @@ void main() {
           pageSize: 20,
           hasMore: false,
         );
-        when(() => mockRepository.getFilteredPageByFilter(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              filter: any(named: 'filter'),
-            ),).thenAnswer((_) async => paginatedResult);
+        when(
+          () => mockRepository.getFilteredPageByFilter(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            filter: any(named: 'filter'),
+          ),
+        ).thenAnswer((_) async => paginatedResult);
 
         final result = await service.getFilteredPageByFilter(
           page: 1,
@@ -831,10 +939,12 @@ void main() {
         );
 
         expect(result.items.length, equals(1));
-        verify(() => mockRepository.getFilteredPageByFilter(
-              page: 1,
-              filter: filter,
-            ),).called(1);
+        verify(
+          () => mockRepository.getFilteredPageByFilter(
+            page: 1,
+            filter: filter,
+          ),
+        ).called(1);
       });
     });
   });

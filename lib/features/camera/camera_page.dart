@@ -106,7 +106,9 @@ class _CameraPageState extends ConsumerState<CameraPage> {
   }
 
   Future<bool> _showDiscardDialog(
-      BuildContext context, AppStrings strings,) async {
+    BuildContext context,
+    AppStrings strings,
+  ) async {
     final result = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -466,6 +468,10 @@ class _CameraPageState extends ConsumerState<CameraPage> {
       return;
     }
 
+    // 同步置位保存状态（H-7）：在图片压缩前禁用保存按钮，
+    // 防止压缩耗时期间重复点击产生重复记录
+    if (!vm.beginSaving()) return;
+
     try {
       final appDir = await getApplicationDocumentsDirectory();
       final fileName = FileUtils.generateTimestampFileName('jpg');
@@ -492,15 +498,18 @@ class _CameraPageState extends ConsumerState<CameraPage> {
         // 重置 captureState 到 pictureTaken，让用户留在表单页面
         vm.resetCaptureStateToForm();
         if (mounted) {
-          AppLogger.w('CameraPage', 'Save failed: fishId=$fishId, '
-              'error=$errorFromState, '
-              'imagePath=${state.imagePath != null ? "set" : "null"}, '
-              'species="${state.species}", '
-              'length=${state.length}');
+          AppLogger.w(
+              'CameraPage',
+              'Save failed: fishId=$fishId, '
+                  'error=$errorFromState, '
+                  'imagePath=${state.imagePath != null ? "set" : "null"}, '
+                  'species="${state.species}", '
+                  'length=${state.length}');
           // 优先展示真实错误，方便用户定位问题
-          final displayError = errorFromState != null && errorFromState.isNotEmpty
-              ? errorFromState.replaceFirst(RegExp(r'^[^:]+:\s*'), '')
-              : null;
+          final displayError =
+              errorFromState != null && errorFromState.isNotEmpty
+                  ? errorFromState.replaceFirst(RegExp(r'^[^:]+:\s*'), '')
+                  : null;
           AppSnackBar.showError(
             context,
             displayError ?? strings.saveFailedCheckInput,
@@ -644,10 +653,12 @@ class _CameraPageState extends ConsumerState<CameraPage> {
                     border: const OutlineInputBorder(),
                   ),
                   items: weatherOptions
-                      .map((opt) => DropdownMenuItem(
-                            value: opt.$1,
-                            child: Text(opt.$2),
-                          ),)
+                      .map(
+                        (opt) => DropdownMenuItem(
+                          value: opt.$1,
+                          child: Text(opt.$2),
+                        ),
+                      )
                       .toList(),
                   onChanged: (v) => setState(() => selectedWeatherCode = v),
                 ),

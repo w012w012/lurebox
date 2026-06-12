@@ -10,9 +10,11 @@ import 'package:lurebox/widgets/common/image_cache_helper.dart';
 import 'package:shimmer/shimmer.dart';
 
 class FishListItem extends ConsumerWidget {
-
   const FishListItem({
-    required this.fish, required this.strings, required this.onTap, super.key,
+    required this.fish,
+    required this.strings,
+    required this.onTap,
+    super.key,
     this.isSelected = false,
     this.isSelectionMode = false,
     this.onLongPress,
@@ -53,7 +55,7 @@ class FishListItem extends ConsumerWidget {
     final locationName = fish.locationName;
 
     final a11yLabel =
-        '${fish.species}, ${displayLength.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.fishLengthUnit, isChinese: isChinese)}';
+        '${fish.displaySpecies(strings)}, ${displayLength.toStringAsFixed(1)} ${UnitConverter.getLengthSymbol(displayUnits.fishLengthUnit, isChinese: isChinese)}';
 
     return Semantics(
       label: a11yLabel,
@@ -124,7 +126,7 @@ class FishListItem extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        fish.species,
+                        fish.displaySpecies(strings),
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

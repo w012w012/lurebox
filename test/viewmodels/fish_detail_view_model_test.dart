@@ -175,6 +175,36 @@ void main() {
         expect(viewModel.state.errorMessage, isNull);
       });
 
+      test('refresh clears stale equipment when fish no longer references it',
+          () async {
+        // Arrange - 首次加载时鱼获关联了鱼竿
+        final rod = _createEquipment(id: 10);
+        final fishWithRod = _createFishCatch(rodId: 10);
+        when(() => mockFishCatchService.getById(1))
+            .thenAnswer((_) async => fishWithRod);
+        when(() => mockEquipmentService.getById(10))
+            .thenAnswer((_) async => rod);
+
+        viewModel = FishDetailViewModel(
+          1,
+          mockFishCatchService,
+          mockEquipmentService,
+        );
+        await viewModel.loadFish();
+        expect(viewModel.state.rodEquipment, isNotNull);
+
+        // Act - 编辑后移除装备引用，重新加载
+        final fishWithoutRod = _createFishCatch();
+        when(() => mockFishCatchService.getById(1))
+            .thenAnswer((_) async => fishWithoutRod);
+        await viewModel.refresh();
+
+        // Assert - 详情页不应继续显示已被移除的装备
+        expect(viewModel.state.rodEquipment, isNull);
+        expect(viewModel.state.reelEquipment, isNull);
+        expect(viewModel.state.lureEquipment, isNull);
+      });
+
       test('loads fish with no equipment when IDs are null', () async {
         // Arrange
         final fish = _createFishCatch(id: 2, species: 'Trout');

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import '../helpers/test_helpers.dart';
 
@@ -205,12 +206,19 @@ void main() {
       expect(copy.length, equals(original.length));
     });
 
-    test('copyWith(weight: null) keeps original weight (null coalescing)', () {
-      // weight uses null coalescing: weight ?? this.weight
-      // so passing null doesn't clear it
-      final copy = original.copyWith(weight: null);
+    test('copyWith without weight keeps original weight', () {
+      final copy = original.copyWith();
 
       expect(copy.weight, equals(original.weight));
+      expect(copy.id, equals(original.id));
+      expect(copy.species, equals(original.species));
+    });
+
+    test('copyWith(weight: () => null) clears weight', () {
+      // weight 使用闭包（thunk）语义，编辑页清空重量后必须能真正清掉旧值
+      final copy = original.copyWith(weight: () => null);
+
+      expect(copy.weight, isNull);
       expect(copy.id, equals(original.id));
       expect(copy.species, equals(original.species));
     });
@@ -218,7 +226,7 @@ void main() {
     test('copyWith can update multiple fields at once', () {
       final copy = original.copyWith(
         species: 'Trout',
-        weight: 1.5,
+        weight: () => 1.5,
         fate: FishFateType.release,
       );
 
@@ -360,16 +368,23 @@ void main() {
       expect(result.length, equals(expectedCount));
     });
 
-    test('timeFilter: "month" returns last 30 days', () {
+    test('timeFilter: "month" returns current calendar month', () {
       final result = catches.filterByTime('month');
-      // Today, yesterday, 2 days ago, and 15 days ago
-      expect(result.length, equals(4));
+      // 期望值按日历月起点动态计算，避免月初运行时 15 天前落入上月导致测试抖动
+      final now = DateTime.now();
+      final monthStart = DateTime(now.year, now.month);
+      final expectedCount =
+          catches.where((f) => !f.catchTime.isBefore(monthStart)).length;
+      expect(result.length, equals(expectedCount));
     });
 
-    test('timeFilter: "year" returns last 365 days', () {
+    test('timeFilter: "year" returns current calendar year', () {
       final result = catches.filterByTime('year');
-      // All except the 400-day-old catch
-      expect(result.length, equals(5));
+      // 期望值按日历年起点动态计算，避免年初运行时跨年数据导致测试抖动
+      final yearStart = DateTime(DateTime.now().year);
+      final expectedCount =
+          catches.where((f) => !f.catchTime.isBefore(yearStart)).length;
+      expect(result.length, equals(expectedCount));
     });
 
     test('timeFilter: "all" returns all catches', () {
@@ -411,8 +426,8 @@ void main() {
         final now = DateTime.now();
         final prevMonth = now.month == 1 ? 12 : now.month - 1;
         final prevYear = now.month == 1 ? now.year - 1 : now.year;
-        final prevMonthEnd = DateTime(now.year, now.month)
-            .subtract(const Duration(seconds: 1));
+        final prevMonthEnd =
+            DateTime(now.year, now.month).subtract(const Duration(seconds: 1));
 
         final catches = [
           TestDataFactory.createFishCatch(
@@ -831,6 +846,55 @@ void main() {
       expect(singleCatch.releaseCount, equals(1));
       expect(singleCatch.keepCount, equals(0));
       expect(singleCatch.releaseRate, equals(1.0));
+    });
+  });
+
+  group('FishCatchDisplay.displaySpecies', () {
+    FishCatch buildFish({
+      String species = 'Bass',
+      bool pendingRecognition = false,
+    }) {
+      final now = DateTime.now();
+      return FishCatch(
+        id: 1,
+        imagePath: '/test.jpg',
+        species: species,
+        length: 30.0,
+        fate: FishFateType.release,
+        catchTime: now,
+        pendingRecognition: pendingRecognition,
+        createdAt: now,
+        updatedAt: now,
+      );
+    }
+
+    test('returns species for a normal catch', () {
+      final fish = buildFish(species: '鲈鱼');
+
+      expect(fish.displaySpecies(AppStrings.chinese), equals('鲈鱼'));
+      expect(fish.displaySpecies(AppStrings.english), equals('鲈鱼'));
+    });
+
+    test('returns localized placeholder when pendingRecognition is true', () {
+      final fish = buildFish(species: '', pendingRecognition: true);
+
+      expect(
+        fish.displaySpecies(AppStrings.chinese),
+        equals(AppStrings.chinese.pendingRecognition),
+      );
+      expect(
+        fish.displaySpecies(AppStrings.english),
+        equals(AppStrings.english.pendingRecognition),
+      );
+    });
+
+    test('returns localized placeholder when species is empty', () {
+      final fish = buildFish(species: '');
+
+      expect(
+        fish.displaySpecies(AppStrings.chinese),
+        equals(AppStrings.chinese.pendingRecognition),
+      );
     });
   });
 

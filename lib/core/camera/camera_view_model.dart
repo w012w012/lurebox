@@ -18,7 +18,6 @@ import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 class CameraViewModel extends StateNotifier<CameraState> {
-
   CameraViewModel(this._fishCatchService, this._equipmentService, this._strings)
       : super(const CameraState()) {
     _cameraHelper.setStrings(_strings);
@@ -28,6 +27,9 @@ class CameraViewModel extends StateNotifier<CameraState> {
   final EquipmentService _equipmentService;
   final AppStrings _strings;
   BuildContext? _context;
+  // 保存流程守卫（H-7）：防止压缩/写库期间的重复提交
+  bool _savePending = false; // beginSaving 已调用，等待 saveFishCatch
+  bool _isSaving = false; // saveFishCatch 正在执行
 
   CameraHelper get cameraHelper => _cameraHelper;
 
@@ -39,9 +41,12 @@ class CameraViewModel extends StateNotifier<CameraState> {
   Future<void> initializeCamera() async {
     state = state.copyWith(isLoading: true);
     try {
-      await error_service.ErrorService().wrap(() async {
-        await _cameraHelper.initCamera(context: _context);
-      }, context: '初始化相机',);
+      await error_service.ErrorService().wrap(
+        () async {
+          await _cameraHelper.initCamera(context: _context);
+        },
+        context: '初始化相机',
+      );
 
       state = state.copyWith(
         isCameraInitialized: _cameraHelper.isInitialized,
@@ -62,17 +67,21 @@ class CameraViewModel extends StateNotifier<CameraState> {
 
   Future<void> switchCamera() async {
     try {
-      await error_service.ErrorService().wrap(() async {
-        final success = await _cameraHelper.switchCamera();
-        if (success) {
-          state = state.copyWith(
-            canSwitchCamera: _cameraHelper.canSwitchCamera,
-            errorMessage: () => _cameraHelper.errorMessage,
-          );
-        }
-      }, context: '切换相机',);
+      await error_service.ErrorService().wrap(
+        () async {
+          final success = await _cameraHelper.switchCamera();
+          if (success) {
+            state = state.copyWith(
+              canSwitchCamera: _cameraHelper.canSwitchCamera,
+              errorMessage: () => _cameraHelper.errorMessage,
+            );
+          }
+        },
+        context: '切换相机',
+      );
     } catch (e) {
-      state = state.copyWith(errorMessage: () => error_service.ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          errorMessage: () => error_service.ErrorService.toUserMessage(e));
     }
   }
 
@@ -81,22 +90,25 @@ class CameraViewModel extends StateNotifier<CameraState> {
 
     state = state.copyWith(isTakingPicture: true);
     try {
-      return await error_service.ErrorService().wrap(() async {
-        final path = await _cameraHelper.takePicture();
-        if (path != null) {
-          // 将临时目录中的照片移动到应用文档目录的 photos/ 子目录
-          final appDir = await getApplicationDocumentsDirectory();
-          final photosDir = Directory(p.join(appDir.path, 'photos'));
-          await photosDir.create(recursive: true);
-          final fileName = p.basename(path);
-          final newPath = p.join(photosDir.path, fileName);
-          await File(path).copy(newPath);
-          await File(path).delete(); // 删除临时文件
-          setImagePath(newPath); // newPath 是绝对路径
-          return newPath;
-        }
-        return path;
-      }, context: '拍照',);
+      return await error_service.ErrorService().wrap(
+        () async {
+          final path = await _cameraHelper.takePicture();
+          if (path != null) {
+            // 将临时目录中的照片移动到应用文档目录的 photos/ 子目录
+            final appDir = await getApplicationDocumentsDirectory();
+            final photosDir = Directory(p.join(appDir.path, 'photos'));
+            await photosDir.create(recursive: true);
+            final fileName = p.basename(path);
+            final newPath = p.join(photosDir.path, fileName);
+            await File(path).copy(newPath);
+            await File(path).delete(); // 删除临时文件
+            setImagePath(newPath); // newPath 是绝对路径
+            return newPath;
+          }
+          return path;
+        },
+        context: '拍照',
+      );
     } finally {
       state = state.copyWith(isTakingPicture: false);
     }
@@ -104,73 +116,89 @@ class CameraViewModel extends StateNotifier<CameraState> {
 
   Future<void> getLocation() async {
     try {
-      await error_service.ErrorService().wrap(() async {
-        await _cameraHelper.getLocation(context: _context);
-        setLocation(
-          _cameraHelper.locationName,
-          _cameraHelper.position?.latitude,
-          _cameraHelper.position?.longitude,
-          _cameraHelper.weatherData?.airTemperature,
-          _cameraHelper.weatherData?.pressure,
-          _cameraHelper.weatherData?.weatherCode,
-        );
-      }, context: '获取位置',);
+      await error_service.ErrorService().wrap(
+        () async {
+          await _cameraHelper.getLocation(context: _context);
+          setLocation(
+            _cameraHelper.locationName,
+            _cameraHelper.position?.latitude,
+            _cameraHelper.position?.longitude,
+            _cameraHelper.weatherData?.airTemperature,
+            _cameraHelper.weatherData?.pressure,
+            _cameraHelper.weatherData?.weatherCode,
+          );
+          // 定位错误提示与位置数据分离，仅用于 UI 展示，不会被持久化
+          state = state.copyWith(
+            locationError: () => _cameraHelper.locationError,
+          );
+        },
+        context: '获取位置',
+      );
     } catch (e) {
-      state = state.copyWith(errorMessage: () => error_service.ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          errorMessage: () => error_service.ErrorService.toUserMessage(e));
     }
   }
 
   Future<void> loadSpeciesHistory() async {
     try {
-      await error_service.ErrorService().wrap(() async {
-        final history = await _fishCatchService.getSpeciesHistory();
-        state = state.copyWith(speciesHistory: history);
-      }, context: '加载历史品种',);
+      await error_service.ErrorService().wrap(
+        () async {
+          final history = await _fishCatchService.getSpeciesHistory();
+          state = state.copyWith(speciesHistory: history);
+        },
+        context: '加载历史品种',
+      );
     } catch (e) {
-      state = state.copyWith(errorMessage: () => error_service.ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          errorMessage: () => error_service.ErrorService.toUserMessage(e));
     }
   }
 
   Future<void> loadEquipments() async {
     try {
-      await error_service.ErrorService().wrap(() async {
-        final rods = await _equipmentService.getAll(type: 'rod');
-        final reels = await _equipmentService.getAll(type: 'reel');
-        final lures = await _equipmentService.getAll(type: 'lure');
+      await error_service.ErrorService().wrap(
+        () async {
+          final rods = await _equipmentService.getAll(type: 'rod');
+          final reels = await _equipmentService.getAll(type: 'reel');
+          final lures = await _equipmentService.getAll(type: 'lure');
 
-        Equipment? defaultRod;
-        Equipment? defaultReel;
-        Equipment? defaultLure;
-        for (final rod in rods) {
-          if (rod.isDefault) {
-            defaultRod = rod;
-            break;
+          Equipment? defaultRod;
+          Equipment? defaultReel;
+          Equipment? defaultLure;
+          for (final rod in rods) {
+            if (rod.isDefault) {
+              defaultRod = rod;
+              break;
+            }
           }
-        }
-        for (final reel in reels) {
-          if (reel.isDefault) {
-            defaultReel = reel;
-            break;
+          for (final reel in reels) {
+            if (reel.isDefault) {
+              defaultReel = reel;
+              break;
+            }
           }
-        }
-        for (final lure in lures) {
-          if (lure.isDefault) {
-            defaultLure = lure;
-            break;
+          for (final lure in lures) {
+            if (lure.isDefault) {
+              defaultLure = lure;
+              break;
+            }
           }
-        }
 
-        state = state.copyWith(
-          rods: rods,
-          reels: reels,
-          lures: lures,
-          selectedRod: () => defaultRod,
-          selectedReel: () => defaultReel,
-          selectedLure: () => defaultLure,
-        );
-      }, context: '加载装备',);
+          state = state.copyWith(
+            rods: rods,
+            reels: reels,
+            lures: lures,
+            selectedRod: () => defaultRod,
+            selectedReel: () => defaultReel,
+            selectedLure: () => defaultLure,
+          );
+        },
+        context: '加载装备',
+      );
     } catch (e) {
-      state = state.copyWith(errorMessage: () => error_service.ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          errorMessage: () => error_service.ErrorService.toUserMessage(e));
     }
   }
 
@@ -178,13 +206,13 @@ class CameraViewModel extends StateNotifier<CameraState> {
     state = state.copyWith(
       imagePath: () => path,
       captureState: CameraCaptureState.pictureTaken,
-      catchTime: DateTime.now, // 自动设置当前时间为默认钓获时间
+      // 仅在尚未设置钓获时间时默认当前时间，避免覆盖用户手动编辑的时间
+      catchTime: state.catchTime == null ? DateTime.now : null,
     );
   }
 
   void setSpecies(String species) {
-    final keepPending =
-        !species.isNotEmpty && state.pendingRecognition;
+    final keepPending = !species.isNotEmpty && state.pendingRecognition;
     state = state.copyWith(species: species, pendingRecognition: keepPending);
   }
 
@@ -218,21 +246,32 @@ class CameraViewModel extends StateNotifier<CameraState> {
   }
 
   void setWeight(double? weight) {
-    state = state.copyWith(weight: weight);
+    state = state.copyWith(weight: () => weight);
   }
 
   void setLengthUnit(String unit) {
     state = state.copyWith(lengthUnit: unit);
+    _refreshEstimatedWeight();
   }
 
   void setWeightUnit(String unit) {
     state = state.copyWith(weightUnit: unit);
+    _refreshEstimatedWeight();
   }
 
   void initializeUnits(UnitSettings settings) {
     state = state.copyWith(
       lengthUnit: settings.fishLengthUnit,
       weightUnit: settings.fishWeightUnit,
+    );
+    _refreshEstimatedWeight();
+  }
+
+  /// 单位变化后重新计算估算重量，保证估算值与当前单位一致
+  void _refreshEstimatedWeight() {
+    if (state.length <= 0) return;
+    state = state.copyWith(
+      estimatedWeight: () => _calculateEstimatedWeight(state.length),
     );
   }
 
@@ -285,10 +324,30 @@ class CameraViewModel extends StateNotifier<CameraState> {
     return UnitConverter.convertWeight(weightInKg, 'kg', state.weightUnit);
   }
 
+  /// 同步开始保存流程（应在图片压缩等耗时前置操作之前调用）。
+  ///
+  /// 立即将 captureState 置为 saving 以禁用保存按钮，
+  /// 防止压缩期间重复点击产生重复记录。
+  /// 已有保存流程进行中时返回 false。
+  bool beginSaving() {
+    if (_savePending || _isSaving) return false;
+    _savePending = true;
+    state = state.copyWith(
+      captureState: CameraCaptureState.saving,
+      isLoading: true,
+    );
+    return true;
+  }
+
   Future<int?> saveFishCatch() async {
+    // 同步检查并置位（Dart 单线程，首个 await 前的检查即可保证无竞态）
+    if (_isSaving) return null;
     if (!state.canSave) {
+      _savePending = false;
       return null;
     }
+    _savePending = false;
+    _isSaving = true;
 
     state = state.copyWith(
       captureState: CameraCaptureState.saving,
@@ -296,41 +355,45 @@ class CameraViewModel extends StateNotifier<CameraState> {
     );
 
     try {
-      return await error_service.ErrorService().wrap(() async {
-        final now = DateTime.now();
-        final fish = FishCatch(
-          id: 0,
-          imagePath: state.imagePath ?? '',
-          watermarkedImagePath: state.watermarkedImagePath,
-          species: state.species.isNotEmpty ? state.species : _strings.pendingRecognition,
-          length: state.length,
-          lengthUnit: state.lengthUnit,
-          weight: state.weight ?? state.estimatedWeight,
-          weightUnit: state.weightUnit,
-          fate: state.fate,
-          catchTime: state.catchTime ?? now,
-          pendingRecognition: state.pendingRecognition,
-          locationName: state.locationName,
-          latitude: state.latitude,
-          longitude: state.longitude,
-          rodId: state.selectedRod?.id,
-          reelId: state.selectedReel?.id,
-          lureId: state.selectedLure?.id,
-          airTemperature: state.airTemperature,
-          pressure: state.pressure,
-          weatherCode: state.weatherCode,
-          createdAt: now,
-          updatedAt: now,
-        );
+      return await error_service.ErrorService().wrap(
+        () async {
+          final now = DateTime.now();
+          final fish = FishCatch(
+            id: 0,
+            imagePath: state.imagePath ?? '',
+            watermarkedImagePath: state.watermarkedImagePath,
+            // 待识别记录持久化为空鱼种，展示层负责渲染本地化占位文案
+            species: state.pendingRecognition ? '' : state.species,
+            length: state.length,
+            lengthUnit: state.lengthUnit,
+            weight: state.weight ?? state.estimatedWeight,
+            weightUnit: state.weightUnit,
+            fate: state.fate,
+            catchTime: state.catchTime ?? now,
+            pendingRecognition: state.pendingRecognition,
+            locationName: state.locationName,
+            latitude: state.latitude,
+            longitude: state.longitude,
+            rodId: state.selectedRod?.id,
+            reelId: state.selectedReel?.id,
+            lureId: state.selectedLure?.id,
+            airTemperature: state.airTemperature,
+            pressure: state.pressure,
+            weatherCode: state.weatherCode,
+            createdAt: now,
+            updatedAt: now,
+          );
 
-        final fishId = await _fishCatchService.create(fish);
+          final fishId = await _fishCatchService.create(fish);
 
-        state = state.copyWith(
-          captureState: CameraCaptureState.saved,
-          isLoading: false,
-        );
-        return fishId;
-      }, context: '保存鱼获',);
+          state = state.copyWith(
+            captureState: CameraCaptureState.saved,
+            isLoading: false,
+          );
+          return fishId;
+        },
+        context: '保存鱼获',
+      );
     } catch (e) {
       state = state.copyWith(
         captureState: CameraCaptureState.error,
@@ -339,10 +402,14 @@ class CameraViewModel extends StateNotifier<CameraState> {
         isLoading: false,
       );
       return null;
+    } finally {
+      _isSaving = false;
     }
   }
 
   void reset() {
+    _savePending = false;
+    _isSaving = false;
     state = const CameraState();
   }
 
@@ -361,6 +428,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
   /// 重置 captureState 到 pictureTaken，让用户留在表单页面
   /// 用于保存失败后恢复表单显示
   void resetCaptureStateToForm() {
+    _savePending = false;
     if (state.imagePath != null) {
       state = state.copyWith(
         captureState: CameraCaptureState.pictureTaken,

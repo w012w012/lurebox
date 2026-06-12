@@ -81,10 +81,12 @@ void main() {
         (WidgetTester tester) async {
       final fish = createFishCatch();
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        fish: fish,
-        isSelectionMode: true,
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          fish: fish,
+          isSelectionMode: true,
+        ),
+      );
       await tester.pump();
 
       expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
@@ -94,11 +96,13 @@ void main() {
         (WidgetTester tester) async {
       final fish = createFishCatch();
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        fish: fish,
-        isSelectionMode: true,
-        isSelected: true,
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          fish: fish,
+          isSelectionMode: true,
+          isSelected: true,
+        ),
+      );
       await tester.pump();
 
       expect(find.byIcon(Icons.check_circle), findsOneWidget);
@@ -108,10 +112,12 @@ void main() {
         (WidgetTester tester) async {
       final fish = createFishCatch();
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        fish: fish,
-        isSelectionMode: true,
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          fish: fish,
+          isSelectionMode: true,
+        ),
+      );
       await tester.pump();
 
       expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
@@ -121,9 +127,11 @@ void main() {
         (WidgetTester tester) async {
       final fish = createFishCatch();
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        fish: fish,
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          fish: fish,
+        ),
+      );
       await tester.pump();
 
       expect(find.byIcon(Icons.check_circle), findsNothing);
@@ -140,7 +148,8 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(fish: fish));
       await tester.pump();
 
-      expect(find.text(defaultStrings.pendingRecognition), findsOneWidget);
+      // 待识别记录的标题与角标均渲染本地化占位文案（标题来自 displaySpecies）
+      expect(find.text(defaultStrings.pendingRecognition), findsNWidgets(2));
       expect(find.text('⚠️'), findsOneWidget);
     });
 
@@ -159,10 +168,12 @@ void main() {
         (WidgetTester tester) async {
       final fish = createFishCatch(pendingRecognition: true);
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        fish: fish,
-        onQuickIdentify: () {},
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          fish: fish,
+          onQuickIdentify: () {},
+        ),
+      );
       await tester.pump();
 
       expect(find.text(defaultStrings.recognize), findsOneWidget);
@@ -174,10 +185,12 @@ void main() {
         (WidgetTester tester) async {
       final fish = createFishCatch();
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        fish: fish,
-        onQuickIdentify: () {},
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          fish: fish,
+          onQuickIdentify: () {},
+        ),
+      );
       await tester.pump();
 
       expect(find.text(defaultStrings.recognize), findsNothing);
@@ -188,9 +201,11 @@ void main() {
         (WidgetTester tester) async {
       final fish = createFishCatch(pendingRecognition: true);
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        fish: fish,
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          fish: fish,
+        ),
+      );
       await tester.pump();
 
       expect(find.text(defaultStrings.recognize), findsNothing);
@@ -201,10 +216,12 @@ void main() {
       final fish = createFishCatch(pendingRecognition: true);
       var quickIdentifyCalled = false;
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        fish: fish,
-        onQuickIdentify: () => quickIdentifyCalled = true,
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          fish: fish,
+          onQuickIdentify: () => quickIdentifyCalled = true,
+        ),
+      );
       await tester.pump();
 
       await tester.tap(find.text(defaultStrings.recognize));
@@ -278,10 +295,12 @@ void main() {
       final fish = createFishCatch();
       var tapCalled = false;
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        fish: fish,
-        onTap: () => tapCalled = true,
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          fish: fish,
+          onTap: () => tapCalled = true,
+        ),
+      );
       await tester.pump();
 
       await tester.tap(find.byType(InkWell).first);
@@ -293,10 +312,12 @@ void main() {
       final fish = createFishCatch();
       var longPressCalled = false;
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        fish: fish,
-        onLongPress: () => longPressCalled = true,
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          fish: fish,
+          onLongPress: () => longPressCalled = true,
+        ),
+      );
       await tester.pump();
 
       await tester.longPress(find.byType(InkWell).first);
@@ -307,9 +328,11 @@ void main() {
         (WidgetTester tester) async {
       final fish = createFishCatch();
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        fish: fish,
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          fish: fish,
+        ),
+      );
       await tester.pump();
 
       // Should not throw
@@ -407,7 +430,8 @@ class MockSettingsService implements SettingsService {
 
   @override
   Future<void> saveAiRecognitionSettings(
-      AiRecognitionSettings settings,) async {}
+    AiRecognitionSettings settings,
+  ) async {}
 
   @override
   Future<void> deleteAiRecognitionSettings() async {}

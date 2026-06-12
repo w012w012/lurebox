@@ -4,7 +4,6 @@ import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/widgets/common/image_cache_helper.dart';
 
 class FishSearchDelegate extends SearchDelegate<FishCatch> {
-
   FishSearchDelegate(this.allCatches, this.strings, this.onTap);
   final List<FishCatch> allCatches;
   final AppStrings strings;
@@ -97,7 +96,7 @@ class FishSearchDelegate extends SearchDelegate<FishCatch> {
                 ),
               ),
             ),
-            title: Text(fish.species),
+            title: Text(fish.displaySpecies(strings)),
             subtitle: Text(
               '${fish.length.toStringAsFixed(1)}cm • ${fish.locationName ?? ''}',
               maxLines: 1,

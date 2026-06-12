@@ -16,6 +16,7 @@ class CameraHelper {
   String? _errorMessage;
   int _currentCameraIndex = 0;
   String? _locationName;
+  String? _locationError; // 定位失败提示，与真实位置名称分离，避免被持久化
   double? _latitude;
   double? _longitude;
   Position? _position;
@@ -29,6 +30,7 @@ class CameraHelper {
   String? get errorMessage => _errorMessage;
   bool get canSwitchCamera => _cameras.length > 1;
   String? get locationName => _locationName;
+  String? get locationError => _locationError;
   double? get latitude => _latitude;
   double? get longitude => _longitude;
   Position? get position => _position;
@@ -129,6 +131,7 @@ class CameraHelper {
   }
 
   Future<void> getLocation({BuildContext? context}) async {
+    _locationError = null;
     try {
       await error_service.ErrorService().wrap(
         () async {
@@ -137,7 +140,8 @@ class CameraHelper {
             final result =
                 await PermissionService().requestLocationPermission(context);
             if (!result.granted) {
-              _locationName = _strings?.locationPermissionDenied ??
+              // 错误提示放入 _locationError，不污染 _locationName（H-8）
+              _locationError = _strings?.locationPermissionDenied ??
                   'Location permission denied';
               return;
             }
@@ -147,7 +151,7 @@ class CameraHelper {
             if (!status.isGranted) {
               status = await Permission.locationWhenInUse.request();
               if (!status.isGranted) {
-                _locationName = _strings?.locationPermissionDenied ??
+                _locationError = _strings?.locationPermissionDenied ??
                     'Location permission denied';
                 return;
               }
@@ -166,7 +170,8 @@ class CameraHelper {
             _longitude = position.longitude;
             _position = position;
           } catch (e) {
-            _locationName = _strings?.locationFailed ?? 'Location fetch failed';
+            _locationError =
+                _strings?.locationFailed ?? 'Location fetch failed';
             return;
           }
 
@@ -200,7 +205,7 @@ class CameraHelper {
         context: '获取位置信息',
       );
     } catch (e) {
-      _locationName = _strings?.errorLocationFetch ?? 'Location fetch failed';
+      _locationError = _strings?.errorLocationFetch ?? 'Location fetch failed';
     }
   }
 
@@ -214,6 +219,7 @@ class CameraHelper {
     _latitude = null;
     _longitude = null;
     _locationName = null;
+    _locationError = null;
 
     // 释放天气数据
     _weatherData = null;

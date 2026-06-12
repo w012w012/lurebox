@@ -30,9 +30,9 @@ class FishDetailState {
     bool? isLoading,
     String? Function()? errorMessage,
     FishCatch? fish,
-    Equipment? rodEquipment,
-    Equipment? reelEquipment,
-    Equipment? lureEquipment,
+    Equipment? Function()? rodEquipment,
+    Equipment? Function()? reelEquipment,
+    Equipment? Function()? lureEquipment,
     bool? isDeleting,
     bool? isSharing,
   }) {
@@ -40,9 +40,11 @@ class FishDetailState {
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
       fish: fish ?? this.fish,
-      rodEquipment: rodEquipment ?? this.rodEquipment,
-      reelEquipment: reelEquipment ?? this.reelEquipment,
-      lureEquipment: lureEquipment ?? this.lureEquipment,
+      rodEquipment: rodEquipment != null ? rodEquipment() : this.rodEquipment,
+      reelEquipment:
+          reelEquipment != null ? reelEquipment() : this.reelEquipment,
+      lureEquipment:
+          lureEquipment != null ? lureEquipment() : this.lureEquipment,
       isDeleting: isDeleting ?? this.isDeleting,
       isSharing: isSharing ?? this.isSharing,
     );
@@ -130,16 +132,18 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
         }
       }
 
+      // 使用闭包传值，确保装备被移除后旧的装备对象能被真正清空
       state = state.copyWith(
         isLoading: false,
         fish: fishModel,
-        rodEquipment: rodEquipment,
-        reelEquipment: reelEquipment,
-        lureEquipment: lureEquipment,
+        rodEquipment: () => rodEquipment,
+        reelEquipment: () => reelEquipment,
+        lureEquipment: () => lureEquipment,
       );
     } on Exception catch (e) {
       if (!mounted) return;
-      state = state.copyWith(isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
     }
   }
 
@@ -152,7 +156,8 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
       return true;
     } on Exception catch (e) {
       if (!mounted) return false;
-      state = state.copyWith(isDeleting: false, errorMessage: () => ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          isDeleting: false, errorMessage: () => ErrorService.toUserMessage(e));
       return false;
     }
   }

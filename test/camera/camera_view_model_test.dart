@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/camera/camera_state.dart';
 import 'package:lurebox/core/camera/camera_view_model.dart';
@@ -53,6 +55,9 @@ Equipment _lure({int id = 3, bool isDefault = false}) => Equipment(
 // ── Tests ────────────────────────────────────────────────────────────────────
 
 void main() {
+  // 初始化绑定，getLocation 测试中权限插件调用需要 method channel
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   late CameraViewModel viewModel;
   late MockFishCatchService mockFishCatchService;
   late MockEquipmentService mockEquipmentService;
@@ -151,11 +156,11 @@ void main() {
       expect(viewModel.state.weight, 2.5);
     });
 
-    test('setWeight with null preserves existing weight (copyWith uses ??)', () {
+    test('setWeight with null clears existing weight', () {
       viewModel.setWeight(2.5);
       viewModel.setWeight(null);
-      // copyWith uses `weight ?? this.weight`, so null keeps existing value
-      expect(viewModel.state.weight, 2.5);
+      // 用户删除重量输入后，旧值不应该被保留
+      expect(viewModel.state.weight, isNull);
     });
 
     test('setFate updates state.fate', () {
@@ -199,6 +204,31 @@ void main() {
           viewModel.state.estimatedWeight,
           closeTo(0.3398, 0.001),
         );
+      });
+
+      test('setWeightUnit recomputes estimatedWeight in new unit (H-6)', () {
+        // 50cm → 50³ × 0.012 / 1000 = 1.5 kg
+        viewModel.setLength(50);
+        expect(viewModel.state.estimatedWeight, closeTo(1.5, 0.001));
+
+        // 切换到克后，估算重量必须随单位换算，否则保存时单位错配（1000 倍误差）
+        viewModel.setWeightUnit('g');
+        expect(viewModel.state.estimatedWeight, closeTo(1500, 1));
+
+        viewModel.setWeightUnit('kg');
+        expect(viewModel.state.estimatedWeight, closeTo(1.5, 0.001));
+      });
+
+      test('setLengthUnit recomputes estimatedWeight (H-6)', () {
+        viewModel.setLength(12);
+        // 切换长度单位后，12 被解释为 12 英寸 = 30.48cm → ≈0.3398 kg
+        viewModel.setLengthUnit('inch');
+        expect(viewModel.state.estimatedWeight, closeTo(0.3398, 0.001));
+      });
+
+      test('setWeightUnit with zero length keeps estimatedWeight null', () {
+        viewModel.setWeightUnit('g');
+        expect(viewModel.state.estimatedWeight, isNull);
       });
 
       test('setLength updates state.weight when weightUnit is kg', () {
@@ -268,6 +298,18 @@ void main() {
       expect(viewModel.state.imagePath, '/photos/test.jpg');
       expect(viewModel.state.captureState, CameraCaptureState.pictureTaken);
       expect(viewModel.state.catchTime, isNotNull);
+    });
+
+    test('setImagePath preserves user-edited catchTime (H-5)', () {
+      final editedTime = DateTime(2025, 6, 1, 8, 30);
+      viewModel.setImagePath('/photos/first.jpg');
+      viewModel.setCatchTime(editedTime);
+
+      // 保存前压缩图片会再次调用 setImagePath，不应覆盖用户编辑的时间
+      viewModel.setImagePath('/photos/compressed.jpg');
+
+      expect(viewModel.state.imagePath, '/photos/compressed.jpg');
+      expect(viewModel.state.catchTime, editedTime);
     });
 
     test('setCatchTime updates state.catchTime', () {
@@ -491,7 +533,8 @@ void main() {
       verifyNever(() => mockFishCatchService.create(any()));
     });
 
-    test('returns null when canSave is false (no species or pending)', () async {
+    test('returns null when canSave is false (no species or pending)',
+        () async {
       viewModel.setImagePath('/img.jpg');
       viewModel.setLength(30);
       // species == '' and pendingRecognition == false → canSave == false
@@ -513,7 +556,8 @@ void main() {
       viewModel.setSelectedReel(_reel(id: 20));
       viewModel.setSelectedLure(_lure(id: 30));
 
-      when(() => mockFishCatchService.create(any())).thenAnswer((_) async => 42);
+      when(() => mockFishCatchService.create(any()))
+          .thenAnswer((_) async => 42);
 
       // Act
       final result = await viewModel.saveFishCatch();
@@ -544,7 +588,8 @@ void main() {
       // via _speciesHistoryRepo.incrementUseCount(), not via a separate call
     });
 
-    test('uses pendingRecognition string when species is empty', () async {
+    test('persists empty species when pendingRecognition is true (H-9)',
+        () async {
       viewModel.setImagePath('/photos/test.jpg');
       viewModel.setLength(30);
       viewModel.setPendingRecognition(true);
@@ -559,7 +604,28 @@ void main() {
       ).captured;
       final fish = captured.first as FishCatch;
       expect(fish.pendingRecognition, true);
-      expect(fish.species, strings.pendingRecognition);
+      // 不再把本地化占位文案（如"待识别"）当成真实鱼种持久化
+      expect(fish.species, isEmpty);
+    });
+
+    test(
+        'persists estimatedWeight consistent with weightUnit after unit switch (H-6)',
+        () async {
+      viewModel.setImagePath('/photos/test.jpg');
+      viewModel.setSpecies('Bass');
+      viewModel.setLength(50); // 1.5 kg
+      viewModel.setWeightUnit('g');
+
+      when(() => mockFishCatchService.create(any())).thenAnswer((_) async => 1);
+
+      await viewModel.saveFishCatch();
+
+      final captured = verify(
+        () => mockFishCatchService.create(captureAny()),
+      ).captured;
+      final fish = captured.first as FishCatch;
+      expect(fish.weightUnit, 'g');
+      expect(fish.weight, closeTo(1500, 1));
     });
 
     test('sets captureState to saving during save', () async {
@@ -688,6 +754,94 @@ void main() {
 
       expect(viewModel.state.errorMessage, isNotNull);
       expect(viewModel.state.errorMessage, contains('db read failed'));
+    });
+  });
+
+  // ===========================================================================
+  // 12. Double-submit protection (H-7)
+  // ===========================================================================
+  group('double-submit protection (H-7)', () {
+    void setUpValidState() {
+      viewModel.setImagePath('/photos/test.jpg');
+      viewModel.setSpecies('Bass');
+      viewModel.setLength(30);
+    }
+
+    test('beginSaving sets saving state and blocks repeated calls', () {
+      setUpValidState();
+
+      expect(viewModel.beginSaving(), isTrue);
+      expect(viewModel.state.captureState, CameraCaptureState.saving);
+      expect(viewModel.state.isLoading, isTrue);
+
+      // 压缩图片期间的第二次点击不能再次进入保存流程
+      expect(viewModel.beginSaving(), isFalse);
+    });
+
+    test('beginSaving followed by saveFishCatch completes the save', () async {
+      setUpValidState();
+      when(() => mockFishCatchService.create(any()))
+          .thenAnswer((_) async => 42);
+
+      expect(viewModel.beginSaving(), isTrue);
+      final result = await viewModel.saveFishCatch();
+
+      expect(result, 42);
+      expect(viewModel.state.captureState, CameraCaptureState.saved);
+      verify(() => mockFishCatchService.create(any())).called(1);
+    });
+
+    test('concurrent saveFishCatch calls create only one record', () async {
+      setUpValidState();
+      final completer = Completer<int>();
+      when(() => mockFishCatchService.create(any()))
+          .thenAnswer((_) => completer.future);
+
+      final first = viewModel.saveFishCatch();
+      final second = viewModel.saveFishCatch();
+      completer.complete(42);
+
+      expect(await first, 42);
+      expect(await second, isNull);
+      verify(() => mockFishCatchService.create(any())).called(1);
+    });
+
+    test('beginSaving can be retried after resetCaptureStateToForm', () {
+      setUpValidState();
+
+      expect(viewModel.beginSaving(), isTrue);
+      // 模拟压缩失败后的恢复路径
+      viewModel.resetCaptureStateToForm();
+
+      expect(viewModel.state.captureState, CameraCaptureState.pictureTaken);
+      expect(viewModel.beginSaving(), isTrue);
+    });
+
+    test('save failure releases the guard so user can retry', () async {
+      setUpValidState();
+      when(() => mockFishCatchService.create(any()))
+          .thenThrow(Exception('DB write failed'));
+
+      expect(viewModel.beginSaving(), isTrue);
+      final result = await viewModel.saveFishCatch();
+
+      expect(result, isNull);
+      viewModel.resetCaptureStateToForm();
+      expect(viewModel.beginSaving(), isTrue);
+    });
+  });
+
+  // ===========================================================================
+  // 13. getLocation error separation (H-8)
+  // ===========================================================================
+  group('getLocation error separation (H-8)', () {
+    test('failure keeps locationName null and sets locationError', () async {
+      // 单元测试环境中权限插件不可用，getLocation 必然失败
+      await viewModel.getLocation();
+
+      // 错误文案不能再混入 locationName（否则会被持久化为钓点名称）
+      expect(viewModel.state.locationName, isNull);
+      expect(viewModel.state.locationError, isNotNull);
     });
   });
 }

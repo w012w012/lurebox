@@ -33,7 +33,6 @@ class HomePage extends ConsumerWidget {
 }
 
 class _HomePageBody extends ConsumerStatefulWidget {
-
   const _HomePageBody({required this.state, required this.strings});
   final HomeState state;
   final AppStrings strings;
@@ -46,7 +45,8 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
     with TickerProviderStateMixin {
   late final List<AnimationController> _controllers;
   late final List<Animation<double>> _fadeAnimations;
-  static const int _itemCount = 7; // pending, podium, (index 2 reserved), 4 stat cards
+  static const int _itemCount =
+      7; // pending, podium, (index 2 reserved), 4 stat cards
 
   @override
   void initState() {
@@ -115,108 +115,114 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
         padding: const EdgeInsets.all(16),
         children: [
           // Item 0: Pending recognition card
-          StaggeredReveal.withAnimation(animation: _fadeAnimations[0], child: _buildPendingRecognitionCard(context, ref)),
+          StaggeredReveal.withAnimation(
+              animation: _fadeAnimations[0],
+              child: _buildPendingRecognitionCard(context, ref)),
           const SizedBox(height: 12),
           // Item 1: Podium
-          StaggeredReveal.withAnimation(animation: _fadeAnimations[1], child: _buildPodium(context)),
+          StaggeredReveal.withAnimation(
+              animation: _fadeAnimations[1], child: _buildPodium(context)),
           const SizedBox(height: 12),
           // Item 3: Today stat card
           StaggeredReveal.withAnimation(
-              animation: _fadeAnimations[3],
-              child: _buildStatCard(
-                context,
-                widget.strings,
-                widget.strings.todayCatch,
-                widget.state.todayCount,
-                widget.state.todayRelease,
-                widget.state.todayKeep,
-                widget.state.todaySpecies,
-                () {
-                  final now = DateTime.now();
-                  _navigateToDetail(
-                    context,
-                    widget.strings.todayCatch,
-                    DateTime(now.year, now.month, now.day),
-                    DateTime(
-                      now.year,
-                      now.month,
-                      now.day,
-                    ).add(const Duration(days: 1)),
-                  );
-                },
-              ),),
+            animation: _fadeAnimations[3],
+            child: _buildStatCard(
+              context,
+              widget.strings,
+              widget.strings.todayCatch,
+              widget.state.todayCount,
+              widget.state.todayRelease,
+              widget.state.todayKeep,
+              widget.state.todaySpecies,
+              () {
+                final now = DateTime.now();
+                _navigateToDetail(
+                  context,
+                  widget.strings.todayCatch,
+                  DateTime(now.year, now.month, now.day),
+                  DateTime(
+                    now.year,
+                    now.month,
+                    now.day,
+                  ).add(const Duration(days: 1)),
+                );
+              },
+            ),
+          ),
           const SizedBox(height: 12),
           // Item 4: Month stat card
           StaggeredReveal.withAnimation(
-              animation: _fadeAnimations[4],
-              child: _buildStatCard(
-                context,
-                widget.strings,
-                widget.strings.monthCatch,
-                widget.state.monthCount,
-                widget.state.monthRelease,
-                widget.state.monthKeep,
-                widget.state.monthSpecies,
-                () {
-                  final now = DateTime.now();
-                  _navigateToDetail(
-                    context,
-                    widget.strings.monthCatch,
-                    DateTime(now.year, now.month),
-                    DateTime(now.year, now.month + 1),
-                  );
-                },
-              ),),
+            animation: _fadeAnimations[4],
+            child: _buildStatCard(
+              context,
+              widget.strings,
+              widget.strings.monthCatch,
+              widget.state.monthCount,
+              widget.state.monthRelease,
+              widget.state.monthKeep,
+              widget.state.monthSpecies,
+              () {
+                final now = DateTime.now();
+                _navigateToDetail(
+                  context,
+                  widget.strings.monthCatch,
+                  DateTime(now.year, now.month),
+                  DateTime(now.year, now.month + 1),
+                );
+              },
+            ),
+          ),
           const SizedBox(height: 12),
           // Item 5: Year stat card
           StaggeredReveal.withAnimation(
-              animation: _fadeAnimations[5],
-              child: _buildStatCard(
-                context,
-                widget.strings,
-                widget.strings.yearCatch,
-                widget.state.yearCount,
-                widget.state.yearRelease,
-                widget.state.yearKeep,
-                widget.state.yearSpecies,
-                () {
-                  final now = DateTime.now();
-                  _navigateToDetail(
-                    context,
-                    widget.strings.yearCatch,
-                    DateTime(now.year),
-                    DateTime(now.year + 1),
-                  );
-                },
-              ),),
+            animation: _fadeAnimations[5],
+            child: _buildStatCard(
+              context,
+              widget.strings,
+              widget.strings.yearCatch,
+              widget.state.yearCount,
+              widget.state.yearRelease,
+              widget.state.yearKeep,
+              widget.state.yearSpecies,
+              () {
+                final now = DateTime.now();
+                _navigateToDetail(
+                  context,
+                  widget.strings.yearCatch,
+                  DateTime(now.year),
+                  DateTime(now.year + 1),
+                );
+              },
+            ),
+          ),
           const SizedBox(height: 12),
           // Item 6: All catch stat card
           StaggeredReveal.withAnimation(
-              animation: _fadeAnimations[6],
-              child: _buildStatCard(
-                context,
-                widget.strings,
-                widget.strings.allCatch,
-                widget.state.allCount,
-                widget.state.allRelease,
-                widget.state.allKeep,
-                widget.state.allSpecies,
-                () {
-                  final now = DateTime.now();
-                  _navigateToDetail(
-                    context,
-                    widget.strings.allCatch,
-                    DateTime(2000),
-                    DateTime(now.year + 1),
-                  );
-                },
-              ),),
+            animation: _fadeAnimations[6],
+            child: _buildStatCard(
+              context,
+              widget.strings,
+              widget.strings.allCatch,
+              widget.state.allCount,
+              widget.state.allRelease,
+              widget.state.allKeep,
+              widget.state.allSpecies,
+              () {
+                final now = DateTime.now();
+                _navigateToDetail(
+                  context,
+                  widget.strings.allCatch,
+                  DateTime(2000),
+                  DateTime(now.year + 1),
+                );
+              },
+            ),
+          ),
           const SizedBox(height: 24),
         ],
       ),
     );
   }
-
 
   void _navigateToDetail(
     BuildContext context,
@@ -366,7 +372,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
     Color mainColor,
     Color textColor,
   ) {
-    final species = fish.species;
+    final species = fish.displaySpecies(widget.strings);
     final length = fish.length;
 
     return SizedBox(
@@ -528,7 +534,6 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
 }
 
 class _StatBadge extends StatelessWidget {
-
   const _StatBadge({
     required this.icon,
     required this.label,

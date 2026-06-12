@@ -151,6 +151,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
                               rodName,
                               reelName,
                               lureName,
+                              strings,
                             );
                           },
                         );
@@ -164,11 +165,12 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
                         rodName,
                         reelName,
                         lureName,
+                        strings,
                       ),
                     ),
                   ),
                   FishInfoCard(
-                    species: fish.species,
+                    species: fish.displaySpecies(strings),
                     length: fish.length,
                     lengthUnit: fishLengthUnit,
                     weight: fish.weight,
@@ -228,10 +230,11 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
     String? rodName,
     String? reelName,
     String? lureName,
+    AppStrings strings,
   ) {
     return FishImageGallery(
       imagePath: fish.imagePath,
-      species: fish.species,
+      species: fish.displaySpecies(strings),
       length: fish.length,
       weight: fish.weight,
       lengthUnit: fishLengthUnit,
@@ -351,11 +354,11 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
         : null;
 
     final shareText =
-        '${fish.species} - ${displayLength.toStringAsFixed(2)}${UnitConverter.getLengthSymbol(units.fishLengthUnit)}';
+        '${fish.displaySpecies(strings)} - ${displayLength.toStringAsFixed(2)}${UnitConverter.getLengthSymbol(units.fishLengthUnit)}';
 
     final previewData = PreviewData(
       imagePath: imagePath,
-      species: fish.species,
+      species: fish.displaySpecies(strings),
       length: fishLength,
       weight: fishWeight,
       lengthUnit: fishLengthUnit,

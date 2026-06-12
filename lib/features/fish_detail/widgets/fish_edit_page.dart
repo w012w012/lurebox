@@ -110,7 +110,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
         species: species,
         length: length,
         lengthUnit: _lengthUnit,
-        weight: weight,
+        weight: () => weight,
         weightUnit: _weightUnit,
         fate: FishFateType.fromValue(_selectedFate),
         locationName: () => _locationController.text.trim().isEmpty

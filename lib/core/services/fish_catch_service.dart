@@ -21,7 +21,6 @@ import 'package:lurebox/core/utils/input_validator.dart';
 /// 和 [StatsRepository]（统计数据）。创建/删除渔获时会自动管理关联的图片文件。
 
 class FishCatchService {
-
   FishCatchService(this._repository, this._speciesHistoryRepo, this._statsRepo);
   final FishCatchRepository _repository;
   final SpeciesHistoryRepository _speciesHistoryRepo;
@@ -40,7 +39,10 @@ class FishCatchService {
   Future<int> create(FishCatch fish) async {
     final validated = _validateFishCatch(fish);
     final id = await _repository.create(validated);
-    await _speciesHistoryRepo.incrementUseCount(validated.species);
+    // 待识别或空鱼种不计入鱼种历史，避免占位记录污染鱼种统计与候选列表
+    if (!validated.pendingRecognition && validated.species.isNotEmpty) {
+      await _speciesHistoryRepo.incrementUseCount(validated.species);
+    }
     return id;
   }
 
@@ -111,7 +113,8 @@ class FishCatchService {
   /// Uses SQL-level filtering for all filter fields
   Future<PaginatedResult<FishCatch>> getFilteredPageByFilter({
     required int page,
-    required FishFilter filter, int pageSize = PaginationConstants.defaultPageSize,
+    required FishFilter filter,
+    int pageSize = PaginationConstants.defaultPageSize,
   }) async {
     return _repository.getFilteredPageByFilter(
       page: page,
@@ -203,10 +206,13 @@ class FishCatchService {
   // ===== Private Helpers =====
 
   FishCatch _validateFishCatch(FishCatch fish) {
-    final species = InputValidator.validateName(
-      fish.species,
-      fieldName: 'species',
-    );
+    // 待识别记录允许空鱼种（以空字符串持久化，展示层渲染占位文案）
+    final species = fish.pendingRecognition && fish.species.trim().isEmpty
+        ? ''
+        : InputValidator.validateName(
+            fish.species,
+            fieldName: 'species',
+          );
     final locationName = InputValidator.validateOptionalName(
       fish.locationName,
       fieldName: 'locationName',

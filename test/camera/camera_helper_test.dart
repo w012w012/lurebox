@@ -83,6 +83,7 @@ void main() {
       expect(cameraHelper.isInitialized, false);
       expect(cameraHelper.errorMessage, isNull);
       expect(cameraHelper.locationName, isNull);
+      expect(cameraHelper.locationError, isNull);
       expect(cameraHelper.latitude, isNull);
       expect(cameraHelper.longitude, isNull);
       expect(cameraHelper.position, isNull);
@@ -159,19 +160,23 @@ void main() {
   // ===========================================================================
   group('getLocation - permission handling', () {
     test(
-        'handles MissingPluginException gracefully (permission handler unavailable)',
+        'failure sets locationError and keeps locationName null (permission handler unavailable)',
         () async {
       // Act - call getLocation without context (uses fallback path)
       // In unit test environment, Permission.locationWhenInUse.status throws
       // MissingPluginException since there's no actual plugin registered
       await cameraHelper.getLocation();
 
-      // Assert: locationName is set to an error message
-      expect(cameraHelper.locationName, isNotNull);
+      // Assert: 错误文案进入 locationError，locationName 保持 null，
+      // 不会被当成真实钓点名称持久化
+      expect(cameraHelper.locationName, isNull);
+      expect(cameraHelper.locationError, isNotNull);
       expect(
-        cameraHelper.locationName,
+        cameraHelper.locationError,
         anyOf(
           contains('获取位置信息'),
+          contains('位置'),
+          contains('定位'),
           contains('Location'),
           contains('error'),
         ),

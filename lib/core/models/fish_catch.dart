@@ -15,6 +15,7 @@
 /// 5. 支持放流或保留的标记
 library;
 
+import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/utils/unit_converter.dart';
 
@@ -35,11 +36,16 @@ enum FishFateType {
 }
 
 class FishCatch {
-
   const FishCatch({
     required this.id,
     required this.imagePath,
-    required this.species, required this.length, required this.fate, required this.catchTime, required this.createdAt, required this.updatedAt, this.watermarkedImagePath,
+    required this.species,
+    required this.length,
+    required this.fate,
+    required this.catchTime,
+    required this.createdAt,
+    required this.updatedAt,
+    this.watermarkedImagePath,
     this.lengthUnit = 'cm',
     this.weight,
     this.weightUnit = 'kg',
@@ -170,7 +176,7 @@ class FishCatch {
     String? species,
     double? length,
     String? lengthUnit,
-    double? weight,
+    double? Function()? weight,
     String? weightUnit,
     FishFateType? fate,
     DateTime? catchTime,
@@ -202,7 +208,7 @@ class FishCatch {
       species: species ?? this.species,
       length: length ?? this.length,
       lengthUnit: lengthUnit ?? this.lengthUnit,
-      weight: weight ?? this.weight,
+      weight: weight != null ? weight() : this.weight,
       weightUnit: weightUnit ?? this.weightUnit,
       fate: fate ?? this.fate,
       catchTime: catchTime ?? this.catchTime,
@@ -221,9 +227,8 @@ class FishCatch {
       notes: notes != null ? notes() : this.notes,
       rigType: rigType != null ? rigType() : this.rigType,
       sinkerWeight: sinkerWeight != null ? sinkerWeight() : this.sinkerWeight,
-      sinkerPosition: sinkerPosition != null
-          ? sinkerPosition()
-          : this.sinkerPosition,
+      sinkerPosition:
+          sinkerPosition != null ? sinkerPosition() : this.sinkerPosition,
       hookType: hookType != null ? hookType() : this.hookType,
       hookSize: hookSize != null ? hookSize() : this.hookSize,
       hookWeight: hookWeight != null ? hookWeight() : this.hookWeight,
@@ -243,6 +248,20 @@ class FishCatch {
   @override
   String toString() {
     return 'FishCatch(id: $id, species: $species, length: ${length}cm, fate: ${fate.label})';
+  }
+}
+
+/// 渔获展示辅助扩展
+extension FishCatchDisplay on FishCatch {
+  /// 展示用鱼种名称。
+  ///
+  /// 待识别记录的 species 以空字符串持久化（避免把本地化占位文案写入数据库），
+  /// 展示时统一渲染当前语言的"待识别"占位文案。
+  String displaySpecies(AppStrings strings) {
+    if (pendingRecognition || species.isEmpty) {
+      return strings.pendingRecognition;
+    }
+    return species;
   }
 }
 

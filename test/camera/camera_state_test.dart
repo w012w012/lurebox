@@ -54,6 +54,7 @@ void main() {
       expect(state.weightUnit, 'kg');
       expect(state.fate, FishFateType.release);
       expect(state.locationName, isNull);
+      expect(state.locationError, isNull);
       expect(state.latitude, isNull);
       expect(state.longitude, isNull);
       expect(state.catchTime, isNull);
@@ -92,7 +93,8 @@ void main() {
   group('copyWith updates non-nullable fields', () {
     test('updates captureState', () {
       const state = CameraState();
-      final updated = state.copyWith(captureState: CameraCaptureState.cameraReady);
+      final updated =
+          state.copyWith(captureState: CameraCaptureState.cameraReady);
 
       expect(updated.captureState, CameraCaptureState.cameraReady);
     });
@@ -276,6 +278,27 @@ void main() {
       expect(updated.locationName, isNull);
     });
 
+    test('clears weight with () => null', () {
+      const state = CameraState(weight: 2.5);
+      final updated = state.copyWith(weight: () => null);
+
+      expect(updated.weight, isNull);
+    });
+
+    test('clears locationError with () => null', () {
+      const state = CameraState(locationError: '定位失败');
+      final updated = state.copyWith(locationError: () => null);
+
+      expect(updated.locationError, isNull);
+    });
+
+    test('sets locationError with closure', () {
+      const state = CameraState();
+      final updated = state.copyWith(locationError: () => '位置权限被拒绝');
+
+      expect(updated.locationError, '位置权限被拒绝');
+    });
+
     test('clears latitude and longitude with () => null', () {
       const state = CameraState(latitude: 29.6, longitude: 119.0);
       final updated = state.copyWith(
@@ -390,7 +413,9 @@ void main() {
       expect(state.canSave, isTrue);
     });
 
-    test('when imagePath, length > 0, and pendingRecognition is true (empty species)', () {
+    test(
+        'when imagePath, length > 0, and pendingRecognition is true (empty species)',
+        () {
       const state = CameraState(
         imagePath: '/path/to/image.jpg',
         length: 25,
@@ -576,7 +601,7 @@ void main() {
       final withForm = taken.copyWith(
         species: '鲈鱼',
         length: 42,
-        weight: 3.2,
+        weight: () => 3.2,
         fate: FishFateType.release,
         locationName: () => '太湖',
         latitude: () => 31.2,

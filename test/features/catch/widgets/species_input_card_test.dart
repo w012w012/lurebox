@@ -113,6 +113,9 @@ class FakeCameraViewModel extends StateNotifier<CameraState>
   void setSelectedLure(Equipment? lure) {}
 
   @override
+  bool beginSaving() => false;
+
+  @override
   Future<int?> saveFishCatch() async => null;
 
   @override

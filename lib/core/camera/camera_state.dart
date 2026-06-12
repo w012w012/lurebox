@@ -11,7 +11,6 @@ enum CameraCaptureState {
 }
 
 class CameraState {
-
   const CameraState({
     this.captureState = CameraCaptureState.initial,
     this.imagePath,
@@ -23,6 +22,7 @@ class CameraState {
     this.weightUnit = 'kg',
     this.fate = FishFateType.release,
     this.locationName,
+    this.locationError,
     this.latitude,
     this.longitude,
     this.catchTime,
@@ -58,6 +58,7 @@ class CameraState {
   final String weightUnit;
   final FishFateType fate;
   final String? locationName;
+  final String? locationError; // 定位失败提示（仅用于 UI 展示，不持久化）
   final double? latitude;
   final double? longitude;
   final DateTime? catchTime;
@@ -91,10 +92,11 @@ class CameraState {
     String? species,
     double? length,
     String? lengthUnit,
-    double? weight,
+    double? Function()? weight,
     String? weightUnit,
     FishFateType? fate,
     String? Function()? locationName,
+    String? Function()? locationError,
     double? Function()? latitude,
     double? Function()? longitude,
     DateTime? Function()? catchTime,
@@ -128,10 +130,12 @@ class CameraState {
       species: species ?? this.species,
       length: length ?? this.length,
       lengthUnit: lengthUnit ?? this.lengthUnit,
-      weight: weight ?? this.weight,
+      weight: weight != null ? weight() : this.weight,
       weightUnit: weightUnit ?? this.weightUnit,
       fate: fate ?? this.fate,
       locationName: locationName != null ? locationName() : this.locationName,
+      locationError:
+          locationError != null ? locationError() : this.locationError,
       latitude: latitude != null ? latitude() : this.latitude,
       longitude: longitude != null ? longitude() : this.longitude,
       catchTime: catchTime != null ? catchTime() : this.catchTime,

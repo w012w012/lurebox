@@ -8,9 +8,12 @@ import 'package:lurebox/widgets/common/premium_input.dart';
 
 /// Species input card with text field, pending recognition toggle, and history chips.
 class SpeciesInputCard extends ConsumerWidget {
-
   const SpeciesInputCard({
-    required this.state, required this.vm, required this.strings, required this.controller, super.key,
+    required this.state,
+    required this.vm,
+    required this.strings,
+    required this.controller,
+    super.key,
   });
   final CameraState state;
   final CameraViewModel vm;
@@ -19,10 +22,9 @@ class SpeciesInputCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Filter out invalid species names
-    final validHistory = state.speciesHistory
-        .where((s) => s != strings.pendingRecognition && s.isNotEmpty)
-        .toList();
+    // 过滤空字符串；待识别记录已不再把占位文案写入鱼种历史
+    final validHistory =
+        state.speciesHistory.where((s) => s.isNotEmpty).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

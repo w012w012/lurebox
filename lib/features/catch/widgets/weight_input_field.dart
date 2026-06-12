@@ -10,9 +10,12 @@ import 'package:lurebox/widgets/common/premium_input.dart';
 
 /// Weight input field with unit dropdown and estimated weight display.
 class WeightInputField extends ConsumerWidget {
-
   const WeightInputField({
-    required this.state, required this.vm, required this.strings, required this.controller, super.key,
+    required this.state,
+    required this.vm,
+    required this.strings,
+    required this.controller,
+    super.key,
   });
   final CameraState state;
   final CameraViewModel vm;
@@ -25,18 +28,9 @@ class WeightInputField extends ConsumerWidget {
       appSettingsProvider.select((s) => s.language == AppLanguage.chinese),
     );
 
-    double? displayEstimatedWeight;
-    if (state.estimatedWeight != null) {
-      final lengthInCm = UnitConverter.toBaseCm(state.length, state.lengthUnit);
-      final weightInGrams =
-          lengthInCm * lengthInCm * lengthInCm * CameraState.weightCoefficient;
-      final weightInKg = weightInGrams / 1000;
-      displayEstimatedWeight = UnitConverter.convertWeight(
-        weightInKg,
-        'kg',
-        state.weightUnit,
-      );
-    }
+    // 估算重量由 ViewModel 在长度/单位变化时统一计算，
+    // 这里直接读取，避免在 UI 层重复实现估算公式导致口径漂移
+    final displayEstimatedWeight = state.estimatedWeight;
 
     final unitSymbol =
         UnitConverter.getWeightSymbol(state.weightUnit, isChinese: isChinese);

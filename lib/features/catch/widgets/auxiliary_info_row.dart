@@ -12,9 +12,11 @@ import 'package:lurebox/core/utils/unit_converter.dart';
 /// An expanded info row displaying location, weather, and time.
 /// Each item is displayed in a card-like container with clear icon and text.
 class AuxiliaryInfoRow extends ConsumerWidget {
-
   const AuxiliaryInfoRow({
-    required this.state, required this.vm, required this.strings, super.key,
+    required this.state,
+    required this.vm,
+    required this.strings,
+    super.key,
     this.onEditLocation,
     this.onEditTime,
     this.onEditWeather,
@@ -42,9 +44,10 @@ class AuxiliaryInfoRow extends ConsumerWidget {
               context: context,
               icon: Icons.location_on,
               label: strings.address,
+              // 定位失败时以 locationError 作为提示文案，但不写入位置数据
               text: state.locationName?.isNotEmpty ?? false
                   ? state.locationName!
-                  : strings.tapToSet,
+                  : (state.locationError ?? strings.tapToSet),
               onTap: onEditLocation,
             ),
             const Divider(height: 16),
@@ -82,10 +85,12 @@ class AuxiliaryInfoRow extends ConsumerWidget {
       }
     }
     if (state.airTemperature != null) {
-      parts.add(UnitConverter.formatTemperature(
-        state.airTemperature!,
-        temperatureUnit,
-      ),);
+      parts.add(
+        UnitConverter.formatTemperature(
+          state.airTemperature!,
+          temperatureUnit,
+        ),
+      );
     }
     if (parts.isEmpty) return strings.tapToSet;
     return parts.join(' · ');
