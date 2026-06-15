@@ -11,6 +11,7 @@ import 'package:lurebox/core/repositories/backup_config_repository.dart';
 import 'package:lurebox/core/services/backup_service.dart';
 import 'package:lurebox/core/services/backup_zip_service.dart';
 import 'package:lurebox/core/services/enhanced_backup_service.dart';
+import 'package:lurebox/core/services/secure_storage_service.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -1418,6 +1419,197 @@ void main() {
       expect(capturedHistory!.equipmentCount, equals(1));
       expect(capturedHistory!.backupType, equals(BackupType.json));
 
+      await tempDir.delete(recursive: true);
+    });
+  });
+
+  // FIX 3: WebDAV config persistence — saving then reloading via a real
+  // SqliteBackupConfigRepository returns the persisted config (password
+  // hydrated from secure storage).
+  group('EnhancedBackupService - WebDAV config persistence', () {
+    late Database realDb;
+    late EnhancedBackupService realService;
+
+    setUp(() async {
+      realDb = await databaseFactoryFfi.openDatabase(
+        inMemoryDatabasePath,
+        options: OpenDatabaseOptions(
+          version: 1,
+          onCreate: (db, v) async {
+            await db.execute('''
+              CREATE TABLE cloud_configs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                provider TEXT NOT NULL,
+                server_url TEXT NOT NULL,
+                username TEXT NOT NULL,
+                password TEXT NOT NULL,
+                is_active INTEGER NOT NULL DEFAULT 0,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+              )
+            ''');
+          },
+        ),
+      );
+      final repo = SqliteBackupConfigRepository(
+        _RealDbWrapper(realDb),
+        InMemoryCloudPasswordStorage(),
+      );
+      realService = EnhancedBackupService(_RealDbWrapper(realDb), repo);
+    });
+
+    tearDown(() async {
+      await realDb.close();
+    });
+
+    test('saveWebDAVConfig then getActiveWebDAVConfig returns persisted config',
+        () async {
+      await realService.saveWebDAVConfig(
+        serverUrl: 'https://dav.example.com',
+        username: 'angler',
+        password: 'rod-and-reel',
+      );
+
+      final reloaded = await realService.getActiveWebDAVConfig();
+
+      expect(reloaded, isNotNull);
+      expect(reloaded!.serverUrl, equals('https://dav.example.com'));
+      expect(reloaded.username, equals('angler'));
+      // Password is hydrated from secure storage on reload.
+      expect(reloaded.password, equals('rod-and-reel'));
+      expect(reloaded.isActive, isTrue);
+    });
+
+    test('re-saving updates the active config returned on reload', () async {
+      await realService.saveWebDAVConfig(
+        serverUrl: 'https://old.example.com',
+        username: 'old',
+        password: 'old-pass',
+      );
+      await realService.saveWebDAVConfig(
+        serverUrl: 'https://new.example.com',
+        username: 'new',
+        password: 'new-pass',
+      );
+
+      final reloaded = await realService.getActiveWebDAVConfig();
+      expect(reloaded!.serverUrl, equals('https://new.example.com'));
+      expect(reloaded.username, equals('new'));
+      expect(reloaded.password, equals('new-pass'));
+    });
+  });
+
+  // FIX 4: shipped ZIP export bookkeeping — recordZipExport writes a history
+  // row and prunes history/recovery points beyond keepCount.
+  group('EnhancedBackupService - recordZipExport', () {
+    late Database realDb;
+    late MockBackupConfigRepository mockConfigRepo;
+
+    setUp(() async {
+      realDb = await databaseFactoryFfi.openDatabase(
+        inMemoryDatabasePath,
+        options: OpenDatabaseOptions(
+          version: 1,
+          onCreate: (db, v) async {
+            await db.execute('''
+              CREATE TABLE fish_catches (
+                id INTEGER PRIMARY KEY,
+                species TEXT,
+                catch_time TEXT,
+                image_path TEXT,
+                created_at TEXT
+              )
+            ''');
+            await db.execute('''
+              CREATE TABLE equipments (
+                id INTEGER PRIMARY KEY,
+                type TEXT,
+                is_deleted INTEGER DEFAULT 0,
+                created_at TEXT
+              )
+            ''');
+          },
+        ),
+      );
+      mockConfigRepo = MockBackupConfigRepository();
+      when(() => mockConfigRepo.addBackupHistory(any()))
+          .thenAnswer((_) async => 1);
+      when(() => mockConfigRepo.cleanupOldBackupHistory(any()))
+          .thenAnswer((_) async => 0);
+    });
+
+    tearDown(() async {
+      await realDb.close();
+    });
+
+    test('records a history row and calls cleanupOldBackupHistory', () async {
+      await realDb.insert('fish_catches', {'species': 'Bass'});
+      await realDb.insert('equipments', {'type': 'rod', 'is_deleted': 0});
+
+      final tempDir = Directory.systemTemp.createTempSync();
+      final zipPath = '${tempDir.path}/lurebox_backup_1.zip';
+      await File(zipPath).writeAsBytes([0x50, 0x4B, 0x03, 0x04]);
+
+      BackupHistory? captured;
+      when(() => mockConfigRepo.addBackupHistory(any()))
+          .thenAnswer((inv) async {
+        captured = inv.positionalArguments[0] as BackupHistory;
+        return 1;
+      });
+
+      final service =
+          EnhancedBackupService(_RealDbWrapper(realDb), mockConfigRepo);
+
+      await service.recordZipExport(zipPath);
+
+      expect(captured, isNotNull);
+      expect(captured!.fishCount, equals(1));
+      expect(captured!.equipmentCount, equals(1));
+      expect(captured!.backupType, equals(BackupType.zipFull));
+      expect(captured!.fileSize, equals(4));
+      verify(() => mockConfigRepo.cleanupOldBackupHistory(20)).called(1);
+
+      await tempDir.delete(recursive: true);
+    });
+
+    test('cleanupOldRecoveryPoints prunes beyond keepCount', () async {
+      final tempDir = Directory.systemTemp.createTempSync();
+      final recoveryDir = Directory('${tempDir.path}/recovery');
+      await recoveryDir.create();
+
+      // Create 5 recovery points (timestamps 1000..5000).
+      final files = <File>[];
+      for (var i = 0; i < 5; i++) {
+        final file =
+            File('${recoveryDir.path}/lurebox_recovery_${(i + 1) * 1000}.db');
+        await file.writeAsString('recovery $i');
+        files.add(file);
+      }
+
+      TestWidgetsFlutterBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        const MethodChannel('plugins.flutter.io/path_provider'),
+        (MethodCall methodCall) async {
+          if (methodCall.method == 'getApplicationDocumentsDirectory') {
+            return tempDir.path;
+          }
+          return null;
+        },
+      );
+
+      final service =
+          EnhancedBackupService(_RealDbWrapper(realDb), mockConfigRepo);
+
+      final deleted = await service.cleanupOldRecoveryPoints(keepCount: 2);
+
+      expect(deleted, equals(3));
+      expect(await files[4].exists(), isTrue); // 5000 newest kept
+      expect(await files[3].exists(), isTrue); // 4000 kept
+      expect(await files[2].exists(), isFalse);
+      expect(await files[1].exists(), isFalse);
+      expect(await files[0].exists(), isFalse);
+
+      await recoveryDir.delete(recursive: true);
       await tempDir.delete(recursive: true);
     });
   });

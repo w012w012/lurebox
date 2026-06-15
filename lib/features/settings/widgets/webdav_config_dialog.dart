@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/providers/data_refresh.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/settings_view_model.dart';
-import 'package:lurebox/core/services/backup_service.dart';
 import 'package:lurebox/widgets/common/app_snack_bar.dart';
 
 /// WebDAV 配置对话框
@@ -15,7 +15,9 @@ import 'package:lurebox/widgets/common/app_snack_bar.dart';
 /// - 用户名
 /// - 密码
 ///
-/// 支持测试连接和保存配置
+/// 支持测试连接、保存配置、上传备份与从云端恢复。
+/// 打开时自动回填已保存的活跃配置；测试连接或上传成功后自动持久化，
+/// 用户无需每次重新输入凭据。
 class WebDAVConfigDialog extends ConsumerStatefulWidget {
   const WebDAVConfigDialog({super.key});
 
@@ -31,9 +33,28 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
 
   bool _isLoading = false;
   bool _isTesting = false;
+  bool _isRestoring = false;
   String? _testResult;
   bool _isTestSuccess = false;
   bool _obscurePassword = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _prefillFromSavedConfig();
+  }
+
+  /// 打开对话框时回填已保存的活跃 WebDAV 配置。
+  Future<void> _prefillFromSavedConfig() async {
+    final config =
+        await ref.read(enhancedBackupServiceProvider).getActiveWebDAVConfig();
+    if (!mounted || config == null) return;
+    setState(() {
+      _urlController.text = config.serverUrl;
+      _usernameController.text = config.username;
+      _passwordController.text = config.password;
+    });
+  }
 
   @override
   void dispose() {
@@ -182,10 +203,9 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                 const SizedBox(height: TeslaTheme.spacingMd),
               ],
 
-              // 按钮行
+              // 按钮行：测试连接 + 从云端恢复
               Row(
                 children: [
-                  // 测试连接按钮
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: _isTesting ? null : _testConnection,
@@ -197,6 +217,20 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                             )
                           : const Icon(Icons.network_check),
                       label: Text(strings.aiTestConnection),
+                    ),
+                  ),
+                  const SizedBox(width: TeslaTheme.spacingSm),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _isRestoring ? null : _restoreFromCloud,
+                      icon: _isRestoring
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.cloud_download),
+                      label: const Text('从云端恢复'),
                     ),
                   ),
                 ],
@@ -229,7 +263,16 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
     );
   }
 
-  /// 测试 WebDAV 连接
+  /// 持久化当前表单中的 WebDAV 配置（密码写入安全存储，不入日志）。
+  Future<void> _saveConfig() async {
+    await ref.read(enhancedBackupServiceProvider).saveWebDAVConfig(
+          serverUrl: _urlController.text.trim(),
+          username: _usernameController.text.trim(),
+          password: _passwordController.text,
+        );
+  }
+
+  /// 测试 WebDAV 连接（成功则顺带持久化配置，便于下次免输）。
   Future<void> _testConnection() async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -241,9 +284,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
     });
 
     try {
-      final backupService = BackupService(
-        ref.read(databaseProvider),
-      );
+      final backupService = ref.read(backupServiceProvider);
 
       final success = await backupService.testWebDAVConnection(
         serverUrl: _urlController.text.trim(),
@@ -251,12 +292,16 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
         password: _passwordController.text,
       );
 
+      // 连接成功即保存配置 —— 关键的可用性收益：用户测通后即被记住。
+      if (success) {
+        await _saveConfig();
+      }
+
       if (mounted) {
         setState(() {
           _isTesting = false;
           _isTestSuccess = success;
-          _testResult =
-              success ? '连接成功！可以正常访问 WebDAV 服务器。' : '连接失败。请检查服务器地址、用户名和密码是否正确。';
+          _testResult = success ? '连接成功！配置已保存。' : '连接失败。请检查服务器地址、用户名和密码是否正确。';
         });
       }
     } catch (e) {
@@ -270,7 +315,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
     }
   }
 
-  /// 上传到 WebDAV
+  /// 上传到 WebDAV（成功后持久化配置并关闭对话框）。
   Future<void> _uploadToWebDAV(AppStrings strings) async {
     if (!_formKey.currentState!.validate()) {
       return;
@@ -281,6 +326,8 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
     });
 
     final viewModel = ref.read(settingsViewModelProvider.notifier);
+    // 弹窗 pop 后其 context 失效，提前捕获 messenger 以安全显示提示。
+    final messenger = ScaffoldMessenger.of(context);
 
     try {
       final url = await viewModel.uploadToWebDAV(
@@ -289,13 +336,14 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
         password: _passwordController.text,
       );
 
-      if (!mounted) return;
-
       if (url != null) {
+        // 上传成功也持久化配置（下次免输）。
+        await _saveConfig();
+        if (!mounted) return;
         Navigator.pop(context);
-        AppSnackBar.showSuccess(
-            context, ref.read(currentStringsProvider).backupUploaded);
+        AppSnackBar.showSuccessWith(messenger, strings.backupUploaded);
       } else {
+        if (!mounted) return;
         setState(() {
           _isLoading = false;
           _isTestSuccess = false;
@@ -308,6 +356,83 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
           _isLoading = false;
           _isTestSuccess = false;
           _testResult = '上传失败: $e';
+        });
+      }
+    }
+  }
+
+  /// 从 WebDAV 下载最新备份并恢复（成功后失效派生数据）。
+  Future<void> _restoreFromCloud() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    final strings = ref.read(currentStringsProvider);
+
+    // 恢复会覆盖/合并本地数据，先确认。
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(strings.restoreTitle),
+        content: Text(strings.restoreOverwriteWarning),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(strings.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(strings.continueAction),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    // 先持久化配置，确保 restoreFromCloud 用到的活跃配置就是当前表单。
+    await _saveConfig();
+
+    if (!mounted) return;
+    setState(() {
+      _isRestoring = true;
+    });
+
+    final messenger = ScaffoldMessenger.of(context);
+
+    try {
+      final result =
+          await ref.read(enhancedBackupServiceProvider).restoreFromCloud();
+
+      if (!mounted) return;
+      setState(() {
+        _isRestoring = false;
+      });
+
+      if (result.isSuccess) {
+        // 恢复成功后失效所有派生数据，避免界面继续显示恢复前的旧值。
+        invalidateDerivedFishData(ref.invalidate);
+        final stats = result.stats;
+        final detail = stats == null
+            ? ''
+            : '（新增 ${stats.importedCount}，跳过 ${stats.skippedCount}）';
+        Navigator.pop(context);
+        AppSnackBar.showSuccessWith(
+          messenger,
+          '${strings.restoreSuccessMsg}$detail',
+        );
+      } else {
+        setState(() {
+          _isTestSuccess = false;
+          _testResult = result.errorMessage ?? strings.restoreFailedMsg;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isRestoring = false;
+          _isTestSuccess = false;
+          _testResult = '${strings.restoreFailedMsg}: $e';
         });
       }
     }

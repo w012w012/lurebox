@@ -1,8 +1,10 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lurebox/core/models/backup_history.dart' show BackupType;
 import 'package:lurebox/core/providers/settings_view_model.dart';
 import 'package:lurebox/core/services/backup_service.dart';
 import 'package:lurebox/core/services/backup_zip_service.dart';
+import 'package:lurebox/core/services/enhanced_backup_service.dart';
 import 'package:lurebox/core/services/export_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 import 'package:mocktail/mocktail.dart';
@@ -14,6 +16,8 @@ class MockBackupZipService extends Mock implements BackupZipService {}
 
 class MockFishCatchService extends Mock implements FishCatchService {}
 
+class MockEnhancedBackupService extends Mock implements EnhancedBackupService {}
+
 class FakeBackupExportOptions extends Fake implements BackupExportOptions {}
 
 class FakeImportResult extends Fake implements ImportResult {}
@@ -23,6 +27,7 @@ void main() {
   late MockBackupService mockBackupService;
   late MockBackupZipService mockBackupZipService;
   late MockFishCatchService mockFishCatchService;
+  late MockEnhancedBackupService mockEnhancedBackupService;
 
   setUpAll(() {
     TestWidgetsFlutterBinding.ensureInitialized();
@@ -46,12 +51,14 @@ void main() {
     registerFallbackValue(FakeImportResult());
     registerFallbackValue(const BackupExportOptions());
     registerFallbackValue(ExportFormat.csv);
+    registerFallbackValue(BackupType.zipFull);
   });
 
   setUp(() {
     mockBackupService = MockBackupService();
     mockBackupZipService = MockBackupZipService();
     mockFishCatchService = MockFishCatchService();
+    mockEnhancedBackupService = MockEnhancedBackupService();
 
     // Default mock behavior
     when(() => mockFishCatchService.getCount()).thenAnswer((_) async => 0);
@@ -72,11 +79,24 @@ void main() {
     ).thenAnswer((_) async => '/path/to/saved/backup.zip');
     when(() => mockBackupZipService.importFromZip())
         .thenAnswer((_) async => const ImportResult.success());
+    // Post-export/restore bookkeeping (history + recovery-point pruning).
+    when(
+      () => mockEnhancedBackupService.recordZipExport(
+        any(),
+        backupType: any(named: 'backupType'),
+      ),
+    ).thenAnswer((_) async {});
+    when(
+      () => mockEnhancedBackupService.cleanupOldRecoveryPoints(
+        keepCount: any(named: 'keepCount'),
+      ),
+    ).thenAnswer((_) async => 0);
 
     viewModel = SettingsViewModel(
       mockBackupService,
       mockBackupZipService,
       mockFishCatchService,
+      mockEnhancedBackupService,
     );
   });
 

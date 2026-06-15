@@ -1,9 +1,31 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lurebox/core/database/database_provider.dart';
 import 'package:lurebox/core/models/backup_history.dart';
 import 'package:lurebox/core/models/cloud_config.dart';
 import 'package:lurebox/core/repositories/backup_config_repository.dart';
 import 'package:lurebox/core/services/secure_storage_service.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+/// 将真实的 sqflite [Database] 包装为 [DatabaseProvider]，供仓库测试使用。
+///
+/// 仓库现在持有 DatabaseProvider 并每次调用重新解析连接（修复换库后缓存
+/// 旧连接导致 database_closed 的 bug），测试用这个轻量包装提供同一连接。
+class _TestDbProvider implements DatabaseProvider {
+  _TestDbProvider(this._db);
+  final Database _db;
+
+  @override
+  Future<Database> get database async => _db;
+
+  @override
+  Future<void> close() async {}
+
+  @override
+  Future<T> runExclusive<T>(Future<T> Function() action) async => action();
+
+  @override
+  Future<void> resetForTesting() async {}
+}
 
 void main() {
   late Database db;
@@ -59,7 +81,7 @@ CREATE TABLE backup_history (
 
     setUp(() {
       repository = SqliteBackupConfigRepository(
-        Future<Database>.value(db),
+        _TestDbProvider(db),
         InMemoryCloudPasswordStorage(),
       );
     });
@@ -253,7 +275,7 @@ CREATE TABLE backup_history (
     test('password is stored in secure storage, not in DB', () async {
       final passwordStorage = InMemoryCloudPasswordStorage();
       final repo = SqliteBackupConfigRepository(
-        Future<Database>.value(db),
+        _TestDbProvider(db),
         passwordStorage,
       );
 
@@ -326,7 +348,7 @@ CREATE TABLE backup_history (
         () async {
       final passwordStorage = InMemoryCloudPasswordStorage();
       final repo = SqliteBackupConfigRepository(
-        Future<Database>.value(db),
+        _TestDbProvider(db),
         passwordStorage,
       );
 
@@ -352,7 +374,7 @@ CREATE TABLE backup_history (
         () async {
       final passwordStorage = InMemoryCloudPasswordStorage();
       final repo = SqliteBackupConfigRepository(
-        Future<Database>.value(db),
+        _TestDbProvider(db),
         passwordStorage,
       );
 
@@ -408,7 +430,7 @@ CREATE TABLE backup_history (
 
     setUp(() {
       repository = SqliteBackupConfigRepository(
-        Future<Database>.value(db),
+        _TestDbProvider(db),
         InMemoryCloudPasswordStorage(),
       );
     });

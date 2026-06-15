@@ -1,7 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/models/backup_history.dart';
+import 'package:lurebox/core/services/app_logger.dart';
 import 'package:lurebox/core/services/backup_service.dart';
 import 'package:lurebox/core/services/backup_zip_service.dart';
+import 'package:lurebox/core/services/enhanced_backup_service.dart';
 import 'package:lurebox/core/services/error_service.dart';
 import 'package:lurebox/core/services/export_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
@@ -68,12 +71,14 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     this._backupService,
     this._backupZipService,
     this._fishCatchService,
+    this._enhancedBackupService,
   ) : super(const SettingsState()) {
     loadStats();
   }
   final BackupService _backupService;
   final BackupZipService _backupZipService;
   final FishCatchService _fishCatchService;
+  final EnhancedBackupService _enhancedBackupService;
 
   Future<void> loadStats() async {
     if (!mounted) return;
@@ -186,6 +191,11 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
         createRecoveryPoint: true,
       );
       final xFile = await _backupZipService.exportToZip(options: options);
+      // 记录历史并清理过期历史/恢复点（出货导出此前从不记账，恢复点无界增长）。
+      await _recordExportBookkeeping(
+        xFile.path,
+        includePhotos: includePhotos,
+      );
       if (!mounted) return xFile;
       state = state.copyWith(isCreatingZipBackup: false);
       return xFile;
@@ -211,6 +221,11 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       );
       final savedPath =
           await _backupZipService.exportToZipAndSave(options: options);
+      // 记录历史并清理过期历史/恢复点。
+      await _recordExportBookkeeping(
+        savedPath,
+        includePhotos: includePhotos,
+      );
       if (!mounted) return savedPath;
       state = state.copyWith(isCreatingZipBackup: false);
       return savedPath;
@@ -224,11 +239,42 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     }
   }
 
+  /// 导出成功后的记账：写备份历史 + 清理过期历史/恢复点。
+  ///
+  /// 失败不应影响导出本身（文件已生成），仅记录日志。
+  Future<void> _recordExportBookkeeping(
+    String filePath, {
+    required bool includePhotos,
+  }) async {
+    try {
+      await _enhancedBackupService.recordZipExport(
+        filePath,
+        backupType: includePhotos ? BackupType.zipFull : BackupType.zipDbOnly,
+      );
+    } on Exception catch (e) {
+      AppLogger.w(
+        'SettingsViewModel',
+        'Failed to record backup history / prune recovery points: $e',
+      );
+    }
+  }
+
   Future<ImportResult> importZipBackup() async {
     state =
         state.copyWith(isRestoringZipBackup: true, errorMessage: () => null);
     try {
       final result = await _backupZipService.importFromZip();
+      // 恢复会新建一个恢复点（保存当前库副本），此处清理过期恢复点避免无界增长。
+      if (result.isSuccess) {
+        try {
+          await _enhancedBackupService.cleanupOldRecoveryPoints(keepCount: 2);
+        } on Exception catch (e) {
+          AppLogger.w(
+            'SettingsViewModel',
+            'Failed to prune recovery points after restore: $e',
+          );
+        }
+      }
       if (!mounted) return result;
       state = state.copyWith(isRestoringZipBackup: false);
       await loadStats();
@@ -272,5 +318,6 @@ final settingsViewModelProvider =
     ref.read(backupServiceProvider),
     ref.read(backupZipServiceProvider),
     ref.read(fishCatchServiceProvider),
+    ref.read(enhancedBackupServiceProvider),
   );
 });

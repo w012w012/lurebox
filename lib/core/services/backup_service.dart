@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:lurebox/core/database/database_provider.dart';
 import 'package:lurebox/core/services/app_logger.dart';
@@ -20,6 +21,18 @@ import 'package:sqflite/sqflite.dart' hide DatabaseException;
 class BackupService {
   BackupService(this._dbProvider);
   final DatabaseProvider _dbProvider;
+
+  /// 固定的"最新备份"远程文件名。
+  ///
+  /// [uploadToWebDAV] 默认写入带时间戳的文件（保留历史、向后兼容）；
+  /// 应用内"云端恢复"需要一个确定的文件名才能下载，因此 [EnhancedBackupService]
+  /// 在上传时额外以该固定名写一份"最新"快照，下载时按此名取回。
+  static const String latestBackupFileName = 'lurebox_backup_latest.json';
+
+  /// 单次下载允许缓冲的最大字节数 (50 MB)。
+  /// 即使服务器未返回 Content-Length（contentLength == -1），也按此上限流式截断，
+  /// 避免恶意/异常超大响应耗尽内存。
+  static const int _maxDownloadBytes = 50 * 1024 * 1024;
 
   Future<String> exportToJson() async {
     final db = await _dbProvider.database;
@@ -124,10 +137,15 @@ class BackupService {
     return importedCount;
   }
 
+  /// 上传 JSON 备份到 WebDAV。
+  ///
+  /// [fileName] 为远程文件名；默认带时间戳（保留历史快照）。传入
+  /// [latestBackupFileName] 可覆盖固定的"最新"快照，供应用内云端恢复读取。
   Future<String> uploadToWebDAV({
     required String serverUrl,
     required String username,
     required String password,
+    String? fileName,
   }) async {
     HttpClient? client;
     try {
@@ -150,11 +168,11 @@ class BackupService {
       final bytes = utf8.encode(jsonString);
 
       final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final fileName = 'lurebox_backup_$timestamp.json';
+      final remoteName = fileName ?? 'lurebox_backup_$timestamp.json';
       final baseUrl = serverUrl.endsWith('/')
           ? serverUrl.substring(0, serverUrl.length - 1)
           : serverUrl;
-      final url = '$baseUrl/$fileName';
+      final url = '$baseUrl/$remoteName';
 
       final uri = Uri.parse(url);
       if (uri.host.isEmpty) {
@@ -262,16 +280,31 @@ class BackupService {
       final response =
           await request.close().timeout(const Duration(seconds: 60));
 
-      if (response.contentLength > 50 * 1024 * 1024) {
+      // 上限保护：先看 Content-Length（若服务器提供）。
+      if (response.contentLength > _maxDownloadBytes) {
         throw const DatabaseException('Backup file too large (>50MB)');
       }
 
-      if (response.statusCode == 200) {
-        final responseBody = await response.transform(utf8.decoder).join();
-        return jsonDecode(responseBody) as Map<String, dynamic>;
+      if (response.statusCode != 200) {
+        return null;
       }
 
-      return null;
+      // 即使 contentLength == -1（chunked / 未知长度），也在流式读取时按上限截断，
+      // 避免异常超大响应耗尽内存。
+      final builder = BytesBuilder(copy: false);
+      await for (final chunk in response) {
+        builder.add(chunk);
+        if (builder.length > _maxDownloadBytes) {
+          throw const DatabaseException('Backup file too large (>50MB)');
+        }
+      }
+
+      final responseBody = utf8.decode(builder.takeBytes());
+      final decoded = jsonDecode(responseBody);
+      if (decoded is! Map<String, dynamic>) {
+        return null;
+      }
+      return decoded;
     } catch (e) {
       AppLogger.e('BackupService', 'WebDAV download error', e);
       return null;

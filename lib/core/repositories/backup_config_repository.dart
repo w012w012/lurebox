@@ -1,3 +1,4 @@
+import 'package:lurebox/core/database/database_provider.dart';
 import 'package:lurebox/core/models/backup_history.dart';
 import 'package:lurebox/core/models/cloud_config.dart';
 import 'package:lurebox/core/services/app_logger.dart';
@@ -43,12 +44,17 @@ abstract class BackupConfigRepository {
 /// SQLite 备份配置仓库实现
 ///
 /// 密码由 [CloudPasswordStorage] 管理，不再持久化到 SQLite。
+///
+/// 持有 [DatabaseProvider] 而非一次性的 `Future<Database>`：备份/恢复会调用
+/// [DatabaseProvider.close]（经 runExclusive 换库），若缓存旧的 Future，其
+/// 解析出的连接在关闭后会永久指向已关闭的库，后续所有云配置/历史操作都会
+/// 抛 database_closed。因此每个方法都通过 [_db] 重新解析当前连接。
 class SqliteBackupConfigRepository implements BackupConfigRepository {
-  SqliteBackupConfigRepository(this._dbFuture, this._passwordStorage);
-  final Future<Database> _dbFuture;
+  SqliteBackupConfigRepository(this._dbProvider, this._passwordStorage);
+  final DatabaseProvider _dbProvider;
   final CloudPasswordStorage _passwordStorage;
 
-  Future<Database> get _db async => _dbFuture;
+  Future<Database> get _db async => _dbProvider.database;
 
   @override
   Future<int> saveCloudConfig(CloudConfig config) async {

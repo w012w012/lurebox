@@ -18,6 +18,7 @@ import 'package:lurebox/core/repositories/user_species_alias_repository.dart';
 import 'package:lurebox/core/services/achievement_service.dart';
 import 'package:lurebox/core/services/backup_service.dart';
 import 'package:lurebox/core/services/backup_zip_service.dart';
+import 'package:lurebox/core/services/enhanced_backup_service.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 import 'package:lurebox/core/services/fish_recognition_service.dart';
@@ -125,8 +126,18 @@ final cloudPasswordStorageProvider = Provider<CloudPasswordStorage>((ref) {
 
 final backupConfigRepositoryProvider = Provider<BackupConfigRepository>((ref) {
   return SqliteBackupConfigRepository(
-    ref.watch(databaseProvider).database,
+    ref.watch(databaseProvider),
     ref.watch(cloudPasswordStorageProvider),
+  );
+});
+
+// ===== Enhanced Backup Service =====
+
+/// 增强备份服务：统一导出/历史记录/云配置持久化/恢复点清理。
+final enhancedBackupServiceProvider = Provider<EnhancedBackupService>((ref) {
+  return EnhancedBackupService(
+    ref.watch(databaseProvider),
+    ref.watch(backupConfigRepositoryProvider),
   );
 });
 

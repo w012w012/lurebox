@@ -100,6 +100,37 @@ class AppSnackBar {
     );
   }
 
+  /// Show a success message using a previously captured [ScaffoldMessengerState].
+  ///
+  /// Useful when the originating widget (e.g. a dialog) is popped before the
+  /// SnackBar is shown — capture the messenger before `Navigator.pop`, then
+  /// call this so the SnackBar still appears on the surviving Scaffold.
+  static void showSuccessWith(
+    ScaffoldMessengerState messenger,
+    String message,
+  ) {
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.check_circle,
+                color: TeslaColors.success, size: 20),
+            const SizedBox(width: 8),
+            Expanded(child: Text(message)),
+          ],
+        ),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 3),
+        backgroundColor: TeslaColors.carbonDark,
+        margin: const EdgeInsets.only(left: 16, right: 16, bottom: 80),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
+  }
+
   /// Show a success message with an Undo action.
   static void showSuccessWithUndo(
     BuildContext context,

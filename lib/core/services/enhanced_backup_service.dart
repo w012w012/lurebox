@@ -153,6 +153,40 @@ class EnhancedBackupService {
     return xFile;
   }
 
+  /// 记录一次已落地的 ZIP 备份到历史，并清理过期历史与恢复点。
+  ///
+  /// 出货的 ZIP 导出（settings_view_model → BackupZipService）此前不写
+  /// backup_history，恢复点也无界增长。导出成功后调用此方法补齐这两项：
+  /// - 写入一条 [BackupHistory]（计算文件大小与统计）；
+  /// - 清理恢复点（默认保留 2 个）与历史（默认保留 20 条）。
+  Future<void> recordZipExport(
+    String filePath, {
+    BackupType backupType = BackupType.zipFull,
+    int recoveryKeepCount = 2,
+    int historyKeepCount = 20,
+  }) async {
+    final file = File(filePath);
+    final fileSize = await file.exists() ? await file.length() : 0;
+
+    final db = await _dbProvider.database;
+    final stats = await _getBackupStats(db);
+
+    final history = BackupHistory(
+      filePath: filePath,
+      fileName: p.basename(filePath),
+      backupType: backupType,
+      fileSize: fileSize,
+      fishCount: stats['fishCount'] ?? 0,
+      equipmentCount: stats['equipmentCount'] ?? 0,
+      photoCount: stats['photoCount'] ?? 0,
+      createdAt: DateTime.now(),
+    );
+    await _configRepo.addBackupHistory(history);
+
+    await cleanupOldBackupHistory(keepCount: historyKeepCount);
+    await cleanupOldRecoveryPoints(keepCount: recoveryKeepCount);
+  }
+
   /// 获取备份统计
   Future<Map<String, int>> _getBackupStats(Database db) async {
     final fishCount = Sqflite.firstIntValue(
@@ -278,17 +312,88 @@ class EnhancedBackupService {
   // ========== WebDAV 云备份（使用保存的配置）==========
 
   /// 上传到 WebDAV（使用保存的配置）
+  ///
+  /// 上传两份：一份带时间戳（保留历史），一份固定名
+  /// [BackupService.latestBackupFileName]（供应用内"云端恢复"确定性下载）。
   Future<String?> uploadToCloud() async {
     final config = await getActiveWebDAVConfig();
     if (config == null) {
       throw const DatabaseException('No active cloud configuration found');
     }
 
-    return _backupService.uploadToWebDAV(
+    final url = await _backupService.uploadToWebDAV(
       serverUrl: config.serverUrl,
       username: config.username,
       password: config.password,
     );
+
+    // 额外写一份固定名"最新"快照，供应用内恢复读取。
+    // 失败不应阻断主上传（历史快照已成功），仅记录日志。
+    try {
+      await _backupService.uploadToWebDAV(
+        serverUrl: config.serverUrl,
+        username: config.username,
+        password: config.password,
+        fileName: BackupService.latestBackupFileName,
+      );
+    } on Exception catch (e) {
+      AppLogger.w(
+        'EnhancedBackupService',
+        'Failed to write latest snapshot to cloud: $e',
+      );
+    }
+
+    return url;
+  }
+
+  /// 从 WebDAV 恢复最新备份（使用保存的配置）。
+  ///
+  /// 下载固定名 [BackupService.latestBackupFileName] 的 JSON 快照，写入临时
+  /// 文件，再走 [importFromJsonWithDeduplication] 去重导入。返回带成功/失败
+  /// 与统计的结果，供 UI 明确反馈（不再静默吞错）。
+  Future<CloudRestoreResult> restoreFromCloud() async {
+    final config = await getActiveWebDAVConfig();
+    if (config == null) {
+      return const CloudRestoreResult.failure('未配置 WebDAV，无法从云端恢复');
+    }
+
+    final Map<String, dynamic>? data;
+    try {
+      data = await _backupService.downloadFromWebDAV(
+        serverUrl: config.serverUrl,
+        username: config.username,
+        password: config.password,
+        fileName: BackupService.latestBackupFileName,
+      );
+    } on Exception catch (e) {
+      AppLogger.e('EnhancedBackupService', 'Cloud restore download failed', e);
+      return const CloudRestoreResult.failure('下载云端备份失败，请检查网络与配置');
+    }
+
+    if (data == null) {
+      return const CloudRestoreResult.failure('未找到云端备份，或下载失败');
+    }
+
+    // 写入临时文件后复用 JSON 去重导入逻辑。
+    final tempDir = await getTemporaryDirectory();
+    final tempFile = File(
+      p.join(
+        tempDir.path,
+        'lurebox_cloud_restore_${DateTime.now().millisecondsSinceEpoch}.json',
+      ),
+    );
+    try {
+      await tempFile.writeAsString(jsonEncode(data));
+      final stats = await importFromJsonWithDeduplication(tempFile.path);
+      return CloudRestoreResult.success(stats);
+    } on Exception catch (e) {
+      AppLogger.e('EnhancedBackupService', 'Cloud restore import failed', e);
+      return const CloudRestoreResult.failure('导入云端备份失败');
+    } finally {
+      if (await tempFile.exists()) {
+        await tempFile.delete();
+      }
+    }
   }
 
   /// 测试 WebDAV 连接（使用保存的配置）
@@ -491,4 +596,22 @@ class ImportResultWithStats {
   int get totalCount => importedCount + skippedCount + errorCount;
   bool get hasErrors => errorCount > 0;
   bool get hasSkipped => skippedCount > 0;
+}
+
+/// 云端恢复结果。
+///
+/// 明确区分成功（含导入统计）与失败（含用户友好消息），避免静默吞错 ——
+/// UI 据此给出明确反馈。
+class CloudRestoreResult {
+  const CloudRestoreResult.success(this.stats)
+      : isSuccess = true,
+        errorMessage = null;
+
+  const CloudRestoreResult.failure(this.errorMessage)
+      : isSuccess = false,
+        stats = null;
+
+  final bool isSuccess;
+  final String? errorMessage;
+  final ImportResultWithStats? stats;
 }
