@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lurebox/core/services/app_logger.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ImageCacheHelper {
@@ -119,55 +118,11 @@ class ImageCacheHelper {
     await Future.wait(futures);
   }
 
-  static void removeFromCache(String imagePath) {
-    _memoryCache.remove(imagePath);
-  }
-
   static void clearCache() {
     _memoryCache.clear();
   }
 
   static int get cacheSize => _memoryCache.length;
-
-  /// 清理未使用的图像文件
-  ///
-  /// [daysToKeep] 保留最近多少天的文件
-  /// 返回删除的文件数量
-  static Future<int> cleanupUnusedImages({int daysToKeep = 30}) async {
-    try {
-      final appDir = await getApplicationDocumentsDirectory();
-      final imageDir = Directory('${appDir.path}/images');
-
-      if (!await imageDir.exists()) {
-        return 0;
-      }
-
-      final cutoffDate = DateTime.now().subtract(Duration(days: daysToKeep));
-      var deletedCount = 0;
-
-      await for (final entity in imageDir.list()) {
-        if (entity is File && entity.path.endsWith('.jpg')) {
-          final stat = await entity.stat();
-          if (stat.modified.isBefore(cutoffDate)) {
-            // 检查文件是否在缓存中使用
-            final key = _getCacheKey(entity.path, null, null);
-            if (!_memoryCache.containsKey(key)) {
-              await entity.delete();
-              deletedCount++;
-              AppLogger.i(
-                  'ImageCacheHelper', 'Deleted unused image: ${entity.path}');
-            }
-          }
-        }
-      }
-
-      AppLogger.i('ImageCacheHelper', 'Cleaned up $deletedCount unused images');
-      return deletedCount;
-    } catch (e) {
-      AppLogger.e('ImageCacheHelper', 'Image cleanup failed: $e');
-      return 0;
-    }
-  }
 
   /// 预加载图像列表
   ///

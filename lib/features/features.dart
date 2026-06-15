@@ -6,7 +6,6 @@ export 'achievement/achievement_page.dart';
 
 // Camera
 export 'camera/camera_page.dart';
-export 'camera/equipment_selector.dart';
 
 // Common
 export 'common/watermarked_image.dart';
@@ -36,4 +35,3 @@ export 'settings/widgets/ai_provider_config_dialog.dart';
 // Stats
 export 'stats/stats_charts.dart';
 export 'stats/stats_detail_page.dart';
-export 'stats/stats_page.dart';

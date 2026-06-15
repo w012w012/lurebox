@@ -49,7 +49,6 @@ export 'providers/pending_recognition_providers.dart';
 export 'providers/providers.dart';
 export 'providers/settings_view_model.dart';
 export 'providers/stats_provider.dart' hide top3LongestCatchesProvider;
-export 'providers/stats_view_model.dart';
 export 'providers/watermark_provider.dart';
 // Repositories
 export 'repositories/backup_config_repository.dart';
