@@ -8,7 +8,9 @@ import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/watermark_provider.dart';
+import 'package:lurebox/core/services/achievement_service.dart';
 import 'package:lurebox/core/services/app_logger.dart';
+import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/features/common/watermarked_image.dart';
 import 'package:lurebox/widgets/common/app_snack_bar.dart';
 import 'package:share_plus/share_plus.dart';
@@ -430,6 +432,11 @@ class _WatermarkSharePreviewPageState
       await Share.shareXFiles(
         [XFile(watermarkedPath)],
         text: _data.shareText,
+      );
+
+      // 鱼获分享成功后递增分享计数（用于 share_5 成就）。
+      await AchievementService.incrementShareCount(
+        ref.read(settingsRepositoryProvider),
       );
 
       await WatermarkExporter.deleteTempFile(watermarkedPath);

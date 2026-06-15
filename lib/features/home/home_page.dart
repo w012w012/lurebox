@@ -145,6 +145,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                     now.month,
                     now.day,
                   ).add(const Duration(days: 1)),
+                  period: 'today',
                 );
               },
             ),
@@ -168,6 +169,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                   widget.strings.monthCatch,
                   DateTime(now.year, now.month),
                   DateTime(now.year, now.month + 1),
+                  period: 'month',
                 );
               },
             ),
@@ -191,6 +193,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                   widget.strings.yearCatch,
                   DateTime(now.year),
                   DateTime(now.year + 1),
+                  period: 'year',
                 );
               },
             ),
@@ -214,6 +217,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
                   widget.strings.allCatch,
                   DateTime(2000),
                   DateTime(now.year + 1),
+                  period: 'all',
                 );
               },
             ),
@@ -228,10 +232,11 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
     BuildContext context,
     String title,
     DateTime start,
-    DateTime end,
-  ) {
+    DateTime end, {
+    required String period,
+  }) {
     context.push(
-      '/stats?title=${Uri.encodeComponent(title)}&start=${start.toIso8601String()}&end=${end.toIso8601String()}',
+      '/stats?title=${Uri.encodeComponent(title)}&start=${start.toIso8601String()}&end=${end.toIso8601String()}&period=$period',
     );
   }
 

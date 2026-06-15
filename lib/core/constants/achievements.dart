@@ -337,7 +337,7 @@ class AchievementConfig {
     AchievementDefinition(
       id: 'morning_20',
       title: '晨钓达人',
-      description: '上午6-9点记录20条鱼获',
+      description: '上午5-9点记录20条鱼获',
       icon: '🌅',
       level: AchievementLevel.gold,
       category: '特殊成就',
@@ -346,7 +346,7 @@ class AchievementConfig {
     AchievementDefinition(
       id: 'night_20',
       title: '夜钓之王',
-      description: '晚上20-24点记录20条鱼获',
+      description: '晚上8点至次日5点记录20条鱼获',
       icon: '🌙',
       level: AchievementLevel.gold,
       category: '特殊成就',

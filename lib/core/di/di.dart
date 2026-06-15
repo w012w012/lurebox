@@ -99,7 +99,10 @@ final settingsServiceProvider = Provider<SettingsService>((ref) {
 });
 
 final achievementServiceProvider = Provider<AchievementService>((ref) {
-  return AchievementService(ref.watch(statsRepositoryProvider));
+  return AchievementService(
+    ref.watch(statsRepositoryProvider),
+    ref.watch(settingsRepositoryProvider),
+  );
 });
 
 final fishCatchServiceProvider = Provider<FishCatchService>((ref) {

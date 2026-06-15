@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:lurebox/core/constants/achievements.dart';
 import 'package:lurebox/core/models/achievement.dart';
+import 'package:lurebox/core/repositories/settings_repository.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
 import 'package:lurebox/core/services/app_logger.dart';
 
@@ -16,18 +19,68 @@ import 'package:lurebox/core/services/app_logger.dart';
 /// - 特殊成就：连续7天、每月30尾、每日5尾、晨钓20尾、夜钓20尾等
 ///
 /// 每个成就包含目标值、当前进度、完成百分比和锁定状态。
+///
+/// 永久解锁语义：成就一旦达成即写入 [SettingsRepository]（键
+/// [_unlockedKey]，值为 `{成就ID: 解锁时间ISO8601}` 的 JSON）。即便用户随后
+/// 删除鱼获导致实时指标回落到目标值以下，已解锁成就也不会被撤销；尚未解锁的
+/// 成就仍按实时指标展示进度。
 
 class AchievementService {
-  AchievementService(this._statsRepo);
+  AchievementService(this._statsRepo, this._settingsRepo);
   final StatsRepository _statsRepo;
+  final SettingsRepository _settingsRepo;
 
+  /// 已解锁成就的持久化键。值为 `{成就ID: 解锁时间ISO8601}` 的 JSON 对象。
+  static const String _unlockedKey = 'unlocked_achievements';
+
+  /// 鱼获分享次数计数器的持久化键。仅统计鱼获分享，不含备份/CSV/装备/统计卡分享。
+  static const String shareCountKey = 'share_count';
+
+  /// 在一次成功的鱼获分享后递增分享计数。
+  ///
+  /// 供分享成功站点调用（持有 [SettingsRepository] 引用即可）。失败仅告警，
+  /// 不抛出，避免影响分享主流程。
+  static Future<void> incrementShareCount(
+      SettingsRepository settingsRepo) async {
+    try {
+      final current = await settingsRepo.getInt(shareCountKey);
+      await settingsRepo.setInt(shareCountKey, current + 1);
+    } on Exception catch (e) {
+      AppLogger.w('AchievementService', 'Failed to increment share count: $e');
+    }
+  }
+
+  /// 获取全部成就（带永久解锁语义）。
+  ///
+  /// 注意：本方法在检测到新解锁成就时会**写入**设置表（持久化解锁时间）。
+  /// 这是有意为之——成就页重新加载或写后失效会再次调用本方法以刷新展示。
   Future<List<Achievement>> getAllAchievements() async {
     final results = <Achievement>[];
     final metrics = await _calculateMetrics();
+    final unlockedMap = await _loadUnlockedMap();
+    var dirty = false;
+    final now = DateTime.now();
 
     for (final def in AchievementConfig.definitions) {
       final current = _getCurrentValue(def.id, metrics);
-      final progress = (current / def.target * 100.0).clamp(0.0, 100.0);
+      final liveUnlocked = current >= def.target;
+      final wasUnlocked = unlockedMap.containsKey(def.id);
+
+      if (liveUnlocked && !wasUnlocked) {
+        unlockedMap[def.id] = now.toIso8601String();
+        dirty = true;
+      }
+
+      final effectiveUnlocked = liveUnlocked || wasUnlocked;
+
+      // 已解锁：抬升 current 至目标值以保证 isUnlocked 为真且进度满格；
+      // 解锁时间取持久化值（新解锁则为 now）。
+      final effectiveCurrent =
+          effectiveUnlocked && current < def.target ? def.target : current;
+      final progress =
+          (effectiveCurrent / def.target * 100.0).clamp(0.0, 100.0);
+      final unlockedAt =
+          effectiveUnlocked ? _parseDateTime(unlockedMap[def.id]) ?? now : null;
 
       results.add(
         Achievement(
@@ -38,13 +91,66 @@ class AchievementService {
           level: def.level,
           category: def.category,
           target: def.target,
-          current: current,
+          current: effectiveCurrent,
           progress: progress,
+          unlockedAt: unlockedAt,
         ),
       );
     }
 
+    if (dirty) {
+      await _persistUnlockedMap(unlockedMap);
+    }
+
     return results;
+  }
+
+  /// 读取已解锁成就映射。缺失或 JSON 损坏时按空映射处理（告警，不抛出）。
+  Future<Map<String, String>> _loadUnlockedMap() async {
+    try {
+      final raw = await _settingsRepo.get(_unlockedKey);
+      if (raw == null || raw.isEmpty) return {};
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map) {
+        AppLogger.w(
+          'AchievementService',
+          'Unlocked achievements payload is not a JSON object',
+        );
+        return {};
+      }
+      return decoded.map(
+        (key, value) => MapEntry(key.toString(), value.toString()),
+      );
+    } on FormatException catch (e) {
+      AppLogger.w(
+        'AchievementService',
+        'Failed to parse unlocked achievements JSON: $e',
+      );
+      return {};
+    } on Exception catch (e) {
+      AppLogger.w(
+        'AchievementService',
+        'Failed to load unlocked achievements: $e',
+      );
+      return {};
+    }
+  }
+
+  /// 持久化已解锁成就映射。写入失败时仅告警，不抛出。
+  Future<void> _persistUnlockedMap(Map<String, String> map) async {
+    try {
+      await _settingsRepo.set(_unlockedKey, jsonEncode(map));
+    } on Exception catch (e) {
+      AppLogger.w(
+        'AchievementService',
+        'Failed to persist unlocked achievements: $e',
+      );
+    }
+  }
+
+  DateTime? _parseDateTime(String? value) {
+    if (value == null || value.isEmpty) return null;
+    return DateTime.tryParse(value);
   }
 
   int _getCurrentValue(String id, AchievementMetrics metrics) {
@@ -101,7 +207,10 @@ class AchievementService {
       case 'release_200':
         return metrics.releaseCount;
       case 'release_rate_80':
-        return metrics.releaseRate >= 0.8 ? 1 : 0;
+        // 要求最小样本量，避免单条放流即解锁。
+        return (metrics.releaseRate >= 0.8 && metrics.totalCatches >= 5)
+            ? 1
+            : 0;
 
       // 特殊成就
       case 'consecutive_7':
@@ -150,6 +259,7 @@ class AchievementService {
         _getEquipmentFullStatus(), // 13
         _getEquipmentCount(), // 14
         _getEquipmentComboMax(), // 15
+        _settingsRepo.getInt(shareCountKey), // 16
       ]);
 
       final totalCatches = results[0] as int;
@@ -170,6 +280,7 @@ class AchievementService {
         equipmentFull: results[13] as bool,
         equipmentCount: results[14] as int,
         equipmentComboMax: results[15] as int,
+        shareCount: results[16] as int,
         newRecord: totalCatches > 0,
       );
     } catch (e) {
@@ -184,11 +295,17 @@ class AchievementService {
   }
 
   Future<int> _getEquipmentCount() async {
-    return _statsRepo.getEquipmentCount();
+    // 装备类成就口径为"拥有"装备数（未软删除），与描述"添加 N 件装备"一致。
+    return _statsRepo.getOwnedEquipmentCount();
   }
 
   Future<int> _getEquipmentComboMax() async {
-    return 0;
+    // 单套装备最多钓获数 = 各装备 catchCount 的最大值（无装备记录时为 0）。
+    final stats = await _statsRepo.getEquipmentCatchStats();
+    if (stats.isEmpty) return 0;
+    return stats.values
+        .map((s) => s.catchCount)
+        .reduce((a, b) => a > b ? a : b);
   }
 
   Future<Map<String, dynamic>> getAchievementStats() async {

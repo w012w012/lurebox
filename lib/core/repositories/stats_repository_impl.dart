@@ -160,6 +160,19 @@ class SqliteStatsRepository extends BaseSqliteRepository
   }
 
   @override
+  Future<int> getOwnedEquipmentCount() async {
+    try {
+      final db = await database;
+      final results = await db.rawQuery(
+        'SELECT COUNT(*) as count FROM equipments WHERE is_deleted = 0',
+      );
+      return results.first['count'] as int? ?? 0;
+    } catch (e) {
+      throwDbError('get owned equipment count', e);
+    }
+  }
+
+  @override
   Future<int> getLocationCount() async {
     try {
       final db = await database;

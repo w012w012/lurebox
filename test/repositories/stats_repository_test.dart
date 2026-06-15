@@ -974,6 +974,39 @@ void main() {
     });
   });
 
+  // ─── Owned Equipment Count (FIX E) ───
+
+  group('Owned Equipment Count', () {
+    test('getOwnedEquipmentCount returns 0 when no equipment', () async {
+      expect(await repository.getOwnedEquipmentCount(), equals(0));
+    });
+
+    test('getOwnedEquipmentCount counts only non-deleted equipment', () async {
+      // 3 owned + 2 soft-deleted.
+      await insertEquipment(type: 'rod', brand: 'Shimano');
+      await insertEquipment(type: 'reel', brand: 'Daiwa');
+      await insertEquipment(type: 'lure', lureType: 'Minnow');
+      final now = DateTime.now().toIso8601String();
+      await db.insert('equipments', {
+        'type': 'rod',
+        'brand': 'Deleted',
+        'is_deleted': 1,
+        'created_at': now,
+        'updated_at': now,
+      });
+      await db.insert('equipments', {
+        'type': 'reel',
+        'brand': 'AlsoDeleted',
+        'is_deleted': 1,
+        'created_at': now,
+        'updated_at': now,
+      });
+
+      // 仅统计未软删除的 3 件（区别于 getEquipmentCount 的"已使用"口径）。
+      expect(await repository.getOwnedEquipmentCount(), equals(3));
+    });
+  });
+
   // ─── Equipment Distribution ───
 
   group('Equipment Distribution', () {

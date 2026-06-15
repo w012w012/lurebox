@@ -114,7 +114,8 @@ GoRouter _createTestRouter({
         path: '/stats',
         builder: (_, state) {
           final title = state.uri.queryParameters['title'] ?? '';
-          return Text('stats:title=$title');
+          final period = state.uri.queryParameters['period'];
+          return Text('stats:title=$title,period=$period');
         },
       ),
       GoRoute(
@@ -510,7 +511,18 @@ void main() {
       await tester.pumpWidget(_testApp(router));
       router.go('/stats?title=Summer');
       await tester.pumpAndSettle();
-      expect(find.text('stats:title=Summer'), findsOneWidget);
+      expect(find.text('stats:title=Summer,period=null'), findsOneWidget);
+    });
+
+    testWidgets('parses period param from /stats query (FIX G)',
+        (tester) async {
+      final router = _createTestRouter(onboardingCompleted: true);
+      addTearDown(router.dispose);
+
+      await tester.pumpWidget(_testApp(router));
+      router.go('/stats?title=Today&period=today');
+      await tester.pumpAndSettle();
+      expect(find.text('stats:title=Today,period=today'), findsOneWidget);
     });
 
     testWidgets('matches /camera route', (tester) async {

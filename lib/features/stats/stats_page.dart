@@ -60,6 +60,7 @@ class StatsPage extends ConsumerWidget {
                         now.month,
                         now.day,
                       ).add(const Duration(days: 1)),
+                      period: 'today',
                     );
                   },
                 ),
@@ -81,6 +82,7 @@ class StatsPage extends ConsumerWidget {
                       strings.monthCatch,
                       startOfDay: DateTime(now.year, now.month),
                       endOfDay: DateTime(now.year, now.month + 1),
+                      period: 'month',
                     );
                   },
                 ),
@@ -102,6 +104,7 @@ class StatsPage extends ConsumerWidget {
                       strings.yearCatch,
                       startOfDay: DateTime(now.year),
                       endOfDay: DateTime(now.year + 1),
+                      period: 'year',
                     );
                   },
                 ),
@@ -123,6 +126,7 @@ class StatsPage extends ConsumerWidget {
                       strings.allCatch,
                       startOfDay: DateTime(2000),
                       endOfDay: DateTime(now.year + 1),
+                      period: 'all',
                     );
                   },
                 ),
@@ -163,9 +167,10 @@ class StatsPage extends ConsumerWidget {
     String title, {
     required DateTime startOfDay,
     required DateTime endOfDay,
+    required String period,
   }) {
     context.push(
-      '/stats?title=${Uri.encodeComponent(title)}&start=${startOfDay.toIso8601String()}&end=${endOfDay.toIso8601String()}',
+      '/stats?title=${Uri.encodeComponent(title)}&start=${startOfDay.toIso8601String()}&end=${endOfDay.toIso8601String()}&period=$period',
     );
   }
 }

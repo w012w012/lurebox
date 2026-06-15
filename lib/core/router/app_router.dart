@@ -118,8 +118,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           final title = state.uri.queryParameters['title'] ?? '';
           final start = state.uri.queryParameters['start'];
           final end = state.uri.queryParameters['end'];
+          final period = state.uri.queryParameters['period'];
           return StatsDetailPage(
             title: title,
+            periodType: period,
             startDate: start != null
                 ? (DateTime.tryParse(start) ?? DateTime.now())
                 : DateTime.now(),

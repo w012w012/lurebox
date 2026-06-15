@@ -31,6 +31,9 @@ abstract class StatsRepository {
 
   Future<int> getEquipmentCount();
 
+  /// 拥有的装备数量（未软删除）。区别于 [getEquipmentCount]（已使用装备数）。
+  Future<int> getOwnedEquipmentCount();
+
   Future<int> getLocationCount();
 
   Future<int> getReleaseCount();

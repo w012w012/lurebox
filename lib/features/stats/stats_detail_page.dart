@@ -32,11 +32,18 @@ class StatsDetailPage extends ConsumerStatefulWidget {
     required this.endDate,
     super.key,
     this.speciesStats,
+    this.periodType,
   });
   final String title;
   final DateTime startDate;
   final DateTime endDate;
   final Map<String, int>? speciesStats;
+
+  /// 显式时间粒度（today/week/month/year/all/custom）。
+  ///
+  /// 用于趋势图粒度分发，避免依赖本地化标题子串匹配（语言切换或自定义标题会失效）。
+  /// 为 null 时回退到旧的标题子串匹配逻辑以保持向后兼容。
+  final String? periodType;
 
   @override
   ConsumerState<StatsDetailPage> createState() => _StatsDetailPageState();
@@ -233,7 +240,10 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
     final now = DateTime.now();
     final trendMap = <String, int>{};
 
-    if (widget.title.contains(strings.today)) {
+    // 优先使用显式 periodType；为 null 时回退到标题子串匹配（向后兼容）。
+    final granularity = _resolveGranularity(strings);
+
+    if (granularity == _TrendGranularity.today) {
       _trendTitle = strings.hourlyTrend;
       for (var h = 0; h < 24; h++) {
         trendMap['$h${strings.hour}'] = 0;
@@ -243,7 +253,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
         final key = '${t.hour}${strings.hour}';
         trendMap[key] = (trendMap[key] ?? 0) + 1;
       }
-    } else if (widget.title.contains(strings.month)) {
+    } else if (granularity == _TrendGranularity.month) {
       _trendTitle = strings.dailyTrend;
       final daysInMonth = DateTime(now.year, now.month + 1, 0).day;
       for (var d = 1; d <= daysInMonth; d++) {
@@ -256,7 +266,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
           trendMap[key] = (trendMap[key] ?? 0) + 1;
         }
       }
-    } else if (widget.title.contains(strings.year)) {
+    } else if (granularity == _TrendGranularity.year) {
       _trendTitle = strings.monthlyTrend;
       for (var m = 1; m <= 12; m++) {
         trendMap['$m${strings.monthUnit}'] = 0;
@@ -273,6 +283,30 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
       return;
     }
     _trendData = trendMap;
+  }
+
+  /// 解析趋势图粒度：显式 [StatsDetailPage.periodType] 优先，否则回退标题子串匹配。
+  _TrendGranularity _resolveGranularity(AppStrings strings) {
+    final period = widget.periodType;
+    if (period != null) {
+      switch (period) {
+        case 'today':
+          return _TrendGranularity.today;
+        case 'week':
+        case 'month':
+          return _TrendGranularity.month;
+        case 'year':
+          return _TrendGranularity.year;
+        case 'all':
+        case 'custom':
+          return _TrendGranularity.all;
+      }
+    }
+    // 回退：基于本地化标题子串。
+    if (widget.title.contains(strings.today)) return _TrendGranularity.today;
+    if (widget.title.contains(strings.month)) return _TrendGranularity.month;
+    if (widget.title.contains(strings.year)) return _TrendGranularity.year;
+    return _TrendGranularity.all;
   }
 
   void _calculateAllTrend(
@@ -300,13 +334,10 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
       }
     } else if (_trendType == 'month') {
       _trendTitle = strings.last12Months;
-      for (var i = 11; i >= 0; i--) {
-        final nowSub = DateTime(
-          now.year,
-          now.month,
-        ).subtract(Duration(days: i * 30));
-        final d = DateTime(nowSub.year, nowSub.month);
-        trendMap['${d.month}${strings.monthUnit}'] = 0;
+      // 按日历月递推，避免 i*30 天造成的月份漂移/桶冲突。
+      final monthKeys = last12MonthKeys(now, strings.monthUnit);
+      for (final key in monthKeys) {
+        trendMap[key] = 0;
       }
       for (final fish in catches) {
         final t = _dt(fish, 'catch_time') ?? DateTime.now();
@@ -537,7 +568,9 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
           CatchTrendChart(
             trendData: _trendData,
             trendTitle: _trendTitle,
-            showDropdown: widget.title.contains(strings.all),
+            showDropdown: widget.periodType != null
+                ? (widget.periodType == 'all' || widget.periodType == 'custom')
+                : widget.title.contains(strings.all),
             trendType: _trendType,
             onTrendTypeChanged: _onTrendTypeChanged,
           ),
@@ -619,3 +652,21 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
     );
   }
 }
+
+/// 生成最近 12 个日历月的趋势桶键（从最早到当前），按日历月递推。
+///
+/// 使用 `DateTime(now.year, now.month - i)`，由 [DateTime] 自动跨年规整负月份，
+/// 避免 `i*30` 天近似带来的月份漂移、重复桶或缺失桶。键格式为
+/// `'<月份数字><monthUnit>'`，与聚合阶段保持一致；连续 12 个月的月份数字互不相同，
+/// 故跨年边界也不会发生桶冲突。
+List<String> last12MonthKeys(DateTime now, String monthUnit) {
+  final keys = <String>[];
+  for (var i = 11; i >= 0; i--) {
+    final d = DateTime(now.year, now.month - i);
+    keys.add('${d.month}$monthUnit');
+  }
+  return keys;
+}
+
+/// 趋势图粒度。
+enum _TrendGranularity { today, month, year, all }
