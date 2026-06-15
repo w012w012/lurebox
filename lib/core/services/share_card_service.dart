@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/services/app_logger.dart';
 import 'package:lurebox/core/services/share_template.dart';
 import 'package:share_plus/share_plus.dart';
@@ -50,7 +51,14 @@ class ShareCardService {
     await Share.share(text);
   }
 
-  static String generateShareText(ShareCardConfig config) {
+  /// 生成分享文本。
+  ///
+  /// 传入 [strings] 时统计标签会本地化；未传入时回退到英文标签
+  /// （保持纯逻辑单测无需 AppStrings 即可断言）。
+  static String generateShareText(
+    ShareCardConfig config, {
+    AppStrings? strings,
+  }) {
     final buffer = StringBuffer();
 
     if (config.showHashtags) {
@@ -63,11 +71,13 @@ class ShareCardService {
 
     if (config.showStats && config.statsData != null) {
       final stats = config.statsData!;
+      final totalLabel = strings?.shareTotalCatches ?? 'Total Catches';
+      final speciesLabel = strings?.shareSpecies ?? 'Species';
       if (stats.containsKey('totalCatches')) {
-        buffer.writeln('Total Catches: ${stats['totalCatches']}');
+        buffer.writeln('$totalLabel: ${stats['totalCatches']}');
       }
       if (stats.containsKey('speciesCount')) {
-        buffer.writeln('Species: ${stats['speciesCount']}');
+        buffer.writeln('$speciesLabel: ${stats['speciesCount']}');
       }
     }
 

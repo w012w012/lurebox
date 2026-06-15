@@ -252,7 +252,9 @@ class _ShareBottomSheetState extends ConsumerState<ShareBottomSheet> {
       repaintBoundaryKey: _previewKey,
     );
     if (imageBytes != null) {
-      final text = ShareCardService.generateShareText(_config);
+      final strings = ref.read(currentStringsProvider);
+      final text =
+          ShareCardService.generateShareText(_config, strings: strings);
       await ShareCardService.shareImage(imageBytes, text: text);
       widget.onShare?.call();
       if (mounted) Navigator.of(context).pop();

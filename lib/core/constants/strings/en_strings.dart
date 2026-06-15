@@ -449,6 +449,8 @@ const AppStrings englishStrings = AppStrings(
   equipmentCatchRanking: 'Equipment Ranking',
   noCatchData: 'No catch data yet',
   selectFromGallery: 'Select from gallery',
+  shareTotalCatches: 'Total Catches',
+  shareSpecies: 'Species',
   zoomIn: 'Zoom In',
   zoomOut: 'Zoom Out',
   locateMe: 'Locate Me',
@@ -753,6 +755,21 @@ const AppStrings englishStrings = AppStrings(
       'We do not collect or upload your data. All information is stored locally on your device.',
   permissionGrantLater: 'Not Now',
   permissionGrant: 'Grant',
+  permissionCameraTitle: 'Camera',
+  permissionCameraDesc:
+      'LureBox needs camera access to take photos of your catches',
+  permissionCameraBenefit: 'Capture the highlights of every trip',
+  permissionLocationTitle: 'Location',
+  permissionLocationDesc: 'LureBox needs your location to record fishing spots',
+  permissionLocationBenefit:
+      'Automatically record fishing spots for easy review and sharing',
+  permissionPhotosTitle: 'Photo Library',
+  permissionPhotosDesc:
+      'Allow access to your photo library to save and select catch photos',
+  permissionPhotosBenefit:
+      'Save catch photos to your album, or pick photos from it',
+  permissionSettingsBody:
+      'You previously denied %s.\n\nPlease enable %s in system settings to use related features.',
   unknownSpecies: 'Unknown Species',
   errorImageNotFound: 'Image file not found',
   errorImageTooLarge: 'Image exceeds 10MB limit',
@@ -827,10 +844,12 @@ const AppStrings englishStrings = AppStrings(
   typeSoftBait: 'Soft Bait',
   typeSpoon: 'Spoon',
   typeJigHead: 'Jig Head',
+  typeSpinner: 'Spinner',
   typeNylonLine: 'Nylon Line',
   typePELine: 'PE Line',
   typeFluorocarbonLine: 'Fluorocarbon',
   countSuffix: ' fish',
   distributionTitle: 'Distribution',
   priceDistribution: 'Price Distribution',
+  distributionOf: '%s Distribution',
 );

@@ -248,6 +248,7 @@ class MainShell extends ConsumerWidget {
         ],
         showCenterFab: true,
         onCenterFabPressed: () => context.push('/camera'),
+        centerFabSemanticLabel: strings.recordCatch,
       ),
     );
   }

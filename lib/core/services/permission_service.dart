@@ -51,20 +51,50 @@ class _RealPermissionPlatform extends PermissionPlatform {
   Future<void> openAppSettings() => perm_handler.openAppSettings();
 }
 
+/// 权限类型，用于在对话框构建时解析对应的本地化文案
+enum PermissionKind { camera, location, photos }
+
 /// 权限类型信息
 class PermissionInfo {
   const PermissionInfo({
+    required this.kind,
     required this.permission,
     required this.title,
     required this.description,
     required this.benefit,
     required this.icon,
   });
+  final PermissionKind kind;
   final perm_handler.Permission permission;
+
+  /// 中文兜底文案（当未传入 [AppStrings] 时使用，保证中文行为不变）
   final String title;
   final String description;
   final String benefit;
   final IconData icon;
+
+  /// 解析本地化标题；无 [strings] 时回退到中文兜底
+  String localizedTitle(AppStrings? strings) => switch (kind) {
+        PermissionKind.camera => strings?.permissionCameraTitle ?? title,
+        PermissionKind.location => strings?.permissionLocationTitle ?? title,
+        PermissionKind.photos => strings?.permissionPhotosTitle ?? title,
+      };
+
+  /// 解析本地化描述；无 [strings] 时回退到中文兜底
+  String localizedDescription(AppStrings? strings) => switch (kind) {
+        PermissionKind.camera => strings?.permissionCameraDesc ?? description,
+        PermissionKind.location =>
+          strings?.permissionLocationDesc ?? description,
+        PermissionKind.photos => strings?.permissionPhotosDesc ?? description,
+      };
+
+  /// 解析本地化收益说明；无 [strings] 时回退到中文兜底
+  String localizedBenefit(AppStrings? strings) => switch (kind) {
+        PermissionKind.camera => strings?.permissionCameraBenefit ?? benefit,
+        PermissionKind.location =>
+          strings?.permissionLocationBenefit ?? benefit,
+        PermissionKind.photos => strings?.permissionPhotosBenefit ?? benefit,
+      };
 }
 
 /// 权限服务 - 统一处理权限请求和用户引导
@@ -85,6 +115,7 @@ class PermissionService {
 
   /// 相机权限信息
   static const cameraInfo = PermissionInfo(
+    kind: PermissionKind.camera,
     permission: perm_handler.Permission.camera,
     title: '相机权限',
     description: 'LureBox 需要使用相机来拍摄您的渔获照片',
@@ -94,6 +125,7 @@ class PermissionService {
 
   /// 位置权限信息
   static const locationInfo = PermissionInfo(
+    kind: PermissionKind.location,
     permission: perm_handler.Permission.locationWhenInUse,
     title: '位置权限',
     description: 'LureBox 需要获取您的位置信息来记录钓点',
@@ -103,6 +135,7 @@ class PermissionService {
 
   /// 照片库权限信息
   static const photosInfo = PermissionInfo(
+    kind: PermissionKind.photos,
     permission: perm_handler.Permission.photos,
     title: '照片库权限',
     description: '允许访问您的照片库来保存和选择渔获照片',
@@ -177,8 +210,8 @@ class PermissionService {
       return PermissionResult(
         granted: false,
         permanentlyDenied: true,
-        errorMessage:
-            strings?.errorPermanentlyDenied ?? '${info.title}已被永久拒绝，请在系统设置中开启',
+        errorMessage: strings?.errorPermanentlyDenied ??
+            '${info.localizedTitle(strings)}已被永久拒绝，请在系统设置中开启',
       );
     }
 
@@ -200,7 +233,7 @@ class PermissionService {
             granted: false,
             permanentlyDenied: true,
             errorMessage: strings?.errorPermanentlyDenied ??
-                '${info.title}被拒绝，需要在系统设置中开启',
+                '${info.localizedTitle(strings)}被拒绝，需要在系统设置中开启',
           );
         }
       }
@@ -209,7 +242,8 @@ class PermissionService {
     return PermissionResult(
       granted: false,
       permanentlyDenied: false,
-      errorMessage: strings?.errorDenied ?? '${info.title}被拒绝',
+      errorMessage:
+          strings?.errorDenied ?? '${info.localizedTitle(strings)}被拒绝',
     );
   }
 
@@ -219,16 +253,20 @@ class PermissionService {
     PermissionInfo info, {
     AppStrings? strings,
   }) {
+    final localizedTitle = info.localizedTitle(strings);
+    final dialogTitle = strings != null
+        ? strings.permissionRequiredTitle.replaceFirst('%s', localizedTitle)
+        : '需要$localizedTitle';
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         icon: Icon(info.icon, size: 48, color: Theme.of(context).primaryColor),
-        title: Text('${strings?.permissionRequiredTitle ?? '需要'}${info.title}'),
+        title: Text(dialogTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(info.description),
+            Text(info.localizedDescription(strings)),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
@@ -246,7 +284,7 @@ class PermissionService {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      info.benefit,
+                      info.localizedBenefit(strings),
                       style: TextStyle(
                         color: Theme.of(context).primaryColor,
                         fontSize: 14,
@@ -283,13 +321,18 @@ class PermissionService {
   /// 显示引导到设置对话框
   Future<void> _showSettingsDialog(BuildContext context, PermissionInfo info,
       {AppStrings? strings}) {
+    final localizedTitle = info.localizedTitle(strings);
+    final dialogTitle = strings != null
+        ? strings.permissionRequiredTitle.replaceFirst('%s', localizedTitle)
+        : '需要$localizedTitle';
+    final body = strings != null
+        ? strings.permissionSettingsBody.replaceAll('%s', localizedTitle)
+        : '您之前拒绝了$localizedTitle。\n\n请在系统设置中开启$localizedTitle，以使用相关功能。';
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('${strings?.permissionRequiredTitle ?? '需要'}${info.title}'),
-        content: Text(
-          '您之前拒绝了${info.title}。\n\n请在系统设置中开启${info.title}，以使用相关功能。',
-        ),
+        title: Text(dialogTitle),
+        content: Text(body),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

@@ -397,11 +397,13 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
 
     if (type == 'lure' && e['lure_quantity'] != null) {
       final quantity = e['lure_quantity'] as int;
-      final unit = e['lure_quantity_unit'] as String? ?? '条';
+      final unitKey = e['lure_quantity_unit'] as String? ?? 'piece';
       return [
         row,
         const SizedBox(height: TeslaTheme.spacingSm),
-        _buildQuantityBadge(context, quantity, unit, strings),
+        _buildQuantityBadge(
+            context, quantity, _localizedQuantityUnit(unitKey, strings),
+            strings: strings),
       ];
     }
 
@@ -630,8 +632,20 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     );
   }
 
-  Widget _buildQuantityBadge(
-      BuildContext context, int quantity, String unit, AppStrings strings) {
+  /// 将存储的数量单位 key 映射为本地化文案，未知 key 原样返回
+  String _localizedQuantityUnit(String unitKey, AppStrings strings) {
+    return switch (unitKey) {
+      'piece' => strings.quantityUnitPiece,
+      'item' => strings.quantityUnitItem,
+      'pack' => strings.quantityUnitPack,
+      'box' => strings.quantityUnitBox,
+      'carton' => strings.quantityUnitCarton,
+      _ => unitKey,
+    };
+  }
+
+  Widget _buildQuantityBadge(BuildContext context, int quantity, String unit,
+      {required AppStrings strings}) {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: TeslaTheme.spacingMicro,
@@ -710,7 +724,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       // 假饵类型
       'hard_bait': strings.typeHardBait,
       'soft_bait': strings.typeSoftBait,
-      'spinner': '亮片',
+      'spinner': strings.typeSpinner,
       'spoon': strings.typeSpoon,
       'jig': strings.typeJigHead,
       // 鱼线类型

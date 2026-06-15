@@ -225,10 +225,10 @@ class FishInfoCard extends ConsumerWidget {
                 padding: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
                 child: Text(
                   strings.weatherInfo,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: TeslaColors.carbonDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -266,10 +266,10 @@ class FishInfoCard extends ConsumerWidget {
                 padding: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
                 child: Text(
                   strings.useEquipment,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
-                    color: TeslaColors.carbonDark,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -326,9 +326,9 @@ class _InfoRow extends StatelessWidget {
         const SizedBox(width: 12),
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: TeslaColors.graphite,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
         const Spacer(),
@@ -337,7 +337,7 @@ class _InfoRow extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
-            color: valueColor ?? TeslaColors.carbonDark,
+            color: valueColor ?? Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],
@@ -375,7 +375,10 @@ class _EquipmentInfoRow extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
           ),
         ],

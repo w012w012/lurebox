@@ -72,4 +72,6 @@ mixin CatchStringsMixin {
   String get notFilled;
   String get editFish;
   String get selectFromGallery;
+  String get shareTotalCatches;
+  String get shareSpecies;
 }

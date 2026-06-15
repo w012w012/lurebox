@@ -14,6 +14,7 @@ class PremiumNavigationBar extends StatelessWidget {
     super.key,
     this.showCenterFab = false,
     this.onCenterFabPressed,
+    this.centerFabSemanticLabel,
   });
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
@@ -25,6 +26,9 @@ class PremiumNavigationBar extends StatelessWidget {
 
   /// FAB 点击回调（showCenterFab=true 时使用）
   final VoidCallback? onCenterFabPressed;
+
+  /// 居中 FAB 的无障碍标签；未提供时回退到英文兜底
+  final String? centerFabSemanticLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -176,7 +180,7 @@ class PremiumNavigationBar extends StatelessWidget {
 
   Widget _buildCenterFab(BuildContext context) {
     return Semantics(
-      label: 'Take photo',
+      label: centerFabSemanticLabel ?? 'Take photo',
       button: true,
       child: GestureDetector(
         onTap: onCenterFabPressed,

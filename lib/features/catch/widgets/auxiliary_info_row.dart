@@ -79,7 +79,8 @@ class AuxiliaryInfoRow extends ConsumerWidget {
   String _getWeatherText(AppStrings strings, String temperatureUnit) {
     final parts = <String>[];
     if (state.weatherCode != null) {
-      final weatherDesc = getWeatherDescription(state.weatherCode);
+      final weatherDesc =
+          getLocalizedWeatherDescription(state.weatherCode, strings);
       if (weatherDesc.isNotEmpty) {
         parts.add(weatherDesc);
       }

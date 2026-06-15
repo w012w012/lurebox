@@ -174,10 +174,14 @@ mixin EquipmentStringsMixin {
   String get typeSoftBait;
   String get typeSpoon;
   String get typeJigHead;
+  String get typeSpinner;
   String get typeNylonLine;
   String get typePELine;
   String get typeFluorocarbonLine;
   String get countSuffix;
   String get distributionTitle;
   String get priceDistribution;
+
+  /// 「%s 分布」模式，避免在英文下拼接出 "RodDistribution"（无空格）
+  String get distributionOf;
 }

@@ -460,6 +460,8 @@ class AppStrings extends StringsBase
     required this.equipmentCatchRanking,
     required this.noCatchData,
     required this.selectFromGallery,
+    required this.shareTotalCatches,
+    required this.shareSpecies,
     required this.zoomIn,
     required this.zoomOut,
     required this.locateMe,
@@ -750,6 +752,16 @@ class AppStrings extends StringsBase
     required this.privacyNote,
     required this.permissionGrantLater,
     required this.permissionGrant,
+    required this.permissionCameraTitle,
+    required this.permissionCameraDesc,
+    required this.permissionCameraBenefit,
+    required this.permissionLocationTitle,
+    required this.permissionLocationDesc,
+    required this.permissionLocationBenefit,
+    required this.permissionPhotosTitle,
+    required this.permissionPhotosDesc,
+    required this.permissionPhotosBenefit,
+    required this.permissionSettingsBody,
     required this.unknownSpecies,
     required this.errorImageNotFound,
     required this.errorImageTooLarge,
@@ -824,12 +836,14 @@ class AppStrings extends StringsBase
     required this.typeSoftBait,
     required this.typeSpoon,
     required this.typeJigHead,
+    required this.typeSpinner,
     required this.typeNylonLine,
     required this.typePELine,
     required this.typeFluorocarbonLine,
     required this.countSuffix,
     required this.distributionTitle,
     required this.priceDistribution,
+    required this.distributionOf,
   });
 
   @override
@@ -1689,6 +1703,10 @@ class AppStrings extends StringsBase
   @override
   final String selectFromGallery;
   @override
+  final String shareTotalCatches;
+  @override
+  final String shareSpecies;
+  @override
   final String zoomIn;
   @override
   final String zoomOut;
@@ -2272,6 +2290,26 @@ class AppStrings extends StringsBase
   @override
   final String permissionGrant;
   @override
+  final String permissionCameraTitle;
+  @override
+  final String permissionCameraDesc;
+  @override
+  final String permissionCameraBenefit;
+  @override
+  final String permissionLocationTitle;
+  @override
+  final String permissionLocationDesc;
+  @override
+  final String permissionLocationBenefit;
+  @override
+  final String permissionPhotosTitle;
+  @override
+  final String permissionPhotosDesc;
+  @override
+  final String permissionPhotosBenefit;
+  @override
+  final String permissionSettingsBody;
+  @override
   final String unknownSpecies;
   @override
   final String errorImageNotFound;
@@ -2420,6 +2458,8 @@ class AppStrings extends StringsBase
   @override
   final String typeJigHead;
   @override
+  final String typeSpinner;
+  @override
   final String typeNylonLine;
   @override
   final String typePELine;
@@ -2431,6 +2471,8 @@ class AppStrings extends StringsBase
   final String distributionTitle;
   @override
   final String priceDistribution;
+  @override
+  final String distributionOf;
 
   static const chinese = chineseStrings;
   static const english = englishStrings;

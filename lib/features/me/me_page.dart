@@ -238,7 +238,7 @@ class _MePageState extends ConsumerState<MePage> {
               Text(
                 strings.aboutCopyright,
                 style: Theme.of(ctx).textTheme.bodySmall?.copyWith(
-                      color: TeslaColors.graphite,
+                      color: Theme.of(ctx).colorScheme.onSurfaceVariant,
                     ),
               ),
             ],
@@ -275,8 +275,10 @@ class _MePageState extends ConsumerState<MePage> {
                     style: const TextStyle(fontWeight: FontWeight.w500)),
                 Text(
                   description,
-                  style: const TextStyle(
-                      fontSize: 12, color: TeslaColors.graphite),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Theme.of(ctx).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),

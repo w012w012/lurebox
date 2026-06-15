@@ -44,8 +44,8 @@ class CameraHelper {
         () async {
           // Request camera permission with education dialog
           if (context != null) {
-            final result =
-                await PermissionService().requestCameraPermission(context);
+            final result = await PermissionService()
+                .requestCameraPermission(context, strings: _strings);
             if (!result.granted) {
               _errorMessage = _strings?.cameraPermissionRequired ??
                   'Camera permission required';
@@ -137,8 +137,8 @@ class CameraHelper {
         () async {
           // Request location permission with education dialog
           if (context != null) {
-            final result =
-                await PermissionService().requestLocationPermission(context);
+            final result = await PermissionService()
+                .requestLocationPermission(context, strings: _strings);
             if (!result.granted) {
               // 错误提示放入 _locationError，不污染 _locationName（H-8）
               _locationError = _strings?.locationPermissionDenied ??

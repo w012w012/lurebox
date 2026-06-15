@@ -166,7 +166,8 @@ class _LocationGroupCardState extends State<LocationGroupCard> {
                                 ),
                               ),
                               Text(
-                                '$fishCount 条渔获',
+                                (widget.strings?.fishCountSuffix ?? '%d 条渔获')
+                                    .replaceFirst('%d', '$fishCount'),
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: textSecondary,

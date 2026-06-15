@@ -30,6 +30,16 @@ mixin ErrorStringsMixin {
   String get privacyNote;
   String get permissionGrantLater;
   String get permissionGrant;
+  String get permissionCameraTitle;
+  String get permissionCameraDesc;
+  String get permissionCameraBenefit;
+  String get permissionLocationTitle;
+  String get permissionLocationDesc;
+  String get permissionLocationBenefit;
+  String get permissionPhotosTitle;
+  String get permissionPhotosDesc;
+  String get permissionPhotosBenefit;
+  String get permissionSettingsBody;
   String get unknownSpecies;
   String get errorImageNotFound;
   String get errorImageTooLarge;

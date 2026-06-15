@@ -44,11 +44,11 @@ class EquipmentListPage extends ConsumerWidget {
                       const Icon(Icons.error,
                           size: 48, color: TeslaColors.electricBlue),
                       const SizedBox(height: 16),
-                      Text('Error: ${state.errorMessage}'),
+                      Text('${strings.error}: ${state.errorMessage}'),
                       const SizedBox(height: 16),
                       PremiumButton(
                         onPressed: viewModel.refresh,
-                        text: 'Retry',
+                        text: strings.retry,
                       ),
                     ],
                   ),

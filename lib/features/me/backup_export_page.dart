@@ -296,16 +296,18 @@ class BackupExportPage extends ConsumerWidget {
         final metadata = result.metadata;
         var message = strings.restoreSuccessMsg;
         if (metadata != null) {
-          message = '${strings.restoreSuccessMsg}\n'
-              '渔获: ${metadata.fishCatchesCount} 条\n'
-              '装备: ${metadata.equipmentCount} 件\n'
-              '照片: ${metadata.photoCount} 张';
+          final detail = strings.restoreDetailPattern
+              .replaceFirst('%d', '${metadata.fishCatchesCount}')
+              .replaceFirst('%d', '${metadata.equipmentCount}')
+              .replaceFirst('%d', '${metadata.photoCount}');
+          message = '${strings.restoreSuccessMsg}\n$detail';
         }
         AppSnackBar.showSuccess(context, message);
       } else {
         AppSnackBar.showError(
           context,
-          '${strings.restoreFailedMsg}: ${result.errorMessage ?? "未知错误"}',
+          '${strings.restoreFailedMsg}: '
+          '${result.errorMessage ?? strings.errorUnknown}',
         );
       }
     } catch (e) {
