@@ -40,8 +40,7 @@ void main() {
     });
 
     test('each provider has unique value', () {
-      final values =
-          AiRecognitionProvider.values.map((p) => p.value).toSet();
+      final values = AiRecognitionProvider.values.map((p) => p.value).toSet();
       expect(values.length, AiRecognitionProvider.values.length);
     });
 

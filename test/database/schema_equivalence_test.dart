@@ -73,6 +73,9 @@ void main() {
     'hook_type',
     'hook_size',
     'hook_weight',
+    // v25 归一化基准单位列（SQL 聚合/排序统一口径）
+    'length_cm',
+    'weight_kg',
   };
 
   group('schema 完整性（全新安装）', () {
@@ -198,6 +201,130 @@ void main() {
         await upgraded.close();
         await _deleteDb(freshPath);
         await _deleteDb(upgradedPath);
+      }
+    });
+  });
+
+  group('v25 数据回填（length_cm / weight_kg 归一化）', () {
+    test('混合单位的存量记录按 UnitConverter 系数回填基准单位列', () async {
+      final dbPath = _tempDbPath('v25_backfill');
+
+      // 在 v12 基线库中插入混合单位的存量数据
+      final v12 = await openDatabase(
+        dbPath,
+        version: 12,
+        onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
+        onCreate: (db, v) => _createSchemaV12Baseline(db),
+      );
+      final now = DateTime.now().toIso8601String();
+      Future<void> insertLegacy({
+        required String species,
+        required double length,
+        String? lengthUnit,
+        double? weight,
+        String? weightUnit,
+      }) =>
+          v12.insert('fish_catches', {
+            'species': species,
+            'length': length,
+            'length_unit': lengthUnit,
+            'weight': weight,
+            'weight_unit': weightUnit,
+            'fate': 0,
+            'catch_time': now,
+            'created_at': now,
+            'updated_at': now,
+          }).then((_) {});
+
+      await insertLegacy(
+        species: 'cm鱼',
+        length: 30,
+        lengthUnit: 'cm',
+        weight: 1,
+        weightUnit: 'kg',
+      );
+      await insertLegacy(
+        species: 'inch鱼',
+        length: 20,
+        lengthUnit: 'inch',
+        weight: 1,
+        weightUnit: 'lb',
+      );
+      await insertLegacy(
+        species: 'm鱼',
+        length: 0.5,
+        lengthUnit: 'm',
+        weight: 500,
+        weightUnit: 'g',
+      );
+      await insertLegacy(
+        species: 'mm鱼',
+        length: 300,
+        lengthUnit: 'mm',
+        weight: 16,
+        weightUnit: 'oz',
+      );
+      await insertLegacy(species: 'ft鱼', length: 2, lengthUnit: 'ft');
+      // 单位为 NULL 的遗留行 → 按 cm/kg 处理
+      await insertLegacy(species: 'null单位鱼', length: 40, weight: 2);
+      await v12.close();
+
+      // 用真实迁移链升级到当前版本
+      final upgraded = await openDatabase(
+        dbPath,
+        version: currentVersion,
+        onConfigure: (db) => db.execute('PRAGMA foreign_keys = ON'),
+        onUpgrade: (db, oldV, newV) =>
+            DatabaseProvider.migrateDatabaseForTesting(db, oldV, newV),
+      );
+
+      try {
+        final rows = await upgraded.query(
+          'fish_catches',
+          columns: ['species', 'length_cm', 'weight_kg'],
+        );
+        final bySpecies = {
+          for (final row in rows) row['species']! as String: row,
+        };
+
+        expect(bySpecies['cm鱼']!['length_cm'] as double, closeTo(30, 0.0001));
+        expect(bySpecies['cm鱼']!['weight_kg'] as double, closeTo(1, 0.0001));
+
+        expect(
+          bySpecies['inch鱼']!['length_cm'] as double,
+          closeTo(50.8, 0.0001),
+        );
+        expect(
+          bySpecies['inch鱼']!['weight_kg'] as double,
+          closeTo(0.453592, 0.000001),
+        );
+
+        expect(bySpecies['m鱼']!['length_cm'] as double, closeTo(50, 0.0001));
+        expect(bySpecies['m鱼']!['weight_kg'] as double, closeTo(0.5, 0.0001));
+
+        expect(bySpecies['mm鱼']!['length_cm'] as double, closeTo(30, 0.0001));
+        expect(
+          bySpecies['mm鱼']!['weight_kg'] as double,
+          closeTo(0.453592, 0.0001),
+        );
+
+        expect(
+          bySpecies['ft鱼']!['length_cm'] as double,
+          closeTo(60.96, 0.0001),
+        );
+        expect(bySpecies['ft鱼']!['weight_kg'], isNull);
+
+        expect(
+          bySpecies['null单位鱼']!['length_cm'] as double,
+          closeTo(40, 0.0001),
+        );
+        expect(
+          bySpecies['null单位鱼']!['weight_kg'] as double,
+          closeTo(2, 0.0001),
+        );
+      } finally {
+        await upgraded.close();
+        await _deleteDb(dbPath);
       }
     });
   });

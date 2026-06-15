@@ -5,9 +5,9 @@ import 'package:lurebox/widgets/common/premium_button.dart';
 
 /// 通用的空状态组件，支持插画图标、文字描述和操作按钮。
 class AppEmptyState extends StatelessWidget {
-
   const AppEmptyState({
-    required this.message, super.key,
+    required this.message,
+    super.key,
     this.description,
     this.icon,
     this.imageAsset,
@@ -15,6 +15,7 @@ class AppEmptyState extends StatelessWidget {
     this.onAction,
     this.backgroundColor,
   });
+
   /// 主提示文字
   final String message;
 
@@ -41,7 +42,8 @@ class AppEmptyState extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return ColoredBox(
-      color: backgroundColor ?? (isDark ? TeslaColors.carbonDark : Colors.transparent),
+      color: backgroundColor ??
+          (isDark ? TeslaColors.carbonDark : Colors.transparent),
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(32),
@@ -79,7 +81,9 @@ class AppEmptyState extends StatelessWidget {
                   description!,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
+                        color: isDark
+                            ? const Color(0xFF9A9A9A)
+                            : TeslaColors.graphite,
                       ),
                 ),
               ],
@@ -111,9 +115,10 @@ class AppEmptyState extends StatelessWidget {
 
 /// 错误视图（保留向后兼容）
 class ErrorView extends StatelessWidget {
-
   const ErrorView({
-    required this.message, required this.strings, super.key,
+    required this.message,
+    required this.strings,
+    super.key,
     this.onRetry,
     this.title,
     this.icon,
@@ -171,7 +176,6 @@ class ErrorView extends StatelessWidget {
 
 /// 加载视图
 class LoadingView extends StatelessWidget {
-
   const LoadingView({super.key, this.message});
   final String? message;
 

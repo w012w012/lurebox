@@ -110,7 +110,6 @@ class MockDb extends Mock implements Database {
 }
 
 class _MockTransaction implements Transaction {
-
   _MockTransaction(this._mockDb);
   final MockDb _mockDb;
 
@@ -139,7 +138,6 @@ class _MockTransaction implements Transaction {
 
 // Mock DatabaseProvider for testing
 class MockDatabaseProvider extends Mock implements DatabaseProvider {
-
   MockDatabaseProvider(this.mockDb);
   final MockDb mockDb;
 
@@ -234,7 +232,12 @@ void main() {
       test('writes valid JSON with expected structure', () async {
         // Arrange
         final fishCatchesData = [
-          {'id': 1, 'species': 'Bass', 'length': 30.0, 'catch_time': 1234567890},
+          {
+            'id': 1,
+            'species': 'Bass',
+            'length': 30.0,
+            'catch_time': 1234567890
+          },
         ];
         final equipmentsData = [
           {'id': 1, 'type': 'rod', 'brand': 'Shimano'},
@@ -424,7 +427,7 @@ void main() {
         () async {
           // This validation happens BEFORE any HTTP call
           final result = await backupService.testWebDAVConnection(
-            serverUrl: 'https://',  // No host, just scheme
+            serverUrl: 'https://', // No host, just scheme
             username: 'testuser',
             password: 'testpass',
           );
@@ -437,7 +440,7 @@ void main() {
         'testWebDAVConnection returns false when URL does not use HTTPS',
         () async {
           final result = await backupService.testWebDAVConnection(
-            serverUrl: 'http://example.com/webdav',  // HTTP, not HTTPS
+            serverUrl: 'http://example.com/webdav', // HTTP, not HTTPS
             username: 'testuser',
             password: 'testpass',
           );
@@ -454,7 +457,7 @@ void main() {
             serverUrl: 'https://example.com/webdav',
             username: 'testuser',
             password: 'testpass',
-            fileName: '../etc/passwd',  // Path traversal attempt
+            fileName: '../etc/passwd', // Path traversal attempt
           );
 
           // downloadFromWebDAV catches all exceptions and returns null
@@ -469,7 +472,7 @@ void main() {
             serverUrl: 'https://example.com/webdav',
             username: 'testuser',
             password: 'testpass',
-            fileName: '../../../backup.json',  // Multiple path traversal
+            fileName: '../../../backup.json', // Multiple path traversal
           );
 
           // downloadFromWebDAV catches all exceptions and returns null
@@ -481,7 +484,7 @@ void main() {
         'downloadFromWebDAV returns null when URL has empty host',
         () async {
           final result = await backupService.downloadFromWebDAV(
-            serverUrl: 'https://',  // No host
+            serverUrl: 'https://', // No host
             username: 'testuser',
             password: 'testpass',
             fileName: 'backup.json',
@@ -496,7 +499,7 @@ void main() {
         () async {
           // downloadFromWebDAV catches HTTPS exception and returns null
           final result = await backupService.downloadFromWebDAV(
-            serverUrl: 'http://example.com/webdav',  // HTTP, not HTTPS
+            serverUrl: 'http://example.com/webdav', // HTTP, not HTTPS
             username: 'testuser',
             password: 'testpass',
             fileName: 'backup.json',

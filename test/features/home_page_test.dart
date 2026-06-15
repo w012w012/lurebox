@@ -22,7 +22,8 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            homeViewModelProvider.overrideWith((ref) => _MockHomeViewModel(mockState)),
+            homeViewModelProvider
+                .overrideWith((ref) => _MockHomeViewModel(mockState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(
@@ -36,13 +37,15 @@ void main() {
       expect(find.text('路亚鱼护'), findsOneWidget);
     });
 
-    testWidgets('shows loading indicator when isLoading is true', (tester) async {
+    testWidgets('shows loading indicator when isLoading is true',
+        (tester) async {
       final loadingState = _MockHomeState(isLoading: true);
 
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            homeViewModelProvider.overrideWith((ref) => _MockHomeViewModel(loadingState)),
+            homeViewModelProvider
+                .overrideWith((ref) => _MockHomeViewModel(loadingState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(
@@ -56,7 +59,8 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('shows error state when errorMessage is present', (tester) async {
+    testWidgets('shows error state when errorMessage is present',
+        (tester) async {
       final errorState = _MockHomeState(
         errorMessage: 'Failed to load data',
         isLoading: false,
@@ -65,7 +69,8 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            homeViewModelProvider.overrideWith((ref) => _MockHomeViewModel(errorState)),
+            homeViewModelProvider
+                .overrideWith((ref) => _MockHomeViewModel(errorState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(
@@ -91,7 +96,8 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            homeViewModelProvider.overrideWith((ref) => _MockHomeViewModel(loadedState)),
+            homeViewModelProvider
+                .overrideWith((ref) => _MockHomeViewModel(loadedState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(
@@ -124,7 +130,8 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            homeViewModelProvider.overrideWith((ref) => _MockHomeViewModel(loadedState)),
+            homeViewModelProvider
+                .overrideWith((ref) => _MockHomeViewModel(loadedState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(
@@ -153,7 +160,8 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            homeViewModelProvider.overrideWith((ref) => _MockHomeViewModel(loadedState)),
+            homeViewModelProvider
+                .overrideWith((ref) => _MockHomeViewModel(loadedState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(

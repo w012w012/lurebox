@@ -222,7 +222,8 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                   ),
                 )
               : const Icon(Icons.cloud_upload, size: 18),
-          label: Text(_isLoading ? strings.uploadingToCloud : strings.backupNow),
+          label:
+              Text(_isLoading ? strings.uploadingToCloud : strings.backupNow),
         ),
       ],
     );
@@ -292,7 +293,8 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
 
       if (url != null) {
         Navigator.pop(context);
-        AppSnackBar.showSuccess(context, ref.read(currentStringsProvider).backupUploaded);
+        AppSnackBar.showSuccess(
+            context, ref.read(currentStringsProvider).backupUploaded);
       } else {
         setState(() {
           _isLoading = false;

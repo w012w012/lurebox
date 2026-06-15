@@ -8,11 +8,9 @@ import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
 class SqliteSettingsRepository extends BaseSqliteRepository
     implements SettingsRepository {
-
   SqliteSettingsRepository();
 
-  SqliteSettingsRepository.withDatabase(super.testDb)
-      : super.withDatabase();
+  SqliteSettingsRepository.withDatabase(super.testDb) : super.withDatabase();
   @override
   String get tableName => 'settings';
 
@@ -44,13 +42,14 @@ class SqliteSettingsRepository extends BaseSqliteRepository
     try {
       final db = await database;
       await db.insert(
-          tableName,
-          {
-            'key': key,
-            'value': value,
-            'updated_at': DateTime.now().toIso8601String(),
-          },
-          conflictAlgorithm: ConflictAlgorithm.replace,);
+        tableName,
+        {
+          'key': key,
+          'value': value,
+          'updated_at': DateTime.now().toIso8601String(),
+        },
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
     } catch (e) {
       throwDbError('set setting', e);
     }
@@ -108,13 +107,14 @@ class SqliteSettingsRepository extends BaseSqliteRepository
       await db.transaction((txn) async {
         for (final entry in settings.entries) {
           await txn.insert(
-              tableName,
-              {
-                'key': entry.key,
-                'value': entry.value,
-                'updated_at': DateTime.now().toIso8601String(),
-              },
-              conflictAlgorithm: ConflictAlgorithm.replace,);
+            tableName,
+            {
+              'key': entry.key,
+              'value': entry.value,
+              'updated_at': DateTime.now().toIso8601String(),
+            },
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
         }
       });
     } catch (e) {

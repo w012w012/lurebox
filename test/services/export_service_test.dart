@@ -91,7 +91,8 @@ void main() {
         expect(lines[1], contains('30.0'));
       });
 
-      test('includeImagePaths=false excludes image path columns from CSV', () async {
+      test('includeImagePaths=false excludes image path columns from CSV',
+          () async {
         final catches = <FishCatch>[
           TestDataFactory.createFishCatch(),
         ];
@@ -106,7 +107,8 @@ void main() {
         expect(content, isNot(contains('水印图片路径')));
       });
 
-      test('includeImagePaths=true includes image path columns in CSV', () async {
+      test('includeImagePaths=true includes image path columns in CSV',
+          () async {
         final catches = <FishCatch>[
           TestDataFactory.createFishCatch(),
         ];
@@ -190,7 +192,8 @@ void main() {
 
         expect(json['exportTime'], isA<String>());
         // Should be parseable as ISO8601
-        expect(() => DateTime.parse(json['exportTime'] as String), returnsNormally);
+        expect(() => DateTime.parse(json['exportTime'] as String),
+            returnsNormally);
       });
 
       test('JSON contains fishCatches array', () async {

@@ -66,8 +66,7 @@ void main() {
     });
 
     test('returns empty list when no achievements', () async {
-      when(() => mockService.getAllAchievements())
-          .thenAnswer((_) async => []);
+      when(() => mockService.getAllAchievements()).thenAnswer((_) async => []);
 
       final container = ProviderContainer(
         overrides: [
@@ -82,8 +81,7 @@ void main() {
     });
 
     test('service is called exactly once due to caching', () async {
-      when(() => mockService.getAllAchievements())
-          .thenAnswer((_) async => []);
+      when(() => mockService.getAllAchievements()).thenAnswer((_) async => []);
 
       final container = ProviderContainer(
         overrides: [
@@ -143,8 +141,7 @@ void main() {
   });
 
   group('achievement unlock state', () {
-    test('achievement isUnlocked returns true when current >= target',
-        () {
+    test('achievement isUnlocked returns true when current >= target', () {
       final achievement = Achievement(
         id: 'catch_10',
         title: '10尾钓获',

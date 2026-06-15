@@ -32,9 +32,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
             settings: settings,
             strings: strings,
             onToggle: (value) {
-              ref
-                  .read(watermarkSettingsProvider.notifier)
-                  .updateEnabled(value);
+              ref.read(watermarkSettingsProvider.notifier).updateEnabled(value);
             },
           ),
           const SizedBox(height: TeslaTheme.spacingMicro),
@@ -71,94 +69,92 @@ class WatermarkSettingsPage extends ConsumerWidget {
   ) {
     return PremiumCard(
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.style,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: TeslaTheme.spacingSm),
-                Text(
-                  strings.watermarkStyle,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-            const SizedBox(height: TeslaTheme.spacingMd),
-            WatermarkStyleSelector(
-              settings: settings,
-              strings: strings,
-              onStyleChanged: (style) {
-                ref
-                    .read(watermarkSettingsProvider.notifier)
-                    .updateStyle(style);
-              },
-            ),
-            const SizedBox(height: TeslaTheme.spacingMd),
-            WatermarkPositionSelector(
-              settings: settings,
-              strings: strings,
-              onPositionChanged: (position) {
-                ref
-                    .read(watermarkSettingsProvider.notifier)
-                    .updatePosition(position);
-              },
-            ),
-            const SizedBox(height: TeslaTheme.spacingMd),
-            LabeledSlider(
-              label: strings.watermarkBgRadius,
-              value: settings.blurRadius,
-              min: 0,
-              max: 20,
-              onChanged: (value) {
-                ref
-                    .read(watermarkSettingsProvider.notifier)
-                    .updateBlurRadius(value);
-              },
-            ),
-            const SizedBox(height: TeslaTheme.spacingSm),
-            LabeledSlider(
-              label: strings.watermarkBgOpacity,
-              value: settings.backgroundOpacity * 100,
-              min: 0,
-              max: 100,
-              onChanged: (value) {
-                ref
-                    .read(watermarkSettingsProvider.notifier)
-                    .updateBackgroundOpacity(value / 100);
-              },
-              valueFormatter: (v) => '${v.toInt()}%',
-            ),
-            const SizedBox(height: TeslaTheme.spacingSm),
-            LabeledSlider(
-              label: strings.watermarkFontSize,
-              value: settings.fontSize,
-              min: 10,
-              max: 24,
-              onChanged: (value) {
-                ref
-                    .read(watermarkSettingsProvider.notifier)
-                    .updateFontSize(value);
-              },
-            ),
-            const SizedBox(height: TeslaTheme.spacingMd),
-            WatermarkColorSelector(
-              selectedColor: settings.textColor,
-              strings: strings,
-              onColorChanged: (color) {
-                ref
-                    .read(watermarkSettingsProvider.notifier)
-                    .updateTextColor(color);
-              },
-            ),
-            const SizedBox(height: TeslaTheme.spacingSm),
-            WatermarkCustomTextField(settings: settings, strings: strings),
-          ],
-        ),
-      );
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.style,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+              const SizedBox(width: TeslaTheme.spacingSm),
+              Text(
+                strings.watermarkStyle,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: TeslaTheme.spacingMd),
+          WatermarkStyleSelector(
+            settings: settings,
+            strings: strings,
+            onStyleChanged: (style) {
+              ref.read(watermarkSettingsProvider.notifier).updateStyle(style);
+            },
+          ),
+          const SizedBox(height: TeslaTheme.spacingMd),
+          WatermarkPositionSelector(
+            settings: settings,
+            strings: strings,
+            onPositionChanged: (position) {
+              ref
+                  .read(watermarkSettingsProvider.notifier)
+                  .updatePosition(position);
+            },
+          ),
+          const SizedBox(height: TeslaTheme.spacingMd),
+          LabeledSlider(
+            label: strings.watermarkBgRadius,
+            value: settings.blurRadius,
+            min: 0,
+            max: 20,
+            onChanged: (value) {
+              ref
+                  .read(watermarkSettingsProvider.notifier)
+                  .updateBlurRadius(value);
+            },
+          ),
+          const SizedBox(height: TeslaTheme.spacingSm),
+          LabeledSlider(
+            label: strings.watermarkBgOpacity,
+            value: settings.backgroundOpacity * 100,
+            min: 0,
+            max: 100,
+            onChanged: (value) {
+              ref
+                  .read(watermarkSettingsProvider.notifier)
+                  .updateBackgroundOpacity(value / 100);
+            },
+            valueFormatter: (v) => '${v.toInt()}%',
+          ),
+          const SizedBox(height: TeslaTheme.spacingSm),
+          LabeledSlider(
+            label: strings.watermarkFontSize,
+            value: settings.fontSize,
+            min: 10,
+            max: 24,
+            onChanged: (value) {
+              ref
+                  .read(watermarkSettingsProvider.notifier)
+                  .updateFontSize(value);
+            },
+          ),
+          const SizedBox(height: TeslaTheme.spacingMd),
+          WatermarkColorSelector(
+            selectedColor: settings.textColor,
+            strings: strings,
+            onColorChanged: (color) {
+              ref
+                  .read(watermarkSettingsProvider.notifier)
+                  .updateTextColor(color);
+            },
+          ),
+          const SizedBox(height: TeslaTheme.spacingSm),
+          WatermarkCustomTextField(settings: settings, strings: strings),
+        ],
+      ),
+    );
   }
 }

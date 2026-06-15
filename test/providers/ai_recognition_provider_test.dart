@@ -8,8 +8,7 @@ import 'package:lurebox/core/services/settings_service.dart';
 
 class MockSettingsService extends Mock implements SettingsService {}
 
-class FakeAiRecognitionSettings extends Fake
-    implements AiRecognitionSettings {}
+class FakeAiRecognitionSettings extends Fake implements AiRecognitionSettings {}
 
 void main() {
   late MockSettingsService mockService;
@@ -28,8 +27,7 @@ void main() {
 
   group('AiRecognitionSettingsNotifier', () {
     test('initial state is default AiRecognitionSettings', () async {
-      final notifier =
-          AiRecognitionSettingsNotifier(mockService);
+      final notifier = AiRecognitionSettingsNotifier(mockService);
 
       // Allow async _loadSettings to complete
       await Future.delayed(Duration.zero);
@@ -48,8 +46,7 @@ void main() {
       when(() => mockService.getAiRecognitionSettings())
           .thenAnswer((_) async => customSettings);
 
-      final notifier =
-          AiRecognitionSettingsNotifier(mockService);
+      final notifier = AiRecognitionSettingsNotifier(mockService);
 
       await Future.delayed(Duration.zero);
 
@@ -61,8 +58,7 @@ void main() {
       when(() => mockService.getAiRecognitionSettings())
           .thenThrow(Exception('Settings load failed'));
 
-      final notifier =
-          AiRecognitionSettingsNotifier(mockService);
+      final notifier = AiRecognitionSettingsNotifier(mockService);
 
       await Future.delayed(Duration.zero);
 
@@ -70,8 +66,7 @@ void main() {
     });
 
     test('updateSettings saves and updates state', () async {
-      final notifier =
-          AiRecognitionSettingsNotifier(mockService);
+      final notifier = AiRecognitionSettingsNotifier(mockService);
       await Future.delayed(Duration.zero);
 
       const newSettings = AiRecognitionSettings(
@@ -87,8 +82,7 @@ void main() {
     });
 
     test('updateProvider changes current provider', () async {
-      final notifier =
-          AiRecognitionSettingsNotifier(mockService);
+      final notifier = AiRecognitionSettingsNotifier(mockService);
       await Future.delayed(Duration.zero);
 
       await notifier.updateProvider(AiRecognitionProvider.deepseek);
@@ -98,8 +92,7 @@ void main() {
     });
 
     test('updateApiKey updates api key for current provider', () async {
-      final notifier =
-          AiRecognitionSettingsNotifier(mockService);
+      final notifier = AiRecognitionSettingsNotifier(mockService);
       await Future.delayed(Duration.zero);
 
       await notifier.updateApiKey('sk-test-api-key-12345');
@@ -111,8 +104,7 @@ void main() {
     });
 
     test('updateApiKey creates config for new provider', () async {
-      final notifier =
-          AiRecognitionSettingsNotifier(mockService);
+      final notifier = AiRecognitionSettingsNotifier(mockService);
       await Future.delayed(Duration.zero);
 
       // Change to a provider with no config first
@@ -126,8 +118,7 @@ void main() {
     });
 
     test('toggleAutoRecognize toggles auto recognize flag', () async {
-      final notifier =
-          AiRecognitionSettingsNotifier(mockService);
+      final notifier = AiRecognitionSettingsNotifier(mockService);
       await Future.delayed(Duration.zero);
 
       expect(notifier.state.autoRecognize, isTrue);
@@ -163,8 +154,7 @@ void main() {
       addTearDown(container.dispose);
 
       // Get the notifier via the provider's notifier
-      final notifier = container
-          .read(aiRecognitionSettingsProvider.notifier);
+      final notifier = container.read(aiRecognitionSettingsProvider.notifier);
 
       await notifier.updateProvider(AiRecognitionProvider.minimax);
 

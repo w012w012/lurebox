@@ -18,7 +18,6 @@
 library;
 
 class LocationWithStats {
-
   const LocationWithStats({
     required this.name,
     required this.latitude,
@@ -89,7 +88,6 @@ class LocationWithStats {
 }
 
 class LocationStats {
-
   const LocationStats({
     required this.totalCatches,
     required this.releaseCount,
@@ -194,8 +192,9 @@ class LocationStats {
         totalCatches,
         releaseCount,
         keepCount,
-        Object.hashAll(speciesDistribution.entries
-            .map((e) => Object.hash(e.key, e.value)),),
+        Object.hashAll(
+          speciesDistribution.entries.map((e) => Object.hash(e.key, e.value)),
+        ),
         avgLength,
         avgWeight,
       );

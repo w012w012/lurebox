@@ -49,7 +49,6 @@ enum AiRecognitionProvider {
 
 /// AI 提供商配置
 class AiProviderConfig {
-
   const AiProviderConfig({
     required this.provider,
     required this.apiKey,
@@ -100,7 +99,6 @@ class AiProviderConfig {
 
 /// AI 识别设置
 class AiRecognitionSettings {
-
   const AiRecognitionSettings({
     this.currentProvider = AiRecognitionProvider.gemini,
     this.providerConfigs = const {},
@@ -133,7 +131,8 @@ class AiRecognitionSettings {
   }
 
   factory AiRecognitionSettings.decode(String source) =>
-      AiRecognitionSettings.fromJson(jsonDecode(source) as Map<String, dynamic>);
+      AiRecognitionSettings.fromJson(
+          jsonDecode(source) as Map<String, dynamic>);
   final AiRecognitionProvider currentProvider;
   final Map<AiRecognitionProvider, AiProviderConfig> providerConfigs;
   final bool autoRecognize;

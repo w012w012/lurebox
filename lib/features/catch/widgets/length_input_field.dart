@@ -7,9 +7,12 @@ import 'package:lurebox/widgets/common/premium_input.dart';
 
 /// Length input field with unit dropdown.
 class LengthInputField extends ConsumerWidget {
-
   const LengthInputField({
-    required this.state, required this.vm, required this.strings, required this.controller, super.key,
+    required this.state,
+    required this.vm,
+    required this.strings,
+    required this.controller,
+    super.key,
   });
   final CameraState state;
   final CameraViewModel vm;

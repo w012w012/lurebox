@@ -9,7 +9,6 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 
 class SettingsState {
-
   const SettingsState({
     this.isLoading = false,
     this.errorMessage,
@@ -65,7 +64,6 @@ class SettingsState {
 }
 
 class SettingsViewModel extends StateNotifier<SettingsState> {
-
   SettingsViewModel(
     this._backupService,
     this._backupZipService,
@@ -95,7 +93,8 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       );
     } on Exception catch (e) {
       if (!mounted) return;
-      state = state.copyWith(isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
     }
   }
 
@@ -108,13 +107,16 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       return path;
     } on Exception catch (e) {
       if (!mounted) return null;
-      state = state.copyWith(isExporting: false, errorMessage: () => ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          isExporting: false,
+          errorMessage: () => ErrorService.toUserMessage(e));
       return null;
     }
   }
 
-  Future<XFile?> exportDataWithFormat(
-      {ExportFormat format = ExportFormat.json,}) async {
+  Future<XFile?> exportDataWithFormat({
+    ExportFormat format = ExportFormat.json,
+  }) async {
     state = state.copyWith(isExporting: true, errorMessage: () => null);
     try {
       final catches = await _fishCatchService.getAll();
@@ -128,7 +130,9 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       return xFile;
     } on Exception catch (e) {
       if (!mounted) return null;
-      state = state.copyWith(isExporting: false, errorMessage: () => ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          isExporting: false,
+          errorMessage: () => ErrorService.toUserMessage(e));
       return null;
     }
   }
@@ -143,7 +147,9 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       return count;
     } on Exception catch (e) {
       if (!mounted) return null;
-      state = state.copyWith(isImporting: false, errorMessage: () => ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          isImporting: false,
+          errorMessage: () => ErrorService.toUserMessage(e));
       return null;
     }
   }
@@ -165,7 +171,9 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       return url;
     } on Exception catch (e) {
       if (!mounted) return null;
-      state = state.copyWith(isUploading: false, errorMessage: () => ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          isUploading: false,
+          errorMessage: () => ErrorService.toUserMessage(e));
       return null;
     }
   }
@@ -217,7 +225,8 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
   }
 
   Future<ImportResult> importZipBackup() async {
-    state = state.copyWith(isRestoringZipBackup: true, errorMessage: () => null);
+    state =
+        state.copyWith(isRestoringZipBackup: true, errorMessage: () => null);
     try {
       final result = await _backupZipService.importFromZip();
       if (!mounted) return result;

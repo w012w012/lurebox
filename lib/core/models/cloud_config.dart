@@ -4,9 +4,14 @@ import 'dart:convert';
 ///
 /// 支持多种云存储提供商：WebDAV、Nextcloud、OwnCloud 等
 class CloudConfig {
-
   const CloudConfig({
-    required this.provider, required this.serverUrl, required this.username, required this.password, required this.createdAt, required this.updatedAt, this.id,
+    required this.provider,
+    required this.serverUrl,
+    required this.username,
+    required this.password,
+    required this.createdAt,
+    required this.updatedAt,
+    this.id,
     this.isActive = false,
   });
 

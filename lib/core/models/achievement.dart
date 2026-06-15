@@ -43,7 +43,6 @@ enum AchievementLevel {
 
 /// 成就模型
 class Achievement {
-
   const Achievement({
     required this.id,
     required this.title,
@@ -53,7 +52,8 @@ class Achievement {
     required this.category,
     required this.target,
     required this.current,
-    required this.progress, this.unlockedAt,
+    required this.progress,
+    this.unlockedAt,
   });
 
   factory Achievement.fromJson(Map<String, dynamic> json) {

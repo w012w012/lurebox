@@ -5,9 +5,12 @@ import 'package:lurebox/core/design/theme/app_theme.dart';
 
 /// Location marker widget with blue accent styling and iOS-style touch feedback.
 class LocationMarker extends StatefulWidget {
-
   const LocationMarker({
-    required this.name, required this.fishCount, required this.isSelected, required this.onTap, super.key,
+    required this.name,
+    required this.fishCount,
+    required this.isSelected,
+    required this.onTap,
+    super.key,
   });
   final String name;
   final int fishCount;
@@ -121,7 +124,6 @@ class _LocationMarkerState extends State<LocationMarker> {
 }
 
 class _TrianglePainter extends CustomPainter {
-
   _TrianglePainter({required this.color});
   final Color color;
 

@@ -7,9 +7,13 @@ import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
 class MonthlyStatsCard extends ConsumerStatefulWidget {
-
   const MonthlyStatsCard({
-    required this.releaseCount, required this.keepCount, required this.releaseRate, required this.title, required this.totalCount, super.key,
+    required this.releaseCount,
+    required this.keepCount,
+    required this.releaseRate,
+    required this.title,
+    required this.totalCount,
+    super.key,
   });
   final int releaseCount;
   final int keepCount;
@@ -37,10 +41,12 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
     _scaleAnimation = Tween<double>(
       begin: 0.8,
       end: 1,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: TeslaTheme.transitionCurve,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: TeslaTheme.transitionCurve,
+      ),
+    );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
       curve: TeslaTheme.transitionCurve,
@@ -124,7 +130,6 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
 }
 
 class _AnimatedStatItem extends StatefulWidget {
-
   const _AnimatedStatItem({
     required this.index,
     required this.label,

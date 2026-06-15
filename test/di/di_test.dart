@@ -95,12 +95,15 @@ void main() {
         expect(repository, isA<SqliteLocationRepository>());
       });
 
-      test('backupConfigRepositoryProvider returns SqliteBackupConfigRepository', () async {
+      test(
+          'backupConfigRepositoryProvider returns SqliteBackupConfigRepository',
+          () async {
         final mockDb = MockDb();
         final testContainer = ProviderContainer(
           overrides: [
             databaseProvider.overrideWithValue(mockDb),
-            cloudPasswordStorageProvider.overrideWithValue(InMemoryCloudPasswordStorage()),
+            cloudPasswordStorageProvider
+                .overrideWithValue(InMemoryCloudPasswordStorage()),
           ],
         );
 
@@ -356,7 +359,6 @@ class MockAchievementService extends Mock implements AchievementService {}
 class MockLocationService extends Mock implements LocationService {}
 
 class MockDb implements DatabaseProvider {
-
   MockDb() : database = _buildInMemoryDb();
   @override
   final Future<Database> database;

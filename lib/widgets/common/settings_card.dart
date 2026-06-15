@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class SettingsCard extends StatelessWidget {
-
   const SettingsCard({
-    required this.children, super.key,
+    required this.children,
+    super.key,
     this.margin,
     this.padding,
   });
@@ -26,9 +26,9 @@ class SettingsCard extends StatelessWidget {
 }
 
 class SettingsSection extends StatelessWidget {
-
   const SettingsSection({
-    required this.children, super.key,
+    required this.children,
+    super.key,
     this.title,
     this.spacing = 8,
   });

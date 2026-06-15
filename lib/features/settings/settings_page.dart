@@ -306,9 +306,8 @@ class SettingsPage extends ConsumerWidget {
           Text(
             strings.reasonableRelease,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: isDark
-                      ? const Color(0xFF9A9A9A)
-                      : TeslaColors.graphite,
+                  color:
+                      isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
                 ),
             textAlign: TextAlign.center,
           ),

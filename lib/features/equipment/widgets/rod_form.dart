@@ -7,9 +7,21 @@ import 'package:lurebox/widgets/common/premium_input.dart';
 import 'package:lurebox/widgets/common/unit_dropdown.dart';
 
 class RodForm extends ConsumerWidget {
-
   const RodForm({
-    required this.lengthController, required this.lengthUnit, required this.onLengthUnitChanged, required this.sectionsController, required this.jointType, required this.onJointTypeChanged, required this.materialController, required this.hardness, required this.onHardnessChanged, required this.action, required this.onActionChanged, required this.weightRangeMinController, required this.weightRangeMaxController, super.key,
+    required this.lengthController,
+    required this.lengthUnit,
+    required this.onLengthUnitChanged,
+    required this.sectionsController,
+    required this.jointType,
+    required this.onJointTypeChanged,
+    required this.materialController,
+    required this.hardness,
+    required this.onHardnessChanged,
+    required this.action,
+    required this.onActionChanged,
+    required this.weightRangeMinController,
+    required this.weightRangeMaxController,
+    super.key,
   });
   final TextEditingController lengthController;
   final String lengthUnit;
@@ -82,10 +94,14 @@ class RodForm extends ConsumerWidget {
           label: strings.jointMethod,
           value: jointType.isEmpty ? null : jointType,
           items: [
-            PremiumDropdownItem(value: 'spigot', label: strings.jointTypeSpigot),
-            PremiumDropdownItem(value: 'reverse_spigot', label: strings.jointTypeReverseSpigot),
-            PremiumDropdownItem(value: 'dragon_spigot', label: strings.jointTypeDragonSpigot),
-            PremiumDropdownItem(value: 'telescopic', label: strings.jointTypeTelescopic),
+            PremiumDropdownItem(
+                value: 'spigot', label: strings.jointTypeSpigot),
+            PremiumDropdownItem(
+                value: 'reverse_spigot', label: strings.jointTypeReverseSpigot),
+            PremiumDropdownItem(
+                value: 'dragon_spigot', label: strings.jointTypeDragonSpigot),
+            PremiumDropdownItem(
+                value: 'telescopic', label: strings.jointTypeTelescopic),
           ],
           onChanged: (value) {
             if (value != null) {

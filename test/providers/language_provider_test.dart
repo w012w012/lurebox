@@ -20,8 +20,7 @@ void main() {
     mockService = MockSettingsService();
     when(() => mockService.getAppSettings())
         .thenAnswer((_) async => const AppSettings());
-    when(() => mockService.saveAppSettings(any()))
-        .thenAnswer((_) async {});
+    when(() => mockService.saveAppSettings(any())).thenAnswer((_) async {});
   });
 
   group('appLanguageProvider', () {

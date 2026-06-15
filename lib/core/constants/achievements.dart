@@ -384,7 +384,6 @@ class AchievementConfig {
 
 /// 成就定义
 class AchievementDefinition {
-
   const AchievementDefinition({
     required this.id,
     required this.title,

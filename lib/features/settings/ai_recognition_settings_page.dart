@@ -148,7 +148,9 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    isConfigured ? strings.aiConfigured : strings.aiNotConfigured,
+                    isConfigured
+                        ? strings.aiConfigured
+                        : strings.aiNotConfigured,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: isConfigured
                               ? TeslaColors.electricBlue

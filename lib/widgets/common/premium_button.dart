@@ -6,9 +6,9 @@ import 'package:lurebox/core/design/theme/tesla_theme.dart';
 /// 高级极简按钮组件
 /// 提供多种样式的按钮，符合Premium Minimalist设计系统
 class PremiumButton extends StatefulWidget {
-
   const PremiumButton({
-    required this.text, super.key,
+    required this.text,
+    super.key,
     this.onPressed,
     this.variant = PremiumButtonVariant.primary,
     this.icon,
@@ -91,7 +91,9 @@ class _PremiumButtonState extends State<PremiumButton> {
 
   EdgeInsets get _effectivePadding =>
       widget.padding ??
-      (widget.variant == PremiumButtonVariant.text ? _textPadding : _defaultPadding);
+      (widget.variant == PremiumButtonVariant.text
+          ? _textPadding
+          : _defaultPadding);
 
   @override
   Widget build(BuildContext context) {
@@ -221,9 +223,9 @@ enum PremiumButtonVariant {
 
 /// 图标按钮
 class PremiumIconButton extends StatelessWidget {
-
   const PremiumIconButton({
-    required this.icon, super.key,
+    required this.icon,
+    super.key,
     this.onPressed,
     this.tooltip,
     this.accessibilityLabel,
@@ -380,9 +382,9 @@ class PremiumIconButton extends StatelessWidget {
 
 /// 浮动操作按钮
 class PremiumFAB extends StatelessWidget {
-
   const PremiumFAB({
-    required this.icon, super.key,
+    required this.icon,
+    super.key,
     this.onPressed,
     this.tooltip,
     this.mini = false,

@@ -11,9 +11,14 @@ import 'package:lurebox/core/utils/unit_converter.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
 class StatsSummaryCard extends ConsumerStatefulWidget {
-
   const StatsSummaryCard({
-    required this.totalCount, required this.speciesSummary, required this.rodDistribution, required this.reelDistribution, required this.lureDistribution, required this.weightUnit, super.key,
+    required this.totalCount,
+    required this.speciesSummary,
+    required this.rodDistribution,
+    required this.reelDistribution,
+    required this.lureDistribution,
+    required this.weightUnit,
+    super.key,
   });
   final int totalCount;
   final List<Map<String, dynamic>> speciesSummary;
@@ -55,7 +60,8 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
   Widget build(BuildContext context) {
     final strings = ref.watch(currentStringsProvider);
     final isChinese = ref.watch(
-        appSettingsProvider.select((s) => s.language == AppLanguage.chinese),);
+      appSettingsProvider.select((s) => s.language == AppLanguage.chinese),
+    );
     if (widget.speciesSummary.isEmpty) return const SizedBox();
 
     return FadeTransition(
@@ -83,7 +89,8 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
             ),
             const SizedBox(height: TeslaTheme.spacingMicro),
             Container(
-              padding: const EdgeInsets.symmetric(vertical: TeslaTheme.spacingSm),
+              padding:
+                  const EdgeInsets.symmetric(vertical: TeslaTheme.spacingSm),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
@@ -134,8 +141,8 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
             ),
             ...widget.speciesSummary.map(
               (item) => Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: TeslaTheme.spacingMicro),
+                padding: const EdgeInsets.symmetric(
+                    vertical: TeslaTheme.spacingMicro),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
@@ -185,9 +192,11 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
 }
 
 class EquipmentChart extends StatefulWidget {
-
   const EquipmentChart({
-    required this.title, required this.data, required this.color, super.key,
+    required this.title,
+    required this.data,
+    required this.color,
+    super.key,
     this.strings,
   });
   final String title;

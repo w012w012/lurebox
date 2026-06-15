@@ -16,21 +16,21 @@ import 'package:lurebox/core/constants/strings/weather_strings.dart';
 import 'package:lurebox/core/constants/strings/zh_strings.dart';
 
 /// Language string constants
-class AppStrings extends StringsBase with
-    CommonStringsMixin,
-    CatchStringsMixin,
-    EquipmentStringsMixin,
-    CameraStringsMixin,
-    StatsStringsMixin,
-    WeatherStringsMixin,
-    WatermarkStringsMixin,
-    ExportStringsMixin,
-    SettingsStringsMixin,
-    ErrorStringsMixin,
-    AchievementStringsMixin,
-    LocationStringsMixin,
-    OnboardingStringsMixin {
-
+class AppStrings extends StringsBase
+    with
+        CommonStringsMixin,
+        CatchStringsMixin,
+        EquipmentStringsMixin,
+        CameraStringsMixin,
+        StatsStringsMixin,
+        WeatherStringsMixin,
+        WatermarkStringsMixin,
+        ExportStringsMixin,
+        SettingsStringsMixin,
+        ErrorStringsMixin,
+        AchievementStringsMixin,
+        LocationStringsMixin,
+        OnboardingStringsMixin {
   const AppStrings({
     required this.appName,
     required this.home,

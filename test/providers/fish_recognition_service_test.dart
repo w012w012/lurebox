@@ -166,11 +166,13 @@ void main() {
         // This proves the switch statement correctly routes to DeepSeek
         expect(
           () => service.identifySpecies(testImage, settings),
-          throwsA(isA<FishRecognitionException>().having(
-            (e) => e.message,
-            'message',
-            contains('视觉'),
-          ),),
+          throwsA(
+            isA<FishRecognitionException>().having(
+              (e) => e.message,
+              'message',
+              contains('视觉'),
+            ),
+          ),
         );
       });
 
@@ -321,16 +323,26 @@ void main() {
 
       test('FishRecognitionErrorType enum has all expected values', () {
         expect(FishRecognitionErrorType.values.length, equals(5));
-        expect(FishRecognitionErrorType.values,
-            contains(FishRecognitionErrorType.apiKeyInvalid),);
-        expect(FishRecognitionErrorType.values,
-            contains(FishRecognitionErrorType.timeout),);
-        expect(FishRecognitionErrorType.values,
-            contains(FishRecognitionErrorType.networkError),);
-        expect(FishRecognitionErrorType.values,
-            contains(FishRecognitionErrorType.rateLimited),);
-        expect(FishRecognitionErrorType.values,
-            contains(FishRecognitionErrorType.unknown),);
+        expect(
+          FishRecognitionErrorType.values,
+          contains(FishRecognitionErrorType.apiKeyInvalid),
+        );
+        expect(
+          FishRecognitionErrorType.values,
+          contains(FishRecognitionErrorType.timeout),
+        );
+        expect(
+          FishRecognitionErrorType.values,
+          contains(FishRecognitionErrorType.networkError),
+        );
+        expect(
+          FishRecognitionErrorType.values,
+          contains(FishRecognitionErrorType.rateLimited),
+        );
+        expect(
+          FishRecognitionErrorType.values,
+          contains(FishRecognitionErrorType.unknown),
+        );
       });
     });
 
@@ -361,8 +373,10 @@ void main() {
 
         expect(updated.apiKey, equals('new-key'));
         expect(updated.enabled, isFalse);
-        expect(updated.provider,
-            equals(AiRecognitionProvider.gemini),); // unchanged
+        expect(
+          updated.provider,
+          equals(AiRecognitionProvider.gemini),
+        ); // unchanged
       });
 
       test('can be serialized and deserialized', () {

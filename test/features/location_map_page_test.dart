@@ -15,28 +15,32 @@ Widget _wrapInApp(Widget child, {Brightness brightness = Brightness.light}) {
 void main() {
   group('LocationMarker', () {
     testWidgets('renders name and fish count', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        const LocationMarker(
-          name: 'Test Lake',
-          fishCount: 5,
-          isSelected: false,
-          onTap: _noop,
+      await tester.pumpWidget(
+        _wrapInApp(
+          const LocationMarker(
+            name: 'Test Lake',
+            fishCount: 5,
+            isSelected: false,
+            onTap: _noop,
+          ),
         ),
-      ),);
+      );
 
       expect(find.text('Test Lake'), findsOneWidget);
       expect(find.text('5'), findsOneWidget);
     });
 
     testWidgets('renders with selected state', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        const LocationMarker(
-          name: 'Selected Spot',
-          fishCount: 3,
-          isSelected: true,
-          onTap: _noop,
+      await tester.pumpWidget(
+        _wrapInApp(
+          const LocationMarker(
+            name: 'Selected Spot',
+            fishCount: 3,
+            isSelected: true,
+            onTap: _noop,
+          ),
         ),
-      ),);
+      );
 
       expect(find.text('Selected Spot'), findsOneWidget);
       expect(find.text('3'), findsOneWidget);
@@ -44,28 +48,32 @@ void main() {
 
     testWidgets('fires onTap when tapped', (tester) async {
       var tapped = false;
-      await tester.pumpWidget(_wrapInApp(
-        LocationMarker(
-          name: 'Tap Me',
-          fishCount: 1,
-          isSelected: false,
-          onTap: () => tapped = true,
+      await tester.pumpWidget(
+        _wrapInApp(
+          LocationMarker(
+            name: 'Tap Me',
+            fishCount: 1,
+            isSelected: false,
+            onTap: () => tapped = true,
+          ),
         ),
-      ),);
+      );
 
       await tester.tap(find.text('Tap Me'));
       expect(tapped, isTrue);
     });
 
     testWidgets('has CustomPaint triangle for map pin shape', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        const LocationMarker(
-          name: 'Pin',
-          fishCount: 1,
-          isSelected: false,
-          onTap: _noop,
+      await tester.pumpWidget(
+        _wrapInApp(
+          const LocationMarker(
+            name: 'Pin',
+            fishCount: 1,
+            isSelected: false,
+            onTap: _noop,
+          ),
         ),
-      ),);
+      );
 
       // The marker uses CustomPaint for the triangle pin shape.
       // Flutter may also use CustomPaint internally, so check at least 1.
@@ -73,14 +81,16 @@ void main() {
     });
 
     testWidgets('renders location_on icon', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        const LocationMarker(
-          name: 'Icon Test',
-          fishCount: 2,
-          isSelected: false,
-          onTap: _noop,
+      await tester.pumpWidget(
+        _wrapInApp(
+          const LocationMarker(
+            name: 'Icon Test',
+            fishCount: 2,
+            isSelected: false,
+            onTap: _noop,
+          ),
         ),
-      ),);
+      );
 
       expect(find.byIcon(Icons.location_on), findsOneWidget);
     });
@@ -94,78 +104,92 @@ void main() {
     final testCounts = {'North Shore': 5, 'South Pier': 3};
 
     testWidgets('renders group representative name', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        LocationGroupCard(
-          group: testGroup,
-          locationFishCounts: testCounts,
+      await tester.pumpWidget(
+        _wrapInApp(
+          LocationGroupCard(
+            group: testGroup,
+            locationFishCounts: testCounts,
+          ),
         ),
-      ),);
+      );
 
       expect(find.textContaining('Lake Michigan'), findsOneWidget);
     });
 
     testWidgets('shows location count in subtitle', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        LocationGroupCard(
-          group: testGroup,
-          locationFishCounts: testCounts,
+      await tester.pumpWidget(
+        _wrapInApp(
+          LocationGroupCard(
+            group: testGroup,
+            locationFishCounts: testCounts,
+          ),
         ),
-      ),);
+      );
 
       expect(find.text('包含 2 个相似钓点'), findsOneWidget);
     });
 
     testWidgets('shows merge_type icon', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        LocationGroupCard(
-          group: testGroup,
-          locationFishCounts: testCounts,
+      await tester.pumpWidget(
+        _wrapInApp(
+          LocationGroupCard(
+            group: testGroup,
+            locationFishCounts: testCounts,
+          ),
         ),
-      ),);
+      );
 
       expect(find.byIcon(Icons.merge_type), findsOneWidget);
     });
 
     testWidgets('shows expand_more chevron', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        LocationGroupCard(
-          group: testGroup,
-          locationFishCounts: testCounts,
+      await tester.pumpWidget(
+        _wrapInApp(
+          LocationGroupCard(
+            group: testGroup,
+            locationFishCounts: testCounts,
+          ),
         ),
-      ),);
+      );
 
       expect(find.byIcon(Icons.expand_more), findsOneWidget);
     });
 
     testWidgets('uses AnimatedContainer for expansion', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        LocationGroupCard(
-          group: testGroup,
-          locationFishCounts: testCounts,
+      await tester.pumpWidget(
+        _wrapInApp(
+          LocationGroupCard(
+            group: testGroup,
+            locationFishCounts: testCounts,
+          ),
         ),
-      ),);
+      );
 
       expect(find.byType(AnimatedContainer), findsOneWidget);
     });
 
     testWidgets('uses AnimatedCrossFade for content', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        LocationGroupCard(
-          group: testGroup,
-          locationFishCounts: testCounts,
+      await tester.pumpWidget(
+        _wrapInApp(
+          LocationGroupCard(
+            group: testGroup,
+            locationFishCounts: testCounts,
+          ),
         ),
-      ),);
+      );
 
       expect(find.byType(AnimatedCrossFade), findsOneWidget);
     });
 
     testWidgets('expands on tap to show locations', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        LocationGroupCard(
-          group: testGroup,
-          locationFishCounts: testCounts,
+      await tester.pumpWidget(
+        _wrapInApp(
+          LocationGroupCard(
+            group: testGroup,
+            locationFishCounts: testCounts,
+          ),
         ),
-      ),);
+      );
 
       // AnimatedCrossFade keeps both children in tree (collapsed = zero opacity).
       // Verify the cross-fade starts in collapsed state.
@@ -186,12 +210,14 @@ void main() {
     });
 
     testWidgets('shows fish count per location when expanded', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        LocationGroupCard(
-          group: testGroup,
-          locationFishCounts: testCounts,
+      await tester.pumpWidget(
+        _wrapInApp(
+          LocationGroupCard(
+            group: testGroup,
+            locationFishCounts: testCounts,
+          ),
         ),
-      ),);
+      );
 
       await tester.tap(find.byType(InkWell));
       await tester.pumpAndSettle();
@@ -201,50 +227,58 @@ void main() {
     });
 
     testWidgets('shows merge button when onAutoMerge provided', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        LocationGroupCard(
-          group: testGroup,
-          locationFishCounts: testCounts,
-          onAutoMerge: () {},
+      await tester.pumpWidget(
+        _wrapInApp(
+          LocationGroupCard(
+            group: testGroup,
+            locationFishCounts: testCounts,
+            onAutoMerge: () {},
+          ),
         ),
-      ),);
+      );
 
       expect(find.text('合并'), findsOneWidget);
     });
 
     testWidgets('hides merge button when onAutoMerge is null', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        LocationGroupCard(
-          group: testGroup,
-          locationFishCounts: testCounts,
+      await tester.pumpWidget(
+        _wrapInApp(
+          LocationGroupCard(
+            group: testGroup,
+            locationFishCounts: testCounts,
+          ),
         ),
-      ),);
+      );
 
       expect(find.text('合并'), findsNothing);
     });
 
     testWidgets('uses English strings when provided', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        LocationGroupCard(
-          group: testGroup,
-          locationFishCounts: testCounts,
-          strings: AppStrings.english,
-          onAutoMerge: () {},
+      await tester.pumpWidget(
+        _wrapInApp(
+          LocationGroupCard(
+            group: testGroup,
+            locationFishCounts: testCounts,
+            strings: AppStrings.english,
+            onAutoMerge: () {},
+          ),
         ),
-      ),);
+      );
 
       expect(find.textContaining('Similar locations'), findsOneWidget);
       expect(find.text('Merge'), findsOneWidget);
     });
 
     testWidgets('supports dark mode', (tester) async {
-      await tester.pumpWidget(_wrapInApp(
-        LocationGroupCard(
-          group: testGroup,
-          locationFishCounts: testCounts,
+      await tester.pumpWidget(
+        _wrapInApp(
+          LocationGroupCard(
+            group: testGroup,
+            locationFishCounts: testCounts,
+          ),
+          brightness: Brightness.dark,
         ),
-        brightness: Brightness.dark,
-      ),);
+      );
 
       expect(find.byType(AnimatedContainer), findsOneWidget);
       expect(find.textContaining('Lake Michigan'), findsOneWidget);

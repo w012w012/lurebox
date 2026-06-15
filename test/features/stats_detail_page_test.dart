@@ -97,7 +97,8 @@ void main() {
         fishCatches: [],
       ));
       await tester.pump();
-      await tester.pump(const Duration(seconds: 2)); // Allow animations to complete
+      await tester
+          .pump(const Duration(seconds: 2)); // Allow animations to complete
 
       expect(find.text('今日渔获'), findsWidgets);
     });

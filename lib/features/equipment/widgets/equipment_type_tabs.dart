@@ -6,9 +6,13 @@ import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 
 class EquipmentTypeTabs extends ConsumerWidget {
-
   const EquipmentTypeTabs({
-    required this.selectedType, required this.rodCount, required this.reelCount, required this.lureCount, required this.onTypeChanged, super.key,
+    required this.selectedType,
+    required this.rodCount,
+    required this.reelCount,
+    required this.lureCount,
+    required this.onTypeChanged,
+    super.key,
   });
   final String selectedType;
   final int rodCount;
@@ -53,7 +57,6 @@ class EquipmentTypeTabs extends ConsumerWidget {
 }
 
 class _TypeButton extends StatelessWidget {
-
   const _TypeButton({
     required this.label,
     required this.isSelected,

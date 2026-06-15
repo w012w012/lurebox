@@ -179,9 +179,15 @@ void main() {
           _createFishCatch(id: 1, species: '鳜鱼', length: 30), // standard name
           _createFishCatch(id: 2, species: '桂鱼', length: 35), // alias
           _createFishCatch(
-              id: 3, species: '桂花鱼', length: 40,), // another alias
+            id: 3,
+            species: '桂花鱼',
+            length: 40,
+          ), // another alias
           _createFishCatch(
-              id: 4, species: '其他鱼', length: 25,), // different species
+            id: 4,
+            species: '其他鱼',
+            length: 25,
+          ), // different species
         ];
         when(() => mockRepository.getAll()).thenAnswer((_) async => catches);
 
@@ -243,15 +249,30 @@ void main() {
         // Arrange - catches at exact boundaries
         final catches = [
           _createFishCatch(
-              id: 1, species: '鳜鱼', length: 10,), // should be in 10-20
+            id: 1,
+            species: '鳜鱼',
+            length: 10,
+          ), // should be in 10-20
           _createFishCatch(
-              id: 2, species: '鳜鱼', length: 20,), // should be in 20-30
+            id: 2,
+            species: '鳜鱼',
+            length: 20,
+          ), // should be in 20-30
           _createFishCatch(
-              id: 3, species: '鳜鱼', length: 30,), // should be in 30-40
+            id: 3,
+            species: '鳜鱼',
+            length: 30,
+          ), // should be in 30-40
           _createFishCatch(
-              id: 4, species: '鳜鱼', length: 40,), // should be in 40-50
+            id: 4,
+            species: '鳜鱼',
+            length: 40,
+          ), // should be in 40-50
           _createFishCatch(
-              id: 5, species: '鳜鱼', length: 50,), // should be in 50+
+            id: 5,
+            species: '鳜鱼',
+            length: 50,
+          ), // should be in 50+
         ];
         when(() => mockRepository.getAll()).thenAnswer((_) async => catches);
 

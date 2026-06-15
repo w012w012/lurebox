@@ -35,9 +35,12 @@ void main() {
   late FishCatchService service;
 
   final testCatches = [
-    _createFishCatch(id: 1, species: 'Bass', length: 30, catchTime: DateTime(2024)),
-    _createFishCatch(id: 2, species: 'Trout', length: 25, catchTime: DateTime(2024, 1, 2)),
-    _createFishCatch(id: 3, species: 'Bass', length: 35, catchTime: DateTime(2024, 1, 3)),
+    _createFishCatch(
+        id: 1, species: 'Bass', length: 30, catchTime: DateTime(2024)),
+    _createFishCatch(
+        id: 2, species: 'Trout', length: 25, catchTime: DateTime(2024, 1, 2)),
+    _createFishCatch(
+        id: 3, species: 'Bass', length: 35, catchTime: DateTime(2024, 1, 3)),
   ];
 
   setUp(() {
@@ -57,11 +60,13 @@ void main() {
     when(() => mockRepository.getByDateRange(any(), any()))
         .thenAnswer((_) async => []);
     when(() => mockRepository.getByFate(any())).thenAnswer((_) async => []);
-    when(() => mockRepository.getPage(
-          page: any(named: 'page'),
-          pageSize: any(named: 'pageSize'),
-          orderBy: any(named: 'orderBy'),
-        ),).thenAnswer(
+    when(
+      () => mockRepository.getPage(
+        page: any(named: 'page'),
+        pageSize: any(named: 'pageSize'),
+        orderBy: any(named: 'orderBy'),
+      ),
+    ).thenAnswer(
       (_) async => const PaginatedResult(
         items: [],
         totalCount: 0,
@@ -70,15 +75,17 @@ void main() {
         hasMore: false,
       ),
     );
-    when(() => mockRepository.getFilteredPage(
-          page: any(named: 'page'),
-          pageSize: any(named: 'pageSize'),
-          startDate: any(named: 'startDate'),
-          endDate: any(named: 'endDate'),
-          fate: any(named: 'fate'),
-          species: any(named: 'species'),
-          orderBy: any(named: 'orderBy'),
-        ),).thenAnswer(
+    when(
+      () => mockRepository.getFilteredPage(
+        page: any(named: 'page'),
+        pageSize: any(named: 'pageSize'),
+        startDate: any(named: 'startDate'),
+        endDate: any(named: 'endDate'),
+        fate: any(named: 'fate'),
+        species: any(named: 'species'),
+        orderBy: any(named: 'orderBy'),
+      ),
+    ).thenAnswer(
       (_) async => const PaginatedResult(
         items: [],
         totalCount: 0,
@@ -135,11 +142,13 @@ void main() {
           pageSize: 20,
           hasMore: false,
         );
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => paginatedResult);
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => paginatedResult);
 
         await viewModel.loadCatches(reset: true);
 
@@ -154,11 +163,13 @@ void main() {
       });
 
       test('sets isLoading during fetch', () async {
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async {
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async {
           await Future.delayed(const Duration(milliseconds: 10));
           return const PaginatedResult(
             items: [],
@@ -184,11 +195,13 @@ void main() {
           pageSize: 20,
           hasMore: true,
         );
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => paginatedResult1);
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => paginatedResult1);
 
         await viewModel.loadCatches(reset: true);
         expect(viewModel.state.currentPage, 1);
@@ -201,11 +214,13 @@ void main() {
           pageSize: 20,
           hasMore: false,
         );
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => paginatedResult2);
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => paginatedResult2);
 
         await viewModel.loadCatches(reset: true);
         expect(viewModel.state.currentPage, 1);
@@ -221,11 +236,13 @@ void main() {
           pageSize: 20,
           hasMore: true,
         );
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => paginatedResult1);
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => paginatedResult1);
 
         await viewModel.loadCatches(reset: true);
 
@@ -237,11 +254,13 @@ void main() {
           pageSize: 20,
           hasMore: false,
         );
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => paginatedResult2);
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => paginatedResult2);
 
         await viewModel.loadCatches();
 
@@ -251,11 +270,13 @@ void main() {
       });
 
       test('sets errorMessage on failure', () async {
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenThrow(Exception('Network error'));
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenThrow(Exception('Network error'));
 
         await viewModel.loadCatches(reset: true);
 
@@ -265,23 +286,25 @@ void main() {
 
       test('uses filtered page when filters are active', () async {
         // Set up filtered page mock
-        when(() => mockRepository.getFilteredPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              fate: any(named: 'fate'),
-              species: any(named: 'species'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer(
-            (_) async => const PaginatedResult(
-              items: [],
-              totalCount: 0,
-              page: 1,
-              pageSize: 20,
-              hasMore: false,
-            ),
-          );
+        when(
+          () => mockRepository.getFilteredPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            fate: any(named: 'fate'),
+            species: any(named: 'species'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer(
+          (_) async => const PaginatedResult(
+            items: [],
+            totalCount: 0,
+            page: 1,
+            pageSize: 20,
+            hasMore: false,
+          ),
+        );
 
         // setTimeFilter triggers loadCatches internally
         // Verify filter was updated before async load
@@ -304,15 +327,17 @@ void main() {
 
     group('setFateFilter', () {
       test('updates fate filter in state', () async {
-        when(() => mockRepository.getFilteredPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              fate: any(named: 'fate'),
-              species: any(named: 'species'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer(
+        when(
+          () => mockRepository.getFilteredPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            fate: any(named: 'fate'),
+            species: any(named: 'species'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -328,15 +353,17 @@ void main() {
       });
 
       test('can clear fate filter by passing null', () async {
-        when(() => mockRepository.getFilteredPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              fate: any(named: 'fate'),
-              species: any(named: 'species'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer(
+        when(
+          () => mockRepository.getFilteredPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            fate: any(named: 'fate'),
+            species: any(named: 'species'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -354,15 +381,17 @@ void main() {
 
     group('setSpeciesFilter', () {
       test('updates species filter', () async {
-        when(() => mockRepository.getFilteredPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              fate: any(named: 'fate'),
-              species: any(named: 'species'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer(
+        when(
+          () => mockRepository.getFilteredPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            fate: any(named: 'fate'),
+            species: any(named: 'species'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -380,11 +409,13 @@ void main() {
 
     group('setSortBy', () {
       test('updates sort settings', () async {
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer(
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -400,11 +431,13 @@ void main() {
       });
 
       test('toggles sort direction when same sort field is selected', () async {
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer(
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -430,15 +463,17 @@ void main() {
 
     group('setSearchQuery', () {
       test('updates searchQuery in filter', () async {
-        when(() => mockRepository.getFilteredPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              fate: any(named: 'fate'),
-              species: any(named: 'species'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer(
+        when(
+          () => mockRepository.getFilteredPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            fate: any(named: 'fate'),
+            species: any(named: 'species'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -454,15 +489,17 @@ void main() {
       });
 
       test('clears searchQuery when null is passed', () async {
-        when(() => mockRepository.getFilteredPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              fate: any(named: 'fate'),
-              species: any(named: 'species'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer(
+        when(
+          () => mockRepository.getFilteredPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            fate: any(named: 'fate'),
+            species: any(named: 'species'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -478,15 +515,17 @@ void main() {
       });
 
       test('hasFilters returns true when searchQuery is set', () async {
-        when(() => mockRepository.getFilteredPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              fate: any(named: 'fate'),
-              species: any(named: 'species'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer(
+        when(
+          () => mockRepository.getFilteredPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            fate: any(named: 'fate'),
+            species: any(named: 'species'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -504,15 +543,17 @@ void main() {
 
     group('setCustomDateRange', () {
       test('sets custom date range and timeFilter to custom', () async {
-        when(() => mockRepository.getFilteredPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              fate: any(named: 'fate'),
-              species: any(named: 'species'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer(
+        when(
+          () => mockRepository.getFilteredPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            fate: any(named: 'fate'),
+            species: any(named: 'species'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -533,15 +574,17 @@ void main() {
       });
 
       test('can clear custom date range by passing nulls', () async {
-        when(() => mockRepository.getFilteredPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              fate: any(named: 'fate'),
-              species: any(named: 'species'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer(
+        when(
+          () => mockRepository.getFilteredPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            fate: any(named: 'fate'),
+            species: any(named: 'species'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer(
           (_) async => const PaginatedResult(
             items: [],
             totalCount: 0,
@@ -624,11 +667,13 @@ void main() {
           pageSize: 20,
           hasMore: false,
         );
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => paginatedResult);
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => paginatedResult);
 
         await viewModel.loadCatches(reset: true);
         viewModel.toggleSelectionMode();
@@ -648,11 +693,13 @@ void main() {
           pageSize: 20,
           hasMore: false,
         );
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => paginatedResult);
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => paginatedResult);
 
         await viewModel.loadCatches(reset: true);
         viewModel.toggleSelectionMode();
@@ -669,18 +716,21 @@ void main() {
           pageSize: 20,
           hasMore: false,
         );
-        when(() => mockRepository.getByIds([1, 2]))
-            .thenAnswer((_) async => [
-                  _createFishCatch(id: 1, species: 'Bass', length: 30),
-                  _createFishCatch(id: 2, species: 'Trout', length: 25),
-                ],);
+        when(() => mockRepository.getByIds([1, 2])).thenAnswer(
+          (_) async => [
+            _createFishCatch(id: 1, species: 'Bass', length: 30),
+            _createFishCatch(id: 2, species: 'Trout', length: 25),
+          ],
+        );
         when(() => mockRepository.deleteMultiple([1, 2]))
             .thenAnswer((_) async {});
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => emptyResult);
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => emptyResult);
 
         await viewModel.deleteSelected();
 
@@ -702,8 +752,8 @@ void main() {
         viewModel.toggleSelectionMode();
         viewModel.toggleSelection(1);
 
-        when(() => mockRepository.getByIds([1]))
-            .thenAnswer((_) async => [_createFishCatch(id: 1, species: 'Bass', length: 30)]);
+        when(() => mockRepository.getByIds([1])).thenAnswer((_) async =>
+            [_createFishCatch(id: 1, species: 'Bass', length: 30)]);
         when(() => mockRepository.deleteMultiple([1]))
             .thenThrow(Exception('Delete failed'));
 
@@ -716,11 +766,13 @@ void main() {
     group('loadMore', () {
       test('does nothing when already loading', () async {
         final completer = Completer<PaginatedResult<FishCatch>>();
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) => completer.future);
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) => completer.future);
 
         final load1 = viewModel.loadCatches(reset: true);
         // loadMore should be skipped because isLoading is true
@@ -737,11 +789,13 @@ void main() {
         await load1;
 
         // Should only be called once because loadMore should be skipped during loading
-        verify(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).called(1);
+        verify(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).called(1);
       });
 
       test('does nothing when hasMore is false', () async {
@@ -753,18 +807,22 @@ void main() {
           pageSize: 20,
           hasMore: false,
         );
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => paginatedResult);
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => paginatedResult);
 
         await viewModel.loadCatches(reset: true);
-        verify(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).called(1);
+        verify(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).called(1);
 
         // Reset call count
         clearInteractions(mockRepository);
@@ -772,11 +830,13 @@ void main() {
         await viewModel.loadMore();
 
         // Should not call repository again
-        verifyNever(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),);
+        verifyNever(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        );
       });
     });
 
@@ -862,11 +922,13 @@ void main() {
           pageSize: 20,
           hasMore: false,
         );
-        when(() => mockRepository.getPage(
-              page: any(named: 'page'),
-              pageSize: any(named: 'pageSize'),
-              orderBy: any(named: 'orderBy'),
-            ),).thenAnswer((_) async => paginatedResult);
+        when(
+          () => mockRepository.getPage(
+            page: any(named: 'page'),
+            pageSize: any(named: 'pageSize'),
+            orderBy: any(named: 'orderBy'),
+          ),
+        ).thenAnswer((_) async => paginatedResult);
 
         await viewModel.loadCatches(reset: true);
 

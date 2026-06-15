@@ -18,7 +18,6 @@ import 'package:sqflite/sqflite.dart' hide DatabaseException;
 /// 备份数据包含版本号和导出时间戳，支持数据迁移。
 
 class BackupService {
-
   BackupService(this._dbProvider);
   final DatabaseProvider _dbProvider;
 
@@ -69,7 +68,8 @@ class BackupService {
       if (backupData.containsKey('fishCatches')) {
         final fishCatches = backupData['fishCatches'] as List;
         for (final fish in fishCatches) {
-          await txn.insert('fish_catches', Map<String, dynamic>.from(fish as Map));
+          await txn.insert(
+              'fish_catches', Map<String, dynamic>.from(fish as Map));
           importedCount++;
         }
       }
@@ -77,7 +77,8 @@ class BackupService {
       if (backupData.containsKey('equipments')) {
         final equipments = backupData['equipments'] as List;
         for (final equipment in equipments) {
-          await txn.insert('equipments', Map<String, dynamic>.from(equipment as Map));
+          await txn.insert(
+              'equipments', Map<String, dynamic>.from(equipment as Map));
         }
       }
 
@@ -242,8 +243,8 @@ class BackupService {
       final credentials = base64Encode(utf8.encode('$username:$password'));
       request.headers.set('Authorization', 'Basic $credentials');
 
-      final response = await request.close()
-          .timeout(const Duration(seconds: 60));
+      final response =
+          await request.close().timeout(const Duration(seconds: 60));
 
       if (response.contentLength > 50 * 1024 * 1024) {
         throw const DatabaseException('Backup file too large (>50MB)');

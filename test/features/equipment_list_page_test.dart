@@ -44,8 +44,8 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            equipmentListViewModelProvider
-                .overrideWith((ref) => _MockEquipmentListViewModel(loadingState)),
+            equipmentListViewModelProvider.overrideWith(
+                (ref) => _MockEquipmentListViewModel(loadingState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(
@@ -95,8 +95,8 @@ void main() {
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
-            equipmentListViewModelProvider
-                .overrideWith((ref) => _MockEquipmentListViewModel(loadedState)),
+            equipmentListViewModelProvider.overrideWith(
+                (ref) => _MockEquipmentListViewModel(loadedState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(
@@ -244,4 +244,3 @@ class _MockEquipmentListViewModel extends StateNotifier<EquipmentListState>
   @override
   Future<void> setDefaultEquipment(int id, String type) async {}
 }
-

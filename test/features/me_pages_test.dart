@@ -86,7 +86,8 @@ class MockSettingsViewModel extends StateNotifier<SettingsState>
   @override
   Future<XFile?> exportDataWithFormat({
     ExportFormat format = ExportFormat.csv,
-  }) async => null;
+  }) async =>
+      null;
 
   @override
   Future<XFile?> exportZipBackup({bool includePhotos = true}) async => null;
@@ -96,7 +97,8 @@ class MockSettingsViewModel extends StateNotifier<SettingsState>
     required String serverUrl,
     required String username,
     required String password,
-  }) async => null;
+  }) async =>
+      null;
 }
 
 // ===== Test App Builders =====
@@ -455,8 +457,7 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsWidgets);
     });
 
-    testWidgets('shows loading indicator when creating backup',
-        (tester) async {
+    testWidgets('shows loading indicator when creating backup', (tester) async {
       tester.view.physicalSize = const Size(1080, 1920);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() {

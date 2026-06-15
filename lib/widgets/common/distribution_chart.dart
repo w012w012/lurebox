@@ -4,9 +4,11 @@ import 'package:lurebox/core/design/theme/app_colors.dart';
 
 /// 通用分布图表组件
 class DistributionChart extends StatelessWidget {
-
   const DistributionChart({
-    required this.data, required this.title, required this.color, super.key,
+    required this.data,
+    required this.title,
+    required this.color,
+    super.key,
     this.maxItems = 6,
     this.chartType = ChartType.bar,
   });
@@ -192,7 +194,6 @@ class DistributionChart extends StatelessWidget {
 enum ChartType { bar, pie }
 
 class _PieChartPainter extends CustomPainter {
-
   _PieChartPainter({
     required this.entries,
     required this.total,

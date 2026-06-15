@@ -7,7 +7,6 @@ import 'package:lurebox/core/repositories/species_history_repository.dart';
 
 class SqliteSpeciesHistoryRepository extends BaseSqliteRepository
     implements SpeciesHistoryRepository {
-
   SqliteSpeciesHistoryRepository();
 
   SqliteSpeciesHistoryRepository.withDatabase(super.testDb)
@@ -29,8 +28,10 @@ class SqliteSpeciesHistoryRepository extends BaseSqliteRepository
         orderBy: 'use_count DESC, created_at ASC',
         limit: limit,
       );
-      return List<SpeciesHistory>.from(results
-          .map((map) => SpeciesHistory.fromMap(map as Map<String, dynamic>)),);
+      return List<SpeciesHistory>.from(
+        results
+            .map((map) => SpeciesHistory.fromMap(map as Map<String, dynamic>)),
+      );
     } catch (e) {
       throwDbError('get species history', e);
     }

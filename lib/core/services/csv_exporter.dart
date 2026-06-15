@@ -1,5 +1,6 @@
 import 'package:lurebox/core/models/fish_catch.dart';
-import 'package:lurebox/core/services/weather_service.dart' show getWeatherDescription;
+import 'package:lurebox/core/services/weather_service.dart'
+    show getWeatherDescription;
 import 'package:lurebox/core/utils/unit_converter.dart';
 
 /// CSV 导出器 - 渔获数据转换为 CSV 格式
@@ -45,8 +46,10 @@ class CsvExporter {
         UnitConverter.getLengthSymbol(lengthUnit, isChinese: isChinese);
     final weightSymbol =
         UnitConverter.getWeightSymbol(weightUnit, isChinese: isChinese);
-    final tempSymbol = UnitConverter.getTemperatureSymbol(temperatureUnit,
-        isChinese: isChinese,);
+    final tempSymbol = UnitConverter.getTemperatureSymbol(
+      temperatureUnit,
+      isChinese: isChinese,
+    );
 
     // 完整的 CSV 表头
     final headers = [
@@ -78,7 +81,10 @@ class CsvExporter {
       // Convert length to display unit
       final displayLength = fish.lengthUnit != lengthUnit
           ? UnitConverter.convertLength(
-              fish.length, fish.lengthUnit, lengthUnit,)
+              fish.length,
+              fish.lengthUnit,
+              lengthUnit,
+            )
           : fish.length;
 
       // Convert weight to display unit
@@ -87,7 +93,10 @@ class CsvExporter {
       if (fishWeight != null) {
         displayWeight = fish.weightUnit != weightUnit
             ? UnitConverter.convertWeight(
-                fishWeight, fish.weightUnit, weightUnit,)
+                fishWeight,
+                fish.weightUnit,
+                weightUnit,
+              )
             : fishWeight;
       }
 
@@ -97,7 +106,10 @@ class CsvExporter {
       if (fishTemp != null) {
         displayTemp = temperatureUnit != 'C'
             ? UnitConverter.convertTemperature(
-                fishTemp, 'C', temperatureUnit,)
+                fishTemp,
+                'C',
+                temperatureUnit,
+              )
             : fishTemp;
       }
 

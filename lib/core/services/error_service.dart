@@ -226,7 +226,6 @@ class ErrorService {
 }
 
 class AppException implements Exception {
-
   const AppException(this.message, {this.code, this.originalError});
   final String message;
   final String? code;
@@ -241,7 +240,6 @@ class DatabaseException extends AppException {
 }
 
 class NetworkException extends AppException {
-
   const NetworkException(super.message, {this.statusCode, super.originalError});
   final int? statusCode;
 }
@@ -267,12 +265,12 @@ class FileException extends AppException {
 /// 当用户设置文件（WatermarkSettings / AppSettings / AiRecognitionSettings）
 /// 无法解析时抛出，而非静默回退到默认值导致用户偏好丢失。
 class SettingsCorruptedException extends AppException {
-
   const SettingsCorruptedException(
     super.message, {
     this.originalValue,
     super.originalError,
   });
+
   /// 原始的损坏数据（可用于诊断或备份）
   final String? originalValue;
 }

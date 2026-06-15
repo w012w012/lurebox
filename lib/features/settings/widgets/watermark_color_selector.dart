@@ -4,9 +4,11 @@ import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/tesla_theme.dart';
 
 class WatermarkColorSelector extends StatelessWidget {
-
   const WatermarkColorSelector({
-    required this.selectedColor, required this.strings, required this.onColorChanged, super.key,
+    required this.selectedColor,
+    required this.strings,
+    required this.onColorChanged,
+    super.key,
   });
   final int selectedColor;
   final AppStrings strings;

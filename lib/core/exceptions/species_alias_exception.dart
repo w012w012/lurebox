@@ -1,6 +1,5 @@
 /// 鱼种别名相关异常
 class SpeciesAliasException implements Exception {
-
   const SpeciesAliasException({
     required this.message,
     this.operation,

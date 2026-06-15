@@ -37,8 +37,7 @@ void main() {
 
   group('SpeciesManagementService', () {
     group('renameSpecies', () {
-      test(
-          'calls _mergeSpecies when newName already exists as an alias',
+      test('calls _mergeSpecies when newName already exists as an alias',
           () async {
         // Arrange
         const oldName = '旧鱼名';
@@ -62,7 +61,8 @@ void main() {
 
         // Assert
         verify(() => mockAliasRepo.findByAlias(newName)).called(1);
-        verify(() => mockAliasRepo.create(oldName, existingSpeciesId)).called(1);
+        verify(() => mockAliasRepo.create(oldName, existingSpeciesId))
+            .called(1);
       });
 
       test(
@@ -97,8 +97,7 @@ void main() {
         verify(() => mockAliasRepo.create(newName, speciesId)).called(1);
       });
 
-      test(
-          'does not create alias when species is not found by matcher',
+      test('does not create alias when species is not found by matcher',
           () async {
         // Arrange
         const oldName = '完全不存在的鱼';
@@ -117,9 +116,7 @@ void main() {
         verifyNever(() => mockAliasRepo.create(any(), any()));
       });
 
-      test(
-          'handles multiple consecutive renames correctly',
-          () async {
+      test('handles multiple consecutive renames correctly', () async {
         // Arrange - simulate rename chain: A -> B -> C
         const nameA = '鱼名A';
         const nameB = '鱼名B';
@@ -161,9 +158,7 @@ void main() {
         verify(() => mockAliasRepo.create(nameC, speciesId)).called(1);
       });
 
-      test(
-          'findByAlias returns null for non-existent alias',
-          () async {
+      test('findByAlias returns null for non-existent alias', () async {
         // Arrange
         const nonExistentName = '这个名称完全不存在';
 
@@ -177,9 +172,7 @@ void main() {
         expect(result, isNull);
       });
 
-      test(
-          'mergeSpecies creates alias mapping correctly',
-          () async {
+      test('mergeSpecies creates alias mapping correctly', () async {
         // Arrange
         const sourceAlias = '来源别名';
         const targetSpeciesId = '目标物种ID';
@@ -205,9 +198,7 @@ void main() {
             .called(1);
       });
 
-      test(
-          'findSpeciesByName is case-sensitive in matching',
-          () async {
+      test('findSpeciesByName is case-sensitive in matching', () async {
         // Arrange
         const oldName = 'BASS';
 

@@ -7,9 +7,10 @@ import 'package:lurebox/features/common/watermarked_image.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
 class WatermarkPreviewCard extends StatelessWidget {
-
   const WatermarkPreviewCard({
-    required this.settings, required this.strings, super.key,
+    required this.settings,
+    required this.strings,
+    super.key,
   });
   final WatermarkSettings settings;
   final AppStrings strings;
@@ -58,7 +59,6 @@ class WatermarkPreviewCard extends StatelessWidget {
 }
 
 class _LiveWatermarkPreview extends StatelessWidget {
-
   const _LiveWatermarkPreview({
     required this.settings,
     required this.strings,
@@ -85,7 +85,6 @@ class _LiveWatermarkPreview extends StatelessWidget {
 }
 
 class _WatermarkPreviewPainter extends CustomPainter {
-
   _WatermarkPreviewPainter({
     required this.settings,
     required this.strings,
@@ -154,7 +153,6 @@ class _WatermarkPreviewPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _WatermarkPreviewPainter oldDelegate) {
-    return settings != oldDelegate.settings ||
-        strings != oldDelegate.strings;
+    return settings != oldDelegate.settings || strings != oldDelegate.strings;
   }
 }

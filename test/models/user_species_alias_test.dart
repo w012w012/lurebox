@@ -108,7 +108,8 @@ void main() {
       expect(result['created_at'], equals(1718444400000));
     });
 
-    test('excludes id when id is null even if it was set during construction', () {
+    test('excludes id when id is null even if it was set during construction',
+        () {
       final alias = UserSpeciesAlias(
         id: null,
         userAlias: '罗非',
@@ -198,7 +199,9 @@ void main() {
       expect(copy.userAlias, equals('alias'));
     });
 
-    test('copyWith with id: null preserves original id (null coalescing behavior)', () {
+    test(
+        'copyWith with id: null preserves original id (null coalescing behavior)',
+        () {
       final original = UserSpeciesAlias(
         id: 5,
         userAlias: 'alias',
@@ -268,7 +271,8 @@ void main() {
   });
 
   group('UserSpeciesAlias equality - userAlias + speciesId based', () {
-    test('two instances with null id and same userAlias + speciesId are equal', () {
+    test('two instances with null id and same userAlias + speciesId are equal',
+        () {
       final alias1 = UserSpeciesAlias(
         id: null,
         userAlias: 'my_alias',
@@ -285,7 +289,8 @@ void main() {
       expect(alias1, equals(alias2));
     });
 
-    test('two instances with null id but different userAlias are not equal', () {
+    test('two instances with null id but different userAlias are not equal',
+        () {
       final alias1 = UserSpeciesAlias(
         id: null,
         userAlias: 'alias_one',
@@ -302,7 +307,8 @@ void main() {
       expect(alias1, isNot(equals(alias2)));
     });
 
-    test('two instances with null id but different speciesId are not equal', () {
+    test('two instances with null id but different speciesId are not equal',
+        () {
       final alias1 = UserSpeciesAlias(
         id: null,
         userAlias: 'same_alias',
@@ -336,7 +342,9 @@ void main() {
       expect(alias1.hashCode, equals(alias2.hashCode));
     });
 
-    test('null id instance and non-null id instance with same userAlias+speciesId are not equal', () {
+    test(
+        'null id instance and non-null id instance with same userAlias+speciesId are not equal',
+        () {
       final aliasNullId = UserSpeciesAlias(
         id: null,
         userAlias: 'alias_x',

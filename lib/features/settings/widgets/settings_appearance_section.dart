@@ -132,9 +132,7 @@ class SettingsAppearanceSection extends ConsumerWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: isDark
-                      ? TeslaColors.white
-                      : TeslaColors.carbonDark,
+                  color: isDark ? TeslaColors.white : TeslaColors.carbonDark,
                 ),
               ),
             ),

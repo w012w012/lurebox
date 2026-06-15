@@ -6,7 +6,6 @@ import 'package:lurebox/core/services/error_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 
 class EquipmentListState {
-
   const EquipmentListState({
     this.isLoading = true,
     this.errorMessage,
@@ -67,7 +66,6 @@ class EquipmentListState {
 }
 
 class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
-
   EquipmentListViewModel(this._equipmentService, this._fishCatchService)
       : super(const EquipmentListState()) {
     loadData();
@@ -95,7 +93,8 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
       );
     } on Exception catch (e) {
       if (!mounted) return;
-      state = state.copyWith(isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
     }
   }
 

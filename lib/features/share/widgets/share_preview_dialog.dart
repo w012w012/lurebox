@@ -6,9 +6,9 @@ import 'package:lurebox/features/share/widgets/share_card_widget.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
 
 class SharePreviewDialog extends StatelessWidget {
-
   const SharePreviewDialog({
-    required this.config, super.key,
+    required this.config,
+    super.key,
     this.onShare,
     this.onEdit,
   });

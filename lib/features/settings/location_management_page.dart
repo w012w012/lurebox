@@ -277,7 +277,8 @@ class _LocationManagementPageState
             color: Theme.of(context).colorScheme.outline,
           ),
           const SizedBox(height: TeslaTheme.spacingMd),
-          Text(strings.noLocationRecords, style: Theme.of(context).textTheme.titleLarge),
+          Text(strings.noLocationRecords,
+              style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: TeslaTheme.spacingSm),
           Text(
             strings.locationStartFishing,
@@ -332,7 +333,9 @@ class _LocationManagementPageState
       final success = await viewModel.renameLocation(oldName, result);
       if (!context.mounted) return;
       AppSnackBar.showInfo(
-          context, success ? strings.locationEditSuccess : strings.locationEditFailed,);
+        context,
+        success ? strings.locationEditSuccess : strings.locationEditFailed,
+      );
     }
     controller.dispose();
   }
@@ -370,7 +373,9 @@ class _LocationManagementPageState
       final success = await viewModel.mergeLocations(targetName);
       if (!mounted) return;
       AppSnackBar.showInfo(
-          context, success ? strings.mergeSuccess : strings.mergeFailed,);
+        context,
+        success ? strings.mergeSuccess : strings.mergeFailed,
+      );
     }
   }
 
@@ -403,7 +408,9 @@ class _LocationManagementPageState
       final success = await viewModel.autoMergeGroup(group);
       if (!mounted) return;
       AppSnackBar.showInfo(
-          context, success ? strings.mergeSuccess : strings.mergeFailed,);
+        context,
+        success ? strings.mergeSuccess : strings.mergeFailed,
+      );
     }
   }
 }

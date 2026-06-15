@@ -82,12 +82,12 @@ class _FishListPageState extends ConsumerState<FishListPage>
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
       initialDateRange: switch ((
-                state.filter.customStartDate,
-                state.filter.customEndDate,
-              )) {
-                (final start?, final end?) => DateTimeRange(start: start, end: end),
-                _ => null,
-              },
+        state.filter.customStartDate,
+        state.filter.customEndDate,
+      )) {
+        (final start?, final end?) => DateTimeRange(start: start, end: end),
+        _ => null,
+      },
       helpText: strings.selectDateRange,
       cancelText: strings.cancel,
       confirmText: strings.confirm,
@@ -359,9 +359,8 @@ class _FishListPageState extends ConsumerState<FishListPage>
           expandLabel: strings.expandFilter,
           onTap: () {},
           onClear: state.hasFilters
-              ? () => ref
-                  .read(fishListViewModelProvider.notifier)
-                  .clearFilters()
+              ? () =>
+                  ref.read(fishListViewModelProvider.notifier).clearFilters()
               : null,
           onShowSheet: () => _showFilterSheet(context, state, strings),
         ),
@@ -380,7 +379,10 @@ class _FishListPageState extends ConsumerState<FishListPage>
   }
 
   void _showFilterSheet(
-      BuildContext context, FishListState state, AppStrings strings,) {
+    BuildContext context,
+    FishListState state,
+    AppStrings strings,
+  ) {
     FishFilterPanel.show(
       context: context,
       strings: strings,
@@ -394,13 +396,17 @@ class _FishListPageState extends ConsumerState<FishListPage>
           ref.read(fishListViewModelProvider.notifier).setTimeFilter(filter),
       onFateFilterChanged: (fate) =>
           ref.read(fishListViewModelProvider.notifier).setFateFilter(fate),
-      onSpeciesFilterChanged: (species) =>
-          ref.read(fishListViewModelProvider.notifier).setSpeciesFilter(species),
+      onSpeciesFilterChanged: (species) => ref
+          .read(fishListViewModelProvider.notifier)
+          .setSpeciesFilter(species),
     );
   }
 
   Widget _buildTabletGridView(
-      BoxConstraints constraints, FishListState state, AppStrings strings,) {
+    BoxConstraints constraints,
+    FishListState state,
+    AppStrings strings,
+  ) {
     final crossAxisCount = constraints.maxWidth >= 900 ? 3 : 2;
     final itemWidth = (constraints.maxWidth - 32 - (crossAxisCount - 1) * 16) /
         crossAxisCount;
@@ -416,9 +422,8 @@ class _FishListPageState extends ConsumerState<FishListPage>
             expandLabel: strings.expandFilter,
             onTap: () {},
             onClear: state.hasFilters
-                ? () => ref
-                    .read(fishListViewModelProvider.notifier)
-                    .clearFilters()
+                ? () =>
+                    ref.read(fishListViewModelProvider.notifier).clearFilters()
                 : null,
             onShowSheet: () => _showFilterSheet(context, state, strings),
           ),
@@ -574,7 +579,6 @@ class _FishListPageState extends ConsumerState<FishListPage>
 }
 
 class _SortButton extends StatelessWidget {
-
   const _SortButton({
     required this.label,
     required this.isSelected,
@@ -626,4 +630,3 @@ class _SortButton extends StatelessWidget {
     );
   }
 }
-

@@ -12,7 +12,6 @@ library;
 enum ShareTemplate { classic, card, minimal }
 
 class ShareCardConfig {
-
   const ShareCardConfig({
     this.template = ShareTemplate.card,
     this.showStats = true,

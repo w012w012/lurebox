@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:lurebox/features/common/watermarked_image.dart';
 
 class FishImageGallery extends StatelessWidget {
-
   const FishImageGallery({
-    required this.imagePath, required this.species, required this.length, required this.weight, required this.locationName, required this.catchTime, required this.rodName, required this.reelName, required this.lureName, super.key,
+    required this.imagePath,
+    required this.species,
+    required this.length,
+    required this.weight,
+    required this.locationName,
+    required this.catchTime,
+    required this.rodName,
+    required this.reelName,
+    required this.lureName,
+    super.key,
     this.lengthUnit,
     this.weightUnit,
     this.rodBrand,

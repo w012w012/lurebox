@@ -7,9 +7,21 @@ import 'package:lurebox/widgets/common/premium_input.dart';
 import 'package:lurebox/widgets/common/unit_dropdown.dart';
 
 class ReelForm extends ConsumerWidget {
-
   const ReelForm({
-    required this.bearingsController, required this.ratioAController, required this.ratioBController, required this.capacityNumberController, required this.capacityLengthController, required this.weightController, required this.weightUnit, required this.onWeightUnitChanged, required this.dragController, required this.dragUnit, required this.onDragUnitChanged, required this.brakeType, required this.onBrakeTypeChanged, super.key,
+    required this.bearingsController,
+    required this.ratioAController,
+    required this.ratioBController,
+    required this.capacityNumberController,
+    required this.capacityLengthController,
+    required this.weightController,
+    required this.weightUnit,
+    required this.onWeightUnitChanged,
+    required this.dragController,
+    required this.dragUnit,
+    required this.onDragUnitChanged,
+    required this.brakeType,
+    required this.onBrakeTypeChanged,
+    super.key,
   });
   final TextEditingController bearingsController;
   final TextEditingController ratioAController;
@@ -80,7 +92,8 @@ class ReelForm extends ConsumerWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Text(strings.capacityLineUnit, style: const TextStyle(fontSize: 14)),
+              child: Text(strings.capacityLineUnit,
+                  style: const TextStyle(fontSize: 14)),
             ),
             Expanded(
               child: PremiumTextField(
@@ -104,11 +117,17 @@ class ReelForm extends ConsumerWidget {
           value: brakeType.isEmpty ? null : brakeType,
           items: [
             PremiumDropdownItem(value: 'none', label: strings.brakeTypeNone),
-            PremiumDropdownItem(value: 'traditional_magnetic', label: strings.brakeTypeTraditionalMagnetic),
-            PremiumDropdownItem(value: 'centrifugal', label: strings.brakeTypeCentrifugal),
+            PremiumDropdownItem(
+                value: 'traditional_magnetic',
+                label: strings.brakeTypeTraditionalMagnetic),
+            PremiumDropdownItem(
+                value: 'centrifugal', label: strings.brakeTypeCentrifugal),
             PremiumDropdownItem(value: 'dc', label: strings.brakeTypeDC),
-            PremiumDropdownItem(value: 'floating_magnetic', label: strings.brakeTypeFloatingMagnetic),
-            PremiumDropdownItem(value: 'innovative', label: strings.brakeTypeInnovative),
+            PremiumDropdownItem(
+                value: 'floating_magnetic',
+                label: strings.brakeTypeFloatingMagnetic),
+            PremiumDropdownItem(
+                value: 'innovative', label: strings.brakeTypeInnovative),
           ],
           onChanged: (value) {
             if (value != null) {

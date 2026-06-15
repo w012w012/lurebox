@@ -99,11 +99,14 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
           ),
           const SizedBox(width: TeslaTheme.spacingMd),
           Expanded(
-              child: Text(title,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge
-                      ?.copyWith(fontWeight: FontWeight.w500),),),
+            child: Text(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.w500),
+            ),
+          ),
           trailing,
         ],
       ),

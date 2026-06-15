@@ -193,7 +193,8 @@ class _BaseEquipmentEditNotifier {
     } catch (e) {
       AppLogger.e('EquipmentEditViewModel', 'Failed to save equipment', e);
       _updateState(
-        _state.withUpdates(isSaving: false, errorMessage: ErrorService.toUserMessage(e)),
+        _state.withUpdates(
+            isSaving: false, errorMessage: ErrorService.toUserMessage(e)),
       );
       return false;
     }
@@ -585,11 +586,16 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
       _delegateAndSync(() => _delegate.loadFromEquipment(equipment));
 
   // Shared fields
-  void updateBrand(String value) => _delegateAndSync(() => _delegate.updateBrand(value));
-  void updateModel(String value) => _delegateAndSync(() => _delegate.updateModel(value));
-  void updatePrice(String value) => _delegateAndSync(() => _delegate.updatePrice(value));
-  void updatePurchaseDate(String value) => _delegateAndSync(() => _delegate.updatePurchaseDate(value));
-  void updateIsDefault(bool value) => _delegateAndSync(() => _delegate.updateIsDefault(value));
+  void updateBrand(String value) =>
+      _delegateAndSync(() => _delegate.updateBrand(value));
+  void updateModel(String value) =>
+      _delegateAndSync(() => _delegate.updateModel(value));
+  void updatePrice(String value) =>
+      _delegateAndSync(() => _delegate.updatePrice(value));
+  void updatePurchaseDate(String value) =>
+      _delegateAndSync(() => _delegate.updatePurchaseDate(value));
+  void updateIsDefault(bool value) =>
+      _delegateAndSync(() => _delegate.updateIsDefault(value));
 
   void resetState() {
     _delegate = _createDelegate(state.type, null);
@@ -597,41 +603,72 @@ class EquipmentEditViewModel extends StateNotifier<EquipmentEditState> {
   }
 
   // Rod-specific
-  void updateCategoryType1(String value) => _delegateAndSync(() => _delegate.updateCategoryType1(value));
-  void updateCategoryType2(String value) => _delegateAndSync(() => _delegate.updateCategoryType2(value));
-  void updateLength(String value) => _delegateAndSync(() => _delegate.updateLength(value));
-  void updateLengthUnit(String value) => _delegateAndSync(() => _delegate.updateLengthUnit(value));
-  void updateSections(String value) => _delegateAndSync(() => _delegate.updateSections(value));
-  void updateJointType(String value) => _delegateAndSync(() => _delegate.updateJointType(value));
-  void updateMaterial(String value) => _delegateAndSync(() => _delegate.updateMaterial(value));
-  void updateHardness(String value) => _delegateAndSync(() => _delegate.updateHardness(value));
-  void updateRodAction(String value) => _delegateAndSync(() => _delegate.updateRodAction(value));
-  void updateWeightRange(String value) => _delegateAndSync(() => _delegate.updateWeightRange(value));
+  void updateCategoryType1(String value) =>
+      _delegateAndSync(() => _delegate.updateCategoryType1(value));
+  void updateCategoryType2(String value) =>
+      _delegateAndSync(() => _delegate.updateCategoryType2(value));
+  void updateLength(String value) =>
+      _delegateAndSync(() => _delegate.updateLength(value));
+  void updateLengthUnit(String value) =>
+      _delegateAndSync(() => _delegate.updateLengthUnit(value));
+  void updateSections(String value) =>
+      _delegateAndSync(() => _delegate.updateSections(value));
+  void updateJointType(String value) =>
+      _delegateAndSync(() => _delegate.updateJointType(value));
+  void updateMaterial(String value) =>
+      _delegateAndSync(() => _delegate.updateMaterial(value));
+  void updateHardness(String value) =>
+      _delegateAndSync(() => _delegate.updateHardness(value));
+  void updateRodAction(String value) =>
+      _delegateAndSync(() => _delegate.updateRodAction(value));
+  void updateWeightRange(String value) =>
+      _delegateAndSync(() => _delegate.updateWeightRange(value));
 
   // Reel-specific
-  void updateReelBearings(String value) => _delegateAndSync(() => _delegate.updateReelBearings(value));
-  void updateReelRatio(String value) => _delegateAndSync(() => _delegate.updateReelRatio(value));
-  void updateReelCapacity(String value) => _delegateAndSync(() => _delegate.updateReelCapacity(value));
-  void updateReelBrakeType(String value) => _delegateAndSync(() => _delegate.updateReelBrakeType(value));
-  void updateReelDrag(String value) => _delegateAndSync(() => _delegate.updateReelDrag(value));
-  void updateReelDragUnit(String value) => _delegateAndSync(() => _delegate.updateReelDragUnit(value));
-  void updateReelWeight(String value) => _delegateAndSync(() => _delegate.updateReelWeight(value));
-  void updateReelWeightUnit(String value) => _delegateAndSync(() => _delegate.updateReelWeightUnit(value));
-  void updateReelLine(String value) => _delegateAndSync(() => _delegate.updateReelLine(value));
-  void updateReelLineNumber(String value) => _delegateAndSync(() => _delegate.updateReelLineNumber(value));
-  void updateReelLineLength(String value) => _delegateAndSync(() => _delegate.updateReelLineLength(value));
-  void updateReelLineLengthUnit(String value) => _delegateAndSync(() => _delegate.updateReelLineLengthUnit(value));
-  void updateReelLineDate(String value) => _delegateAndSync(() => _delegate.updateReelLineDate(value));
+  void updateReelBearings(String value) =>
+      _delegateAndSync(() => _delegate.updateReelBearings(value));
+  void updateReelRatio(String value) =>
+      _delegateAndSync(() => _delegate.updateReelRatio(value));
+  void updateReelCapacity(String value) =>
+      _delegateAndSync(() => _delegate.updateReelCapacity(value));
+  void updateReelBrakeType(String value) =>
+      _delegateAndSync(() => _delegate.updateReelBrakeType(value));
+  void updateReelDrag(String value) =>
+      _delegateAndSync(() => _delegate.updateReelDrag(value));
+  void updateReelDragUnit(String value) =>
+      _delegateAndSync(() => _delegate.updateReelDragUnit(value));
+  void updateReelWeight(String value) =>
+      _delegateAndSync(() => _delegate.updateReelWeight(value));
+  void updateReelWeightUnit(String value) =>
+      _delegateAndSync(() => _delegate.updateReelWeightUnit(value));
+  void updateReelLine(String value) =>
+      _delegateAndSync(() => _delegate.updateReelLine(value));
+  void updateReelLineNumber(String value) =>
+      _delegateAndSync(() => _delegate.updateReelLineNumber(value));
+  void updateReelLineLength(String value) =>
+      _delegateAndSync(() => _delegate.updateReelLineLength(value));
+  void updateReelLineLengthUnit(String value) =>
+      _delegateAndSync(() => _delegate.updateReelLineLengthUnit(value));
+  void updateReelLineDate(String value) =>
+      _delegateAndSync(() => _delegate.updateReelLineDate(value));
 
   // Lure-specific
-  void updateLureType(String value) => _delegateAndSync(() => _delegate.updateLureType(value));
-  void updateLureWeight(String value) => _delegateAndSync(() => _delegate.updateLureWeight(value));
-  void updateLureWeightUnit(String value) => _delegateAndSync(() => _delegate.updateLureWeightUnit(value));
-  void updateLureSize(String value) => _delegateAndSync(() => _delegate.updateLureSize(value));
-  void updateLureSizeUnit(String value) => _delegateAndSync(() => _delegate.updateLureSizeUnit(value));
-  void updateLureColor(String value) => _delegateAndSync(() => _delegate.updateLureColor(value));
-  void updateLureQuantity(String value) => _delegateAndSync(() => _delegate.updateLureQuantity(value));
-  void updateLureQuantityUnit(String? value) => _delegateAndSync(() => _delegate.updateLureQuantityUnit(value));
+  void updateLureType(String value) =>
+      _delegateAndSync(() => _delegate.updateLureType(value));
+  void updateLureWeight(String value) =>
+      _delegateAndSync(() => _delegate.updateLureWeight(value));
+  void updateLureWeightUnit(String value) =>
+      _delegateAndSync(() => _delegate.updateLureWeightUnit(value));
+  void updateLureSize(String value) =>
+      _delegateAndSync(() => _delegate.updateLureSize(value));
+  void updateLureSizeUnit(String value) =>
+      _delegateAndSync(() => _delegate.updateLureSizeUnit(value));
+  void updateLureColor(String value) =>
+      _delegateAndSync(() => _delegate.updateLureColor(value));
+  void updateLureQuantity(String value) =>
+      _delegateAndSync(() => _delegate.updateLureQuantity(value));
+  void updateLureQuantityUnit(String? value) =>
+      _delegateAndSync(() => _delegate.updateLureQuantityUnit(value));
 
   String? validatePrice(AppStrings strings) => _delegate.validatePrice(strings);
 

@@ -12,7 +12,9 @@ void main() {
 
       test('returns field as-is when no special characters', () {
         expect(
-            CsvExporter.escapeCsvField('simple text'), equals('simple text'),);
+          CsvExporter.escapeCsvField('simple text'),
+          equals('simple text'),
+        );
       });
 
       test('wraps field in quotes when it contains a comma', () {
@@ -20,13 +22,17 @@ void main() {
       });
 
       test('wraps field in quotes and doubles embedded double quotes', () {
-        expect(CsvExporter.escapeCsvField('say "hello"'),
-            equals('"say ""hello"""'),);
+        expect(
+          CsvExporter.escapeCsvField('say "hello"'),
+          equals('"say ""hello"""'),
+        );
       });
 
       test('wraps field in quotes when it contains a newline', () {
-        expect(CsvExporter.escapeCsvField('line1\nline2'),
-            equals('"line1\nline2"'),);
+        expect(
+          CsvExporter.escapeCsvField('line1\nline2'),
+          equals('"line1\nline2"'),
+        );
       });
 
       test('handles integer input', () {
@@ -420,8 +426,30 @@ void main() {
     group('weather code mapping', () {
       test('maps WMO weather codes correctly', () async {
         final testCodes = [
-          0, 1, 2, 3, 45, 48, 51, 53, 55, 61, 63, 65, 71, 73, 75, 77, 80, 81,
-          82, 85, 86, 95, 96, 99,
+          0,
+          1,
+          2,
+          3,
+          45,
+          48,
+          51,
+          53,
+          55,
+          61,
+          63,
+          65,
+          71,
+          73,
+          75,
+          77,
+          80,
+          81,
+          82,
+          85,
+          86,
+          95,
+          96,
+          99,
         ];
 
         for (final code in testCodes) {
@@ -441,8 +469,11 @@ void main() {
           ];
 
           final csv = await CsvExporter.exportFishCatches(catches: catches);
-          expect(csv, contains(expected),
-              reason: 'Weather code $code should map to $expected',);
+          expect(
+            csv,
+            contains(expected),
+            reason: 'Weather code $code should map to $expected',
+          );
         }
       });
 

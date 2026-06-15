@@ -31,7 +31,8 @@ void main() {
       );
     });
 
-    test('preserves surrounding text when content does not start with code block',
+    test(
+        'preserves surrounding text when content does not start with code block',
         () {
       const content =
           '根据图片分析，识别结果如下：```json\n{"primarySpecies": {"chineseName": "黑鱼"}}\n```\n以上结果供参考';
@@ -50,7 +51,8 @@ void main() {
 
     test('trims whitespace from plain JSON', () {
       const content = '  \n  {"primarySpecies": {}}  \n  ';
-      expect(extractJsonFromResponse(content), equals('{"primarySpecies": {}}'));
+      expect(
+          extractJsonFromResponse(content), equals('{"primarySpecies": {}}'));
     });
 
     test('handles extra newlines and spaces in markdown block', () {
@@ -163,8 +165,7 @@ void main() {
       );
     });
 
-    test('throws FishRecognitionException for 401 with apiKeyInvalid type',
-        () {
+    test('throws FishRecognitionException for 401 with apiKeyInvalid type', () {
       final response = http.Response('Unauthorized', 401);
       expect(
         () => throwHttpError(response),
@@ -178,8 +179,7 @@ void main() {
       );
     });
 
-    test('throws FishRecognitionException for 403 with apiKeyInvalid type',
-        () {
+    test('throws FishRecognitionException for 403 with apiKeyInvalid type', () {
       final response = http.Response('Forbidden', 403);
       expect(
         () => throwHttpError(response),
@@ -193,8 +193,7 @@ void main() {
       );
     });
 
-    test('throws FishRecognitionException for 429 with rateLimited type',
-        () {
+    test('throws FishRecognitionException for 429 with rateLimited type', () {
       final response = http.Response('Too Many Requests', 429);
       expect(
         () => throwHttpError(response),
@@ -208,8 +207,7 @@ void main() {
       );
     });
 
-    test('throws FishRecognitionException for 500 with networkError type',
-        () {
+    test('throws FishRecognitionException for 500 with networkError type', () {
       final response = http.Response('Internal Server Error', 500);
       expect(
         () => throwHttpError(response),

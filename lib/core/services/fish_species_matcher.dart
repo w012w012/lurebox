@@ -9,7 +9,6 @@ import 'package:lurebox/features/achievement/fish_guide_data.dart';
 /// 3. 部分匹配（输入包含在名称或别名中）
 /// 4. 相似度匹配（Levenshtein距离）
 class FishSpeciesMatcher {
-
   /// 创建鱼类物种匹配服务
   ///
   /// 默认使用 FishGuideData 中的全部物种

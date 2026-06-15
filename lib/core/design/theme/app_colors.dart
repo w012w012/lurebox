@@ -131,14 +131,19 @@ class AppColors {
 
   /// Primary CTA background.
   static const Color teslaCtaBackground = teslaElectricBlue;
+
   /// Primary CTA text.
   static const Color teslaCtaText = teslaWhite;
+
   /// Light mode surface (white canvas).
   static const Color teslaSurfaceLight = teslaWhite;
+
   /// Dark mode surface (carbon dark).
   static const Color teslaSurfaceDark = teslaCarbonDark;
+
   /// Light mode background (white).
   static const Color teslaBackgroundLight = teslaWhite;
+
   /// Dark mode background (pure black for OLED).
   static const Color teslaBackgroundDark = Color(0xFF000000);
 
@@ -224,12 +229,9 @@ class TeslaColors {
   static const Color paleSilver = Color(0xFFD0D1D2);
 
   // Frosted glass helpers
-  static Color get frostedGlassWhite =>
-      white.withValues(alpha: 0.75);
-  static Color get frostedGlassDark =>
-      carbonDark.withValues(alpha: 0.85);
-  static Color get overlay =>
-      const Color(0xFF808080).withValues(alpha: 0.65);
+  static Color get frostedGlassWhite => white.withValues(alpha: 0.75);
+  static Color get frostedGlassDark => carbonDark.withValues(alpha: 0.85);
+  static Color get overlay => const Color(0xFF808080).withValues(alpha: 0.65);
 
   // Semantic aliases
   static const Color ctaBackground = electricBlue;

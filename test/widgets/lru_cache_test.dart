@@ -89,7 +89,8 @@ void main() {
       expect(cache.length, 2);
     });
 
-    test('setting maxSize evicts excess entries from least recently used end', () {
+    test('setting maxSize evicts excess entries from least recently used end',
+        () {
       final cache = LRUMap<String, int>(maxSize: 5);
 
       cache.put('a', 1);

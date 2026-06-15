@@ -19,9 +19,10 @@ import 'package:path_provider/path_provider.dart';
 /// - 测试连接按钮
 /// - 保存/取消按钮
 class AiProviderConfigDialog extends ConsumerStatefulWidget {
-
   const AiProviderConfigDialog({
-    required this.provider, required this.onSave, super.key,
+    required this.provider,
+    required this.onSave,
+    super.key,
     this.config,
   });
   final AiRecognitionProvider provider;
@@ -385,7 +386,8 @@ class _AiProviderConfigDialogState
 
     if (mounted) {
       Navigator.pop(context);
-      AppSnackBar.showSuccess(context, ref.read(currentStringsProvider).aiConfigSaved);
+      AppSnackBar.showSuccess(
+          context, ref.read(currentStringsProvider).aiConfigSaved);
     }
   }
 }

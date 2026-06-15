@@ -4,14 +4,12 @@ import 'package:lurebox/core/services/error_service.dart';
 import 'package:lurebox/core/services/location_service.dart';
 
 class LocationGroup {
-
   const LocationGroup({required this.representative, required this.locations});
   final String representative;
   final List<String> locations;
 }
 
 class LocationManagementState {
-
   const LocationManagementState({
     this.isLoading = true,
     this.errorMessage,
@@ -52,7 +50,6 @@ class LocationManagementState {
 
 class LocationManagementViewModel
     extends StateNotifier<LocationManagementState> {
-
   LocationManagementViewModel(this._locationService)
       : super(const LocationManagementState()) {
     loadData();
@@ -85,7 +82,8 @@ class LocationManagementViewModel
       );
     } on Exception catch (e) {
       if (!mounted) return;
-      state = state.copyWith(isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
     }
   }
 
@@ -128,7 +126,8 @@ class LocationManagementViewModel
       return true;
     } on Exception catch (e) {
       if (!mounted) return false;
-      state = state.copyWith(isMerging: false, errorMessage: () => ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          isMerging: false, errorMessage: () => ErrorService.toUserMessage(e));
       return false;
     }
   }
@@ -148,7 +147,8 @@ class LocationManagementViewModel
       return true;
     } on Exception catch (e) {
       if (!mounted) return false;
-      state = state.copyWith(isMerging: false, errorMessage: () => ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          isMerging: false, errorMessage: () => ErrorService.toUserMessage(e));
       return false;
     }
   }
@@ -165,7 +165,8 @@ class LocationManagementViewModel
       return true;
     } on Exception catch (e) {
       if (!mounted) return false;
-      state = state.copyWith(isMerging: false, errorMessage: () => ErrorService.toUserMessage(e));
+      state = state.copyWith(
+          isMerging: false, errorMessage: () => ErrorService.toUserMessage(e));
       return false;
     }
   }

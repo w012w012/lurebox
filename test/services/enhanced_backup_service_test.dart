@@ -37,7 +37,8 @@ class MockDb extends Mock implements Database {
     int? limit,
     int? offset,
   }) async {
-    return (_queryResults[table] ?? <Map<String, dynamic>>[]) as List<Map<String, Object?>>;
+    return (_queryResults[table] ?? <Map<String, dynamic>>[])
+        as List<Map<String, Object?>>;
   }
 
   @override
@@ -224,23 +225,28 @@ class _MockTransaction implements Transaction {
   Batch batch() => _MockBatch();
 
   @override
-  Future<QueryCursor> rawQueryCursor(String sql, List<Object?>? arguments,
-      {int? bufferSize,}) async {
+  Future<QueryCursor> rawQueryCursor(
+    String sql,
+    List<Object?>? arguments, {
+    int? bufferSize,
+  }) async {
     throw UnimplementedError();
   }
 
   @override
-  Future<QueryCursor> queryCursor(String table,
-      {bool? distinct,
-      List<String>? columns,
-      String? where,
-      List<Object?>? whereArgs,
-      String? groupBy,
-      String? having,
-      String? orderBy,
-      int? limit,
-      int? offset,
-      int? bufferSize,}) async {
+  Future<QueryCursor> queryCursor(
+    String table, {
+    bool? distinct,
+    List<String>? columns,
+    String? where,
+    List<Object?>? whereArgs,
+    String? groupBy,
+    String? having,
+    String? orderBy,
+    int? limit,
+    int? offset,
+    int? bufferSize,
+  }) async {
     throw UnimplementedError();
   }
 }
@@ -264,17 +270,24 @@ class _MockBatch implements Batch {
   void rawInsert(String sql, [List<Object?>? arguments]) {}
 
   @override
-  void insert(String table, Map<String, Object?> values,
-      {String? nullColumnHack, ConflictAlgorithm? conflictAlgorithm,}) {}
+  void insert(
+    String table,
+    Map<String, Object?> values, {
+    String? nullColumnHack,
+    ConflictAlgorithm? conflictAlgorithm,
+  }) {}
 
   @override
   void rawUpdate(String sql, [List<Object?>? arguments]) {}
 
   @override
-  void update(String table, Map<String, Object?> values,
-      {String? where,
-      List<Object?>? whereArgs,
-      ConflictAlgorithm? conflictAlgorithm,}) {}
+  void update(
+    String table,
+    Map<String, Object?> values, {
+    String? where,
+    List<Object?>? whereArgs,
+    ConflictAlgorithm? conflictAlgorithm,
+  }) {}
 
   @override
   void rawDelete(String sql, [List<Object?>? arguments]) {}
@@ -286,16 +299,18 @@ class _MockBatch implements Batch {
   void execute(String sql, [List<Object?>? arguments]) {}
 
   @override
-  void query(String table,
-      {bool? distinct,
-      List<String>? columns,
-      String? where,
-      List<Object?>? whereArgs,
-      String? groupBy,
-      String? having,
-      String? orderBy,
-      int? limit,
-      int? offset,}) {}
+  void query(
+    String table, {
+    bool? distinct,
+    List<String>? columns,
+    String? where,
+    List<Object?>? whereArgs,
+    String? groupBy,
+    String? having,
+    String? orderBy,
+    int? limit,
+    int? offset,
+  }) {}
 
   @override
   void rawQuery(String sql, [List<Object?>? arguments]) {}
@@ -306,7 +321,6 @@ class _MockBatch implements Batch {
 
 // Mock DatabaseProvider
 class MockDatabaseProvider extends Mock implements DatabaseProvider {
-
   MockDatabaseProvider(this.mockDb);
   final MockDb mockDb;
 
@@ -771,10 +785,14 @@ void main() {
         // Assert
         expect(result.length, equals(2));
         // Verify we got the recovery files (order depends on implementation)
-        expect(result.any((f) => f.path.contains('lurebox_recovery_1000')),
-            isTrue,);
-        expect(result.any((f) => f.path.contains('lurebox_recovery_2000')),
-            isTrue,);
+        expect(
+          result.any((f) => f.path.contains('lurebox_recovery_1000')),
+          isTrue,
+        );
+        expect(
+          result.any((f) => f.path.contains('lurebox_recovery_2000')),
+          isTrue,
+        );
 
         // Cleanup
         await recoveryDir.delete(recursive: true);
@@ -995,6 +1013,8 @@ void main() {
                 length_unit TEXT DEFAULT 'cm',
                 weight REAL,
                 weight_unit TEXT DEFAULT 'kg',
+                length_cm REAL,
+                weight_kg REAL,
                 fate INTEGER DEFAULT 0,
                 catch_time TEXT NOT NULL,
                 location_name TEXT,
@@ -1061,7 +1081,8 @@ void main() {
     test('throws exception when file does not exist', () async {
       await expectLater(
         realDbService.importFromJsonWithDeduplication(
-            '/non/existent/path/backup.json',),
+          '/non/existent/path/backup.json',
+        ),
         throwsA(isA<Exception>()),
       );
     });
@@ -1202,8 +1223,10 @@ void main() {
     setUp(() async {
       realDb = await databaseFactoryFfi.openDatabase(
         inMemoryDatabasePath,
-        options: OpenDatabaseOptions(version: 1, onCreate: (db, v) async {
-          await db.execute('''
+        options: OpenDatabaseOptions(
+          version: 1,
+          onCreate: (db, v) async {
+            await db.execute('''
             CREATE TABLE fish_catches (
               id INTEGER PRIMARY KEY,
               species TEXT,
@@ -1212,7 +1235,7 @@ void main() {
               created_at TEXT
             )
           ''');
-          await db.execute('''
+            await db.execute('''
             CREATE TABLE equipments (
               id INTEGER PRIMARY KEY,
               type TEXT,
@@ -1220,7 +1243,8 @@ void main() {
               created_at TEXT
             )
           ''');
-        },),
+          },
+        ),
       );
       fakeBackupService = _FakeBackupService();
       fakeBackupZipService = _FakeBackupZipService();
@@ -1360,7 +1384,8 @@ void main() {
 
       // Re-stub with capture for this test (clears previous stub from setUp)
       BackupHistory? capturedHistory;
-      when(() => mockConfigRepo.addBackupHistory(any())).thenAnswer((inv) async {
+      when(() => mockConfigRepo.addBackupHistory(any()))
+          .thenAnswer((inv) async {
         capturedHistory = inv.positionalArguments[0] as BackupHistory;
         return 1;
       });

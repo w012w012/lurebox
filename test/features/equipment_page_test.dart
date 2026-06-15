@@ -10,8 +10,10 @@ import 'package:lurebox/widgets/common/premium_input.dart';
 void main() {
   group('Design System Verification Tests', () {
     test('AnimationConstants uses correct touch feedback values', () {
-      expect(AnimationConstants.touchFeedbackDuration,
-          const Duration(milliseconds: 150),);
+      expect(
+        AnimationConstants.touchFeedbackDuration,
+        const Duration(milliseconds: 150),
+      );
       expect(AnimationConstants.touchScale, 0.98);
     });
 

@@ -11,11 +11,10 @@ import 'package:sqflite/sqflite.dart' hide DatabaseException;
 /// - [paginate] helper for paginated queries
 /// - [throwDbError] for consistent error wrapping
 abstract class BaseSqliteRepository {
-
   BaseSqliteRepository();
 
-  BaseSqliteRepository.withDatabase(Future<Database> testDb)
-      : _testDb = testDb;
+  BaseSqliteRepository.withDatabase(Future<Database> testDb) : _testDb = testDb;
+
   /// Optional test database future (injected via [withDatabase]).
   Future<Database>? _testDb;
 
@@ -49,8 +48,7 @@ abstract class BaseSqliteRepository {
     ) dataQuery,
     required T Function(Map<String, dynamic>) fromMap,
   }) async {
-    final clampedSize =
-        pageSize.clamp(1, PaginationConstants.maxPageSize);
+    final clampedSize = pageSize.clamp(1, PaginationConstants.maxPageSize);
     final db = await database;
 
     final totalCount = await countQuery(db);

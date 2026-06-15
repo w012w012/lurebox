@@ -11,7 +11,6 @@ import 'package:lurebox/core/utils/input_validator.dart';
 /// 注意：[findSimilarLocations] 是同步方法，其他为异步方法。
 
 class LocationService {
-
   LocationService(this._dbProvider);
   final DatabaseProvider _dbProvider;
 

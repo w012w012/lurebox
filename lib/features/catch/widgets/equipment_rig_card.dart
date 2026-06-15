@@ -10,9 +10,12 @@ import 'package:lurebox/widgets/common/premium_button.dart';
 ///
 /// 展示装备信息（鱼竿、鱼轮、鱼饵）
 class EquipmentRigCard extends StatelessWidget {
-
   const EquipmentRigCard({
-    required this.state, required this.vm, required this.strings, required this.onModifyPressed, super.key,
+    required this.state,
+    required this.vm,
+    required this.strings,
+    required this.onModifyPressed,
+    super.key,
     this.isChinese = true,
   });
   final CameraState state;
@@ -96,7 +99,8 @@ class EquipmentRigCard extends StatelessWidget {
     }
     if (rod.length?.isNotEmpty ?? false) {
       parts.add(
-          '${rod.length}${UnitConverter.getLengthSymbol(rod.lengthUnit, isChinese: isChinese)}',);
+        '${rod.length}${UnitConverter.getLengthSymbol(rod.lengthUnit, isChinese: isChinese)}',
+      );
     }
     if (rod.hardness?.isNotEmpty ?? false) parts.add(rod.hardness!);
     if (rod.rodAction?.isNotEmpty ?? false) parts.add(rod.rodAction!);
@@ -119,7 +123,8 @@ class EquipmentRigCard extends StatelessWidget {
     if (lure.model?.isNotEmpty ?? false) parts.add(lure.model!);
     if (lure.lureSize?.isNotEmpty ?? false) {
       parts.add(
-          '${lure.lureSize}${UnitConverter.getLengthSymbol(lure.lureSizeUnit, isChinese: isChinese)}',);
+        '${lure.lureSize}${UnitConverter.getLengthSymbol(lure.lureSizeUnit, isChinese: isChinese)}',
+      );
     }
     if (lure.lureColor?.isNotEmpty ?? false) parts.add(lure.lureColor!);
     return parts.isEmpty ? '-' : parts.join(' / ');
@@ -128,7 +133,6 @@ class EquipmentRigCard extends StatelessWidget {
 
 /// 装备信息行
 class _EquipmentRow extends StatelessWidget {
-
   const _EquipmentRow({required this.label, required this.value});
   final String label;
   final String value;

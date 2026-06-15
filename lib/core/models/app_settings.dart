@@ -35,7 +35,8 @@ import 'package:lurebox/core/utils/legacy_value_migrator.dart';
 /// - 多语言支持
 
 /// 单位设置 - 按物品类型分组
-class UnitSettings { // C, F
+class UnitSettings {
+  // C, F
 
   const UnitSettings({
     this.fishLengthUnit = 'cm',
@@ -125,7 +126,6 @@ enum AppLanguage { chinese, english }
 
 /// 应用设置
 class AppSettings {
-
   const AppSettings({
     this.units = const UnitSettings(),
     this.darkMode = DarkMode.system,

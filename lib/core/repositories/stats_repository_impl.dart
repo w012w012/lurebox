@@ -113,8 +113,10 @@ class SqliteStatsRepository extends BaseSqliteRepository
   Future<int> getCatchesAboveLength(double minLength) async {
     try {
       final db = await database;
+      // 阈值以厘米为单位（成就口径），按基准列比较；遗留 NULL 行回退原始值。
       final results = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $tableName WHERE length >= ?',
+        'SELECT COUNT(*) as count FROM $tableName '
+        'WHERE COALESCE(length_cm, length) >= ?',
         [minLength],
       );
       return results.first['count'] as int? ?? 0;
@@ -351,8 +353,10 @@ class SqliteStatsRepository extends BaseSqliteRepository
   Future<double> getTotalWeight() async {
     try {
       final db = await database;
+      // 基准千克求和（遗留 NULL 行回退原始值）。返回值单位为 kg。
       final results = await db.rawQuery(
-        'SELECT SUM(weight) as total FROM $tableName WHERE weight IS NOT NULL',
+        'SELECT SUM(COALESCE(weight_kg, weight)) as total FROM $tableName '
+        'WHERE weight IS NOT NULL',
       );
       return (results.first['total'] as num?)?.toDouble() ?? 0.0;
     } catch (e) {
@@ -364,8 +368,10 @@ class SqliteStatsRepository extends BaseSqliteRepository
   Future<double> getMaxLength() async {
     try {
       final db = await database;
+      // 基准厘米最大值（遗留 NULL 行回退原始值）。返回值单位为 cm。
       final results = await db.rawQuery(
-        'SELECT MAX(length) as max_length FROM $tableName WHERE length IS NOT NULL',
+        'SELECT MAX(COALESCE(length_cm, length)) as max_length FROM $tableName '
+        'WHERE length IS NOT NULL',
       );
       return (results.first['max_length'] as num?)?.toDouble() ?? 0.0;
     } catch (e) {
@@ -584,13 +590,13 @@ SELECT
   AVG(weight) as avg_weight,
   SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as release_count
 FROM (
-  SELECT equipment_id as eq_id, species, length, weight, fate FROM $tableName WHERE equipment_id IS NOT NULL
+  SELECT equipment_id as eq_id, species, COALESCE(length_cm, length) as length, COALESCE(weight_kg, weight) as weight, fate FROM $tableName WHERE equipment_id IS NOT NULL
   UNION ALL
-  SELECT rod_id as eq_id, species, length, weight, fate FROM $tableName WHERE rod_id IS NOT NULL
+  SELECT rod_id as eq_id, species, COALESCE(length_cm, length) as length, COALESCE(weight_kg, weight) as weight, fate FROM $tableName WHERE rod_id IS NOT NULL
   UNION ALL
-  SELECT reel_id as eq_id, species, length, weight, fate FROM $tableName WHERE reel_id IS NOT NULL
+  SELECT reel_id as eq_id, species, COALESCE(length_cm, length) as length, COALESCE(weight_kg, weight) as weight, fate FROM $tableName WHERE reel_id IS NOT NULL
   UNION ALL
-  SELECT lure_id as eq_id, species, length, weight, fate FROM $tableName WHERE lure_id IS NOT NULL
+  SELECT lure_id as eq_id, species, COALESCE(length_cm, length) as length, COALESCE(weight_kg, weight) as weight, fate FROM $tableName WHERE lure_id IS NOT NULL
 )
 GROUP BY eq_id
 ''',
@@ -708,9 +714,10 @@ GROUP BY eq_id, species
   Future<List<FishCatch>> getTop3LongestCatches() async {
     try {
       final db = await database;
+      // 按基准厘米排序（遗留 NULL 行回退原始值），避免混合单位下排名错误。
       final results = await db.query(
         tableName,
-        orderBy: 'length DESC',
+        orderBy: 'COALESCE(length_cm, length) DESC',
         limit: 3,
       );
       return List<FishCatch>.from(

@@ -219,7 +219,8 @@ class MockSettingsService implements SettingsService {
 
   @override
   Future<void> saveAiRecognitionSettings(
-      AiRecognitionSettings settings,) async {}
+    AiRecognitionSettings settings,
+  ) async {}
 
   @override
   Future<void> deleteAiRecognitionSettings() async {}

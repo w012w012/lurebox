@@ -218,14 +218,22 @@ class _MePageState extends ConsumerState<MePage> {
                     ),
               ),
               const SizedBox(height: TeslaTheme.spacingSm),
-              _buildFeatureItem(ctx, '🐟', strings.aboutFeatureCatchTitle, strings.aboutFeatureCatchDesc),
-              _buildFeatureItem(ctx, '🎣', strings.aboutFeatureEquipmentTitle, strings.aboutFeatureEquipmentDesc),
-              _buildFeatureItem(ctx, '📊', strings.aboutFeatureStatsTitle, strings.aboutFeatureStatsDesc),
-              _buildFeatureItem(ctx, '📸', strings.aboutFeatureAITitle, strings.aboutFeatureAIDesc),
-              _buildFeatureItem(ctx, '💧', strings.aboutFeatureWatermarkTitle, strings.aboutFeatureWatermarkDesc),
-              _buildFeatureItem(ctx, '📤', strings.aboutFeatureExportTitle, strings.aboutFeatureExportDesc),
-              _buildFeatureItem(ctx, '☁️', strings.aboutFeatureCloudTitle, strings.aboutFeatureCloudDesc),
-              _buildFeatureItem(ctx, '🏆', strings.aboutFeatureAchievementTitle, strings.aboutFeatureAchievementDesc),
+              _buildFeatureItem(ctx, '🐟', strings.aboutFeatureCatchTitle,
+                  strings.aboutFeatureCatchDesc),
+              _buildFeatureItem(ctx, '🎣', strings.aboutFeatureEquipmentTitle,
+                  strings.aboutFeatureEquipmentDesc),
+              _buildFeatureItem(ctx, '📊', strings.aboutFeatureStatsTitle,
+                  strings.aboutFeatureStatsDesc),
+              _buildFeatureItem(ctx, '📸', strings.aboutFeatureAITitle,
+                  strings.aboutFeatureAIDesc),
+              _buildFeatureItem(ctx, '💧', strings.aboutFeatureWatermarkTitle,
+                  strings.aboutFeatureWatermarkDesc),
+              _buildFeatureItem(ctx, '📤', strings.aboutFeatureExportTitle,
+                  strings.aboutFeatureExportDesc),
+              _buildFeatureItem(ctx, '☁️', strings.aboutFeatureCloudTitle,
+                  strings.aboutFeatureCloudDesc),
+              _buildFeatureItem(ctx, '🏆', strings.aboutFeatureAchievementTitle,
+                  strings.aboutFeatureAchievementDesc),
               const SizedBox(height: TeslaTheme.spacingMd),
               Text(
                 strings.aboutCopyright,
@@ -247,7 +255,11 @@ class _MePageState extends ConsumerState<MePage> {
   }
 
   Widget _buildFeatureItem(
-      BuildContext ctx, String emoji, String title, String description,) {
+    BuildContext ctx,
+    String emoji,
+    String title,
+    String description,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: TeslaTheme.spacingMicro),
       child: Row(
@@ -259,10 +271,12 @@ class _MePageState extends ConsumerState<MePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+                Text(title,
+                    style: const TextStyle(fontWeight: FontWeight.w500)),
                 Text(
                   description,
-                  style: const TextStyle(fontSize: 12, color: TeslaColors.graphite),
+                  style: const TextStyle(
+                      fontSize: 12, color: TeslaColors.graphite),
                 ),
               ],
             ),

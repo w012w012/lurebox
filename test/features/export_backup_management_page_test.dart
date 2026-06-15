@@ -239,7 +239,8 @@ class _TestableExportBackupPageState
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: iconColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(4),
@@ -337,8 +338,7 @@ void main() {
       );
     });
 
-    testWidgets('shows loading indicator while fetching files',
-        (tester) async {
+    testWidgets('shows loading indicator while fetching files', (tester) async {
       // Use an incomplete completer to keep future in waiting state
       final completer = Completer<List<FileInfo>>();
 

@@ -55,9 +55,12 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
       await file.writeAsBytes(pngBytes);
 
       final strings = ref.read(currentStringsProvider);
-      await Share.shareXFiles([
-        XFile(file.path),
-      ], text: '${strings.myEquipment} - ${strings.fromLureBox}',);
+      await Share.shareXFiles(
+        [
+          XFile(file.path),
+        ],
+        text: '${strings.myEquipment} - ${strings.fromLureBox}',
+      );
     } catch (e) {
       AppLogger.e('EquipmentOverview', 'Failed to share equipment overview', e);
       if (mounted) {
@@ -283,12 +286,8 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                         },
                       ),
                     ),
-                    leftTitles: const AxisTitles(
-                      
-                    ),
-                    rightTitles: const AxisTitles(
-                      
-                    ),
+                    leftTitles: const AxisTitles(),
+                    rightTitles: const AxisTitles(),
                   ),
                   gridData: const FlGridData(show: false),
                   borderData: FlBorderData(show: false),
@@ -320,8 +319,11 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
           children: [
             Row(
               children: [
-                const Icon(Icons.emoji_events,
-                    color: TeslaColors.electricBlue, size: 20,),
+                const Icon(
+                  Icons.emoji_events,
+                  color: TeslaColors.electricBlue,
+                  size: 20,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   strings.equipmentCatchRanking,
@@ -458,7 +460,8 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('${strings.rod}${strings.distribution}', TeslaColors.electricBlue),
+        _buildSectionTitle(
+            '${strings.rod}${strings.distribution}', TeslaColors.electricBlue),
         const SizedBox(height: 12),
         _buildBarChart(
           _getDistribution(
@@ -472,7 +475,8 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         _buildBarChart(
           _getDistribution(
             rods,
-            (e) => e.length?.isNotEmpty ?? false ? e.length! : strings.notFilled,
+            (e) =>
+                e.length?.isNotEmpty ?? false ? e.length! : strings.notFilled,
           ),
           '${strings.length}${strings.distribution}',
           TeslaColors.electricBlue,
@@ -517,7 +521,8 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
-        _buildPriceChart(rods, '${strings.rod}${strings.priceDistribution}', TeslaColors.electricBlue),
+        _buildPriceChart(rods, '${strings.rod}${strings.priceDistribution}',
+            TeslaColors.electricBlue),
       ],
     );
   }
@@ -526,7 +531,8 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('${strings.reel}${strings.distribution}', TeslaColors.electricBlue),
+        _buildSectionTitle(
+            '${strings.reel}${strings.distribution}', TeslaColors.electricBlue),
         const SizedBox(height: 12),
         _buildBarChart(
           _getDistribution(
@@ -584,7 +590,8 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildSectionTitle('${strings.lure}${strings.distribution}', TeslaColors.electricBlue),
+        _buildSectionTitle(
+            '${strings.lure}${strings.distribution}', TeslaColors.electricBlue),
         const SizedBox(height: 12),
         _buildBarChart(
           _getDistribution(
@@ -727,15 +734,9 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                         },
                       ),
                     ),
-                    leftTitles: const AxisTitles(
-                      
-                    ),
-                    topTitles: const AxisTitles(
-                      
-                    ),
-                    rightTitles: const AxisTitles(
-                      
-                    ),
+                    leftTitles: const AxisTitles(),
+                    topTitles: const AxisTitles(),
+                    rightTitles: const AxisTitles(),
                   ),
                   borderData: FlBorderData(show: false),
                   gridData: const FlGridData(show: false),

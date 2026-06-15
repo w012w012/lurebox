@@ -145,8 +145,10 @@ void main() {
     });
 
     test('returns list of equipment when type is null', () async {
-      final rod = _createEquipment(id: 1, type: EquipmentType.rod, brand: 'Shimano');
-      final reel = _createEquipment(id: 2, type: EquipmentType.reel, brand: 'Shimano');
+      final rod =
+          _createEquipment(id: 1, type: EquipmentType.rod, brand: 'Shimano');
+      final reel =
+          _createEquipment(id: 2, type: EquipmentType.reel, brand: 'Shimano');
       fakeService.getAllResult = [rod, reel];
 
       final result = await container.read(equipmentProviderV2(null).future);
@@ -156,7 +158,8 @@ void main() {
     });
 
     test('returns list of equipment filtered by type', () async {
-      final rod = _createEquipment(id: 1, type: EquipmentType.rod, brand: 'Shimano');
+      final rod =
+          _createEquipment(id: 1, type: EquipmentType.rod, brand: 'Shimano');
       fakeService.getAllResult = [rod];
 
       final result = await container.read(equipmentProviderV2('rod').future);
@@ -198,7 +201,8 @@ void main() {
     });
 
     test('returns Equipment when found', () async {
-      final equipment = _createEquipment(id: 1, type: EquipmentType.rod, brand: 'Shimano');
+      final equipment =
+          _createEquipment(id: 1, type: EquipmentType.rod, brand: 'Shimano');
       fakeService.getByIdResult = equipment;
 
       final result = await container.read(equipmentByIdProvider(1).future);
@@ -249,7 +253,8 @@ void main() {
       );
       fakeService.getDefaultEquipmentResult = defaultRod;
 
-      final result = await container.read(defaultEquipmentProvider('rod').future);
+      final result =
+          await container.read(defaultEquipmentProvider('rod').future);
 
       expect(result, isNotNull);
       expect(result!.isDefault, isTrue);
@@ -259,7 +264,8 @@ void main() {
     test('returns null when no default exists for type', () async {
       fakeService.getDefaultEquipmentResult = null;
 
-      final result = await container.read(defaultEquipmentProvider('lure').future);
+      final result =
+          await container.read(defaultEquipmentProvider('lure').future);
 
       expect(result, isNull);
     });
@@ -299,8 +305,8 @@ void main() {
       );
 
       final result = await container.read(
-        paginatedEquipmentProvider((page: 1, pageSize: 20, type: null, orderBy: null))
-            .future,
+        paginatedEquipmentProvider(
+            (page: 1, pageSize: 20, type: null, orderBy: null)).future,
       );
 
       expect(result.items.length, equals(1));
@@ -319,8 +325,8 @@ void main() {
       );
 
       final result = await container.read(
-        paginatedEquipmentProvider((page: 2, pageSize: 10, type: null, orderBy: null))
-            .future,
+        paginatedEquipmentProvider(
+            (page: 2, pageSize: 10, type: null, orderBy: null)).future,
       );
 
       expect(result.page, equals(2));
@@ -338,8 +344,8 @@ void main() {
       );
 
       final result = await container.read(
-        paginatedEquipmentProvider((page: 1, pageSize: 20, type: null, orderBy: null))
-            .future,
+        paginatedEquipmentProvider(
+            (page: 1, pageSize: 20, type: null, orderBy: null)).future,
       );
 
       expect(result.items, isEmpty);
@@ -355,7 +361,8 @@ void main() {
         hasMore: false,
       );
       final asyncValue = container.read(
-        paginatedEquipmentProvider((page: 1, pageSize: 20, type: null, orderBy: null)),
+        paginatedEquipmentProvider(
+            (page: 1, pageSize: 20, type: null, orderBy: null)),
       );
       expect(asyncValue.isLoading, isTrue);
     });
@@ -470,7 +477,8 @@ void main() {
     test('returns models for specific brand', () async {
       fakeService.getModelsByBrandResult = ['Stella', 'Stradivair', 'Nasci'];
 
-      final result = await container.read(modelsByBrandProvider('Shimano').future);
+      final result =
+          await container.read(modelsByBrandProvider('Shimano').future);
 
       expect(result.length, equals(3));
       expect(result, contains('Stella'));
@@ -480,7 +488,8 @@ void main() {
     test('returns empty list when brand has no models', () async {
       fakeService.getModelsByBrandResult = [];
 
-      final result = await container.read(modelsByBrandProvider('Unknown').future);
+      final result =
+          await container.read(modelsByBrandProvider('Unknown').future);
 
       expect(result, isEmpty);
     });

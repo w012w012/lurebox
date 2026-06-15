@@ -89,8 +89,10 @@ void main() {
 
         when(() => mockService.getAllLocations())
             .thenAnswer((_) async => locations);
-        when(() => mockService
-            .findSimilarLocations(['Lake A', 'Lake B', 'Lake C']),).thenReturn([
+        when(
+          () =>
+              mockService.findSimilarLocations(['Lake A', 'Lake B', 'Lake C']),
+        ).thenReturn([
           ['Lake A', 'Lake B'],
           ['Lake C'],
         ]);
@@ -158,7 +160,8 @@ void main() {
     group('selectAll', () {
       test('selects all locations', () async {
         when(() => mockService.getAllLocations()).thenAnswer(
-            (_) async => createLocations(['Lake A', 'Lake B', 'Lake C']),);
+          (_) async => createLocations(['Lake A', 'Lake B', 'Lake C']),
+        );
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
 
         viewModel = LocationManagementViewModel(mockService);
@@ -167,7 +170,8 @@ void main() {
         viewModel.selectAll();
 
         expect(viewModel.state.selectedLocations.length, 3);
-        expect(viewModel.state.selectedLocations, containsAll(['Lake A', 'Lake B', 'Lake C']));
+        expect(viewModel.state.selectedLocations,
+            containsAll(['Lake A', 'Lake B', 'Lake C']));
       });
     });
 
@@ -204,7 +208,8 @@ void main() {
 
       test('merges locations successfully when 2+ selected', () async {
         when(() => mockService.getAllLocations()).thenAnswer(
-            (_) async => createLocations(['Lake A', 'Lake B', 'Lake C']),);
+          (_) async => createLocations(['Lake A', 'Lake B', 'Lake C']),
+        );
         when(() => mockService.findSimilarLocations(any())).thenReturn([]);
         when(() => mockService.mergeLocations(['Lake A', 'Lake B'], 'New Lake'))
             .thenAnswer((_) async {});
@@ -217,9 +222,9 @@ void main() {
         final result = await viewModel.mergeLocations('New Lake');
 
         expect(result, true);
-        verify(() =>
-                mockService.mergeLocations(['Lake A', 'Lake B'], 'New Lake'),)
-            .called(1);
+        verify(
+          () => mockService.mergeLocations(['Lake A', 'Lake B'], 'New Lake'),
+        ).called(1);
       });
 
       test('handles error during merge', () async {

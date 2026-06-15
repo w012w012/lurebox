@@ -3,7 +3,6 @@ import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/services/share_template.dart';
 
 class ShareCardWidget extends StatelessWidget {
-
   const ShareCardWidget({required this.config, super.key, this.repaintKey});
   final ShareCardConfig config;
   final GlobalKey? repaintKey;

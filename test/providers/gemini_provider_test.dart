@@ -54,12 +54,14 @@ void main() {
         final responseJson = _createSuccessfulGeminiResponse();
         final mockResponse = _createUtf8Response(jsonEncode(responseJson), 200);
 
-        when(() => mockHttpClient.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-              encoding: any(named: 'encoding'),
-            ),).thenAnswer((_) async => mockResponse);
+        when(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
 
         // Act
         final result = await provider.identifySpecies(imageFile, config);
@@ -79,23 +81,27 @@ void main() {
         final responseJson = _createSuccessfulGeminiResponse();
         final mockResponse = _createUtf8Response(jsonEncode(responseJson), 200);
 
-        when(() => mockHttpClient.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-              encoding: any(named: 'encoding'),
-            ),).thenAnswer((_) async => mockResponse);
+        when(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
 
         // Act
         await provider.identifySpecies(imageFile, config);
 
         // Assert - verify request was made with inlineData
-        verify(() => mockHttpClient.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-              encoding: any(named: 'encoding'),
-            ),).called(1);
+        verify(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).called(1);
       });
 
       test('includes systemInstruction with fishing expert prompt', () async {
@@ -104,23 +110,27 @@ void main() {
         final responseJson = _createSuccessfulGeminiResponse();
         final mockResponse = _createUtf8Response(jsonEncode(responseJson), 200);
 
-        when(() => mockHttpClient.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-              encoding: any(named: 'encoding'),
-            ),).thenAnswer((_) async => mockResponse);
+        when(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
 
         // Act
         await provider.identifySpecies(imageFile, config);
 
         // Assert - verify request was made
-        verify(() => mockHttpClient.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-              encoding: any(named: 'encoding'),
-            ),).called(1);
+        verify(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).called(1);
       });
 
       test('correctly parses response to extract species', () async {
@@ -129,12 +139,14 @@ void main() {
         final responseJson = _createSuccessfulGeminiResponse();
         final mockResponse = _createUtf8Response(jsonEncode(responseJson), 200);
 
-        when(() => mockHttpClient.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-              encoding: any(named: 'encoding'),
-            ),).thenAnswer((_) async => mockResponse);
+        when(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
 
         // Act
         final result = await provider.identifySpecies(imageFile, config);
@@ -147,14 +159,18 @@ void main() {
         // Arrange
         final imageFile = File('test/fixtures/test_fish.jpg');
         final errorResponse = _createUtf8Response(
-            '{"error": {"code": 429, "message": "Rate limit exceeded"}}', 429,);
+          '{"error": {"code": 429, "message": "Rate limit exceeded"}}',
+          429,
+        );
 
-        when(() => mockHttpClient.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-              encoding: any(named: 'encoding'),
-            ),).thenAnswer((_) async => errorResponse);
+        when(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).thenAnswer((_) async => errorResponse);
 
         // Act & Assert
         expect(
@@ -171,12 +187,14 @@ void main() {
         final mockResponse =
             _createUtf8Response(jsonEncode(responseWithMarkdown), 200);
 
-        when(() => mockHttpClient.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-              encoding: any(named: 'encoding'),
-            ),).thenAnswer((_) async => mockResponse);
+        when(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
 
         // Act
         final result = await provider.identifySpecies(imageFile, config);
@@ -192,24 +210,29 @@ void main() {
         final responseJson = _createSuccessfulGeminiResponse();
         final mockResponse = _createUtf8Response(jsonEncode(responseJson), 200);
 
-        when(() => mockHttpClient.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-              encoding: any(named: 'encoding'),
-            ),).thenAnswer((_) async => mockResponse);
+        when(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
 
         // Act
         await provider.identifySpecies(imageFile, config);
 
         // Assert - verify URL contains correct format
-        verify(() => mockHttpClient.post(
-              Uri.parse(
-                  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=test-api-key',),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-              encoding: any(named: 'encoding'),
-            ),).called(1);
+        verify(
+          () => mockHttpClient.post(
+            Uri.parse(
+              'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=test-api-key',
+            ),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).called(1);
       });
 
       test('includes generationConfig in request', () async {
@@ -218,23 +241,27 @@ void main() {
         final responseJson = _createSuccessfulGeminiResponse();
         final mockResponse = _createUtf8Response(jsonEncode(responseJson), 200);
 
-        when(() => mockHttpClient.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-              encoding: any(named: 'encoding'),
-            ),).thenAnswer((_) async => mockResponse);
+        when(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
 
         // Act
         await provider.identifySpecies(imageFile, config);
 
         // Assert - verify request was made
-        verify(() => mockHttpClient.post(
-              any(),
-              headers: any(named: 'headers'),
-              body: any(named: 'body'),
-              encoding: any(named: 'encoding'),
-            ),).called(1);
+        verify(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).called(1);
       });
     });
   });

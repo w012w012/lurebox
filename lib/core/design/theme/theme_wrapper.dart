@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 /// 主题切换动画包装器
 /// 提供平滑的主题过渡效果
 class ThemeWrapper extends StatelessWidget {
-
   const ThemeWrapper({
-    required this.child, super.key,
+    required this.child,
+    super.key,
     this.duration = const Duration(milliseconds: 300),
     this.curve = Curves.easeInOut,
   });
@@ -33,9 +33,10 @@ class ThemeWrapper extends StatelessWidget {
 
 /// 主题过渡动画 - 用于整个应用
 class AppThemeTransition extends StatelessWidget {
-
   const AppThemeTransition({
-    required this.child, required this.themeMode, super.key,
+    required this.child,
+    required this.themeMode,
+    super.key,
   });
   final Widget child;
   final ThemeMode themeMode;
@@ -56,9 +57,9 @@ class AppThemeTransition extends StatelessWidget {
 
 /// 渐变背景动画 - 用于平滑的背景颜色过渡
 class AnimatedThemeBackground extends StatelessWidget {
-
   const AnimatedThemeBackground({
-    required this.child, super.key,
+    required this.child,
+    super.key,
     this.lightColor,
     this.darkColor,
   });
@@ -84,9 +85,11 @@ class AnimatedThemeBackground extends StatelessWidget {
 
 /// 主题感知颜色包装器
 class ThemeAwareColor extends StatelessWidget {
-
   const ThemeAwareColor({
-    required this.child, required this.lightColor, required this.darkColor, super.key,
+    required this.child,
+    required this.lightColor,
+    required this.darkColor,
+    super.key,
   });
   final Widget child;
   final Color Function(BuildContext) lightColor;

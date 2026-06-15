@@ -57,11 +57,13 @@ class TestArchive {
 
     if (metadata != null) {
       final metadataJson = const JsonEncoder.withIndent('  ').convert(metadata);
-      archive.addFile(ArchiveFile(
-        'metadata.json',
-        metadataJson.codeUnits.length,
-        metadataJson.codeUnits,
-      ),);
+      archive.addFile(
+        ArchiveFile(
+          'metadata.json',
+          metadataJson.codeUnits.length,
+          metadataJson.codeUnits,
+        ),
+      );
     }
 
     final zipData = ZipEncoder().encode(archive);
@@ -809,16 +811,20 @@ void main() {
     test('returns failure when metadata has invalid format', () async {
       // Create ZIP with corrupted metadata.json content
       final archive = Archive();
-      archive.addFile(ArchiveFile(
-        'metadata.json',
-        'not valid json'.length,
-        'not valid json'.codeUnits,
-      ),);
-      archive.addFile(ArchiveFile(
-        'lurebox.db',
-        'db content'.length,
-        'db content'.codeUnits,
-      ),);
+      archive.addFile(
+        ArchiveFile(
+          'metadata.json',
+          'not valid json'.length,
+          'not valid json'.codeUnits,
+        ),
+      );
+      archive.addFile(
+        ArchiveFile(
+          'lurebox.db',
+          'db content'.length,
+          'db content'.codeUnits,
+        ),
+      );
 
       final zipData = ZipEncoder().encode(archive);
       final zipFile = File(

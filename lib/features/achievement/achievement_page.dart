@@ -62,8 +62,11 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline,
-                    size: 64, color: TeslaColors.electricBlue,),
+                const Icon(
+                  Icons.error_outline,
+                  size: 64,
+                  color: TeslaColors.electricBlue,
+                ),
                 const SizedBox(height: 16),
                 Text(
                   strings.error,
@@ -163,8 +166,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                   CircularProgressIndicator(
                     value: progress / 100,
                     strokeWidth: 8,
-                    backgroundColor:
-                        TeslaColors.white.withValues(alpha: 0.2),
+                    backgroundColor: TeslaColors.white.withValues(alpha: 0.2),
                     valueColor:
                         const AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)),
                   ),
@@ -229,8 +231,7 @@ class _AchievementPageState extends ConsumerState<AchievementPage> {
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
                     value: progress / 100,
-                    backgroundColor:
-                        TeslaColors.white.withValues(alpha: 0.2),
+                    backgroundColor: TeslaColors.white.withValues(alpha: 0.2),
                     valueColor:
                         const AlwaysStoppedAnimation<Color>(Color(0xFFD4AF37)),
                     minHeight: 6,

@@ -89,12 +89,15 @@ void runOpenAICompatibleProviderTests({
 
   group('$providerName - shared behavior', () {
     test('sends POST with correct URL, headers, and model', () async {
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer(
-          (_) async => createUtf8Response(successResponse(), 200),);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer(
+        (_) async => createUtf8Response(successResponse(), 200),
+      );
 
       final config = AiProviderConfig(
         provider: aiProvider,
@@ -103,11 +106,13 @@ void runOpenAICompatibleProviderTests({
 
       await provider.identifySpecies(tempImage, config);
 
-      final captured = verify(() => mockClient.post(
-            captureAny(),
-            headers: captureAny(named: 'headers'),
-            body: captureAny(named: 'body'),
-          ),).captured;
+      final captured = verify(
+        () => mockClient.post(
+          captureAny(),
+          headers: captureAny(named: 'headers'),
+          body: captureAny(named: 'body'),
+        ),
+      ).captured;
 
       final url = captured[0] as Uri;
       expect(url.toString(), contains(expectedUrlFragment));
@@ -116,23 +121,27 @@ void runOpenAICompatibleProviderTests({
       final headers = captured[1] as Map<String, String>;
       expect(headers['Authorization'], 'Bearer test-api-key');
 
-      final body =
-          jsonDecode(captured[2] as String) as Map<String, dynamic>;
+      final body = jsonDecode(captured[2] as String) as Map<String, dynamic>;
       expect(body['model'], expectedModel);
     });
 
     test('returns parsed species from successful response', () async {
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async => createUtf8Response(
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer(
+        (_) async => createUtf8Response(
           successResponse(
             chineseName: chineseName,
             scientificName: scientificName,
             confidence: confidence,
           ),
-          200,),);
+          200,
+        ),
+      );
 
       final config = AiProviderConfig(
         provider: aiProvider,
@@ -147,12 +156,15 @@ void runOpenAICompatibleProviderTests({
     });
 
     test('throws FishRecognitionException on 401', () async {
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer(
-          (_) async => createUtf8Response({'error': 'Unauthorized'}, 401),);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer(
+        (_) async => createUtf8Response({'error': 'Unauthorized'}, 401),
+      );
 
       final config = AiProviderConfig(
         provider: aiProvider,
@@ -166,12 +178,15 @@ void runOpenAICompatibleProviderTests({
     });
 
     test('throws FishRecognitionException on 429', () async {
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async =>
-          createUtf8Response({'error': 'Rate limited'}, 429),);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer(
+        (_) async => createUtf8Response({'error': 'Rate limited'}, 429),
+      );
 
       final config = AiProviderConfig(
         provider: aiProvider,
@@ -185,12 +200,18 @@ void runOpenAICompatibleProviderTests({
     });
 
     test('throws FishRecognitionException on 500', () async {
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async => createUtf8Response(
-          {'error': 'Internal Server Error'}, 500,),);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer(
+        (_) async => createUtf8Response(
+          {'error': 'Internal Server Error'},
+          500,
+        ),
+      );
 
       final config = AiProviderConfig(
         provider: aiProvider,

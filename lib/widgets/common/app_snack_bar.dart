@@ -18,7 +18,8 @@ class AppSnackBar {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle, color: TeslaColors.success, size: 20),
+            const Icon(Icons.check_circle,
+                color: TeslaColors.success, size: 20),
             const SizedBox(width: 8),
             Expanded(child: Text(message)),
           ],
@@ -78,7 +79,8 @@ class AppSnackBar {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.info_outline, color: TeslaColors.electricBlue, size: 20),
+            const Icon(Icons.info_outline,
+                color: TeslaColors.electricBlue, size: 20),
             const SizedBox(width: 8),
             Expanded(child: Text(message)),
           ],

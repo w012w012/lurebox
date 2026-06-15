@@ -10,9 +10,11 @@ import 'package:lurebox/widgets/common/premium_button.dart';
 
 /// Camera view widget - displays camera preview with capture controls.
 class CameraViewWidget extends ConsumerWidget {
-
   const CameraViewWidget({
-    required this.state, required this.vm, required this.strings, super.key,
+    required this.state,
+    required this.vm,
+    required this.strings,
+    super.key,
     this.onPickFromGallery,
     this.onTakePicture,
   });

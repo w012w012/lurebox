@@ -65,7 +65,8 @@ void main() {
   group('FishRecognitionService', () {
     group('identifySpecies', () {
       group('input validation — file does not exist', () {
-        test('throws FishRecognitionException when file does not exist', () async {
+        test('throws FishRecognitionException when file does not exist',
+            () async {
           final mockFile = MockFile('/nonexistent/path.jpg');
           when(() => mockFile.exists()).thenAnswer((_) async => false);
 
@@ -78,15 +79,17 @@ void main() {
           expect(
             () => service.identifySpecies(mockFile, settings),
             throwsA(
-              isA<FishRecognitionException>().having(
-                (e) => e.type,
-                'type',
-                FishRecognitionErrorType.unknown,
-              ).having(
-                (e) => e.message,
-                'message',
-                '图片文件不存在',
-              ),
+              isA<FishRecognitionException>()
+                  .having(
+                    (e) => e.type,
+                    'type',
+                    FishRecognitionErrorType.unknown,
+                  )
+                  .having(
+                    (e) => e.message,
+                    'message',
+                    '图片文件不存在',
+                  ),
             ),
           );
         });
@@ -97,7 +100,8 @@ void main() {
           const oversizedFileSize = 11 * 1024 * 1024; // 11MB
           final mockFile = MockFile('/valid/path.jpg', oversizedFileSize);
           when(() => mockFile.exists()).thenAnswer((_) async => true);
-          when(() => mockFile.length()).thenAnswer((_) async => oversizedFileSize);
+          when(() => mockFile.length())
+              .thenAnswer((_) async => oversizedFileSize);
 
           final settings = createSettings(
             providerConfigs: {
@@ -391,15 +395,17 @@ void main() {
           expect(
             () => service.identifySpecies(mockFile, settings),
             throwsA(
-              isA<FishRecognitionException>().having(
-                (e) => e.type,
-                'type',
-                FishRecognitionErrorType.apiKeyInvalid,
-              ).having(
-                (e) => e.message,
-                'message',
-                '未配置 API 密钥',
-              ),
+              isA<FishRecognitionException>()
+                  .having(
+                    (e) => e.type,
+                    'type',
+                    FishRecognitionErrorType.apiKeyInvalid,
+                  )
+                  .having(
+                    (e) => e.message,
+                    'message',
+                    '未配置 API 密钥',
+                  ),
             ),
           );
         });
@@ -418,20 +424,23 @@ void main() {
           expect(
             () => service.identifySpecies(mockFile, settings),
             throwsA(
-              isA<FishRecognitionException>().having(
-                (e) => e.type,
-                'type',
-                FishRecognitionErrorType.apiKeyInvalid,
-              ).having(
-                (e) => e.message,
-                'message',
-                '未配置 API 密钥',
-              ),
+              isA<FishRecognitionException>()
+                  .having(
+                    (e) => e.type,
+                    'type',
+                    FishRecognitionErrorType.apiKeyInvalid,
+                  )
+                  .having(
+                    (e) => e.message,
+                    'message',
+                    '未配置 API 密钥',
+                  ),
             ),
           );
         });
 
-        test('throws FishRecognitionException when config.enabled is false', () async {
+        test('throws FishRecognitionException when config.enabled is false',
+            () async {
           final mockFile = MockFile('/valid/path.jpg', 1000);
           when(() => mockFile.exists()).thenAnswer((_) async => true);
           when(() => mockFile.length()).thenAnswer((_) async => 1000);
@@ -448,15 +457,17 @@ void main() {
           expect(
             () => service.identifySpecies(mockFile, settings),
             throwsA(
-              isA<FishRecognitionException>().having(
-                (e) => e.type,
-                'type',
-                FishRecognitionErrorType.unknown,
-              ).having(
-                (e) => e.message,
-                'message',
-                '当前提供商已禁用',
-              ),
+              isA<FishRecognitionException>()
+                  .having(
+                    (e) => e.type,
+                    'type',
+                    FishRecognitionErrorType.unknown,
+                  )
+                  .having(
+                    (e) => e.message,
+                    'message',
+                    '当前提供商已禁用',
+                  ),
             ),
           );
         });
@@ -505,20 +516,23 @@ void main() {
         });
 
         test('provider value is unique', () {
-          final values = AiRecognitionProvider.values.map((p) => p.value).toList();
+          final values =
+              AiRecognitionProvider.values.map((p) => p.value).toList();
           expect(values.toSet().length, equals(values.length));
         });
       });
 
       group('delegation', () {
-        test('delegates to provider.identifySpecies() with valid input', () async {
+        test('delegates to provider.identifySpecies() with valid input',
+            () async {
           final mockFile = MockFile('/valid/path.jpg', 1000);
           when(() => mockFile.exists()).thenAnswer((_) async => true);
           when(() => mockFile.length()).thenAnswer((_) async => 1000);
 
           final settings = createSettings(
             providerConfigs: {
-              AiRecognitionProvider.gemini: createConfig(apiKey: 'test-api-key'),
+              AiRecognitionProvider.gemini:
+                  createConfig(apiKey: 'test-api-key'),
             },
           );
 
@@ -543,7 +557,8 @@ void main() {
           when(() => mockProvider.identifySpecies(any(), any()))
               .thenAnswer((_) async => expectedResult);
 
-          final result = await testService.identifySpeciesWithValidation(mockFile, settings);
+          final result = await testService.identifySpeciesWithValidation(
+              mockFile, settings);
 
           expect(result.primarySpecies.chineseName, equals('鲈鱼'));
           expect(result.confidence, equals(95));
@@ -559,29 +574,32 @@ void main() {
 
           final settings = createSettings(
             providerConfigs: {
-              AiRecognitionProvider.gemini: createConfig(apiKey: 'test-api-key'),
+              AiRecognitionProvider.gemini:
+                  createConfig(apiKey: 'test-api-key'),
             },
           );
 
           final testService = _TestableFishRecognitionService(mockProvider);
           when(() => mockProvider.identifySpecies(any(), any()))
               .thenThrow(const FishRecognitionException(
-                FishRecognitionErrorType.networkError,
-                'Network connection failed',
-              ));
+            FishRecognitionErrorType.networkError,
+            'Network connection failed',
+          ));
 
           expect(
             () => testService.identifySpeciesWithValidation(mockFile, settings),
             throwsA(
-              isA<FishRecognitionException>().having(
-                (e) => e.type,
-                'type',
-                FishRecognitionErrorType.networkError,
-              ).having(
-                (e) => e.message,
-                'message',
-                'Network connection failed',
-              ),
+              isA<FishRecognitionException>()
+                  .having(
+                    (e) => e.type,
+                    'type',
+                    FishRecognitionErrorType.networkError,
+                  )
+                  .having(
+                    (e) => e.message,
+                    'message',
+                    'Network connection failed',
+                  ),
             ),
           );
         });
@@ -611,7 +629,8 @@ void main() {
           when(() => mockProvider.identifySpecies(any(), any())).thenAnswer(
             (invocation) async {
               capturedFile = invocation.positionalArguments[0] as File;
-              capturedConfig = invocation.positionalArguments[1] as AiProviderConfig;
+              capturedConfig =
+                  invocation.positionalArguments[1] as AiProviderConfig;
               return FishRecognitionResult(
                 primarySpecies: const SpeciesInfo(
                   chineseName: '测试',
@@ -655,7 +674,8 @@ void main() {
           final result = FishRecognitionResult.fromJson(json);
 
           expect(result.primarySpecies.chineseName, equals('鲤鱼'));
-          expect(result.primarySpecies.scientificName, equals('Cyprinus carpio'));
+          expect(
+              result.primarySpecies.scientificName, equals('Cyprinus carpio'));
           expect(result.primarySpecies.confidence, equals(88));
           expect(result.confidence, equals(88));
           expect(result.alternatives.length, equals(1));
@@ -803,7 +823,8 @@ void main() {
 
           expect(
             exception.toString(),
-            equals('FishRecognitionException(FishRecognitionErrorType.apiKeyInvalid): API key is invalid'),
+            equals(
+                'FishRecognitionException(FishRecognitionErrorType.apiKeyInvalid): API key is invalid'),
           );
         });
 
@@ -813,7 +834,8 @@ void main() {
             'Invalid key',
           );
 
-          expect(exception.type, equals(FishRecognitionErrorType.apiKeyInvalid));
+          expect(
+              exception.type, equals(FishRecognitionErrorType.apiKeyInvalid));
         });
 
         test('timeout type is correctly set', () {
@@ -864,7 +886,12 @@ class _TestableFishRecognitionService {
   _TestableFishRecognitionService(this._testProvider);
 
   static const int _maxImageSizeBytes = 10 * 1024 * 1024; // 10MB
-  static const Set<String> _supportedExtensions = {'.jpg', '.jpeg', '.png', '.webp'};
+  static const Set<String> _supportedExtensions = {
+    '.jpg',
+    '.jpeg',
+    '.png',
+    '.webp'
+  };
 
   Future<FishRecognitionResult> identifySpeciesWithValidation(
     File image,

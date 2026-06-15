@@ -4,7 +4,6 @@ import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/core/services/settings_service.dart';
 
 class WatermarkSettingsNotifier extends StateNotifier<WatermarkSettings> {
-
   WatermarkSettingsNotifier(this._service) : super(const WatermarkSettings()) {
     _loadSettings();
   }

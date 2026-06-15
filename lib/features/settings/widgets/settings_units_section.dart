@@ -39,7 +39,9 @@ class SettingsUnitsSection extends ConsumerWidget {
     required BuildContext context,
     required IconData icon,
     required String title,
-    required Widget trailing, required VoidCallback onTap, String? subtitle,
+    required Widget trailing,
+    required VoidCallback onTap,
+    String? subtitle,
   }) {
     const accentColor = TeslaColors.electricBlue;
 
@@ -234,11 +236,16 @@ class UnitSettingsPage extends ConsumerWidget {
                 title: strings.quantity,
                 value: units.lureQuantityUnit,
                 items: [
-                  PremiumDropdownItem(value: 'piece', label: strings.quantityUnitPiece),
-                  PremiumDropdownItem(value: 'item', label: strings.quantityUnitItem),
-                  PremiumDropdownItem(value: 'pack', label: strings.quantityUnitPack),
-                  PremiumDropdownItem(value: 'box', label: strings.quantityUnitBox),
-                  PremiumDropdownItem(value: 'carton', label: strings.quantityUnitCarton),
+                  PremiumDropdownItem(
+                      value: 'piece', label: strings.quantityUnitPiece),
+                  PremiumDropdownItem(
+                      value: 'item', label: strings.quantityUnitItem),
+                  PremiumDropdownItem(
+                      value: 'pack', label: strings.quantityUnitPack),
+                  PremiumDropdownItem(
+                      value: 'box', label: strings.quantityUnitBox),
+                  PremiumDropdownItem(
+                      value: 'carton', label: strings.quantityUnitCarton),
                 ],
                 onChanged: (value) {
                   if (value != null) {

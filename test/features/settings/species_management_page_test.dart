@@ -35,7 +35,8 @@ class MockSettingsService implements SettingsService {
       const AiRecognitionSettings();
   @override
   Future<void> saveAiRecognitionSettings(
-      AiRecognitionSettings settings,) async {}
+    AiRecognitionSettings settings,
+  ) async {}
   @override
   Future<void> deleteAiRecognitionSettings() async {}
 }
@@ -74,7 +75,12 @@ class FakeFishCatchRepository extends Fake implements FishCatchRepository {
     int pageSize = PaginationConstants.defaultPageSize,
     String orderBy = 'catch_time DESC',
   }) async =>
-      PaginatedResult(items: [], totalCount: 0, page: page, pageSize: pageSize, hasMore: false);
+      PaginatedResult(
+          items: [],
+          totalCount: 0,
+          page: page,
+          pageSize: pageSize,
+          hasMore: false);
   @override
   Future<PaginatedResult<FishCatch>> getFilteredPage({
     required int page,
@@ -85,24 +91,33 @@ class FakeFishCatchRepository extends Fake implements FishCatchRepository {
     String? species,
     String orderBy = 'catch_time DESC',
   }) async =>
-      PaginatedResult(items: [], totalCount: 0, page: page, pageSize: pageSize, hasMore: false);
+      PaginatedResult(
+          items: [],
+          totalCount: 0,
+          page: page,
+          pageSize: pageSize,
+          hasMore: false);
   @override
   Future<List<FishCatch>> getPendingRecognitionCatches() async {
     if (error != null) throw error as Exception;
     return pendingCatches;
   }
+
   @override
   Future<int> getPendingRecognitionCount() async => pendingCatches.length;
   @override
   Future<void> updateSpecies(int id, String species) async {}
   @override
   Future<void> batchUpdateSpecies(
-      List<int> ids, List<String> speciesList,) async {}
+    List<int> ids,
+    List<String> speciesList,
+  ) async {}
   @override
   Future<Map<String, int>> getSpeciesCounts() async {
     if (error != null) throw error as Exception;
     return speciesCounts;
   }
+
   @override
   Future<void> renameSpecies(String oldName, String newName) async {}
   @override
@@ -114,9 +129,15 @@ class FakeFishCatchRepository extends Fake implements FishCatchRepository {
   @override
   Future<PaginatedResult<FishCatch>> getFilteredPageByFilter({
     required int page,
-    required FishFilter filter, int pageSize = PaginationConstants.defaultPageSize,
+    required FishFilter filter,
+    int pageSize = PaginationConstants.defaultPageSize,
   }) async =>
-      PaginatedResult(items: [], totalCount: 0, page: page, pageSize: pageSize, hasMore: false);
+      PaginatedResult(
+          items: [],
+          totalCount: 0,
+          page: page,
+          pageSize: pageSize,
+          hasMore: false);
   @override
   Future<int> getCount() async => 0;
 }
@@ -162,7 +183,8 @@ void main() {
       await tester.pump();
       await tester.pump();
 
-      expect(find.text(AppStrings.chinese.pendingRecognitionList), findsOneWidget);
+      expect(
+          find.text(AppStrings.chinese.pendingRecognitionList), findsOneWidget);
       expect(find.text(AppStrings.chinese.pendingNoFish), findsOneWidget);
     });
 
@@ -241,8 +263,7 @@ void main() {
       expect(find.text('Bass'), findsOneWidget);
     });
 
-    testWidgets('shows empty state when no pending catches',
-        (tester) async {
+    testWidgets('shows empty state when no pending catches', (tester) async {
       await tester.pumpWidget(buildTestPage(FakeFishCatchRepository(
         pendingCatches: const [],
         speciesCounts: const {'Bass': 3},

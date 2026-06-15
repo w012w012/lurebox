@@ -5,7 +5,6 @@ import 'package:lurebox/core/services/settings_service.dart';
 
 class AiRecognitionSettingsNotifier
     extends StateNotifier<AiRecognitionSettings> {
-
   AiRecognitionSettingsNotifier(this._service)
       : super(const AiRecognitionSettings()) {
     _loadSettings();

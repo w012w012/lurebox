@@ -154,7 +154,8 @@ class ImageCacheHelper {
             if (!_memoryCache.containsKey(key)) {
               await entity.delete();
               deletedCount++;
-              AppLogger.i('ImageCacheHelper', 'Deleted unused image: ${entity.path}');
+              AppLogger.i(
+                  'ImageCacheHelper', 'Deleted unused image: ${entity.path}');
             }
           }
         }
@@ -187,7 +188,8 @@ class ImageCacheHelper {
         final key = _getCacheKey(path, width, height);
         if (!_memoryCache.containsKey(key)) {
           futures.add(
-              precacheThumbnail(context, path, width: width, height: height),);
+            precacheThumbnail(context, path, width: width, height: height),
+          );
         }
       }
     }
@@ -258,7 +260,6 @@ class ImageCacheHelper {
 }
 
 class LRUMap<K, V> {
-
   LRUMap({int maxSize = 50}) : _maxSize = maxSize;
   int _maxSize;
   final LinkedHashMap<K, V> _map = LinkedHashMap<K, V>();
@@ -308,7 +309,6 @@ class LRUMap<K, V> {
 }
 
 class CachedNetworkImage extends StatelessWidget {
-
   const CachedNetworkImage({
     super.key,
     this.imagePath,

@@ -2,10 +2,14 @@
 ///
 /// 用于存储用户输入的鱼种别名与标准鱼种ID之间的映射关系。
 /// 当用户输入一个非标准鱼种名称时，系统通过此表建立映射关系。
-class UserSpeciesAlias { // 首次创建时间
+class UserSpeciesAlias {
+  // 首次创建时间
 
   const UserSpeciesAlias({
-    required this.userAlias, required this.speciesId, required this.createdAt, this.id,
+    required this.userAlias,
+    required this.speciesId,
+    required this.createdAt,
+    this.id,
   });
 
   factory UserSpeciesAlias.fromMap(Map<String, dynamic> map) {

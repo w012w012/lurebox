@@ -130,7 +130,9 @@ void main() {
         final settings = WatermarkSettings.fromJson(json);
 
         expect(
-            settings.position, equals(WatermarkPosition.bottomLeft),); // default
+          settings.position,
+          equals(WatermarkPosition.bottomLeft),
+        ); // default
       });
 
       test('fromJson handles unknown infoType', () {
@@ -222,8 +224,11 @@ void main() {
 
     test('has corresponding presets', () {
       for (final style in WatermarkStyle.values) {
-        expect(watermarkStylePresets[style], isNotNull,
-            reason: 'Style $style should have a preset',);
+        expect(
+          watermarkStylePresets[style],
+          isNotNull,
+          reason: 'Style $style should have a preset',
+        );
       }
     });
   });

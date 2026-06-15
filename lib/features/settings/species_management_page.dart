@@ -59,7 +59,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         child: pendingCatchesAsync.when(
           data: (catches) => _buildContent(context, catches, strings),
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('${strings.errorLoadFailed}: $e')),
+          error: (e, _) =>
+              Center(child: Text('${strings.errorLoadFailed}: $e')),
         ),
       ),
     );
@@ -115,7 +116,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         });
         if (mounted) {
           final s = ref.read(currentStringsProvider);
-          AppSnackBar.showSuccess(context, s.speciesUpdated.replaceFirst('%s', speciesName));
+          AppSnackBar.showSuccess(
+              context, s.speciesUpdated.replaceFirst('%s', speciesName));
         }
       } catch (e) {
         if (mounted) {
@@ -156,8 +158,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       }
 
       final settings = ref.read(aiRecognitionSettingsProvider);
-      final currentConfig =
-          settings.providerConfigs[settings.currentProvider];
+      final currentConfig = settings.providerConfigs[settings.currentProvider];
       if (currentConfig == null || currentConfig.apiKey.isEmpty) {
         setState(() {
           _recognitionStates[fish.id] = SingleRecognitionState(
@@ -175,22 +176,26 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
 
       final s = ref.read(currentStringsProvider);
       if (result.primarySpecies.chineseName.isNotEmpty) {
-        options.add(AiRecognitionOption(
-          speciesName: result.primarySpecies.chineseName,
-          confidence: result.primarySpecies.confidence / 100.0,
-          providerName: s.speciesAiResultTitle,
-        ),);
+        options.add(
+          AiRecognitionOption(
+            speciesName: result.primarySpecies.chineseName,
+            confidence: result.primarySpecies.confidence / 100.0,
+            providerName: s.speciesAiResultTitle,
+          ),
+        );
       }
 
       // 添加备选结果
       if (result.alternatives.isNotEmpty) {
         for (final alt in result.alternatives.take(2)) {
           if (alt.chineseName.isNotEmpty) {
-            options.add(AiRecognitionOption(
-              speciesName: alt.chineseName,
-              confidence: alt.confidence / 100.0,
-              providerName: s.speciesAlternative,
-            ),);
+            options.add(
+              AiRecognitionOption(
+                speciesName: alt.chineseName,
+                confidence: alt.confidence / 100.0,
+                providerName: s.speciesAlternative,
+              ),
+            );
           }
         }
       }
@@ -213,14 +218,19 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
     } catch (e) {
       setState(() {
         _recognitionStates[fish.id] = SingleRecognitionState(
-          error: ref.read(currentStringsProvider).speciesRecognitionFailed.replaceFirst('%s', '$e'),
+          error: ref
+              .read(currentStringsProvider)
+              .speciesRecognitionFailed
+              .replaceFirst('%s', '$e'),
         );
       });
     }
   }
 
   Future<void> _showConfirmDialog(
-      FishCatch fish, AiRecognitionOption option,) async {
+    FishCatch fish,
+    AiRecognitionOption option,
+  ) async {
     final strings = ref.read(currentStringsProvider);
     final speciesName =
         await SpeciesManagementDialogs.showConfirmRecognitionDialog(
@@ -240,7 +250,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         });
         if (mounted) {
           final s = ref.read(currentStringsProvider);
-          AppSnackBar.showSuccess(context, s.speciesUpdated.replaceFirst('%s', speciesName));
+          AppSnackBar.showSuccess(
+              context, s.speciesUpdated.replaceFirst('%s', speciesName));
         }
       } catch (e) {
         if (mounted) {
@@ -270,7 +281,11 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         setState(() {});
         if (!context.mounted) return;
         final s = ref.read(currentStringsProvider);
-        AppSnackBar.showSuccess(context, s.speciesRenamed.replaceFirst('%s', oldName).replaceFirst('%s', result));
+        AppSnackBar.showSuccess(
+            context,
+            s.speciesRenamed
+                .replaceFirst('%s', oldName)
+                .replaceFirst('%s', result));
       } catch (e) {
         if (!context.mounted) return;
         final s = ref.read(currentStringsProvider);
@@ -280,7 +295,10 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
   }
 
   Future<void> _showDeleteDialog(
-      BuildContext context, String speciesName, int count,) async {
+    BuildContext context,
+    String speciesName,
+    int count,
+  ) async {
     final strings = ref.read(currentStringsProvider);
     final confirmed = await SpeciesManagementDialogs.showDeleteDialog(
       context,
@@ -300,7 +318,11 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         if (!context.mounted) return;
         final s = ref.read(currentStringsProvider);
         AppSnackBar.showSuccess(
-            context, s.speciesDeleted.replaceFirst('%s', speciesName).replaceFirst('%d', '$count'),);
+          context,
+          s.speciesDeleted
+              .replaceFirst('%s', speciesName)
+              .replaceFirst('%d', '$count'),
+        );
       } catch (e) {
         if (!context.mounted) return;
         final s = ref.read(currentStringsProvider);
@@ -348,7 +370,9 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
 
           if (result.primarySpecies.chineseName.isNotEmpty) {
             await repository.updateSpecies(
-                fish.id, result.primarySpecies.chineseName,);
+              fish.id,
+              result.primarySpecies.chineseName,
+            );
             setState(() => _batchSuccess++);
           } else {
             setState(() => _batchFailed++);
@@ -366,7 +390,11 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       if (mounted) {
         final s = ref.read(currentStringsProvider);
         AppSnackBar.showInfo(
-            context, s.speciesRecognitionComplete.replaceFirst('%d', '$_batchSuccess').replaceFirst('%d', '$_batchFailed'),);
+          context,
+          s.speciesRecognitionComplete
+              .replaceFirst('%d', '$_batchSuccess')
+              .replaceFirst('%d', '$_batchFailed'),
+        );
       }
     } finally {
       setState(() => _isBatchRecognizing = false);
@@ -382,7 +410,6 @@ final speciesCountsProvider = FutureProvider<Map<String, int>>((ref) async {
 
 /// 已保存品种列表 Widget
 class _SpeciesListSection extends ConsumerWidget {
-
   const _SpeciesListSection({
     required this.onRename,
     required this.onDelete,
@@ -443,9 +470,8 @@ class _SpeciesListSection extends ConsumerWidget {
                 itemCount: sortedSpecies.length,
                 separatorBuilder: (_, __) => Divider(
                   height: 1,
-                  color: isDark
-                      ? const Color(0xFF2A2D30)
-                      : TeslaColors.cloudGray,
+                  color:
+                      isDark ? const Color(0xFF2A2D30) : TeslaColors.cloudGray,
                 ),
                 itemBuilder: (context, index) {
                   final entry = sortedSpecies[index];
@@ -453,7 +479,8 @@ class _SpeciesListSection extends ConsumerWidget {
                   final count = entry.value;
 
                   final strings = ref.read(currentStringsProvider);
-                  final countLabel = strings.fishCountSuffix.replaceFirst('%d', '$count');
+                  final countLabel =
+                      strings.fishCountSuffix.replaceFirst('%d', '$count');
                   return _SpeciesListItem(
                     speciesName: speciesName,
                     count: count,
@@ -491,7 +518,6 @@ class _SpeciesListSection extends ConsumerWidget {
 
 /// 品种列表单项 Widget
 class _SpeciesListItem extends StatelessWidget {
-
   const _SpeciesListItem({
     required this.speciesName,
     required this.count,

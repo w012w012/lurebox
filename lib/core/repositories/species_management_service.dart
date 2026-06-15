@@ -5,7 +5,6 @@ import 'package:lurebox/core/services/fish_species_matcher.dart';
 ///
 /// 负责品种重命名和合并的同步逻辑
 class SpeciesManagementService {
-
   /// 创建品种管理服务
   ///
   /// [aliasRepo] 用户别名仓储层

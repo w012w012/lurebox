@@ -153,7 +153,10 @@ class SettingsBackupSection extends ConsumerWidget {
   }
 
   void _showWebDAVDialog(
-      BuildContext context, WidgetRef ref, AppStrings strings,) {
+    BuildContext context,
+    WidgetRef ref,
+    AppStrings strings,
+  ) {
     showDialog<void>(
       context: context,
       builder: (context) => const WebDAVConfigDialog(),
@@ -162,7 +165,10 @@ class SettingsBackupSection extends ConsumerWidget {
 
   /// 显示完整备份确认对话框（ZIP格式）
   void _showFullBackupDialog(
-      BuildContext context, WidgetRef ref, AppStrings strings,) {
+    BuildContext context,
+    WidgetRef ref,
+    AppStrings strings,
+  ) {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(

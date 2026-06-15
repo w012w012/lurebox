@@ -6,9 +6,11 @@ import 'package:lurebox/core/utils/unit_converter.dart';
 import 'package:lurebox/widgets/common/image_cache_helper.dart';
 
 class FishCard extends StatelessWidget {
-
   const FishCard({
-    required this.fish, required this.onTap, required this.strings, super.key,
+    required this.fish,
+    required this.onTap,
+    required this.strings,
+    super.key,
     this.isSelected = false,
     this.isSelectionMode = false,
     this.onLongPress,

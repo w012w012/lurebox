@@ -79,7 +79,8 @@ void main() {
         expect(copy.searchQuery, equals(original.searchQuery));
       });
 
-      test('copyWith(fateFilter: () => FishFateType.release) sets fateFilter', () {
+      test('copyWith(fateFilter: () => FishFateType.release) sets fateFilter',
+          () {
         const original = FishFilter();
         final copy = original.copyWith(fateFilter: () => FishFateType.release);
 
@@ -95,7 +96,9 @@ void main() {
         expect(copy.fateFilter, isNull);
       });
 
-      test('copyWith(customStartDate: () => DateTime(2024)) sets customStartDate', () {
+      test(
+          'copyWith(customStartDate: () => DateTime(2024)) sets customStartDate',
+          () {
         const original = FishFilter();
         final date = DateTime(2024, 6, 15);
         final copy = original.copyWith(customStartDate: () => date);
@@ -112,7 +115,8 @@ void main() {
         expect(copy.customStartDate, isNull);
       });
 
-      test('copyWith(customEndDate: () => DateTime(2024)) sets customEndDate', () {
+      test('copyWith(customEndDate: () => DateTime(2024)) sets customEndDate',
+          () {
         const original = FishFilter();
         final date = DateTime(2024, 12, 31);
         final copy = original.copyWith(customEndDate: () => date);

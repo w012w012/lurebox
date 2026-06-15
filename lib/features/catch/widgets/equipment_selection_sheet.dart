@@ -8,9 +8,11 @@ import 'package:lurebox/widgets/common/premium_button.dart';
 
 /// Equipment selection sheet - modal bottom sheet for selecting rod, reel, lure.
 class EquipmentSelectionSheet extends StatelessWidget {
-
   const EquipmentSelectionSheet({
-    required this.state, required this.vm, required this.strings, super.key,
+    required this.state,
+    required this.vm,
+    required this.strings,
+    super.key,
   });
   final CameraState state;
   final CameraViewModel vm;
@@ -48,7 +50,6 @@ class EquipmentSelectionSheet extends StatelessWidget {
 }
 
 class _EquipmentSelectionContent extends StatefulWidget {
-
   const _EquipmentSelectionContent({
     required this.state,
     required this.vm,

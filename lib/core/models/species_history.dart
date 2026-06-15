@@ -25,12 +25,12 @@
 library;
 
 class SpeciesHistory {
-
   const SpeciesHistory({
     required this.id,
     required this.name,
     required this.useCount,
-    required this.createdAt, this.isDeleted = false,
+    required this.createdAt,
+    this.isDeleted = false,
   });
 
   factory SpeciesHistory.fromMap(Map<String, dynamic> map) {

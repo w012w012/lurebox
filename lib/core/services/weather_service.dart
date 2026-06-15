@@ -109,7 +109,8 @@ String getLocalizedWeatherDescription(int? code, AppStrings strings) {
 }
 
 /// 天气数据
-class WeatherData { // 天气代码（WMO）
+class WeatherData {
+  // 天气代码（WMO）
 
   const WeatherData({this.airTemperature, this.pressure, this.weatherCode});
   final double? airTemperature; // 气温（摄氏度）
@@ -159,8 +160,7 @@ class WeatherService {
       );
     } catch (e) {
       AppLogger.e('WeatherService', 'Failed to fetch weather data', e);
-      return const WeatherData(
-          );
+      return const WeatherData();
     }
   }
 }

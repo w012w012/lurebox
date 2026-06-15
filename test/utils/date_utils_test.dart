@@ -78,7 +78,9 @@ void main() {
         expect(period.end.millisecond, 0);
       });
 
-      test('end is first day of January next year when current month is December', () {
+      test(
+          'end is first day of January next year when current month is December',
+          () {
         final period = DatePeriod.month;
         // December case: next month is January of next year
         final now = DateTime.now();

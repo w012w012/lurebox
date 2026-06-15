@@ -22,7 +22,6 @@ import 'package:sqflite/sqflite.dart' hide DatabaseException;
 /// - 支持云配置持久化
 /// - 自动清理过期备份
 class EnhancedBackupService {
-
   /// Constructor for production use.
   ///
   /// Creates BackupService and BackupZipService internally.
@@ -243,7 +242,8 @@ class EnhancedBackupService {
         await files[i].delete();
         deletedCount++;
       } catch (e) {
-        AppLogger.e('EnhancedBackupService', 'Failed to delete recovery point', e);
+        AppLogger.e(
+            'EnhancedBackupService', 'Failed to delete recovery point', e);
       }
     }
 
@@ -309,7 +309,8 @@ class EnhancedBackupService {
   ///
   /// 在导入前检查记录是否已存在，避免重复
   Future<ImportResultWithStats> importFromJsonWithDeduplication(
-      String filePath,) async {
+    String filePath,
+  ) async {
     final file = File(filePath);
     if (!await file.exists()) {
       throw const DatabaseException('File not found');
@@ -336,7 +337,8 @@ class EnhancedBackupService {
             // Can't insert with null species - skip as error
             if (species == null) {
               errorCount++;
-              AppLogger.e('EnhancedBackupService', 'Failed to import fish catch: species is null', null);
+              AppLogger.e('EnhancedBackupService',
+                  'Failed to import fish catch: species is null', null);
               continue;
             }
 
@@ -358,7 +360,8 @@ class EnhancedBackupService {
             importedCount++;
           } catch (e) {
             errorCount++;
-            AppLogger.e('EnhancedBackupService', 'Failed to import fish catch', e);
+            AppLogger.e(
+                'EnhancedBackupService', 'Failed to import fish catch', e);
           }
         }
       }
@@ -376,7 +379,8 @@ class EnhancedBackupService {
             // Can't insert with null type - skip as error
             if (type == null) {
               errorCount++;
-              AppLogger.e('EnhancedBackupService', 'Failed to import equipment: type is null', null);
+              AppLogger.e('EnhancedBackupService',
+                  'Failed to import equipment: type is null', null);
               continue;
             }
 
@@ -410,7 +414,8 @@ class EnhancedBackupService {
             await txn.insert('equipments', map);
           } catch (e) {
             errorCount++;
-            AppLogger.e('EnhancedBackupService', 'Failed to import equipment', e);
+            AppLogger.e(
+                'EnhancedBackupService', 'Failed to import equipment', e);
           }
         }
       }
@@ -439,7 +444,8 @@ class EnhancedBackupService {
             await txn.insert('species_history', map);
           } catch (e) {
             errorCount++;
-            AppLogger.e('EnhancedBackupService', 'Failed to import species history', e);
+            AppLogger.e(
+                'EnhancedBackupService', 'Failed to import species history', e);
           }
         }
       }
@@ -473,7 +479,6 @@ class EnhancedBackupService {
 
 /// 导入结果（带统计信息）
 class ImportResultWithStats {
-
   const ImportResultWithStats({
     required this.importedCount,
     required this.skippedCount,

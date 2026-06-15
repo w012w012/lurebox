@@ -10,7 +10,6 @@
 library;
 
 class ExportOptions {
-
   const ExportOptions({
     this.startDate,
     this.endDate,

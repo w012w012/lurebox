@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 class ListTileAction extends StatelessWidget {
-
   const ListTileAction({
-    required this.icon, required this.title, super.key,
+    required this.icon,
+    required this.title,
+    super.key,
     this.iconColor,
     this.subtitle,
     this.trailing,
@@ -32,7 +33,6 @@ class ListTileAction extends StatelessWidget {
 }
 
 class ListTileDivider extends StatelessWidget {
-
   const ListTileDivider({required this.children, super.key});
   final List<Widget> children;
 

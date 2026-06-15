@@ -8,15 +8,17 @@ import 'package:lurebox/widgets/common/premium_card.dart';
 /// Provides consistent iOS settings app appearance with blue accent colors,
 /// touch feedback animations, and proper dark mode support.
 class SettingsTile extends StatefulWidget {
-
   const SettingsTile({
-    required this.icon, required this.title, super.key,
+    required this.icon,
+    required this.title,
+    super.key,
     this.subtitle,
     this.trailing,
     this.onTap,
     this.showChevron = false,
     this.variant = PremiumCardVariant.flat,
   });
+
   /// Icon displayed on the left side of the tile.
   final IconData icon;
 
@@ -49,9 +51,9 @@ class _SettingsTileState extends State<SettingsTile> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue;
-    final textColor =
-        isDark ? TeslaColors.white : TeslaColors.carbonDark;
+    final accentColor =
+        isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue;
+    final textColor = isDark ? TeslaColors.white : TeslaColors.carbonDark;
     final subtitleColor =
         isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite;
 
@@ -161,11 +163,12 @@ class _SettingsTileState extends State<SettingsTile> {
 
 /// A settings section header with optional action.
 class SettingsSectionHeader extends StatelessWidget {
-
   const SettingsSectionHeader({
-    required this.title, super.key,
+    required this.title,
+    super.key,
     this.action,
   });
+
   /// The header title text.
   final String title;
 
@@ -175,8 +178,7 @@ class SettingsSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor =
-        isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite;
+    final textColor = isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite;
 
     return Padding(
       padding: const EdgeInsets.only(
@@ -213,13 +215,16 @@ class SettingsDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dividerColor = isDark ? const Color(0xFF2A2D30) : TeslaColors.cloudGray;
+    final dividerColor =
+        isDark ? const Color(0xFF2A2D30) : TeslaColors.cloudGray;
 
     return Divider(
       height: 1,
       thickness: 1,
       color: dividerColor,
-      indent: TeslaTheme.spacingMd + 22 + TeslaTheme.spacingMicro, // Icon area width
+      indent: TeslaTheme.spacingMd +
+          22 +
+          TeslaTheme.spacingMicro, // Icon area width
     );
   }
 }

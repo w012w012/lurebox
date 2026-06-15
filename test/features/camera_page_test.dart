@@ -77,9 +77,7 @@ void main() {
 
       testWidgets('shows loading when not initialized and not loading',
           (tester) async {
-        const initial = CameraState(
-          
-        );
+        const initial = CameraState();
         await tester.pumpWidget(buildWidget(state: initial));
         await tester.pump();
 

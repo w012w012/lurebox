@@ -81,9 +81,11 @@ class ImageCompressor {
       final outputFile = File(outputPath);
       await outputFile.writeAsBytes(compressedBytes);
 
-      AppLogger.i('ImageCompressor', 'Compressed: $inputPath -> $outputPath '
-          '(${image.width}x${image.height} -> ${newWidth}x$newHeight), '
-          'quality: $quality');
+      AppLogger.i(
+          'ImageCompressor',
+          'Compressed: $inputPath -> $outputPath '
+              '(${image.width}x${image.height} -> ${newWidth}x$newHeight), '
+              'quality: $quality');
 
       return outputFile;
     } catch (e) {
@@ -141,8 +143,10 @@ class ImageCompressor {
       final outputFile = File(outputPath);
       await outputFile.writeAsBytes(compressedBytes);
 
-      AppLogger.i('ImageCompressor', 'Thumbnail: $inputPath -> $outputPath '
-          '(${newWidth}x$newHeight)');
+      AppLogger.i(
+          'ImageCompressor',
+          'Thumbnail: $inputPath -> $outputPath '
+              '(${newWidth}x$newHeight)');
 
       return outputFile;
     } catch (e) {

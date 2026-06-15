@@ -42,7 +42,6 @@ class TeslaTheme {
         outline: TeslaColors.cloudGray,
       ),
       scaffoldBackgroundColor: TeslaColors.white,
-
       appBarTheme: AppBarTheme(
         backgroundColor: TeslaColors.white,
         foregroundColor: TeslaColors.carbonDark,
@@ -57,7 +56,6 @@ class TeslaTheme {
           size: 24,
         ),
       ),
-
       cardTheme: CardThemeData(
         elevation: 0,
         color: TeslaColors.white,
@@ -67,7 +65,6 @@ class TeslaTheme {
         margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAlias,
       ),
-
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: TeslaColors.frostedGlassWhite,
         elevation: 0,
@@ -97,7 +94,6 @@ class TeslaTheme {
           return TeslaTypography.navItem(color: TeslaColors.pewter);
         }),
       ),
-
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: TeslaColors.electricBlue,
@@ -114,7 +110,6 @@ class TeslaTheme {
           textStyle: TeslaTypography.buttonLabel(),
         ),
       ),
-
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: TeslaColors.graphite,
@@ -130,7 +125,6 @@ class TeslaTheme {
           textStyle: TeslaTypography.buttonLabel(color: TeslaColors.graphite),
         ),
       ),
-
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: TeslaColors.pewter,
@@ -144,7 +138,6 @@ class TeslaTheme {
           textStyle: TeslaTypography.subLink(color: TeslaColors.pewter),
         ),
       ),
-
       inputDecorationTheme: InputDecorationTheme(
         filled: false,
         border: const OutlineInputBorder(
@@ -163,13 +156,11 @@ class TeslaTheme {
         hintStyle: TeslaTypography.placeholder(),
         labelStyle: TeslaTypography.body(color: TeslaColors.graphite),
       ),
-
       dividerTheme: const DividerThemeData(
         color: TeslaColors.cloudGray,
         thickness: 1,
         space: 1,
       ),
-
       snackBarTheme: SnackBarThemeData(
         backgroundColor: TeslaColors.electricBlue,
         contentTextStyle: TeslaTypography.body(color: TeslaColors.white),
@@ -178,7 +169,6 @@ class TeslaTheme {
         ),
         behavior: SnackBarBehavior.floating,
       ),
-
       dialogTheme: DialogThemeData(
         backgroundColor: TeslaColors.white,
         shape: RoundedRectangleBorder(
@@ -189,7 +179,6 @@ class TeslaTheme {
         ),
         contentTextStyle: TeslaTypography.body(color: TeslaColors.graphite),
       ),
-
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: TeslaColors.white,
         shape: RoundedRectangleBorder(

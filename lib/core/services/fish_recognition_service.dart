@@ -15,7 +15,6 @@ import 'package:lurebox/core/services/adapters/zhipu_provider.dart';
 
 /// 鱼类识别结果
 class FishRecognitionResult {
-
   const FishRecognitionResult({
     required this.primarySpecies,
     required this.confidence,
@@ -26,7 +25,8 @@ class FishRecognitionResult {
   factory FishRecognitionResult.fromJson(Map<String, dynamic> json) {
     final primaryJson = json['primarySpecies'];
     if (primaryJson is! Map<String, dynamic>) {
-      throw const FormatException('Invalid primarySpecies in recognition result');
+      throw const FormatException(
+          'Invalid primarySpecies in recognition result');
     }
     return FishRecognitionResult(
       primarySpecies: SpeciesInfo.fromJson(primaryJson),
@@ -38,6 +38,7 @@ class FishRecognitionResult {
       notes: json['notes'] as String? ?? '',
     );
   }
+
   /// 主要识别物种
   final SpeciesInfo primarySpecies;
 
@@ -60,7 +61,6 @@ class FishRecognitionResult {
 
 /// 物种信息
 class SpeciesInfo {
-
   const SpeciesInfo({
     required this.chineseName,
     required this.scientificName,
@@ -76,6 +76,7 @@ class SpeciesInfo {
       confidence: (json['confidence'] as int?)?.clamp(0, 100) ?? 0,
     );
   }
+
   /// 中文名称
   final String chineseName;
 
@@ -94,7 +95,6 @@ class SpeciesInfo {
 
 /// 鱼类识别异常
 class FishRecognitionException implements Exception {
-
   const FishRecognitionException(this.type, this.message);
   final FishRecognitionErrorType type;
   final String message;
@@ -140,7 +140,12 @@ abstract class FishRecognitionProvider {
 /// 统一的鱼类识别服务接口，根据配置选择不同的 AI 提供商
 class FishRecognitionService {
   static const int _maxImageSizeBytes = 10 * 1024 * 1024; // 10MB
-  static const Set<String> _supportedExtensions = {'.jpg', '.jpeg', '.png', '.webp'};
+  static const Set<String> _supportedExtensions = {
+    '.jpg',
+    '.jpeg',
+    '.png',
+    '.webp'
+  };
 
   /// Provider factory map — only the selected provider is instantiated
   static final Map<AiRecognitionProvider, FishRecognitionProvider Function()>

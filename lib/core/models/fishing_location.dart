@@ -28,11 +28,11 @@
 library;
 
 class FishingLocation {
-
   const FishingLocation({
     required this.id,
     required this.name,
-    required this.createdAt, this.latitude,
+    required this.createdAt,
+    this.latitude,
     this.longitude,
     this.lastVisit,
     this.fishCount = 0,
@@ -124,11 +124,11 @@ extension FishingLocationListExtension on List<FishingLocation> {
 
   List<FishingLocation> sortedByLastVisit() {
     return [...this]..sort((a, b) {
-      if (a.lastVisit == null && b.lastVisit == null) return 0;
-      if (a.lastVisit == null) return 1;
-      if (b.lastVisit == null) return -1;
-      return b.lastVisit!.compareTo(a.lastVisit!);
-    });
+        if (a.lastVisit == null && b.lastVisit == null) return 0;
+        if (a.lastVisit == null) return 1;
+        if (b.lastVisit == null) return -1;
+        return b.lastVisit!.compareTo(a.lastVisit!);
+      });
   }
 
   FishingLocation? findByName(String name) {

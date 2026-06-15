@@ -10,13 +10,11 @@ import 'package:lurebox/core/repositories/equipment_repository.dart';
 
 class SqliteEquipmentRepository extends BaseSqliteRepository
     implements EquipmentRepository {
-
   /// 无参构造函数（使用默认 DatabaseService）
   SqliteEquipmentRepository();
 
   /// 带数据库的构造函数（用于测试）
-  SqliteEquipmentRepository.withDatabase(super.testDb)
-      : super.withDatabase();
+  SqliteEquipmentRepository.withDatabase(super.testDb) : super.withDatabase();
   @override
   String get tableName => 'equipments';
 
@@ -38,7 +36,8 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
         orderBy: 'is_default DESC, created_at DESC',
       );
       return List<Equipment>.from(
-          results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)),);
+        results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)),
+      );
     } catch (e) {
       throwDbError('get equipments', e);
     }
@@ -162,7 +161,8 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
         offset: offset,
       );
       final items = List<Equipment>.from(
-          results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)),);
+        results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)),
+      );
 
       final hasMore = (page * pageSize) < totalCount;
 
@@ -229,7 +229,8 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
         offset: offset,
       );
       final items = List<Equipment>.from(
-          results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)),);
+        results.map((map) => Equipment.fromMap(map as Map<String, dynamic>)),
+      );
 
       final hasMore = (page * pageSize) < totalCount;
 

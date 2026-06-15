@@ -4,7 +4,6 @@ import 'package:lurebox/core/services/fish_species_matcher.dart';
 
 /// 尺寸分布桶
 class SizeBucket {
-
   const SizeBucket({
     required this.range,
     required this.count,
@@ -29,7 +28,6 @@ class SizeBucket {
 
 /// 鱼种统计 (动态计算，不存储)
 class FishSpeciesStats {
-
   const FishSpeciesStats({
     required this.speciesId,
     required this.speciesName,
@@ -37,7 +35,8 @@ class FishSpeciesStats {
     required this.maxLength,
     required this.minLength,
     required this.avgLength,
-    required this.isUnlocked, this.maxWeight,
+    required this.isUnlocked,
+    this.maxWeight,
     this.firstCaughtAt,
   });
 
@@ -46,7 +45,8 @@ class FishSpeciesStats {
   /// [speciesId] 鱼种ID（未知时为空字符串）
   /// [speciesName] 鱼种名称
   factory FishSpeciesStats.empty({
-    required String speciesName, String speciesId = '',
+    required String speciesName,
+    String speciesId = '',
   }) {
     return FishSpeciesStats(
       speciesId: speciesId,
@@ -114,7 +114,6 @@ class FishSpeciesStats {
 ///
 /// 所有统计均为动态计算，不存储数据。
 class FishSpeciesStatsService {
-
   FishSpeciesStatsService(this._catchRepo, this._matcher);
   final FishCatchRepository _catchRepo;
   final FishSpeciesMatcher _matcher;

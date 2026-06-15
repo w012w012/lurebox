@@ -274,15 +274,17 @@ void main() {
           FishGuideData.getByCategory(FishCategory.freshwaterLure);
       expect(lureSpecies.length, equals(34));
       expect(
-          lureSpecies.every((s) => s.category == FishCategory.freshwaterLure),
-          isTrue,);
+        lureSpecies.every((s) => s.category == FishCategory.freshwaterLure),
+        isTrue,
+      );
 
       final saltwaterLure =
           FishGuideData.getByCategory(FishCategory.saltwaterLure);
       expect(saltwaterLure.length, equals(16));
       expect(
-          saltwaterLure.every((s) => s.category == FishCategory.saltwaterLure),
-          isTrue,);
+        saltwaterLure.every((s) => s.category == FishCategory.saltwaterLure),
+        isTrue,
+      );
 
       final saltwaterGeneral =
           FishGuideData.getByCategory(FishCategory.saltwaterGeneral);
@@ -326,7 +328,9 @@ void main() {
       for (final species in FishGuideData.allSpecies) {
         expect(species.id, isNotEmpty);
         expect(
-            species.id.startsWith('f') || species.id.startsWith('g'), isTrue,);
+          species.id.startsWith('f') || species.id.startsWith('g'),
+          isTrue,
+        );
       }
     });
 
@@ -356,7 +360,8 @@ void main() {
 
     test('all g-species have valid categories', () {
       for (final species in FishGuideData.allSpecies.where(
-          (s) => s.id.startsWith('g'),)) {
+        (s) => s.id.startsWith('g'),
+      )) {
         expect(
           species.category == FishCategory.freshwaterGeneral ||
               species.category == FishCategory.saltwaterGeneral,

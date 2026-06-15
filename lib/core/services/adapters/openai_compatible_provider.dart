@@ -33,11 +33,11 @@ enum UrlPathStrategy {
 /// 子类只需提供默认配置（baseUrl、model、URL策略），
 /// 无需重复实现识别逻辑。
 abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
-
   /// Creates an OpenAI compatible provider with optional HTTP client injection.
   /// If no client is provided, uses a shared static client to avoid socket leaks.
   OpenAICompatibleProvider({http.Client? client})
       : _client = client ?? sharedHttpClient;
+
   /// HTTP client for making requests (injectable for testing)
   final http.Client _client;
 
@@ -98,8 +98,9 @@ abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
     final base64Image = base64Encode(imageBytes);
 
     // 确定使用的模型名称
-    final modelName =
-        config.modelName?.isNotEmpty ?? false ? config.modelName! : defaultModel;
+    final modelName = config.modelName?.isNotEmpty ?? false
+        ? config.modelName!
+        : defaultModel;
 
     // 自动检测图片 MIME 类型
     final mediaType = detectImageMediaType(image);

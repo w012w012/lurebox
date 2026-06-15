@@ -45,7 +45,9 @@ void main() {
         errorService.unregisterHandler(handler);
         errorService.handleError(Exception('test2'), StackTrace.current);
         expect(
-            handlerCallCount, equals(1),); // Still 1, handler was unregistered
+          handlerCallCount,
+          equals(1),
+        ); // Still 1, handler was unregistered
       });
 
       test('handles error with no handlers gracefully', () {
@@ -344,7 +346,9 @@ void main() {
       test('returns correct message for each error type', () {
         expect(
           ErrorService.getLocalizedMessage(
-              AppErrorType.cameraPermission, strings,),
+            AppErrorType.cameraPermission,
+            strings,
+          ),
           equals(strings.errorCameraPermission),
         );
         expect(
@@ -357,7 +361,9 @@ void main() {
         );
         expect(
           ErrorService.getLocalizedMessage(
-              AppErrorType.locationPermission, strings,),
+            AppErrorType.locationPermission,
+            strings,
+          ),
           equals(strings.errorLocationPermission),
         );
         expect(
@@ -386,7 +392,9 @@ void main() {
         );
         expect(
           ErrorService.getLocalizedMessage(
-              AppErrorType.networkConnect, strings,),
+            AppErrorType.networkConnect,
+            strings,
+          ),
           equals(strings.errorNetworkConnect),
         );
         expect(
@@ -399,7 +407,9 @@ void main() {
         );
         expect(
           ErrorService.getLocalizedMessage(
-              AppErrorType.webDAVDownload, strings,),
+            AppErrorType.webDAVDownload,
+            strings,
+          ),
           equals(strings.errorWebDAVDownload),
         );
         expect(

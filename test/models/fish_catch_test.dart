@@ -916,6 +916,107 @@ void main() {
     });
   });
 
+  group('FishCatch 归一化基准单位列（length_cm / weight_kg）', () {
+    FishCatch buildCatch({
+      double length = 30.0,
+      String lengthUnit = 'cm',
+      double? weight,
+      String weightUnit = 'kg',
+    }) {
+      final now = DateTime.now();
+      return FishCatch(
+        id: 1,
+        imagePath: '/test.jpg',
+        species: 'Bass',
+        length: length,
+        lengthUnit: lengthUnit,
+        weight: weight,
+        weightUnit: weightUnit,
+        fate: FishFateType.release,
+        catchTime: now,
+        createdAt: now,
+        updatedAt: now,
+      );
+    }
+
+    test('toMap 在 cm/kg 单位下直接透传数值', () {
+      final map = buildCatch(length: 30, weight: 2.5).toMap();
+      expect(map['length_cm'], equals(30.0));
+      expect(map['weight_kg'], equals(2.5));
+    });
+
+    test('toMap 将 inch 长度换算为厘米', () {
+      final map = buildCatch(length: 20, lengthUnit: 'inch').toMap();
+      expect(map['length_cm'], closeTo(50.8, 0.0001));
+    });
+
+    test('toMap 将 m/mm/ft 长度换算为厘米', () {
+      expect(
+        buildCatch(length: 0.5, lengthUnit: 'm').toMap()['length_cm'],
+        closeTo(50.0, 0.0001),
+      );
+      expect(
+        buildCatch(length: 300, lengthUnit: 'mm').toMap()['length_cm'],
+        closeTo(30.0, 0.0001),
+      );
+      expect(
+        buildCatch(length: 2, lengthUnit: 'ft').toMap()['length_cm'],
+        closeTo(60.96, 0.0001),
+      );
+    });
+
+    test('toMap 将 lb/oz/g 重量换算为千克', () {
+      expect(
+        buildCatch(weight: 1, weightUnit: 'lb').toMap()['weight_kg'],
+        closeTo(0.453592, 0.000001),
+      );
+      expect(
+        buildCatch(weight: 16, weightUnit: 'oz').toMap()['weight_kg'],
+        closeTo(0.453592, 0.0001),
+      );
+      expect(
+        buildCatch(weight: 500, weightUnit: 'g').toMap()['weight_kg'],
+        closeTo(0.5, 0.000001),
+      );
+    });
+
+    test('toMap 在 weight 为空时 weight_kg 也为空', () {
+      final map = buildCatch().toMap();
+      expect(map['weight_kg'], isNull);
+    });
+
+    test('toMap 对未知单位按 cm/kg 处理（与 UnitConverter 默认分支一致）', () {
+      final map = buildCatch(
+              length: 30,
+              lengthUnit: 'unknown',
+              weight: 2,
+              weightUnit: 'unknown')
+          .toMap();
+      expect(map['length_cm'], equals(30.0));
+      expect(map['weight_kg'], equals(2.0));
+    });
+
+    test('fromMap 不读取派生列（以原始值+单位为准）', () {
+      final now = DateTime.now();
+      final map = buildCatch(
+              length: 20, lengthUnit: 'inch', weight: 1, weightUnit: 'lb')
+          .toMap()
+        ..['catch_time'] = now.toIso8601String()
+        // 故意写入错误的派生值，验证 fromMap 忽略它们
+        ..['length_cm'] = 999.0
+        ..['weight_kg'] = 999.0;
+
+      final fish = FishCatch.fromMap(map);
+      expect(fish.length, equals(20.0));
+      expect(fish.lengthUnit, equals('inch'));
+      expect(fish.weight, equals(1.0));
+      expect(fish.weightUnit, equals('lb'));
+      // 重新 toMap 时派生列按原始值重算
+      expect(fish.toMap()['length_cm'], closeTo(50.8, 0.0001));
+      expect(fish.toMap()['weight_kg'], closeTo(0.453592, 0.000001));
+    });
+  });
+
   group('FishCatch edge cases', () {
     test('handles very large id values', () {
       final fish = TestDataFactory.createFishCatch(id: 999999999);

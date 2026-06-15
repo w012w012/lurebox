@@ -18,7 +18,6 @@ import 'package:lurebox/core/services/app_logger.dart';
 /// 每个成就包含目标值、当前进度、完成百分比和锁定状态。
 
 class AchievementService {
-
   AchievementService(this._statsRepo);
   final StatsRepository _statsRepo;
 
@@ -135,22 +134,22 @@ class AchievementService {
     try {
       // 所有查询相互独立，并行执行以提升性能
       final results = await Future.wait([
-        _statsRepo.getTotalCatchCount(),       // 0
-        _statsRepo.getMaxLength(),             // 1
-        _statsRepo.getDistinctSpeciesCount(),  // 2
-        _statsRepo.getLocationCount(),         // 3
-        _statsRepo.getReleaseCount(),          // 4
-        _statsRepo.getReleaseRate(),           // 5
-        _statsRepo.getConsecutiveDays(),       // 6
-        _statsRepo.getMonthlyMax(),            // 7
-        _statsRepo.getDailyMax(),              // 8
-        _statsRepo.getMorningCatchCount(),     // 9
-        _statsRepo.getNightCatchCount(),       // 10
-        _statsRepo.getPhotoCount(),            // 11
-        _statsRepo.getTotalWeight(),           // 12
-        _getEquipmentFullStatus(),             // 13
-        _getEquipmentCount(),                  // 14
-        _getEquipmentComboMax(),               // 15
+        _statsRepo.getTotalCatchCount(), // 0
+        _statsRepo.getMaxLength(), // 1
+        _statsRepo.getDistinctSpeciesCount(), // 2
+        _statsRepo.getLocationCount(), // 3
+        _statsRepo.getReleaseCount(), // 4
+        _statsRepo.getReleaseRate(), // 5
+        _statsRepo.getConsecutiveDays(), // 6
+        _statsRepo.getMonthlyMax(), // 7
+        _statsRepo.getDailyMax(), // 8
+        _statsRepo.getMorningCatchCount(), // 9
+        _statsRepo.getNightCatchCount(), // 10
+        _statsRepo.getPhotoCount(), // 11
+        _statsRepo.getTotalWeight(), // 12
+        _getEquipmentFullStatus(), // 13
+        _getEquipmentCount(), // 14
+        _getEquipmentComboMax(), // 15
       ]);
 
       final totalCatches = results[0] as int;

@@ -16,8 +16,10 @@ class FakeEquipmentRepository implements EquipmentRepository {
   @override
   Future<List<Equipment>> getAll({String? type}) async {
     return _store.values
-        .where((e) =>
-            !e.isDeleted && (type == null || e.type.name == _typeStr(type)),)
+        .where(
+          (e) =>
+              !e.isDeleted && (type == null || e.type.name == _typeStr(type)),
+        )
         .toList();
   }
 
@@ -105,7 +107,8 @@ class FakeEquipmentRepository implements EquipmentRepository {
     // Clear existing default for this type
     for (final entry in _store.entries) {
       if (entry.value.type.name == type && entry.value.isDefault) {
-        _store[entry.key] = Equipment.fromMap({...entry.value.toMap(), 'is_default': 0});
+        _store[entry.key] =
+            Equipment.fromMap({...entry.value.toMap(), 'is_default': 0});
       }
     }
     // Set new default
@@ -146,7 +149,8 @@ class FakeEquipmentRepository implements EquipmentRepository {
   Future<Map<String, int>> getCategoryDistribution(String type) async {
     final dist = <String, int>{};
     for (final e in _store.values.where(
-        (e) => !e.isDeleted && e.type.name == type && e.category != null,)) {
+      (e) => !e.isDeleted && e.type.name == type && e.category != null,
+    )) {
       dist[e.category!] = (dist[e.category!] ?? 0) + 1;
     }
     return dist;
@@ -388,8 +392,12 @@ void main() {
 
 final _now = DateTime.now();
 
-Equipment _makeRod(
-    {int id = 1, String? brand, String? model, bool isDefault = false,}) {
+Equipment _makeRod({
+  int id = 1,
+  String? brand,
+  String? model,
+  bool isDefault = false,
+}) {
   return Equipment(
     id: id,
     type: EquipmentType.rod,

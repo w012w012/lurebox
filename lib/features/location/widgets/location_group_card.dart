@@ -7,9 +7,10 @@ import 'package:lurebox/core/providers/location_view_model.dart';
 
 /// Similar fishing location group card with iOS aesthetics and PremiumCard styling.
 class LocationGroupCard extends StatefulWidget {
-
   const LocationGroupCard({
-    required this.group, required this.locationFishCounts, super.key,
+    required this.group,
+    required this.locationFishCounts,
+    super.key,
     this.strings,
     this.onAutoMerge,
   });
@@ -92,8 +93,10 @@ class _LocationGroupCardState extends State<LocationGroupCard> {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            (widget.strings?.containsNSimilarLocations ?? '包含 %d 个相似钓点')
-                                .replaceAll('%d', '${widget.group.locations.length}'),
+                            (widget.strings?.containsNSimilarLocations ??
+                                    '包含 %d 个相似钓点')
+                                .replaceAll(
+                                    '%d', '${widget.group.locations.length}'),
                             style: TextStyle(
                               fontSize: 12,
                               color: textSecondary,

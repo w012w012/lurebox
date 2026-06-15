@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 
 class LabeledSlider extends StatelessWidget {
-
   const LabeledSlider({
-    required this.label, required this.value, required this.min, required this.max, required this.onChanged, super.key,
+    required this.label,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.onChanged,
+    super.key,
     this.valueFormatter,
   });
   final String label;

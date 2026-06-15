@@ -11,7 +11,6 @@ import 'package:lurebox/core/services/fish_recognition_service.dart';
 ///
 /// 使用 Google Gemini 2.0 Flash API 进行鱼类识别
 class GeminiFishRecognitionProvider implements FishRecognitionProvider {
-
   /// Creates a Gemini provider with optional HTTP client injection
   /// If no client is provided, uses a shared static client to avoid socket leaks
   GeminiFishRecognitionProvider({http.Client? client})

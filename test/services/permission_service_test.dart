@@ -68,7 +68,8 @@ void main() {
     test('returns true when status is granted', () async {
       mock.statusResult = PermissionStatus.granted;
 
-      final result = await PermissionService().isPermissionGranted(Permission.camera);
+      final result =
+          await PermissionService().isPermissionGranted(Permission.camera);
 
       expect(result, isTrue);
     });
@@ -76,7 +77,8 @@ void main() {
     test('returns true when status is limited (iOS photos)', () async {
       mock.statusResult = PermissionStatus.limited;
 
-      final result = await PermissionService().isPermissionGranted(Permission.photos);
+      final result =
+          await PermissionService().isPermissionGranted(Permission.photos);
 
       expect(result, isTrue);
     });
@@ -84,7 +86,8 @@ void main() {
     test('returns false when status is denied', () async {
       mock.statusResult = PermissionStatus.denied;
 
-      final result = await PermissionService().isPermissionGranted(Permission.camera);
+      final result =
+          await PermissionService().isPermissionGranted(Permission.camera);
 
       expect(result, isFalse);
     });
@@ -92,7 +95,8 @@ void main() {
     test('returns false when status is permanently denied', () async {
       mock.statusResult = PermissionStatus.permanentlyDenied;
 
-      final result = await PermissionService().isPermissionGranted(Permission.camera);
+      final result =
+          await PermissionService().isPermissionGranted(Permission.camera);
 
       expect(result, isFalse);
     });
@@ -100,14 +104,16 @@ void main() {
     test('returns false when status is restricted', () async {
       mock.statusResult = PermissionStatus.restricted;
 
-      final result = await PermissionService().isPermissionGranted(Permission.camera);
+      final result =
+          await PermissionService().isPermissionGranted(Permission.camera);
 
       expect(result, isFalse);
     });
 
     test('delegates to platform with correct permission', () async {
       mock.statusResult = PermissionStatus.granted;
-      await PermissionService().isPermissionGranted(Permission.locationWhenInUse);
+      await PermissionService()
+          .isPermissionGranted(Permission.locationWhenInUse);
       expect(mock.statusResult, equals(PermissionStatus.granted));
     });
   });
@@ -127,7 +133,8 @@ void main() {
     test('returns true when status is permanentlyDenied', () async {
       mock.statusResult = PermissionStatus.permanentlyDenied;
 
-      final result = await PermissionService().isPermanentlyDenied(Permission.camera);
+      final result =
+          await PermissionService().isPermanentlyDenied(Permission.camera);
 
       expect(result, isTrue);
     });
@@ -135,7 +142,8 @@ void main() {
     test('returns false when status is denied (not permanent)', () async {
       mock.statusResult = PermissionStatus.denied;
 
-      final result = await PermissionService().isPermanentlyDenied(Permission.camera);
+      final result =
+          await PermissionService().isPermanentlyDenied(Permission.camera);
 
       expect(result, isFalse);
     });
@@ -143,7 +151,8 @@ void main() {
     test('returns false when status is granted', () async {
       mock.statusResult = PermissionStatus.granted;
 
-      final result = await PermissionService().isPermanentlyDenied(Permission.camera);
+      final result =
+          await PermissionService().isPermanentlyDenied(Permission.camera);
 
       expect(result, isFalse);
     });
@@ -259,7 +268,8 @@ void main() {
       // No resources to clean up - mocks are garbage collected
     });
 
-    testWidgets('camera education dialog shows title and description', (tester) async {
+    testWidgets('camera education dialog shows title and description',
+        (tester) async {
       mock.statusResult = PermissionStatus.denied;
       mock.requestResult = PermissionStatus.granted;
 
@@ -271,14 +281,18 @@ void main() {
                 body: ElevatedButton(
                   onPressed: () async {
                     // Test the dialog flow
-                    final status = await PermissionService().isPermissionGranted(Permission.camera);
+                    final status = await PermissionService()
+                        .isPermissionGranted(Permission.camera);
                     if (!status && context.mounted) {
                       await showDialog(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          icon: Icon(PermissionService.cameraInfo.icon, size: 48),
-                          title: Text('需要${PermissionService.cameraInfo.title}'),
-                          content: Text(PermissionService.cameraInfo.description),
+                          icon:
+                              Icon(PermissionService.cameraInfo.icon, size: 48),
+                          title:
+                              Text('需要${PermissionService.cameraInfo.title}'),
+                          content:
+                              Text(PermissionService.cameraInfo.description),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(ctx, false),
@@ -304,8 +318,10 @@ void main() {
       await tester.tap(find.text('Request Permission'));
       await tester.pumpAndSettle();
 
-      expect(find.text('需要${PermissionService.cameraInfo.title}'), findsOneWidget);
-      expect(find.text(PermissionService.cameraInfo.description), findsOneWidget);
+      expect(
+          find.text('需要${PermissionService.cameraInfo.title}'), findsOneWidget);
+      expect(
+          find.text(PermissionService.cameraInfo.description), findsOneWidget);
       expect(find.text('授权'), findsOneWidget);
       expect(find.text('暂不授权'), findsOneWidget);
     });
@@ -322,7 +338,8 @@ void main() {
                       await showDialog(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          title: Text('需要${PermissionService.cameraInfo.title}'),
+                          title:
+                              Text('需要${PermissionService.cameraInfo.title}'),
                           content: Text(
                             '您之前拒绝了${PermissionService.cameraInfo.title}。\n\n'
                             '请在系统设置中开启${PermissionService.cameraInfo.title}，以使用相关功能。',

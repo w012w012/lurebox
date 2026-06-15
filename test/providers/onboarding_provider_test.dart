@@ -64,16 +64,14 @@ void main() {
       expect(result.container.read(onboardingNotifierProvider), false);
     });
 
-    test('initial state is true when hasCompletedOnboarding is true',
-        () async {
+    test('initial state is true when hasCompletedOnboarding is true', () async {
       final result = makeContainer(hasCompletedOnboarding: true);
       addTearDown(result.container.dispose);
 
       expect(result.container.read(onboardingNotifierProvider), true);
     });
 
-    test('completeOnboarding sets state to true and saves settings',
-        () async {
+    test('completeOnboarding sets state to true and saves settings', () async {
       final result = makeContainer(hasCompletedOnboarding: false);
       addTearDown(result.container.dispose);
 
@@ -85,8 +83,7 @@ void main() {
       expect(result.savedSettings.single.hasCompletedOnboarding, true);
     });
 
-    test('resetOnboarding sets state to false and saves settings',
-        () async {
+    test('resetOnboarding sets state to false and saves settings', () async {
       final result = makeContainer(hasCompletedOnboarding: true);
       addTearDown(result.container.dispose);
 

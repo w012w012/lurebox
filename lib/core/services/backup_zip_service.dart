@@ -27,7 +27,6 @@ import 'package:sqflite/sqflite.dart' hide DatabaseException;
 ///
 /// 包含备份版本、导出时间、数据校验和、统计信息等
 class BackupMetadata {
-
   const BackupMetadata({
     required this.version,
     required this.exportTime,
@@ -50,6 +49,7 @@ class BackupMetadata {
       appVersion: map['appVersion'] as String,
     );
   }
+
   /// 备份格式版本号
   final int version;
 
@@ -136,11 +136,11 @@ class BackupMetadata {
 ///
 /// 配置备份过程中是否包含照片、是否创建恢复点等
 class BackupExportOptions {
-
   const BackupExportOptions({
     this.includePhotos = true,
     this.createRecoveryPoint = false,
   });
+
   /// 是否包含照片文件
   final bool includePhotos;
 
@@ -148,9 +148,7 @@ class BackupExportOptions {
   final bool createRecoveryPoint;
 
   /// 默认导出选项（包含照片，不创建恢复点）
-  static const BackupExportOptions defaultOptions = BackupExportOptions(
-    
-  );
+  static const BackupExportOptions defaultOptions = BackupExportOptions();
 
   /// 仅导出数据库选项
   static const BackupExportOptions databaseOnly = BackupExportOptions(
@@ -173,7 +171,6 @@ class BackupExportOptions {
 ///
 /// 包含校验是否通过、错误信息（如果失败）和元数据
 class IntegrityResult {
-
   const IntegrityResult({
     required this.isValid,
     this.errorMessage,
@@ -202,6 +199,7 @@ class IntegrityResult {
     this.errorMessage,
     this.metadata,
   ) : isValid = false;
+
   /// 备份文件是否有效
   final bool isValid;
 
@@ -228,7 +226,6 @@ class IntegrityResult {
 ///
 /// 包含导入是否成功、错误信息（如果失败）和元数据
 class ImportResult {
-
   const ImportResult({
     required this.isSuccess,
     this.errorMessage,
@@ -251,6 +248,7 @@ class ImportResult {
   const ImportResult.successWithMetadata(this.metadata)
       : isSuccess = true,
         errorMessage = null;
+
   /// 导入是否成功
   final bool isSuccess;
 
@@ -279,7 +277,6 @@ class ImportResult {
 /// - 创建包含数据库和照片的 ZIP 备份文件
 /// - 校验备份文件的完整性（SHA-256 校验和）
 class BackupZipService {
-
   BackupZipService(this._dbProvider);
   final DatabaseProvider _dbProvider;
 
@@ -323,8 +320,12 @@ class BackupZipService {
 
       // 3. 创建临时目录
       final tempDir = await getTemporaryDirectory();
-      final backupDir = Directory(p.join(tempDir.path,
-          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}',),);
+      final backupDir = Directory(
+        p.join(
+          tempDir.path,
+          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}',
+        ),
+      );
       await backupDir.create(recursive: true);
 
       // 4. 复制数据库文件到临时目录
@@ -363,8 +364,10 @@ class BackupZipService {
           .writeAsString(metadataJson);
 
       // 9. 创建 ZIP 文件
-      final zipPath = p.join(tempDir.path,
-          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}.zip',);
+      final zipPath = p.join(
+        tempDir.path,
+        'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}.zip',
+      );
       await _createZip(backupDir.path, zipPath);
 
       // 10. 清理临时备份目录（保留 ZIP 文件）
@@ -399,8 +402,12 @@ class BackupZipService {
 
       // 3. 创建临时目录
       final tempDir = await getTemporaryDirectory();
-      final backupDir = Directory(p.join(tempDir.path,
-          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}',),);
+      final backupDir = Directory(
+        p.join(
+          tempDir.path,
+          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}',
+        ),
+      );
       await backupDir.create(recursive: true);
 
       // 4. 复制数据库文件到临时目录
@@ -439,8 +446,10 @@ class BackupZipService {
           .writeAsString(metadataJson);
 
       // 9. 创建 ZIP 文件（先在 temp 目录）
-      final tempZipPath = p.join(tempDir.path,
-          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}.zip',);
+      final tempZipPath = p.join(
+        tempDir.path,
+        'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}.zip',
+      );
       await _createZip(backupDir.path, tempZipPath);
 
       // 10. 将 ZIP 复制到应用文档目录
@@ -514,7 +523,10 @@ class BackupZipService {
 
   /// 复制单个照片文件（如果存在）
   Future<void> _copyPhotoIfExists(
-      String relativePath, String appDir, String photosDir,) async {
+    String relativePath,
+    String appDir,
+    String photosDir,
+  ) async {
     // 处理可能的相对路径或绝对路径
     String fullPath;
     if (p.isAbsolute(relativePath)) {
@@ -543,7 +555,8 @@ class BackupZipService {
 
       final equipmentCount = Sqflite.firstIntValue(
             await db.rawQuery(
-                'SELECT COUNT(*) FROM equipments WHERE is_deleted = 0',),
+              'SELECT COUNT(*) FROM equipments WHERE is_deleted = 0',
+            ),
           ) ??
           0;
 
@@ -630,10 +643,12 @@ class BackupZipService {
 
       // 2. 提取 ZIP 到临时目录
       final tempDir = await getTemporaryDirectory();
-      final extractDir = Directory(p.join(
-        tempDir.path,
-        'lurebox_import_${DateTime.now().millisecondsSinceEpoch}',
-      ),);
+      final extractDir = Directory(
+        p.join(
+          tempDir.path,
+          'lurebox_import_${DateTime.now().millisecondsSinceEpoch}',
+        ),
+      );
       await extractDir.create(recursive: true);
 
       try {

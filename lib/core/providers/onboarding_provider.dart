@@ -10,7 +10,6 @@ final onboardingCompletedProvider = Provider<bool>((ref) {
 
 /// Onboarding notifier for managing onboarding state
 class OnboardingNotifier extends StateNotifier<bool> {
-
   OnboardingNotifier(this._ref) : super(false) {
     // Initialize from AppSettings
     state = _ref.read(appSettingsProvider).hasCompletedOnboarding;

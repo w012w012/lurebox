@@ -30,7 +30,6 @@ import 'package:lurebox/core/models/fish_catch.dart';
 /// - 支持空值清除（通过函数回调）
 
 class FishFilter {
-
   const FishFilter({
     this.timeFilter = 'all',
     this.fateFilter,

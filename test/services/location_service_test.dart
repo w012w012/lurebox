@@ -107,7 +107,6 @@ class MockDb extends Mock implements Database {
 }
 
 class _MockTransaction implements Transaction {
-
   _MockTransaction(this._mockDb);
   final MockDb _mockDb;
 
@@ -226,7 +225,6 @@ class _MockQueryCursor implements QueryCursor {
 
 // Mock DatabaseProvider for query-based tests
 class MockDatabaseProvider extends Mock implements DatabaseProvider {
-
   MockDatabaseProvider(this.mockDb);
   final MockDb mockDb;
 
@@ -236,7 +234,6 @@ class MockDatabaseProvider extends Mock implements DatabaseProvider {
 
 // Real DatabaseProvider for integration tests
 class RealDatabaseProvider implements DatabaseProvider {
-
   RealDatabaseProvider(this._db);
   final Database _db;
 
@@ -325,10 +322,13 @@ void main() {
       expect(result, isEmpty);
     });
 
-    test('getFishCountByLocation returns fish count for given location', () async {
+    test('getFishCountByLocation returns fish count for given location',
+        () async {
       mockDatabase.addQueryResult(
         'SELECT COUNT(*) as count FROM fish_catches WHERE location_name = ?',
-        [{'count': 10}],
+        [
+          {'count': 10}
+        ],
       );
 
       final result = await service.getFishCountByLocation('西湖');
@@ -339,7 +339,9 @@ void main() {
     test('getFishCountByLocation returns 0 when location not found', () async {
       mockDatabase.addQueryResult(
         'SELECT COUNT(*) as count FROM fish_catches WHERE location_name = ?',
-        [{'count': 0}],
+        [
+          {'count': 0}
+        ],
       );
 
       final result = await service.getFishCountByLocation('未知地点');
@@ -405,7 +407,8 @@ void main() {
           'fish_catches',
           columns: ['location_name'],
         );
-        final locationNames = results.map((r) => r['location_name']! as String).toList();
+        final locationNames =
+            results.map((r) => r['location_name']! as String).toList();
 
         expect(locationNames, equals(['新地点', '新地点']));
         expect(locationNames, isNot(contains('旧地点1')));
@@ -437,7 +440,8 @@ void main() {
           columns: ['location_name'],
           orderBy: 'location_name ASC',
         );
-        final locationNames = results.map((r) => r['location_name']! as String).toList();
+        final locationNames =
+            results.map((r) => r['location_name']! as String).toList();
 
         expect(locationNames, equals(['保留的地点', '新地点']));
       });
@@ -476,7 +480,8 @@ void main() {
           'fish_catches',
           columns: ['location_name'],
         );
-        final locationNames = results.map((r) => r['location_name']! as String).toList();
+        final locationNames =
+            results.map((r) => r['location_name']! as String).toList();
 
         // Only the existing location remains - mergeLocations only updates existing records
         expect(locationNames, equals(['存在的地点']));
@@ -500,7 +505,8 @@ void main() {
           'fish_catches',
           columns: ['location_name'],
         );
-        final locationNames = results.map((r) => r['location_name']! as String).toList();
+        final locationNames =
+            results.map((r) => r['location_name']! as String).toList();
 
         expect(locationNames, equals(['新名称']));
         expect(locationNames, isNot(contains('旧名称')));
@@ -530,7 +536,8 @@ void main() {
           'fish_catches',
           columns: ['location_name'],
         );
-        final locationNames = results.map((r) => r['location_name']! as String).toList();
+        final locationNames =
+            results.map((r) => r['location_name']! as String).toList();
 
         expect(locationNames, equals(['新名称', '新名称']));
       });
@@ -576,7 +583,8 @@ void main() {
           columns: ['location_name'],
           orderBy: 'species ASC',
         );
-        final locationNames = results.map((r) => r['location_name']! as String).toList();
+        final locationNames =
+            results.map((r) => r['location_name']! as String).toList();
 
         expect(locationNames, equals(['新名称', '保留地点']));
       });

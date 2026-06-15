@@ -4,9 +4,9 @@ import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
 
 class FishActionButtons extends StatelessWidget {
-
   const FishActionButtons({
-    required this.strings, super.key,
+    required this.strings,
+    super.key,
     this.onEdit,
     this.onDelete,
     this.onShare,
@@ -45,7 +45,6 @@ class FishActionButtons extends StatelessWidget {
 }
 
 class _ActionButton extends StatelessWidget {
-
   const _ActionButton({
     required this.icon,
     required this.label,
@@ -73,14 +72,17 @@ class _ActionButton extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (isLoading) SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: color,
-                    ),
-                  ) else Icon(icon, color: color),
+            if (isLoading)
+              SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: color,
+                ),
+              )
+            else
+              Icon(icon, color: color),
             const SizedBox(height: 4),
             Text(
               label,

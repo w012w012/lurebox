@@ -27,9 +27,11 @@ CREATE TABLE user_species_alias (
 )
 ''');
           await db.execute(
-              'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)',);
+            'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)',
+          );
           await db.execute(
-              'CREATE INDEX idx_alias_species ON user_species_alias(species_id)',);
+            'CREATE INDEX idx_alias_species ON user_species_alias(species_id)',
+          );
         },
       ),
     );
@@ -93,7 +95,9 @@ CREATE TABLE user_species_alias (
 
       expect(results.length, equals(2));
       expect(
-          results.map((a) => a.userAlias).toList(), containsAll(['桂鱼', '桂花鱼']),);
+        results.map((a) => a.userAlias).toList(),
+        containsAll(['桂鱼', '桂花鱼']),
+      );
     });
 
     test('findBySpeciesId returns empty list for non-existent species',
@@ -192,8 +196,10 @@ CREATE TABLE user_species_alias (
       expect(map['id'], equals(1));
       expect(map['user_alias'], equals('桂鱼'));
       expect(map['species_id'], equals('f001'));
-      expect(map['created_at'],
-          equals(DateTime(2024).millisecondsSinceEpoch),);
+      expect(
+        map['created_at'],
+        equals(DateTime(2024).millisecondsSinceEpoch),
+      );
     });
 
     test('toMap excludes null id', () {

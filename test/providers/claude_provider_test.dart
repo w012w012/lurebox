@@ -11,9 +11,13 @@ import 'package:mocktail/mocktail.dart';
 /// Creates an HTTP response with proper UTF-8 encoding for Chinese characters
 http.Response _createUtf8Response(String body, int statusCode) {
   final bytes = utf8.encode(body);
-  return http.Response.bytes(bytes, statusCode, headers: {
-    'Content-Type': 'application/json; charset=utf-8',
-  },);
+  return http.Response.bytes(
+    bytes,
+    statusCode,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+    },
+  );
 }
 
 /// Mock HTTP Client for testing
@@ -49,7 +53,8 @@ void main() {
         // Arrange
         final tempDir = Directory.systemTemp;
         final tempFile = File(
-            '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',);
+          '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
         try {
@@ -63,13 +68,15 @@ void main() {
             ],
           };
 
-          when(() => mockHttpClient.post(
-                    any(),
-                    headers: any(named: 'headers'),
-                    body: any(named: 'body'),
-                  ),)
-              .thenAnswer((_) async =>
-                  _createUtf8Response(jsonEncode(responseJson), 200),);
+          when(
+            () => mockHttpClient.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => _createUtf8Response(jsonEncode(responseJson), 200),
+          );
 
           final provider =
               ClaudeFishRecognitionProvider(client: mockHttpClient);
@@ -80,8 +87,10 @@ void main() {
           // Assert
           expect(result, isA<FishRecognitionResult>());
           expect(result.primarySpecies.chineseName, equals('鲈鱼'));
-          expect(result.primarySpecies.scientificName,
-              equals('Lateolabrax japonicus'),);
+          expect(
+            result.primarySpecies.scientificName,
+            equals('Lateolabrax japonicus'),
+          );
           expect(result.confidence, equals(85));
         } finally {
           await tempFile.delete();
@@ -92,7 +101,8 @@ void main() {
         // Arrange
         final tempDir = Directory.systemTemp;
         final tempFile = File(
-            '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',);
+          '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
         try {
@@ -106,13 +116,15 @@ void main() {
             ],
           };
 
-          when(() => mockHttpClient.post(
-                    any(),
-                    headers: any(named: 'headers'),
-                    body: any(named: 'body'),
-                  ),)
-              .thenAnswer((_) async =>
-                  _createUtf8Response(jsonEncode(responseJson), 200),);
+          when(
+            () => mockHttpClient.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => _createUtf8Response(jsonEncode(responseJson), 200),
+          );
 
           final provider =
               ClaudeFishRecognitionProvider(client: mockHttpClient);
@@ -121,11 +133,13 @@ void main() {
           await provider.identifySpecies(tempFile, config);
 
           // Assert
-          final captured = verify(() => mockHttpClient.post(
-                captureAny(),
-                headers: captureAny(named: 'headers'),
-                body: captureAny(named: 'body'),
-              ),).captured;
+          final captured = verify(
+            () => mockHttpClient.post(
+              captureAny(),
+              headers: captureAny(named: 'headers'),
+              body: captureAny(named: 'body'),
+            ),
+          ).captured;
 
           final uri = captured[0] as Uri;
           final headers = captured[1] as Map<String, String>;
@@ -174,7 +188,8 @@ void main() {
         // Arrange
         final tempDir = Directory.systemTemp;
         final tempFile = File(
-            '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',);
+          '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
         try {
@@ -191,13 +206,15 @@ void main() {
             ],
           };
 
-          when(() => mockHttpClient.post(
-                    any(),
-                    headers: any(named: 'headers'),
-                    body: any(named: 'body'),
-                  ),)
-              .thenAnswer((_) async =>
-                  _createUtf8Response(jsonEncode(responseJson), 200),);
+          when(
+            () => mockHttpClient.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => _createUtf8Response(jsonEncode(responseJson), 200),
+          );
 
           final provider =
               ClaudeFishRecognitionProvider(client: mockHttpClient);
@@ -208,7 +225,9 @@ void main() {
           // Assert
           expect(result.primarySpecies.chineseName, equals('翘嘴'));
           expect(
-              result.primarySpecies.scientificName, equals('Culter alburnus'),);
+            result.primarySpecies.scientificName,
+            equals('Culter alburnus'),
+          );
           expect(result.confidence, equals(78));
           expect(result.alternatives.length, equals(1));
           expect(result.alternatives[0].chineseName, equals('鳜鱼'));
@@ -223,7 +242,8 @@ void main() {
         // Arrange
         final tempDir = Directory.systemTemp;
         final tempFile = File(
-            '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',);
+          '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
         try {
@@ -234,13 +254,15 @@ void main() {
             },
           };
 
-          when(() => mockHttpClient.post(
-                    any(),
-                    headers: any(named: 'headers'),
-                    body: any(named: 'body'),
-                  ),)
-              .thenAnswer((_) async =>
-                  _createUtf8Response(jsonEncode(responseJson), 401),);
+          when(
+            () => mockHttpClient.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => _createUtf8Response(jsonEncode(responseJson), 401),
+          );
 
           final provider =
               ClaudeFishRecognitionProvider(client: mockHttpClient);
@@ -261,7 +283,8 @@ void main() {
         // Arrange
         final tempDir = Directory.systemTemp;
         final tempFile = File(
-            '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',);
+          '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
         try {
@@ -272,13 +295,15 @@ void main() {
             },
           };
 
-          when(() => mockHttpClient.post(
-                    any(),
-                    headers: any(named: 'headers'),
-                    body: any(named: 'body'),
-                  ),)
-              .thenAnswer((_) async =>
-                  _createUtf8Response(jsonEncode(responseJson), 429),);
+          when(
+            () => mockHttpClient.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => _createUtf8Response(jsonEncode(responseJson), 429),
+          );
 
           final provider =
               ClaudeFishRecognitionProvider(client: mockHttpClient);
@@ -300,7 +325,8 @@ void main() {
         // Arrange
         final tempDir = Directory.systemTemp;
         final tempFile = File(
-            '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',);
+          '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
         try {
@@ -308,13 +334,15 @@ void main() {
             'content': <dynamic>[],
           };
 
-          when(() => mockHttpClient.post(
-                    any(),
-                    headers: any(named: 'headers'),
-                    body: any(named: 'body'),
-                  ),)
-              .thenAnswer((_) async =>
-                  _createUtf8Response(jsonEncode(responseJson), 200),);
+          when(
+            () => mockHttpClient.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => _createUtf8Response(jsonEncode(responseJson), 200),
+          );
 
           final provider =
               ClaudeFishRecognitionProvider(client: mockHttpClient);
@@ -336,7 +364,8 @@ void main() {
         // Arrange
         final tempDir = Directory.systemTemp;
         final tempFile = File(
-            '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',);
+          '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
         try {
@@ -349,13 +378,15 @@ void main() {
             ],
           };
 
-          when(() => mockHttpClient.post(
-                    any(),
-                    headers: any(named: 'headers'),
-                    body: any(named: 'body'),
-                  ),)
-              .thenAnswer((_) async =>
-                  _createUtf8Response(jsonEncode(responseJson), 200),);
+          when(
+            () => mockHttpClient.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => _createUtf8Response(jsonEncode(responseJson), 200),
+          );
 
           final provider =
               ClaudeFishRecognitionProvider(client: mockHttpClient);
@@ -376,16 +407,18 @@ void main() {
         // Arrange
         final tempDir = Directory.systemTemp;
         final tempFile = File(
-            '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',);
+          '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
         try {
-          when(() => mockHttpClient.post(
-                    any(),
-                    headers: any(named: 'headers'),
-                    body: any(named: 'body'),
-                  ),)
-              .thenAnswer((_) async => _createUtf8Response('Bad Request', 400));
+          when(
+            () => mockHttpClient.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer((_) async => _createUtf8Response('Bad Request', 400));
 
           final provider =
               ClaudeFishRecognitionProvider(client: mockHttpClient);
@@ -406,17 +439,20 @@ void main() {
         // Arrange
         final tempDir = Directory.systemTemp;
         final tempFile = File(
-            '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',);
+          '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
         try {
-          when(() => mockHttpClient.post(
-                    any(),
-                    headers: any(named: 'headers'),
-                    body: any(named: 'body'),
-                  ),)
-              .thenAnswer(
-                  (_) async => _createUtf8Response('Server Error', 500),);
+          when(
+            () => mockHttpClient.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => _createUtf8Response('Server Error', 500),
+          );
 
           final provider =
               ClaudeFishRecognitionProvider(client: mockHttpClient);
@@ -437,7 +473,8 @@ void main() {
         // Arrange
         final tempDir = Directory.systemTemp;
         final tempFile = File(
-            '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',);
+          '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
         const customConfig = AiProviderConfig(
@@ -458,13 +495,15 @@ void main() {
             ],
           };
 
-          when(() => mockHttpClient.post(
-                    any(),
-                    headers: any(named: 'headers'),
-                    body: any(named: 'body'),
-                  ),)
-              .thenAnswer((_) async =>
-                  _createUtf8Response(jsonEncode(responseJson), 200),);
+          when(
+            () => mockHttpClient.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => _createUtf8Response(jsonEncode(responseJson), 200),
+          );
 
           final provider =
               ClaudeFishRecognitionProvider(client: mockHttpClient);
@@ -473,11 +512,13 @@ void main() {
           await provider.identifySpecies(tempFile, customConfig);
 
           // Assert
-          final captured = verify(() => mockHttpClient.post(
-                captureAny(),
-                headers: any(named: 'headers'),
-                body: any(named: 'body'),
-              ),).captured;
+          final captured = verify(
+            () => mockHttpClient.post(
+              captureAny(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).captured;
 
           final uri = captured[0] as Uri;
           expect(uri.host, equals('custom.anthropic.com'));
@@ -491,7 +532,8 @@ void main() {
         // Arrange
         final tempDir = Directory.systemTemp;
         final tempFile = File(
-            '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',);
+          '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
         const configWithNullModel = AiProviderConfig(
@@ -511,13 +553,15 @@ void main() {
             ],
           };
 
-          when(() => mockHttpClient.post(
-                    any(),
-                    headers: any(named: 'headers'),
-                    body: any(named: 'body'),
-                  ),)
-              .thenAnswer((_) async =>
-                  _createUtf8Response(jsonEncode(responseJson), 200),);
+          when(
+            () => mockHttpClient.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => _createUtf8Response(jsonEncode(responseJson), 200),
+          );
 
           final provider =
               ClaudeFishRecognitionProvider(client: mockHttpClient);
@@ -526,11 +570,13 @@ void main() {
           await provider.identifySpecies(tempFile, configWithNullModel);
 
           // Assert
-          final captured = verify(() => mockHttpClient.post(
-                captureAny(),
-                headers: captureAny(named: 'headers'),
-                body: captureAny(named: 'body'),
-              ),).captured;
+          final captured = verify(
+            () => mockHttpClient.post(
+              captureAny(),
+              headers: captureAny(named: 'headers'),
+              body: captureAny(named: 'body'),
+            ),
+          ).captured;
 
           final body = captured[2] as String;
           final requestBody = jsonDecode(body) as Map<String, dynamic>;
@@ -544,7 +590,8 @@ void main() {
         // Arrange
         final tempDir = Directory.systemTemp;
         final tempFile = File(
-            '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',);
+          '${tempDir.path}/test_fish_${DateTime.now().millisecondsSinceEpoch}.jpg',
+        );
         await tempFile.writeAsBytes([1, 2, 3, 4, 5]);
 
         try {
@@ -558,13 +605,15 @@ void main() {
             ],
           };
 
-          when(() => mockHttpClient.post(
-                    any(),
-                    headers: any(named: 'headers'),
-                    body: any(named: 'body'),
-                  ),)
-              .thenAnswer((_) async =>
-                  _createUtf8Response(jsonEncode(responseJson), 200),);
+          when(
+            () => mockHttpClient.post(
+              any(),
+              headers: any(named: 'headers'),
+              body: any(named: 'body'),
+            ),
+          ).thenAnswer(
+            (_) async => _createUtf8Response(jsonEncode(responseJson), 200),
+          );
 
           final provider =
               ClaudeFishRecognitionProvider(client: mockHttpClient);
@@ -578,8 +627,10 @@ void main() {
           expect(result.alternatives[0].scientificName, equals('Channa argus'));
           expect(result.alternatives[0].confidence, equals(60));
           expect(result.alternatives[1].chineseName, equals('鳜鱼'));
-          expect(result.alternatives[1].scientificName,
-              equals('Siniperca chuatsi'),);
+          expect(
+            result.alternatives[1].scientificName,
+            equals('Siniperca chuatsi'),
+          );
           expect(result.alternatives[1].confidence, equals(45));
         } finally {
           await tempFile.delete();

@@ -8,9 +8,10 @@ import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/core/providers/watermark_provider.dart';
 
 class WatermarkCustomTextField extends ConsumerStatefulWidget {
-
   const WatermarkCustomTextField({
-    required this.settings, required this.strings, super.key,
+    required this.settings,
+    required this.strings,
+    super.key,
   });
   final WatermarkSettings settings;
   final AppStrings strings;
@@ -27,8 +28,7 @@ class _WatermarkCustomTextFieldState
   @override
   void initState() {
     super.initState();
-    _controller =
-        TextEditingController(text: widget.settings.customText ?? '');
+    _controller = TextEditingController(text: widget.settings.customText ?? '');
   }
 
   @override

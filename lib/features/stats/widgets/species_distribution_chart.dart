@@ -7,9 +7,10 @@ import 'package:lurebox/core/utils/unit_converter.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
 class SpeciesDistributionChart extends StatefulWidget {
-
   const SpeciesDistributionChart({
-    required this.speciesStats, required this.totalCount, super.key,
+    required this.speciesStats,
+    required this.totalCount,
+    super.key,
     this.speciesWeightStats,
     this.totalWeight = 0,
     this.showByWeight = false,
@@ -74,8 +75,10 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
     if (widget.speciesStats.isEmpty) return const SizedBox();
 
     final unitLabel = widget.showByWeight
-        ? UnitConverter.getWeightSymbol(widget.weightUnit,
-            isChinese: widget.isChinese,)
+        ? UnitConverter.getWeightSymbol(
+            widget.weightUnit,
+            isChinese: widget.isChinese,
+          )
         : (appStrings?.fishCountUnit ?? '');
     final displayTotal =
         widget.showByWeight ? widget.totalWeight : widget.totalCount;
@@ -113,7 +116,8 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                       color: Theme.of(
                         context,
                       ).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+                      borderRadius:
+                          BorderRadius.circular(TeslaTheme.radiusCard),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -225,7 +229,6 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
 }
 
 class _ToggleOption extends StatelessWidget {
-
   const _ToggleOption({
     required this.label,
     required this.isSelected,

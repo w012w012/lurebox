@@ -11,7 +11,6 @@ import 'package:lurebox/core/services/fish_recognition_service.dart';
 ///
 /// 使用 MiniMax 多模态 API 进行鱼类识别
 class MiniMaxFishRecognitionProvider implements FishRecognitionProvider {
-
   /// Creates a MiniMax provider with optional HTTP client injection
   /// If no client is provided, uses a shared static client to avoid socket leaks
   MiniMaxFishRecognitionProvider({http.Client? client})

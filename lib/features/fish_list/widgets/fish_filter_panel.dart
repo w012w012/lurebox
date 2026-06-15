@@ -8,9 +8,16 @@ import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/widgets/common/filter_chip.dart';
 
 class FishFilterPanel extends StatelessWidget {
-
   const FishFilterPanel({
-    required this.strings, required this.timeFilter, required this.speciesList, required this.customDateLabel, required this.onShowDateRangePicker, required this.onTimeFilterChanged, required this.onFateFilterChanged, required this.onSpeciesFilterChanged, super.key,
+    required this.strings,
+    required this.timeFilter,
+    required this.speciesList,
+    required this.customDateLabel,
+    required this.onShowDateRangePicker,
+    required this.onTimeFilterChanged,
+    required this.onFateFilterChanged,
+    required this.onSpeciesFilterChanged,
+    super.key,
     this.fateFilter,
     this.speciesFilter,
   });
@@ -196,7 +203,13 @@ class _FilterBottomSheet extends ConsumerStatefulWidget {
   const _FilterBottomSheet._({
     required this.strings,
     required this.timeFilter,
-    required this.speciesList, required this.customDateLabel, required this.onShowDateRangePicker, required this.onTimeFilterChanged, required this.onFateFilterChanged, required this.onSpeciesFilterChanged, this.fateFilter,
+    required this.speciesList,
+    required this.customDateLabel,
+    required this.onShowDateRangePicker,
+    required this.onTimeFilterChanged,
+    required this.onFateFilterChanged,
+    required this.onSpeciesFilterChanged,
+    this.fateFilter,
     this.speciesFilter,
   });
 
@@ -268,7 +281,8 @@ class _FilterBottomSheetState extends ConsumerState<_FilterBottomSheet> {
                 width: 36,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF5C5E62) : TeslaColors.cloudGray,
+                  color:
+                      isDark ? const Color(0xFF5C5E62) : TeslaColors.cloudGray,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -323,9 +337,12 @@ class _FilterBottomSheetState extends ConsumerState<_FilterBottomSheet> {
 }
 
 class FishFilterCollapsed extends StatelessWidget {
-
   const FishFilterCollapsed({
-    required this.hasFilters, required this.filterLabel, required this.expandLabel, required this.onTap, super.key,
+    required this.hasFilters,
+    required this.filterLabel,
+    required this.expandLabel,
+    required this.onTap,
+    super.key,
     this.onClear,
     this.onShowSheet,
   });

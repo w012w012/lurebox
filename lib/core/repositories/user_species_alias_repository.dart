@@ -25,7 +25,6 @@ abstract class UserSpeciesAliasRepository {
 /// SQLite 实现 - 用户鱼种别名仓储层
 class SqliteUserSpeciesAliasRepository extends BaseSqliteRepository
     implements UserSpeciesAliasRepository {
-
   /// 无参构造函数（使用默认 DatabaseService）
   SqliteUserSpeciesAliasRepository();
 

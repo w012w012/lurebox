@@ -46,9 +46,9 @@ void main() {
 
         await settingsService.saveWatermarkSettings(settings);
 
-        verify(() =>
-                mockRepository.set('watermark_settings', settings.encode()),)
-            .called(1);
+        verify(
+          () => mockRepository.set('watermark_settings', settings.encode()),
+        ).called(1);
       });
 
       test('getWatermarkSettings decodes JSON from repository', () async {
@@ -168,11 +168,12 @@ void main() {
     });
 
     group('AiRecognitionSettings', () {
-      test('saveAiRecognitionSettings writes API keys to secure storage and cleaned JSON to repository',
+      test(
+          'saveAiRecognitionSettings writes API keys to secure storage and cleaned JSON to repository',
           () async {
         final apiKeyStorage = InMemoryApiKeyStorage();
-        final service =
-            SettingsService(mockRepository, secureStorage: SecureStorageService(storage: apiKeyStorage));
+        final service = SettingsService(mockRepository,
+            secureStorage: SecureStorageService(storage: apiKeyStorage));
 
         const settings = AiRecognitionSettings(
           currentProvider: AiRecognitionProvider.openai,
@@ -191,11 +192,12 @@ void main() {
         verify(() => mockRepository.set('_ai_keys_migrated', 'true')).called(1);
       });
 
-      test('saveAiRecognitionSettings with provider config writes API key to secure storage',
+      test(
+          'saveAiRecognitionSettings with provider config writes API key to secure storage',
           () async {
         final apiKeyStorage = InMemoryApiKeyStorage();
-        final service =
-            SettingsService(mockRepository, secureStorage: SecureStorageService(storage: apiKeyStorage));
+        final service = SettingsService(mockRepository,
+            secureStorage: SecureStorageService(storage: apiKeyStorage));
 
         final settings = AiRecognitionSettings(
           currentProvider: AiRecognitionProvider.openai,
@@ -244,8 +246,10 @@ void main() {
 
         final result = await settingsService.getAiRecognitionSettings();
 
-        expect(result.currentProvider,
-            equals(AiRecognitionProvider.gemini),); // default
+        expect(
+          result.currentProvider,
+          equals(AiRecognitionProvider.gemini),
+        ); // default
         expect(result.autoRecognize, equals(true)); // default
         expect(result.timeout, equals(const Duration(seconds: 10))); // default
       });
@@ -295,19 +299,25 @@ void main() {
 
         // Verify API keys were migrated to secure storage
         expect(
-            await mockSecureStorage.get('0'), equals('sk-test-gemini'),);
+          await mockSecureStorage.get('0'),
+          equals('sk-test-gemini'),
+        );
         expect(
-            await mockSecureStorage.get('1'), equals('sk-test-openai'),);
+          await mockSecureStorage.get('1'),
+          equals('sk-test-openai'),
+        );
 
         // Verify saved JSON has API keys removed
         expect(savedJson, isNotNull);
         expect(savedJson!.contains('sk-test-gemini'), isFalse);
         expect(savedJson!.contains('sk-test-openai'), isFalse);
         expect(savedJson!.contains('"apiKey"'), isFalse);
-        expect(savedJson!.contains('"currentProvider"'), isTrue); // other fields preserved
+        expect(savedJson!.contains('"currentProvider"'),
+            isTrue); // other fields preserved
       });
 
-      test('getAiRecognitionSettings re-runs migration on next call if cleaned JSON write fails',
+      test(
+          'getAiRecognitionSettings re-runs migration on next call if cleaned JSON write fails',
           () async {
         const legacyJson = '''
 {
@@ -370,8 +380,10 @@ void main() {
         final result = await settingsService.getAiRecognitionSettings();
 
         // API keys should be readable from secure storage
-        expect(result.providerConfigs[AiRecognitionProvider.gemini]?.apiKey,
-            equals('sk-test-gemini'),);
+        expect(
+          result.providerConfigs[AiRecognitionProvider.gemini]?.apiKey,
+          equals('sk-test-gemini'),
+        );
       });
 
       test('deleteAiRecognitionSettings clears all storage', () async {
@@ -383,7 +395,8 @@ void main() {
 
         await settingsService.deleteAiRecognitionSettings();
 
-        verify(() => mockRepository.delete('ai_recognition_settings')).called(1);
+        verify(() => mockRepository.delete('ai_recognition_settings'))
+            .called(1);
         verify(() => mockRepository.delete('_ai_keys_migrated')).called(1);
 
         // Secure storage should be cleared

@@ -58,7 +58,8 @@ void main() {
       expect(backup.fishCount, equals(50));
       expect(backup.equipmentCount, equals(10));
       expect(backup.photoCount, equals(25));
-      expect(backup.createdAt, equals(DateTime.parse('2024-06-15T10:30:00.000')));
+      expect(
+          backup.createdAt, equals(DateTime.parse('2024-06-15T10:30:00.000')));
     });
 
     test('uses default counts (0) when fishCount is null', () {

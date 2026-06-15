@@ -5,9 +5,10 @@ import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 
 class EquipmentFilterBar extends ConsumerWidget {
-
   const EquipmentFilterBar({
-    required this.allExpanded, required this.onToggleExpand, super.key,
+    required this.allExpanded,
+    required this.onToggleExpand,
+    super.key,
   });
   final bool allExpanded;
   final VoidCallback onToggleExpand;
@@ -16,7 +17,8 @@ class EquipmentFilterBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final strings = ref.watch(currentStringsProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue;
+    final accentColor =
+        isDark ? TeslaColors.electricBlue : TeslaColors.electricBlue;
 
     return Padding(
       padding: const EdgeInsets.symmetric(

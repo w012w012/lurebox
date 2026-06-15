@@ -3,9 +3,10 @@ import 'package:intl/intl.dart';
 
 /// 钓点列表项组件
 class LocationListTile extends StatelessWidget {
-
   const LocationListTile({
-    required this.name, required this.fishCount, super.key,
+    required this.name,
+    required this.fishCount,
+    super.key,
     this.firstCatchTime,
     this.lastCatchTime,
     this.isSelected = false,
@@ -83,7 +84,8 @@ class LocationListTile extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          (fishCountSuffix ?? '%d 条渔获').replaceFirst('%d', '$fishCount'),
+                          (fishCountSuffix ?? '%d 条渔获')
+                              .replaceFirst('%d', '$fishCount'),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.onSurfaceVariant,
                           ),

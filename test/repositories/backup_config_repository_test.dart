@@ -278,7 +278,8 @@ CREATE TABLE backup_history (
         'cloud_configs',
         where: 'id = ?',
         whereArgs: [id],
-      )).first;
+      ))
+          .first;
       expect(dbRow['password'], equals(''));
     });
 
@@ -300,7 +301,8 @@ CREATE TABLE backup_history (
       expect(configs.first.password, equals('hydrated_pass'));
     });
 
-    test('getActiveCloudConfig hydrates password from secure storage', () async {
+    test('getActiveCloudConfig hydrates password from secure storage',
+        () async {
       final now = DateTime.now();
       final config = CloudConfig(
         provider: CloudProvider.webdav,
@@ -320,7 +322,8 @@ CREATE TABLE backup_history (
       expect(active!.password, equals('active_pass'));
     });
 
-    test('deleteCloudConfig also removes password from secure storage', () async {
+    test('deleteCloudConfig also removes password from secure storage',
+        () async {
       final passwordStorage = InMemoryCloudPasswordStorage();
       final repo = SqliteBackupConfigRepository(
         Future<Database>.value(db),
@@ -344,7 +347,9 @@ CREATE TABLE backup_history (
       expect(await passwordStorage.get(id), isNull);
     });
 
-    test('migrateExistingPasswords moves plaintext DB passwords to secure storage', () async {
+    test(
+        'migrateExistingPasswords moves plaintext DB passwords to secure storage',
+        () async {
       final passwordStorage = InMemoryCloudPasswordStorage();
       final repo = SqliteBackupConfigRepository(
         Future<Database>.value(db),
@@ -369,7 +374,9 @@ CREATE TABLE backup_history (
       expect(stored, equals('legacy_password'));
 
       // DB password should be cleared
-      final dbRow = (await db.query('cloud_configs', where: 'id = ?', whereArgs: [1])).first;
+      final dbRow =
+          (await db.query('cloud_configs', where: 'id = ?', whereArgs: [1]))
+              .first;
       expect(dbRow['password'], equals(''));
     });
 
@@ -455,27 +462,33 @@ CREATE TABLE backup_history (
         () async {
       final baseTime = DateTime.now();
 
-      await repository.addBackupHistory(BackupHistory(
-        filePath: '/backups/backup1.zip',
-        fileName: 'backup1.zip',
-        backupType: BackupType.json,
-        fileSize: 100,
-        createdAt: baseTime,
-      ),);
-      await repository.addBackupHistory(BackupHistory(
-        filePath: '/backups/backup2.zip',
-        fileName: 'backup2.zip',
-        backupType: BackupType.zipFull,
-        fileSize: 200,
-        createdAt: baseTime.add(const Duration(milliseconds: 10)),
-      ),);
-      await repository.addBackupHistory(BackupHistory(
-        filePath: '/backups/backup3.zip',
-        fileName: 'backup3.zip',
-        backupType: BackupType.zipDbOnly,
-        fileSize: 300,
-        createdAt: baseTime.add(const Duration(milliseconds: 20)),
-      ),);
+      await repository.addBackupHistory(
+        BackupHistory(
+          filePath: '/backups/backup1.zip',
+          fileName: 'backup1.zip',
+          backupType: BackupType.json,
+          fileSize: 100,
+          createdAt: baseTime,
+        ),
+      );
+      await repository.addBackupHistory(
+        BackupHistory(
+          filePath: '/backups/backup2.zip',
+          fileName: 'backup2.zip',
+          backupType: BackupType.zipFull,
+          fileSize: 200,
+          createdAt: baseTime.add(const Duration(milliseconds: 10)),
+        ),
+      );
+      await repository.addBackupHistory(
+        BackupHistory(
+          filePath: '/backups/backup3.zip',
+          fileName: 'backup3.zip',
+          backupType: BackupType.zipDbOnly,
+          fileSize: 300,
+          createdAt: baseTime.add(const Duration(milliseconds: 20)),
+        ),
+      );
 
       final histories = await repository.getBackupHistory();
 
@@ -488,13 +501,15 @@ CREATE TABLE backup_history (
       final baseTime = DateTime.now();
 
       for (var i = 0; i < 5; i++) {
-        await repository.addBackupHistory(BackupHistory(
-          filePath: '/backups/backup$i.zip',
-          fileName: 'backup$i.zip',
-          backupType: BackupType.json,
-          fileSize: 100 * i,
-          createdAt: baseTime.add(Duration(milliseconds: i * 10)),
-        ),);
+        await repository.addBackupHistory(
+          BackupHistory(
+            filePath: '/backups/backup$i.zip',
+            fileName: 'backup$i.zip',
+            backupType: BackupType.json,
+            fileSize: 100 * i,
+            createdAt: baseTime.add(Duration(milliseconds: i * 10)),
+          ),
+        );
       }
 
       final histories = await repository.getBackupHistory(limit: 3);
@@ -507,13 +522,15 @@ CREATE TABLE backup_history (
 
       // Add 5 records
       for (var i = 0; i < 5; i++) {
-        await repository.addBackupHistory(BackupHistory(
-          filePath: '/backups/backup$i.zip',
-          fileName: 'backup$i.zip',
-          backupType: BackupType.json,
-          fileSize: 100,
-          createdAt: baseTime.add(Duration(milliseconds: i * 10)),
-        ),);
+        await repository.addBackupHistory(
+          BackupHistory(
+            filePath: '/backups/backup$i.zip',
+            fileName: 'backup$i.zip',
+            backupType: BackupType.json,
+            fileSize: 100,
+            createdAt: baseTime.add(Duration(milliseconds: i * 10)),
+          ),
+        );
       }
 
       // Keep only 2
@@ -528,13 +545,15 @@ CREATE TABLE backup_history (
     test('cleanupOldBackupHistory returns 0 when nothing to delete', () async {
       final now = DateTime.now();
 
-      await repository.addBackupHistory(BackupHistory(
-        filePath: '/backups/backup1.zip',
-        fileName: 'backup1.zip',
-        backupType: BackupType.json,
-        fileSize: 100,
-        createdAt: now,
-      ),);
+      await repository.addBackupHistory(
+        BackupHistory(
+          filePath: '/backups/backup1.zip',
+          fileName: 'backup1.zip',
+          backupType: BackupType.json,
+          fileSize: 100,
+          createdAt: now,
+        ),
+      );
 
       final deleted = await repository.cleanupOldBackupHistory(10);
 
@@ -547,20 +566,24 @@ CREATE TABLE backup_history (
     test('deleteBackupHistory removes specific record', () async {
       final now = DateTime.now();
 
-      await repository.addBackupHistory(BackupHistory(
-        filePath: '/backups/backup1.zip',
-        fileName: 'backup1.zip',
-        backupType: BackupType.json,
-        fileSize: 100,
-        createdAt: now,
-      ),);
-      await repository.addBackupHistory(BackupHistory(
-        filePath: '/backups/backup2.zip',
-        fileName: 'backup2.zip',
-        backupType: BackupType.json,
-        fileSize: 200,
-        createdAt: now,
-      ),);
+      await repository.addBackupHistory(
+        BackupHistory(
+          filePath: '/backups/backup1.zip',
+          fileName: 'backup1.zip',
+          backupType: BackupType.json,
+          fileSize: 100,
+          createdAt: now,
+        ),
+      );
+      await repository.addBackupHistory(
+        BackupHistory(
+          filePath: '/backups/backup2.zip',
+          fileName: 'backup2.zip',
+          backupType: BackupType.json,
+          fileSize: 200,
+          createdAt: now,
+        ),
+      );
 
       final histories = await repository.getBackupHistory();
       final toDelete = histories.firstWhere((h) => h.fileName == 'backup1.zip');

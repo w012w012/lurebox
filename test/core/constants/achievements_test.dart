@@ -106,8 +106,7 @@ void main() {
         expect(
           allCategories,
           contains(definition.category),
-          reason:
-              'Definition ${definition.id} has unknown category: '
+          reason: 'Definition ${definition.id} has unknown category: '
               '${definition.category}',
         );
       }
@@ -166,8 +165,7 @@ void main() {
             expect(
               levels.length,
               greaterThanOrEqualTo(2),
-              reason:
-                  '$category should have at least 2 distinct '
+              reason: '$category should have at least 2 distinct '
                   'achievement levels',
             );
           });
@@ -204,8 +202,7 @@ void main() {
         expect(platinumAchievements, isNotEmpty);
       });
 
-      test('progressive categories have non-decreasing level progression',
-          () {
+      test('progressive categories have non-decreasing level progression', () {
         // Progressive categories are those whose achievements form a
         // single ascending ladder of milestones — each achievement is
         // strictly harder than the last. Categories with mixed-type
@@ -231,8 +228,7 @@ void main() {
             expect(
               current.level.index <= next.level.index,
               isTrue,
-              reason:
-                  '$category: ${current.id} (${current.level}) '
+              reason: '$category: ${current.id} (${current.level}) '
                   'should not have higher level than ${next.id} '
                   '(${next.level})',
             );
@@ -276,8 +272,7 @@ void main() {
         expect(
           restored,
           equals(level),
-          reason:
-              'fromJson(${level.jsonName}) did not return $level',
+          reason: 'fromJson(${level.jsonName}) did not return $level',
         );
       }
     });

@@ -4,7 +4,6 @@ import 'package:lurebox/core/models/fish_catch.dart';
 
 /// 统计时间范围
 class StatsTimeRange {
-
   const StatsTimeRange({
     required this.start,
     required this.end,
@@ -48,7 +47,6 @@ final statsTimeRangeProvider = StateProvider<StatsTimeRange>((ref) {
 
 /// 时间范围内的鱼获统计
 class TimeRangeStats {
-
   const TimeRangeStats({
     required this.totalCount,
     required this.releaseCount,

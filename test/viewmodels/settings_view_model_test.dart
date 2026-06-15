@@ -60,12 +60,16 @@ void main() {
         .thenAnswer((_) async => '/path/to/export.json');
     when(() => mockBackupService.importFromJson(any()))
         .thenAnswer((_) async => 10);
-    when(() => mockBackupZipService.exportToZip(
-          options: any(named: 'options'),
-        ),).thenAnswer((_) async => XFile('/path/to/backup.zip'));
-    when(() => mockBackupZipService.exportToZipAndSave(
-          options: any(named: 'options'),
-        ),).thenAnswer((_) async => '/path/to/saved/backup.zip');
+    when(
+      () => mockBackupZipService.exportToZip(
+        options: any(named: 'options'),
+      ),
+    ).thenAnswer((_) async => XFile('/path/to/backup.zip'));
+    when(
+      () => mockBackupZipService.exportToZipAndSave(
+        options: any(named: 'options'),
+      ),
+    ).thenAnswer((_) async => '/path/to/saved/backup.zip');
     when(() => mockBackupZipService.importFromZip())
         .thenAnswer((_) async => const ImportResult.success());
 
@@ -311,7 +315,8 @@ void main() {
             .thenAnswer((_) async => exportPath);
 
         // Set export path
-        viewModel.state = viewModel.state.copyWith(exportPath: () => exportPath);
+        viewModel.state =
+            viewModel.state.copyWith(exportPath: () => exportPath);
         expect(viewModel.state.exportPath, exportPath);
 
         // Clear - now correctly sets to null
@@ -430,9 +435,11 @@ void main() {
     // ============================================================
     group('backup and zip operations', () {
       test('exportZipBackup success', () async {
-        when(() => mockBackupZipService.exportToZip(
-              options: any(named: 'options'),
-            ),).thenAnswer((_) async => XFile('/path/to/backup.zip'));
+        when(
+          () => mockBackupZipService.exportToZip(
+            options: any(named: 'options'),
+          ),
+        ).thenAnswer((_) async => XFile('/path/to/backup.zip'));
 
         final result = await viewModel.exportZipBackup();
 
@@ -441,9 +448,11 @@ void main() {
       });
 
       test('exportZipBackup error', () async {
-        when(() => mockBackupZipService.exportToZip(
-              options: any(named: 'options'),
-            ),).thenThrow(Exception('Zip error'));
+        when(
+          () => mockBackupZipService.exportToZip(
+            options: any(named: 'options'),
+          ),
+        ).thenThrow(Exception('Zip error'));
 
         final result = await viewModel.exportZipBackup();
 
@@ -452,9 +461,11 @@ void main() {
       });
 
       test('startZipBackup success', () async {
-        when(() => mockBackupZipService.exportToZipAndSave(
-              options: any(named: 'options'),
-            ),).thenAnswer((_) async => '/saved/backup.zip');
+        when(
+          () => mockBackupZipService.exportToZipAndSave(
+            options: any(named: 'options'),
+          ),
+        ).thenAnswer((_) async => '/saved/backup.zip');
 
         final result = await viewModel.startZipBackup();
 
@@ -475,7 +486,8 @@ void main() {
 
       test('importZipBackup error', () async {
         when(() => mockBackupZipService.importFromZip()).thenAnswer(
-            (_) async => const ImportResult.failure('Import failed'),);
+          (_) async => const ImportResult.failure('Import failed'),
+        );
 
         final result = await viewModel.importZipBackup();
 
@@ -489,11 +501,13 @@ void main() {
     // ============================================================
     group('uploadToWebDAV', () {
       test('uploadToWebDAV success', () async {
-        when(() => mockBackupService.uploadToWebDAV(
-              serverUrl: any(named: 'serverUrl'),
-              username: any(named: 'username'),
-              password: any(named: 'password'),
-            ),).thenAnswer((_) async => 'https://example.com/backup.json');
+        when(
+          () => mockBackupService.uploadToWebDAV(
+            serverUrl: any(named: 'serverUrl'),
+            username: any(named: 'username'),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async => 'https://example.com/backup.json');
 
         final result = await viewModel.uploadToWebDAV(
           serverUrl: 'https://example.com/',
@@ -506,11 +520,13 @@ void main() {
       });
 
       test('uploadToWebDAV error', () async {
-        when(() => mockBackupService.uploadToWebDAV(
-              serverUrl: any(named: 'serverUrl'),
-              username: any(named: 'username'),
-              password: any(named: 'password'),
-            ),).thenThrow(Exception('Upload failed'));
+        when(
+          () => mockBackupService.uploadToWebDAV(
+            serverUrl: any(named: 'serverUrl'),
+            username: any(named: 'username'),
+            password: any(named: 'password'),
+          ),
+        ).thenThrow(Exception('Upload failed'));
 
         final result = await viewModel.uploadToWebDAV(
           serverUrl: 'https://example.com/',
@@ -525,11 +541,13 @@ void main() {
       test('uploadToWebDAV sets isUploading to true during operation',
           () async {
         var uploadingState = false;
-        when(() => mockBackupService.uploadToWebDAV(
-              serverUrl: any(named: 'serverUrl'),
-              username: any(named: 'username'),
-              password: any(named: 'password'),
-            ),).thenAnswer((_) async {
+        when(
+          () => mockBackupService.uploadToWebDAV(
+            serverUrl: any(named: 'serverUrl'),
+            username: any(named: 'username'),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async {
           uploadingState = viewModel.state.isUploading;
           return 'https://example.com/backup.json';
         });

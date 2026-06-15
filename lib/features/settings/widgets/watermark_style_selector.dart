@@ -6,9 +6,11 @@ import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 
 class WatermarkStyleSelector extends StatelessWidget {
-
   const WatermarkStyleSelector({
-    required this.settings, required this.strings, required this.onStyleChanged, super.key,
+    required this.settings,
+    required this.strings,
+    required this.onStyleChanged,
+    super.key,
   });
   final WatermarkSettings settings;
   final AppStrings strings;
@@ -59,9 +61,7 @@ class WatermarkStyleSelector extends StatelessWidget {
                             .colorScheme
                             .primary
                             .withValues(alpha: 0.15)
-                        : Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest,
+                        : Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
                     border: Border.all(
                       color: isSelected

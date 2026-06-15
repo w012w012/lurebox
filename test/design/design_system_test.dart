@@ -192,10 +192,12 @@ void main() {
       final card = tester.widget<PremiumCard>(find.byType(PremiumCard));
       expect(
         card.margin,
-        equals(const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingLg,
-          vertical: AppTheme.spacingSm,
-        ),),
+        equals(
+          const EdgeInsets.symmetric(
+            horizontal: AppTheme.spacingLg,
+            vertical: AppTheme.spacingSm,
+          ),
+        ),
       );
     });
   });

@@ -26,7 +26,6 @@
 library;
 
 class PaginatedResult<T> {
-
   const PaginatedResult({
     required this.items,
     required this.totalCount,

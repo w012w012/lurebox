@@ -39,7 +39,8 @@ void main() {
         expect(result, isEmpty);
       });
 
-      test('uses defaultHashtags when customHashtags is empty with showHashtags=true',
+      test(
+          'uses defaultHashtags when customHashtags is empty with showHashtags=true',
           () {
         const config = ShareCardConfig(
           showStats: false,

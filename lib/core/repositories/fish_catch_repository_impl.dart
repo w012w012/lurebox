@@ -12,11 +12,9 @@ import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 
 class SqliteFishCatchRepository extends BaseSqliteRepository
     implements FishCatchRepository {
-
   SqliteFishCatchRepository();
 
-  SqliteFishCatchRepository.withDatabase(super.testDb)
-      : super.withDatabase();
+  SqliteFishCatchRepository.withDatabase(super.testDb) : super.withDatabase();
   @override
   String get tableName => 'fish_catches';
 
@@ -25,7 +23,8 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
   /// [whereClause] is the SQL WHERE string (empty string if no filter)
   /// [whereArgs] are the parameterized arguments
   (String whereClause, List<dynamic> whereArgs) _buildWhereClause(
-      FishFilter filter,) {
+    FishFilter filter,
+  ) {
     final clauses = <String>[];
     final args = <dynamic>[];
 
@@ -59,7 +58,10 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
 
   /// Add date filter clauses based on timeFilter
   void _addDateFilter(
-      FishFilter filter, List<String> clauses, List<dynamic> args,) {
+    FishFilter filter,
+    List<String> clauses,
+    List<dynamic> args,
+  ) {
     final timeFilter = filter.timeFilter;
     if (timeFilter == 'all') return;
 
@@ -117,9 +119,11 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
 
   /// Build SQL ORDER BY clause from sortBy and sortAsc
   String _buildSortClause(FishFilter filter) {
+    // 长度/重量按归一化基准列排序（遗留 NULL 行回退原始值），
+    // 避免混合单位（cm/inch、kg/lb/g）下排名错误。详见 H-9。
     final column = switch (filter.sortBy) {
-      'length' => 'length',
-      'weight' => 'weight',
+      'length' => 'COALESCE(length_cm, length)',
+      'weight' => 'COALESCE(weight_kg, weight)',
       _ => 'catch_time',
     };
     final direction = filter.sortAsc ? 'ASC' : 'DESC';
@@ -294,8 +298,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         totalCount = PaginationConstants.unknownTotalCount; // -1 琛ㄧず鏈煡
       }
 
-      final items =
-          List<FishCatch>.from(results.map(FishCatch.fromMap));
+      final items = List<FishCatch>.from(results.map(FishCatch.fromMap));
       final hasMore = results.length == pageSize;
 
       return PaginatedResult(
@@ -361,7 +364,8 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         final countResult = await db.rawQuery(countQuery, whereArgs);
         totalCount = countResult.first['count'] as int? ?? 0;
       } else {
-        totalCount = PaginationConstants.unknownTotalCount; // -1 琛ㄧず鏈煡锛岄渶瑕侀澶栨煡璇?
+        totalCount =
+            PaginationConstants.unknownTotalCount; // -1 琛ㄧず鏈煡锛岄渶瑕侀澶栨煡璇?
       }
 
       final results = await db.query(
@@ -372,8 +376,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         limit: pageSize,
         offset: offset,
       ) as List<Map<String, dynamic>>;
-      final items =
-          List<FishCatch>.from(results.map(FishCatch.fromMap));
+      final items = List<FishCatch>.from(results.map(FishCatch.fromMap));
       final hasMore = results.length == pageSize;
 
       return PaginatedResult(
@@ -396,7 +399,8 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
   @override
   Future<PaginatedResult<FishCatch>> getFilteredPageByFilter({
     required int page,
-    required FishFilter filter, int pageSize = PaginationConstants.defaultPageSize,
+    required FishFilter filter,
+    int pageSize = PaginationConstants.defaultPageSize,
   }) async {
     pageSize = pageSize.clamp(1, PaginationConstants.maxPageSize);
     try {
@@ -422,8 +426,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
       final results =
           await db.rawQuery(dataSql, dataArgs) as List<Map<String, dynamic>>;
 
-      final items =
-          List<FishCatch>.from(results.map(FishCatch.fromMap));
+      final items = List<FishCatch>.from(results.map(FishCatch.fromMap));
 
       // Correct hasMore calculation based on total filtered count
       final hasMore = page * pageSize < totalCount;
@@ -491,7 +494,9 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
 
   @override
   Future<void> batchUpdateSpecies(
-      List<int> ids, List<String> speciesList,) async {
+    List<int> ids,
+    List<String> speciesList,
+  ) async {
     // Edge case: Empty input - return early without SQL execution
     if (ids.isEmpty) {
       return;

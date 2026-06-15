@@ -75,11 +75,13 @@ void main() {
     mockStatsRepo = MockStatsRepository();
 
     // Default mock behavior for empty results
-    when(() => mockRepository.getPage(
-          page: any(named: 'page'),
-          pageSize: any(named: 'pageSize'),
-          orderBy: any(named: 'orderBy'),
-        ),).thenAnswer(
+    when(
+      () => mockRepository.getPage(
+        page: any(named: 'page'),
+        pageSize: any(named: 'pageSize'),
+        orderBy: any(named: 'orderBy'),
+      ),
+    ).thenAnswer(
       (_) async => const PaginatedResult<FishCatch>(
         items: [],
         totalCount: 0,
@@ -88,15 +90,17 @@ void main() {
         hasMore: false,
       ),
     );
-    when(() => mockRepository.getFilteredPage(
-          page: any(named: 'page'),
-          pageSize: any(named: 'pageSize'),
-          startDate: any(named: 'startDate'),
-          endDate: any(named: 'endDate'),
-          fate: any(named: 'fate'),
-          species: any(named: 'species'),
-          orderBy: any(named: 'orderBy'),
-        ),).thenAnswer(
+    when(
+      () => mockRepository.getFilteredPage(
+        page: any(named: 'page'),
+        pageSize: any(named: 'pageSize'),
+        startDate: any(named: 'startDate'),
+        endDate: any(named: 'endDate'),
+        fate: any(named: 'fate'),
+        species: any(named: 'species'),
+        orderBy: any(named: 'orderBy'),
+      ),
+    ).thenAnswer(
       (_) async => const PaginatedResult<FishCatch>(
         items: [],
         totalCount: 0,
@@ -284,7 +288,8 @@ void main() {
         expect(viewModel.state.catches.length, 4);
 
         // Verify repository was called
-        verify(() => mockRepository.getByDateRange(testStartDate, testEndDate)).called(1);
+        verify(() => mockRepository.getByDateRange(testStartDate, testEndDate))
+            .called(1);
 
         // Assert - isLoading
         expect(viewModel.state.isLoading, false);
@@ -433,8 +438,10 @@ void main() {
 
         // Assert
         expect(viewModel.state.isLoading, false);
-        expect(viewModel.state.errorMessage,
-            contains('Database connection failed'),);
+        expect(
+          viewModel.state.errorMessage,
+          contains('Database connection failed'),
+        );
         expect(viewModel.state.totalCount, 0);
         expect(viewModel.state.catches, isEmpty);
       });
@@ -587,9 +594,11 @@ void main() {
 
         // Arrange - now return some data
         when(() => mockRepository.getByDateRange(testStartDate, testEndDate))
-            .thenAnswer((_) async => [
-                  _createFishCatch(),
-                ],);
+            .thenAnswer(
+          (_) async => [
+            _createFishCatch(),
+          ],
+        );
 
         // Act
         await viewModel.refresh();

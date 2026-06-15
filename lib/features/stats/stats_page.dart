@@ -170,10 +170,8 @@ class StatsPage extends ConsumerWidget {
   }
 }
 
-
 /// Loading state for stat card
 class _StatCardLoading extends StatelessWidget {
-
   const _StatCardLoading({required this.title});
   final String title;
 
@@ -205,7 +203,6 @@ class _StatCardLoading extends StatelessWidget {
 
 /// Error state for stat card
 class _StatCardError extends StatelessWidget {
-
   const _StatCardError({required this.title});
   final String title;
 
@@ -229,13 +226,14 @@ class _StatCardError extends StatelessWidget {
 }
 
 class _StatCard extends StatefulWidget {
-
   const _StatCard({
     required this.title,
     required this.count,
     required this.release,
     required this.keep,
-    required this.onTap, required this.strings, this.species,
+    required this.onTap,
+    required this.strings,
+    this.species,
   });
   final String title;
   final int count;
@@ -328,7 +326,6 @@ class _StatCardState extends State<_StatCard> {
 }
 
 class _StatItem extends StatelessWidget {
-
   const _StatItem({
     required this.icon,
     required this.count,

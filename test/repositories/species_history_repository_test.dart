@@ -29,9 +29,11 @@ CREATE TABLE species_history (
 )
 ''');
           await db.execute(
-              'CREATE INDEX idx_species_name ON species_history(name)',);
+            'CREATE INDEX idx_species_name ON species_history(name)',
+          );
           await db.execute(
-              'CREATE INDEX idx_species_use_count ON species_history(use_count)',);
+            'CREATE INDEX idx_species_use_count ON species_history(use_count)',
+          );
         },
       ),
     );

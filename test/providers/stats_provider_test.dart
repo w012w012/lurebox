@@ -138,7 +138,8 @@ class FakeFishCatchService implements FishCatchService {
   @override
   Future<PaginatedResult<FishCatch>> getFilteredPageByFilter({
     required int page,
-    required FishFilter filter, int pageSize = 20,
+    required FishFilter filter,
+    int pageSize = 20,
   }) async {
     return const PaginatedResult(
       items: [],
@@ -274,9 +275,16 @@ void main() {
     test('filters out pending recognition records', () async {
       final now = DateTime.now();
       fakeService.getByDateRangeResult = [
-        _createFishCatch(id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now),
-        _createFishCatch(id: 2, species: 'Trout', fate: FishFateType.release, catchTime: now, pendingRecognition: true), // Should be filtered
-        _createFishCatch(id: 3, species: 'Carp', fate: FishFateType.keep, catchTime: now),
+        _createFishCatch(
+            id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now),
+        _createFishCatch(
+            id: 2,
+            species: 'Trout',
+            fate: FishFateType.release,
+            catchTime: now,
+            pendingRecognition: true), // Should be filtered
+        _createFishCatch(
+            id: 3, species: 'Carp', fate: FishFateType.keep, catchTime: now),
       ];
 
       final range = StatsTimeRange(
@@ -296,8 +304,16 @@ void main() {
     test('counts release correctly (fate == 0)', () async {
       final now = DateTime.now();
       fakeService.getByDateRangeResult = [
-        _createFishCatch(id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now), // fate = 0
-        _createFishCatch(id: 2, species: 'Trout', fate: FishFateType.release, catchTime: now), // fate = 0
+        _createFishCatch(
+            id: 1,
+            species: 'Bass',
+            fate: FishFateType.release,
+            catchTime: now), // fate = 0
+        _createFishCatch(
+            id: 2,
+            species: 'Trout',
+            fate: FishFateType.release,
+            catchTime: now), // fate = 0
       ];
 
       final range = StatsTimeRange(
@@ -315,8 +331,16 @@ void main() {
     test('counts keep correctly (fate != 0)', () async {
       final now = DateTime.now();
       fakeService.getByDateRangeResult = [
-        _createFishCatch(id: 1, species: 'Bass', fate: FishFateType.keep, catchTime: now), // fate = 1
-        _createFishCatch(id: 2, species: 'Trout', fate: FishFateType.keep, catchTime: now), // fate = 1
+        _createFishCatch(
+            id: 1,
+            species: 'Bass',
+            fate: FishFateType.keep,
+            catchTime: now), // fate = 1
+        _createFishCatch(
+            id: 2,
+            species: 'Trout',
+            fate: FishFateType.keep,
+            catchTime: now), // fate = 1
       ];
 
       final range = StatsTimeRange(
@@ -334,11 +358,25 @@ void main() {
     test('builds speciesStats map correctly', () async {
       final now = DateTime.now();
       fakeService.getByDateRangeResult = [
-        _createFishCatch(id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now),
-        _createFishCatch(id: 2, species: 'Bass', fate: FishFateType.release, catchTime: now),
-        _createFishCatch(id: 3, species: 'Trout', fate: FishFateType.release, catchTime: now),
-        _createFishCatch(id: 4, species: 'Trout', fate: FishFateType.release, catchTime: now),
-        _createFishCatch(id: 5, species: 'Trout', fate: FishFateType.release, catchTime: now),
+        _createFishCatch(
+            id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now),
+        _createFishCatch(
+            id: 2, species: 'Bass', fate: FishFateType.release, catchTime: now),
+        _createFishCatch(
+            id: 3,
+            species: 'Trout',
+            fate: FishFateType.release,
+            catchTime: now),
+        _createFishCatch(
+            id: 4,
+            species: 'Trout',
+            fate: FishFateType.release,
+            catchTime: now),
+        _createFishCatch(
+            id: 5,
+            species: 'Trout',
+            fate: FishFateType.release,
+            catchTime: now),
       ];
 
       final range = StatsTimeRange(
@@ -440,7 +478,12 @@ void main() {
     test('returns correct map structure for each catch', () async {
       final now = DateTime.now();
       fakeService.getTop3LongestCatchesResult = [
-        _createFishCatch(id: 1, species: 'Bass', length: 50, fate: FishFateType.release, catchTime: now),
+        _createFishCatch(
+            id: 1,
+            species: 'Bass',
+            length: 50,
+            fate: FishFateType.release,
+            catchTime: now),
       ];
 
       final result = await container.read(top3LongestCatchesProvider.future);

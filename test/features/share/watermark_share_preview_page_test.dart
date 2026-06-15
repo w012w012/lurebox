@@ -120,7 +120,8 @@ void main() {
       expect(find.byType(ElevatedButton), findsOneWidget);
     });
 
-    testWidgets('renders instruction text for watermark adjustment', (tester) async {
+    testWidgets('renders instruction text for watermark adjustment',
+        (tester) async {
       final previewData = createValidPreviewData();
 
       await tester.pumpWidget(createWidgetUnderTest(previewData: previewData));
@@ -149,7 +150,8 @@ class _FakeSettingsRepository implements SettingsRepository {
   Future<String?> get(String key) async => null;
 
   @override
-  Future<String> getOrDefault(String key, String defaultValue) async => defaultValue;
+  Future<String> getOrDefault(String key, String defaultValue) async =>
+      defaultValue;
 
   @override
   Future<void> set(String key, String value) async {}
@@ -170,10 +172,12 @@ class _FakeSettingsRepository implements SettingsRepository {
   Future<int> getInt(String key, {int defaultValue = 0}) async => defaultValue;
 
   @override
-  Future<double> getDouble(String key, {double defaultValue = 0.0}) async => defaultValue;
+  Future<double> getDouble(String key, {double defaultValue = 0.0}) async =>
+      defaultValue;
 
   @override
-  Future<bool> getBool(String key, {bool defaultValue = false}) async => defaultValue;
+  Future<bool> getBool(String key, {bool defaultValue = false}) async =>
+      defaultValue;
 
   @override
   Future<void> setInt(String key, int value) async {}

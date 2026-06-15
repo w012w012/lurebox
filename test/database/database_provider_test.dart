@@ -86,8 +86,7 @@ void main() {
             final tables = await freshDb.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name",
             );
-            final tableNames =
-                tables.map((t) => t['name']! as String).toList();
+            final tableNames = tables.map((t) => t['name']! as String).toList();
 
             expect(tableNames, contains('fish_catches'));
             expect(tableNames, contains('equipments'));
@@ -120,8 +119,7 @@ void main() {
             final indexes = await freshDb.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='fish_catches'",
             );
-            final indexNames =
-                indexes.map((i) => i['name']! as String).toSet();
+            final indexNames = indexes.map((i) => i['name']! as String).toSet();
 
             expect(indexNames, contains('idx_fish_catches_fate'));
             expect(indexNames, contains('idx_fish_catches_catch_time'));
@@ -154,8 +152,7 @@ void main() {
             final indexes = await freshDb.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='equipments'",
             );
-            final indexNames =
-                indexes.map((i) => i['name']! as String).toSet();
+            final indexNames = indexes.map((i) => i['name']! as String).toSet();
 
             expect(indexNames, contains('idx_equipments_type'));
             expect(indexNames, contains('idx_equipments_category'));
@@ -201,8 +198,7 @@ void main() {
 
           try {
             // Verify lure_quantity column was added
-            final result =
-                await dbv2.rawQuery('PRAGMA table_info(equipments)');
+            final result = await dbv2.rawQuery('PRAGMA table_info(equipments)');
             final columns = result.map((r) => r['name'] as String).toList();
             expect(columns, contains('lure_quantity'));
           } finally {
@@ -244,8 +240,7 @@ void main() {
           );
 
           try {
-            final result =
-                await dbv3.rawQuery('PRAGMA table_info(equipments)');
+            final result = await dbv3.rawQuery('PRAGMA table_info(equipments)');
             final columns = result.map((r) => r['name'] as String).toList();
             expect(columns, contains('lure_quantity_unit'));
           } finally {
@@ -379,8 +374,7 @@ void main() {
             final tables = await dbv11.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='table'",
             );
-            final tableNames =
-                tables.map((t) => t['name'] as String).toList();
+            final tableNames = tables.map((t) => t['name'] as String).toList();
             expect(tableNames, contains('cloud_configs'));
             expect(tableNames, contains('backup_history'));
           } finally {
@@ -426,8 +420,7 @@ void main() {
             final tables = await dbv17.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='table'",
             );
-            final tableNames =
-                tables.map((t) => t['name'] as String).toList();
+            final tableNames = tables.map((t) => t['name'] as String).toList();
             expect(tableNames, contains('fish_species'));
             expect(tableNames, contains('user_species_alias'));
           } finally {
@@ -472,8 +465,7 @@ void main() {
             final indexes = await dbv21.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='fish_catches'",
             );
-            final indexNames =
-                indexes.map((i) => i['name'] as String).toList();
+            final indexNames = indexes.map((i) => i['name'] as String).toList();
             expect(indexNames, contains('idx_fish_catches_catch_time'));
             expect(indexNames, contains('idx_fish_catches_time_fate'));
           } finally {
@@ -518,8 +510,7 @@ void main() {
             final indexes = await dbv22.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name='equipments'",
             );
-            final indexNames =
-                indexes.map((i) => i['name'] as String).toList();
+            final indexNames = indexes.map((i) => i['name'] as String).toList();
             expect(indexNames, contains('idx_equipments_type'));
             expect(indexNames, contains('idx_equipments_category'));
             expect(indexNames, contains('idx_equipments_is_deleted'));
@@ -565,8 +556,7 @@ void main() {
             final columns = await dbv23.rawQuery(
               'PRAGMA table_info(equipments)',
             );
-            final columnNames =
-                columns.map((c) => c['name'] as String).toSet();
+            final columnNames = columns.map((c) => c['name'] as String).toSet();
             expect(columnNames, contains('reel_drag'));
             expect(columnNames, contains('reel_drag_unit'));
           } finally {
@@ -627,8 +617,7 @@ void main() {
             final tables = await dbv22.rawQuery(
               "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name",
             );
-            final tableNames =
-                tables.map((t) => t['name'] as String).toList();
+            final tableNames = tables.map((t) => t['name'] as String).toList();
 
             expect(tableNames, contains('fish_catches'));
             expect(tableNames, contains('equipments'));
@@ -657,8 +646,7 @@ void main() {
             final columns = await dbv22.rawQuery(
               'PRAGMA table_info(equipments)',
             );
-            final columnNames =
-                columns.map((c) => c['name'] as String).toSet();
+            final columnNames = columns.map((c) => c['name'] as String).toSet();
             expect(columnNames, contains('reel_drag'));
             expect(columnNames, contains('reel_drag_unit'));
           } finally {
@@ -688,16 +676,15 @@ void main() {
 
           try {
             // Drop a column to simulate it not existing
-            await db.execute(
-                'ALTER TABLE fish_catches ADD COLUMN test_col TEXT');
+            await db
+                .execute('ALTER TABLE fish_catches ADD COLUMN test_col TEXT');
 
             // Use our helper that replicates _addColumnIfNotExists
             await _addColumnIfNotExists(
                 db, 'fish_catches', 'new_test_col', 'TEXT');
 
             // Verify the column exists
-            final result =
-                await db.rawQuery('PRAGMA table_info(fish_catches)');
+            final result = await db.rawQuery('PRAGMA table_info(fish_catches)');
             final columns = result.map((r) => r['name'] as String).toList();
             expect(columns, contains('new_test_col'));
           } finally {
@@ -725,12 +712,10 @@ void main() {
 
           try {
             // This should not throw even though species column exists
-            await _addColumnIfNotExists(
-                db, 'fish_catches', 'species', 'TEXT');
+            await _addColumnIfNotExists(db, 'fish_catches', 'species', 'TEXT');
 
             // Verify the column still exists
-            final result =
-                await db.rawQuery('PRAGMA table_info(fish_catches)');
+            final result = await db.rawQuery('PRAGMA table_info(fish_catches)');
             final columns = result.map((r) => r['name'] as String).toList();
             expect(columns, contains('species'));
           } finally {
@@ -937,8 +922,7 @@ Future<void> _createSchema(Database db) async {
   ''');
 
   // Indexes on fish_catches
-  await db.execute(
-      'CREATE INDEX idx_fish_catches_fate ON fish_catches(fate)');
+  await db.execute('CREATE INDEX idx_fish_catches_fate ON fish_catches(fate)');
   await db.execute(
       'CREATE INDEX idx_fish_catches_catch_time ON fish_catches(catch_time)');
   await db.execute(
@@ -991,10 +975,9 @@ Future<void> _createSchema(Database db) async {
   ''');
 
   // Indexes on equipments
-  await db.execute(
-      'CREATE INDEX idx_equipments_type ON equipments(type)');
-  await db.execute(
-      'CREATE INDEX idx_equipments_category ON equipments(category)');
+  await db.execute('CREATE INDEX idx_equipments_type ON equipments(type)');
+  await db
+      .execute('CREATE INDEX idx_equipments_category ON equipments(category)');
   await db.execute(
       'CREATE INDEX idx_equipments_is_deleted ON equipments(is_deleted)');
 
@@ -1100,8 +1083,7 @@ Future<void> _createSchemaV1(Database db) async {
     )
   ''');
 
-  await db.execute(
-      'CREATE INDEX idx_fish_catches_fate ON fish_catches(fate)');
+  await db.execute('CREATE INDEX idx_fish_catches_fate ON fish_catches(fate)');
   await db.execute(
       'CREATE INDEX idx_fish_catches_species ON fish_catches(species)');
 
@@ -1164,19 +1146,16 @@ Future<void> _migrateDatabase(
   if (oldVersion < 4) {
     await _addColumnIfNotExists(db, 'fish_catches', 'rig_type', 'TEXT');
     await _addColumnIfNotExists(db, 'fish_catches', 'sinker_weight', 'TEXT');
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'sinker_position', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'sinker_position', 'TEXT');
     await _addColumnIfNotExists(db, 'fish_catches', 'hook_type', 'TEXT');
     await _addColumnIfNotExists(db, 'fish_catches', 'hook_size', 'TEXT');
     await _addColumnIfNotExists(db, 'fish_catches', 'hook_weight', 'TEXT');
   }
   if (oldVersion < 5) {
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'lure_id', 'INTEGER');
+    await _addColumnIfNotExists(db, 'fish_catches', 'lure_id', 'INTEGER');
   }
   if (oldVersion < 6) {
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'bead_type', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'bead_type', 'TEXT');
     await _addColumnIfNotExists(
         db, 'fish_catches', 'rubber_grommet_size', 'TEXT');
   }
@@ -1185,16 +1164,14 @@ Future<void> _migrateDatabase(
         'ALTER TABLE fish_catches ADD COLUMN watermarked_image_path TEXT');
   }
   if (oldVersion < 8) {
-    await db.execute(
-        'ALTER TABLE fish_catches ADD COLUMN air_temperature REAL');
-    await db.execute(
-        'ALTER TABLE fish_catches ADD COLUMN pressure REAL');
-    await db.execute(
-        'ALTER TABLE fish_catches ADD COLUMN weather_code INTEGER');
+    await db
+        .execute('ALTER TABLE fish_catches ADD COLUMN air_temperature REAL');
+    await db.execute('ALTER TABLE fish_catches ADD COLUMN pressure REAL');
+    await db
+        .execute('ALTER TABLE fish_catches ADD COLUMN weather_code INTEGER');
   }
   if (oldVersion < 9) {
-    await _addColumnIfNotExists(
-        db, 'equipments', 'sections', 'INTEGER');
+    await _addColumnIfNotExists(db, 'equipments', 'sections', 'INTEGER');
     await _addColumnIfNotExists(db, 'equipments', 'material', 'TEXT');
     await _addColumnIfNotExists(db, 'equipments', 'hardness', 'TEXT');
   }
@@ -1231,44 +1208,30 @@ Future<void> _migrateDatabase(
         'ALTER TABLE settings ADD COLUMN is_deleted INTEGER DEFAULT 0');
   }
   if (oldVersion < 13) {
-    await _addColumnIfNotExists(
-        db, 'equipments', 'sections', 'INTEGER');
+    await _addColumnIfNotExists(db, 'equipments', 'sections', 'INTEGER');
     await _addColumnIfNotExists(db, 'equipments', 'material', 'TEXT');
     await _addColumnIfNotExists(db, 'equipments', 'hardness', 'TEXT');
   }
   if (oldVersion < 14) {
-    await db.execute(
-        'ALTER TABLE settings ADD COLUMN category TEXT');
+    await db.execute('ALTER TABLE settings ADD COLUMN category TEXT');
     await db.execute(
         'ALTER TABLE settings ADD COLUMN sort_order INTEGER DEFAULT 0');
   }
   if (oldVersion < 15) {
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'rig_type', 'TEXT');
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'sinker_weight', 'TEXT');
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'sinker_position', 'TEXT');
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'hook_type', 'TEXT');
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'hook_size', 'TEXT');
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'hook_weight', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'rig_type', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'sinker_weight', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'sinker_position', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'hook_type', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'hook_size', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'hook_weight', 'TEXT');
   }
   if (oldVersion < 16) {
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'rig_type', 'TEXT');
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'sinker_weight', 'TEXT');
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'sinker_position', 'TEXT');
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'hook_type', 'TEXT');
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'hook_size', 'TEXT');
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'hook_weight', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'rig_type', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'sinker_weight', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'sinker_position', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'hook_type', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'hook_size', 'TEXT');
+    await _addColumnIfNotExists(db, 'fish_catches', 'hook_weight', 'TEXT');
   }
   if (oldVersion < 17) {
     await db.execute('''
@@ -1299,10 +1262,8 @@ Future<void> _migrateDatabase(
         'CREATE INDEX idx_alias_species ON user_species_alias(species_id)');
   }
   if (oldVersion < 18) {
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'reel_id', 'INTEGER');
-    await _addColumnIfNotExists(
-        db, 'fish_catches', 'lure_id', 'INTEGER');
+    await _addColumnIfNotExists(db, 'fish_catches', 'reel_id', 'INTEGER');
+    await _addColumnIfNotExists(db, 'fish_catches', 'lure_id', 'INTEGER');
   }
   if (oldVersion < 19) {
     await _addColumnIfNotExists(db, 'settings', 'created_at', 'TEXT');

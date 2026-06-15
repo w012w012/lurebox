@@ -17,7 +17,10 @@ class DatabaseProvider {
   /// v24: schema 修复版本 —— 历史上 _createSchema 与迁移链产出的 schema 不一致
   /// （全新安装缺 cloud_configs/backup_history/fish_species/user_species_alias
   /// 表与 v16 钓组列），v24 用幂等修复补齐所有存量安装。
-  static const int _databaseVersion = 24;
+  ///
+  /// v25: 单位归一化（H-9）—— 新增 length_cm/weight_kg 基准单位列并回填，
+  /// 所有 SQL 聚合/排序/阈值比较统一改用基准列，修复混合单位下的错误统计。
+  static const int _databaseVersion = 25;
 
   Database? _database;
   Completer<Database>? _initCompleter;
@@ -139,7 +142,9 @@ class DatabaseProvider {
         sinker_position TEXT,
         hook_type TEXT,
         hook_size TEXT,
-        hook_weight TEXT
+        hook_weight TEXT,
+        length_cm REAL,
+        weight_kg REAL
       )
     ''');
 
@@ -715,6 +720,50 @@ CREATE TABLE user_species_alias (
 
       // 清理 v12 时代的旧命名索引（已被 v22 的 idx_equipments_type 取代）
       await db.execute('DROP INDEX IF EXISTS idx_equipment_type');
+    }
+    if (oldVersion < 25) {
+      // v25: 单位归一化（H-9）。
+      // length/weight 按录入时单位混存（cm/m/mm/inch/ft，kg/lb/oz/g），
+      // 历史 SQL 直接对原始列做 SUM/MAX/ORDER BY/阈值比较 → 混合单位下结果错误。
+      // 新增 length_cm/weight_kg 基准列，并用 CASE 按 UnitConverter 系数回填。
+      // 系数必须与 lib/core/utils/unit_converter.dart 完全一致。
+      await _addColumnIfNotExists(
+        db,
+        'fish_catches',
+        'length_cm',
+        'REAL',
+        critical: true,
+      );
+      await _addColumnIfNotExists(
+        db,
+        'fish_catches',
+        'weight_kg',
+        'REAL',
+        critical: true,
+      );
+
+      // 回填长度（NULL / 未知单位按 cm 处理，与 UnitConverter default 分支一致）
+      await db.execute('''
+        UPDATE fish_catches SET length_cm = CASE length_unit
+          WHEN 'm' THEN length * 100
+          WHEN 'mm' THEN length / 10
+          WHEN 'inch' THEN length * 2.54
+          WHEN 'ft' THEN length * 30.48
+          ELSE length
+        END
+        WHERE length IS NOT NULL
+      ''');
+
+      // 回填重量（weight 为空则 weight_kg 保持 NULL；未知单位按 kg 处理）
+      await db.execute('''
+        UPDATE fish_catches SET weight_kg = CASE weight_unit
+          WHEN 'lb' THEN weight * 0.453592
+          WHEN 'oz' THEN weight * 0.0283495
+          WHEN 'g' THEN weight * 0.001
+          ELSE weight
+        END
+        WHERE weight IS NOT NULL
+      ''');
     }
   }
 

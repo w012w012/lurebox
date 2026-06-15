@@ -79,7 +79,8 @@ abstract class FishCatchRepository {
   /// [filter] 包含所有过滤条件（timeFilter/fateFilter/speciesFilter/searchQuery/sortBy/sortAsc）
   Future<PaginatedResult<FishCatch>> getFilteredPageByFilter({
     required int page,
-    required FishFilter filter, int pageSize = PaginationConstants.defaultPageSize,
+    required FishFilter filter,
+    int pageSize = PaginationConstants.defaultPageSize,
   });
 
   /// 获取渔获总数（高效实现，使用 SELECT COUNT(*)）

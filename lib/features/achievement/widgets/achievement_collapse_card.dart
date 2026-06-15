@@ -9,9 +9,12 @@ import 'package:lurebox/widgets/common/premium_card.dart';
 /// Collapsible achievement card with expand/collapse functionality.
 /// Displays category title, count, icon, and expandable child items.
 class AchievementCollapseCard extends ConsumerStatefulWidget {
-
   const AchievementCollapseCard({
-    required this.title, required this.currentCount, required this.totalCount, required this.icon, super.key,
+    required this.title,
+    required this.currentCount,
+    required this.totalCount,
+    required this.icon,
+    super.key,
     this.isCompleted = false,
     this.children = const [],
     this.initiallyExpanded = false,
@@ -47,10 +50,12 @@ class _AchievementCollapseCardState
     _rotationAnimation = Tween<double>(
       begin: 0,
       end: 0.5,
-    ).animate(CurvedAnimation(
-      parent: _rotationController,
-      curve: TeslaTheme.transitionCurve,
-    ),);
+    ).animate(
+      CurvedAnimation(
+        parent: _rotationController,
+        curve: TeslaTheme.transitionCurve,
+      ),
+    );
 
     if (_isExpanded) {
       _rotationController.value = 1.0;
@@ -214,8 +219,8 @@ class _AchievementCollapseCardState
               return TweenAnimationBuilder<double>(
                 tween: Tween(begin: 0, end: 1),
                 duration: Duration(
-                  milliseconds:
-                      TeslaTheme.transitionDuration.inMilliseconds * (index + 1),
+                  milliseconds: TeslaTheme.transitionDuration.inMilliseconds *
+                      (index + 1),
                 ),
                 curve: TeslaTheme.transitionCurve,
                 builder: (context, value, child) {
@@ -242,9 +247,11 @@ class _AchievementCollapseCardState
 
 /// Child achievement item for use within AchievementCollapseCard
 class AchievementChildItem extends StatelessWidget {
-
   const AchievementChildItem({
-    required this.title, required this.currentCount, required this.totalCount, super.key,
+    required this.title,
+    required this.currentCount,
+    required this.totalCount,
+    super.key,
     this.isCompleted = false,
     this.subtitle,
   });
@@ -262,7 +269,8 @@ class AchievementChildItem extends StatelessWidget {
         Icon(
           isCompleted ? Icons.check_circle : Icons.radio_button_unchecked,
           size: 16,
-          color: isCompleted ? TeslaColors.electricBlue : TeslaColors.paleSilver,
+          color:
+              isCompleted ? TeslaColors.electricBlue : TeslaColors.paleSilver,
         ),
         const SizedBox(width: 8),
 

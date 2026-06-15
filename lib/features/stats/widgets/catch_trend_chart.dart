@@ -7,9 +7,10 @@ import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
 class CatchTrendChart extends ConsumerStatefulWidget {
-
   const CatchTrendChart({
-    required this.trendData, required this.trendTitle, super.key,
+    required this.trendData,
+    required this.trendTitle,
+    super.key,
     this.showDropdown = false,
     this.trendType,
     this.onTrendTypeChanged,
@@ -78,7 +79,8 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
                     decoration: BoxDecoration(
                       color:
                           Theme.of(context).colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                      borderRadius:
+                          BorderRadius.circular(TeslaTheme.radiusMicro),
                     ),
                     child: DropdownButton<String>(
                       value: widget.trendType,
@@ -122,10 +124,9 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
                           widget.trendData.values.every((v) => v == 0))
                       ? 10
                       : (widget.trendData.values
-                                      .reduce((a, b) => a > b ? a : b) *
-                                  1.3 +
-                              1)
-                          ,
+                                  .reduce((a, b) => a > b ? a : b) *
+                              1.3 +
+                          1),
                   barTouchData: BarTouchData(
                     enabled: true,
                     touchTooltipData: BarTouchTooltipData(
@@ -166,7 +167,8 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
                             if (value.toInt() % step == 0) {
                               return Padding(
                                 padding: const EdgeInsets.only(
-                                    top: TeslaTheme.spacingMicro,),
+                                  top: TeslaTheme.spacingMicro,
+                                ),
                                 child: Text(
                                   keys[value.toInt()],
                                   style: Theme.of(
@@ -184,15 +186,9 @@ class _CatchTrendChartState extends ConsumerState<CatchTrendChart>
                         },
                       ),
                     ),
-                    leftTitles: const AxisTitles(
-                      
-                    ),
-                    topTitles: const AxisTitles(
-                      
-                    ),
-                    rightTitles: const AxisTitles(
-                      
-                    ),
+                    leftTitles: const AxisTitles(),
+                    topTitles: const AxisTitles(),
+                    rightTitles: const AxisTitles(),
                   ),
                   borderData: FlBorderData(show: false),
                   barGroups:

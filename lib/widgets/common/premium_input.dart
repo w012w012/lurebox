@@ -7,7 +7,6 @@ import 'package:lurebox/core/design/theme/tesla_theme.dart';
 /// 高级极简输入框组件
 /// 提供统一的输入框样式，符合Premium Minimalist设计系统
 class PremiumTextField extends StatelessWidget {
-
   const PremiumTextField({
     super.key,
     this.label,
@@ -125,12 +124,11 @@ class PremiumTextField extends StatelessWidget {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
-          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 2),
+          borderSide:
+              const BorderSide(color: TeslaColors.electricBlue, width: 2),
         ),
         labelStyle: TextStyle(
-          color: isDark
-              ? const Color(0xFF9A9A9A)
-              : TeslaColors.graphite,
+          color: isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
           fontSize: 16,
         ),
         floatingLabelStyle: TextStyle(
@@ -143,11 +141,10 @@ class PremiumTextField extends StatelessWidget {
               : TeslaColors.graphite.withValues(alpha: 0.7),
           fontSize: 16,
         ),
-        errorStyle: const TextStyle(color: TeslaColors.electricBlue, fontSize: 12),
+        errorStyle:
+            const TextStyle(color: TeslaColors.electricBlue, fontSize: 12),
         counterStyle: TextStyle(
-          color: isDark
-              ? const Color(0xFF9A9A9A)
-              : TeslaColors.graphite,
+          color: isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
           fontSize: 12,
         ),
       ),
@@ -157,7 +154,6 @@ class PremiumTextField extends StatelessWidget {
 
 /// 高级极简搜索框
 class PremiumSearchField extends StatelessWidget {
-
   const PremiumSearchField({
     super.key,
     this.hint,
@@ -199,17 +195,14 @@ class PremiumSearchField extends StatelessWidget {
         prefixIcon: prefixIcon ??
             Icon(
               Icons.search_rounded,
-              color: isDark
-                  ? const Color(0xFF9A9A9A)
-                  : TeslaColors.graphite,
+              color: isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
             ),
         suffixIcon: controller != null && controller!.text.isNotEmpty
             ? IconButton(
                 icon: Icon(
                   Icons.clear_rounded,
-                  color: isDark
-                      ? const Color(0xFF9A9A9A)
-                      : TeslaColors.graphite,
+                  color:
+                      isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
                 ),
                 onPressed: () {
                   controller!.clear();
@@ -249,9 +242,7 @@ class PremiumSearchField extends StatelessWidget {
           ),
         ),
         hintStyle: TextStyle(
-          color: isDark
-              ? const Color(0xFF9A9A9A)
-              : TeslaColors.graphite,
+          color: isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
           fontSize: 16,
         ),
       ),
@@ -261,7 +252,6 @@ class PremiumSearchField extends StatelessWidget {
 
 /// 高级极简数字输入框
 class PremiumNumberField extends StatelessWidget {
-
   const PremiumNumberField({
     super.key,
     this.label,
@@ -360,12 +350,11 @@ class PremiumNumberField extends StatelessWidget {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
-          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 2),
+          borderSide:
+              const BorderSide(color: TeslaColors.electricBlue, width: 2),
         ),
         labelStyle: TextStyle(
-          color: isDark
-              ? const Color(0xFF9A9A9A)
-              : TeslaColors.graphite,
+          color: isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
           fontSize: 16,
         ),
         floatingLabelStyle: TextStyle(
@@ -379,15 +368,11 @@ class PremiumNumberField extends StatelessWidget {
           fontSize: 16,
         ),
         suffixStyle: TextStyle(
-          color: isDark
-              ? const Color(0xFF9A9A9A)
-              : TeslaColors.graphite,
+          color: isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
           fontSize: 16,
         ),
         prefixStyle: TextStyle(
-          color: isDark
-              ? const Color(0xFF9A9A9A)
-              : TeslaColors.graphite,
+          color: isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
           fontSize: 16,
         ),
       ),
@@ -397,7 +382,6 @@ class PremiumNumberField extends StatelessWidget {
 
 /// 范围输入格式化器
 class _RangeTextInputFormatter extends TextInputFormatter {
-
   _RangeTextInputFormatter({this.min, this.max});
   final double? min;
   final double? max;
@@ -436,7 +420,6 @@ class _RangeTextInputFormatter extends TextInputFormatter {
 
 /// 高级极简多行文本输入框
 class PremiumTextArea extends StatelessWidget {
-
   const PremiumTextArea({
     super.key,
     this.label,
@@ -523,12 +506,11 @@ class PremiumTextArea extends StatelessWidget {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
-          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 2),
+          borderSide:
+              const BorderSide(color: TeslaColors.electricBlue, width: 2),
         ),
         labelStyle: TextStyle(
-          color: isDark
-              ? const Color(0xFF9A9A9A)
-              : TeslaColors.graphite,
+          color: isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
           fontSize: 16,
         ),
         floatingLabelStyle: TextStyle(
@@ -548,9 +530,9 @@ class PremiumTextArea extends StatelessWidget {
 
 /// 高级极简下拉选择框
 class PremiumDropdown<T> extends StatelessWidget {
-
   const PremiumDropdown({
-    required this.items, super.key,
+    required this.items,
+    super.key,
     this.label,
     this.value,
     this.onChanged,
@@ -578,9 +560,7 @@ class PremiumDropdown<T> extends StatelessWidget {
           child: Text(
             item.label,
             style: TextStyle(
-              color: isDark
-                  ? TeslaColors.white
-                  : TeslaColors.carbonDark,
+              color: isDark ? TeslaColors.white : TeslaColors.carbonDark,
             ),
           ),
         );
@@ -588,8 +568,7 @@ class PremiumDropdown<T> extends StatelessWidget {
       onChanged: enabled ? onChanged : null,
       icon: Icon(
         Icons.keyboard_arrow_down_rounded,
-        color:
-            isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
+        color: isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
       ),
       style: TextStyle(
         color: isDark ? TeslaColors.white : TeslaColors.carbonDark,
@@ -636,12 +615,11 @@ class PremiumDropdown<T> extends StatelessWidget {
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
-          borderSide: const BorderSide(color: TeslaColors.electricBlue, width: 2),
+          borderSide:
+              const BorderSide(color: TeslaColors.electricBlue, width: 2),
         ),
         labelStyle: TextStyle(
-          color: isDark
-              ? const Color(0xFF9A9A9A)
-              : TeslaColors.graphite,
+          color: isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
           fontSize: 16,
         ),
         floatingLabelStyle: TextStyle(
@@ -658,7 +636,6 @@ class PremiumDropdown<T> extends StatelessWidget {
 
 /// 下拉选择项
 class PremiumDropdownItem<T> {
-
   const PremiumDropdownItem({required this.value, required this.label});
   final T value;
   final String label;

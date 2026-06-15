@@ -47,7 +47,9 @@ class BackupExportPage extends ConsumerWidget {
             icon: Icons.table_chart,
             title: strings.exportCsv,
             subtitle: strings.exportCsvDesc,
-            onTap: settingsState.isExporting ? null : () => _handleCsvExport(context, ref),
+            onTap: settingsState.isExporting
+                ? null
+                : () => _handleCsvExport(context, ref),
             isLoading: settingsState.isExporting,
           ),
           const SizedBox(height: TeslaTheme.spacingMicro),
@@ -58,7 +60,9 @@ class BackupExportPage extends ConsumerWidget {
             icon: Icons.archive,
             title: strings.fullBackup,
             subtitle: strings.fullBackupDesc,
-            onTap: settingsState.isCreatingZipBackup ? null : () => _showFullBackupDialog(context, ref, strings),
+            onTap: settingsState.isCreatingZipBackup
+                ? null
+                : () => _showFullBackupDialog(context, ref, strings),
             isLoading: settingsState.isCreatingZipBackup,
           ),
           const SizedBox(height: TeslaTheme.spacingMicro),
@@ -69,7 +73,9 @@ class BackupExportPage extends ConsumerWidget {
             icon: Icons.restore,
             title: strings.restoreBackup,
             subtitle: strings.restoreBackupDesc,
-            onTap: settingsState.isRestoringZipBackup ? null : () => _handleZipRestore(context, ref, strings),
+            onTap: settingsState.isRestoringZipBackup
+                ? null
+                : () => _handleZipRestore(context, ref, strings),
             isLoading: settingsState.isRestoringZipBackup,
           ),
           const SizedBox(height: TeslaTheme.spacingMicro),
@@ -133,7 +139,8 @@ class BackupExportPage extends ConsumerWidget {
                     Text(
                       subtitle,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                     ),
                   ],
@@ -165,7 +172,8 @@ class BackupExportPage extends ConsumerWidget {
     final strings = ref.read(currentStringsProvider);
     final viewModel = ref.read(settingsViewModelProvider.notifier);
     try {
-      final xFile = await viewModel.exportDataWithFormat(format: ExportFormat.csv);
+      final xFile =
+          await viewModel.exportDataWithFormat(format: ExportFormat.csv);
       if (context.mounted && xFile != null) {
         await Share.shareXFiles([xFile], subject: 'LureBox CSV Export');
       }
@@ -176,7 +184,8 @@ class BackupExportPage extends ConsumerWidget {
     }
   }
 
-  void _showFullBackupDialog(BuildContext context, WidgetRef ref, AppStrings strings) {
+  void _showFullBackupDialog(
+      BuildContext context, WidgetRef ref, AppStrings strings) {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -226,7 +235,8 @@ class BackupExportPage extends ConsumerWidget {
     );
 
     try {
-      final savedPath = await viewModel.startZipBackup(includePhotos: includePhotos);
+      final savedPath =
+          await viewModel.startZipBackup(includePhotos: includePhotos);
 
       if (!context.mounted) return;
 

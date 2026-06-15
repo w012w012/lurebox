@@ -14,7 +14,6 @@ import 'package:lurebox/core/utils/input_validator.dart';
 /// 装备类型包括：鱼竿（rod）、鱼轮（reel）、鱼饵（lure）等。
 
 class EquipmentService {
-
   EquipmentService(this._repository);
   final EquipmentRepository _repository;
 

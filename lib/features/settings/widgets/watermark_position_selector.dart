@@ -5,9 +5,11 @@ import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 
 class WatermarkPositionSelector extends StatelessWidget {
-
   const WatermarkPositionSelector({
-    required this.settings, required this.strings, required this.onPositionChanged, super.key,
+    required this.settings,
+    required this.strings,
+    required this.onPositionChanged,
+    super.key,
   });
   final WatermarkSettings settings;
   final AppStrings strings;

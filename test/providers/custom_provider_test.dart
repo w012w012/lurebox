@@ -89,25 +89,33 @@ void main() {
       final uri =
           provider.buildUrl('https://api.custom.com/v1/chat/completions');
       expect(
-          uri.toString(), equals('https://api.custom.com/v1/chat/completions'),);
+        uri.toString(),
+        equals('https://api.custom.com/v1/chat/completions'),
+      );
     });
 
     test('buildUrl with /v1 suffix appends /chat/completions', () {
       final uri = provider.buildUrl('https://api.custom.com/v1');
       expect(
-          uri.toString(), equals('https://api.custom.com/v1/chat/completions'),);
+        uri.toString(),
+        equals('https://api.custom.com/v1/chat/completions'),
+      );
     });
 
     test('buildUrl with trailing slash appends v1/chat/completions', () {
       final uri = provider.buildUrl('https://api.custom.com/');
       expect(
-          uri.toString(), equals('https://api.custom.com/v1/chat/completions'),);
+        uri.toString(),
+        equals('https://api.custom.com/v1/chat/completions'),
+      );
     });
 
     test('buildUrl standard case appends /v1/chat/completions', () {
       final uri = provider.buildUrl('https://api.custom.com');
       expect(
-          uri.toString(), equals('https://api.custom.com/v1/chat/completions'),);
+        uri.toString(),
+        equals('https://api.custom.com/v1/chat/completions'),
+      );
     });
   });
 
@@ -127,17 +135,19 @@ void main() {
 
       expect(
         () => provider.identifySpecies(testImage, configWithoutBaseUrl),
-        throwsA(isA<FishRecognitionException>()
-            .having(
-              (e) => e.type,
-              'type',
-              equals(FishRecognitionErrorType.apiKeyInvalid),
-            )
-            .having(
-              (e) => e.message,
-              'message',
-              contains('Base URL'),
-            ),),
+        throwsA(
+          isA<FishRecognitionException>()
+              .having(
+                (e) => e.type,
+                'type',
+                equals(FishRecognitionErrorType.apiKeyInvalid),
+              )
+              .having(
+                (e) => e.message,
+                'message',
+                contains('Base URL'),
+              ),
+        ),
       );
     });
 
@@ -150,11 +160,13 @@ void main() {
 
       expect(
         () => provider.identifySpecies(testImage, configWithNullBaseUrl),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.apiKeyInvalid),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.apiKeyInvalid),
+          ),
+        ),
       );
     });
 
@@ -168,11 +180,13 @@ void main() {
         200,
       );
 
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async => mockResponse);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((_) async => mockResponse);
 
       final result = await provider.identifySpecies(testImage, testConfig);
 
@@ -193,11 +207,13 @@ void main() {
       );
 
       String? capturedBody;
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((invocation) async {
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((invocation) async {
         capturedBody =
             invocation.namedArguments[const Symbol('body')] as String?;
         return mockResponse;
@@ -224,11 +240,13 @@ void main() {
       );
 
       String? capturedBody;
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((invocation) async {
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((invocation) async {
         capturedBody =
             invocation.namedArguments[const Symbol('body')] as String?;
         return mockResponse;
@@ -253,11 +271,13 @@ void main() {
       );
 
       String? capturedBody;
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((invocation) async {
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((invocation) async {
         capturedBody =
             invocation.namedArguments[const Symbol('body')] as String?;
         return mockResponse;
@@ -288,8 +308,10 @@ void main() {
       expect(userContent[0]['type'], equals('text'));
       expect(userContent[0]['text'], contains('识别'));
       expect(userContent[1]['type'], equals('image_url'));
-      expect(userContent[1]['image_url']['url'],
-          startsWith('data:image/jpeg;base64,'),);
+      expect(
+        userContent[1]['image_url']['url'],
+        startsWith('data:image/jpeg;base64,'),
+      );
     });
 
     test('sets correct headers including Authorization', () async {
@@ -303,11 +325,13 @@ void main() {
       );
 
       Map<String, String>? capturedHeaders;
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((invocation) async {
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((invocation) async {
         capturedHeaders = invocation.namedArguments[const Symbol('headers')]
             as Map<String, String>?;
         return mockResponse;
@@ -333,11 +357,13 @@ void main() {
       );
 
       Uri? capturedUri;
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((invocation) async {
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((invocation) async {
         capturedUri = invocation.positionalArguments[0] as Uri;
         return mockResponse;
       });
@@ -346,8 +372,10 @@ void main() {
 
       // CustomProvider appends /chat/completions when baseUrl ends with /v1
       expect(capturedUri, isNotNull);
-      expect(capturedUri.toString(),
-          equals('https://custom.api.com/v1/chat/completions'),);
+      expect(
+        capturedUri.toString(),
+        equals('https://custom.api.com/v1/chat/completions'),
+      );
     });
   });
 
@@ -363,112 +391,136 @@ void main() {
     });
 
     test('throws FishRecognitionException on timeout', () async {
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenThrow(TimeoutException('Connection timed out'));
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenThrow(TimeoutException('Connection timed out'));
 
       expect(
         () => provider.identifySpecies(testImage, testConfig),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.timeout),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.timeout),
+          ),
+        ),
       );
     });
 
     test('throws FishRecognitionException on network error', () async {
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenThrow(http.ClientException('Network is unreachable'));
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenThrow(http.ClientException('Network is unreachable'));
 
       expect(
         () => provider.identifySpecies(testImage, testConfig),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.networkError),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.networkError),
+          ),
+        ),
       );
     });
 
     test('throws FishRecognitionException on 401 unauthorized', () async {
       final errorResponse = http.Response('Unauthorized', 401);
 
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async => errorResponse);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((_) async => errorResponse);
 
       expect(
         () => provider.identifySpecies(testImage, testConfig),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.apiKeyInvalid),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.apiKeyInvalid),
+          ),
+        ),
       );
     });
 
     test('throws FishRecognitionException on 403 forbidden', () async {
       final errorResponse = http.Response('Forbidden', 403);
 
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async => errorResponse);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((_) async => errorResponse);
 
       expect(
         () => provider.identifySpecies(testImage, testConfig),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.apiKeyInvalid),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.apiKeyInvalid),
+          ),
+        ),
       );
     });
 
     test('throws FishRecognitionException on 429 rate limited', () async {
       final errorResponse = http.Response('Too Many Requests', 429);
 
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async => errorResponse);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((_) async => errorResponse);
 
       expect(
         () => provider.identifySpecies(testImage, testConfig),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.rateLimited),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.rateLimited),
+          ),
+        ),
       );
     });
 
     test('throws FishRecognitionException on 500 server error', () async {
       final errorResponse = http.Response('Internal Server Error', 500);
 
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async => errorResponse);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((_) async => errorResponse);
 
       expect(
         () => provider.identifySpecies(testImage, testConfig),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.networkError),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.networkError),
+          ),
+        ),
       );
     });
   });

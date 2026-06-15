@@ -49,6 +49,8 @@ void main() {
               length_unit TEXT DEFAULT 'cm',
               weight REAL,
               weight_unit TEXT DEFAULT 'kg',
+              length_cm REAL,
+              weight_kg REAL,
               fate INTEGER DEFAULT 0,
               catch_time TEXT NOT NULL,
               location_name TEXT,
@@ -710,7 +712,9 @@ void main() {
       expect(fishCatches.length, equals(1));
       expect(fishCatches.first['species'], equals('Walleye'));
       expect(
-          equipments.length, equals(0),); // Equipment was not in partial backup
+        equipments.length,
+        equals(0),
+      ); // Equipment was not in partial backup
 
       // Cleanup
       await File(exportPath).delete();
@@ -861,7 +865,6 @@ void main() {
 
 /// Test DatabaseProvider that wraps a real Database instance
 class _TestDatabaseProvider implements DatabaseProvider {
-
   _TestDatabaseProvider(this._database);
   final Database _database;
 

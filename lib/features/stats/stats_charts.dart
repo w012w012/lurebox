@@ -8,9 +8,11 @@ import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// 概览项组件
 class OverviewItem extends ConsumerWidget {
-
   const OverviewItem({
-    required this.label, required this.count, required this.color, super.key,
+    required this.label,
+    required this.count,
+    required this.color,
+    super.key,
     this.isPercent = false,
   });
   final String label;
@@ -44,9 +46,11 @@ class OverviewItem extends ConsumerWidget {
 
 /// 装备饼图组件
 class EquipmentPieChart extends StatelessWidget {
-
   const EquipmentPieChart({
-    required this.title, required this.data, required this.color, super.key,
+    required this.title,
+    required this.data,
+    required this.color,
+    super.key,
   });
   final String title;
   final Map<String, int> data;
@@ -118,8 +122,8 @@ class EquipmentPieChart extends StatelessWidget {
                     final index = e.key;
                     final entry = e.value;
                     return Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
+                      padding: const EdgeInsets.only(
+                          bottom: TeslaTheme.spacingMicro),
                       child: Row(
                         children: [
                           Container(
@@ -162,9 +166,10 @@ class EquipmentPieChart extends StatelessWidget {
 
 /// 品种分布饼图组件
 class SpeciesPieChart extends ConsumerWidget {
-
   const SpeciesPieChart({
-    required this.speciesStats, required this.totalCount, super.key,
+    required this.speciesStats,
+    required this.totalCount,
+    super.key,
   });
   final Map<String, int> speciesStats;
   final int totalCount;
@@ -226,7 +231,8 @@ class SpeciesPieChart extends ConsumerWidget {
           const SizedBox(height: TeslaTheme.spacingMicro),
           ...speciesStats.entries.map(
             (e) => Padding(
-              padding: const EdgeInsets.symmetric(vertical: TeslaTheme.spacingMicro),
+              padding:
+                  const EdgeInsets.symmetric(vertical: TeslaTheme.spacingMicro),
               child: Row(
                 children: [
                   Expanded(
@@ -253,9 +259,10 @@ class SpeciesPieChart extends ConsumerWidget {
 
 /// 趋势柱状图组件
 class TrendBarChart extends ConsumerWidget {
-
   const TrendBarChart({
-    required this.trendData, required this.trendTitle, super.key,
+    required this.trendData,
+    required this.trendTitle,
+    super.key,
     this.showDropdown = false,
     this.trendType,
     this.onTrendTypeChanged,
@@ -337,8 +344,7 @@ class TrendBarChart extends ConsumerWidget {
                         trendData.values.every((v) => v == 0))
                     ? 10
                     : (trendData.values.reduce((a, b) => a > b ? a : b) * 1.3 +
-                            1)
-                        ,
+                        1),
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
@@ -379,7 +385,8 @@ class TrendBarChart extends ConsumerWidget {
                           if (value.toInt() % step == 0) {
                             return Padding(
                               padding: const EdgeInsets.only(
-                                  top: TeslaTheme.spacingMicro,),
+                                top: TeslaTheme.spacingMicro,
+                              ),
                               child: Text(
                                 keys[value.toInt()],
                                 style: Theme.of(
@@ -397,15 +404,9 @@ class TrendBarChart extends ConsumerWidget {
                       },
                     ),
                   ),
-                  leftTitles: const AxisTitles(
-                    
-                  ),
-                  topTitles: const AxisTitles(
-                    
-                  ),
-                  rightTitles: const AxisTitles(
-                    
-                  ),
+                  leftTitles: const AxisTitles(),
+                  topTitles: const AxisTitles(),
+                  rightTitles: const AxisTitles(),
                 ),
                 borderData: FlBorderData(show: false),
                 barGroups: trendData.entries.toList().asMap().entries.map((

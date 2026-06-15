@@ -34,7 +34,6 @@ enum WatermarkPosition {
 
 /// 预设样式参数
 class WatermarkStylePreset {
-
   const WatermarkStylePreset({
     required this.blurRadius,
     required this.backgroundOpacity,
@@ -80,7 +79,8 @@ const watermarkStylePresets = {
 };
 
 /// 水印设置
-class WatermarkSettings { // 自定义文字
+class WatermarkSettings {
+  // 自定义文字
 
   const WatermarkSettings({
     this.enabled = true,
@@ -204,7 +204,6 @@ class WatermarkSettings { // 自定义文字
 
 /// 水印信息类型信息
 class WatermarkInfoTypeInfo {
-
   const WatermarkInfoTypeInfo({
     required this.type,
     required this.name,

@@ -54,7 +54,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
     } on Object catch (e) {
       if (!mounted) return;
       final errorStrings = ref.read(currentStringsProvider);
-      AppSnackBar.showError(context, errorStrings.errorSaveFailed, debugError: e);
+      AppSnackBar.showError(context, errorStrings.errorSaveFailed,
+          debugError: e);
     } finally {
       if (mounted) setState(() => _isCompleting = false);
     }

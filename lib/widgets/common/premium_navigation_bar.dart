@@ -7,9 +7,11 @@ import 'package:lurebox/core/design/theme/app_colors.dart';
 /// - 标准模式：5 个 Tab 均分宽度
 /// - FAB 模式（showCenterFab=true）：中间 Tab 位置被 FAB 替代，4 个 Tab 分列两侧
 class PremiumNavigationBar extends StatelessWidget {
-
   const PremiumNavigationBar({
-    required this.selectedIndex, required this.onDestinationSelected, required this.destinations, super.key,
+    required this.selectedIndex,
+    required this.onDestinationSelected,
+    required this.destinations,
+    super.key,
     this.showCenterFab = false,
     this.onCenterFabPressed,
   });
@@ -221,7 +223,6 @@ class PremiumNavigationBar extends StatelessWidget {
 
 /// 单个导航 Tab
 class _NavTab extends StatelessWidget {
-
   const _NavTab({
     required this.isSelected,
     required this.onTap,
@@ -240,7 +241,8 @@ class _NavTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const activeColor = Color(0xFF3E6AE1);
-    final inactiveColor = isDark ? const Color(0xFF9A9A9A) : const Color(0xFF5C5E62);
+    final inactiveColor =
+        isDark ? const Color(0xFF9A9A9A) : const Color(0xFF5C5E62);
 
     return Expanded(
       child: InkWell(
@@ -274,7 +276,6 @@ class _NavTab extends StatelessWidget {
 
 /// 导航目标项
 class PremiumNavigationDestination {
-
   const PremiumNavigationDestination({
     required this.icon,
     required this.selectedIcon,

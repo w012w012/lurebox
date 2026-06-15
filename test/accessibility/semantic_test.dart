@@ -40,8 +40,7 @@ void main() {
       expect(semantics.label, 'Cancel');
     });
 
-    testWidgets('text button has correct semantic properties',
-        (tester) async {
+    testWidgets('text button has correct semantic properties', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -174,8 +173,7 @@ void main() {
       expect(find.text('Profile'), findsOneWidget);
     });
 
-    testWidgets('fab nav bar has correct semantic properties',
-        (tester) async {
+    testWidgets('fab nav bar has correct semantic properties', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -213,7 +211,8 @@ void main() {
 
       // The FAB has Semantics with label 'Take photo' and button: true
       final fabFinder = find.byWidgetPredicate(
-        (widget) => widget is Semantics &&
+        (widget) =>
+            widget is Semantics &&
             widget.properties.label == 'Take photo' &&
             widget.properties.button == true,
       );
@@ -223,8 +222,7 @@ void main() {
       expect(semantics.label, 'Take photo');
     });
 
-    testWidgets('nav bar tab has correct semantic properties',
-        (tester) async {
+    testWidgets('nav bar tab has correct semantic properties', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -269,8 +267,7 @@ void main() {
   });
 
   group('PremiumFAB Semantics', () {
-    testWidgets('FAB has correct semantic label with tooltip',
-        (tester) async {
+    testWidgets('FAB has correct semantic label with tooltip', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

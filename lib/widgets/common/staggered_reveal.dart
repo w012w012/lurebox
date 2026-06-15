@@ -66,8 +66,7 @@ class _StaggeredRevealState extends State<StaggeredReveal>
       );
 
       _slideAnimation =
-          Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero)
-              .animate(
+          Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero).animate(
         CurvedAnimation(
           parent: _controller!,
           curve: TeslaTheme.transitionCurve,

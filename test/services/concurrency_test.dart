@@ -30,6 +30,8 @@ void main() {
               length_unit TEXT DEFAULT 'cm',
               weight REAL,
               weight_unit TEXT DEFAULT 'kg',
+              length_cm REAL,
+              weight_kg REAL,
               fate INTEGER DEFAULT 0,
               catch_time TEXT NOT NULL,
               location_name TEXT,

@@ -11,7 +11,6 @@ import 'package:lurebox/core/services/fish_recognition_service.dart';
 ///
 /// 使用 Anthropic Claude Messages API (Claude 3.5) 进行鱼类识别
 class ClaudeFishRecognitionProvider implements FishRecognitionProvider {
-
   /// Creates a Claude provider with optional HTTP client injection.
   /// If no client is provided, uses a shared static client to avoid socket leaks.
   ClaudeFishRecognitionProvider({http.Client? client})

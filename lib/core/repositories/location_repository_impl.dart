@@ -8,13 +8,12 @@ import 'package:lurebox/core/repositories/location_repository.dart';
 
 class SqliteLocationRepository extends BaseSqliteRepository
     implements LocationRepository {
-
   /// 无参构造函数（使用默认 DatabaseService）
   SqliteLocationRepository();
 
   /// 带数据库的构造函数（用于测试）
-  SqliteLocationRepository.withDatabase(super.testDb)
-      : super.withDatabase();
+  SqliteLocationRepository.withDatabase(super.testDb) : super.withDatabase();
+
   /// Approximate km per degree of latitude (varies ~110.57 at equator to ~111.70 at poles)
   static const double _kmPerDegreeLatitude = 111;
 
@@ -40,8 +39,11 @@ class SqliteLocationRepository extends BaseSqliteRepository
         GROUP BY location_name, latitude, longitude
         ORDER BY fish_count DESC
       ''');
-      return List<LocationWithStats>.from(results.map(
-          (map) => LocationWithStats.fromMap(map as Map<String, dynamic>),),);
+      return List<LocationWithStats>.from(
+        results.map(
+          (map) => LocationWithStats.fromMap(map as Map<String, dynamic>),
+        ),
+      );
     } catch (e) {
       throwDbError('get all locations with stats', e);
     }
@@ -108,8 +110,11 @@ class SqliteLocationRepository extends BaseSqliteRepository
           longitude + radiusDeg,
         ],
       );
-      return List<LocationWithStats>.from(results.map(
-          (map) => LocationWithStats.fromMap(map as Map<String, dynamic>),),);
+      return List<LocationWithStats>.from(
+        results.map(
+          (map) => LocationWithStats.fromMap(map as Map<String, dynamic>),
+        ),
+      );
     } catch (e) {
       throwDbError('get nearby locations', e);
     }
@@ -150,8 +155,8 @@ class SqliteLocationRepository extends BaseSqliteRepository
           COUNT(*) as total_catches,
           SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as release_count,
           SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as keep_count,
-          AVG(length) as avg_length,
-          AVG(weight) as avg_weight
+          AVG(COALESCE(length_cm, length)) as avg_length,
+          AVG(COALESCE(weight_kg, weight)) as avg_weight
         FROM $tableName
         WHERE location_name = ?
         ''',

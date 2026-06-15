@@ -135,6 +135,7 @@ class FishCatch {
   final DateTime updatedAt;
 
   Map<String, dynamic> toMap() {
+    final weightValue = weight;
     return {
       'id': id,
       'image_path': imagePath,
@@ -144,6 +145,12 @@ class FishCatch {
       'length_unit': lengthUnit,
       'weight': weight,
       'weight_unit': weightUnit,
+      // 归一化基准单位列（派生值，仅供 SQL 聚合/排序统一口径，fromMap 不读取）。
+      // 详见 schema v25 与 H-9 修复说明。
+      'length_cm': UnitConverter.toBaseCm(length, lengthUnit),
+      'weight_kg': weightValue == null
+          ? null
+          : UnitConverter.toBaseKg(weightValue, weightUnit),
       'fate': fate.value,
       'catch_time': catchTime.toIso8601String(),
       'location_name': locationName,

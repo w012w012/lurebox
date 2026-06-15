@@ -40,13 +40,16 @@ void main() {
           return AppSettingsNotifierTest();
         }),
         todayStatsProvider.overrideWith(
-            (ref) => todayStats ?? AsyncValue.data(createStats()),),
+          (ref) => todayStats ?? AsyncValue.data(createStats()),
+        ),
         monthStatsProvider.overrideWith(
-            (ref) => monthStats ?? AsyncValue.data(createStats()),),
+          (ref) => monthStats ?? AsyncValue.data(createStats()),
+        ),
         yearStatsProvider
             .overrideWith((ref) => yearStats ?? AsyncValue.data(createStats())),
         allTimeStatsProvider.overrideWith(
-            (ref) => allTimeStats ?? AsyncValue.data(createStats()),),
+          (ref) => allTimeStats ?? AsyncValue.data(createStats()),
+        ),
       ],
       child: const MaterialApp(
         home: StatsPage(),
@@ -65,9 +68,11 @@ void main() {
 
     testWidgets('shows loading indicator when stats are loading',
         (tester) async {
-      await tester.pumpWidget(createWidgetUnderTest(
-        todayStats: const AsyncValue.loading(),
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          todayStats: const AsyncValue.loading(),
+        ),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
 
@@ -83,12 +88,14 @@ void main() {
         speciesStats: {'Bass': 5, 'Trout': 5},
       );
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        todayStats: AsyncValue.data(stats),
-        monthStats: AsyncValue.data(stats),
-        yearStats: AsyncValue.data(stats),
-        allTimeStats: AsyncValue.data(stats),
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          todayStats: AsyncValue.data(stats),
+          monthStats: AsyncValue.data(stats),
+          yearStats: AsyncValue.data(stats),
+          allTimeStats: AsyncValue.data(stats),
+        ),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
@@ -108,12 +115,14 @@ void main() {
         speciesStats: {'Bass': 25},
       );
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        todayStats: AsyncValue.data(stats),
-        monthStats: AsyncValue.data(stats),
-        yearStats: AsyncValue.data(stats),
-        allTimeStats: AsyncValue.data(stats),
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          todayStats: AsyncValue.data(stats),
+          monthStats: AsyncValue.data(stats),
+          yearStats: AsyncValue.data(stats),
+          allTimeStats: AsyncValue.data(stats),
+        ),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
@@ -130,12 +139,14 @@ void main() {
         speciesStats: {},
       );
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        todayStats: AsyncValue.data(stats),
-        monthStats: AsyncValue.data(stats),
-        yearStats: AsyncValue.data(stats),
-        allTimeStats: AsyncValue.data(stats),
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          todayStats: AsyncValue.data(stats),
+          monthStats: AsyncValue.data(stats),
+          yearStats: AsyncValue.data(stats),
+          allTimeStats: AsyncValue.data(stats),
+        ),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
@@ -151,12 +162,14 @@ void main() {
         speciesStats: {},
       );
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        todayStats: AsyncValue.data(stats),
-        monthStats: AsyncValue.data(stats),
-        yearStats: AsyncValue.data(stats),
-        allTimeStats: AsyncValue.data(stats),
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          todayStats: AsyncValue.data(stats),
+          monthStats: AsyncValue.data(stats),
+          yearStats: AsyncValue.data(stats),
+          allTimeStats: AsyncValue.data(stats),
+        ),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
@@ -174,12 +187,14 @@ void main() {
         speciesStats: {},
       );
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        todayStats: AsyncValue.data(stats),
-        monthStats: AsyncValue.data(stats),
-        yearStats: AsyncValue.data(stats),
-        allTimeStats: AsyncValue.data(stats),
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          todayStats: AsyncValue.data(stats),
+          monthStats: AsyncValue.data(stats),
+          yearStats: AsyncValue.data(stats),
+          allTimeStats: AsyncValue.data(stats),
+        ),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
@@ -196,12 +211,14 @@ void main() {
         speciesStats: {},
       );
 
-      await tester.pumpWidget(createWidgetUnderTest(
-        todayStats: AsyncValue.data(stats),
-        monthStats: AsyncValue.data(stats),
-        yearStats: AsyncValue.data(stats),
-        allTimeStats: AsyncValue.data(stats),
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          todayStats: AsyncValue.data(stats),
+          monthStats: AsyncValue.data(stats),
+          yearStats: AsyncValue.data(stats),
+          allTimeStats: AsyncValue.data(stats),
+        ),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1100));
       await tester.pumpAndSettle();
@@ -211,9 +228,11 @@ void main() {
     });
 
     testWidgets('error state shows error icon', (tester) async {
-      await tester.pumpWidget(createWidgetUnderTest(
-        todayStats: AsyncValue.error(Exception('Failed'), StackTrace.current),
-      ),);
+      await tester.pumpWidget(
+        createWidgetUnderTest(
+          todayStats: AsyncValue.error(Exception('Failed'), StackTrace.current),
+        ),
+      );
       await tester.pump();
       await tester.pumpAndSettle();
 
@@ -246,13 +265,17 @@ void main() {
               return AppSettingsNotifierTest();
             }),
             todayStatsProvider.overrideWith(
-                (ref) => AsyncValue.data(stats),),
+              (ref) => AsyncValue.data(stats),
+            ),
             monthStatsProvider.overrideWith(
-                (ref) => AsyncValue.data(createStats()),),
+              (ref) => AsyncValue.data(createStats()),
+            ),
             yearStatsProvider.overrideWith(
-                (ref) => AsyncValue.data(createStats()),),
+              (ref) => AsyncValue.data(createStats()),
+            ),
             allTimeStatsProvider.overrideWith(
-                (ref) => AsyncValue.data(createStats()),),
+              (ref) => AsyncValue.data(createStats()),
+            ),
           ],
           child: MaterialApp.router(
             routerConfig: GoRouter(

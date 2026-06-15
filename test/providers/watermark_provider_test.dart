@@ -196,12 +196,11 @@ void main() {
         expect(notifier.state.style, WatermarkStyle.bold);
         expect(notifier.state.blurRadius, 6); // from bold preset
         expect(notifier.state.backgroundOpacity, 0.7); // from bold preset
-        expect(
-            notifier.state.backgroundColor, 0xFF000000); // from bold preset
+        expect(notifier.state.backgroundColor, 0xFF000000); // from bold preset
         expect(notifier.state.fontSize, 20); // from bold preset
         expect(notifier.state.textColor, 0xFFFFFFFF); // from bold preset
-        expect(
-            notifier.state.position, WatermarkPosition.center); // from bold preset
+        expect(notifier.state.position,
+            WatermarkPosition.center); // from bold preset
         verify(() => mockService.saveWatermarkSettings(any())).called(1);
       });
     });
@@ -229,7 +228,8 @@ void main() {
         // species is in default infoTypes
         await notifier.toggleInfoType(WatermarkInfoType.species);
 
-        expect(notifier.state.infoTypes, isNot(contains(WatermarkInfoType.species)));
+        expect(notifier.state.infoTypes,
+            isNot(contains(WatermarkInfoType.species)));
         verify(() => mockService.saveWatermarkSettings(any())).called(1);
       });
     });

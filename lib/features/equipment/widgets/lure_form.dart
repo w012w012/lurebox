@@ -7,9 +7,18 @@ import 'package:lurebox/widgets/common/premium_input.dart';
 import 'package:lurebox/widgets/common/unit_dropdown.dart';
 
 class LureForm extends ConsumerWidget {
-
   const LureForm({
-    required this.weightController, required this.weightUnit, required this.onWeightUnitChanged, required this.sizeController, required this.sizeUnit, required this.onSizeUnitChanged, required this.colorController, required this.quantityController, required this.quantityUnit, required this.onQuantityUnitChanged, super.key,
+    required this.weightController,
+    required this.weightUnit,
+    required this.onWeightUnitChanged,
+    required this.sizeController,
+    required this.sizeUnit,
+    required this.onSizeUnitChanged,
+    required this.colorController,
+    required this.quantityController,
+    required this.quantityUnit,
+    required this.onQuantityUnitChanged,
+    super.key,
   });
   final TextEditingController weightController;
   final String weightUnit;
@@ -101,11 +110,16 @@ class LureForm extends ConsumerWidget {
               child: PremiumDropdown<String>(
                 value: quantityUnit ?? units.lureQuantityUnit,
                 items: [
-                  PremiumDropdownItem(value: 'piece', label: strings.quantityUnitPiece),
-                  PremiumDropdownItem(value: 'item', label: strings.quantityUnitItem),
-                  PremiumDropdownItem(value: 'pack', label: strings.quantityUnitPack),
-                  PremiumDropdownItem(value: 'box', label: strings.quantityUnitBox),
-                  PremiumDropdownItem(value: 'carton', label: strings.quantityUnitCarton),
+                  PremiumDropdownItem(
+                      value: 'piece', label: strings.quantityUnitPiece),
+                  PremiumDropdownItem(
+                      value: 'item', label: strings.quantityUnitItem),
+                  PremiumDropdownItem(
+                      value: 'pack', label: strings.quantityUnitPack),
+                  PremiumDropdownItem(
+                      value: 'box', label: strings.quantityUnitBox),
+                  PremiumDropdownItem(
+                      value: 'carton', label: strings.quantityUnitCarton),
                 ],
                 onChanged: onQuantityUnitChanged,
               ),

@@ -93,7 +93,8 @@ void main() {
   });
 
   group('Equipment._getField fallback behavior', () {
-    test('parses underscore key when underscore format exists (length_unit)', () {
+    test('parses underscore key when underscore format exists (length_unit)',
+        () {
       final equipment = Equipment.fromMap({
         'id': 1,
         'type': 'rod',

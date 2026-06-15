@@ -67,8 +67,9 @@ class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
     final base64Image = base64Encode(imageBytes);
 
     // 确定使用的模型名称
-    final modelName =
-        config.modelName?.isNotEmpty ?? false ? config.modelName! : defaultModel;
+    final modelName = config.modelName?.isNotEmpty ?? false
+        ? config.modelName!
+        : defaultModel;
 
     // 构建请求体 - 使用 OpenAI 兼容的 vision API
     final requestBody = {
@@ -101,7 +102,9 @@ class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
 
     AppLogger.i('CustomProvider', 'Model: ${config.modelName}');
     AppLogger.i(
-        'CustomProvider', 'Request body size: ${jsonEncode(requestBody).length} bytes',);
+      'CustomProvider',
+      'Request body size: ${jsonEncode(requestBody).length} bytes',
+    );
 
     // 构建请求 URL - 使用用户自定义的 Base URL
     final url = buildUrl(baseUrl);

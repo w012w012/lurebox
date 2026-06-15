@@ -15,9 +15,11 @@ enum AchievementProgressStatus {
 /// Achievement overview card showing unlock progress.
 /// Displays achievement count, progress bar, and monthly new additions.
 class AchievementOverviewCard extends StatelessWidget {
-
   const AchievementOverviewCard({
-    required this.unlockedCount, required this.totalCount, required this.monthlyNewCount, super.key,
+    required this.unlockedCount,
+    required this.totalCount,
+    required this.monthlyNewCount,
+    super.key,
     this.status = AchievementProgressStatus.inProgress,
     this.strings,
     this.onTap,

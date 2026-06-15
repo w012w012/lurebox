@@ -33,7 +33,8 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final count = await container.read(pendingRecognitionCountProvider.future);
+      final count =
+          await container.read(pendingRecognitionCountProvider.future);
 
       expect(count, 5);
     });
@@ -49,7 +50,8 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final count = await container.read(pendingRecognitionCountProvider.future);
+      final count =
+          await container.read(pendingRecognitionCountProvider.future);
 
       expect(count, 0);
     });

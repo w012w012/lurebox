@@ -15,12 +15,19 @@ import 'package:share_plus/share_plus.dart';
 
 /// 分享预览参数
 class PreviewData {
-
   const PreviewData({
     required this.imagePath,
     required this.species,
     required this.length,
-    required this.lengthUnit, required this.weightUnit, required this.catchTime, required this.displayLength, required this.displayLengthUnit, required this.displayWeightUnit, required this.displayTemperatureUnit, required this.shareText, this.weight,
+    required this.lengthUnit,
+    required this.weightUnit,
+    required this.catchTime,
+    required this.displayLength,
+    required this.displayLengthUnit,
+    required this.displayWeightUnit,
+    required this.displayTemperatureUnit,
+    required this.shareText,
+    this.weight,
     this.locationName,
     this.rodName,
     this.reelName,
@@ -88,7 +95,6 @@ class PreviewData {
 
 /// 水印分享预览页 — 可拖拽水印位置，确认后分享
 class WatermarkSharePreviewPage extends ConsumerStatefulWidget {
-
   const WatermarkSharePreviewPage({required this.data, super.key});
   final PreviewData data;
 
@@ -169,10 +175,9 @@ class _WatermarkSharePreviewPageState
   /// 估算水印区域大小（用于初始定位）
   Size _estimateWatermarkSize() {
     final settings = ref.read(watermarkSettingsProvider);
-    final lines = settings.infoTypes
-        .where((t) => t != WatermarkInfoType.appName)
-        .length +
-        1;
+    final lines =
+        settings.infoTypes.where((t) => t != WatermarkInfoType.appName).length +
+            1;
     final fontSize =
         (settings.fontSize > 0 ? settings.fontSize : 14.0) * _watermarkScale;
     final lineHeight = fontSize * 1.5;
@@ -237,7 +242,6 @@ class _WatermarkSharePreviewPageState
           ),
           if (settings.enabled && _watermarkOffset != null)
             CustomPaint(
-
               size: Size(_imageRect.right, _imageRect.bottom),
               painter: WatermarkPainter(
                 species: _data.species,

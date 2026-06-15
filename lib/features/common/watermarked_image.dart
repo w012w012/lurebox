@@ -9,15 +9,18 @@ import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/watermark_provider.dart';
 import 'package:lurebox/core/services/app_logger.dart';
-import 'package:lurebox/core/services/weather_service.dart' show getLocalizedWeatherDescription;
+import 'package:lurebox/core/services/weather_service.dart'
+    show getLocalizedWeatherDescription;
 import 'package:lurebox/core/utils/unit_converter.dart';
 import 'package:lurebox/widgets/common/image_cache_helper.dart';
 
 /// 带水印的图片 Widget
 class WatermarkedImage extends ConsumerWidget {
-
   const WatermarkedImage({
-    required this.imagePath, required this.species, required this.length, super.key,
+    required this.imagePath,
+    required this.species,
+    required this.length,
+    super.key,
     this.weight,
     this.lengthUnit,
     this.weightUnit,
@@ -180,11 +183,16 @@ class WatermarkedImage extends ConsumerWidget {
 
 /// 水印绘制器
 class WatermarkPainter extends CustomPainter {
-
   WatermarkPainter({
     required this.species,
     required this.length,
-    required this.settings, required this.strings, required this.displayLength, required this.displayLengthUnit, required this.displayWeightUnit, required this.displayTemperatureUnit, this.weight,
+    required this.settings,
+    required this.strings,
+    required this.displayLength,
+    required this.displayLengthUnit,
+    required this.displayWeightUnit,
+    required this.displayTemperatureUnit,
+    this.weight,
     this.lengthUnit,
     this.weightUnit,
     this.locationName,
@@ -302,7 +310,8 @@ class WatermarkPainter extends CustomPainter {
               final lengthValue = double.tryParse(rodLength!) ?? 0.0;
               final lengthUnit = rodLengthUnit ?? 'm';
               rodParts.add(
-                  '${lengthValue.toStringAsFixed(2)} ${UnitConverter.getLengthSymbol(lengthUnit)}',);
+                '${lengthValue.toStringAsFixed(2)} ${UnitConverter.getLengthSymbol(lengthUnit)}',
+              );
             }
             if (rodHardness != null && rodHardness!.isNotEmpty) {
               rodParts.add(rodHardness!);
@@ -347,7 +356,8 @@ class WatermarkPainter extends CustomPainter {
             if (lureWeight != null && lureWeight!.isNotEmpty) {
               final weightUnit = lureWeightUnit ?? 'g';
               lureParts.add(
-                  '$lureWeight ${UnitConverter.getWeightSymbol(weightUnit)}',);
+                '$lureWeight ${UnitConverter.getWeightSymbol(weightUnit)}',
+              );
             }
             if (lureColor != null && lureColor!.isNotEmpty) {
               lureParts.add(lureColor!);
@@ -381,7 +391,8 @@ class WatermarkPainter extends CustomPainter {
           }
         case WatermarkInfoType.weather:
           if (weatherCode != null) {
-            final weatherDesc = getLocalizedWeatherDescription(weatherCode, strings);
+            final weatherDesc =
+                getLocalizedWeatherDescription(weatherCode, strings);
             if (weatherDesc.isNotEmpty) {
               lines.add('${strings.weather}：$weatherDesc');
             }
@@ -411,8 +422,9 @@ class WatermarkPainter extends CustomPainter {
     final scale = referenceWidth != null && referenceWidth! > 0
         ? size.width / referenceWidth!
         : 1.0;
-    final baseFontSize =
-        (settings.fontSize > 0 ? settings.fontSize : 14.0) * scale * watermarkScale;
+    final baseFontSize = (settings.fontSize > 0 ? settings.fontSize : 14.0) *
+        scale *
+        watermarkScale;
     final lineHeight = baseFontSize * 1.5;
 
     // 如果有 dragOffset，直接使用偏移量绘制，忽略 preset position
@@ -563,8 +575,14 @@ class WatermarkPainter extends CustomPainter {
   }
 
   /// 在指定偏移位置绘制水印（用于拖拽定位）
-  void _drawAtOffset(Canvas canvas, Size size, List<String> lines,
-      Offset offset, double baseFontSize, double lineHeight,) {
+  void _drawAtOffset(
+    Canvas canvas,
+    Size size,
+    List<String> lines,
+    Offset offset,
+    double baseFontSize,
+    double lineHeight,
+  ) {
     if (lines.isEmpty) return;
 
     final textColor = Color(settings.textColor);
@@ -644,7 +662,14 @@ class WatermarkExporter {
     required String imagePath,
     required String species,
     required double length,
-    required WatermarkSettings settings, required AppStrings strings, required double displayLength, required double? displayWeight, required String displayLengthUnit, required String displayWeightUnit, required String displayTemperatureUnit, double? weight,
+    required WatermarkSettings settings,
+    required AppStrings strings,
+    required double displayLength,
+    required double? displayWeight,
+    required String displayLengthUnit,
+    required String displayWeightUnit,
+    required String displayTemperatureUnit,
+    double? weight,
     String? lengthUnit,
     String? weightUnit,
     String? locationName,

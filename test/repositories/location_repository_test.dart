@@ -31,6 +31,8 @@ void main() {
               length_unit TEXT DEFAULT 'cm',
               weight REAL,
               weight_unit TEXT DEFAULT 'kg',
+              length_cm REAL,
+              weight_kg REAL,
               fate INTEGER DEFAULT 0,
               catch_time INTEGER NOT NULL,
               location_name TEXT,
@@ -75,19 +77,25 @@ void main() {
       });
 
       test('returns locations with fish counts', () async {
-        await _insertFishCatch(db,
-            locationName: 'Location A',
-            latitude: 35,
-            longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Location A',
-            latitude: 35,
-            longitude: 139,
-            species: 'Trout',);
-        await _insertFishCatch(db,
-            locationName: 'Location B',
-            latitude: 36,
-            longitude: 140,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Location A',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Location A',
+          latitude: 35,
+          longitude: 139,
+          species: 'Trout',
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Location B',
+          latitude: 36,
+          longitude: 140,
+        );
 
         final results = await repository.getAllWithStats();
 
@@ -100,11 +108,19 @@ void main() {
       });
 
       test('ignores fish catches without location', () async {
-        await _insertFishCatch(db,);
-        await _insertFishCatch(db,
-            locationName: '',);
-        await _insertFishCatch(db,
-            locationName: 'Valid Location', latitude: 35, longitude: 139,);
+        await _insertFishCatch(
+          db,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: '',
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Valid Location',
+          latitude: 35,
+          longitude: 139,
+        );
 
         final results = await repository.getAllWithStats();
 
@@ -116,16 +132,20 @@ void main() {
         final time1 = DateTime(2024);
         final time2 = DateTime(2024, 1, 2);
 
-        await _insertFishCatch(db,
-            locationName: 'Location A',
-            latitude: 35,
-            longitude: 139,
-            catchTime: time1,);
-        await _insertFishCatch(db,
-            locationName: 'Location A',
-            latitude: 35,
-            longitude: 139,
-            catchTime: time2,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Location A',
+          latitude: 35,
+          longitude: 139,
+          catchTime: time1,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Location A',
+          latitude: 35,
+          longitude: 139,
+          catchTime: time2,
+        );
 
         final results = await repository.getAllWithStats();
 
@@ -196,18 +216,34 @@ void main() {
 
       test('returns locations within radius', () async {
         // Location A: ~1km away (roughly 0.009 degrees)
-        await _insertFishCatch(db,
-            locationName: 'Location A', latitude: 35.009, longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Location A', latitude: 35.009, longitude: 139,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Location A',
+          latitude: 35.009,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Location A',
+          latitude: 35.009,
+          longitude: 139,
+        );
 
         // Location B: ~50km away (roughly 0.45 degrees)
-        await _insertFishCatch(db,
-            locationName: 'Location B', latitude: 35.45, longitude: 139,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Location B',
+          latitude: 35.45,
+          longitude: 139,
+        );
 
         // Location C: ~100km away (roughly 0.9 degrees)
-        await _insertFishCatch(db,
-            locationName: 'Location C', latitude: 35.9, longitude: 139,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Location C',
+          latitude: 35.9,
+          longitude: 139,
+        );
 
         final results = await repository.getNearby(
           latitude: 35,
@@ -222,8 +258,12 @@ void main() {
 
       test('excludes locations outside radius', () async {
         // Insert catch at location that would be outside 5km radius
-        await _insertFishCatch(db,
-            locationName: 'Far Location', latitude: 35.1, longitude: 139,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Far Location',
+          latitude: 35.1,
+          longitude: 139,
+        );
 
         final results = await repository.getNearby(
           latitude: 35,
@@ -236,8 +276,12 @@ void main() {
 
       test('calculates distance correctly using 111km per degree', () async {
         // A location ~111km away (exactly 1 degree)
-        await _insertFishCatch(db,
-            locationName: 'Distant Location', latitude: 36, longitude: 139,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Distant Location',
+          latitude: 36,
+          longitude: 139,
+        );
 
         // Should be outside 100km radius
         var results = await repository.getNearby(
@@ -259,10 +303,18 @@ void main() {
 
     group('mergeLocations', () {
       test('updates source location to target location', () async {
-        await _insertFishCatch(db,
-            locationName: 'Source Location', latitude: 35, longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Source Location', latitude: 35, longitude: 139,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Source Location',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Source Location',
+          latitude: 35,
+          longitude: 139,
+        );
 
         const source = LocationWithStats(
           name: 'Source Location',
@@ -289,12 +341,24 @@ void main() {
       });
 
       test('only updates catches matching exact source location', () async {
-        await _insertFishCatch(db,
-            locationName: 'Source Location', latitude: 35, longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Source Location', latitude: 35, longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Other Location', latitude: 35, longitude: 139,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Source Location',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Source Location',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Other Location',
+          latitude: 35,
+          longitude: 139,
+        );
 
         const source = LocationWithStats(
           name: 'Source Location',
@@ -347,12 +411,24 @@ void main() {
       });
 
       test('returns correct total catches', () async {
-        await _insertFishCatch(db,
-            locationName: 'Test Location', latitude: 35, longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Test Location', latitude: 35, longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Test Location', latitude: 35, longitude: 139,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+        );
 
         final stats = await repository.getStats('Test Location');
 
@@ -361,19 +437,25 @@ void main() {
       });
 
       test('returns correct release and keep counts', () async {
-        await _insertFishCatch(db,
-            locationName: 'Test Location',
-            latitude: 35,
-            longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Test Location',
-            latitude: 35,
-            longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Test Location',
-            latitude: 35,
-            longitude: 139,
-            fate: FishFateType.keep,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+          fate: FishFateType.keep,
+        );
 
         final stats = await repository.getStats('Test Location');
 
@@ -382,19 +464,25 @@ void main() {
       });
 
       test('returns correct species distribution', () async {
-        await _insertFishCatch(db,
-            locationName: 'Test Location',
-            latitude: 35,
-            longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Test Location',
-            latitude: 35,
-            longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Test Location',
-            latitude: 35,
-            longitude: 139,
-            species: 'Trout',);
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+          species: 'Trout',
+        );
 
         final stats = await repository.getStats('Test Location');
 
@@ -403,23 +491,29 @@ void main() {
       });
 
       test('returns correct average length and weight', () async {
-        await _insertFishCatch(db,
-            locationName: 'Test Location',
-            latitude: 35,
-            longitude: 139,
-            weight: 2,);
-        await _insertFishCatch(db,
-            locationName: 'Test Location',
-            latitude: 35,
-            longitude: 139,
-            length: 40,
-            weight: 3,);
-        await _insertFishCatch(db,
-            locationName: 'Test Location',
-            latitude: 35,
-            longitude: 139,
-            length: 50,
-            weight: 4,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+          weight: 2,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+          length: 40,
+          weight: 3,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+          length: 50,
+          weight: 4,
+        );
 
         final stats = await repository.getStats('Test Location');
 
@@ -428,23 +522,31 @@ void main() {
       });
 
       test('calculates correct release rate', () async {
-        await _insertFishCatch(db,
-            locationName: 'Test Location',
-            latitude: 35,
-            longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Test Location',
-            latitude: 35,
-            longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Test Location',
-            latitude: 35,
-            longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Test Location',
-            latitude: 35,
-            longitude: 139,
-            fate: FishFateType.keep,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Test Location',
+          latitude: 35,
+          longitude: 139,
+          fate: FishFateType.keep,
+        );
 
         final stats = await repository.getStats('Test Location');
 
@@ -460,16 +562,30 @@ void main() {
       });
 
       test('returns count of distinct locations', () async {
-        await _insertFishCatch(db,
-            locationName: 'Location A', latitude: 35, longitude: 139,);
-        await _insertFishCatch(db,
-            locationName: 'Location A',
-            latitude: 35,
-            longitude: 139,); // duplicate
-        await _insertFishCatch(db,
-            locationName: 'Location B', latitude: 36, longitude: 140,);
-        await _insertFishCatch(db,
-            locationName: 'Location B', latitude: 36, longitude: 140,);
+        await _insertFishCatch(
+          db,
+          locationName: 'Location A',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Location A',
+          latitude: 35,
+          longitude: 139,
+        ); // duplicate
+        await _insertFishCatch(
+          db,
+          locationName: 'Location B',
+          latitude: 36,
+          longitude: 140,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: 'Location B',
+          latitude: 36,
+          longitude: 140,
+        );
 
         final count = await repository.getLocationCount();
 
@@ -477,11 +593,19 @@ void main() {
       });
 
       test('ignores null and empty location names', () async {
-        await _insertFishCatch(db,
-            locationName: 'Valid Location', latitude: 35, longitude: 139,);
-        await _insertFishCatch(db,);
-        await _insertFishCatch(db,
-            locationName: '',);
+        await _insertFishCatch(
+          db,
+          locationName: 'Valid Location',
+          latitude: 35,
+          longitude: 139,
+        );
+        await _insertFishCatch(
+          db,
+        );
+        await _insertFishCatch(
+          db,
+          locationName: '',
+        );
 
         final count = await repository.getLocationCount();
 

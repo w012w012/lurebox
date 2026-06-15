@@ -8,31 +8,40 @@ import 'package:lurebox/features/equipment/equipment_list_page.dart';
 
 String _brakeTypeLabel(String key, AppStrings strings) {
   return switch (key) {
-    'none'                 => strings.brakeTypeNone,
+    'none' => strings.brakeTypeNone,
     'traditional_magnetic' => strings.brakeTypeTraditionalMagnetic,
-    'centrifugal'          => strings.brakeTypeCentrifugal,
-    'dc'                   => strings.brakeTypeDC,
-    'floating_magnetic'    => strings.brakeTypeFloatingMagnetic,
-    'innovative'           => strings.brakeTypeInnovative,
-    _                      => key,
+    'centrifugal' => strings.brakeTypeCentrifugal,
+    'dc' => strings.brakeTypeDC,
+    'floating_magnetic' => strings.brakeTypeFloatingMagnetic,
+    'innovative' => strings.brakeTypeInnovative,
+    _ => key,
   };
 }
 
 String _jointTypeLabel(String key, AppStrings strings) {
   return switch (key) {
-    'spigot'         => strings.jointTypeSpigot,
+    'spigot' => strings.jointTypeSpigot,
     'reverse_spigot' => strings.jointTypeReverseSpigot,
-    'dragon_spigot'  => strings.jointTypeDragonSpigot,
-    'telescopic'     => strings.jointTypeTelescopic,
-    _                => key,
+    'dragon_spigot' => strings.jointTypeDragonSpigot,
+    'telescopic' => strings.jointTypeTelescopic,
+    _ => key,
   };
 }
 
 /// 装备选择器组件
 class EquipmentSelector extends ConsumerWidget {
-
   const EquipmentSelector({
-    required this.rodList, required this.reelList, required this.lureList, required this.selectedRod, required this.selectedReel, required this.selectedLure, required this.onRodSelected, required this.onReelSelected, required this.onLureSelected, required this.onManageEquipment, super.key,
+    required this.rodList,
+    required this.reelList,
+    required this.lureList,
+    required this.selectedRod,
+    required this.selectedReel,
+    required this.selectedLure,
+    required this.onRodSelected,
+    required this.onReelSelected,
+    required this.onLureSelected,
+    required this.onManageEquipment,
+    super.key,
   });
   final List<Map<String, dynamic>> rodList;
   final List<Map<String, dynamic>> reelList;
@@ -137,7 +146,8 @@ class EquipmentSelector extends ConsumerWidget {
                               final lengthValue =
                                   double.tryParse(length) ?? 0.0;
                               parts.add(
-                                  '${lengthValue.toStringAsFixed(2)}$lengthUnit',);
+                                '${lengthValue.toStringAsFixed(2)}$lengthUnit',
+                              );
                             }
                             final hardness = item['hardness'] as String?;
                             if (hardness != null && hardness.isNotEmpty) {
@@ -192,7 +202,8 @@ class EquipmentSelector extends ConsumerWidget {
                             }
                             final drag = item['reel_drag'] as String?;
                             if (drag != null && drag.isNotEmpty) {
-                              final dragUnit = (item['reel_drag_unit'] as String?) ?? 'kg';
+                              final dragUnit =
+                                  (item['reel_drag_unit'] as String?) ?? 'kg';
                               parts.add('${strings.reelDrag}: $drag$dragUnit');
                             }
                             final weight = item['reel_weight'] as String?;
@@ -351,7 +362,6 @@ class EquipmentSelector extends ConsumerWidget {
 
 /// 装备信息行组件 - 显示完整装备参数
 class EquipmentInfoRow extends ConsumerWidget {
-
   const EquipmentInfoRow({required this.label, super.key, this.equipment});
   final String label;
   final Map<String, dynamic>? equipment;
@@ -397,7 +407,10 @@ class EquipmentInfoRow extends ConsumerWidget {
 
   /// 构建装备信息字符串，格式与水印一致
   String _buildEquipmentInfo(
-      Map<String, dynamic> eq, String label, AppStrings strings,) {
+    Map<String, dynamic> eq,
+    String label,
+    AppStrings strings,
+  ) {
     final parts = <String>[];
 
     // 品牌和型号
@@ -430,7 +443,8 @@ class EquipmentInfoRow extends ConsumerWidget {
       }
 
       final jointType = eq['joint_type'] as String?;
-      if (jointType != null && jointType.isNotEmpty) parts.add(_jointTypeLabel(jointType, strings));
+      if (jointType != null && jointType.isNotEmpty)
+        parts.add(_jointTypeLabel(jointType, strings));
 
       final weightRange = eq['weight_range'] as String?;
       if (weightRange != null && weightRange.isNotEmpty) {
@@ -452,7 +466,8 @@ class EquipmentInfoRow extends ConsumerWidget {
       }
 
       final brakeType = eq['reel_brake_type'] as String?;
-      if (brakeType != null && brakeType.isNotEmpty) parts.add(_brakeTypeLabel(brakeType, strings));
+      if (brakeType != null && brakeType.isNotEmpty)
+        parts.add(_brakeTypeLabel(brakeType, strings));
 
       final weight = eq['reel_weight'] as String?;
       if (weight != null && weight.isNotEmpty) parts.add(weight);

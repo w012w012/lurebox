@@ -9,7 +9,6 @@ import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// AI 识别结果选项
 class AiRecognitionOption {
-
   const AiRecognitionOption({
     required this.speciesName,
     required this.confidence,
@@ -22,7 +21,6 @@ class AiRecognitionOption {
 
 /// 单条识别状态
 class SingleRecognitionState {
-
   const SingleRecognitionState({
     this.isRecognizing = false,
     this.options = const [],
@@ -49,9 +47,20 @@ class SingleRecognitionState {
 ///
 /// 显示待识别鱼获列表，支持单条AI识别、手动识别、批量识别功能
 class PendingQueueWidget extends StatelessWidget {
-
   const PendingQueueWidget({
-    required this.pendingCatches, required this.recognitionStates, required this.isBatchRecognizing, required this.batchProgress, required this.batchTotal, required this.batchSuccess, required this.batchFailed, required this.onRecognize, required this.onManualIdentify, required this.onConfirmOption, required this.onBatchRecognize, required this.strings, super.key,
+    required this.pendingCatches,
+    required this.recognitionStates,
+    required this.isBatchRecognizing,
+    required this.batchProgress,
+    required this.batchTotal,
+    required this.batchSuccess,
+    required this.batchFailed,
+    required this.onRecognize,
+    required this.onManualIdentify,
+    required this.onConfirmOption,
+    required this.onBatchRecognize,
+    required this.strings,
+    super.key,
   });
   final List<FishCatch> pendingCatches;
   final Map<int, SingleRecognitionState> recognitionStates;
@@ -272,7 +281,10 @@ class PendingQueueWidget extends StatelessWidget {
   }
 
   Widget _buildRecognitionOption(
-      BuildContext context, FishCatch fish, AiRecognitionOption option,) {
+    BuildContext context,
+    FishCatch fish,
+    AiRecognitionOption option,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: TeslaTheme.spacingSm),
       child: InkWell(
@@ -346,7 +358,9 @@ class PendingQueueWidget extends StatelessWidget {
   }
 
   Widget _buildBatchRecognizeButton(
-      BuildContext context, List<FishCatch> pendingCatches,) {
+    BuildContext context,
+    List<FishCatch> pendingCatches,
+  ) {
     if (isBatchRecognizing) {
       return PremiumCard(
         variant: PremiumCardVariant.flat,

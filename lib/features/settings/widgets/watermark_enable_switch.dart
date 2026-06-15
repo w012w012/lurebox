@@ -6,9 +6,11 @@ import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
 class WatermarkEnableSwitch extends StatelessWidget {
-
   const WatermarkEnableSwitch({
-    required this.settings, required this.strings, required this.onToggle, super.key,
+    required this.settings,
+    required this.strings,
+    required this.onToggle,
+    super.key,
   });
   final WatermarkSettings settings;
   final AppStrings strings;

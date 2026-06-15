@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lurebox/core/models/fishing_location.dart';
 
 class LocationDetailSheet extends StatelessWidget {
-
   const LocationDetailSheet({
-    required this.location, super.key,
+    required this.location,
+    super.key,
     this.onNavigate,
     this.onViewCatches,
   });

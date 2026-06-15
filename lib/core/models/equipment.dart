@@ -1,4 +1,3 @@
-
 /// 钓具装备数据模型
 ///
 /// 定义了 LureBox 应用中所有钓具装备的数据结构。
@@ -37,7 +36,6 @@ enum EquipmentType {
 }
 
 class Equipment {
-
   const Equipment({
     required this.id,
     required this.type,
@@ -260,7 +258,6 @@ class Equipment {
 /// Type-safe accessor for rod-specific parameters.
 /// Returns null if the equipment type is not rod.
 class RodParams {
-
   const RodParams({
     this.length,
     this.lengthUnit = 'm',
@@ -286,7 +283,6 @@ class RodParams {
 /// Type-safe accessor for reel-specific parameters.
 /// Returns null if the equipment type is not reel.
 class ReelParams {
-
   const ReelParams({
     this.bearings,
     this.ratio,
@@ -322,7 +318,6 @@ class ReelParams {
 /// Type-safe accessor for lure-specific parameters.
 /// Returns null if the equipment type is not lure.
 class LureParams {
-
   const LureParams({
     this.type,
     this.weight,

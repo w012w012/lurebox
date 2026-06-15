@@ -21,7 +21,6 @@ import 'package:lurebox/core/services/secure_storage_service.dart';
 /// - 自动从旧的 SQLite 存储迁移 API keys 到安全存储
 
 class SettingsService {
-
   SettingsService(
     this._repository, {
     SecureStorageService? secureStorage,
@@ -108,8 +107,7 @@ class SettingsService {
         // 关键修复：先标记迁移开始，再执行可能失败的操作
         await _repository.set('_ai_keys_migrated', 'in_progress');
 
-        final migratedJson =
-            await _secureStorage.migrateApiKeysFromJson(value);
+        final migratedJson = await _secureStorage.migrateApiKeysFromJson(value);
         await _repository.set('ai_recognition_settings', migratedJson);
         await _repository.set('_ai_keys_migrated', 'true');
         AppLogger.i('SettingsService', 'API keys migrated to secure storage');
@@ -150,7 +148,8 @@ class SettingsService {
   }
 
   /// 将 API keys 保存到安全存储
-  Future<void> _saveApiKeysToSecureStorage(AiRecognitionSettings settings) async {
+  Future<void> _saveApiKeysToSecureStorage(
+      AiRecognitionSettings settings) async {
     for (final entry in settings.providerConfigs.entries) {
       final providerKey = entry.key.value.toString();
       final apiKey = entry.value.apiKey;
@@ -189,7 +188,8 @@ class SettingsService {
   }
 
   /// 从设置中移除 API keys（用于 SQLite 存储）
-  AiRecognitionSettings _removeApiKeysFromSettings(AiRecognitionSettings settings) {
+  AiRecognitionSettings _removeApiKeysFromSettings(
+      AiRecognitionSettings settings) {
     final cleanedConfigs = <AiRecognitionProvider, AiProviderConfig>{};
 
     for (final entry in settings.providerConfigs.entries) {

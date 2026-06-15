@@ -18,8 +18,7 @@ void main() {
 }
 ''';
 
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
         final cleanedJson = await service.migrateApiKeysFromJson(legacyJson);
 
         // API keys should be saved to secure storage
@@ -48,8 +47,7 @@ void main() {
 }
 ''';
 
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
         final cleanedJson = await service.migrateApiKeysFromJson(json);
 
         expect(await service.getProviderApiKey('0'), isNull);
@@ -68,8 +66,7 @@ void main() {
 }
 ''';
 
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
         final cleanedJson = await service.migrateApiKeysFromJson(json);
 
         expect(await service.getProviderApiKey('0'), isNull);
@@ -88,8 +85,7 @@ void main() {
 }
 ''';
 
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
         await service.migrateApiKeysFromJson(json);
 
         expect(await service.getProviderApiKey('0'), isNull);
@@ -107,8 +103,7 @@ void main() {
 }
 ''';
 
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
         await service.migrateApiKeysFromJson(json);
 
         expect(await service.getProviderApiKey('0'), isNull);
@@ -132,8 +127,7 @@ void main() {
 }
 ''';
 
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
         final cleanedJson = await service.migrateApiKeysFromJson(json);
 
         expect(await service.getProviderApiKey('0'), equals('sk-test-123'));
@@ -153,8 +147,7 @@ void main() {
 }
 ''';
 
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
         final cleanedJson = await service.migrateApiKeysFromJson(json);
 
         expect(cleanedJson, equals(json)); // unchanged
@@ -164,8 +157,7 @@ void main() {
       test('throws when JSON is invalid', () async {
         const invalidJson = 'not valid json';
 
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
         // Rethrow ensures caller handles it — prevents infinite migration
         // loop if the subsequent repository.set() would succeed.
         expect(
@@ -177,8 +169,7 @@ void main() {
       test('throws when JSON is empty string', () async {
         const emptyJson = '';
 
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
         expect(
           () => service.migrateApiKeysFromJson(emptyJson),
           throwsA(isA<FormatException>()),
@@ -198,8 +189,7 @@ void main() {
         expect(await storage.get('gemini'), equals('sk-test-gemini'));
       });
 
-      test('InMemoryApiKeyStorage.has returns true for saved keys',
-          () async {
+      test('InMemoryApiKeyStorage.has returns true for saved keys', () async {
         final storage = InMemoryApiKeyStorage();
 
         expect(await storage.has('openai'), isFalse);
@@ -242,52 +232,59 @@ void main() {
 
     group('SecureStorageService saveProviderApiKey', () {
       test('saves and retrieves provider API key', () async {
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
 
         await service.saveProviderApiKey('openai', 'sk-test-123');
         expect(
-            await service.getProviderApiKey('openai'), equals('sk-test-123'),);
+          await service.getProviderApiKey('openai'),
+          equals('sk-test-123'),
+        );
       });
 
       test('hasProviderApiKey returns true after save', () async {
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
 
         expect(
-            await service.hasProviderApiKey('openai'), isFalse,);
+          await service.hasProviderApiKey('openai'),
+          isFalse,
+        );
         await service.saveProviderApiKey('openai', 'sk-test');
         expect(
-            await service.hasProviderApiKey('openai'), isTrue,);
+          await service.hasProviderApiKey('openai'),
+          isTrue,
+        );
       });
 
       test('deleteProviderApiKey removes the key', () async {
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
 
         await service.saveProviderApiKey('openai', 'sk-test');
         await service.deleteProviderApiKey('openai');
         expect(
-            await service.hasProviderApiKey('openai'), isFalse,);
+          await service.hasProviderApiKey('openai'),
+          isFalse,
+        );
       });
 
       test('deleteAllProviderApiKeys clears all keys', () async {
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
 
         await service.saveProviderApiKey('openai', 'sk-test-1');
         await service.saveProviderApiKey('gemini', 'sk-test-2');
         await service.deleteAllProviderApiKeys();
 
         expect(
-            await service.hasProviderApiKey('openai'), isFalse,);
+          await service.hasProviderApiKey('openai'),
+          isFalse,
+        );
         expect(
-            await service.hasProviderApiKey('gemini'), isFalse,);
+          await service.hasProviderApiKey('gemini'),
+          isFalse,
+        );
       });
 
       test('saveAllProviderApiKeys saves multiple keys', () async {
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
 
         await service.saveAllProviderApiKeys({
           'openai': 'sk-test-1',
@@ -295,14 +292,17 @@ void main() {
         });
 
         expect(
-            await service.getProviderApiKey('openai'), equals('sk-test-1'),);
+          await service.getProviderApiKey('openai'),
+          equals('sk-test-1'),
+        );
         expect(
-            await service.getProviderApiKey('gemini'), equals('sk-test-2'),);
+          await service.getProviderApiKey('gemini'),
+          equals('sk-test-2'),
+        );
       });
 
       test('getAllProviderApiKeys returns all saved keys', () async {
-        final service =
-            SecureStorageService(storage: InMemoryApiKeyStorage());
+        final service = SecureStorageService(storage: InMemoryApiKeyStorage());
 
         // Use numeric provider keys matching AiRecognitionProvider enum values
         await service.saveProviderApiKey('0', 'sk-test-gemini');

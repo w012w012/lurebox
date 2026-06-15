@@ -7,9 +7,12 @@ import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
 class WatermarkInfoSection extends StatelessWidget {
-
   const WatermarkInfoSection({
-    required this.settings, required this.strings, required this.onToggle, required this.onReorder, super.key,
+    required this.settings,
+    required this.strings,
+    required this.onToggle,
+    required this.onReorder,
+    super.key,
   });
   final WatermarkSettings settings;
   final AppStrings strings;
@@ -107,9 +110,11 @@ class WatermarkInfoSection extends StatelessWidget {
 }
 
 class _WatermarkInfoTile extends StatelessWidget {
-
   const _WatermarkInfoTile({
-    required this.typeInfo, required this.isSelected, required this.strings, super.key,
+    required this.typeInfo,
+    required this.isSelected,
+    required this.strings,
+    super.key,
     this.onToggle,
   });
   final WatermarkInfoTypeInfo typeInfo;

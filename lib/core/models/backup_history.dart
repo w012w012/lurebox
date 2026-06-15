@@ -2,9 +2,13 @@
 ///
 /// 用于追踪和管理本地备份文件
 class BackupHistory {
-
   const BackupHistory({
-    required this.filePath, required this.fileName, required this.backupType, required this.fileSize, required this.createdAt, this.id,
+    required this.filePath,
+    required this.fileName,
+    required this.backupType,
+    required this.fileSize,
+    required this.createdAt,
+    this.id,
     this.fishCount = 0,
     this.equipmentCount = 0,
     this.photoCount = 0,

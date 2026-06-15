@@ -44,7 +44,6 @@ abstract class BackupConfigRepository {
 ///
 /// 密码由 [CloudPasswordStorage] 管理，不再持久化到 SQLite。
 class SqliteBackupConfigRepository implements BackupConfigRepository {
-
   SqliteBackupConfigRepository(this._dbFuture, this._passwordStorage);
   final Future<Database> _dbFuture;
   final CloudPasswordStorage _passwordStorage;
@@ -55,8 +54,11 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
   Future<int> saveCloudConfig(CloudConfig config) async {
     final db = await _db;
     final map = config.toDbMap()..remove('id');
-    final id = await db.insert('cloud_configs', map,
-        conflictAlgorithm: ConflictAlgorithm.replace,);
+    final id = await db.insert(
+      'cloud_configs',
+      map,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
     if (config.password.isNotEmpty) {
       await _passwordStorage.save(id, config.password);
     }
@@ -141,8 +143,11 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
   Future<int> addBackupHistory(BackupHistory history) async {
     final db = await _db;
     final map = history.toMap()..remove('id');
-    return db.insert('backup_history', map,
-        conflictAlgorithm: ConflictAlgorithm.replace,);
+    return db.insert(
+      'backup_history',
+      map,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   @override

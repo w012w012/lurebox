@@ -34,13 +34,16 @@ class ShareCardService {
   }
 
   static Future<void> shareImage(Uint8List imageBytes, {String? text}) async {
-    await Share.shareXFiles([
-      XFile.fromData(
-        imageBytes,
-        mimeType: 'image/png',
-        name: 'lurebox_share.png',
-      ),
-    ], text: text,);
+    await Share.shareXFiles(
+      [
+        XFile.fromData(
+          imageBytes,
+          mimeType: 'image/png',
+          name: 'lurebox_share.png',
+        ),
+      ],
+      text: text,
+    );
   }
 
   static Future<void> shareText(String text) async {
@@ -74,8 +77,7 @@ class ShareCardService {
   static Future<Uint8List?> generateShareCard({
     required GlobalKey repaintBoundaryKey,
   }) async {
-    final renderObj =
-        repaintBoundaryKey.currentContext?.findRenderObject();
+    final renderObj = repaintBoundaryKey.currentContext?.findRenderObject();
     if (renderObj is! RenderRepaintBoundary) return null;
     final boundary = renderObj;
 

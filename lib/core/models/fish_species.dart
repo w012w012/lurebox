@@ -58,11 +58,12 @@ enum FishRarity {
 ///
 /// 代表一个具体的鱼类物种，包含学名、分类、稀有度、习性等信息
 class FishSpecies {
-
   const FishSpecies({
     required this.id,
     required this.standardName,
-    required this.category, required this.rarity, this.scientificName,
+    required this.category,
+    required this.rarity,
+    this.scientificName,
     this.aliases = const [],
     this.habitat,
     this.behavior,

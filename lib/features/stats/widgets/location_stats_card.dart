@@ -6,9 +6,10 @@ import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
 class LocationStatsCard extends StatefulWidget {
-
   const LocationStatsCard({
-    required this.locationAnalysis, required this.strings, super.key,
+    required this.locationAnalysis,
+    required this.strings,
+    super.key,
     this.showDetails = true,
     this.onToggleDetails,
   });
@@ -134,7 +135,8 @@ class _LocationStatsCardState extends State<LocationStatsCard>
                           ),
                         ),
                         Text(
-                          widget.strings.totalCountPattern.replaceAll('%d', total.toString()),
+                          widget.strings.totalCountPattern
+                              .replaceAll('%d', total.toString()),
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: Theme.of(
@@ -162,7 +164,8 @@ class _LocationStatsCardState extends State<LocationStatsCard>
                           child: Text(
                             widget.strings.speciesCountPattern
                                 .replaceAll('%s', speciesEntry.key)
-                                .replaceAll('%d', speciesEntry.value.toString()),
+                                .replaceAll(
+                                    '%d', speciesEntry.value.toString()),
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                         );

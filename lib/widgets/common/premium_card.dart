@@ -7,9 +7,9 @@ import 'package:lurebox/core/design/theme/tesla_theme.dart';
 /// 高级极简卡片组件
 /// 提供统一的卡片样式，支持多种变体，iOS风格触摸反馈
 class PremiumCard extends StatefulWidget {
-
   const PremiumCard({
-    required this.child, super.key,
+    required this.child,
+    super.key,
     this.onTap,
     this.padding,
     this.margin,
@@ -41,7 +41,8 @@ class _PremiumCardState extends State<PremiumCard> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     const accentColor = TeslaColors.electricBlue;
     final defaultBg = isDark ? TeslaColors.carbonDark : TeslaColors.white;
-    final borderColor = isDark ? const Color(0xFF2A2D30) : TeslaColors.cloudGray;
+    final borderColor =
+        isDark ? const Color(0xFF2A2D30) : TeslaColors.cloudGray;
 
     final effectiveBorderRadius = widget.borderRadius ?? TeslaTheme.radiusCard;
     final effectivePadding =
@@ -66,9 +67,7 @@ class _PremiumCardState extends State<PremiumCard> {
         decoration: BoxDecoration(
           color: widget.backgroundColor ?? defaultBg,
           borderRadius: BorderRadius.circular(effectiveBorderRadius),
-          border: widget.showBorder
-              ? Border.all(color: borderColor)
-              : null,
+          border: widget.showBorder ? Border.all(color: borderColor) : null,
           boxShadow: widget.shadows ?? _getShadows(widget.variant, isDark),
         ),
         child: widget.child,
@@ -110,9 +109,10 @@ enum PremiumCardVariant {
 
 /// 带标题的卡片
 class PremiumCardWithTitle extends StatelessWidget {
-
   const PremiumCardWithTitle({
-    required this.title, required this.child, super.key,
+    required this.title,
+    required this.child,
+    super.key,
     this.subtitle,
     this.onTap,
     this.trailing,
@@ -166,9 +166,10 @@ class PremiumCardWithTitle extends StatelessWidget {
 
 /// 统计卡片
 class PremiumStatCard extends StatelessWidget {
-
   const PremiumStatCard({
-    required this.title, required this.value, super.key,
+    required this.title,
+    required this.value,
+    super.key,
     this.unit,
     this.icon,
     this.iconColor,
@@ -233,9 +234,9 @@ class PremiumStatCard extends StatelessWidget {
 
 /// 图片卡片
 class PremiumImageCard extends StatelessWidget {
-
   const PremiumImageCard({
-    required this.imageUrl, super.key,
+    required this.imageUrl,
+    super.key,
     this.title,
     this.subtitle,
     this.onTap,
@@ -302,9 +303,10 @@ class PremiumImageCard extends StatelessWidget {
 
 /// 列表项卡片
 class PremiumListCard extends StatelessWidget {
-
   const PremiumListCard({
-    required this.leading, required this.title, super.key,
+    required this.leading,
+    required this.title,
+    super.key,
     this.subtitle,
     this.trailing,
     this.onTap,

@@ -17,7 +17,6 @@ abstract interface class ApiKeyStorage {
 
 /// 生产环境实现：使用 FlutterSecureStorage
 class SecureApiKeyStorage implements ApiKeyStorage {
-
   SecureApiKeyStorage({FlutterSecureStorage? storage})
       : _storage = storage ??
             const FlutterSecureStorage(
@@ -37,7 +36,8 @@ class SecureApiKeyStorage implements ApiKeyStorage {
       return;
     }
     await _storage.write(key: _getKeyName(providerKey), value: apiKey);
-    AppLogger.i('SecureApiKeyStorage', 'Saved API key for provider: $providerKey');
+    AppLogger.i(
+        'SecureApiKeyStorage', 'Saved API key for provider: $providerKey');
   }
 
   @override
@@ -50,7 +50,8 @@ class SecureApiKeyStorage implements ApiKeyStorage {
   Future<void> delete(String providerKey) async {
     if (providerKey.isEmpty) return;
     await _storage.delete(key: _getKeyName(providerKey));
-    AppLogger.i('SecureApiKeyStorage', 'Deleted API key for provider: $providerKey');
+    AppLogger.i(
+        'SecureApiKeyStorage', 'Deleted API key for provider: $providerKey');
   }
 
   @override
@@ -119,7 +120,6 @@ abstract interface class CloudPasswordStorage {
 
 /// 生产环境实现：使用 FlutterSecureStorage
 class SecureCloudPasswordStorage implements CloudPasswordStorage {
-
   SecureCloudPasswordStorage({FlutterSecureStorage? storage})
       : _storage = storage ??
             const FlutterSecureStorage(
@@ -188,7 +188,6 @@ class InMemoryCloudPasswordStorage implements CloudPasswordStorage {
 /// await service.saveProviderApiKey('openai', 'sk-xxx');
 /// ```
 class SecureStorageService {
-
   SecureStorageService({ApiKeyStorage? storage})
       : _storage = storage ?? _defaultStorage ?? SecureApiKeyStorage();
   static SecureStorageService? _instance;
@@ -283,7 +282,9 @@ class SecureStorageService {
           if (apiKey != null && apiKey.isNotEmpty) {
             await saveProviderApiKey(entry.key, apiKey);
             AppLogger.i(
-                'SecureStorageService', 'Migrated API key for provider: ${entry.key}',);
+              'SecureStorageService',
+              'Migrated API key for provider: ${entry.key}',
+            );
           }
         }
       }

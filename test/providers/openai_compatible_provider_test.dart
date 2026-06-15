@@ -58,7 +58,6 @@ Map<String, dynamic> _createSuccessfulOpenAIResponse({
 
 /// Test implementation of OpenAICompatibleProvider
 class TestOpenAICompatibleProvider extends OpenAICompatibleProvider {
-
   TestOpenAICompatibleProvider({
     super.client,
     this.testDefaultBaseUrl = 'https://api.test.com',
@@ -89,7 +88,6 @@ class TestOpenAICompatibleProvider extends OpenAICompatibleProvider {
 /// Test provider that uses base class defaults (does not override urlPathStrategy)
 class TestOpenAICompatibleProviderWithDefaults
     extends OpenAICompatibleProvider {
-
   TestOpenAICompatibleProviderWithDefaults({
     super.client,
     this.testDefaultBaseUrl = 'https://api.test.com',
@@ -244,11 +242,13 @@ void main() {
       final response = http.Response('Unauthorized', 401);
       expect(
         () => throwHttpError(response),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.apiKeyInvalid),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.apiKeyInvalid),
+          ),
+        ),
       );
     });
 
@@ -256,11 +256,13 @@ void main() {
       final response = http.Response('Too Many Requests', 429);
       expect(
         () => throwHttpError(response),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.rateLimited),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.rateLimited),
+          ),
+        ),
       );
     });
 
@@ -268,8 +270,10 @@ void main() {
       final response = http.Response('Too Many Requests', 429);
       var callbackCalled = false;
       expect(
-        () => throwHttpError(response,
-            onRateLimited: () => callbackCalled = true,),
+        () => throwHttpError(
+          response,
+          onRateLimited: () => callbackCalled = true,
+        ),
         throwsA(isA<FishRecognitionException>()),
       );
       expect(callbackCalled, isTrue);
@@ -283,7 +287,9 @@ void main() {
       );
       final uri = provider.buildUrl('https://api.openai.com');
       expect(
-          uri.toString(), equals('https://api.openai.com/v1/chat/completions'),);
+        uri.toString(),
+        equals('https://api.openai.com/v1/chat/completions'),
+      );
     });
 
     test('UrlPathStrategy.appendPath handles trailing slash in baseUrl', () {
@@ -292,7 +298,9 @@ void main() {
       );
       final uri = provider.buildUrl('https://api.openai.com/');
       expect(
-          uri.toString(), equals('https://api.openai.com/v1/chat/completions'),);
+        uri.toString(),
+        equals('https://api.openai.com/v1/chat/completions'),
+      );
     });
 
     test('UrlPathStrategy.useDirect uses baseUrl as-is', () {
@@ -301,8 +309,10 @@ void main() {
       );
       final uri =
           provider.buildUrl('https://api.baidubce.com/v1/chat/completions');
-      expect(uri.toString(),
-          equals('https://api.baidubce.com/v1/chat/completions'),);
+      expect(
+        uri.toString(),
+        equals('https://api.baidubce.com/v1/chat/completions'),
+      );
     });
 
     test('UrlPathStrategy.custom throws UnimplementedError', () {
@@ -321,7 +331,9 @@ void main() {
       final provider = TestOpenAICompatibleProviderWithDefaults();
       final uri = provider.buildUrl('https://api.openai.com');
       expect(
-          uri.toString(), equals('https://api.openai.com/v1/chat/completions'),);
+        uri.toString(),
+        equals('https://api.openai.com/v1/chat/completions'),
+      );
     });
   });
 
@@ -338,11 +350,13 @@ void main() {
         200,
       );
 
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async => mockResponse);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((_) async => mockResponse);
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
@@ -368,11 +382,13 @@ void main() {
         200,
       );
 
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async => mockResponse);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((_) async => mockResponse);
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
@@ -380,11 +396,13 @@ void main() {
       await provider.identifySpecies(testImage, testConfig);
 
       // Assert - verify model in request body
-      verify(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).called(1);
+      verify(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).called(1);
     });
 
     test('uses defaultModel when config.modelName is empty', () async {
@@ -400,11 +418,13 @@ void main() {
         200,
       );
 
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async => mockResponse);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((_) async => mockResponse);
 
       final provider = TestOpenAICompatibleProvider(
         client: mockClient,
@@ -415,11 +435,13 @@ void main() {
       await provider.identifySpecies(testImage, configWithoutModel);
 
       // Assert
-      verify(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).called(1);
+      verify(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).called(1);
     });
 
     test('uses config.baseUrl when provided', () async {
@@ -437,11 +459,13 @@ void main() {
       );
 
       Uri? capturedUri;
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((invocation) async {
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((invocation) async {
         capturedUri = invocation.positionalArguments[0] as Uri;
         return mockResponse;
       });
@@ -470,11 +494,13 @@ void main() {
       );
 
       Uri? capturedUri;
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((invocation) async {
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((invocation) async {
         capturedUri = invocation.positionalArguments[0] as Uri;
         return mockResponse;
       });
@@ -505,11 +531,13 @@ void main() {
       );
 
       String? capturedBody;
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((invocation) async {
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((invocation) async {
         capturedBody =
             invocation.namedArguments[const Symbol('body')] as String?;
         return mockResponse;
@@ -544,8 +572,10 @@ void main() {
       expect(userContent[0]['type'], equals('text'));
       expect(userContent[0]['text'], contains('识别'));
       expect(userContent[1]['type'], equals('image_url'));
-      expect(userContent[1]['image_url']['url'],
-          startsWith('data:image/jpeg;base64,'),);
+      expect(
+        userContent[1]['image_url']['url'],
+        startsWith('data:image/jpeg;base64,'),
+      );
     });
 
     test('sets correct headers including Authorization', () async {
@@ -561,11 +591,13 @@ void main() {
       );
 
       Map<String, String>? capturedHeaders;
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((invocation) async {
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((invocation) async {
         capturedHeaders = invocation.namedArguments[const Symbol('headers')]
             as Map<String, String>?;
         return mockResponse;
@@ -607,11 +639,13 @@ void main() {
         200,
       );
 
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async => mockResponse);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((_) async => mockResponse);
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
@@ -636,22 +670,27 @@ void main() {
 {"primarySpecies":{"chineseName":"鲈鱼","scientificName":"Lateolabrax japonicus","confidence":85},"confidence":85,"alternatives":[],"notes":""}
 ```''';
 
-      final mockResponse = _createUtf8Response({
-        'choices': [
-          {
-            'message': {
-              'role': 'assistant',
-              'content': contentWithMarkdown,
+      final mockResponse = _createUtf8Response(
+        {
+          'choices': [
+            {
+              'message': {
+                'role': 'assistant',
+                'content': contentWithMarkdown,
+              },
             },
-          },
-        ],
-      }, 200,);
+          ],
+        },
+        200,
+      );
 
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async => mockResponse);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((_) async => mockResponse);
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
@@ -689,11 +728,13 @@ void main() {
 
       expect(
         () => provider.handleOpenAIResponse(errorResponse),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.apiKeyInvalid),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.apiKeyInvalid),
+          ),
+        ),
       );
     });
 
@@ -702,11 +743,13 @@ void main() {
 
       expect(
         () => provider.handleOpenAIResponse(errorResponse),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.rateLimited),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.rateLimited),
+          ),
+        ),
       );
     });
 
@@ -715,11 +758,13 @@ void main() {
 
       expect(
         () => provider.handleOpenAIResponse(errorResponse),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.networkError),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.networkError),
+          ),
+        ),
       );
     });
 
@@ -737,11 +782,13 @@ void main() {
 
       expect(
         () => provider.handleOpenAIResponse(response),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.apiKeyInvalid),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.apiKeyInvalid),
+          ),
+        ),
       );
     });
 
@@ -758,11 +805,13 @@ void main() {
 
       expect(
         () => provider.handleOpenAIResponse(response),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.apiKeyInvalid),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.apiKeyInvalid),
+          ),
+        ),
       );
     });
 
@@ -780,11 +829,13 @@ void main() {
 
       expect(
         () => provider.handleOpenAIResponse(response),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.rateLimited),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.rateLimited),
+          ),
+        ),
       );
     });
 
@@ -881,11 +932,13 @@ void main() {
 
       expect(
         () => provider.handleOpenAIResponse(response),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.unknown),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.unknown),
+          ),
+        ),
       );
     });
   });
@@ -895,22 +948,26 @@ void main() {
       // Arrange
       final testImage = File('test/fixtures/test_fish.jpg');
 
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenThrow(TimeoutException('Connection timed out'));
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenThrow(TimeoutException('Connection timed out'));
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
       // Act & Assert
       expect(
         () => provider.identifySpecies(testImage, testConfig),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.timeout),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.timeout),
+          ),
+        ),
       );
     });
 
@@ -918,22 +975,26 @@ void main() {
       // Arrange
       final testImage = File('test/fixtures/test_fish.jpg');
 
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenThrow(http.ClientException('Network is unreachable'));
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenThrow(http.ClientException('Network is unreachable'));
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
       // Act & Assert
       expect(
         () => provider.identifySpecies(testImage, testConfig),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.networkError),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.networkError),
+          ),
+        ),
       );
     });
 
@@ -943,22 +1004,26 @@ void main() {
       final testImage = File('test/fixtures/test_fish.jpg');
       final errorResponse = http.Response('Unauthorized', 401);
 
-      when(() => mockClient.post(
-            any(),
-            headers: any(named: 'headers'),
-            body: any(named: 'body'),
-          ),).thenAnswer((_) async => errorResponse);
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((_) async => errorResponse);
 
       final provider = TestOpenAICompatibleProvider(client: mockClient);
 
       // Act & Assert
       expect(
         () => provider.identifySpecies(testImage, testConfig),
-        throwsA(isA<FishRecognitionException>().having(
-          (e) => e.type,
-          'type',
-          equals(FishRecognitionErrorType.apiKeyInvalid),
-        ),),
+        throwsA(
+          isA<FishRecognitionException>().having(
+            (e) => e.type,
+            'type',
+            equals(FishRecognitionErrorType.apiKeyInvalid),
+          ),
+        ),
       );
     });
   });

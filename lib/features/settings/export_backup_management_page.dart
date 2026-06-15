@@ -26,7 +26,6 @@ enum FileType {
 
 /// 文件信息类
 class FileInfo {
-
   const FileInfo({
     required this.name,
     required this.path,
@@ -79,13 +78,15 @@ Future<List<FileInfo>> _listExportBackupFiles() async {
 
       if (fileType != null) {
         final stat = await entity.stat();
-        files.add(FileInfo(
-          name: name,
-          path: entity.path,
-          modified: stat.modified,
-          size: stat.size,
-          fileType: fileType,
-        ),);
+        files.add(
+          FileInfo(
+            name: name,
+            path: entity.path,
+            modified: stat.modified,
+            size: stat.size,
+            fileType: fileType,
+          ),
+        );
       }
     }
   }
@@ -166,7 +167,9 @@ class _ExportBackupManagementPageState
       final xFile = XFile(file.path);
       await Share.shareXFiles(
         [xFile],
-        subject: file.isBackup ? strings.lureboxCompleteBackup : strings.lureboxDataExport,
+        subject: file.isBackup
+            ? strings.lureboxCompleteBackup
+            : strings.lureboxDataExport,
       );
     } catch (e) {
       if (mounted) {
@@ -277,9 +280,8 @@ class _ExportBackupManagementPageState
                   Icon(
                     Icons.folder_open,
                     size: 64,
-                    color: isDark
-                        ? const Color(0xFF9A9A9A)
-                        : TeslaColors.graphite,
+                    color:
+                        isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
                   ),
                   const SizedBox(height: TeslaTheme.spacingMd),
                   Text(
@@ -378,9 +380,8 @@ class _ExportBackupManagementPageState
                 Text(
                   dateFormat.format(file.modified),
                   style: TextStyle(
-                    color: isDark
-                        ? const Color(0xFF9A9A9A)
-                        : TeslaColors.graphite,
+                    color:
+                        isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
                     fontSize: 12,
                   ),
                 ),
@@ -390,9 +391,7 @@ class _ExportBackupManagementPageState
             Text(
               file.formattedSize,
               style: TextStyle(
-                color: isDark
-                    ? const Color(0xFF9A9A9A)
-                    : TeslaColors.graphite,
+                color: isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
                 fontSize: 12,
               ),
             ),

@@ -9,7 +9,6 @@ import 'package:lurebox/core/services/error_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';
 
 class FishListState {
-
   const FishListState({
     this.catches = const [],
     this.filteredCatches = const [],
@@ -95,7 +94,6 @@ class FishListState {
 }
 
 class FishListViewModel extends StateNotifier<FishListState> {
-
   FishListViewModel(this._fishCatchService) : super(const FishListState());
   static const int _defaultPageSize = 20;
 
@@ -214,8 +212,8 @@ class FishListViewModel extends StateNotifier<FishListState> {
   void setSortBy(String sortBy, {bool? ascending}) {
     final newFilter = state.filter.copyWith(
       sortBy: sortBy,
-      sortAsc: ascending ??
-          (state.filter.sortBy == sortBy && !state.filter.sortAsc),
+      sortAsc:
+          ascending ?? (state.filter.sortBy == sortBy && !state.filter.sortAsc),
     );
     _updateFilter(newFilter);
   }

@@ -8,11 +8,13 @@ void main() {
     });
 
     test('fromString returns nextcloud for "nextcloud"', () {
-      expect(CloudProvider.fromString('nextcloud'), equals(CloudProvider.nextcloud));
+      expect(CloudProvider.fromString('nextcloud'),
+          equals(CloudProvider.nextcloud));
     });
 
     test('fromString returns owncloud for "owncloud"', () {
-      expect(CloudProvider.fromString('owncloud'), equals(CloudProvider.owncloud));
+      expect(
+          CloudProvider.fromString('owncloud'), equals(CloudProvider.owncloud));
     });
 
     test('fromString returns webdav as default for unknown value', () {
@@ -52,12 +54,15 @@ void main() {
 
       expect(config.id, equals(1));
       expect(config.provider, equals(CloudProvider.nextcloud));
-      expect(config.serverUrl, equals('https://cloud.example.com/remote.php/dav'));
+      expect(
+          config.serverUrl, equals('https://cloud.example.com/remote.php/dav'));
       expect(config.username, equals('testuser'));
       expect(config.password, equals('secret123'));
       expect(config.isActive, isTrue);
-      expect(config.createdAt, equals(DateTime.parse('2024-06-15T10:30:00.000')));
-      expect(config.updatedAt, equals(DateTime.parse('2024-06-15T12:00:00.000')));
+      expect(
+          config.createdAt, equals(DateTime.parse('2024-06-15T10:30:00.000')));
+      expect(
+          config.updatedAt, equals(DateTime.parse('2024-06-15T12:00:00.000')));
     });
 
     test('defaults password to empty string when null', () {
@@ -174,7 +179,8 @@ void main() {
 
       expect(result['id'], equals(5));
       expect(result['provider'], equals('nextcloud'));
-      expect(result['server_url'], equals('https://cloud.example.com/remote.php/dav'));
+      expect(result['server_url'],
+          equals('https://cloud.example.com/remote.php/dav'));
       expect(result['username'], equals('testuser'));
       expect(result['password'], equals('mysecretpassword'));
       expect(result['is_active'], equals(1));
@@ -200,7 +206,8 @@ void main() {
   });
 
   group('CloudConfig.toDbMap', () {
-    test('outputs correct map excluding password (password is empty string)', () {
+    test('outputs correct map excluding password (password is empty string)',
+        () {
       final createdAt = DateTime.parse('2024-06-15T10:30:00.000');
       final updatedAt = DateTime.parse('2024-06-15T12:00:00.000');
       final config = CloudConfig(
@@ -218,7 +225,8 @@ void main() {
 
       expect(result['id'], equals(5));
       expect(result['provider'], equals('nextcloud'));
-      expect(result['server_url'], equals('https://cloud.example.com/remote.php/dav'));
+      expect(result['server_url'],
+          equals('https://cloud.example.com/remote.php/dav'));
       expect(result['username'], equals('testuser'));
       expect(result['password'], equals('')); // password always empty in db map
       expect(result['is_active'], equals(1));
@@ -315,7 +323,9 @@ void main() {
   });
 
   group('CloudConfig equality', () {
-    test('two instances with same id, provider, serverUrl, username, isActive are equal', () {
+    test(
+        'two instances with same id, provider, serverUrl, username, isActive are equal',
+        () {
       final config1 = CloudConfig(
         id: 1,
         provider: CloudProvider.webdav,
@@ -365,7 +375,8 @@ void main() {
       expect(config1, isNot(equals(config2)));
     });
 
-    test('hashCode is based on id, provider, serverUrl, username, isActive', () {
+    test('hashCode is based on id, provider, serverUrl, username, isActive',
+        () {
       final config1 = CloudConfig(
         id: 1,
         provider: CloudProvider.webdav,

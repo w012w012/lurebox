@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/repositories/stats_repository.dart';
 import 'package:lurebox/core/repositories/stats_repository_impl.dart';
+import 'package:lurebox/core/utils/unit_converter.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
@@ -29,6 +30,8 @@ void main() {
               length_unit TEXT DEFAULT 'cm',
               weight REAL,
               weight_unit TEXT DEFAULT 'kg',
+              length_cm REAL,
+              weight_kg REAL,
               fate INTEGER NOT NULL,
               catch_time TEXT NOT NULL,
               location_name TEXT,
@@ -103,12 +106,17 @@ void main() {
   });
 
   /// Helper to insert a fish catch into the test database.
+  ///
+  /// 与生产路径 FishCatch.toMap() 一致：写入单位列与归一化基准列
+  /// （length_cm / weight_kg）。
   Future<int> insertCatch({
     required String species,
     required double length,
     required FishFateType fate,
     required DateTime catchTime,
+    String lengthUnit = 'cm',
     double? weight,
+    String weightUnit = 'kg',
     String? locationName,
     int? equipmentId,
     int? rodId,
@@ -120,7 +128,12 @@ void main() {
       'image_path': '/test/fish_$species.jpg',
       'species': species,
       'length': length,
+      'length_unit': lengthUnit,
       'weight': weight,
+      'weight_unit': weightUnit,
+      'length_cm': UnitConverter.toBaseCm(length, lengthUnit),
+      'weight_kg':
+          weight == null ? null : UnitConverter.toBaseKg(weight, weightUnit),
       'fate': fate.value,
       'catch_time': catchTime.toIso8601String(),
       'location_name': locationName,
@@ -530,6 +543,159 @@ void main() {
       expect(await repository.getCatchesAboveLength(30), equals(1));
       expect(await repository.getCatchesAboveLength(20), equals(2));
       expect(await repository.getCatchesAboveLength(10), equals(3));
+    });
+  });
+
+  // ─── Mixed-Unit Stats（H-9：单位归一化后的统计口径）───
+
+  group('Mixed-Unit Stats', () {
+    test('getMaxLength 对混合单位返回基准厘米最大值', () async {
+      final now = DateTime.now();
+      // 20 inch = 50.8 cm > 30 cm，原始值比较时 30 > 20 会得出错误结果
+      await insertCatch(
+        species: 'CmBass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
+      await insertCatch(
+        species: 'InchBass',
+        length: 20,
+        lengthUnit: 'inch',
+        fate: FishFateType.release,
+        catchTime: now,
+      );
+
+      expect(await repository.getMaxLength(), closeTo(50.8, 0.0001));
+    });
+
+    test('getTotalWeight 对混合单位返回基准千克总和', () async {
+      final now = DateTime.now();
+      // 1 kg + 500 g + 1 lb = 1 + 0.5 + 0.453592 ≈ 1.9536 kg
+      await insertCatch(
+        species: 'KgFish',
+        length: 30,
+        weight: 1,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
+      await insertCatch(
+        species: 'GramFish',
+        length: 30,
+        weight: 500,
+        weightUnit: 'g',
+        fate: FishFateType.release,
+        catchTime: now,
+      );
+      await insertCatch(
+        species: 'LbFish',
+        length: 30,
+        weight: 1,
+        weightUnit: 'lb',
+        fate: FishFateType.release,
+        catchTime: now,
+      );
+
+      expect(await repository.getTotalWeight(), closeTo(1.953592, 0.0001));
+    });
+
+    test('getCatchesAboveLength 阈值按厘米比较（成就口径）', () async {
+      final now = DateTime.now();
+      // 20 inch = 50.8 cm ≥ 50；25 cm < 50
+      await insertCatch(
+        species: 'InchBass',
+        length: 20,
+        lengthUnit: 'inch',
+        fate: FishFateType.release,
+        catchTime: now,
+      );
+      await insertCatch(
+        species: 'SmallCm',
+        length: 25,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
+
+      expect(await repository.getCatchesAboveLength(50), equals(1));
+      expect(await repository.getCatchesAboveLength(20), equals(2));
+    });
+
+    test('getTop3LongestCatches 按基准厘米排序', () async {
+      final now = DateTime.now();
+      await insertCatch(
+        species: 'CmBass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
+      await insertCatch(
+        species: 'InchBass',
+        length: 20,
+        lengthUnit: 'inch',
+        fate: FishFateType.release,
+        catchTime: now,
+      );
+      await insertCatch(
+        species: 'MeterPike',
+        length: 0.4,
+        lengthUnit: 'm',
+        fate: FishFateType.release,
+        catchTime: now,
+      );
+
+      final top3 = await repository.getTop3LongestCatches();
+      // 20 inch (50.8cm) > 0.4 m (40cm) > 30 cm
+      expect(top3[0].species, equals('InchBass'));
+      expect(top3[1].species, equals('MeterPike'));
+      expect(top3[2].species, equals('CmBass'));
+    });
+
+    test('getEquipmentCatchStats 的平均长度/重量按基准单位计算', () async {
+      final now = DateTime.now();
+      await insertCatch(
+        species: 'CmBass',
+        length: 30,
+        weight: 1,
+        fate: FishFateType.release,
+        catchTime: now,
+        rodId: 1,
+      );
+      await insertCatch(
+        species: 'InchBass',
+        length: 20,
+        lengthUnit: 'inch',
+        weight: 1,
+        weightUnit: 'lb',
+        fate: FishFateType.release,
+        catchTime: now,
+        rodId: 1,
+      );
+
+      final stats = await repository.getEquipmentCatchStats();
+      // avg_length = (30 + 50.8) / 2 = 40.4 cm
+      expect(stats[1]!.avgLength, closeTo(40.4, 0.0001));
+      // avg_weight = (1 + 0.453592) / 2 ≈ 0.726796 kg
+      expect(stats[1]!.avgWeight, closeTo(0.726796, 0.0001));
+    });
+
+    test('归一化列为 NULL 的遗留行回退按原始值参与统计', () async {
+      final now = DateTime.now().toIso8601String();
+      // 模拟旧备份导入等未写入 length_cm/weight_kg 的行
+      await db.insert('fish_catches', {
+        'image_path': '/test/legacy.jpg',
+        'species': 'LegacyFish',
+        'length': 60.0,
+        'weight': 3.0,
+        'fate': FishFateType.release.value,
+        'catch_time': now,
+        'pending_recognition': 0,
+        'created_at': now,
+        'updated_at': now,
+      });
+
+      expect(await repository.getMaxLength(), closeTo(60, 0.0001));
+      expect(await repository.getTotalWeight(), closeTo(3, 0.0001));
+      expect(await repository.getCatchesAboveLength(50), equals(1));
     });
   });
 
@@ -1069,8 +1235,7 @@ void main() {
       expect(await repository.getConsecutiveDays(), equals(2));
     });
 
-    test('returns 1 when no catch today but last entry is yesterday',
-        () async {
+    test('returns 1 when no catch today but last entry is yesterday', () async {
       final now = DateTime.now();
       final yesterday = DateTime(now.year, now.month, now.day - 1, 14);
 
@@ -1114,8 +1279,7 @@ void main() {
       expect(await repository.getConsecutiveDays(), equals(1));
     });
 
-    test('returns correct count for cross-month consecutive streak',
-        () async {
+    test('returns correct count for cross-month consecutive streak', () async {
       // Build 5 consecutive days backwards from yesterday.
       // This guarantees the streak crosses a month boundary whenever
       // today is within the first 4 days of a month.

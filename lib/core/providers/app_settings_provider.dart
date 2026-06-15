@@ -7,7 +7,6 @@ import 'package:lurebox/core/services/error_service.dart';
 import 'package:lurebox/core/services/settings_service.dart';
 
 class AppSettingsNotifier extends StateNotifier<AppSettings> {
-
   AppSettingsNotifier(this._service) : super(const AppSettings()) {
     _loadSettings();
   }
@@ -20,9 +19,11 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
       state = settings;
     } on SettingsCorruptedException catch (e) {
       // 记录损坏状态但不崩溃：让应用以默认值启动
-      AppLogger.w('AppSettingsNotifier', 'Settings corrupted, using defaults: $e');
+      AppLogger.w(
+          'AppSettingsNotifier', 'Settings corrupted, using defaults: $e');
     } on Exception catch (e) {
-      AppLogger.e('AppSettingsNotifier', 'Unexpected error loading settings: $e');
+      AppLogger.e(
+          'AppSettingsNotifier', 'Unexpected error loading settings: $e');
     }
   }
 

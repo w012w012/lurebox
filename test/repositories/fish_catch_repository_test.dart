@@ -32,6 +32,8 @@ void main() {
               length_unit TEXT DEFAULT 'cm',
               weight REAL,
               weight_unit TEXT DEFAULT 'kg',
+              length_cm REAL,
+              weight_kg REAL,
               fate INTEGER DEFAULT 0,
               catch_time TEXT NOT NULL,
               location_name TEXT,
@@ -236,9 +238,7 @@ void main() {
     });
 
     test('update modifies existing fish catch', () async {
-      final fish = TestDataFactory.createFishCatch(
-        
-      );
+      final fish = TestDataFactory.createFishCatch();
       final id = await repository.create(fish);
 
       final updated = fish.copyWith(species: 'Trout', length: 35);
@@ -339,9 +339,7 @@ void main() {
     });
 
     test('getByFate returns fish catches with matching fate', () async {
-      final fish1 = TestDataFactory.createFishCatch(
-        
-      );
+      final fish1 = TestDataFactory.createFishCatch();
       final fish2 = TestDataFactory.createFishCatch(
         id: 2,
         species: 'Trout',
@@ -384,11 +382,13 @@ void main() {
     test('getPage returns first page with default pageSize', () async {
       // Create 25 fish catches
       for (var i = 0; i < 25; i++) {
-        await repository.create(TestDataFactory.createFishCatch(
-          id: i + 1,
-          species: 'Fish_$i',
-          catchTime: DateTime(2024, 1, i + 1),
-        ),);
+        await repository.create(
+          TestDataFactory.createFishCatch(
+            id: i + 1,
+            species: 'Fish_$i',
+            catchTime: DateTime(2024, 1, i + 1),
+          ),
+        );
       }
 
       final result = await repository.getPage(page: 1);
@@ -402,11 +402,13 @@ void main() {
 
     test('getPage returns second page with correct items', () async {
       for (var i = 0; i < 25; i++) {
-        await repository.create(TestDataFactory.createFishCatch(
-          id: i + 1,
-          species: 'Fish_$i',
-          catchTime: DateTime(2024, 1, i + 1),
-        ),);
+        await repository.create(
+          TestDataFactory.createFishCatch(
+            id: i + 1,
+            species: 'Fish_$i',
+            catchTime: DateTime(2024, 1, i + 1),
+          ),
+        );
       }
 
       final result = await repository.getPage(page: 2);
@@ -418,11 +420,13 @@ void main() {
 
     test('getPage returns last page with partial items', () async {
       for (var i = 0; i < 45; i++) {
-        await repository.create(TestDataFactory.createFishCatch(
-          id: i + 1,
-          species: 'Fish_$i',
-          catchTime: DateTime(2024, 1, i + 1),
-        ),);
+        await repository.create(
+          TestDataFactory.createFishCatch(
+            id: i + 1,
+            species: 'Fish_$i',
+            catchTime: DateTime(2024, 1, i + 1),
+          ),
+        );
       }
 
       final result = await repository.getPage(page: 3);
@@ -442,11 +446,13 @@ void main() {
 
     test('getPage with custom pageSize', () async {
       for (var i = 0; i < 15; i++) {
-        await repository.create(TestDataFactory.createFishCatch(
-          id: i + 1,
-          species: 'Fish_$i',
-          catchTime: DateTime(2024, 1, i + 1),
-        ),);
+        await repository.create(
+          TestDataFactory.createFishCatch(
+            id: i + 1,
+            species: 'Fish_$i',
+            catchTime: DateTime(2024, 1, i + 1),
+          ),
+        );
       }
 
       final result = await repository.getPage(page: 1, pageSize: 5);
@@ -486,9 +492,7 @@ void main() {
     });
 
     test('getFilteredPage filters by fate', () async {
-      final fish1 = TestDataFactory.createFishCatch(
-        
-      );
+      final fish1 = TestDataFactory.createFishCatch();
       final fish2 = TestDataFactory.createFishCatch(
         id: 2,
         species: 'Trout',
@@ -508,9 +512,7 @@ void main() {
     });
 
     test('getFilteredPage filters by species', () async {
-      final fish1 = TestDataFactory.createFishCatch(
-        
-      );
+      final fish1 = TestDataFactory.createFishCatch();
       final fish2 = TestDataFactory.createFishCatch(
         id: 2,
         species: 'Trout',
@@ -542,9 +544,8 @@ void main() {
     });
 
     test('getPendingRecognitionCatches returns only pending records', () async {
-      final fish1 = TestDataFactory.createFishCatch(
-        
-      ).copyWith(pendingRecognition: true);
+      final fish1 =
+          TestDataFactory.createFishCatch().copyWith(pendingRecognition: true);
       final fish2 = TestDataFactory.createFishCatch(
         id: 2,
         species: 'Trout',
@@ -566,9 +567,8 @@ void main() {
 
     test('getPendingRecognitionCatches returns empty when none pending',
         () async {
-      final fish = TestDataFactory.createFishCatch(
-        
-      ).copyWith(pendingRecognition: false);
+      final fish =
+          TestDataFactory.createFishCatch().copyWith(pendingRecognition: false);
       await repository.create(fish);
 
       final results = await repository.getPendingRecognitionCatches();
@@ -747,8 +747,7 @@ void main() {
     });
 
     test('getCount returns correct total', () async {
-      await repository
-          .create(TestDataFactory.createFishCatch());
+      await repository.create(TestDataFactory.createFishCatch());
       await repository
           .create(TestDataFactory.createFishCatch(id: 2, species: 'Trout'));
       await repository
@@ -802,11 +801,13 @@ void main() {
       () async {
         // 20 items, pageSize=10 → 2 exact pages
         for (var i = 0; i < 20; i++) {
-          await repository.create(TestDataFactory.createFishCatch(
-            id: i + 1,
-            species: 'Fish_$i',
-            catchTime: DateTime(2024, 1, i + 1),
-          ),);
+          await repository.create(
+            TestDataFactory.createFishCatch(
+              id: i + 1,
+              species: 'Fish_$i',
+              catchTime: DateTime(2024, 1, i + 1),
+            ),
+          );
         }
 
         const filter = FishFilter();
@@ -831,11 +832,13 @@ void main() {
 
     test('hasMore is false when totalCount < pageSize', () async {
       for (var i = 0; i < 5; i++) {
-        await repository.create(TestDataFactory.createFishCatch(
-          id: i + 1,
-          species: 'Fish_$i',
-          catchTime: DateTime(2024, 1, i + 1),
-        ),);
+        await repository.create(
+          TestDataFactory.createFishCatch(
+            id: i + 1,
+            species: 'Fish_$i',
+            catchTime: DateTime(2024, 1, i + 1),
+          ),
+        );
       }
 
       const filter = FishFilter();
@@ -851,11 +854,13 @@ void main() {
 
     test('hasMore is false when totalCount equals pageSize', () async {
       for (var i = 0; i < 10; i++) {
-        await repository.create(TestDataFactory.createFishCatch(
-          id: i + 1,
-          species: 'Fish_$i',
-          catchTime: DateTime(2024, 1, i + 1),
-        ),);
+        await repository.create(
+          TestDataFactory.createFishCatch(
+            id: i + 1,
+            species: 'Fish_$i',
+            catchTime: DateTime(2024, 1, i + 1),
+          ),
+        );
       }
 
       const filter = FishFilter();
@@ -867,6 +872,94 @@ void main() {
       );
       expect(result.items.length, equals(10));
       expect(result.hasMore, isFalse);
+    });
+
+    test('按长度排序时混合单位按基准厘米比较（H-9）', () async {
+      // 30 cm vs 20 inch (50.8 cm) vs 0.4 m (40 cm)
+      await repository.create(
+        TestDataFactory.createFishCatch(
+          species: 'CmBass',
+          catchTime: DateTime(2024),
+        ),
+      );
+      await repository.create(
+        TestDataFactory.createFishCatch(
+          id: 2,
+          species: 'InchBass',
+          length: 20,
+          lengthUnit: 'inch',
+          catchTime: DateTime(2024, 1, 2),
+        ),
+      );
+      await repository.create(
+        TestDataFactory.createFishCatch(
+          id: 3,
+          species: 'MeterPike',
+          length: 0.4,
+          lengthUnit: 'm',
+          catchTime: DateTime(2024, 1, 3),
+        ),
+      );
+
+      const filter = FishFilter(sortBy: 'length');
+
+      final result = await repository.getFilteredPageByFilter(
+        page: 1,
+        filter: filter,
+      );
+
+      expect(
+        result.items.map((f) => f.species).toList(),
+        equals(['InchBass', 'MeterPike', 'CmBass']),
+      );
+    });
+
+    test('按重量排序时混合单位按基准千克比较，且 NULL 排在最后（H-9）', () async {
+      // 1 kg vs 1 lb (0.4536 kg) vs 900 g (0.9 kg) vs 无重量
+      await repository.create(
+        TestDataFactory.createFishCatch(
+          species: 'KgFish',
+          weight: 1,
+          catchTime: DateTime(2024),
+        ),
+      );
+      await repository.create(
+        TestDataFactory.createFishCatch(
+          id: 2,
+          species: 'LbFish',
+          weight: 1,
+          weightUnit: 'lb',
+          catchTime: DateTime(2024, 1, 2),
+        ),
+      );
+      await repository.create(
+        TestDataFactory.createFishCatch(
+          id: 3,
+          species: 'GramFish',
+          weight: 900,
+          weightUnit: 'g',
+          catchTime: DateTime(2024, 1, 3),
+        ),
+      );
+      await repository.create(
+        TestDataFactory.createFishCatch(
+          id: 4,
+          species: 'NoWeightFish',
+          catchTime: DateTime(2024, 1, 4),
+        ),
+      );
+
+      const filter = FishFilter(sortBy: 'weight');
+
+      final result = await repository.getFilteredPageByFilter(
+        page: 1,
+        filter: filter,
+      );
+
+      expect(
+        result.items.map((f) => f.species).toList(),
+        equals(['KgFish', 'GramFish', 'LbFish', 'NoWeightFish']),
+      );
     });
   });
 

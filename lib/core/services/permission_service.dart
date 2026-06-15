@@ -5,7 +5,6 @@ import 'package:permission_handler/permission_handler.dart' as perm_handler;
 
 /// 权限请求结果
 class PermissionResult {
-
   const PermissionResult({
     required this.granted,
     required this.permanentlyDenied,
@@ -21,8 +20,10 @@ class PermissionResult {
 abstract class PermissionPlatform {
   const PermissionPlatform();
 
-  Future<perm_handler.PermissionStatus> status(perm_handler.Permission permission);
-  Future<perm_handler.PermissionStatus> request(perm_handler.Permission permission);
+  Future<perm_handler.PermissionStatus> status(
+      perm_handler.Permission permission);
+  Future<perm_handler.PermissionStatus> request(
+      perm_handler.Permission permission);
   Future<bool> isLocationServiceEnabled();
   Future<void> openAppSettings();
 
@@ -33,11 +34,13 @@ class _RealPermissionPlatform extends PermissionPlatform {
   const _RealPermissionPlatform();
 
   @override
-  Future<perm_handler.PermissionStatus> status(perm_handler.Permission permission) =>
+  Future<perm_handler.PermissionStatus> status(
+          perm_handler.Permission permission) =>
       permission.status;
 
   @override
-  Future<perm_handler.PermissionStatus> request(perm_handler.Permission permission) =>
+  Future<perm_handler.PermissionStatus> request(
+          perm_handler.Permission permission) =>
       permission.request();
 
   @override
@@ -50,7 +53,6 @@ class _RealPermissionPlatform extends PermissionPlatform {
 
 /// 权限类型信息
 class PermissionInfo {
-
   const PermissionInfo({
     required this.permission,
     required this.title,
@@ -113,7 +115,8 @@ class PermissionService {
     BuildContext context, {
     AppStrings? strings,
   }) async {
-    return _requestPermissionWithEducation(context, cameraInfo, strings: strings);
+    return _requestPermissionWithEducation(context, cameraInfo,
+        strings: strings);
   }
 
   /// 请求位置权限（带教育引导）
@@ -140,7 +143,8 @@ class PermissionService {
       );
     }
 
-    return _requestPermissionWithEducation(context, locationInfo, strings: strings);
+    return _requestPermissionWithEducation(context, locationInfo,
+        strings: strings);
   }
 
   /// 请求照片库权限（带教育引导）
@@ -148,7 +152,8 @@ class PermissionService {
     BuildContext context, {
     AppStrings? strings,
   }) async {
-    return _requestPermissionWithEducation(context, photosInfo, strings: strings);
+    return _requestPermissionWithEducation(context, photosInfo,
+        strings: strings);
   }
 
   /// 通用权限请求流程（带教育引导）
@@ -172,18 +177,21 @@ class PermissionService {
       return PermissionResult(
         granted: false,
         permanentlyDenied: true,
-        errorMessage: strings?.errorPermanentlyDenied ?? '${info.title}已被永久拒绝，请在系统设置中开启',
+        errorMessage:
+            strings?.errorPermanentlyDenied ?? '${info.title}已被永久拒绝，请在系统设置中开启',
       );
     }
 
     // 首次或已拒绝 - 显示教育引导后请求
     if (context.mounted) {
-      final shouldRequest = await _showEducationDialog(context, info, strings: strings);
+      final shouldRequest =
+          await _showEducationDialog(context, info, strings: strings);
       if (shouldRequest ?? false) {
         final newStatus = await _platform.request(info.permission);
 
         if (newStatus.isGranted || newStatus.isLimited) {
-          return const PermissionResult(granted: true, permanentlyDenied: false);
+          return const PermissionResult(
+              granted: true, permanentlyDenied: false);
         }
 
         if (newStatus.isPermanentlyDenied && context.mounted) {
@@ -191,7 +199,8 @@ class PermissionService {
           return PermissionResult(
             granted: false,
             permanentlyDenied: true,
-            errorMessage: strings?.errorPermanentlyDenied ?? '${info.title}被拒绝，需要在系统设置中开启',
+            errorMessage: strings?.errorPermanentlyDenied ??
+                '${info.title}被拒绝，需要在系统设置中开启',
           );
         }
       }
@@ -206,7 +215,10 @@ class PermissionService {
 
   /// 显示权限教育对话框
   Future<bool?> _showEducationDialog(
-      BuildContext context, PermissionInfo info, {AppStrings? strings,}) {
+    BuildContext context,
+    PermissionInfo info, {
+    AppStrings? strings,
+  }) {
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -269,7 +281,8 @@ class PermissionService {
   }
 
   /// 显示引导到设置对话框
-  Future<void> _showSettingsDialog(BuildContext context, PermissionInfo info, {AppStrings? strings}) {
+  Future<void> _showSettingsDialog(BuildContext context, PermissionInfo info,
+      {AppStrings? strings}) {
     return showDialog(
       context: context,
       builder: (context) => AlertDialog(

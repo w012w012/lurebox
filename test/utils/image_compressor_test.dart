@@ -250,7 +250,8 @@ void main() {
       });
 
       test('returns 0 for non-existent directory', () async {
-        final missingDir = Directory('/tmp/nonexistent_dir_${DateTime.now().microsecondsSinceEpoch}');
+        final missingDir = Directory(
+            '/tmp/nonexistent_dir_${DateTime.now().microsecondsSinceEpoch}');
         final count = await ImageCompressor.cleanupOldImages(
           directory: missingDir,
         );

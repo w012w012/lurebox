@@ -7,7 +7,6 @@ import 'package:lurebox/features/share/widgets/share_card_widget.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
 
 class ShareBottomSheet extends ConsumerStatefulWidget {
-
   const ShareBottomSheet({super.key, this.statsData, this.onShare});
   final Map<String, dynamic>? statsData;
   final VoidCallback? onShare;
@@ -198,7 +197,10 @@ class _ShareBottomSheetState extends ConsumerState<ShareBottomSheet> {
             label,
             style: Theme.of(
               context,
-            ).textTheme.bodyLarge?.copyWith(color: colorScheme.onSurfaceVariant),
+            )
+                .textTheme
+                .bodyLarge
+                ?.copyWith(color: colorScheme.onSurfaceVariant),
           ),
           Switch(
             value: value,

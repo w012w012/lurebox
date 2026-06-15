@@ -175,8 +175,10 @@ void main() {
         await viewModel.loadData();
 
         // Assert
-        expect(viewModel.state.errorMessage,
-            contains('Database error: rod table not found'),);
+        expect(
+          viewModel.state.errorMessage,
+          contains('Database error: rod table not found'),
+        );
         expect(viewModel.state.isLoading, isFalse);
       });
 
@@ -460,10 +462,11 @@ void main() {
         clearInteractions(mockEquipmentService);
         when(() => mockEquipmentService.setDefaultEquipment(1, 'rod'))
             .thenAnswer((_) async {});
-        when(() => mockEquipmentService.getAll(type: 'rod'))
-            .thenAnswer((_) async => [
-                  _createEquipment(isDefault: true),
-                ],);
+        when(() => mockEquipmentService.getAll(type: 'rod')).thenAnswer(
+          (_) async => [
+            _createEquipment(isDefault: true),
+          ],
+        );
         when(() => mockEquipmentService.getAll(type: 'reel'))
             .thenAnswer((_) async => <Equipment>[]);
         when(() => mockEquipmentService.getAll(type: 'lure'))
@@ -533,11 +536,15 @@ void main() {
             .thenAnswer((_) async {});
         when(() => mockEquipmentService.getAll(type: 'rod'))
             .thenAnswer((_) async => <Equipment>[]);
-        when(() => mockEquipmentService.getAll(type: 'reel'))
-            .thenAnswer((_) async => [
-                  _createEquipment(
-                      id: 2, type: EquipmentType.reel, isDefault: true,),
-                ],);
+        when(() => mockEquipmentService.getAll(type: 'reel')).thenAnswer(
+          (_) async => [
+            _createEquipment(
+              id: 2,
+              type: EquipmentType.reel,
+              isDefault: true,
+            ),
+          ],
+        );
         when(() => mockEquipmentService.getAll(type: 'lure'))
             .thenAnswer((_) async => <Equipment>[]);
         when(() => mockFishCatchService.getAllEquipmentCatchStats())

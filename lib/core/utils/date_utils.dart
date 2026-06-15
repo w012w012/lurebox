@@ -1,6 +1,5 @@
 /// 日期范围工具类
 class DatePeriod {
-
   const DatePeriod(this.start, this.end);
   final DateTime start;
   final DateTime end;
