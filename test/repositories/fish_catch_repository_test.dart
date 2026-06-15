@@ -287,6 +287,75 @@ void main() {
     });
   });
 
+  // ─── Large ID Set Chunking (LOW-2) ───
+  //
+  // SQLite 默认变量上限 999；超过的 IN (...) / CASE-WHEN 会报错。
+  // 这些测试用 >1000 条记录验证分块后仍能成功。
+  group('FishCatchRepository - Large ID Set Chunking', () {
+    late SqliteFishCatchRepository repository;
+
+    setUp(() {
+      repository = SqliteFishCatchRepository.withDatabase(
+        Future<Database>.value(db),
+      );
+    });
+
+    /// 批量插入 [count] 条记录，返回其 id 列表。
+    Future<List<int>> seedCatches(int count) async {
+      final ids = <int>[];
+      final now = DateTime.now().toIso8601String();
+      await db.transaction((txn) async {
+        for (var i = 0; i < count; i++) {
+          final id = await txn.insert('fish_catches', {
+            'image_path': '/test/bulk_$i.jpg',
+            'species': '待识别',
+            'length': 10.0,
+            'length_unit': 'cm',
+            'length_cm': 10.0,
+            'fate': FishFateType.release.value,
+            'catch_time': now,
+            'pending_recognition': 1,
+            'created_at': now,
+            'updated_at': now,
+          });
+          ids.add(id);
+        }
+      });
+      return ids;
+    }
+
+    test('getByIds succeeds with more than 1000 ids', () async {
+      final ids = await seedCatches(1050);
+
+      final results = await repository.getByIds(ids);
+
+      expect(results.length, equals(1050));
+    });
+
+    test('batchUpdateSpecies succeeds with more than 1000 ids', () async {
+      final ids = await seedCatches(1050);
+      final speciesList = List.generate(ids.length, (i) => 'Species_$i');
+
+      await repository.batchUpdateSpecies(ids, speciesList);
+
+      // 全部确认后，待识别计数归零；抽查首尾记录的品种已更新。
+      expect(await repository.getPendingRecognitionCount(), equals(0));
+      final first = await repository.getById(ids.first);
+      final last = await repository.getById(ids.last);
+      expect(first?.species, equals('Species_0'));
+      expect(last?.species, equals('Species_${ids.length - 1}'));
+      expect(first?.pendingRecognition, isFalse);
+    });
+
+    test('deleteMultiple succeeds with more than 1000 ids', () async {
+      final ids = await seedCatches(1050);
+
+      await repository.deleteMultiple(ids);
+
+      expect(await repository.getCount(), equals(0));
+    });
+  });
+
   group('FishCatchRepository - Query Methods', () {
     late SqliteFishCatchRepository repository;
 
@@ -794,6 +863,63 @@ void main() {
 
       expect(result.items.length, equals(1));
       expect(result.items[0].species, equals('Bass'));
+    });
+
+    test('speciesFilter with % matches literally, not as wildcard (LOW-1)',
+        () async {
+      // "50%" 应按字面量匹配；若未转义，LIKE '50%%' 会把 "5000" 也匹配进来。
+      await repository.create(
+        TestDataFactory.createFishCatch(
+          id: 1,
+          species: '50%',
+          catchTime: DateTime(2024),
+        ),
+      );
+      await repository.create(
+        TestDataFactory.createFishCatch(
+          id: 2,
+          species: '5000',
+          catchTime: DateTime(2024, 1, 2),
+        ),
+      );
+
+      const filter = FishFilter(speciesFilter: '50%');
+      final result = await repository.getFilteredPageByFilter(
+        page: 1,
+        filter: filter,
+      );
+
+      // 只应匹配字面 "50%"，不应匹配 "5000"。
+      expect(result.items.length, equals(1));
+      expect(result.items[0].species, equals('50%'));
+    });
+
+    test('searchQuery with _ matches literally, not as wildcard (LOW-1)',
+        () async {
+      // "a_b" 中的下划线应按字面量；未转义时 LIKE '%a_b%' 会匹配 "axb"。
+      await repository.create(
+        TestDataFactory.createFishCatch(
+          id: 1,
+          species: 'a_b',
+          catchTime: DateTime(2024),
+        ),
+      );
+      await repository.create(
+        TestDataFactory.createFishCatch(
+          id: 2,
+          species: 'axb',
+          catchTime: DateTime(2024, 1, 2),
+        ),
+      );
+
+      const filter = FishFilter(searchQuery: 'a_b');
+      final result = await repository.getFilteredPageByFilter(
+        page: 1,
+        filter: filter,
+      );
+
+      expect(result.items.length, equals(1));
+      expect(result.items[0].species, equals('a_b'));
     });
 
     test(

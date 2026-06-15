@@ -853,4 +853,5 @@ const AppStrings englishStrings = AppStrings(
   distributionTitle: 'Distribution',
   priceDistribution: 'Price Distribution',
   distributionOf: '%s Distribution',
+  priceOf: '%s Price',
 );

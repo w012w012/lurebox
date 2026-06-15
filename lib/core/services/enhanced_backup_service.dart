@@ -572,6 +572,26 @@ class EnhancedBackupService {
           }
         }
       }
+
+      // 导入用户自定义品种别名（user_alias 唯一，replace 策略）。
+      // 与 BackupService.importFromJson 一致，确保 WebDAV 往返一致（FIX-7 / G-5）。
+      if (backupData.containsKey('userSpeciesAlias')) {
+        final userSpeciesAlias = backupData['userSpeciesAlias'] as List;
+        for (final alias in userSpeciesAlias) {
+          try {
+            final map = Map<String, dynamic>.from(alias as Map);
+            await txn.insert(
+              'user_species_alias',
+              map,
+              conflictAlgorithm: ConflictAlgorithm.replace,
+            );
+          } catch (e) {
+            errorCount++;
+            AppLogger.e('EnhancedBackupService',
+                'Failed to import user species alias', e);
+          }
+        }
+      }
     });
 
     return ImportResultWithStats(

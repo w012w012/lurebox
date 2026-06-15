@@ -15,6 +15,20 @@ class SqliteStatsRepository extends BaseSqliteRepository
   @override
   String get tableName => 'fish_catches';
 
+  /// 待识别记录的排除谓词（G-2）。
+  ///
+  /// 维护者决策：所有统计口径（首页仪表盘、成就喂数、统计页）都必须
+  /// 【排除】待识别（`pending_recognition = 1`）记录，直到其品种被确认。
+  /// 统计页此前已通过 `fishCatch.filterPendingRecognition` 在内存层排除，
+  /// 但首页 SQL 与成就计数仍把它们算进去，导致同一天在不同界面总数不一致。
+  ///
+  /// `COALESCE(pending_recognition, 0) = 0` 兼容遗留数据中该列为 NULL 的旧行。
+  ///
+  /// 注意：专用的待识别 provider（getPendingRecognitionCatches /
+  /// getPendingRecognitionCount）【不】使用本谓词 —— 它们的语义就是“只看待识别”。
+  static const String _notPendingPredicate =
+      'COALESCE(pending_recognition, 0) = 0';
+
   @override
   Future<CatchStats> getCatchStats({
     DateTime? startDate,
@@ -23,11 +37,11 @@ class SqliteStatsRepository extends BaseSqliteRepository
     try {
       final db = await database;
 
-      var whereClause = '';
+      var whereClause = 'WHERE $_notPendingPredicate';
       var whereArgs = <dynamic>[];
 
       if (startDate != null && endDate != null) {
-        whereClause = 'WHERE catch_time >= ? AND catch_time < ?';
+        whereClause += ' AND catch_time >= ? AND catch_time < ?';
         whereArgs = [startDate.toIso8601String(), endDate.toIso8601String()];
       }
 
@@ -62,11 +76,11 @@ class SqliteStatsRepository extends BaseSqliteRepository
     try {
       final db = await database;
 
-      var whereClause = '';
+      var whereClause = 'WHERE $_notPendingPredicate';
       var whereArgs = <dynamic>[];
 
       if (startDate != null && endDate != null) {
-        whereClause = 'WHERE catch_time >= ? AND catch_time < ?';
+        whereClause += ' AND catch_time >= ? AND catch_time < ?';
         whereArgs = [startDate.toIso8601String(), endDate.toIso8601String()];
       }
 
@@ -101,7 +115,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
     try {
       final db = await database;
       final results = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $tableName',
+        'SELECT COUNT(*) as count FROM $tableName WHERE $_notPendingPredicate',
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
@@ -116,7 +130,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
       // 阈值以厘米为单位（成就口径），按基准列比较；遗留 NULL 行回退原始值。
       final results = await db.rawQuery(
         'SELECT COUNT(*) as count FROM $tableName '
-        'WHERE COALESCE(length_cm, length) >= ?',
+        'WHERE COALESCE(length_cm, length) >= ? AND $_notPendingPredicate',
         [minLength],
       );
       return results.first['count'] as int? ?? 0;
@@ -130,7 +144,8 @@ class SqliteStatsRepository extends BaseSqliteRepository
     try {
       final db = await database;
       final results = await db.rawQuery(
-        'SELECT COUNT(DISTINCT species) as count FROM $tableName',
+        'SELECT COUNT(DISTINCT species) as count FROM $tableName '
+        'WHERE $_notPendingPredicate',
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
@@ -144,13 +159,13 @@ class SqliteStatsRepository extends BaseSqliteRepository
       final db = await database;
       final results = await db.rawQuery('''
         SELECT COUNT(DISTINCT eq_id) as count FROM (
-          SELECT equipment_id as eq_id FROM $tableName WHERE equipment_id IS NOT NULL
+          SELECT equipment_id as eq_id FROM $tableName WHERE equipment_id IS NOT NULL AND $_notPendingPredicate
           UNION
-          SELECT rod_id as eq_id FROM $tableName WHERE rod_id IS NOT NULL
+          SELECT rod_id as eq_id FROM $tableName WHERE rod_id IS NOT NULL AND $_notPendingPredicate
           UNION
-          SELECT reel_id as eq_id FROM $tableName WHERE reel_id IS NOT NULL
+          SELECT reel_id as eq_id FROM $tableName WHERE reel_id IS NOT NULL AND $_notPendingPredicate
           UNION
-          SELECT lure_id as eq_id FROM $tableName WHERE lure_id IS NOT NULL
+          SELECT lure_id as eq_id FROM $tableName WHERE lure_id IS NOT NULL AND $_notPendingPredicate
         )
         ''');
       return results.first['count'] as int? ?? 0;
@@ -177,9 +192,10 @@ class SqliteStatsRepository extends BaseSqliteRepository
     try {
       final db = await database;
       final results = await db.rawQuery('''
-        SELECT COUNT(DISTINCT location_name) as count 
-        FROM $tableName 
+        SELECT COUNT(DISTINCT location_name) as count
+        FROM $tableName
         WHERE location_name IS NOT NULL AND location_name != ''
+          AND $_notPendingPredicate
         ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
@@ -192,7 +208,8 @@ class SqliteStatsRepository extends BaseSqliteRepository
     try {
       final db = await database;
       final results = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $tableName WHERE fate = ?',
+        'SELECT COUNT(*) as count FROM $tableName '
+        'WHERE fate = ? AND $_notPendingPredicate',
         [FishFateType.release.value],
       );
       return results.first['count'] as int? ?? 0;
@@ -212,6 +229,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
           COUNT(*) as total,
           SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as release
         FROM $tableName
+        WHERE $_notPendingPredicate
       ''',
         [FishFateType.release.value],
       );
@@ -233,7 +251,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
         '''
         SELECT DATE(catch_time) as catch_date, COUNT(*) as count
         FROM $tableName
-        WHERE catch_time >= ?
+        WHERE catch_time >= ? AND $_notPendingPredicate
         GROUP BY catch_date
         ORDER BY catch_date DESC
       ''',
@@ -282,6 +300,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
       final results = await db.rawQuery('''
         SELECT strftime('%Y-%m', catch_time) as month, COUNT(*) as count
         FROM $tableName
+        WHERE $_notPendingPredicate
         GROUP BY month
         ORDER BY count DESC
         LIMIT 1
@@ -301,6 +320,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
       final results = await db.rawQuery('''
         SELECT DATE(catch_time) as day, COUNT(*) as count
         FROM $tableName
+        WHERE $_notPendingPredicate
         GROUP BY day
         ORDER BY count DESC
         LIMIT 1
@@ -322,6 +342,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
         SELECT COUNT(*) as count FROM $tableName
         WHERE strftime('%H', catch_time) >= ?
           AND strftime('%H', catch_time) < ?
+          AND $_notPendingPredicate
       ''',
         [TimeConstants.morningStart, TimeConstants.morningEnd],
       );
@@ -338,8 +359,9 @@ class SqliteStatsRepository extends BaseSqliteRepository
       final results = await db.rawQuery(
         '''
         SELECT COUNT(*) as count FROM $tableName
-        WHERE strftime('%H', catch_time) >= ?
-           OR strftime('%H', catch_time) < ?
+        WHERE (strftime('%H', catch_time) >= ?
+           OR strftime('%H', catch_time) < ?)
+          AND $_notPendingPredicate
       ''',
         [TimeConstants.nightStart, TimeConstants.nightEnd],
       );
@@ -354,7 +376,9 @@ class SqliteStatsRepository extends BaseSqliteRepository
     try {
       final db = await database;
       final results = await db.rawQuery(
-        'SELECT COUNT(*) as count FROM $tableName WHERE image_path IS NOT NULL AND image_path != ""',
+        'SELECT COUNT(*) as count FROM $tableName '
+        'WHERE image_path IS NOT NULL AND image_path != "" '
+        'AND $_notPendingPredicate',
       );
       return results.first['count'] as int? ?? 0;
     } catch (e) {
@@ -369,7 +393,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
       // 基准千克求和（遗留 NULL 行回退原始值）。返回值单位为 kg。
       final results = await db.rawQuery(
         'SELECT SUM(COALESCE(weight_kg, weight)) as total FROM $tableName '
-        'WHERE weight IS NOT NULL',
+        'WHERE weight IS NOT NULL AND $_notPendingPredicate',
       );
       return (results.first['total'] as num?)?.toDouble() ?? 0.0;
     } catch (e) {
@@ -384,7 +408,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
       // 基准厘米最大值（遗留 NULL 行回退原始值）。返回值单位为 cm。
       final results = await db.rawQuery(
         'SELECT MAX(COALESCE(length_cm, length)) as max_length FROM $tableName '
-        'WHERE length IS NOT NULL',
+        'WHERE length IS NOT NULL AND $_notPendingPredicate',
       );
       return (results.first['max_length'] as num?)?.toDouble() ?? 0.0;
     } catch (e) {
@@ -478,6 +502,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
         SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ? THEN 1 ELSE 0 END) as year_release,
         SUM(CASE WHEN catch_time >= ? AND catch_time < ? AND fate = ? THEN 1 ELSE 0 END) as year_keep
       FROM $tableName
+      WHERE $_notPendingPredicate
     ''', [
       FishFateType.release.value,
       FishFateType.keep.value,
@@ -550,6 +575,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
         SUM(CASE WHEN catch_time >= ? AND catch_time < ? THEN 1 ELSE 0 END) as year_count,
         COUNT(*) as all_count
       FROM $tableName
+      WHERE $_notPendingPredicate
       GROUP BY species
       ORDER BY all_count DESC
       LIMIT 10
@@ -603,13 +629,13 @@ SELECT
   AVG(weight) as avg_weight,
   SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as release_count
 FROM (
-  SELECT equipment_id as eq_id, species, COALESCE(length_cm, length) as length, COALESCE(weight_kg, weight) as weight, fate FROM $tableName WHERE equipment_id IS NOT NULL
+  SELECT equipment_id as eq_id, species, COALESCE(length_cm, length) as length, COALESCE(weight_kg, weight) as weight, fate FROM $tableName WHERE equipment_id IS NOT NULL AND $_notPendingPredicate
   UNION ALL
-  SELECT rod_id as eq_id, species, COALESCE(length_cm, length) as length, COALESCE(weight_kg, weight) as weight, fate FROM $tableName WHERE rod_id IS NOT NULL
+  SELECT rod_id as eq_id, species, COALESCE(length_cm, length) as length, COALESCE(weight_kg, weight) as weight, fate FROM $tableName WHERE rod_id IS NOT NULL AND $_notPendingPredicate
   UNION ALL
-  SELECT reel_id as eq_id, species, COALESCE(length_cm, length) as length, COALESCE(weight_kg, weight) as weight, fate FROM $tableName WHERE reel_id IS NOT NULL
+  SELECT reel_id as eq_id, species, COALESCE(length_cm, length) as length, COALESCE(weight_kg, weight) as weight, fate FROM $tableName WHERE reel_id IS NOT NULL AND $_notPendingPredicate
   UNION ALL
-  SELECT lure_id as eq_id, species, COALESCE(length_cm, length) as length, COALESCE(weight_kg, weight) as weight, fate FROM $tableName WHERE lure_id IS NOT NULL
+  SELECT lure_id as eq_id, species, COALESCE(length_cm, length) as length, COALESCE(weight_kg, weight) as weight, fate FROM $tableName WHERE lure_id IS NOT NULL AND $_notPendingPredicate
 )
 GROUP BY eq_id
 ''',
@@ -638,13 +664,13 @@ SELECT
   species,
   COUNT(*) as species_count
 FROM (
-  SELECT equipment_id as eq_id, species FROM $tableName WHERE equipment_id IS NOT NULL
+  SELECT equipment_id as eq_id, species FROM $tableName WHERE equipment_id IS NOT NULL AND $_notPendingPredicate
   UNION ALL
-  SELECT rod_id as eq_id, species FROM $tableName WHERE rod_id IS NOT NULL
+  SELECT rod_id as eq_id, species FROM $tableName WHERE rod_id IS NOT NULL AND $_notPendingPredicate
   UNION ALL
-  SELECT reel_id as eq_id, species FROM $tableName WHERE reel_id IS NOT NULL
+  SELECT reel_id as eq_id, species FROM $tableName WHERE reel_id IS NOT NULL AND $_notPendingPredicate
   UNION ALL
-  SELECT lure_id as eq_id, species FROM $tableName WHERE lure_id IS NOT NULL
+  SELECT lure_id as eq_id, species FROM $tableName WHERE lure_id IS NOT NULL AND $_notPendingPredicate
 )
 GROUP BY eq_id, species
 ''');
@@ -683,7 +709,8 @@ GROUP BY eq_id, species
       };
       final column = typeToColumn[type] ?? 'lure_id';
 
-      var whereClause = 'f.$column IS NOT NULL';
+      var whereClause =
+          'f.$column IS NOT NULL AND COALESCE(f.pending_recognition, 0) = 0';
       var whereArgs = <dynamic>[];
 
       if (startDate != null && endDate != null) {
@@ -730,6 +757,7 @@ GROUP BY eq_id, species
       // 按基准厘米排序（遗留 NULL 行回退原始值），避免混合单位下排名错误。
       final results = await db.query(
         tableName,
+        where: _notPendingPredicate,
         orderBy: 'COALESCE(length_cm, length) DESC',
         limit: 3,
       );
@@ -747,8 +775,9 @@ GROUP BY eq_id, species
       final db = await database;
       final results = await db.rawQuery('''
         SELECT COUNT(*) as count FROM $tableName
-        WHERE equipment_id IS NOT NULL
-           OR (rod_id IS NOT NULL AND reel_id IS NOT NULL AND lure_id IS NOT NULL)
+        WHERE (equipment_id IS NOT NULL
+           OR (rod_id IS NOT NULL AND reel_id IS NOT NULL AND lure_id IS NOT NULL))
+          AND $_notPendingPredicate
       ''');
       return results.first['count'] as int? ?? 0;
     } catch (e) {
@@ -770,7 +799,7 @@ GROUP BY eq_id, species
           SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as release,
           SUM(CASE WHEN fate = ? THEN 1 ELSE 0 END) as keep
         FROM $tableName
-        WHERE catch_time >= ? AND catch_time < ?
+        WHERE catch_time >= ? AND catch_time < ? AND $_notPendingPredicate
         GROUP BY DATE(catch_time)
         ORDER BY date ASC
       ''', [

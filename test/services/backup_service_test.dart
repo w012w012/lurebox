@@ -12,6 +12,9 @@ import 'package:sqflite/sqflite.dart' hide DatabaseException;
 class MockDb extends Mock implements Database {
   final Map<String, List<Map<String, dynamic>>> _queryResults = {};
 
+  /// 记录被 query 过的表名，便于断言备份载荷覆盖了哪些表（G-5）。
+  final List<String> queriedTables = [];
+
   void addQueryResult(String table, List<Map<String, dynamic>> results) {
     _queryResults[table] = results;
   }
@@ -29,6 +32,7 @@ class MockDb extends Mock implements Database {
     int? limit,
     int? offset,
   }) async {
+    queriedTables.add(table);
     return _queryResults[table] ?? [];
   }
 
@@ -509,6 +513,54 @@ void main() {
           expect(result, isNull);
         },
       );
+    });
+
+    // ─── WebDAV Payload Completeness (G-5) ───
+    group('WebDAV Payload Completeness', () {
+      test('exportToJson includes userSpeciesAlias to match WebDAV', () async {
+        mockDatabase.addQueryResult('fish_catches', []);
+        mockDatabase.addQueryResult('equipments', []);
+        mockDatabase.addQueryResult('species_history', []);
+        mockDatabase.addQueryResult('settings', []);
+        mockDatabase.addQueryResult('user_species_alias', [
+          {'id': 1, 'user_alias': '黑坑鲫', 'standard_name': '鲫鱼'},
+        ]);
+
+        final filePath = await backupService.exportToJson();
+        final file = File(filePath);
+        final data =
+            jsonDecode(await file.readAsString()) as Map<String, dynamic>;
+
+        expect(data.containsKey('userSpeciesAlias'), isTrue);
+        expect((data['userSpeciesAlias'] as List).length, equals(1));
+
+        if (await file.exists()) await file.delete();
+      });
+
+      test('uploadToWebDAV queries user_species_alias for the payload',
+          () async {
+        mockDatabase.addQueryResult('fish_catches', []);
+        mockDatabase.addQueryResult('equipments', []);
+        mockDatabase.addQueryResult('species_history', []);
+        mockDatabase.addQueryResult('settings', []);
+        mockDatabase.addQueryResult('user_species_alias', [
+          {'id': 1, 'user_alias': '黑坑鲫', 'standard_name': '鲫鱼'},
+        ]);
+
+        // The HTTP PUT will fail (no live server); the table queries that
+        // build the payload happen before the request, so we assert on those.
+        try {
+          await backupService.uploadToWebDAV(
+            serverUrl: 'https://nonexistent.invalid/webdav',
+            username: 'u',
+            password: 'p',
+          );
+        } on Object {
+          // Expected: network failure after payload is assembled.
+        }
+
+        expect(mockDatabase.queriedTables, contains('user_species_alias'));
+      });
     });
   });
 }

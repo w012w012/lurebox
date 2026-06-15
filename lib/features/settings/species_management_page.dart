@@ -8,6 +8,7 @@ import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/providers/ai_recognition_provider.dart';
+import 'package:lurebox/core/providers/data_refresh.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/pending_recognition_providers.dart';
 import 'package:lurebox/core/services/fish_recognition_service.dart';
@@ -111,6 +112,9 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         await repository.updateSpecies(fish.id, speciesName);
         ref.invalidate(pendingRecognitionCountProvider);
         ref.invalidate(pendingRecognitionCatchesProvider);
+        // 确认/手动识别会清除待识别标记 —— 这是真实的 fish_catches 写操作，
+        // 需同步刷新首页/统计/成就/列表等派生数据（H-12 完整性）。
+        invalidateDerivedFishData(ref.invalidate);
         setState(() {
           _recognitionStates.remove(fish.id);
         });
@@ -252,6 +256,9 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         await repository.updateSpecies(fish.id, speciesName);
         ref.invalidate(pendingRecognitionCountProvider);
         ref.invalidate(pendingRecognitionCatchesProvider);
+        // 确认 AI 识别结果会清除待识别标记 —— 真实的 fish_catches 写操作，
+        // 需同步刷新派生数据（H-12 完整性）。
+        invalidateDerivedFishData(ref.invalidate);
         setState(() {
           _recognitionStates.remove(fish.id);
         });
@@ -285,6 +292,9 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         ref.invalidate(speciesCountsProvider);
         ref.invalidate(pendingRecognitionCountProvider);
         ref.invalidate(pendingRecognitionCatchesProvider);
+        // 重命名/合并品种是批量改写 fish_catches.species 的写操作，
+        // 需同步刷新派生数据（H-12 完整性）。
+        invalidateDerivedFishData(ref.invalidate);
         setState(() {});
         if (!context.mounted) return;
         final s = ref.read(currentStringsProvider);
@@ -323,6 +333,9 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         ref.invalidate(speciesCountsProvider);
         ref.invalidate(pendingRecognitionCountProvider);
         ref.invalidate(pendingRecognitionCatchesProvider);
+        // 删除品种会删除该品种全部 fish_catches 行，
+        // 需同步刷新派生数据（H-12 完整性）。
+        invalidateDerivedFishData(ref.invalidate);
         setState(() {});
         if (!context.mounted) return;
         final s = ref.read(currentStringsProvider);
@@ -401,6 +414,9 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
 
       ref.invalidate(pendingRecognitionCountProvider);
       ref.invalidate(pendingRecognitionCatchesProvider);
+      // 批量识别会对多条 fish_catches 写入品种并清除待识别标记，
+      // 需同步刷新派生数据（H-12 完整性）。
+      invalidateDerivedFishData(ref.invalidate);
 
       if (mounted) {
         final s = ref.read(currentStringsProvider);

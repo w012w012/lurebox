@@ -18,6 +18,17 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
   @override
   String get tableName => 'equipments';
 
+  /// 转义 LIKE 通配符（LOW-1）。
+  ///
+  /// 用户输入中的 `%` `_` 会被 SQLite 当作通配符导致过度匹配；转义 `\` `%` `_`
+  /// 并配合 `ESCAPE '\'` 使其按字面量匹配。参数化已防注入，本转义解决语义问题。
+  static String _escapeLike(String value) {
+    return value
+        .replaceAll(r'\', r'\\')
+        .replaceAll('%', r'\%')
+        .replaceAll('_', r'\_');
+  }
+
   @override
   Future<List<Equipment>> getAll({String? type}) async {
     try {
@@ -200,12 +211,12 @@ class SqliteEquipmentRepository extends BaseSqliteRepository
         whereArgs.add(type);
       }
       if (brand != null && brand.isNotEmpty) {
-        whereClauses.add('brand LIKE ?');
-        whereArgs.add('%$brand%');
+        whereClauses.add("brand LIKE ? ESCAPE '\\'");
+        whereArgs.add('%${_escapeLike(brand)}%');
       }
       if (model != null && model.isNotEmpty) {
-        whereClauses.add('model LIKE ?');
-        whereArgs.add('%$model%');
+        whereClauses.add("model LIKE ? ESCAPE '\\'");
+        whereArgs.add('%${_escapeLike(model)}%');
       }
       if (category != null && category.isNotEmpty) {
         whereClauses.add('category = ?');

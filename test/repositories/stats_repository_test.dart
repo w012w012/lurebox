@@ -122,6 +122,7 @@ void main() {
     int? rodId,
     int? reelId,
     int? lureId,
+    bool pendingRecognition = false,
   }) {
     final now = DateTime.now().toIso8601String();
     return db.insert('fish_catches', {
@@ -141,7 +142,7 @@ void main() {
       'rod_id': rodId,
       'reel_id': reelId,
       'lure_id': lureId,
-      'pending_recognition': 0,
+      'pending_recognition': pendingRecognition ? 1 : 0,
       'created_at': now,
       'updated_at': now,
     });
@@ -1335,6 +1336,60 @@ void main() {
       // Actually: yesterday is the most recent catch (no catch today),
       // so streak = 5 (yesterday through yesterday-4)
       expect(await repository.getConsecutiveDays(), equals(5));
+    });
+  });
+
+  // ─── Pending-Recognition Exclusion (G-2) ───
+  //
+  // 维护者决策：所有统计口径都【排除】待识别记录，直到其品种被确认。
+  group('Pending Recognition Exclusion', () {
+    test('pending record is excluded from total/max/distinct stats', () async {
+      final now = DateTime.now();
+      // 1 已确认记录 + 1 待识别记录（更长、不同物种名）
+      await insertCatch(
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
+      await insertCatch(
+        species: '待识别',
+        length: 99, // 比已确认记录更长
+        fate: FishFateType.release,
+        catchTime: now,
+        pendingRecognition: true,
+      );
+
+      // 待识别记录不计入总数、最大长度、去重物种数。
+      expect(await repository.getTotalCatchCount(), equals(1));
+      expect(await repository.getMaxLength(), equals(30.0));
+      expect(await repository.getDistinctSpeciesCount(), equals(1));
+    });
+
+    test('pending records do not pollute dashboard or catch stats', () async {
+      final now = DateTime.now();
+      await insertCatch(
+        species: 'Bass',
+        length: 30,
+        fate: FishFateType.release,
+        catchTime: now,
+      );
+      await insertCatch(
+        species: '待识别',
+        length: 40,
+        fate: FishFateType.keep,
+        catchTime: now,
+        pendingRecognition: true,
+      );
+
+      final stats = await repository.getCatchStats();
+      expect(stats.total, equals(1));
+      expect(stats.release, equals(1));
+      expect(stats.keep, equals(0));
+
+      final dashboard = await repository.getDashboardData();
+      expect(dashboard.allStats.total, equals(1));
+      expect(dashboard.todayStats.total, equals(1));
     });
   });
 }

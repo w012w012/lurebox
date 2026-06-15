@@ -17,6 +17,33 @@ void main() {
   });
 
   group('EquipmentOverviewPage', () {
+    group('Price distribution title (G-4)', () {
+      // 复现并守护「RodPrice Distribution」缺空格的回归。
+      test('EN composes "Rod Price Distribution" with proper spacing', () {
+        const s = AppStrings.english;
+        final title = s.distributionOf
+            .replaceFirst('%s', s.priceOf.replaceFirst('%s', s.rod));
+        expect(title, equals('Rod Price Distribution'));
+      });
+
+      test('EN composes "Reel Price Distribution" with proper spacing', () {
+        const s = AppStrings.english;
+        final title = s.distributionOf
+            .replaceFirst('%s', s.priceOf.replaceFirst('%s', s.reel));
+        expect(title, equals('Reel Price Distribution'));
+      });
+
+      test('zh output unchanged: 鱼竿价格分布 / 渔轮价格分布', () {
+        const s = AppStrings.chinese;
+        final rodTitle = s.distributionOf
+            .replaceFirst('%s', s.priceOf.replaceFirst('%s', s.rod));
+        final reelTitle = s.distributionOf
+            .replaceFirst('%s', s.priceOf.replaceFirst('%s', s.reel));
+        expect(rodTitle, equals('鱼竿价格分布'));
+        expect(reelTitle, equals('渔轮价格分布'));
+      });
+    });
+
     group('Empty State', () {
       testWidgets('shows app bar with correct title', (tester) async {
         // Empty state with isLoading = true to show initial loading

@@ -845,6 +845,7 @@ class AppStrings extends StringsBase
     required this.distributionTitle,
     required this.priceDistribution,
     required this.distributionOf,
+    required this.priceOf,
   });
 
   @override
@@ -2476,6 +2477,8 @@ class AppStrings extends StringsBase
   final String priceDistribution;
   @override
   final String distributionOf;
+  @override
+  final String priceOf;
 
   static const chinese = chineseStrings;
   static const english = englishStrings;

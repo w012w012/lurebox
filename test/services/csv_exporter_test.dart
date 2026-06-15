@@ -35,6 +35,13 @@ void main() {
         );
       });
 
+      test('wraps field in quotes when it contains a carriage return', () {
+        expect(
+          CsvExporter.escapeCsvField('line1\rline2'),
+          equals('"line1\rline2"'),
+        );
+      });
+
       test('handles integer input', () {
         expect(CsvExporter.escapeCsvField(42), equals('42'));
       });
@@ -69,6 +76,81 @@ void main() {
         expect(lines[0], contains('ID'));
         expect(lines[0], contains('品种'));
         expect(lines[0], contains('长度(cm)'));
+      });
+
+      test('prepends UTF-8 BOM so Excel reads Chinese correctly', () async {
+        final csv = await CsvExporter.exportFishCatches(catches: []);
+
+        // BOM (U+FEFF) must be the very first code unit.
+        expect(csv.codeUnitAt(0), equals(0xFEFF));
+        expect(csv.startsWith('﻿'), isTrue);
+      });
+
+      test('includes rig/hook/notes columns in header', () async {
+        final csv = await CsvExporter.exportFishCatches(catches: []);
+        final lines = csv.split('\n');
+
+        expect(lines[0], contains('备注'));
+        expect(lines[0], contains('钓组类型'));
+        expect(lines[0], contains('铅坠重量'));
+        expect(lines[0], contains('铅坠位置'));
+        expect(lines[0], contains('钩型'));
+        expect(lines[0], contains('钩号'));
+        expect(lines[0], contains('钩重'));
+      });
+
+      test('populates rig/hook/notes columns in data row', () async {
+        final catches = [
+          FishCatch(
+            id: 1,
+            imagePath: '/test/fish.jpg',
+            species: '鳜鱼',
+            length: 35,
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 6, 15),
+            notes: '大风天',
+            rigType: '德州钓组',
+            sinkerWeight: '5g',
+            sinkerPosition: '可滑动',
+            hookType: '曲柄钩',
+            hookSize: '2号',
+            hookWeight: '1g',
+            createdAt: DateTime(2024, 6, 15),
+            updatedAt: DateTime(2024, 6, 15),
+          ),
+        ];
+
+        final csv = await CsvExporter.exportFishCatches(catches: catches);
+        final lines = csv.split('\n');
+
+        expect(lines[1], contains('大风天'));
+        expect(lines[1], contains('德州钓组'));
+        expect(lines[1], contains('5g'));
+        expect(lines[1], contains('可滑动'));
+        expect(lines[1], contains('曲柄钩'));
+        expect(lines[1], contains('2号'));
+        expect(lines[1], contains('1g'));
+      });
+
+      test('escapes carriage return in notes field', () async {
+        final catches = [
+          FishCatch(
+            id: 1,
+            imagePath: '/test/fish.jpg',
+            species: '鳜鱼',
+            length: 35,
+            fate: FishFateType.release,
+            catchTime: DateTime(2024, 6, 15),
+            notes: 'line1\rline2',
+            createdAt: DateTime(2024, 6, 15),
+            updatedAt: DateTime(2024, 6, 15),
+          ),
+        ];
+
+        final csv = await CsvExporter.exportFishCatches(catches: catches);
+
+        // Field with \r must be quoted (otherwise Excel splits the row).
+        expect(csv.contains('"line1\rline2"'), isTrue);
       });
 
       test('exports basic fish catch data', () async {

@@ -1078,6 +1078,13 @@ void main() {
                 value TEXT
               )
             ''');
+            await db.execute('''
+              CREATE TABLE user_species_alias (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_alias TEXT NOT NULL UNIQUE,
+                standard_name TEXT
+              )
+            ''');
           },
         ),
       );
@@ -1120,6 +1127,37 @@ void main() {
       expect(result.importedCount, equals(0));
       expect(result.skippedCount, equals(0));
       expect(result.errorCount, equals(0));
+
+      await tempFile.delete();
+      await tempDir.delete();
+    });
+
+    test('imports userSpeciesAlias from backup (G-5 round-trip)', () async {
+      final validJson = jsonEncode({
+        'version': 1,
+        'exportTime': DateTime.now().toIso8601String(),
+        'fishCatches': <Map<String, dynamic>>[],
+        'equipments': <Map<String, dynamic>>[],
+        'speciesHistory': <Map<String, dynamic>>[],
+        'settings': <Map<String, dynamic>>[],
+        'userSpeciesAlias': [
+          {'id': 1, 'user_alias': '黑坑鲫', 'standard_name': '鲫鱼'},
+          {'id': 2, 'user_alias': '翘嘴', 'standard_name': '红鲌'},
+        ],
+      });
+
+      final tempDir = Directory.systemTemp.createTempSync();
+      final tempFile = File('${tempDir.path}/alias_backup.json');
+      await tempFile.writeAsString(validJson);
+
+      await realDbService.importFromJsonWithDeduplication(tempFile.path);
+
+      final rows = await realDb.query('user_species_alias');
+      expect(rows.length, equals(2));
+      expect(
+        rows.map((r) => r['user_alias']),
+        containsAll(<String>['黑坑鲫', '翘嘴']),
+      );
 
       await tempFile.delete();
       await tempDir.delete();

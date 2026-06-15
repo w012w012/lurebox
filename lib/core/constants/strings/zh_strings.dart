@@ -830,4 +830,5 @@ const AppStrings chineseStrings = AppStrings(
   distributionTitle: '分布',
   priceDistribution: '价格分布',
   distributionOf: '%s分布',
+  priceOf: '%s价格',
 );

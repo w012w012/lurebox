@@ -652,6 +652,33 @@ CREATE TABLE equipments (
         expect(result.items.first.brand, equals('Shimano'));
       });
 
+      test('brand filter with % matches literally, not wildcard (LOW-1)',
+          () async {
+        // "Sh%no" 应按字面量；未转义时 LIKE '%Sh%no%' 会把 "Shimano" 误匹配。
+        await repository.create(
+          TestDataFactory.createEquipment(
+            id: 0,
+            brand: 'Sh%no',
+            model: 'Literal',
+          ),
+        );
+        await repository.create(
+          TestDataFactory.createEquipment(
+            id: 0,
+            brand: 'Shimano',
+            model: 'Wild',
+          ),
+        );
+
+        final result = await repository.getFilteredPage(
+          page: 1,
+          brand: 'Sh%no',
+        );
+
+        expect(result.items.length, equals(1));
+        expect(result.items.first.brand, equals('Sh%no'));
+      });
+
       test('filters by model', () async {
         await repository.create(
           TestDataFactory.createEquipment(

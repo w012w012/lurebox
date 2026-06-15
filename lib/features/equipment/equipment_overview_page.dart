@@ -520,7 +520,12 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
           TeslaColors.electricBlue,
         ),
         const SizedBox(height: 12),
-        _buildPriceChart(rods, '${strings.rod}${strings.priceDistribution}',
+        _buildPriceChart(
+            rods,
+            strings.distributionOf.replaceFirst(
+              '%s',
+              strings.priceOf.replaceFirst('%s', strings.rod),
+            ),
             TeslaColors.electricBlue),
       ],
     );
@@ -577,7 +582,10 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         const SizedBox(height: 12),
         _buildPriceChart(
           reels,
-          '${strings.reel}${strings.priceDistribution}',
+          strings.distributionOf.replaceFirst(
+            '%s',
+            strings.priceOf.replaceFirst('%s', strings.reel),
+          ),
           TeslaColors.electricBlue,
         ),
       ],

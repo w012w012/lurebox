@@ -184,4 +184,8 @@ mixin EquipmentStringsMixin {
 
   /// 「%s 分布」模式，避免在英文下拼接出 "RodDistribution"（无空格）
   String get distributionOf;
+
+  /// 「%s 价格」模式，避免在英文下拼接出 "RodPrice"（无空格）。
+  /// 与 [distributionOf] 嵌套可得「鱼竿价格分布 / Rod Price Distribution」。
+  String get priceOf;
 }

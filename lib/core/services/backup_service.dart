@@ -154,6 +154,7 @@ class BackupService {
       final equipments = await db.query('equipments');
       final speciesHistory = await db.query('species_history');
       final settings = await db.query('settings');
+      final userSpeciesAlias = await db.query('user_species_alias');
 
       final backupData = {
         'version': 1,
@@ -162,6 +163,8 @@ class BackupService {
         'equipments': equipments,
         'speciesHistory': speciesHistory,
         'settings': settings,
+        // 与本地 exportToJson 保持一致：包含用户自定义品种别名（FIX-7 往返一致性）。
+        'userSpeciesAlias': userSpeciesAlias,
       };
 
       final jsonString = const JsonEncoder.withIndent(' ').convert(backupData);

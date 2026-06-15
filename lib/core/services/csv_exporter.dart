@@ -6,23 +6,36 @@ import 'package:lurebox/core/utils/unit_converter.dart';
 /// CSV 导出器 - 渔获数据转换为 CSV 格式
 ///
 /// 将渔获记录转换为符合 RFC 4180 规范的 CSV 格式：
-/// - 自动转义特殊字符（逗号、引号、换行）
-/// - 支持完整字段：基本信息、位置、天气、装备、时间戳
+/// - 自动转义特殊字符（逗号、引号、换行 \n、回车 \r）
+/// - 内容前置 UTF-8 BOM，确保 Excel 正确识别中文（避免乱码）
+/// - 支持完整字段：基本信息、位置、天气、装备、钓组/钩信息、备注、时间戳
 /// - 使用 UTF-8 编码，确保中文等字符正确显示
 ///
 /// CSV 字段（按顺序）：
 /// ID, 品种, 长度(cm), 重量(kg), 命运, 钓点, 经度, 纬度,
 /// 气温(°C), 气压(hPa), 天气, 装备ID, 鱼竿ID, 鱼轮ID, 鱼饵ID,
+/// 钓组类型, 铅坠重量, 铅坠位置, 钩型, 钩号, 钩重, 备注,
 /// 图片路径, 水印图片路径, 创建时间, 更新时间, 捕获时间
 class CsvExporter {
+  /// UTF-8 字节顺序标记（BOM, U+FEFF）。
+  ///
+  /// Excel 默认按本地编码（如 GBK）打开 CSV，导致 UTF-8 中文乱码；
+  /// 前置 BOM 可让 Excel 正确识别为 UTF-8。
+  static const String _utf8Bom = '﻿';
+
   /// RFC 4180 compliant CSV field escaping.
   ///
   /// Handles: null → '', plain text → as-is,
-  /// fields containing comma/double-quote/newline → double-quote wrapped.
+  /// fields containing comma/double-quote/newline/carriage-return →
+  /// double-quote wrapped（\r 也必须转义，否则 Excel 会把单元格内的回车
+  /// 当作行分隔符而错位）。
   static String escapeCsvField(dynamic field) {
     if (field == null) return '';
     final str = field.toString();
-    if (str.contains(',') || str.contains('"') || str.contains('\n')) {
+    if (str.contains(',') ||
+        str.contains('"') ||
+        str.contains('\n') ||
+        str.contains('\r')) {
       return '"${str.replaceAll('"', '""')}"';
     }
     return str;
@@ -66,6 +79,14 @@ class CsvExporter {
       '鱼竿ID',
       '鱼轮ID',
       '鱼饵ID',
+      // 钓组/钩信息
+      '钓组类型',
+      '铅坠重量',
+      '铅坠位置',
+      '钩型',
+      '钩号',
+      '钩重',
+      '备注',
       if (includeImagePaths) ...['原始图片路径', '水印图片路径'],
       '创建时间',
       '更新时间',
@@ -135,6 +156,14 @@ class CsvExporter {
         escapeCsvField(fish.rodId?.toString() ?? ''),
         escapeCsvField(fish.reelId?.toString() ?? ''),
         escapeCsvField(fish.lureId?.toString() ?? ''),
+        // 钓组/钩信息
+        escapeCsvField(fish.rigType ?? ''),
+        escapeCsvField(fish.sinkerWeight ?? ''),
+        escapeCsvField(fish.sinkerPosition ?? ''),
+        escapeCsvField(fish.hookType ?? ''),
+        escapeCsvField(fish.hookSize ?? ''),
+        escapeCsvField(fish.hookWeight ?? ''),
+        escapeCsvField(fish.notes ?? ''),
         // 图片路径
         if (includeImagePaths) ...[
           escapeCsvField(fish.imagePath),
@@ -151,6 +180,7 @@ class CsvExporter {
 
     final csvContent = rows.map((row) => row.join(',')).join('\n');
 
-    return csvContent;
+    // 前置 UTF-8 BOM，确保 Excel 以 UTF-8 打开（中文不乱码）。
+    return '$_utf8Bom$csvContent';
   }
 }
