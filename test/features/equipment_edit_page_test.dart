@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
+import 'package:lurebox/core/widgets/error_view.dart';
 import 'package:lurebox/features/equipment/equipment_edit_page.dart';
 import 'package:lurebox/features/equipment/widgets/lure_form.dart';
 import 'package:lurebox/features/equipment/widgets/reel_form.dart';
@@ -141,6 +142,44 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.widgetWithText(PremiumButton, '保存'), findsOneWidget);
+    });
+  });
+
+  // FIX 7: 非法 id 或 DB 异常时旧实现 _isLoadingEquipment 仅普通字段，
+  // 早返回/抛错都不会 rebuild → 永久转圈。新实现用枚举状态 + setState，
+  // null/error 时展示错误 UI（带返回 AppBar），而非无限 spinner。
+  group('EquipmentEditPage - Load Error (FIX 7)', () {
+    testWidgets('shows error UI (not infinite spinner) for non-existent id',
+        (tester) async {
+      // getById 返回 null（默认 mock 行为）
+      when(() => mockService.getById(any())).thenAnswer((_) async => null);
+
+      await tester.pumpWidget(
+        createWidgetUnderTest(type: 'rod', equipmentId: 999),
+      );
+      await tester.pumpAndSettle();
+
+      // 不应停留在加载指示器
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      // 应展示错误 UI（ErrorView 内含"加载失败"文案）
+      expect(find.byType(ErrorView), findsOneWidget);
+      expect(find.text('加载失败'), findsWidgets);
+      // AppBar 提供返回手段（编辑装备标题 + 返回按钮）
+      expect(find.byType(AppBar), findsOneWidget);
+    });
+
+    testWidgets('shows error UI when getById throws', (tester) async {
+      when(() => mockService.getById(any()))
+          .thenAnswer((_) async => throw Exception('db boom'));
+
+      await tester.pumpWidget(
+        createWidgetUnderTest(type: 'rod', equipmentId: 1),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.byType(ErrorView), findsOneWidget);
+      expect(find.text('加载失败'), findsWidgets);
     });
   });
 }

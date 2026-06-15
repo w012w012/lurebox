@@ -765,5 +765,35 @@ void main() {
       // Visibility icon should show "visibility" (not visibility_off) when details hidden
       expect(find.byIcon(Icons.visibility), findsOneWidget);
     });
+
+    // FIX 2 (H-2): _blurLocation 旧实现对长度 5 的名称会 substring(0,6) 越界
+    // 抛 RangeError，且对 <=6 字符的名称几乎不脱敏。新实现：
+    //   长度 <=2 → 等长 '*'；长度 >2 → 前 2 字符 + '***'。
+    group('location masking does not throw (FIX 2)', () {
+      for (final name in ['A', 'AB', 'ABC', 'ABCDE', 'ABCDEF', 'ABCDEFGHIJ']) {
+        testWidgets('masks "$name" (len ${name.length}) without RangeError',
+            (tester) async {
+          await tester.pumpWidget(createWidgetUnderTest(
+            locationAnalysis: {
+              name: {'Bass': 1},
+            },
+            strings: _defaultStrings,
+            showDetails: false,
+          ));
+          await tester.pumpAndSettle();
+
+          // 没有异常即视为通过 RangeError 守卫
+          expect(tester.takeException(), isNull);
+          // 名称未原样泄露（脱敏后不应出现完整名称）
+          expect(find.text(name), findsNothing);
+
+          // 校验脱敏文案规则
+          final expected = name.length <= 2
+              ? '*' * name.length
+              : '${name.substring(0, 2)}***';
+          expect(find.text(expected), findsOneWidget);
+        });
+      }
+    });
   });
 }

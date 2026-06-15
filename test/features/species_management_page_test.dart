@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -207,5 +209,58 @@ void main() {
       expect(find.textContaining(AppStrings.chinese.errorLoadFailed),
           findsOneWidget);
     });
+
+    // FIX 4 (H-4): _recognizeSingle 在 await 后无 mounted 守卫时，
+    // 用户中途离开页面会触发 setState-after-dispose / ref-after-dispose。
+    // 这里在 getById 未完成时销毁页面，断言无异常抛出。
+    testWidgets('disposing page mid-recognition does not throw (mounted guard)',
+        (tester) async {
+      final delayedRepo = _DelayedRecognitionRepository(
+        pending: [
+          TestDataFactory.createFishCatch(
+            id: 1,
+            species: '待识别',
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(_buildPage(delayedRepo));
+      await tester.pump();
+      await tester.pump();
+
+      // 触发单条识别 → 首个 await（getById）被 delayedRepo 挂起
+      final recognizeBtn = find.text(AppStrings.chinese.pendingAiRecognition);
+      expect(recognizeBtn, findsOneWidget);
+      await tester.tap(recognizeBtn);
+      await tester.pump(); // setState(isRecognizing: true)
+
+      // 在 getById 完成前销毁页面（替换为空白）
+      await tester.pumpWidget(const MaterialApp(home: SizedBox()));
+
+      // 放行挂起的 getById future（此时 widget 已卸载）
+      delayedRepo.completeGetById();
+      await tester.pump();
+      await tester.pump();
+
+      // 关键断言：mounted 守卫阻止了 setState-after-dispose
+      expect(tester.takeException(), isNull);
+    });
   });
+}
+
+/// getById 可控延迟的仓库替身，用于在 await 中途卸载 widget。
+class _DelayedRecognitionRepository extends FakeFishCatchRepository {
+  _DelayedRecognitionRepository({required List<FishCatch> pending})
+      : super(pending: pending);
+
+  final Completer<FishCatch?> _getByIdCompleter = Completer<FishCatch?>();
+
+  void completeGetById() {
+    if (!_getByIdCompleter.isCompleted) {
+      _getByIdCompleter.complete(null);
+    }
+  }
+
+  @override
+  Future<FishCatch?> getById(int id) => _getByIdCompleter.future;
 }

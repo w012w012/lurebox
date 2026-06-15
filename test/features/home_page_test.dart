@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/constants/strings/app_strings.dart';
+import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/models/stats_models.dart';
 import 'package:lurebox/core/providers/home_view_model.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/providers/pending_recognition_providers.dart';
 import 'package:lurebox/features/home/home_page.dart';
 
 import '../helpers/test_helpers.dart';
@@ -14,6 +16,17 @@ void main() {
     setUpDatabaseForTesting();
     registerFallbackValues();
   });
+
+  // HomePage 的待识别卡片会 watch pendingRecognitionCountProvider/
+  // pendingRecognitionCatchesProvider，它们直读 DatabaseProvider 单例。
+  // 若不覆盖，测试会读到其它测试在全局单例上泄漏的 DB 状态，
+  // 导致 “shows dashboard stats” 在全量运行下偶发失败（FIX 8）。
+  // 这里把这两个 provider 固定为确定值，彻底隔离 DB 单例。
+  List<Override> _isolatedPendingOverrides() => [
+        pendingRecognitionCountProvider.overrideWith((ref) async => 0),
+        pendingRecognitionCatchesProvider
+            .overrideWith((ref) async => <FishCatch>[]),
+      ];
 
   group('HomePage', () {
     testWidgets('renders app bar with title', (tester) async {
@@ -25,6 +38,7 @@ void main() {
             homeViewModelProvider
                 .overrideWith((ref) => _MockHomeViewModel(mockState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
+            ..._isolatedPendingOverrides(),
           ],
           child: const MaterialApp(
             home: HomePage(),
@@ -47,6 +61,7 @@ void main() {
             homeViewModelProvider
                 .overrideWith((ref) => _MockHomeViewModel(loadingState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
+            ..._isolatedPendingOverrides(),
           ],
           child: const MaterialApp(
             home: HomePage(),
@@ -72,6 +87,7 @@ void main() {
             homeViewModelProvider
                 .overrideWith((ref) => _MockHomeViewModel(errorState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
+            ..._isolatedPendingOverrides(),
           ],
           child: const MaterialApp(
             home: HomePage(),
@@ -99,6 +115,7 @@ void main() {
             homeViewModelProvider
                 .overrideWith((ref) => _MockHomeViewModel(loadedState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
+            ..._isolatedPendingOverrides(),
           ],
           child: const MaterialApp(
             home: HomePage(),
@@ -133,6 +150,7 @@ void main() {
             homeViewModelProvider
                 .overrideWith((ref) => _MockHomeViewModel(loadedState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
+            ..._isolatedPendingOverrides(),
           ],
           child: const MaterialApp(
             home: HomePage(),
@@ -163,6 +181,7 @@ void main() {
             homeViewModelProvider
                 .overrideWith((ref) => _MockHomeViewModel(loadedState)),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
+            ..._isolatedPendingOverrides(),
           ],
           child: const MaterialApp(
             home: HomePage(),
@@ -191,6 +210,7 @@ void main() {
           overrides: [
             homeViewModelProvider.overrideWith((ref) => mockVm),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
+            ..._isolatedPendingOverrides(),
           ],
           child: const MaterialApp(
             home: HomePage(),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -36,7 +37,8 @@ class CameraPage extends ConsumerStatefulWidget {
   ConsumerState<CameraPage> createState() => _CameraPageState();
 }
 
-class _CameraPageState extends ConsumerState<CameraPage> {
+class _CameraPageState extends ConsumerState<CameraPage>
+    with WidgetsBindingObserver {
   final _speciesController = TextEditingController();
   final _lengthController = TextEditingController();
   final _weightController = TextEditingController();
@@ -44,13 +46,18 @@ class _CameraPageState extends ConsumerState<CameraPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initialize();
     });
     _lengthController.addListener(_onLengthChanged);
 
-    // Listen to settings changes for unit updates
-    ref.listen<UnitSettings>(
+    // Listen to settings changes for unit updates.
+    // initState 中必须用 listenManual：ref.listen 只能在 build 内调用
+    // （riverpod 2.x 在 debug 下会断言失败，release 下首帧后订阅被清除）。
+    // listenManual 在 initState 中调用时，订阅随 element 卸载自动释放，
+    // 无需在 dispose 中手动 close。
+    ref.listenManual<UnitSettings>(
       appSettingsProvider.select((s) => s.units),
       (prev, next) {
         final state = ref.read(cameraViewModelProvider);
@@ -105,6 +112,33 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     return state.species.isNotEmpty || state.length > 0;
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState lifecycleState) {
+    super.didChangeAppLifecycleState(lifecycleState);
+    // 仅在尚未拍照（相机预览阶段）时管理相机硬件，避免在表单页
+    // 后台切换时误释放正在编辑的状态。
+    final captureState = ref.read(cameraViewModelProvider).captureState;
+    if (captureState == CameraCaptureState.pictureTaken ||
+        captureState == CameraCaptureState.saving) {
+      return;
+    }
+
+    final vm = ref.read(cameraViewModelProvider.notifier);
+    switch (lifecycleState) {
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.detached:
+        // 进入后台：释放相机硬件，避免 Android 黑屏与硬件占用
+        vm.disposeCamera();
+      case AppLifecycleState.resumed:
+        // 回到前台：若相机未初始化则重新初始化
+        if (!ref.read(cameraViewModelProvider).isCameraInitialized) {
+          unawaited(vm.initializeCamera());
+        }
+    }
+  }
+
   Future<bool> _showDiscardDialog(
     BuildContext context,
     AppStrings strings,
@@ -139,6 +173,7 @@ class _CameraPageState extends ConsumerState<CameraPage> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     // 释放相机资源
     try {
       final vm = ref.read(cameraViewModelProvider.notifier);

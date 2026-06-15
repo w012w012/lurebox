@@ -135,9 +135,13 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       );
     });
 
+    // 在首个 await 前捕获依赖，避免 await 后 widget 已卸载时仍读取 ref。
+    final repository = ref.read(fishCatchRepositoryProvider);
+    final settings = ref.read(aiRecognitionSettingsProvider);
+
     try {
-      final repository = ref.read(fishCatchRepositoryProvider);
       final fishCatch = await repository.getById(fish.id);
+      if (!mounted) return;
       if (fishCatch == null || fishCatch.imagePath.isEmpty) {
         setState(() {
           _recognitionStates[fish.id] = SingleRecognitionState(
@@ -148,7 +152,9 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       }
 
       final file = File(fishCatch.imagePath);
-      if (!await file.exists()) {
+      final fileExists = await file.exists();
+      if (!mounted) return;
+      if (!fileExists) {
         setState(() {
           _recognitionStates[fish.id] = SingleRecognitionState(
             error: ref.read(currentStringsProvider).errorImageNotFound,
@@ -157,7 +163,6 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         return;
       }
 
-      final settings = ref.read(aiRecognitionSettingsProvider);
       final currentConfig = settings.providerConfigs[settings.currentProvider];
       if (currentConfig == null || currentConfig.apiKey.isEmpty) {
         setState(() {
@@ -170,6 +175,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
 
       final service = FishRecognitionService();
       final result = await service.identifySpecies(file, settings);
+      if (!mounted) return;
 
       // 构建多选项列表
       final options = <AiRecognitionOption>[];
@@ -216,6 +222,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         );
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _recognitionStates[fish.id] = SingleRecognitionState(
           error: ref
@@ -348,13 +355,16 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       for (final fish in pendingCatches) {
         try {
           final fishCatch = await repository.getById(fish.id);
+          if (!mounted) return;
           if (fishCatch == null || fishCatch.imagePath.isEmpty) {
             setState(() => _batchFailed++);
             continue;
           }
 
           final file = File(fishCatch.imagePath);
-          if (!await file.exists()) {
+          final fileExists = await file.exists();
+          if (!mounted) return;
+          if (!fileExists) {
             setState(() => _batchFailed++);
             continue;
           }
@@ -367,20 +377,23 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           }
 
           final result = await service.identifySpecies(file, settings);
+          if (!mounted) return;
 
           if (result.primarySpecies.chineseName.isNotEmpty) {
             await repository.updateSpecies(
               fish.id,
               result.primarySpecies.chineseName,
             );
+            if (!mounted) return;
             setState(() => _batchSuccess++);
           } else {
             setState(() => _batchFailed++);
           }
         } catch (e) {
+          if (!mounted) return;
           setState(() => _batchFailed++);
         } finally {
-          setState(() => _batchProgress++);
+          if (mounted) setState(() => _batchProgress++);
         }
       }
 
@@ -397,7 +410,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         );
       }
     } finally {
-      setState(() => _isBatchRecognizing = false);
+      if (mounted) setState(() => _isBatchRecognizing = false);
     }
   }
 }

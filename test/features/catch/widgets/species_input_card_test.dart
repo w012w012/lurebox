@@ -134,6 +134,9 @@ class FakeCameraViewModel extends StateNotifier<CameraState>
   void disposeCamera() {}
 
   @override
+  void markCameraUninitialized() {}
+
+  @override
   bool updateShouldNotify(CameraState old, CameraState current) => true;
 
   @override

@@ -844,4 +844,53 @@ void main() {
       expect(viewModel.state.locationError, isNotNull);
     });
   });
+
+  // 相机重入陈旧状态（FIX 6）：dispose 后必须同步清掉 isCameraInitialized，
+  // 否则重新进入页面首帧会对 null controller 解引用。
+  group('disposeCamera resets isCameraInitialized (FIX 6)', () {
+    test('markCameraUninitialized sets isCameraInitialized false', () {
+      final vm = _SeamCameraViewModel(
+        mockFishCatchService,
+        mockEquipmentService,
+        strings,
+      )..setCameraInitializedForTest(true);
+      expect(vm.state.isCameraInitialized, true);
+
+      vm.markCameraUninitialized();
+
+      expect(vm.state.isCameraInitialized, false);
+      vm.dispose();
+    });
+
+    test('disposeCamera leaves isCameraInitialized false', () {
+      final vm = _SeamCameraViewModel(
+        mockFishCatchService,
+        mockEquipmentService,
+        strings,
+      )..setCameraInitializedForTest(true);
+
+      vm.disposeCamera();
+
+      expect(vm.state.isCameraInitialized, false);
+      vm.dispose();
+    });
+
+    test('markCameraUninitialized is a no-op when already false', () {
+      expect(viewModel.state.isCameraInitialized, false);
+
+      viewModel.markCameraUninitialized();
+
+      expect(viewModel.state.isCameraInitialized, false);
+    });
+  });
+}
+
+/// 测试用子类：暴露同步设置 isCameraInitialized 的能力，
+/// 用于验证 disposeCamera/markCameraUninitialized 行为。
+class _SeamCameraViewModel extends CameraViewModel {
+  _SeamCameraViewModel(super.a, super.b, super.c);
+
+  void setCameraInitializedForTest(bool value) {
+    state = state.copyWith(isCameraInitialized: value);
+  }
 }

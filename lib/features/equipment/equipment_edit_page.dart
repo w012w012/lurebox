@@ -8,8 +8,10 @@ import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/providers/equipment_edit_state.dart';
 import 'package:lurebox/core/providers/equipment_edit_view_model.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/services/app_logger.dart';
 import 'package:lurebox/core/utils/legacy_value_migrator.dart';
 import 'package:lurebox/core/utils/unit_converter.dart';
+import 'package:lurebox/core/widgets/error_view.dart';
 import 'package:lurebox/features/equipment/widgets/lure_form.dart';
 import 'package:lurebox/features/equipment/widgets/reel_form.dart';
 import 'package:lurebox/features/equipment/widgets/rod_form.dart';
@@ -17,6 +19,9 @@ import 'package:lurebox/widgets/common/app_snack_bar.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 import 'package:lurebox/widgets/common/premium_input.dart';
+
+/// 装备编辑页加载状态。
+enum _EquipmentLoadStatus { idle, loading, loaded, error }
 
 class EquipmentEditPage extends ConsumerStatefulWidget {
   const EquipmentEditPage({required this.type, super.key, this.equipmentId});
@@ -29,7 +34,7 @@ class EquipmentEditPage extends ConsumerStatefulWidget {
 class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   final _formKey = GlobalKey<FormState>();
   final Map<String, TextEditingController> _controllers = {};
-  bool _isLoadingEquipment = false;
+  _EquipmentLoadStatus _loadStatus = _EquipmentLoadStatus.idle;
 
   // _params is computed dynamically to always match widget.type
   ({String type, Equipment? equipment}) get _params =>
@@ -38,22 +43,36 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Edit mode - load equipment data
-    if (widget.equipmentId != null && !_isLoadingEquipment) {
+    // Edit mode - load equipment data once.
+    // 仅在 idle 时触发，避免 didChangeDependencies 多次回调重复加载
+    // 而覆盖用户未保存的编辑。
+    if (widget.equipmentId != null &&
+        _loadStatus == _EquipmentLoadStatus.idle) {
       _loadEquipmentData();
     }
   }
 
   Future<void> _loadEquipmentData() async {
-    if (widget.equipmentId == null || _isLoadingEquipment) return;
+    if (widget.equipmentId == null ||
+        _loadStatus == _EquipmentLoadStatus.loading) {
+      return;
+    }
 
-    _isLoadingEquipment = true;
+    setState(() => _loadStatus = _EquipmentLoadStatus.loading);
     try {
       final service = ref.read(equipmentServiceProvider);
       final equipment = await service.getById(widget.equipmentId!);
+      if (!mounted) return;
 
-      // Equipment not found - just return, don't show error for edit
-      if (equipment == null) return;
+      // Equipment not found - surface an error state instead of spinning forever.
+      if (equipment == null) {
+        AppLogger.w(
+          'EquipmentEditPage',
+          'Equipment not found: id=${widget.equipmentId}',
+        );
+        setState(() => _loadStatus = _EquipmentLoadStatus.error);
+        return;
+      }
 
       // Apply legacy migration to get English values
       final equipmentMap = LegacyValueMigrator.migrateEquipmentMap(
@@ -80,8 +99,18 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
 
       // Sync type-specific controllers from equipment
       _syncTypeSpecificControllers(migratedEquipment);
-    } finally {
-      _isLoadingEquipment = false;
+
+      if (!mounted) return;
+      setState(() => _loadStatus = _EquipmentLoadStatus.loaded);
+    } on Object catch (e, st) {
+      AppLogger.e(
+        'EquipmentEditPage',
+        'Failed to load equipment id=${widget.equipmentId}',
+        e,
+        st,
+      );
+      if (!mounted) return;
+      setState(() => _loadStatus = _EquipmentLoadStatus.error);
     }
   }
 
@@ -149,8 +178,10 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
     final notifier = ref.read(equipmentEditViewModelProvider(params).notifier);
 
     // Show loading indicator while fetching equipment data
-    if (_isLoadingEquipment && widget.equipmentId != null) {
+    if (_loadStatus == _EquipmentLoadStatus.loading &&
+        widget.equipmentId != null) {
       return Scaffold(
+        appBar: AppBar(centerTitle: true),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -160,6 +191,22 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
               Text(strings.loading),
             ],
           ),
+        ),
+      );
+    }
+
+    // Show error UI (with AppBar back affordance) instead of an infinite spinner
+    // when the equipment id is invalid or loading threw.
+    if (_loadStatus == _EquipmentLoadStatus.error) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(strings.editEquipment),
+          centerTitle: true,
+        ),
+        body: ErrorView(
+          message: strings.errorLoadFailed,
+          strings: strings,
+          onRetry: _loadEquipmentData,
         ),
       );
     }

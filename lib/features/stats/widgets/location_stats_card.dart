@@ -47,13 +47,14 @@ class _LocationStatsCardState extends State<LocationStatsCard>
     super.dispose();
   }
 
+  /// 对钓点名称脱敏：保留前 2 个字符，其余以固定 *** 掩码替换，
+  /// 既隐藏大部分位置信息，又不泄露名称长度。
+  /// 长度 <= 2 时整体以等长 * 替换，避免 substring 越界。
   String _blurLocation(String location) {
-    if (location.length <= 4) {
+    if (location.length <= 2) {
       return '*' * location.length;
     }
-    final visiblePart = location.substring(0, 6);
-    final blurredPart = '*' * (location.length - 6);
-    return visiblePart + blurredPart;
+    return '${location.substring(0, 2)}***';
   }
 
   @override

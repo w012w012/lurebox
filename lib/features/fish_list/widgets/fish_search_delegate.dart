@@ -3,7 +3,7 @@ import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/widgets/common/image_cache_helper.dart';
 
-class FishSearchDelegate extends SearchDelegate<FishCatch> {
+class FishSearchDelegate extends SearchDelegate<FishCatch?> {
   FishSearchDelegate(this.allCatches, this.strings, this.onTap);
   final List<FishCatch> allCatches;
   final AppStrings strings;
@@ -20,7 +20,9 @@ class FishSearchDelegate extends SearchDelegate<FishCatch> {
   Widget buildLeading(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
-      onPressed: () => close(context, allCatches.first),
+      // 返回 null：渔获列表为空时 allCatches.first 会抛 StateError，
+      // 改为返回空结果，调用方已通过 .then 安全处理 null。
+      onPressed: () => close(context, null),
     );
   }
 

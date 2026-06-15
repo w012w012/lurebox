@@ -441,6 +441,19 @@ class CameraViewModel extends StateNotifier<CameraState> {
   /// 释放相机资源但不销毁 ViewModel
   void disposeCamera() {
     _cameraHelper.dispose();
+    // 同步标记相机为未初始化，避免页面再次进入时首帧用 null controller
+    // 构建 CameraPreview（reset() 只在下一帧的 post-frame 回调中执行）。
+    markCameraUninitialized();
+  }
+
+  /// 同步将相机标记为未初始化。
+  ///
+  /// 用于页面 dispose 时立即让 isCameraInitialized=false，
+  /// 这样重新进入页面的首帧会渲染加载视图而非对空 controller 解引用。
+  void markCameraUninitialized() {
+    if (state.isCameraInitialized) {
+      state = state.copyWith(isCameraInitialized: false);
+    }
   }
 
   @override
