@@ -104,6 +104,90 @@ void main() {
         ).called(1);
       });
 
+      test('uses detected MIME type for PNG images', () async {
+        // Arrange: .png 临时文件，验证 detectImageMediaType 被使用
+        final tempDir = Directory.systemTemp.createTempSync('gemini_png_');
+        final pngImage = File('${tempDir.path}/fish.png')
+          ..writeAsBytesSync([0x89, 0x50, 0x4E, 0x47]);
+        addTearDown(() => tempDir.deleteSync(recursive: true));
+
+        final mockResponse = _createUtf8Response(
+            jsonEncode(_createSuccessfulGeminiResponse()), 200);
+
+        when(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: captureAny(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
+
+        // Act
+        await provider.identifySpecies(pngImage, config);
+
+        // Assert
+        final captured = verify(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: captureAny(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).captured;
+        final body = jsonDecode(captured[0] as String) as Map<String, dynamic>;
+        final parts =
+            (body['contents'] as List<dynamic>)[0]['parts'] as List<dynamic>;
+        expect(parts[0]['inlineData']['mimeType'], equals('image/png'));
+      });
+
+      test('parses Chinese species when Content-Type lacks charset', () async {
+        // Arrange: 裸 application/json + 中文，验证 UTF-8 解码（H-11）
+        final imageFile = File('test/fixtures/test_fish.jpg');
+        final chineseResponse = {
+          'candidates': [
+            {
+              'content': {
+                'parts': [
+                  {
+                    'text': jsonEncode({
+                      'primarySpecies': {
+                        'chineseName': '鲈鱼',
+                        'scientificName': 'Lateolabrax japonicus',
+                        'confidence': 88,
+                      },
+                      'confidence': 88,
+                      'alternatives': [],
+                      'notes': '',
+                    }),
+                  },
+                ],
+              },
+            }
+          ],
+        };
+        final bareResponse = http.Response.bytes(
+          utf8.encode(jsonEncode(chineseResponse)),
+          200,
+          headers: {'content-type': 'application/json'},
+        );
+
+        when(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+            encoding: any(named: 'encoding'),
+          ),
+        ).thenAnswer((_) async => bareResponse);
+
+        // Act
+        final result = await provider.identifySpecies(imageFile, config);
+
+        // Assert: 中文未乱码
+        expect(result.primarySpecies.chineseName, equals('鲈鱼'));
+      });
+
       test('includes systemInstruction with fishing expert prompt', () async {
         // Arrange
         final imageFile = File('test/fixtures/test_fish.jpg');
@@ -204,7 +288,7 @@ void main() {
         expect(result.primarySpecies.chineseName, equals('BlackFish'));
       });
 
-      test('uses correct URL format for Gemini API', () async {
+      test('sends API key in x-goog-api-key header, not the URL', () async {
         // Arrange
         final imageFile = File('test/fixtures/test_fish.jpg');
         final responseJson = _createSuccessfulGeminiResponse();
@@ -222,17 +306,29 @@ void main() {
         // Act
         await provider.identifySpecies(imageFile, config);
 
-        // Assert - verify URL contains correct format
-        verify(
+        // Assert - key lives in header, never the URL
+        final captured = verify(
           () => mockHttpClient.post(
-            Uri.parse(
-              'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=test-api-key',
-            ),
-            headers: any(named: 'headers'),
+            captureAny(),
+            headers: captureAny(named: 'headers'),
             body: any(named: 'body'),
             encoding: any(named: 'encoding'),
           ),
-        ).called(1);
+        ).captured;
+
+        final url = captured[0] as Uri;
+        expect(
+          url.toString(),
+          equals(
+            'https://generativelanguage.googleapis.com/v1beta/models/'
+            'gemini-2.0-flash:generateContent',
+          ),
+        );
+        expect(url.queryParameters.containsKey('key'), isFalse);
+        expect(url.toString(), isNot(contains('test-api-key')));
+
+        final headers = captured[1] as Map<String, String>;
+        expect(headers['x-goog-api-key'], equals('test-api-key'));
       });
 
       test('includes generationConfig in request', () async {

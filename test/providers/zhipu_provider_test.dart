@@ -32,6 +32,29 @@ void main() {
       test('urlPathStrategy is useDirect', () {
         expect(provider.urlPathStrategy, equals(UrlPathStrategy.useDirect));
       });
+
+      test('buildUrl on default base yields documented endpoint', () {
+        expect(
+          provider.buildUrl(provider.defaultBaseUrl),
+          equals(
+            Uri.parse(
+              'https://open.bigmodel.cn/api/paas/v4/chat/completions',
+            ),
+          ),
+        );
+      });
+
+      test('buildUrl uses user-supplied full path directly', () {
+        expect(
+          provider.buildUrl('https://proxy.example.com/api/paas/v4/'
+              'chat/completions'),
+          equals(
+            Uri.parse(
+              'https://proxy.example.com/api/paas/v4/chat/completions',
+            ),
+          ),
+        );
+      });
     });
 
     runOpenAICompatibleProviderTests(

@@ -140,7 +140,7 @@ void main() {
               .having(
                 (e) => e.type,
                 'type',
-                equals(FishRecognitionErrorType.apiKeyInvalid),
+                equals(FishRecognitionErrorType.unknown),
               )
               .having(
                 (e) => e.message,
@@ -164,7 +164,7 @@ void main() {
           isA<FishRecognitionException>().having(
             (e) => e.type,
             'type',
-            equals(FishRecognitionErrorType.apiKeyInvalid),
+            equals(FishRecognitionErrorType.unknown),
           ),
         ),
       );

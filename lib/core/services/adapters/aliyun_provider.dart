@@ -10,11 +10,11 @@ class AliyunFishRecognitionProvider extends OpenAICompatibleProvider {
 
   @override
   String get defaultBaseUrl =>
-      'https://dashscope.aliyuncs.com/compatible-mode/v1';
+      'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
 
   @override
   String get defaultModel => 'qwen-vl-max';
 
   @override
-  UrlPathStrategy get urlPathStrategy => UrlPathStrategy.appendPath;
+  UrlPathStrategy get urlPathStrategy => UrlPathStrategy.useDirect;
 }

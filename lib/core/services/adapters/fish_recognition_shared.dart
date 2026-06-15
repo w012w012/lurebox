@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:http/http.dart' as http;
@@ -8,6 +9,25 @@ import 'package:lurebox/core/services/fish_recognition_service.dart';
 /// Reuses a single connection pool instead of creating a new client per request,
 /// which leaks sockets. Disposed when the app process exits.
 final http.Client sharedHttpClient = http.Client();
+
+/// AI 识别请求的统一超时时间。
+///
+/// 视觉大模型推理较慢，10 秒过短会频繁误报超时；统一为 45 秒。
+const Duration aiRequestTimeout = Duration(seconds: 45);
+
+/// 以 UTF-8 解码 HTTP 响应体。
+///
+/// http 包的 [http.Response.body] 在 Content-Type 缺少 charset 参数时
+/// （例如裸 `application/json`，国内服务商常见）会回退到 latin1 解码，
+/// 导致中文物种名变成乱码。此处始终以 [http.Response.bodyBytes] 按 UTF-8
+/// 解码；若字节非法则回退到允许畸形字节的宽松解码，避免抛出异常。
+String decodeUtf8Body(http.Response response) {
+  try {
+    return utf8.decode(response.bodyBytes);
+  } on FormatException {
+    return utf8.decode(response.bodyBytes, allowMalformed: true);
+  }
+}
 
 /// Detect image MIME type from file extension.
 String detectImageMediaType(File image) {

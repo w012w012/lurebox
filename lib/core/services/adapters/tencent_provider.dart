@@ -9,8 +9,7 @@ class TencentFishRecognitionProvider extends OpenAICompatibleProvider {
   TencentFishRecognitionProvider({super.client});
 
   @override
-  String get defaultBaseUrl =>
-      'https://api.hunyuan.cloud.tencent.com/v1/chat/completions';
+  String get defaultBaseUrl => 'https://api.hunyuan.cloud.tencent.com';
 
   @override
   String get defaultModel => 'hunyuan-vision';

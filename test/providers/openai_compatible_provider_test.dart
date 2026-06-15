@@ -703,6 +703,42 @@ void main() {
     });
   });
 
+  group('OpenAICompatibleProvider - H-11 UTF-8 decoding', () {
+    test('parses Chinese species when Content-Type lacks charset', () async {
+      // Arrange: 裸 application/json（无 charset），http 的 body 会回退 latin1
+      final testImage = File('test/fixtures/test_fish.jpg');
+      final bareResponse = http.Response.bytes(
+        utf8.encode(
+          jsonEncode(
+            _createSuccessfulOpenAIResponse(
+              chineseName: '鲈鱼',
+              scientificName: 'Lateolabrax japonicus',
+              confidence: 85,
+            ),
+          ),
+        ),
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+
+      when(
+        () => mockClient.post(
+          any(),
+          headers: any(named: 'headers'),
+          body: any(named: 'body'),
+        ),
+      ).thenAnswer((_) async => bareResponse);
+
+      final provider = TestOpenAICompatibleProvider(client: mockClient);
+
+      // Act
+      final result = await provider.identifySpecies(testImage, testConfig);
+
+      // Assert: 中文未乱码
+      expect(result.primarySpecies.chineseName, equals('鲈鱼'));
+    });
+  });
+
   group('OpenAICompatibleProvider - handleOpenAIResponse', () {
     late TestOpenAICompatibleProvider provider;
 

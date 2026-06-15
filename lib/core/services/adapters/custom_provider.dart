@@ -57,8 +57,8 @@ class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
     final baseUrl = config.baseUrl ?? '';
     if (baseUrl.isEmpty) {
       throw const FishRecognitionException(
-        FishRecognitionErrorType.apiKeyInvalid,
-        '未配置 Base URL',
+        FishRecognitionErrorType.unknown,
+        '请配置 Base URL',
       );
     }
 
@@ -70,6 +70,9 @@ class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
     final modelName = config.modelName?.isNotEmpty ?? false
         ? config.modelName!
         : defaultModel;
+
+    // 自动检测图片 MIME 类型
+    final mediaType = detectImageMediaType(image);
 
     // 构建请求体 - 使用 OpenAI 兼容的 vision API
     final requestBody = {
@@ -89,7 +92,7 @@ class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
             {
               'type': 'image_url',
               'image_url': {
-                'url': 'data:image/jpeg;base64,$base64Image',
+                'url': 'data:$mediaType;base64,$base64Image',
               },
             },
           ],
@@ -111,7 +114,7 @@ class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
     AppLogger.i('CustomProvider', 'URL: $url');
 
     try {
-      // 发送请求，设置 10 秒超时
+      // 发送请求，设置统一超时
       final response = await client
           .post(
             url,
@@ -121,7 +124,7 @@ class CustomFishRecognitionProvider extends OpenAICompatibleProvider {
             },
             body: jsonEncode(requestBody),
           )
-          .timeout(const Duration(seconds: 10));
+          .timeout(aiRequestTimeout);
 
       // 处理响应
       return handleOpenAIResponse(response);

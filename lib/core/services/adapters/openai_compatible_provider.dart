@@ -142,7 +142,7 @@ abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
     final url = buildUrl(effectiveBaseUrl);
 
     try {
-      // 发送请求，设置 10 秒超时
+      // 发送请求，设置统一超时
       final response = await _client
           .post(
             url,
@@ -152,7 +152,7 @@ abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
             },
             body: jsonEncode(requestBody),
           )
-          .timeout(const Duration(seconds: 10));
+          .timeout(aiRequestTimeout);
 
       // 处理响应
       return handleOpenAIResponse(response);
@@ -192,7 +192,8 @@ abstract class OpenAICompatibleProvider implements FishRecognitionProvider {
 
     // 解析响应体
     try {
-      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      // 以 UTF-8 解码字节，避免裸 application/json 触发 latin1 回退导致中文乱码
+      final json = jsonDecode(decodeUtf8Body(response)) as Map<String, dynamic>;
 
       // 检查 API 错误
       if (json.containsKey('error')) {

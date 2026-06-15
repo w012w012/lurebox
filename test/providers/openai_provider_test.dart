@@ -32,6 +32,20 @@ void main() {
       test('urlPathStrategy is appendPath', () {
         expect(provider.urlPathStrategy, equals(UrlPathStrategy.appendPath));
       });
+
+      test('buildUrl on default base yields documented endpoint', () {
+        expect(
+          provider.buildUrl(provider.defaultBaseUrl),
+          equals(Uri.parse('https://api.openai.com/v1/chat/completions')),
+        );
+      });
+
+      test('buildUrl appends path on user-supplied host override', () {
+        expect(
+          provider.buildUrl('https://proxy.example.com'),
+          equals(Uri.parse('https://proxy.example.com/v1/chat/completions')),
+        );
+      });
     });
 
     runOpenAICompatibleProviderTests(

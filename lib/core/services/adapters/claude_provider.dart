@@ -30,8 +30,11 @@ class ClaudeFishRecognitionProvider implements FishRecognitionProvider {
     final base64Image = base64Encode(imageBytes);
 
     // 构建请求体 - 使用 Anthropic Messages API
+    final modelName = config.modelName?.isNotEmpty ?? false
+        ? config.modelName!
+        : 'claude-3-5-sonnet-20241022';
     final requestBody = {
-      'model': config.modelName ?? 'claude-3-5-sonnet-20241022',
+      'model': modelName,
       'max_tokens': 2048,
       'system': _systemPrompt,
       'messages': [
@@ -56,11 +59,16 @@ class ClaudeFishRecognitionProvider implements FishRecognitionProvider {
     };
 
     // 构建请求 URL
-    final baseUrl = config.baseUrl ?? 'https://api.anthropic.com';
+    final rawBaseUrl = config.baseUrl?.isNotEmpty ?? false
+        ? config.baseUrl!
+        : 'https://api.anthropic.com';
+    final baseUrl = rawBaseUrl.endsWith('/')
+        ? rawBaseUrl.substring(0, rawBaseUrl.length - 1)
+        : rawBaseUrl;
     final url = Uri.parse('$baseUrl/v1/messages');
 
     try {
-      // 发送请求，设置 10 秒超时
+      // 发送请求，设置统一超时
       final response = await _client
           .post(
             url,
@@ -71,7 +79,7 @@ class ClaudeFishRecognitionProvider implements FishRecognitionProvider {
             },
             body: jsonEncode(requestBody),
           )
-          .timeout(const Duration(seconds: 10));
+          .timeout(aiRequestTimeout);
 
       // 处理响应
       return _handleResponse(response);
@@ -108,8 +116,8 @@ class ClaudeFishRecognitionProvider implements FishRecognitionProvider {
 
     // 解析响应体
     try {
-      // Use utf8.decode for proper Chinese character support
-      final bodyString = utf8.decode(response.bodyBytes);
+      // 以 UTF-8 解码字节，确保中文物种名不乱码
+      final bodyString = decodeUtf8Body(response);
       final json = jsonDecode(bodyString) as Map<String, dynamic>;
 
       // 检查 API 错误

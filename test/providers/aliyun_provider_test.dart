@@ -17,10 +17,12 @@ void main() {
         // No resources to clean up - mocks are garbage collected
       });
 
-      test('defaultBaseUrl points to DashScope endpoint', () {
+      test('defaultBaseUrl is the full DashScope compatible-mode endpoint', () {
         expect(
           provider.defaultBaseUrl,
-          equals('https://dashscope.aliyuncs.com/compatible-mode/v1'),
+          equals(
+            'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+          ),
         );
       });
 
@@ -28,8 +30,26 @@ void main() {
         expect(provider.defaultModel, equals('qwen-vl-max'));
       });
 
-      test('urlPathStrategy is appendPath', () {
-        expect(provider.urlPathStrategy, equals(UrlPathStrategy.appendPath));
+      test('urlPathStrategy is useDirect', () {
+        expect(provider.urlPathStrategy, equals(UrlPathStrategy.useDirect));
+      });
+
+      test('buildUrl on default base yields documented endpoint', () {
+        expect(
+          provider.buildUrl(provider.defaultBaseUrl),
+          equals(
+            Uri.parse(
+              'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+            ),
+          ),
+        );
+      });
+
+      test('buildUrl uses user-supplied full path directly', () {
+        expect(
+          provider.buildUrl('https://proxy.example.com/v1/chat/completions'),
+          equals(Uri.parse('https://proxy.example.com/v1/chat/completions')),
+        );
       });
     });
 

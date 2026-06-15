@@ -205,6 +205,94 @@ void main() {
         );
       });
 
+      test('uses detected MIME type for PNG images', () async {
+        // Arrange: 写入 .png 临时文件，验证使用 detectImageMediaType
+        final tempDir = Directory.systemTemp.createTempSync('minimax_png_');
+        final pngImage = File('${tempDir.path}/fish.png')
+          ..writeAsBytesSync([0x89, 0x50, 0x4E, 0x47]);
+        addTearDown(() => tempDir.deleteSync(recursive: true));
+
+        final mockResponse = createUtf8Response(
+          {
+            'base_resp': {'status_code': 0, 'status_msg': ''},
+            'choices': [
+              {
+                'message': {
+                  'role': 'assistant',
+                  'content':
+                      '{"primarySpecies":{"chineseName":"鲈鱼","scientificName":"Lateolabrax japonicus","confidence":85},"confidence":85,"alternatives":[],"notes":""}',
+                },
+              },
+            ],
+          },
+          200,
+        );
+
+        when(
+          () => mockHttpClient.post(
+            captureAny(),
+            headers: any(named: 'headers'),
+            body: captureAny(named: 'body'),
+          ),
+        ).thenAnswer((_) async => mockResponse);
+
+        // Act
+        await provider.identifySpecies(pngImage, testConfig);
+
+        // Assert
+        final captured = verify(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: captureAny(named: 'body'),
+          ),
+        ).captured;
+        final body = jsonDecode(captured[0] as String) as Map<String, dynamic>;
+        final userContent =
+            (body['messages'] as List<dynamic>)[1]['content'] as List<dynamic>;
+        expect(
+          userContent[1]['image_url']['url'],
+          startsWith('data:image/png;base64,'),
+        );
+      });
+
+      test('parses Chinese species when Content-Type lacks charset', () async {
+        // Arrange: 裸 application/json，验证 UTF-8 解码（H-11）
+        final testImage = File('test/fixtures/test_fish.jpg');
+        final bareResponse = http.Response.bytes(
+          utf8.encode(
+            jsonEncode({
+              'base_resp': {'status_code': 0, 'status_msg': ''},
+              'choices': [
+                {
+                  'message': {
+                    'role': 'assistant',
+                    'content':
+                        '{"primarySpecies":{"chineseName":"鳜鱼","scientificName":"Siniperca chuatsi","confidence":90},"confidence":90,"alternatives":[],"notes":""}',
+                  },
+                },
+              ],
+            }),
+          ),
+          200,
+          headers: {'content-type': 'application/json'},
+        );
+
+        when(
+          () => mockHttpClient.post(
+            any(),
+            headers: any(named: 'headers'),
+            body: any(named: 'body'),
+          ),
+        ).thenAnswer((_) async => bareResponse);
+
+        // Act
+        final result = await provider.identifySpecies(testImage, testConfig);
+
+        // Assert
+        expect(result.primarySpecies.chineseName, equals('鳜鱼'));
+      });
+
       test('parses response with alternatives correctly', () async {
         // Arrange
         final testImage = File('test/fixtures/test_fish.jpg');

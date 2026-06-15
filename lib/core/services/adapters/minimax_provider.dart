@@ -29,9 +29,15 @@ class MiniMaxFishRecognitionProvider implements FishRecognitionProvider {
     final imageBytes = await image.readAsBytes();
     final base64Image = base64Encode(imageBytes);
 
+    // 自动检测图片 MIME 类型
+    final mediaType = detectImageMediaType(image);
+
     // 构建请求体 - MiniMax 多模态 API
+    final modelName = config.modelName?.isNotEmpty ?? false
+        ? config.modelName!
+        : 'abab6.5s-chat';
     final requestBody = {
-      'model': config.modelName ?? 'abab6.5s-chat',
+      'model': modelName,
       'messages': [
         {
           'role': 'system',
@@ -47,7 +53,7 @@ class MiniMaxFishRecognitionProvider implements FishRecognitionProvider {
             {
               'type': 'image_url',
               'image_url': {
-                'url': 'data:image/jpeg;base64,$base64Image',
+                'url': 'data:$mediaType;base64,$base64Image',
               },
             },
           ],
@@ -58,11 +64,16 @@ class MiniMaxFishRecognitionProvider implements FishRecognitionProvider {
     };
 
     // 构建请求 URL - MiniMax API 端点
-    final baseUrl = config.baseUrl ?? 'https://api.minimax.chat';
+    final rawBaseUrl = config.baseUrl?.isNotEmpty ?? false
+        ? config.baseUrl!
+        : 'https://api.minimax.chat';
+    final baseUrl = rawBaseUrl.endsWith('/')
+        ? rawBaseUrl.substring(0, rawBaseUrl.length - 1)
+        : rawBaseUrl;
     final url = Uri.parse('$baseUrl/v1/text/chatcompletion_v2');
 
     try {
-      // 发送请求，设置 10 秒超时
+      // 发送请求，设置统一超时
       final response = await _client
           .post(
             url,
@@ -72,7 +83,7 @@ class MiniMaxFishRecognitionProvider implements FishRecognitionProvider {
             },
             body: jsonEncode(requestBody),
           )
-          .timeout(const Duration(seconds: 10));
+          .timeout(aiRequestTimeout);
 
       // 处理响应
       return _handleResponse(response);
@@ -109,7 +120,8 @@ class MiniMaxFishRecognitionProvider implements FishRecognitionProvider {
 
     // 解析响应体
     try {
-      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      // 以 UTF-8 解码字节，确保中文物种名不乱码
+      final json = jsonDecode(decodeUtf8Body(response)) as Map<String, dynamic>;
 
       // 检查 API 错误
       if (json.containsKey('base_resp')) {

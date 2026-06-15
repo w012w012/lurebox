@@ -40,7 +40,10 @@ class GeminiFishRecognitionProvider implements FishRecognitionProvider {
         {
           'parts': [
             {
-              'inlineData': {'mimeType': 'image/jpeg', 'data': base64Image},
+              'inlineData': {
+                'mimeType': detectImageMediaType(image),
+                'data': base64Image,
+              },
             },
             {'text': '请识别这张图片中的鱼类品种。'},
           ],
@@ -55,24 +58,27 @@ class GeminiFishRecognitionProvider implements FishRecognitionProvider {
       },
     };
 
-    // 构建请求 URL
-    final modelName = config.modelName ?? 'gemini-2.0-flash';
+    // 构建请求 URL（API Key 通过 x-goog-api-key 请求头传递，不放入 URL）
+    final modelName = config.modelName?.isNotEmpty ?? false
+        ? config.modelName!
+        : 'gemini-2.0-flash';
     final url = Uri.parse(
       'https://generativelanguage.googleapis.com/v1beta/models/'
-      '$modelName:generateContent?key=${config.apiKey}',
+      '$modelName:generateContent',
     );
 
     try {
-      // 发送请求，设置 10 秒超时
+      // 发送请求，设置统一超时
       final response = await _client
           .post(
             url,
             headers: {
               'Content-Type': 'application/json',
+              'x-goog-api-key': config.apiKey,
             },
             body: jsonEncode(requestBody),
           )
-          .timeout(const Duration(seconds: 10));
+          .timeout(aiRequestTimeout);
 
       // 处理响应
       return _handleResponse(response);
@@ -109,7 +115,8 @@ class GeminiFishRecognitionProvider implements FishRecognitionProvider {
 
     // 解析响应体
     try {
-      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      // 以 UTF-8 解码字节，确保中文物种名不乱码
+      final json = jsonDecode(decodeUtf8Body(response)) as Map<String, dynamic>;
 
       // 检查 API 错误
       if (json.containsKey('error')) {

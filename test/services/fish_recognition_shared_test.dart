@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:lurebox/core/services/adapters/fish_recognition_shared.dart';
@@ -297,6 +299,45 @@ void main() {
         expect(e.toString(), contains('rateLimited'));
         expect(e.toString(), contains('请求过于频繁'));
       }
+    });
+  });
+
+  group('decodeUtf8Body', () {
+    test('decodes UTF-8 Chinese correctly when charset is absent', () {
+      // 裸 application/json，无 charset：http 的 body 会误用 latin1。
+      final response = http.Response.bytes(
+        utf8.encode('{"name":"鲈鱼"}'),
+        200,
+        headers: {'content-type': 'application/json'},
+      );
+
+      expect(decodeUtf8Body(response), equals('{"name":"鲈鱼"}'));
+    });
+
+    test('decodes UTF-8 Chinese correctly when charset is present', () {
+      final response = http.Response.bytes(
+        utf8.encode('{"name":"鳜鱼"}'),
+        200,
+        headers: {'content-type': 'application/json; charset=utf-8'},
+      );
+
+      expect(decodeUtf8Body(response), equals('{"name":"鳜鱼"}'));
+    });
+
+    test('falls back to lenient decoding on malformed bytes', () {
+      // 0xFF 不是合法的 UTF-8 起始字节，宽松解码不应抛异常。
+      final response = http.Response.bytes(
+        [0xFF, 0xFE, 0x7B, 0x7D],
+        200,
+      );
+
+      expect(() => decodeUtf8Body(response), returnsNormally);
+    });
+  });
+
+  group('aiRequestTimeout', () {
+    test('is 45 seconds', () {
+      expect(aiRequestTimeout, equals(const Duration(seconds: 45)));
     });
   });
 }
