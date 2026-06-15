@@ -287,7 +287,9 @@ class FishListViewModel extends StateNotifier<FishListState> {
     try {
       await _fishCatchService.deleteMultiple(state.selectedIds.toList());
       state = state.copyWith(selectedIds: <int>{}, isSelectionMode: false);
-      await loadCatches(units: state.displayUnits);
+      // reset:true —— 删除后必须重置分页重新拉取，否则已删行残留且 OFFSET
+      // 左移导致跳行（H-13）
+      await loadCatches(reset: true, units: state.displayUnits);
     } on Exception catch (e) {
       if (!mounted) return;
       state = state.copyWith(errorMessage: () => ErrorService.toUserMessage(e));

@@ -7,6 +7,7 @@ import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/core/di/di.dart';
+import 'package:lurebox/core/providers/data_refresh.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/widgets/common/app_snack_bar.dart';
 import 'package:path_provider/path_provider.dart';
@@ -217,6 +218,8 @@ class _ExportBackupManagementPageState
       if (!mounted) return;
 
       if (result.isSuccess) {
+        // 恢复成功后失效所有派生数据，避免界面继续显示恢复前的旧数据
+        invalidateDerivedFishData(ref.invalidate);
         AppSnackBar.showSuccess(context, strings.restoreSuccessMsg);
       } else {
         AppSnackBar.showError(

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/providers/data_refresh.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/settings_view_model.dart';
 import 'package:lurebox/core/services/export_service.dart';
@@ -290,6 +291,8 @@ class BackupExportPage extends ConsumerWidget {
       if (!context.mounted) return;
 
       if (result.isSuccess) {
+        // 恢复成功后失效所有派生数据，避免界面继续显示恢复前的旧数据
+        invalidateDerivedFishData(ref.invalidate);
         final metadata = result.metadata;
         var message = strings.restoreSuccessMsg;
         if (metadata != null) {

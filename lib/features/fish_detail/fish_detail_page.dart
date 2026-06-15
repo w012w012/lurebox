@@ -6,6 +6,7 @@ import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/data_refresh.dart';
 import 'package:lurebox/core/providers/fish_detail_view_model.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/utils/unit_converter.dart';
@@ -312,7 +313,11 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
       final success = await ref
           .read(fishDetailViewModelProvider(widget.fishId).notifier)
           .deleteFish();
-      if (success && context.mounted) Navigator.pop(context);
+      if (success) {
+        // 删除成功后失效派生数据（首页/统计/成就/列表计数等）
+        invalidateDerivedFishData(ref.invalidate);
+        if (context.mounted) Navigator.pop(context);
+      }
     }
   }
 
@@ -415,6 +420,8 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
     );
     if (result != null) {
       ref.read(fishDetailViewModelProvider(widget.fishId).notifier).refresh();
+      // 编辑成功后失效派生数据（鱼种/长度/重量变化影响统计与成就）
+      invalidateDerivedFishData(ref.invalidate);
     }
   }
 }

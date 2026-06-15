@@ -7,6 +7,7 @@ import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/data_refresh.dart';
 import 'package:lurebox/core/providers/fish_list_view_model.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/widgets/error_view.dart';
@@ -40,7 +41,11 @@ class _FishListPageState extends ConsumerState<FishListPage>
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final units = ref.read(appSettingsProvider).units;
-      ref.read(fishListViewModelProvider.notifier).loadCatches(units: units);
+      // reset:true —— provider 是 keep-alive，切回本 tab 时必须重置分页重新加载，
+      // 否则会在已有列表后追加下一页（H-13）
+      ref
+          .read(fishListViewModelProvider.notifier)
+          .loadCatches(reset: true, units: units);
     });
   }
 
@@ -125,7 +130,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
         ref.read(currentStringsProvider),
         (fish) async {
           await context.push('/fish/${fish.id}');
-          ref.read(fishListViewModelProvider.notifier).loadCatches();
+          ref.read(fishListViewModelProvider.notifier).loadCatches(reset: true);
         },
       ),
     );
@@ -159,6 +164,8 @@ class _FishListPageState extends ConsumerState<FishListPage>
 
     if (confirm ?? false) {
       await ref.read(fishListViewModelProvider.notifier).deleteSelected();
+      // 批量删除后失效派生数据（计数/统计/成就/首页）
+      invalidateDerivedFishData(ref.invalidate);
     }
   }
 
@@ -172,7 +179,9 @@ class _FishListPageState extends ConsumerState<FishListPage>
       ref.read(fishListViewModelProvider.notifier).toggleSelection(fish.id);
     } else {
       context.push('/fish/${fish.id}').then(
-            (_) => ref.read(fishListViewModelProvider.notifier).loadCatches(),
+            (_) => ref
+                .read(fishListViewModelProvider.notifier)
+                .loadCatches(reset: true),
           );
     }
   }
@@ -301,8 +310,9 @@ class _FishListPageState extends ConsumerState<FishListPage>
     if (errorMessage != null) {
       return ErrorView(
         message: errorMessage,
-        onRetry: () =>
-            ref.read(fishListViewModelProvider.notifier).loadCatches(),
+        onRetry: () => ref
+            .read(fishListViewModelProvider.notifier)
+            .loadCatches(reset: true),
         strings: strings,
       );
     }

@@ -10,6 +10,7 @@ import 'package:lurebox/core/camera/camera_view_model.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
+import 'package:lurebox/core/providers/data_refresh.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/services/app_logger.dart';
 import 'package:lurebox/core/utils/file_utils.dart';
@@ -524,6 +525,8 @@ class _CameraPageState extends ConsumerState<CameraPage>
       final fishId = await vm.saveFishCatch();
 
       if (fishId != null && fishId > 0 && mounted) {
+        // 保存成功后失效所有派生数据，确保首页/统计/成就/待识别角标即时刷新
+        invalidateDerivedFishData(ref.invalidate);
         context.pushReplacement('/fish/$fishId');
       } else if (fishId == null || fishId <= 0) {
         // 从 viewModel 读取最新的错误信息
