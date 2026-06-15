@@ -416,6 +416,7 @@ class AppStrings extends StringsBase
     required this.confirmShare,
     required this.dragToAdjustWatermark,
     required this.pinchToZoomWatermark,
+    required this.shareImageLoadFailed,
     required this.rodDistribution,
     required this.reelDistribution,
     required this.lureDistribution,
@@ -1614,6 +1615,8 @@ class AppStrings extends StringsBase
   final String dragToAdjustWatermark;
   @override
   final String pinchToZoomWatermark;
+  @override
+  final String shareImageLoadFailed;
   @override
   final String rodDistribution;
   @override

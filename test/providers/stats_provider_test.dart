@@ -131,6 +131,9 @@ class FakeFishCatchService implements FishCatchService {
   Future<void> deleteMultiple(List<int> ids) async {}
 
   @override
+  Future<void> deleteSpecies(String name) async {}
+
+  @override
   Future<Map<String, int>> getEquipmentCatchStats(int equipmentId) async {
     return {};
   }

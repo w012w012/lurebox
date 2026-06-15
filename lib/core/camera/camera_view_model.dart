@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
+import 'package:lurebox/core/services/app_logger.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
 import 'package:lurebox/core/services/error_service.dart' as error_service;
 import 'package:lurebox/core/services/fish_catch_service.dart';
@@ -418,11 +420,37 @@ class CameraViewModel extends StateNotifier<CameraState> {
   }
 
   void clearImage() {
+    // 重拍：先尽力删除尚未保存的已拍/已选图片（位于 photos/ 的应用副本），
+    // 避免遗弃孤儿文件。删除是 fire-and-forget，不阻塞 UI 状态切换。
+    final discarded = state.imagePath;
     state = state.copyWith(
       imagePath: () => null,
       watermarkedImagePath: () => null,
       captureState: CameraCaptureState.cameraReady,
     );
+    unawaited(_deleteUnsavedCapture(discarded));
+  }
+
+  /// 删除尚未保存的拍摄/选图副本（仅限应用 photos/ 目录内的文件）。
+  ///
+  /// 相册选图与拍照都会先拷贝进 photos/，此处删除的是这份副本，
+  /// 不会触及用户的相册原图。尽力而为：失败仅记录日志。
+  Future<void> deleteUnsavedCapture() => _deleteUnsavedCapture(state.imagePath);
+
+  Future<void> _deleteUnsavedCapture(String? path) async {
+    if (path == null || path.isEmpty) return;
+    try {
+      final appDir = await getApplicationDocumentsDirectory();
+      final photosDir = p.join(appDir.path, 'photos');
+      if (!p.isWithin(photosDir, path)) return;
+      final file = File(path);
+      if (await file.exists()) {
+        await file.delete();
+        AppLogger.i('CameraViewModel', '已删除未保存的拍摄副本: $path');
+      }
+    } on Object catch (e) {
+      AppLogger.w('CameraViewModel', '删除未保存的拍摄副本失败: $e');
+    }
   }
 
   /// 重置 captureState 到 pictureTaken，让用户留在表单页面

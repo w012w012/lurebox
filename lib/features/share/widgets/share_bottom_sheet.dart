@@ -4,6 +4,7 @@ import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/services/share_card_service.dart';
 import 'package:lurebox/core/services/share_template.dart';
 import 'package:lurebox/features/share/widgets/share_card_widget.dart';
+import 'package:lurebox/widgets/common/app_snack_bar.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
 
 class ShareBottomSheet extends ConsumerStatefulWidget {
@@ -248,16 +249,18 @@ class _ShareBottomSheetState extends ConsumerState<ShareBottomSheet> {
   }
 
   Future<void> _handleShare() async {
+    final strings = ref.read(currentStringsProvider);
     final imageBytes = await ShareCardService.generateShareCard(
       repaintBoundaryKey: _previewKey,
     );
-    if (imageBytes != null) {
-      final strings = ref.read(currentStringsProvider);
-      final text =
-          ShareCardService.generateShareText(_config, strings: strings);
-      await ShareCardService.shareImage(imageBytes, text: text);
-      widget.onShare?.call();
-      if (mounted) Navigator.of(context).pop();
+    if (imageBytes == null) {
+      // 生成失败时给出明确反馈，避免点击分享后无任何反应。
+      if (mounted) AppSnackBar.showError(context, strings.shareFailed);
+      return;
     }
+    final text = ShareCardService.generateShareText(_config, strings: strings);
+    await ShareCardService.shareImage(imageBytes, text: text);
+    widget.onShare?.call();
+    if (mounted) Navigator.of(context).pop();
   }
 }

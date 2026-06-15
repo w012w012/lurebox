@@ -316,8 +316,10 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
 
     if (confirmed && context.mounted) {
       try {
-        final repository = ref.read(fishCatchRepositoryProvider);
-        await repository.deleteSpecies(speciesName);
+        // 经由 FishCatchService 删除：在删库行后清理受影响渔获的图片文件，
+        // 避免直接调用 repository.deleteSpecies 遗弃图片（孤儿文件 + 越层）。
+        final fishCatchService = ref.read(fishCatchServiceProvider);
+        await fishCatchService.deleteSpecies(speciesName);
         ref.invalidate(speciesCountsProvider);
         ref.invalidate(pendingRecognitionCountProvider);
         ref.invalidate(pendingRecognitionCatchesProvider);

@@ -416,6 +416,20 @@ class WatermarkPainter extends CustomPainter {
     return lines;
   }
 
+  /// 构建受最大宽度约束、超长省略号截断的单行 [TextPainter]。
+  ///
+  /// 给水印文字设上宽度上限并启用省略号：长鱼种/地点/装备行不再画到画布外
+  /// 被裁切（预览与导出此前会不一致）。正常长度文字布局不受影响。
+  TextPainter _boundedPainter(String line, TextStyle style, double maxWidth) {
+    final tp = TextPainter(
+      text: TextSpan(text: line, style: style),
+      textDirection: TextDirection.ltr,
+      maxLines: 1,
+      ellipsis: '…',
+    )..layout(maxWidth: maxWidth > 0 ? maxWidth : 0);
+    return tp;
+  }
+
   /// 简约左下水印（逐行显示）
   void _drawMinimal(Canvas canvas, Size size, List<String> lines) {
     // 根据 referenceWidth 缩放字号，确保不同画布尺寸下视觉比例一致
@@ -463,6 +477,10 @@ class WatermarkPainter extends CustomPainter {
         paddingRight = 0;
     }
 
+    // 文字最大可用宽度：画布宽减去两侧边距与背景内衬，保证文字不画出画布。
+    final edgeMargin = size.width * 0.03;
+    final maxTextWidth = size.width - 2 * edgeMargin - 16;
+
     // 计算起始位置
     double y;
     if (settings.position == WatermarkPosition.topLeft ||
@@ -485,10 +503,11 @@ class WatermarkPainter extends CustomPainter {
       // 先计算文字区域大小
       double bgWidth = 0;
       for (final line in lines) {
-        final textPainter = TextPainter(
-          text: TextSpan(text: line, style: TextStyle(fontSize: baseFontSize)),
-          textDirection: TextDirection.ltr,
-        )..layout();
+        final textPainter = _boundedPainter(
+          line,
+          TextStyle(fontSize: baseFontSize),
+          maxTextWidth,
+        );
         bgWidth = bgWidth > textPainter.width ? bgWidth : textPainter.width;
       }
 
@@ -535,25 +554,23 @@ class WatermarkPainter extends CustomPainter {
     for (var i = 0; i < drawLines.length; i++) {
       final line = drawLines[i];
       final isAppName = line.startsWith('\u200B');
-      final textPainter = TextPainter(
-        text: TextSpan(
-          text: line,
-          style: TextStyle(
-            color: textColor.withValues(alpha: 0.9),
-            fontSize: isAppName ? baseFontSize * 0.85 : baseFontSize,
-            fontWeight: isAppName ? FontWeight.normal : FontWeight.w500,
-            shadows: [
-              Shadow(
-                color: Colors.black.withValues(alpha: 0.6),
-                blurRadius: size.width * 0.01,
-              ),
-            ],
-          ),
+      final textPainter = _boundedPainter(
+        line,
+        TextStyle(
+          color: textColor.withValues(alpha: 0.9),
+          fontSize: isAppName ? baseFontSize * 0.85 : baseFontSize,
+          fontWeight: isAppName ? FontWeight.normal : FontWeight.w500,
+          shadows: [
+            Shadow(
+              color: Colors.black.withValues(alpha: 0.6),
+              blurRadius: size.width * 0.01,
+            ),
+          ],
         ),
-        textDirection: TextDirection.ltr,
+        maxTextWidth,
       );
-      textPainter.layout();
 
+      // \u53F3\u5BF9\u9F50\u4E0E\u5C45\u4E2D\u6309\u622A\u65AD\u540E\u7684\u5B9E\u9645\u5BBD\u5EA6\u91CD\u65B0\u8BA1\u7B97 x\uFF0C\u907F\u514D\u79FB\u51FA\u753B\u5E03\u3002
       var x = paddingLeft;
       if (settings.position == WatermarkPosition.topRight ||
           settings.position == WatermarkPosition.bottomRight) {
@@ -598,13 +615,13 @@ class WatermarkPainter extends CustomPainter {
       ],
     );
 
+    // 文字最大可用宽度：从偏移位置到画布右缘减去背景内衬，超长省略号截断。
+    final maxTextWidth = size.width - offset.dx - 8 - size.width * 0.03;
+
     // 计算文字区域大小
     double bgWidth = 0;
     for (final line in lines) {
-      final tp = TextPainter(
-        text: TextSpan(text: line, style: textStyle),
-        textDirection: TextDirection.ltr,
-      )..layout();
+      final tp = _boundedPainter(line, textStyle, maxTextWidth);
       bgWidth = bgWidth > tp.width ? bgWidth : tp.width;
     }
     final bgHeight = lines.length * lineHeight + 16;
@@ -625,10 +642,7 @@ class WatermarkPainter extends CustomPainter {
     // 绘制文字
     var y = offset.dy;
     for (final line in lines) {
-      final tp = TextPainter(
-        text: TextSpan(text: line, style: textStyle),
-        textDirection: TextDirection.ltr,
-      )..layout();
+      final tp = _boundedPainter(line, textStyle, maxTextWidth);
       tp.paint(canvas, Offset(offset.dx, y));
       y += lineHeight;
     }

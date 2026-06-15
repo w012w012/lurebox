@@ -80,29 +80,35 @@ void main() async {
 }
 
 /// 清理旧版遗留的系统临时文件（防御性清理）
+///
+/// 水印导出经由 Directory.systemTemp.createTemp('watermark') 创建临时目录，
+/// 实际目录名形如 'watermarkAbc123'（无下划线、无时间戳）。此前用
+/// 'watermark_' 前缀 + 时间戳正则匹配，永远命中不了真实目录，导致全分辨率
+/// PNG 持续堆积。改为匹配 'watermark' 前缀，并按目录文件系统修改时间
+/// （超过 N 天）判定是否删除，因为目录名中并无时间戳可解析。
 Future<void> _cleanupLegacyTempFiles() async {
+  const staleThresholdDays = 7;
   try {
     if (!Platform.isAndroid && !Platform.isIOS) return;
     final tempDir = Directory.systemTemp;
     if (!await tempDir.exists()) return;
 
+    final now = DateTime.now();
     await for (final entity in tempDir.list()) {
-      if (entity is Directory) {
-        final name = entity.path.split('/').last;
-        if (name.contains('watermark_')) {
-          final timestampMatch = RegExp(r'watermark_(\d+)').firstMatch(name);
-          if (timestampMatch != null) {
-            final timestamp = int.tryParse(timestampMatch.group(1)!);
-            if (timestamp != null) {
-              final fileTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
-              if (DateTime.now().difference(fileTime).inDays > 7) {
-                await entity.delete(recursive: true);
-                AppLogger.i(
-                    'Main', 'Cleaned up stale watermark temp: ${entity.path}');
-              }
-            }
-          }
+      if (entity is! Directory) continue;
+      final name = entity.path.split('/').last;
+      if (!name.startsWith('watermark')) continue;
+      try {
+        final stat = await entity.stat();
+        if (now.difference(stat.modified).inDays > staleThresholdDays) {
+          await entity.delete(recursive: true);
+          AppLogger.i(
+            'Main',
+            'Cleaned up stale watermark temp: ${entity.path}',
+          );
         }
+      } on Exception catch (_) {
+        // 单个目录处理失败不影响其余清理。
       }
     }
   } on Exception catch (_) {

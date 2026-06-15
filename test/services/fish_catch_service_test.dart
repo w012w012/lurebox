@@ -300,8 +300,9 @@ void main() {
         verify(() => mockRepository.delete(8)).called(1);
       });
 
-      test('deletes files before calling repository.delete()', () async {
-        // Verifies the order: file deletion happens first, then DB deletion
+      test('deletes the DB row before deleting image files', () async {
+        // Verifies the order: DB deletion happens FIRST, then file cleanup.
+        // 若先删文件后删库失败，记录会残留指向死路径——故必须先删库。
         final imageFile = File('${tempDir.path}/fish_9.jpg');
         await imageFile.writeAsString('data');
 
@@ -310,17 +311,20 @@ void main() {
         var repositoryDeleteCalled = false;
         when(() => mockRepository.getById(9)).thenAnswer((_) async => fish);
         when(() => mockRepository.delete(9)).thenAnswer((_) async {
-          // When repository.delete is called, the file should already be gone
+          // When repository.delete is called, the image file should STILL exist
+          // (files are cleaned up only after the DB row is gone).
           repositoryDeleteCalled = true;
           expect(
             await imageFile.exists(),
-            isFalse,
-            reason: 'image should be deleted BEFORE repository.delete()',
+            isTrue,
+            reason: 'DB row should be deleted BEFORE image files',
           );
         });
 
         await service.delete(9);
         expect(repositoryDeleteCalled, isTrue);
+        // After the whole operation the image file is gone.
+        expect(await imageFile.exists(), isFalse);
       });
     });
 
@@ -364,8 +368,7 @@ void main() {
         }
       });
 
-      test('deletes image files for all fish before deleting records',
-          () async {
+      test('deletes image files for all fish after deleting records', () async {
         final file1 = File('${tempDir.path}/fish_1.jpg');
         final file2 = File('${tempDir.path}/fish_2.jpg');
         await file1.writeAsString('img1');
@@ -438,6 +441,75 @@ void main() {
 
         expect(await file1.exists(), isFalse);
         verify(() => mockRepository.deleteMultiple([4, 5])).called(1);
+      });
+    });
+
+    group('deleteSpecies', () {
+      late Directory tempDir;
+
+      setUp(() async {
+        tempDir =
+            await Directory.systemTemp.createTemp('lurebox_test_species_');
+      });
+
+      tearDown(() async {
+        if (await tempDir.exists()) {
+          await tempDir.delete(recursive: true);
+        }
+      });
+
+      test('deletes DB rows for the species then cleans up image files',
+          () async {
+        final file1 = File('${tempDir.path}/bass_1.jpg');
+        final file2 = File('${tempDir.path}/bass_2.jpg');
+        await file1.writeAsString('img1');
+        await file2.writeAsString('img2');
+
+        final fish1 = createFishCatch(id: 1, imagePath: file1.path);
+        final fish2 = createFishCatch(id: 2, imagePath: file2.path);
+
+        var deleteSpeciesCalled = false;
+        when(() => mockRepository.getBySpecies('Bass'))
+            .thenAnswer((_) async => [fish1, fish2]);
+        when(() => mockRepository.deleteSpecies('Bass')).thenAnswer((_) async {
+          // DB rows must be deleted before image files are removed.
+          deleteSpeciesCalled = true;
+          expect(await file1.exists(), isTrue);
+          expect(await file2.exists(), isTrue);
+        });
+
+        await service.deleteSpecies('Bass');
+
+        expect(deleteSpeciesCalled, isTrue);
+        expect(await file1.exists(), isFalse);
+        expect(await file2.exists(), isFalse);
+        verify(() => mockRepository.getBySpecies('Bass')).called(1);
+        verify(() => mockRepository.deleteSpecies('Bass')).called(1);
+      });
+
+      test('does not throw when no catches exist for the species', () async {
+        when(() => mockRepository.getBySpecies('Ghost'))
+            .thenAnswer((_) async => []);
+        when(() => mockRepository.deleteSpecies('Ghost'))
+            .thenAnswer((_) async {});
+
+        await expectLater(service.deleteSpecies('Ghost'), completes);
+        verify(() => mockRepository.deleteSpecies('Ghost')).called(1);
+      });
+
+      test('still deletes rows when image file cleanup fails', () async {
+        // imagePath points to a nonexistent file — cleanup must not throw.
+        final fish = createFishCatch(
+          id: 3,
+          imagePath: '${tempDir.path}/missing.jpg',
+        );
+        when(() => mockRepository.getBySpecies('Pike'))
+            .thenAnswer((_) async => [fish]);
+        when(() => mockRepository.deleteSpecies('Pike'))
+            .thenAnswer((_) async {});
+
+        await expectLater(service.deleteSpecies('Pike'), completes);
+        verify(() => mockRepository.deleteSpecies('Pike')).called(1);
       });
     });
 

@@ -55,4 +55,5 @@ mixin WatermarkStringsMixin {
   String get confirmShare;
   String get dragToAdjustWatermark;
   String get pinchToZoomWatermark;
+  String get shareImageLoadFailed;
 }

@@ -53,17 +53,31 @@ class FishCatchService {
 
   Future<void> delete(int id) async {
     final fish = await _repository.getById(id);
+    // 先删数据库行，再尽力删图片文件：若先删文件后删库失败，记录会残留
+    // 指向已删除文件的死路径。文件删除失败不影响删除操作本身（仅记录日志）。
+    await _repository.delete(id);
     if (fish != null) {
       await _deleteImageFiles(fish);
     }
-    await _repository.delete(id);
   }
 
   Future<void> deleteMultiple(List<int> ids) async {
     if (ids.isEmpty) return;
     final fishList = await _repository.getByIds(ids);
-    await Future.wait(fishList.map(_deleteImageFiles));
+    // 先删数据库行，再尽力删图片文件（顺序见 [delete] 注释）。
     await _repository.deleteMultiple(ids);
+    await Future.wait(fishList.map(_deleteImageFiles));
+  }
+
+  /// 删除指定鱼种的所有渔获记录，并清理其图片文件。
+  ///
+  /// 先收集受影响渔获的图片路径，再删除数据库行（精确匹配鱼种名），
+  /// 最后尽力删除图片文件——避免页面直接调用 repository.deleteSpecies
+  /// 导致图片被遗弃（孤儿文件）。文件删除失败不影响删除操作（仅记录日志）。
+  Future<void> deleteSpecies(String name) async {
+    final fishList = await _repository.getBySpecies(name);
+    await _repository.deleteSpecies(name);
+    await Future.wait(fishList.map(_deleteImageFiles));
   }
 
   // ===== Query Operations =====

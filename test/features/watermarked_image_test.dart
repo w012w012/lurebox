@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -364,6 +366,86 @@ void main() {
 
       // Basic render should work with required params
       expect(find.byType(WatermarkedImage), findsOneWidget);
+    });
+  });
+
+  group('WatermarkPainter long-text bounding', () {
+    // 直接驱动 painter，验证超长文字在窄画布上正常布局（省略号截断），
+    // 不抛异常、不画出画布——预览与导出此前会因无宽度约束而裁切不一致。
+    WatermarkPainter buildPainter({
+      required String species,
+      required String? locationName,
+      WatermarkPosition position = WatermarkPosition.bottomLeft,
+      Offset? dragOffset,
+    }) {
+      return WatermarkPainter(
+        species: species,
+        length: 30,
+        locationName: locationName,
+        settings: WatermarkSettings(
+          enabled: true,
+          style: WatermarkStyle.minimal,
+          position: position,
+          infoTypes: const [
+            WatermarkInfoType.species,
+            WatermarkInfoType.location,
+            WatermarkInfoType.appName,
+          ],
+          backgroundOpacity: 0.5,
+        ),
+        strings: AppStrings.chinese,
+        displayLength: 30,
+        displayWeight: null,
+        displayLengthUnit: 'cm',
+        displayWeightUnit: 'kg',
+        displayTemperatureUnit: 'C',
+        dragOffset: dragOffset,
+      );
+    }
+
+    void paintOnNarrowCanvas(WatermarkPainter painter) {
+      final recorder = PictureRecorder();
+      final canvas = Canvas(recorder);
+      // 故意用窄画布，确保长文字超出宽度，触发截断路径。
+      painter.paint(canvas, const Size(200, 300));
+      recorder.endRecording();
+    }
+
+    final longText = '超长鱼种名称' * 20;
+
+    test('does not throw for very long species/location (preset position)', () {
+      expect(
+        () => paintOnNarrowCanvas(
+          buildPainter(species: longText, locationName: longText),
+        ),
+        returnsNormally,
+      );
+    });
+
+    test('does not throw for long text in right-anchored position', () {
+      expect(
+        () => paintOnNarrowCanvas(
+          buildPainter(
+            species: longText,
+            locationName: longText,
+            position: WatermarkPosition.bottomRight,
+          ),
+        ),
+        returnsNormally,
+      );
+    });
+
+    test('does not throw for long text in drag (offset) mode', () {
+      expect(
+        () => paintOnNarrowCanvas(
+          buildPainter(
+            species: longText,
+            locationName: longText,
+            dragOffset: const Offset(150, 100),
+          ),
+        ),
+        returnsNormally,
+      );
     });
   });
 }

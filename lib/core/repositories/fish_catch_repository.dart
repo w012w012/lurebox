@@ -25,6 +25,11 @@ abstract class FishCatchRepository {
   /// 批量获取渔获记录
   Future<List<FishCatch>> getByIds(List<int> ids);
 
+  /// 精确匹配鱼种名获取该鱼种的所有渔获记录
+  ///
+  /// 用于删除鱼种前收集其图片路径以清理文件（精确匹配，不做前缀模糊）。
+  Future<List<FishCatch>> getBySpecies(String speciesName);
+
   Future<List<FishCatch>> getByDateRange(DateTime start, DateTime end);
   Future<List<FishCatch>> getByFate(FishFateType fate);
   Future<PaginatedResult<FishCatch>> getPage({

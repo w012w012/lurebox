@@ -27,6 +27,19 @@ void main() {
       // produce valid PNG output before these tests were split out.
     });
 
+    group('generateShareCard', () {
+      testWidgets('returns null (not throws) when key has no render boundary',
+          (WidgetTester tester) async {
+        final key = GlobalKey();
+        // key 从未挂到 RepaintBoundary，应返回 null 而非抛异常。
+        await tester.pumpWidget(Container(key: key));
+
+        final result =
+            await ShareCardService.generateShareCard(repaintBoundaryKey: key);
+        expect(result, isNull);
+      });
+    });
+
     group('generateShareText', () {
       test('returns empty string when showHashtags and showStats are false',
           () {

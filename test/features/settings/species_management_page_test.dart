@@ -66,6 +66,8 @@ class FakeFishCatchRepository extends Fake implements FishCatchRepository {
   @override
   Future<List<FishCatch>> getByIds(List<int> ids) async => [];
   @override
+  Future<List<FishCatch>> getBySpecies(String speciesName) async => [];
+  @override
   Future<List<FishCatch>> getByDateRange(DateTime s, DateTime e) async => [];
   @override
   Future<List<FishCatch>> getByFate(FishFateType fate) async => [];

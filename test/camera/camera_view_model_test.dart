@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/camera/camera_state.dart';
 import 'package:lurebox/core/camera/camera_view_model.dart';
@@ -385,6 +387,63 @@ void main() {
       expect(viewModel.state.imagePath, isNull);
       expect(viewModel.state.watermarkedImagePath, isNull);
       expect(viewModel.state.captureState, CameraCaptureState.cameraReady);
+    });
+  });
+
+  // ===========================================================================
+  // 4b. Unsaved capture cleanup (photo file lifecycle)
+  // ===========================================================================
+  group('deleteUnsavedCapture', () {
+    late Directory docsDir;
+
+    setUp(() async {
+      docsDir = await Directory.systemTemp.createTemp('lurebox_vm_docs_');
+      // 模拟 path_provider，让 getApplicationDocumentsDirectory 返回临时目录。
+      TestWidgetsFlutterBinding.ensureInitialized();
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        const MethodChannel('plugins.flutter.io/path_provider'),
+        (call) async => docsDir.path,
+      );
+    });
+
+    tearDown(() async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+        const MethodChannel('plugins.flutter.io/path_provider'),
+        null,
+      );
+      if (await docsDir.exists()) {
+        await docsDir.delete(recursive: true);
+      }
+    });
+
+    test('deletes a capture file inside the app photos/ directory', () async {
+      final photosDir = Directory('${docsDir.path}/photos');
+      await photosDir.create(recursive: true);
+      final file = File('${photosDir.path}/capture.jpg');
+      await file.writeAsString('captured');
+      expect(await file.exists(), isTrue);
+
+      viewModel.setImagePath(file.path);
+      await viewModel.deleteUnsavedCapture();
+
+      expect(await file.exists(), isFalse);
+    });
+
+    test('does not delete files outside the app photos/ directory', () async {
+      // 相册原图等外部路径绝不能被删除。
+      final outside = File('${docsDir.path}/gallery_original.jpg');
+      await outside.writeAsString('user owned');
+
+      viewModel.setImagePath(outside.path);
+      await viewModel.deleteUnsavedCapture();
+
+      expect(await outside.exists(), isTrue);
+    });
+
+    test('does nothing when imagePath is null', () async {
+      await expectLater(viewModel.deleteUnsavedCapture(), completes);
     });
   });
 

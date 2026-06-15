@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lurebox/core/constants/strings.dart';
+import 'package:lurebox/core/services/app_logger.dart';
 import 'package:lurebox/core/services/error_service.dart' as error_service;
 import 'package:lurebox/core/services/permission_service.dart';
 import 'package:lurebox/core/services/weather_service.dart';
@@ -179,33 +180,50 @@ class CameraHelper {
           final lng = _longitude;
           if (lat == null || lng == null) return;
 
-          // 获取天气数据
-          _weatherData = await _weatherService.getWeather(lat, lng);
-
-          try {
-            final placemarks = await placemarkFromCoordinates(lat, lng).timeout(
-              const Duration(seconds: 5),
-              onTimeout: () =>
-                  throw const error_service.LocationException('地址解析超时'),
-            );
-            if (placemarks.isNotEmpty) {
-              final place = placemarks[0];
-              _locationName =
-                  '${place.administrativeArea ?? ''}${place.locality ?? ''}${place.name ?? ''}';
-              if (_locationName == null || _locationName!.isEmpty) {
-                _locationName = _strings?.unknownLocation ?? 'Unknown location';
-              }
-            } else {
-              _locationName = _strings?.unknownLocation ?? 'Unknown location';
-            }
-          } catch (e) {
-            _locationName = _strings?.unknownLocation ?? 'Unknown location';
-          }
+          // 天气与地址解析互不依赖，并发执行：天气网络停滞不再拖慢位置名解析，
+          // 反之亦然。两者各自带超时和独立错误处理，任一失败都不影响另一个。
+          await Future.wait([
+            _resolveWeather(lat, lng),
+            _resolveLocationName(lat, lng),
+          ]);
         },
         context: '获取位置信息',
       );
     } catch (e) {
       _locationError = _strings?.errorLocationFetch ?? 'Location fetch failed';
+    }
+  }
+
+  /// 获取天气数据（独立超时与错误处理，失败时清空天气数据）。
+  Future<void> _resolveWeather(double lat, double lng) async {
+    try {
+      _weatherData = await _weatherService.getWeather(lat, lng);
+    } on Object catch (e) {
+      // 天气失败不污染位置流程，仅记录并保持天气为空。
+      _weatherData = const WeatherData();
+      AppLogger.w('CameraHelper', '获取天气失败: $e');
+    }
+  }
+
+  /// 反向地理编码解析位置名（独立超时与错误处理）。
+  Future<void> _resolveLocationName(double lat, double lng) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(lat, lng).timeout(
+        const Duration(seconds: 5),
+        onTimeout: () => throw const error_service.LocationException('地址解析超时'),
+      );
+      if (placemarks.isNotEmpty) {
+        final place = placemarks[0];
+        _locationName =
+            '${place.administrativeArea ?? ''}${place.locality ?? ''}${place.name ?? ''}';
+        if (_locationName == null || _locationName!.isEmpty) {
+          _locationName = _strings?.unknownLocation ?? 'Unknown location';
+        }
+      } else {
+        _locationName = _strings?.unknownLocation ?? 'Unknown location';
+      }
+    } on Object catch (_) {
+      _locationName = _strings?.unknownLocation ?? 'Unknown location';
     }
   }
 

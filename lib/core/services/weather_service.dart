@@ -131,12 +131,19 @@ class WeatherData {
 class WeatherService {
   final WeatherApi _weatherApi = const WeatherApi();
 
+  /// 天气请求超时时间。
+  ///
+  /// open_meteo 包的 [WeatherApi.request] 自身不带超时，网络停滞时会无限挂起，
+  /// 进而阻塞调用方（如定位名解析）。这里统一加 15s 超时，超时按无天气数据处理。
+  static const Duration requestTimeout = Duration(seconds: 15);
+
   /// 根据经纬度获取当前天气
   ///
   /// [latitude] 纬度
   /// [longitude] 经度
   ///
-  /// 返回 [WeatherData]，包含气温、气压和天气代码
+  /// 返回 [WeatherData]，包含气温、气压和天气代码。
+  /// 网络失败或超时时返回空的 [WeatherData]（不抛异常）。
   Future<WeatherData> getWeather(double latitude, double longitude) async {
     try {
       final response = await _weatherApi.request(
@@ -148,7 +155,7 @@ class WeatherService {
           WeatherCurrent.pressure_msl,
           WeatherCurrent.weather_code,
         },
-      );
+      ).timeout(requestTimeout);
 
       final segment = response.segments.first;
       final current = segment.currentData;

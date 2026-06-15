@@ -114,6 +114,7 @@ class _WatermarkSharePreviewPageState
 
   Rect _imageRect = Rect.zero;
   Size _imageSize = Size.zero;
+  bool _imageLoadFailed = false;
 
   PreviewData get _data => widget.data;
 
@@ -124,17 +125,28 @@ class _WatermarkSharePreviewPageState
   }
 
   Future<void> _loadImageSize() async {
-    final bytes = await File(_data.imagePath).readAsBytes();
-    final codec = await ui.instantiateImageCodec(bytes);
-    final frame = await codec.getNextFrame();
-    if (!mounted) return;
-    setState(() {
-      _imageSize = Size(
-        frame.image.width.toDouble(),
-        frame.image.height.toDouble(),
-      );
-    });
-    frame.image.dispose();
+    // 图片可能已被删除（如恢复备份时未带照片），readAsBytes/解码会抛异常。
+    // 此处为 UI 边缘，捕获所有异常并切换到错误态，避免 _imageSize 永远为 0
+    // 导致 CircularProgressIndicator 无限旋转。
+    try {
+      final bytes = await File(_data.imagePath).readAsBytes();
+      final codec = await ui.instantiateImageCodec(bytes);
+      final frame = await codec.getNextFrame();
+      if (!mounted) return;
+      setState(() {
+        _imageSize = Size(
+          frame.image.width.toDouble(),
+          frame.image.height.toDouble(),
+        );
+      });
+      frame.image.dispose();
+    } on Object catch (e) {
+      AppLogger.e('WatermarkSharePreview', '加载图片失败: $e');
+      if (!mounted) return;
+      final strings = ref.read(currentStringsProvider);
+      AppSnackBar.showError(context, strings.shareImageLoadFailed);
+      setState(() => _imageLoadFailed = true);
+    }
   }
 
   /// 计算 BoxFit.contain 下图片的实际显示区域
@@ -200,14 +212,18 @@ class _WatermarkSharePreviewPageState
       ),
       body: Column(
         children: [
-          Expanded(child: _buildPreview(settings)),
-          _buildToolbar(strings),
+          Expanded(child: _buildPreview(settings, strings)),
+          if (!_imageLoadFailed) _buildToolbar(strings),
         ],
       ),
     );
   }
 
-  Widget _buildPreview(WatermarkSettings settings) {
+  Widget _buildPreview(WatermarkSettings settings, AppStrings strings) {
+    if (_imageLoadFailed) {
+      return _buildErrorPlaceholder(strings);
+    }
+
     if (_imageSize == Size.zero) {
       return const Center(
         child: CircularProgressIndicator(color: TeslaColors.electricBlue),
@@ -292,6 +308,40 @@ class _WatermarkSharePreviewPageState
     );
   }
 
+  Widget _buildErrorPlaceholder(AppStrings strings) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.broken_image_outlined,
+              color: Colors.white54,
+              size: 64,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              strings.shareImageLoadFailed,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: Colors.white70, fontSize: 15),
+            ),
+            const SizedBox(height: 24),
+            OutlinedButton.icon(
+              onPressed: () => Navigator.of(context).maybePop(),
+              icon: const Icon(Icons.arrow_back),
+              label: Text(strings.cancel),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: const BorderSide(color: Colors.white38),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _onScaleStart(ScaleStartDetails details) {
     _baseScale = _watermarkScale;
   }
@@ -368,6 +418,10 @@ class _WatermarkSharePreviewPageState
 
     final strings = ref.read(currentStringsProvider);
 
+    // 临时水印文件路径在 try 外声明，确保即便 Share 抛异常也能在 finally 清理，
+    // 避免全分辨率 PNG 临时文件泄漏。
+    String? watermarkedPath;
+
     try {
       final settings = ref.read(watermarkSettingsProvider);
 
@@ -379,7 +433,7 @@ class _WatermarkSharePreviewPageState
         (_watermarkOffset!.dy - _imageRect.top) * scaleY,
       );
 
-      final watermarkedPath = await WatermarkExporter.exportWatermarkedImage(
+      watermarkedPath = await WatermarkExporter.exportWatermarkedImage(
         imagePath: _data.imagePath,
         species: _data.species,
         length: _data.length,
@@ -439,8 +493,6 @@ class _WatermarkSharePreviewPageState
         ref.read(settingsRepositoryProvider),
       );
 
-      await WatermarkExporter.deleteTempFile(watermarkedPath);
-
       if (mounted) Navigator.of(context).pop();
     } catch (e) {
       AppLogger.e('WatermarkSharePreview', '分享失败: $e');
@@ -448,6 +500,8 @@ class _WatermarkSharePreviewPageState
         AppSnackBar.showError(context, strings.shareFailed);
       }
     } finally {
+      // 无论分享成功或抛异常，都清理临时水印文件与目录。
+      await WatermarkExporter.deleteTempFile(watermarkedPath);
       if (mounted) setState(() => _isSharing = false);
     }
   }

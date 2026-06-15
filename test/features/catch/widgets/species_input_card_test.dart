@@ -128,6 +128,9 @@ class FakeCameraViewModel extends StateNotifier<CameraState>
   void clearImage() {}
 
   @override
+  Future<void> deleteUnsavedCapture() async {}
+
+  @override
   void resetCaptureStateToForm() {}
 
   @override

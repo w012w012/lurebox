@@ -203,7 +203,9 @@ class _CameraPageState extends ConsumerState<CameraPage>
           if (didPop) return;
           final shouldPop = await _showDiscardDialog(context, strings);
           if (shouldPop && context.mounted) {
-            Navigator.of(context).pop();
+            // 放弃录入：尽力删除尚未保存的拍摄/选图副本，避免遗弃孤儿文件。
+            await vm.deleteUnsavedCapture();
+            if (context.mounted) Navigator.of(context).pop();
           }
         },
         child: _buildFormView(state, vm, strings),
@@ -510,8 +512,14 @@ class _CameraPageState extends ConsumerState<CameraPage>
 
     try {
       final appDir = await getApplicationDocumentsDirectory();
+      // 压缩输出与拍照/选图一致写入 photos/ 子目录（此前误写文档根目录）。
+      final photosDir = Directory(p.join(appDir.path, 'photos'));
+      await photosDir.create(recursive: true);
       final fileName = FileUtils.generateTimestampFileName('jpg');
-      final newPath = '${appDir.path}/$fileName';
+      final newPath = p.join(photosDir.path, fileName);
+
+      // 记录压缩前的原图路径，用于保存成功后清理，避免一条记录残留两份图片。
+      final originalPath = state.imagePath;
 
       // 使用图像压缩工具压缩图像
       await ImageCompressor.compressImage(
@@ -525,6 +533,8 @@ class _CameraPageState extends ConsumerState<CameraPage>
       final fishId = await vm.saveFishCatch();
 
       if (fishId != null && fishId > 0 && mounted) {
+        // 保存成功：删除压缩前的原图（仅当与最终路径不同时），避免双份图片。
+        await _deleteSupersededOriginal(originalPath, newPath);
         // 保存成功后失效所有派生数据，确保首页/统计/成就/待识别角标即时刷新
         invalidateDerivedFishData(ref.invalidate);
         context.pushReplacement('/fish/$fishId');
@@ -563,6 +573,32 @@ class _CameraPageState extends ConsumerState<CameraPage>
           strings.saveFailedRetry,
         );
       }
+    }
+  }
+
+  /// 保存成功后删除压缩前的原图（即被压缩输出取代的那份）。
+  ///
+  /// 仅当原图位于应用自身 photos/ 目录、且不等于最终路径时才删除——
+  /// 相册选图与拍照都会先拷贝进 photos/，删除的是这份副本而非用户的相册原图。
+  /// 尽力而为：删除失败只记录日志，绝不影响已成功的保存。
+  Future<void> _deleteSupersededOriginal(
+    String? originalPath,
+    String finalPath,
+  ) async {
+    if (originalPath == null || originalPath.isEmpty) return;
+    if (originalPath == finalPath) return;
+    try {
+      final appDir = await getApplicationDocumentsDirectory();
+      final photosDir = p.join(appDir.path, 'photos');
+      // 只删 photos/ 内的应用自有文件，避免误删外部路径。
+      if (!p.isWithin(photosDir, originalPath)) return;
+      final file = File(originalPath);
+      if (await file.exists()) {
+        await file.delete();
+        AppLogger.i('CameraPage', '已删除压缩前原图: $originalPath');
+      }
+    } on Object catch (e) {
+      AppLogger.w('CameraPage', '删除压缩前原图失败: $e');
     }
   }
 

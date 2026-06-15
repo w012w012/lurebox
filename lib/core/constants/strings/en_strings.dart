@@ -388,6 +388,7 @@ const AppStrings englishStrings = AppStrings(
   confirmShare: 'Confirm Share',
   dragToAdjustWatermark: 'Drag watermark to adjust position',
   pinchToZoomWatermark: 'Pinch to zoom watermark',
+  shareImageLoadFailed: 'Failed to load image — it may have been deleted',
   rodDistribution: 'Rod Distribution',
   reelDistribution: 'Reel Distribution',
   lureDistribution: 'Lure Distribution',

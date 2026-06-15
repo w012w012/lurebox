@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:typed_data';
+
 import 'package:image/image.dart' as img;
 import 'package:lurebox/core/services/app_logger.dart';
 import 'package:lurebox/core/services/error_service.dart';
@@ -44,48 +47,31 @@ class ImageCompressor {
       }
 
       final bytes = await inputFile.readAsBytes();
-      final image = img.decodeImage(bytes);
 
-      if (image == null) {
-        throw FileException('Failed to decode image: $inputPath');
-      }
-
-      // 计算新的尺寸
-      var newWidth = image.width;
-      var newHeight = image.height;
-
-      final targetMaxWidth = maxWidth ?? ImageCompressor.maxWidth;
-      final targetMaxHeight = maxHeight ?? ImageCompressor.maxHeight;
-
-      if (image.width > targetMaxWidth || image.height > targetMaxHeight) {
-        final ratio = (targetMaxWidth / image.width).clamp(0.0, 1.0);
-        final ratioHeight = (targetMaxHeight / image.height).clamp(0.0, 1.0);
-        final finalRatio = ratio < ratioHeight ? ratio : ratioHeight;
-
-        newWidth = (image.width * finalRatio).round();
-        newHeight = (image.height * finalRatio).round();
-      }
-
-      // 调整图像尺寸
-      final resizedImage = img.copyResize(
-        image,
-        width: newWidth,
-        height: newHeight,
-        interpolation: img.Interpolation.linear,
+      // 解码/缩放/编码是纯 Dart CPU 密集操作（package:image），放在主 isolate
+      // 会在保存点击时冻结 UI 数百毫秒。这里搬到后台 isolate 执行，
+      // 文件 I/O 仍在主 isolate。Isolate.run 在 flutter_test 下同样可用。
+      final compressedBytes = await Isolate.run(
+        () => _resizeAndEncode(
+          bytes: bytes,
+          targetMaxWidth: maxWidth ?? ImageCompressor.maxWidth,
+          targetMaxHeight: maxHeight ?? ImageCompressor.maxHeight,
+          quality: quality,
+        ),
       );
 
-      // 编码为JPEG
-      final compressedBytes = img.encodeJpg(resizedImage, quality: quality);
+      if (compressedBytes == null) {
+        throw FileException('Failed to decode image: $inputPath');
+      }
 
       // 保存压缩后的图像
       final outputFile = File(outputPath);
       await outputFile.writeAsBytes(compressedBytes);
 
       AppLogger.i(
-          'ImageCompressor',
-          'Compressed: $inputPath -> $outputPath '
-              '(${image.width}x${image.height} -> ${newWidth}x$newHeight), '
-              'quality: $quality');
+        'ImageCompressor',
+        'Compressed: $inputPath -> $outputPath (quality: $quality)',
+      );
 
       return outputFile;
     } catch (e) {
@@ -114,39 +100,29 @@ class ImageCompressor {
       }
 
       final bytes = await inputFile.readAsBytes();
-      final image = img.decodeImage(bytes);
 
-      if (image == null) {
-        throw FileException('Failed to decode image: $inputPath');
-      }
-
-      // 计算保持宽高比的尺寸
-      final ratio = (width / image.width).clamp(0.0, 1.0);
-      final ratioHeight = (height / image.height).clamp(0.0, 1.0);
-      final finalRatio = ratio < ratioHeight ? ratio : ratioHeight;
-
-      final newWidth = (image.width * finalRatio).round();
-      final newHeight = (image.height * finalRatio).round();
-
-      // 调整图像尺寸
-      final resizedImage = img.copyResize(
-        image,
-        width: newWidth,
-        height: newHeight,
-        interpolation: img.Interpolation.linear,
+      // 同 compressImage：解码/缩放/编码搬到后台 isolate，避免阻塞 UI。
+      final compressedBytes = await Isolate.run(
+        () => _resizeAndEncode(
+          bytes: bytes,
+          targetMaxWidth: width,
+          targetMaxHeight: height,
+          quality: 70,
+        ),
       );
 
-      // 编码为JPEG，使用较低的质量
-      final compressedBytes = img.encodeJpg(resizedImage, quality: 70);
+      if (compressedBytes == null) {
+        throw FileException('Failed to decode image: $inputPath');
+      }
 
       // 保存缩略图
       final outputFile = File(outputPath);
       await outputFile.writeAsBytes(compressedBytes);
 
       AppLogger.i(
-          'ImageCompressor',
-          'Thumbnail: $inputPath -> $outputPath '
-              '(${newWidth}x$newHeight)');
+        'ImageCompressor',
+        'Thumbnail: $inputPath -> $outputPath',
+      );
 
       return outputFile;
     } catch (e) {
@@ -190,4 +166,40 @@ class ImageCompressor {
       return 0;
     }
   }
+}
+
+/// 在后台 isolate 中解码、按比例缩放并编码为 JPEG。
+///
+/// 纯 CPU 操作，不触碰文件系统——通过 [Isolate.run] 调用，入参为原始字节，
+/// 返回编码后的字节。解码失败返回 null（由调用方转换为 [FileException]）。
+/// 缩放只缩小不放大（ratio 上限 1.0），与原同步实现行为一致。
+Uint8List? _resizeAndEncode({
+  required Uint8List bytes,
+  required int targetMaxWidth,
+  required int targetMaxHeight,
+  required int quality,
+}) {
+  final image = img.decodeImage(bytes);
+  if (image == null) return null;
+
+  var newWidth = image.width;
+  var newHeight = image.height;
+
+  if (image.width > targetMaxWidth || image.height > targetMaxHeight) {
+    final ratio = (targetMaxWidth / image.width).clamp(0.0, 1.0);
+    final ratioHeight = (targetMaxHeight / image.height).clamp(0.0, 1.0);
+    final finalRatio = ratio < ratioHeight ? ratio : ratioHeight;
+
+    newWidth = (image.width * finalRatio).round();
+    newHeight = (image.height * finalRatio).round();
+  }
+
+  final resizedImage = img.copyResize(
+    image,
+    width: newWidth,
+    height: newHeight,
+    interpolation: img.Interpolation.linear,
+  );
+
+  return img.encodeJpg(resizedImage, quality: quality);
 }

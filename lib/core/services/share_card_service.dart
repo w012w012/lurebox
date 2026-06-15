@@ -87,12 +87,19 @@ class ShareCardService {
   static Future<Uint8List?> generateShareCard({
     required GlobalKey repaintBoundaryKey,
   }) async {
-    final renderObj = repaintBoundaryKey.currentContext?.findRenderObject();
-    if (renderObj is! RenderRepaintBoundary) return null;
-    final boundary = renderObj;
+    try {
+      final renderObj = repaintBoundaryKey.currentContext?.findRenderObject();
+      if (renderObj is! RenderRepaintBoundary) return null;
+      final boundary = renderObj;
 
-    final image = await boundary.toImage(pixelRatio: 2);
-    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-    return byteData?.buffer.asUint8List();
+      final image = await boundary.toImage(pixelRatio: 2);
+      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+      return byteData?.buffer.asUint8List();
+    } catch (e) {
+      // boundary.toImage() 可能抛异常（如边界未挂载/渲染未完成）。
+      // 返回 null，由调用方反馈错误，避免静默失败。
+      AppLogger.e('ShareCardService', 'Error generating share card', e);
+      return null;
+    }
   }
 }

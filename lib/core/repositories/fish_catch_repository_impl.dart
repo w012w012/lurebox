@@ -183,6 +183,22 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
   }
 
   @override
+  Future<List<FishCatch>> getBySpecies(String speciesName) async {
+    if (speciesName.isEmpty) return [];
+    try {
+      final db = await database;
+      final results = await db.query(
+        tableName,
+        where: 'species = ?',
+        whereArgs: [speciesName],
+      );
+      return results.map(FishCatch.fromMap).toList();
+    } catch (e) {
+      throwDbError('get fish catches by species', e);
+    }
+  }
+
+  @override
   Future<int> create(FishCatch fish) async {
     try {
       final db = await database;
