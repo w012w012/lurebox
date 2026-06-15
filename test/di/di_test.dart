@@ -367,6 +367,12 @@ class MockDb implements DatabaseProvider {
   Future<void> close() async {}
 
   @override
+  Future<T> runExclusive<T>(Future<T> Function() action) async {
+    await close();
+    return action();
+  }
+
+  @override
   Future<void> resetForTesting() async {}
 
   static Future<Database> _buildInMemoryDb() async {

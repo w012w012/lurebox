@@ -850,6 +850,91 @@ void main() {
         }
       });
     });
+
+    group('runExclusive maintenance latch', () {
+      setUp(() async {
+        // FFI's getDatabasesPath() returns a writable temp dir, so the real
+        // DatabaseProvider.database getter opens an actual on-disk db here.
+        await DatabaseProvider.instance.resetForTesting();
+      });
+
+      tearDown(() async {
+        await DatabaseProvider.instance.resetForTesting();
+      });
+
+      test(
+          'a database read started during runExclusive resolves only after '
+          'the exclusive action completes, and returns a working db', () async {
+        final provider = DatabaseProvider.instance;
+
+        // Open the database once so there is a live connection to close.
+        final initialDb = await provider.database;
+        expect(initialDb.isOpen, isTrue);
+
+        var actionCompleted = false;
+        var getterResolvedBeforeAction = false;
+
+        // Start a concurrent database read; capture WHEN it resolves.
+        // NOTE: we must NOT await this future inside the exclusive action —
+        // doing so would deadlock (the getter waits on _maintenance, which is
+        // only cleared after the action returns).
+        late final Future<Database> getterFuture;
+
+        await provider.runExclusive(() async {
+          getterFuture = provider.database.then((db) {
+            if (!actionCompleted) {
+              getterResolvedBeforeAction = true;
+            }
+            return db;
+          });
+
+          // Hold the maintenance window open while the getter is pending.
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+          actionCompleted = true;
+
+          // The getter must NOT have resolved yet (latch still held).
+          expect(getterResolvedBeforeAction, isFalse);
+        });
+
+        // After maintenance, the getter that started mid-maintenance resolves,
+        // only now, and yields a working database.
+        final dbAfter = await getterFuture.timeout(const Duration(seconds: 5));
+        expect(getterResolvedBeforeAction, isFalse);
+        expect(dbAfter.isOpen, isTrue);
+
+        // The returned db is usable.
+        final result = await dbAfter.rawQuery('SELECT 1 AS v');
+        expect(result.first['v'], equals(1));
+      });
+
+      test('runExclusive returns the action result and clears the latch',
+          () async {
+        final provider = DatabaseProvider.instance;
+        await provider.database; // ensure a live connection exists
+
+        final value = await provider.runExclusive(() async => 42);
+        expect(value, equals(42));
+
+        // After maintenance, the getter opens a fresh working db without hanging.
+        final db = await provider.database.timeout(const Duration(seconds: 5));
+        expect(db.isOpen, isTrue);
+      });
+
+      test('runExclusive releases the latch even when the action throws',
+          () async {
+        final provider = DatabaseProvider.instance;
+        await provider.database;
+
+        await expectLater(
+          provider.runExclusive(() async => throw StateError('boom')),
+          throwsA(isA<StateError>()),
+        );
+
+        // Latch released: a subsequent getter must not hang.
+        final db = await provider.database.timeout(const Duration(seconds: 5));
+        expect(db.isOpen, isTrue);
+      });
+    });
   });
 }
 

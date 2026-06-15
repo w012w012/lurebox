@@ -149,6 +149,16 @@ void main() {
             )
           ''');
 
+          // User species alias table (schema v17)
+          await db.execute('''
+            CREATE TABLE user_species_alias (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              user_alias TEXT NOT NULL UNIQUE,
+              species_id TEXT NOT NULL,
+              created_at INTEGER NOT NULL
+            )
+          ''');
+
           // Indexes
           await db.execute(
             'CREATE INDEX idx_fish_catches_fate ON fish_catches(fate)',
@@ -659,8 +669,55 @@ void main() {
       await File(exportPath).delete();
     });
 
+    test('user_species_alias round-trip preserves data', () async {
+      // Arrange
+      await db.insert('user_species_alias', {
+        'user_alias': '小鲈鱼',
+        'species_id': 'largemouth_bass',
+        'created_at': 1718000000000,
+      });
+      await db.insert('user_species_alias', {
+        'user_alias': 'Northern',
+        'species_id': 'northern_pike',
+        'created_at': 1718000111111,
+      });
+
+      // Act - Export
+      final exportPath = await backupService.exportToJson();
+
+      // Verify the export includes the alias table
+      final exportContent = await File(exportPath).readAsString();
+      final exportedData = jsonDecode(exportContent) as Map<String, dynamic>;
+      expect(exportedData.containsKey('userSpeciesAlias'), isTrue);
+      expect((exportedData['userSpeciesAlias'] as List).length, equals(2));
+
+      // Clear
+      await db.delete('user_species_alias');
+      expect((await db.query('user_species_alias')).length, equals(0));
+
+      // Import
+      await backupService.importFromJson(exportPath);
+
+      // Assert
+      final restored = await db.query('user_species_alias');
+      expect(restored.length, equals(2));
+
+      final bassAlias = restored.firstWhere(
+        (a) => a['user_alias'] == '小鲈鱼',
+      );
+      expect(bassAlias['species_id'], equals('largemouth_bass'));
+      expect(bassAlias['created_at'], equals(1718000000000));
+
+      final pikeAlias = restored.firstWhere(
+        (a) => a['user_alias'] == 'Northern',
+      );
+      expect(pikeAlias['species_id'], equals('northern_pike'));
+
+      // Cleanup
+      await File(exportPath).delete();
+    });
+
     test('partial import: only fishCatches imports correctly', () async {
-      // Arrange - Create only fish catches data
       final now = DateTime.now();
 
       await db.insert('fish_catches', {
@@ -874,6 +931,12 @@ class _TestDatabaseProvider implements DatabaseProvider {
   @override
   Future<void> close() async {
     await _database.close();
+  }
+
+  @override
+  Future<T> runExclusive<T>(Future<T> Function() action) async {
+    await close();
+    return action();
   }
 
   @override

@@ -25,6 +25,12 @@ class MockDatabaseProvider extends Mock implements DatabaseProvider {
   Future<void> close() async {
     isClosed = true;
   }
+
+  @override
+  Future<T> runExclusive<T>(Future<T> Function() action) async {
+    await close();
+    return action();
+  }
 }
 
 // ===== SHA-256 Helper =====
@@ -442,6 +448,32 @@ void main() {
     // ===== Path Traversal Attack Prevention Tests =====
 
     group('Path Traversal Attack Prevention', () {
+      test(
+          'guard uses p.isWithin so a sibling dir with an extending prefix is '
+          'NOT treated as inside the extract dir', () {
+        // Regression for the old startsWith(canonicalExtractDir) check: a
+        // sibling directory whose name extends the prefix (e.g.
+        // ".../lurebox_import_123_evil") passes a naive startsWith but is NOT
+        // actually within ".../lurebox_import_123".
+        final extractDir = p.canonicalize('/tmp/lurebox_import_123');
+        final sibling = p.canonicalize('/tmp/lurebox_import_123_evil/x.txt');
+
+        // Old, buggy check would let this through:
+        expect(sibling.startsWith(extractDir), isTrue);
+
+        // New check correctly rejects it:
+        final allowed =
+            p.isWithin(extractDir, sibling) || sibling == extractDir;
+        expect(allowed, isFalse);
+
+        // And a genuinely-inside path is still allowed:
+        final inside = p.canonicalize('/tmp/lurebox_import_123/photos/a.jpg');
+        expect(
+          p.isWithin(extractDir, inside) || inside == extractDir,
+          isTrue,
+        );
+      });
+
       test('blocks ZIP entry with ../ path traversal', () async {
         // Create ZIP with path traversal: "../../../malicious.txt"
         final zipFile = await createZipWithFiles(

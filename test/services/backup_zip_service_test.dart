@@ -23,6 +23,12 @@ class MockDatabaseProvider extends Mock implements DatabaseProvider {
   Future<void> close() async {
     isClosed = true;
   }
+
+  @override
+  Future<T> runExclusive<T>(Future<T> Function() action) async {
+    await close();
+    return action();
+  }
 }
 
 // Flutter binding initializer for tests
@@ -303,6 +309,7 @@ void main() {
         'fishCatchesCount': 10,
         'equipmentCount': 3,
         'appVersion': '1.0.3',
+        'databaseVersion': 25,
       };
 
       final metadata = BackupMetadata.fromMap(map);
@@ -314,6 +321,24 @@ void main() {
       expect(metadata.fishCatchesCount, 10);
       expect(metadata.equipmentCount, 3);
       expect(metadata.appVersion, '1.0.3');
+      expect(metadata.databaseVersion, 25);
+    });
+
+    test('fromMap defaults databaseVersion to 0 for legacy backups', () {
+      final map = {
+        'version': 1,
+        'exportTime': '2024-01-15T10:30:00.000',
+        'databaseChecksum': 'abc123def456',
+        'photoCount': 5,
+        'fishCatchesCount': 10,
+        'equipmentCount': 3,
+        'appVersion': '1.0.3',
+        // no databaseVersion key (old backup)
+      };
+
+      final metadata = BackupMetadata.fromMap(map);
+
+      expect(metadata.databaseVersion, 0);
     });
 
     test('toMap produces correct JSON', () {
@@ -326,6 +351,7 @@ void main() {
         fishCatchesCount: 10,
         equipmentCount: 3,
         appVersion: '1.0.3',
+        databaseVersion: 25,
       );
 
       final map = metadata.toMap();
@@ -337,6 +363,7 @@ void main() {
       expect(map['fishCatchesCount'], 10);
       expect(map['equipmentCount'], 3);
       expect(map['appVersion'], '1.0.3');
+      expect(map['databaseVersion'], 25);
     });
 
     test('copyWith updates specified fields', () {
@@ -779,6 +806,86 @@ void main() {
 
         expect(result.isSuccess, false);
         expect(result.errorMessage, contains('database file not found'));
+      } finally {
+        await zipFile.delete();
+      }
+    });
+
+    test('rejects backup whose schema version is newer than the app', () async {
+      // databaseVersion one above the running schema → must be rejected
+      // before any DB swap, with a clear "newer app version" message.
+      final zipFile = await TestArchive.createTestZip(
+        files: {'lurebox.db': 'fake db'},
+        metadata: {
+          'version': 1,
+          'exportTime': DateTime.now().toIso8601String(),
+          'databaseChecksum': 'abc123',
+          'photoCount': 0,
+          'fishCatchesCount': 0,
+          'equipmentCount': 0,
+          'appVersion': '99.0.0',
+          'databaseVersion': DatabaseProvider.currentSchemaVersion + 1,
+        },
+      );
+      try {
+        final result = await service.importFromZipPath(zipFile.path);
+
+        expect(result.isSuccess, false);
+        expect(result.errorMessage, contains('newer app version'));
+      } finally {
+        await zipFile.delete();
+      }
+    });
+
+    test('allows backup whose schema version equals the app (passes gate)',
+        () async {
+      // Equal schema version must pass the version gate; it then fails later
+      // (checksum mismatch here), proving the gate itself did not block it.
+      final zipFile = await TestArchive.createTestZip(
+        files: {'lurebox.db': 'fake db'},
+        metadata: {
+          'version': 1,
+          'exportTime': DateTime.now().toIso8601String(),
+          'databaseChecksum': 'wrong_checksum',
+          'photoCount': 0,
+          'fishCatchesCount': 0,
+          'equipmentCount': 0,
+          'appVersion': '1.0.3',
+          'databaseVersion': DatabaseProvider.currentSchemaVersion,
+        },
+      );
+      try {
+        final result = await service.importFromZipPath(zipFile.path);
+
+        expect(result.isSuccess, false);
+        expect(result.errorMessage, isNot(contains('newer app version')));
+        expect(result.errorMessage, contains('checksum mismatch'));
+      } finally {
+        await zipFile.delete();
+      }
+    });
+
+    test('allows legacy backup with databaseVersion 0 (no gate)', () async {
+      // Old backups omit databaseVersion → fromMap defaults to 0 → not blocked.
+      final zipFile = await TestArchive.createTestZip(
+        files: {'lurebox.db': 'fake db'},
+        metadata: {
+          'version': 1,
+          'exportTime': DateTime.now().toIso8601String(),
+          'databaseChecksum': 'wrong_checksum',
+          'photoCount': 0,
+          'fishCatchesCount': 0,
+          'equipmentCount': 0,
+          'appVersion': '1.0.3',
+          // intentionally no databaseVersion key
+        },
+      );
+      try {
+        final result = await service.importFromZipPath(zipFile.path);
+
+        expect(result.isSuccess, false);
+        expect(result.errorMessage, isNot(contains('newer app version')));
+        expect(result.errorMessage, contains('checksum mismatch'));
       } finally {
         await zipFile.delete();
       }

@@ -60,7 +60,23 @@ void main() async {
     // 仍然启动 app，让各 feature 的 DB 操作自行处理错误，避免白屏
   }
 
-  runApp(const ProviderScope(child: LuYuHuApp()));
+  // 在首帧前加载应用设置：onboardingCompletedProvider 派生自 appSettings，
+  // 若不等待，路由会先按默认值（未完成 onboarding）落到 /onboarding 再重定向，
+  // 造成返回用户看到 onboarding 闪屏。用同一 container 接到 UncontrolledProviderScope。
+  final container = ProviderContainer();
+  try {
+    await container.read(appSettingsProvider.notifier).loaded;
+  } catch (e, stackTrace) {
+    // loaded 内部已吞异常回退默认值；此处再保险，避免阻断启动
+    AppLogger.e('Main', 'App settings load failed', e, stackTrace);
+  }
+
+  runApp(
+    UncontrolledProviderScope(
+      container: container,
+      child: const LuYuHuApp(),
+    ),
+  );
 }
 
 /// 清理旧版遗留的系统临时文件（防御性清理）

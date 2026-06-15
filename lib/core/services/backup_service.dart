@@ -31,6 +31,7 @@ class BackupService {
     final equipments = await db.query('equipments');
     final speciesHistory = await db.query('species_history');
     final settings = await db.query('settings');
+    final userSpeciesAlias = await db.query('user_species_alias');
 
     final backupData = {
       'version': 1,
@@ -39,6 +40,7 @@ class BackupService {
       'equipments': equipments,
       'speciesHistory': speciesHistory,
       'settings': settings,
+      'userSpeciesAlias': userSpeciesAlias,
     };
 
     final jsonString = const JsonEncoder.withIndent(' ').convert(backupData);
@@ -98,6 +100,20 @@ class BackupService {
           final map = Map<String, dynamic>.from(setting as Map);
           await txn.insert(
             'settings',
+            map,
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+      }
+
+      // user_species_alias 在被引用的表（fish_species 等）之后导入；
+      // user_alias 唯一，沿用 replace 冲突策略避免重复别名导入失败。
+      if (backupData.containsKey('userSpeciesAlias')) {
+        final userSpeciesAlias = backupData['userSpeciesAlias'] as List;
+        for (final alias in userSpeciesAlias) {
+          final map = Map<String, dynamic>.from(alias as Map);
+          await txn.insert(
+            'user_species_alias',
             map,
             conflictAlgorithm: ConflictAlgorithm.replace,
           );

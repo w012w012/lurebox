@@ -35,6 +35,7 @@ class BackupMetadata {
     required this.fishCatchesCount,
     required this.equipmentCount,
     required this.appVersion,
+    this.databaseVersion = 0,
   });
 
   /// 从 Map 创建 BackupMetadata
@@ -47,6 +48,8 @@ class BackupMetadata {
       fishCatchesCount: map['fishCatchesCount'] as int,
       equipmentCount: map['equipmentCount'] as int,
       appVersion: map['appVersion'] as String,
+      // 旧备份没有 databaseVersion 字段，用哨兵 0 表示"未知/不拦截"。
+      databaseVersion: map['databaseVersion'] as int? ?? 0,
     );
   }
 
@@ -71,6 +74,12 @@ class BackupMetadata {
   /// 应用版本号
   final String appVersion;
 
+  /// 备份内嵌数据库的 schema 版本。
+  ///
+  /// 0 表示旧备份（未记录该字段），导入时不做跨版本拦截；
+  /// 大于当前 app schema 版本则拒绝导入，避免新版备份回灌旧版 app。
+  final int databaseVersion;
+
   /// 转换为 Map
   Map<String, dynamic> toMap() {
     return {
@@ -81,6 +90,7 @@ class BackupMetadata {
       'fishCatchesCount': fishCatchesCount,
       'equipmentCount': equipmentCount,
       'appVersion': appVersion,
+      'databaseVersion': databaseVersion,
     };
   }
 
@@ -93,6 +103,7 @@ class BackupMetadata {
     int? fishCatchesCount,
     int? equipmentCount,
     String? appVersion,
+    int? databaseVersion,
   }) {
     return BackupMetadata(
       version: version ?? this.version,
@@ -102,6 +113,7 @@ class BackupMetadata {
       fishCatchesCount: fishCatchesCount ?? this.fishCatchesCount,
       equipmentCount: equipmentCount ?? this.equipmentCount,
       appVersion: appVersion ?? this.appVersion,
+      databaseVersion: databaseVersion ?? this.databaseVersion,
     );
   }
 
@@ -115,7 +127,8 @@ class BackupMetadata {
         other.photoCount == photoCount &&
         other.fishCatchesCount == fishCatchesCount &&
         other.equipmentCount == equipmentCount &&
-        other.appVersion == appVersion;
+        other.appVersion == appVersion &&
+        other.databaseVersion == databaseVersion;
   }
 
   @override
@@ -128,6 +141,7 @@ class BackupMetadata {
       fishCatchesCount,
       equipmentCount,
       appVersion,
+      databaseVersion,
     );
   }
 }
@@ -308,71 +322,12 @@ class BackupZipService {
     BackupExportOptions options = BackupExportOptions.defaultOptions,
   }) async {
     try {
-      // 1. 关闭数据库连接
-      await _dbProvider.close();
-
-      // 2. 获取数据库路径
-      final dbPath = await _getDatabasePath();
-      final dbFile = File(dbPath);
-      if (!await dbFile.exists()) {
-        throw const DatabaseException('Database file not found');
-      }
-
-      // 3. 创建临时目录
       final tempDir = await getTemporaryDirectory();
-      final backupDir = Directory(
-        p.join(
-          tempDir.path,
-          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}',
-        ),
-      );
-      await backupDir.create(recursive: true);
-
-      // 4. 复制数据库文件到临时目录
-      final dbCopyPath = p.join(backupDir.path, 'lurebox.db');
-      await dbFile.copy(dbCopyPath);
-
-      // 5. 计算数据库文件的 SHA-256 校验和
-      final dbChecksum = await _calculateSha256(dbCopyPath);
-
-      // 6. 收集并复制照片（如果选项包含照片）
-      var photoCount = 0;
-      if (options.includePhotos) {
-        final photosDir = Directory(p.join(backupDir.path, 'photos'));
-        await photosDir.create(recursive: true);
-
-        photoCount = await _copyPhotosToBackup(dbPath, photosDir.path);
-      }
-
-      // 7. 获取统计数据
-      final stats = await _getBackupStats(dbPath);
-
-      // 8. 生成 metadata.json
-      final metadata = BackupMetadata(
-        version: 1,
-        exportTime: DateTime.now(),
-        databaseChecksum: dbChecksum,
-        photoCount: photoCount,
-        fishCatchesCount: stats['fishCatchesCount']!,
-        equipmentCount: stats['equipmentCount']!,
-        appVersion: await _getAppVersion(),
-      );
-
-      final metadataJson =
-          const JsonEncoder.withIndent('  ').convert(metadata.toMap());
-      await File(p.join(backupDir.path, 'metadata.json'))
-          .writeAsString(metadataJson);
-
-      // 9. 创建 ZIP 文件
       final zipPath = p.join(
         tempDir.path,
         'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}.zip',
       );
-      await _createZip(backupDir.path, zipPath);
-
-      // 10. 清理临时备份目录（保留 ZIP 文件）
-      await backupDir.delete(recursive: true);
-
+      await _buildBackupZip(zipPath, options);
       return XFile(zipPath);
     } catch (e) {
       AppLogger.e('BackupZipService', 'Export to ZIP error', e);
@@ -389,35 +344,70 @@ class BackupZipService {
   Future<String> exportToZipAndSave({
     BackupExportOptions options = BackupExportOptions.defaultOptions,
   }) async {
+    final tempDir = await getTemporaryDirectory();
+    final tempZipPath = p.join(
+      tempDir.path,
+      'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}.zip',
+    );
     try {
-      // 1. 关闭数据库连接
-      await _dbProvider.close();
+      // 1. 先在 temp 目录构建 ZIP
+      await _buildBackupZip(tempZipPath, options);
 
-      // 2. 获取数据库路径
-      final dbPath = await _getDatabasePath();
-      final dbFile = File(dbPath);
-      if (!await dbFile.exists()) {
-        throw const DatabaseException('Database file not found');
+      // 2. 将 ZIP 复制到应用文档目录
+      final appDir = await getApplicationDocumentsDirectory();
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final savedZipName = 'lurebox_backup_$timestamp.zip';
+      final savedZipPath = p.join(appDir.path, savedZipName);
+
+      await File(tempZipPath).copy(savedZipPath);
+
+      return savedZipPath;
+    } catch (e) {
+      AppLogger.e('BackupZipService', 'Export to ZIP and save error', e);
+      rethrow;
+    } finally {
+      // 清理临时 ZIP（成功路径已复制到文档目录，失败路径无需保留）
+      final tempZip = File(tempZipPath);
+      if (await tempZip.exists()) {
+        await tempZip.delete();
       }
+    }
+  }
 
-      // 3. 创建临时目录
-      final tempDir = await getTemporaryDirectory();
-      final backupDir = Directory(
-        p.join(
-          tempDir.path,
-          'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}',
-        ),
-      );
-      await backupDir.create(recursive: true);
+  /// 构建备份 ZIP 到指定路径（exportToZip / exportToZipAndSave 共享实现）。
+  ///
+  /// 步骤：关闭并复制数据库（runExclusive 保护，避免并发重开撕裂备份）→
+  /// 计算校验和 → 复制照片 → 收集统计 → 写 metadata.json → 打包 ZIP。
+  /// 临时工作目录在 finally 中清理（含成功路径），避免泄漏。
+  Future<void> _buildBackupZip(
+    String zipPath,
+    BackupExportOptions options,
+  ) async {
+    final dbPath = await _getDatabasePath();
+    final tempDir = await getTemporaryDirectory();
+    final backupDir = Directory(
+      p.join(
+        tempDir.path,
+        'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}',
+      ),
+    );
+    await backupDir.create(recursive: true);
 
-      // 4. 复制数据库文件到临时目录
+    try {
+      // 1. 关闭数据库并复制文件到临时目录（互斥：并发重开会写 DB → 撕裂备份）
       final dbCopyPath = p.join(backupDir.path, 'lurebox.db');
-      await dbFile.copy(dbCopyPath);
+      await _dbProvider.runExclusive(() async {
+        final dbFile = File(dbPath);
+        if (!await dbFile.exists()) {
+          throw const DatabaseException('Database file not found');
+        }
+        await dbFile.copy(dbCopyPath);
+      });
 
-      // 5. 计算数据库文件的 SHA-256 校验和
+      // 2. 计算数据库文件的 SHA-256 校验和
       final dbChecksum = await _calculateSha256(dbCopyPath);
 
-      // 6. 收集并复制照片（如果选项包含照片）
+      // 3. 收集并复制照片（如果选项包含照片）
       var photoCount = 0;
       if (options.includePhotos) {
         final photosDir = Directory(p.join(backupDir.path, 'photos'));
@@ -426,10 +416,10 @@ class BackupZipService {
         photoCount = await _copyPhotosToBackup(dbPath, photosDir.path);
       }
 
-      // 7. 获取统计数据
+      // 4. 获取统计数据
       final stats = await _getBackupStats(dbPath);
 
-      // 8. 生成 metadata.json
+      // 5. 生成 metadata.json
       final metadata = BackupMetadata(
         version: 1,
         exportTime: DateTime.now(),
@@ -438,6 +428,7 @@ class BackupZipService {
         fishCatchesCount: stats['fishCatchesCount']!,
         equipmentCount: stats['equipmentCount']!,
         appVersion: await _getAppVersion(),
+        databaseVersion: DatabaseProvider.currentSchemaVersion,
       );
 
       final metadataJson =
@@ -445,29 +436,13 @@ class BackupZipService {
       await File(p.join(backupDir.path, 'metadata.json'))
           .writeAsString(metadataJson);
 
-      // 9. 创建 ZIP 文件（先在 temp 目录）
-      final tempZipPath = p.join(
-        tempDir.path,
-        'lurebox_backup_${DateTime.now().millisecondsSinceEpoch}.zip',
-      );
-      await _createZip(backupDir.path, tempZipPath);
-
-      // 10. 将 ZIP 复制到应用文档目录
-      final appDir = await getApplicationDocumentsDirectory();
-      final timestamp = DateTime.now().millisecondsSinceEpoch;
-      final savedZipName = 'lurebox_backup_$timestamp.zip';
-      final savedZipPath = p.join(appDir.path, savedZipName);
-
-      await File(tempZipPath).copy(savedZipPath);
-
-      // 11. 清理临时备份目录
-      await backupDir.delete(recursive: true);
-
-      // 12. 返回文档目录中的 ZIP 文件路径
-      return savedZipPath;
-    } catch (e) {
-      AppLogger.e('BackupZipService', 'Export to ZIP and save error', e);
-      rethrow;
+      // 6. 创建 ZIP 文件
+      await _createZip(backupDir.path, zipPath);
+    } finally {
+      // 清理临时备份工作目录（成功/失败均清理）
+      if (await backupDir.exists()) {
+        await backupDir.delete(recursive: true);
+      }
     }
   }
 
@@ -475,6 +450,15 @@ class BackupZipService {
   Future<String> _getDatabasePath() async {
     final dbPath = await getDatabasesPath();
     return p.join(dbPath, 'lurebox.db');
+  }
+
+  /// 删除指定文件（如果存在），缺失视为空操作。
+  /// 用于清理 WAL/SHM 旁文件与失败的临时文件。
+  Future<void> _deleteIfExists(String path) async {
+    final file = File(path);
+    if (await file.exists()) {
+      await file.delete();
+    }
   }
 
   /// 计算文件的 SHA-256 校验和
@@ -670,7 +654,10 @@ class BackupZipService {
           final filePath = p.join(extractDir.path, filename);
           final resolvedPath = p.canonicalize(filePath);
 
-          if (!resolvedPath.startsWith(canonicalExtractDir)) {
+          // 路径遍历防护：用 p.isWithin 做真正的目录包含判断，
+          // 避免 startsWith 被同前缀的兄弟目录（如 extractDir 的同名前缀）绕过。
+          if (!p.isWithin(canonicalExtractDir, resolvedPath) &&
+              resolvedPath != canonicalExtractDir) {
             return ImportResult.failure(
               'Invalid backup: path traversal detected in "$filename"',
             );
@@ -703,6 +690,18 @@ class BackupZipService {
         if (metadata.version > 1) {
           return ImportResult.failure(
             'Unsupported backup version: ${metadata.version}. '
+            'Please update the app to import this backup.',
+          );
+        }
+
+        // 跨 schema 版本拦截：新版 app 导出的备份（databaseVersion 更高）
+        // 不能回灌到旧版 app —— _onDowngrade 为空操作，旧的非幂等迁移
+        // 之后可能重跑导致损坏。databaseVersion==0 为旧备份，放行不拦截。
+        if (metadata.databaseVersion > DatabaseProvider.currentSchemaVersion) {
+          return ImportResult.failure(
+            'This backup was created by a newer app version '
+            '(database v${metadata.databaseVersion} > '
+            'v${DatabaseProvider.currentSchemaVersion}). '
             'Please update the app to import this backup.',
           );
         }
@@ -773,31 +772,9 @@ class BackupZipService {
           await tempDb.close();
         }
 
-        // 8. 关闭当前数据库
-        await _dbProvider.close();
-
-        // 9. 原子替换：用临时文件 + rename 确保失败时原 DB 不损坏
-        final tempDbPath = '$dbPath.in_progress';
-        try {
-          await File(dbPath).copy(tempDbPath);
-          // 验证临时文件完整性
-          final tempDb = await openDatabase(tempDbPath);
-          await tempDb.close();
-          // 原子性 rename：成功则替换，失败则原 DB 不受影响
-          final renamed = await File(tempDbPath).rename(currentDbPath);
-          if (!File(renamed.path).existsSync()) {
-            throw StateError('Database rename failed unexpectedly');
-          }
-        } catch (e) {
-          // 清理失败的临时文件
-          final tempFile = File(tempDbPath);
-          if (await tempFile.exists()) {
-            await tempFile.delete();
-          }
-          rethrow;
-        }
-
-        // 10. 复制照片到应用文档目录的 photos/ 子目录
+        // 8. 先复制照片到应用文档目录的 photos/ 子目录。
+        //    照片是幂等/增量的：先复制即使后续 DB 交换失败也安全（旧 DB 仍由
+        //    步骤 5 的恢复点保护）。若照片复制失败，则在触碰活动 DB 之前失败。
         final photosDir = p.join(extractDir.path, 'photos');
         if (await Directory(photosDir).exists()) {
           final destPhotosDir = Directory(p.join(appDir.path, 'photos'));
@@ -814,10 +791,47 @@ class BackupZipService {
           AppLogger.i('BackupZipService', 'Photos imported from backup');
         }
 
-        // 11. 重新打开数据库
+        // 9. 互斥临界区：关闭当前库 → 清理陈旧 WAL/SHM 旁文件 → 原子换库 → 重开。
+        //    runExclusive 会先 close()，并在其内部阻塞任何 database getter，
+        //    避免 close→rename 之间被重新打开旧库横跨文件交换持有连接。
+        await _dbProvider.runExclusive(() async {
+          // 9a. 清理活动库残留的 WAL/SHM 旁文件。
+          //     WAL 模式下，崩溃/非干净关闭可能遗留 -wal/-shm；若不删除，
+          //     恢复后的新库（自带无旁文件）会被陈旧 WAL 回放污染 → 静默损坏。
+          await _deleteIfExists('$currentDbPath-wal');
+          await _deleteIfExists('$currentDbPath-shm');
+
+          // 9b. 原子替换：用临时文件 + rename 确保失败时原 DB 不损坏
+          final tempDbPath = '$dbPath.in_progress';
+          try {
+            await File(dbPath).copy(tempDbPath);
+            // 验证临时文件完整性
+            final verifyDb = await openDatabase(tempDbPath);
+            await verifyDb.close();
+            // rename 前再次清理可能新生成的旁文件（验证打开可能创建 -wal/-shm）
+            await _deleteIfExists('$tempDbPath-wal');
+            await _deleteIfExists('$tempDbPath-shm');
+            // 原子性 rename：成功则替换，失败则原 DB 不受影响
+            final renamed = await File(tempDbPath).rename(currentDbPath);
+            if (!File(renamed.path).existsSync()) {
+              throw StateError('Database rename failed unexpectedly');
+            }
+            // rename 后再保险清理一次旧旁文件（恢复的备份库无旁文件，删旧即可）
+            await _deleteIfExists('$currentDbPath-wal');
+            await _deleteIfExists('$currentDbPath-shm');
+          } catch (e) {
+            // 清理失败的临时文件
+            await _deleteIfExists(tempDbPath);
+            await _deleteIfExists('$tempDbPath-wal');
+            await _deleteIfExists('$tempDbPath-shm');
+            rethrow;
+          }
+        });
+
+        // 10. 重新打开数据库（runExclusive 已结束、维护锁已释放，getter 打开新库）
         await _dbProvider.database;
 
-        // 12. 清理临时文件
+        // 11. 清理临时文件
         await extractDir.delete(recursive: true);
 
         return ImportResult.successWithMetadata(metadata);

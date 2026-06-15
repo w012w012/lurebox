@@ -244,6 +244,12 @@ class RealDatabaseProvider implements DatabaseProvider {
   Future<void> close() async {}
 
   @override
+  Future<T> runExclusive<T>(Future<T> Function() action) async {
+    await close();
+    return action();
+  }
+
+  @override
   Future<void> resetForTesting() async {}
 }
 
@@ -703,6 +709,12 @@ class _DummyDatabaseProvider implements DatabaseProvider {
   Future<void> close() async {
     await _db?.close();
     _db = null;
+  }
+
+  @override
+  Future<T> runExclusive<T>(Future<T> Function() action) async {
+    await close();
+    return action();
   }
 
   @override

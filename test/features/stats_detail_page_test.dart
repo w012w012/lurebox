@@ -576,6 +576,9 @@ class AppSettingsNotifierTest extends StateNotifier<AppSettings>
   AppSettingsNotifierTest() : super(const AppSettings());
 
   @override
+  Future<void> get loaded async {}
+
+  @override
   Future<void> updateSettings(AppSettings settings) async {
     state = settings;
   }

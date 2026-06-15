@@ -25,8 +25,20 @@ class DatabaseProvider {
   Database? _database;
   Completer<Database>? _initCompleter;
 
+  /// 维护锁：备份/恢复期间的 close→换文件→reopen 临界区由它保护。
+  /// 非空表示正在维护（DB 已关闭、文件可能正被替换），此时 [database]
+  /// getter 必须先等待维护完成，再打开"新"库，避免拿到旧连接横跨文件交换。
+  Completer<void>? _maintenance;
+
   /// 获取数据库实例（单例模式）
   Future<Database> get database async {
+    // 维护期间（备份/恢复换文件）必须先等待，再打开新库，
+    // 否则会在 close→rename 之间重新打开旧库并横跨文件交换持有连接。
+    // 循环等待以覆盖"前一次维护刚结束、下一次维护又开始"的情况。
+    while (_maintenance != null) {
+      await _maintenance!.future;
+    }
+
     if (_database != null) {
       return _database!;
     }
@@ -803,6 +815,34 @@ CREATE TABLE user_species_alias (
       _database = null;
     }
   }
+
+  /// 互斥维护区：用于备份/恢复时的"关闭连接 → 替换数据库文件 → 重开连接"。
+  ///
+  /// 进入时会设置维护锁并 [close] 当前连接；此后任何 [database] 访问都会
+  /// 阻塞，直到 [action] 完成、维护锁释放，再打开"新"库。这样可避免在
+  /// 关闭与文件替换之间，某个 provider 触发 getter 重新打开旧库并横跨
+  /// 文件交换持有连接（close→rename race / 撕裂备份）。
+  ///
+  /// 注意：[action] 内部不要再 `await database` —— 维护锁尚未释放，会自我
+  /// 死锁。需要新连接时应在 runExclusive 返回后再访问 getter。
+  Future<T> runExclusive<T>(Future<T> Function() action) async {
+    // 若已有维护在进行，先排队等待，避免并发维护互相破坏。
+    while (_maintenance != null) {
+      await _maintenance!.future;
+    }
+    final completer = Completer<void>();
+    _maintenance = completer;
+    try {
+      await close();
+      return await action();
+    } finally {
+      _maintenance = null;
+      completer.complete();
+    }
+  }
+
+  /// 当前数据库 schema 版本（供备份元数据写入与跨版本拦截使用）
+  static int get currentSchemaVersion => _databaseVersion;
 
   /// 暴露真实的建表逻辑给测试（schema 等价性测试需要穿透私有方法）。
   /// 静态方法：避免给 implements DatabaseProvider 的测试替身增加抽象成员。
