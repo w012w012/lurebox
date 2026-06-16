@@ -145,7 +145,7 @@ class SettingsBackupSection extends ConsumerWidget {
           subject: 'LureBox CSV Export',
         );
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (context.mounted) {
         AppSnackBar.showError(context, strings.exportFailedMsg, debugError: e);
       }
@@ -234,7 +234,7 @@ class SettingsBackupSection extends ConsumerWidget {
       } else {
         AppSnackBar.showError(context, strings.backupFailed);
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop(); // 关闭对话框
         AppSnackBar.showError(context, strings.backupFailed, debugError: e);
@@ -294,7 +294,7 @@ class SettingsBackupSection extends ConsumerWidget {
           '${strings.restoreFailedMsg}: ${result.errorMessage ?? "未知错误"}',
         );
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (context.mounted) {
         AppSnackBar.showError(context, strings.restoreFailedMsg, debugError: e);
       }

@@ -61,7 +61,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
         ],
         text: '${strings.myEquipment} - ${strings.fromLureBox}',
       );
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('EquipmentOverview', 'Failed to share equipment overview', e);
       if (mounted) {
         final strings = ref.read(currentStringsProvider);

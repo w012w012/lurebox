@@ -123,7 +123,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           AppSnackBar.showSuccess(
               context, s.speciesUpdated.replaceFirst('%s', speciesName),);
         }
-      } catch (e) {
+      } on Exception catch (e) {
         if (mounted) {
           final s = ref.read(currentStringsProvider);
           AppSnackBar.showError(context, s.speciesUpdateFailed, debugError: e);
@@ -225,7 +225,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           options: options,
         );
       });
-    } catch (e) {
+    } on Exception catch (e) {
       if (!mounted) return;
       setState(() {
         _recognitionStates[fish.id] = SingleRecognitionState(
@@ -267,7 +267,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           AppSnackBar.showSuccess(
               context, s.speciesUpdated.replaceFirst('%s', speciesName),);
         }
-      } catch (e) {
+      } on Exception catch (e) {
         if (mounted) {
           final s = ref.read(currentStringsProvider);
           AppSnackBar.showError(context, s.speciesUpdateFailed, debugError: e);
@@ -303,7 +303,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
             s.speciesRenamed
                 .replaceFirst('%s', oldName)
                 .replaceFirst('%s', result),);
-      } catch (e) {
+      } on Exception catch (e) {
         if (!context.mounted) return;
         final s = ref.read(currentStringsProvider);
         AppSnackBar.showError(context, s.speciesRenameFailed, debugError: e);
@@ -345,7 +345,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
               .replaceFirst('%s', speciesName)
               .replaceFirst('%d', '$count'),
         );
-      } catch (e) {
+      } on Exception catch (e) {
         if (!context.mounted) return;
         final s = ref.read(currentStringsProvider);
         AppSnackBar.showError(context, s.speciesDeleteFailed, debugError: e);
@@ -404,7 +404,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           } else {
             setState(() => _batchFailed++);
           }
-        } catch (e) {
+        } on Exception catch (e) {
           if (!mounted) return;
           setState(() => _batchFailed++);
         } finally {

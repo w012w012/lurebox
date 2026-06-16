@@ -36,7 +36,7 @@ class _SettingsAboutSectionState extends ConsumerState<SettingsAboutSection> {
           _appVersion = packageInfo.version;
         });
       }
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('SettingsAboutSection', '获取版本失败: $e');
     }
   }

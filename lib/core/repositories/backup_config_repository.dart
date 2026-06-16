@@ -228,7 +228,7 @@ class SqliteBackupConfigRepository implements BackupConfigRepository {
             where: 'id = ?',
             whereArgs: [id],
           );
-        } catch (e) {
+        } on Exception catch (e) {
           AppLogger.w(
             'BackupConfigRepository',
             'Failed to clear plaintext password for config $id after migration',

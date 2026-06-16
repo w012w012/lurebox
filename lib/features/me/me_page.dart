@@ -34,7 +34,7 @@ class _MePageState extends ConsumerState<MePage> {
           _appVersion = packageInfo.version;
         });
       }
-    } catch (_) {}
+    } on Exception catch (_) {}
   }
 
   @override

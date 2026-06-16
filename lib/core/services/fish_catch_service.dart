@@ -250,7 +250,7 @@ class FishCatchService {
             await file.delete();
             AppLogger.i('FishCatchService', 'Deleted image: $path');
           }
-        } catch (e) {
+        } on Exception catch (e) {
           AppLogger.e('FishCatchService', 'Failed to delete image file', e);
         }
       }

@@ -231,7 +231,7 @@ class EnhancedBackupService {
       if (await file.exists()) {
         await file.delete();
       }
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('EnhancedBackupService', 'Failed to delete backup file', e);
     }
 
@@ -275,7 +275,7 @@ class EnhancedBackupService {
       try {
         await files[i].delete();
         deletedCount++;
-      } catch (e) {
+      } on Exception catch (e) {
         AppLogger.e(
             'EnhancedBackupService', 'Failed to delete recovery point', e,);
       }
@@ -463,7 +463,7 @@ class EnhancedBackupService {
 
             await txn.insert('fish_catches', map);
             importedCount++;
-          } catch (e) {
+          } on Exception catch (e) {
             errorCount++;
             AppLogger.e(
                 'EnhancedBackupService', 'Failed to import fish catch', e,);
@@ -517,7 +517,7 @@ class EnhancedBackupService {
             }
 
             await txn.insert('equipments', map);
-          } catch (e) {
+          } on Exception catch (e) {
             errorCount++;
             AppLogger.e(
                 'EnhancedBackupService', 'Failed to import equipment', e,);
@@ -547,7 +547,7 @@ class EnhancedBackupService {
             }
 
             await txn.insert('species_history', map);
-          } catch (e) {
+          } on Exception catch (e) {
             errorCount++;
             AppLogger.e(
                 'EnhancedBackupService', 'Failed to import species history', e,);
@@ -566,7 +566,7 @@ class EnhancedBackupService {
               map,
               conflictAlgorithm: ConflictAlgorithm.replace,
             );
-          } catch (e) {
+          } on Exception catch (e) {
             errorCount++;
             AppLogger.e('EnhancedBackupService', 'Failed to import setting', e);
           }
@@ -585,7 +585,7 @@ class EnhancedBackupService {
               map,
               conflictAlgorithm: ConflictAlgorithm.replace,
             );
-          } catch (e) {
+          } on Exception catch (e) {
             errorCount++;
             AppLogger.e('EnhancedBackupService',
                 'Failed to import user species alias', e,);

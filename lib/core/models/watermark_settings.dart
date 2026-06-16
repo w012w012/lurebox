@@ -116,7 +116,7 @@ class WatermarkSettings {
                   return WatermarkInfoType.values.firstWhere(
                     (type) => type.name == e,
                   );
-                } catch (_) {
+                } on Exception catch (_) {
                   return null;
                 }
               })

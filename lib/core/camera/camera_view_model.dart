@@ -59,7 +59,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
             : CameraCaptureState.initial,
         isLoading: false,
       );
-    } catch (e) {
+    } on Exception catch (e) {
       state = state.copyWith(
         isLoading: false,
         errorMessage: () => error_service.ErrorService.toUserMessage(e),
@@ -81,7 +81,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
         },
         context: '切换相机',
       );
-    } catch (e) {
+    } on Exception catch (e) {
       state = state.copyWith(
           errorMessage: () => error_service.ErrorService.toUserMessage(e),);
     }
@@ -136,7 +136,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
         },
         context: '获取位置',
       );
-    } catch (e) {
+    } on Exception catch (e) {
       state = state.copyWith(
           errorMessage: () => error_service.ErrorService.toUserMessage(e),);
     }
@@ -151,7 +151,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
         },
         context: '加载历史品种',
       );
-    } catch (e) {
+    } on Exception catch (e) {
       state = state.copyWith(
           errorMessage: () => error_service.ErrorService.toUserMessage(e),);
     }
@@ -198,7 +198,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
         },
         context: '加载装备',
       );
-    } catch (e) {
+    } on Exception catch (e) {
       state = state.copyWith(
           errorMessage: () => error_service.ErrorService.toUserMessage(e),);
     }
@@ -396,7 +396,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
         },
         context: '保存鱼获',
       );
-    } catch (e) {
+    } on Exception catch (e) {
       state = state.copyWith(
         captureState: CameraCaptureState.error,
         errorMessage: () =>

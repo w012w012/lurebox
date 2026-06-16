@@ -153,7 +153,7 @@ class _ExportBackupManagementPageState
           AppSnackBar.showSuccess(context, strings.deleteSuccess);
           _refreshFiles();
         }
-      } catch (e) {
+      } on Exception catch (e) {
         if (mounted) {
           AppSnackBar.showError(context, strings.errorFileDelete);
         }
@@ -172,7 +172,7 @@ class _ExportBackupManagementPageState
             ? strings.lureboxCompleteBackup
             : strings.lureboxDataExport,
       );
-    } catch (e) {
+    } on Exception catch (e) {
       if (mounted) {
         final strings = ref.read(currentStringsProvider);
         AppSnackBar.showError(context, strings.shareFailed, debugError: e);
@@ -227,7 +227,7 @@ class _ExportBackupManagementPageState
           '${strings.restoreFailedMsg}: ${result.errorMessage ?? "未知错误"}',
         );
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (mounted) {
         AppSnackBar.showError(context, strings.restoreFailedMsg, debugError: e);
       }

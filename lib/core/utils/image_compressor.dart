@@ -74,7 +74,7 @@ class ImageCompressor {
       );
 
       return outputFile;
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('ImageCompressor', 'Compression failed', e);
       rethrow;
     }
@@ -125,7 +125,7 @@ class ImageCompressor {
       );
 
       return outputFile;
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('ImageCompressor', 'Thumbnail generation failed', e);
       rethrow;
     }
@@ -161,7 +161,7 @@ class ImageCompressor {
 
       AppLogger.i('ImageCompressor', 'Cleaned up $deletedCount old images');
       return deletedCount;
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('ImageCompressor', 'Cleanup failed', e);
       return 0;
     }

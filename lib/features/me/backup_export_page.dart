@@ -178,7 +178,7 @@ class BackupExportPage extends ConsumerWidget {
       if (context.mounted && xFile != null) {
         await Share.shareXFiles([xFile], subject: 'LureBox CSV Export');
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (context.mounted) {
         AppSnackBar.showError(context, strings.exportFailedMsg, debugError: e);
       }
@@ -248,7 +248,7 @@ class BackupExportPage extends ConsumerWidget {
       } else {
         AppSnackBar.showError(context, strings.backupFailed);
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (context.mounted) {
         Navigator.of(context).pop();
         AppSnackBar.showError(context, strings.backupFailed, debugError: e);
@@ -310,7 +310,7 @@ class BackupExportPage extends ConsumerWidget {
           '${result.errorMessage ?? strings.errorUnknown}',
         );
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (context.mounted) {
         AppSnackBar.showError(context, strings.restoreFailedMsg, debugError: e);
       }

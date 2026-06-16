@@ -38,7 +38,7 @@ class FishGuideData {
   static FishSpecies? getById(String id) {
     try {
       return allSpecies.firstWhere((s) => s.id == id);
-    } catch (_) {
+    } on Exception catch (_) {
       return null;
     }
   }

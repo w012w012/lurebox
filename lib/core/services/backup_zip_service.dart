@@ -329,7 +329,7 @@ class BackupZipService {
       );
       await _buildBackupZip(zipPath, options);
       return XFile(zipPath);
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('BackupZipService', 'Export to ZIP error', e);
       rethrow;
     }
@@ -362,7 +362,7 @@ class BackupZipService {
       await File(tempZipPath).copy(savedZipPath);
 
       return savedZipPath;
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('BackupZipService', 'Export to ZIP and save error', e);
       rethrow;
     } finally {
@@ -609,7 +609,7 @@ class BackupZipService {
       }
 
       return importFromZipPath(zipPath);
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('BackupZipService', 'Import from ZIP error', e);
       return ImportResult.failure('Import failed: $e');
     }
@@ -819,7 +819,7 @@ class BackupZipService {
             // rename 后再保险清理一次旧旁文件（恢复的备份库无旁文件，删旧即可）
             await _deleteIfExists('$currentDbPath-wal');
             await _deleteIfExists('$currentDbPath-shm');
-          } catch (e) {
+          } on Exception catch (e) {
             // 清理失败的临时文件
             await _deleteIfExists(tempDbPath);
             await _deleteIfExists('$tempDbPath-wal');
@@ -835,14 +835,14 @@ class BackupZipService {
         await extractDir.delete(recursive: true);
 
         return ImportResult.successWithMetadata(metadata);
-      } catch (e) {
+      } on Exception catch (e) {
         // 清理临时目录
         if (await extractDir.exists()) {
           await extractDir.delete(recursive: true);
         }
         rethrow;
       }
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('BackupZipService', 'Import from ZIP error', e);
       return ImportResult.failure('Import failed: $e');
     }

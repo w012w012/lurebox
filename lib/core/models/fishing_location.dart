@@ -134,7 +134,7 @@ extension FishingLocationListExtension on List<FishingLocation> {
   FishingLocation? findByName(String name) {
     try {
       return firstWhere((l) => l.name == name);
-    } catch (_) {
+    } on Exception catch (_) {
       return null;
     }
   }

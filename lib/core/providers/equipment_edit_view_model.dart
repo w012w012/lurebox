@@ -190,7 +190,7 @@ class _BaseEquipmentEditNotifier {
 
       _updateState(_state.withUpdates(isSaving: false));
       return true;
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('EquipmentEditViewModel', 'Failed to save equipment', e);
       _updateState(
         _state.withUpdates(

@@ -17,7 +17,7 @@ class AiRecognitionSettingsNotifier
       if (mounted) {
         state = settings;
       }
-    } catch (_) {
+    } on Exception catch (_) {
       // 安全降级：使用默认设置，不阻塞应用启动
       if (mounted) {
         state = const AiRecognitionSettings();

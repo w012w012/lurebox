@@ -33,7 +33,7 @@ class FishSpeciesMatcher {
       return _allSpecies.firstWhere(
         (s) => s.aliases.any((a) => a.toLowerCase() == lowerAlias),
       );
-    } catch (_) {
+    } on Exception catch (_) {
       return null;
     }
   }
@@ -62,7 +62,7 @@ class FishSpeciesMatcher {
         (s) => s.standardName.toLowerCase() == lowerName,
       );
       return exactMatch;
-    } catch (_) {
+    } on Exception catch (_) {
       // continue to partial match
     }
 
@@ -74,7 +74,7 @@ class FishSpeciesMatcher {
             s.aliases.any((a) => a.contains(name)),
       );
       return partialMatch;
-    } catch (_) {
+    } on Exception catch (_) {
       // continue to similarity match
     }
 

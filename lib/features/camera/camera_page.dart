@@ -179,7 +179,7 @@ class _CameraPageState extends ConsumerState<CameraPage>
     try {
       final vm = ref.read(cameraViewModelProvider.notifier);
       vm.disposeCamera();
-    } catch (_) {
+    } on Exception catch (_) {
       // ViewModel may already be disposed
     }
 

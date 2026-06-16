@@ -304,7 +304,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
           _testResult = success ? '连接成功！配置已保存。' : '连接失败。请检查服务器地址、用户名和密码是否正确。';
         });
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (mounted) {
         setState(() {
           _isTesting = false;
@@ -350,7 +350,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
           _testResult = '上传失败。请检查配置并重试。';
         });
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (mounted) {
         setState(() {
           _isLoading = false;
@@ -427,7 +427,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
           _testResult = result.errorMessage ?? strings.restoreFailedMsg;
         });
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (mounted) {
         setState(() {
           _isRestoring = false;

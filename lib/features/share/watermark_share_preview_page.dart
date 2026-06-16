@@ -494,7 +494,7 @@ class _WatermarkSharePreviewPageState
       );
 
       if (mounted) Navigator.of(context).pop();
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('WatermarkSharePreview', '分享失败: $e');
       if (mounted) {
         AppSnackBar.showError(context, strings.shareFailed);

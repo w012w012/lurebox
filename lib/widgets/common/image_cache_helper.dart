@@ -98,7 +98,7 @@ class ImageCacheHelper {
         await precacheImage(provider, context);
         _memoryCache.put(key, provider);
       }
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.w('ImageCacheHelper', 'Precache failed for $imagePath: $e');
     }
   }

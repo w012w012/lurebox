@@ -347,7 +347,7 @@ class _AiProviderConfigDialogState
           _testResult = ref.read(currentStringsProvider).aiConnectionSuccess;
         });
       }
-    } catch (e) {
+    } on Exception catch (e) {
       if (mounted) {
         setState(() {
           _isTesting = false;

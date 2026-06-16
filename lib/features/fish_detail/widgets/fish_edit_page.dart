@@ -77,7 +77,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
           _lures = lures;
         });
       }
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('FishEditPage', 'Failed to load equipment', e);
     }
   }
@@ -127,7 +127,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
       );
       await ref.read(fishCatchServiceProvider).update(updatedFish);
       if (mounted) Navigator.pop(context, {'success': true});
-    } catch (e) {
+    } on Exception catch (e) {
       if (mounted) _showSnackBar('${widget.strings.saveFailed}: $e');
     } finally {
       if (mounted) setState(() => _isSaving = false);

@@ -790,7 +790,7 @@ class WatermarkExporter {
       await tempFile.writeAsBytes(pngBytes);
 
       return tempFile.path;
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('WatermarkExporter', '导出水印图片失败: $e');
       return null;
     }
@@ -812,7 +812,7 @@ class WatermarkExporter {
           await dir.delete();
         }
       }
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.w('WatermarkExporter', '删除临时文件失败: $e');
     }
   }

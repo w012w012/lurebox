@@ -205,7 +205,7 @@ class BackupService {
       } else {
         throw DatabaseException('Upload failed: ${response.statusCode}');
       }
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('BackupService', 'WebDAV upload error', e);
       rethrow;
     } finally {
@@ -239,7 +239,7 @@ class BackupService {
       final response = await request.close();
 
       return response.statusCode == 207 || response.statusCode == 200;
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('BackupService', 'WebDAV test connection error', e);
       return false;
     } finally {
@@ -308,7 +308,7 @@ class BackupService {
         return null;
       }
       return decoded;
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('BackupService', 'WebDAV download error', e);
       return null;
     } finally {

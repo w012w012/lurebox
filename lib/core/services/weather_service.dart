@@ -165,7 +165,7 @@ class WeatherService {
         pressure: current[WeatherCurrent.pressure_msl]?.value,
         weatherCode: current[WeatherCurrent.weather_code]?.value.toInt(),
       );
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('WeatherService', 'Failed to fetch weather data', e);
       return const WeatherData();
     }

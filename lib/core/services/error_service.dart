@@ -59,7 +59,7 @@ class ErrorService {
     for (final handler in _handlers) {
       try {
         handler(error, trace);
-      } catch (e) {
+      } on Exception catch (e) {
         AppLogger.e('ErrorService', 'Error in error handler', e);
       }
     }
@@ -68,7 +68,7 @@ class ErrorService {
   Future<T> wrap<T>(Future<T> Function() fn, {String? context}) async {
     try {
       return await fn();
-    } catch (e, stack) {
+    } on Exception catch (e, stack) {
       handleError(e, stack);
       if (context != null) {
         throw Exception('$context: $e');
@@ -80,7 +80,7 @@ class ErrorService {
   R run<T, R>(R Function() fn, {String? context}) {
     try {
       return fn();
-    } catch (e, stack) {
+    } on Exception catch (e, stack) {
       handleError(e, stack);
       if (context != null) {
         throw Exception('$context: $e');

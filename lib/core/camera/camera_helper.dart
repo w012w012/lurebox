@@ -69,7 +69,7 @@ class CameraHelper {
         },
         context: '初始化相机',
       );
-    } catch (e) {
+    } on Exception catch (e) {
       _errorMessage =
           '${_strings?.cameraInitFailed ?? 'Camera initialization failed'}: $e';
       _isInitialized = false;
@@ -91,7 +91,7 @@ class CameraHelper {
       await _cameraController!.initialize();
       _isInitialized = true;
       _errorMessage = null;
-    } catch (e) {
+    } on Exception catch (e) {
       _errorMessage =
           '${_strings?.cameraControllerInitFailed ?? 'Camera controller initialization failed'}: $e';
       _isInitialized = false;
@@ -109,7 +109,7 @@ class CameraHelper {
         context: '切换相机',
       );
       return _isInitialized;
-    } catch (e) {
+    } on Exception catch (e) {
       return false;
     }
   }
@@ -124,7 +124,7 @@ class CameraHelper {
         },
         context: '拍照',
       );
-    } catch (e) {
+    } on Exception catch (e) {
       _errorMessage =
           '${_strings?.cameraTakePictureFailed ?? 'Take picture failed'}: $e';
       return null;
@@ -170,7 +170,7 @@ class CameraHelper {
             _latitude = position.latitude;
             _longitude = position.longitude;
             _position = position;
-          } catch (e) {
+          } on Exception catch (e) {
             _locationError =
                 _strings?.locationFailed ?? 'Location fetch failed';
             return;
@@ -189,7 +189,7 @@ class CameraHelper {
         },
         context: '获取位置信息',
       );
-    } catch (e) {
+    } on Exception catch (e) {
       _locationError = _strings?.errorLocationFetch ?? 'Location fetch failed';
     }
   }

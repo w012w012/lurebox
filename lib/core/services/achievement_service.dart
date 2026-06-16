@@ -283,7 +283,7 @@ class AchievementService {
         shareCount: results[16] as int,
         newRecord: totalCatches > 0,
       );
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('AchievementService', 'Failed to calculate metrics', e);
       return const AchievementMetrics();
     }

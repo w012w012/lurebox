@@ -192,7 +192,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
         });
         _contentAnimationController.forward();
       }
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('StatsDetailPage', 'Failed to load detail data', e);
       if (mounted) {
         setState(() {
@@ -407,7 +407,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
         text:
             '${widget.title} - ${strings.catchStatistics}\n${strings.fromLureBox}',
       );
-    } catch (e) {
+    } on Exception catch (e) {
       AppLogger.e('StatsDetailPage', 'Failed to share stats', e);
       if (mounted) {
         AppSnackBar.showError(context, strings.shareFailed);
