@@ -21,9 +21,9 @@ abstract class PermissionPlatform {
   const PermissionPlatform();
 
   Future<perm_handler.PermissionStatus> status(
-      perm_handler.Permission permission);
+      perm_handler.Permission permission,);
   Future<perm_handler.PermissionStatus> request(
-      perm_handler.Permission permission);
+      perm_handler.Permission permission,);
   Future<bool> isLocationServiceEnabled();
   Future<void> openAppSettings();
 
@@ -35,12 +35,12 @@ class _RealPermissionPlatform extends PermissionPlatform {
 
   @override
   Future<perm_handler.PermissionStatus> status(
-          perm_handler.Permission permission) =>
+          perm_handler.Permission permission,) =>
       permission.status;
 
   @override
   Future<perm_handler.PermissionStatus> request(
-          perm_handler.Permission permission) =>
+          perm_handler.Permission permission,) =>
       permission.request();
 
   @override
@@ -149,7 +149,7 @@ class PermissionService {
     AppStrings? strings,
   }) async {
     return _requestPermissionWithEducation(context, cameraInfo,
-        strings: strings);
+        strings: strings,);
   }
 
   /// 请求位置权限（带教育引导）
@@ -177,7 +177,7 @@ class PermissionService {
     }
 
     return _requestPermissionWithEducation(context, locationInfo,
-        strings: strings);
+        strings: strings,);
   }
 
   /// 请求照片库权限（带教育引导）
@@ -186,7 +186,7 @@ class PermissionService {
     AppStrings? strings,
   }) async {
     return _requestPermissionWithEducation(context, photosInfo,
-        strings: strings);
+        strings: strings,);
   }
 
   /// 通用权限请求流程（带教育引导）
@@ -224,7 +224,7 @@ class PermissionService {
 
         if (newStatus.isGranted || newStatus.isLimited) {
           return const PermissionResult(
-              granted: true, permanentlyDenied: false);
+              granted: true, permanentlyDenied: false,);
         }
 
         if (newStatus.isPermanentlyDenied && context.mounted) {
@@ -320,7 +320,7 @@ class PermissionService {
 
   /// 显示引导到设置对话框
   Future<void> _showSettingsDialog(BuildContext context, PermissionInfo info,
-      {AppStrings? strings}) {
+      {AppStrings? strings,}) {
     final localizedTitle = info.localizedTitle(strings);
     final dialogTitle = strings != null
         ? strings.permissionRequiredTitle.replaceFirst('%s', localizedTitle)

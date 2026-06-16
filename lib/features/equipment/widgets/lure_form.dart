@@ -111,15 +111,15 @@ class LureForm extends ConsumerWidget {
                 value: quantityUnit ?? units.lureQuantityUnit,
                 items: [
                   PremiumDropdownItem(
-                      value: 'piece', label: strings.quantityUnitPiece),
+                      value: 'piece', label: strings.quantityUnitPiece,),
                   PremiumDropdownItem(
-                      value: 'item', label: strings.quantityUnitItem),
+                      value: 'item', label: strings.quantityUnitItem,),
                   PremiumDropdownItem(
-                      value: 'pack', label: strings.quantityUnitPack),
+                      value: 'pack', label: strings.quantityUnitPack,),
                   PremiumDropdownItem(
-                      value: 'box', label: strings.quantityUnitBox),
+                      value: 'box', label: strings.quantityUnitBox,),
                   PremiumDropdownItem(
-                      value: 'carton', label: strings.quantityUnitCarton),
+                      value: 'carton', label: strings.quantityUnitCarton,),
                 ],
                 onChanged: onQuantityUnitChanged,
               ),

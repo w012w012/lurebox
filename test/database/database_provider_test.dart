@@ -681,7 +681,7 @@ void main() {
 
             // Use our helper that replicates _addColumnIfNotExists
             await _addColumnIfNotExists(
-                db, 'fish_catches', 'new_test_col', 'TEXT');
+                db, 'fish_catches', 'new_test_col', 'TEXT',);
 
             // Verify the column exists
             final result = await db.rawQuery('PRAGMA table_info(fish_catches)');
@@ -1009,11 +1009,11 @@ Future<void> _createSchema(Database db) async {
   // Indexes on fish_catches
   await db.execute('CREATE INDEX idx_fish_catches_fate ON fish_catches(fate)');
   await db.execute(
-      'CREATE INDEX idx_fish_catches_catch_time ON fish_catches(catch_time)');
+      'CREATE INDEX idx_fish_catches_catch_time ON fish_catches(catch_time)',);
   await db.execute(
-      'CREATE INDEX idx_fish_catches_time_fate ON fish_catches(catch_time, fate)');
+      'CREATE INDEX idx_fish_catches_time_fate ON fish_catches(catch_time, fate)',);
   await db.execute(
-      'CREATE INDEX idx_fish_catches_species ON fish_catches(species)');
+      'CREATE INDEX idx_fish_catches_species ON fish_catches(species)',);
 
   // Equipments table
   await db.execute('''
@@ -1064,7 +1064,7 @@ Future<void> _createSchema(Database db) async {
   await db
       .execute('CREATE INDEX idx_equipments_category ON equipments(category)');
   await db.execute(
-      'CREATE INDEX idx_equipments_is_deleted ON equipments(is_deleted)');
+      'CREATE INDEX idx_equipments_is_deleted ON equipments(is_deleted)',);
 
   // Settings table
   await db.execute('''
@@ -1138,9 +1138,9 @@ Future<void> _createSchema(Database db) async {
   ''');
 
   await db.execute(
-      'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)');
+      'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)',);
   await db.execute(
-      'CREATE INDEX idx_alias_species ON user_species_alias(species_id)');
+      'CREATE INDEX idx_alias_species ON user_species_alias(species_id)',);
 }
 
 /// Mirrors DatabaseProvider._createSchema for v1 (base schema without later migrations)
@@ -1170,7 +1170,7 @@ Future<void> _createSchemaV1(Database db) async {
 
   await db.execute('CREATE INDEX idx_fish_catches_fate ON fish_catches(fate)');
   await db.execute(
-      'CREATE INDEX idx_fish_catches_species ON fish_catches(species)');
+      'CREATE INDEX idx_fish_catches_species ON fish_catches(species)',);
 
   await db.execute('''
     CREATE TABLE equipments (
@@ -1208,7 +1208,7 @@ Future<void> _createSchemaV1(Database db) async {
 
 /// Mirrors DatabaseProvider._addColumnIfNotExists
 Future<void> _addColumnIfNotExists(
-    Database db, String table, String column, String type) async {
+    Database db, String table, String column, String type,) async {
   final result = await db.rawQuery('PRAGMA table_info($table)');
   final existingColumns = result.map((r) => r['name'] as String).toList();
 
@@ -1219,14 +1219,14 @@ Future<void> _addColumnIfNotExists(
 
 /// Mirrors DatabaseProvider._migrateDatabase
 Future<void> _migrateDatabase(
-    Database db, int oldVersion, int newVersion) async {
+    Database db, int oldVersion, int newVersion,) async {
   if (oldVersion < 2) {
     await _addColumnIfNotExists(
-        db, 'equipments', 'lure_quantity', 'INTEGER DEFAULT 1');
+        db, 'equipments', 'lure_quantity', 'INTEGER DEFAULT 1',);
   }
   if (oldVersion < 3) {
     await _addColumnIfNotExists(
-        db, 'equipments', 'lure_quantity_unit', "TEXT DEFAULT 'pcs'");
+        db, 'equipments', 'lure_quantity_unit', "TEXT DEFAULT 'pcs'",);
   }
   if (oldVersion < 4) {
     await _addColumnIfNotExists(db, 'fish_catches', 'rig_type', 'TEXT');
@@ -1242,11 +1242,11 @@ Future<void> _migrateDatabase(
   if (oldVersion < 6) {
     await _addColumnIfNotExists(db, 'fish_catches', 'bead_type', 'TEXT');
     await _addColumnIfNotExists(
-        db, 'fish_catches', 'rubber_grommet_size', 'TEXT');
+        db, 'fish_catches', 'rubber_grommet_size', 'TEXT',);
   }
   if (oldVersion < 7) {
     await db.execute(
-        'ALTER TABLE fish_catches ADD COLUMN watermarked_image_path TEXT');
+        'ALTER TABLE fish_catches ADD COLUMN watermarked_image_path TEXT',);
   }
   if (oldVersion < 8) {
     await db
@@ -1262,9 +1262,9 @@ Future<void> _migrateDatabase(
   }
   if (oldVersion < 10) {
     await _addColumnIfNotExists(
-        db, 'equipments', 'lure_quantity', 'INTEGER DEFAULT 1');
+        db, 'equipments', 'lure_quantity', 'INTEGER DEFAULT 1',);
     await _addColumnIfNotExists(
-        db, 'equipments', 'lure_quantity_unit', "TEXT DEFAULT 'pcs'");
+        db, 'equipments', 'lure_quantity_unit', "TEXT DEFAULT 'pcs'",);
   }
   if (oldVersion < 11) {
     await db.execute('''
@@ -1290,7 +1290,7 @@ Future<void> _migrateDatabase(
   }
   if (oldVersion < 12) {
     await db.execute(
-        'ALTER TABLE settings ADD COLUMN is_deleted INTEGER DEFAULT 0');
+        'ALTER TABLE settings ADD COLUMN is_deleted INTEGER DEFAULT 0',);
   }
   if (oldVersion < 13) {
     await _addColumnIfNotExists(db, 'equipments', 'sections', 'INTEGER');
@@ -1300,7 +1300,7 @@ Future<void> _migrateDatabase(
   if (oldVersion < 14) {
     await db.execute('ALTER TABLE settings ADD COLUMN category TEXT');
     await db.execute(
-        'ALTER TABLE settings ADD COLUMN sort_order INTEGER DEFAULT 0');
+        'ALTER TABLE settings ADD COLUMN sort_order INTEGER DEFAULT 0',);
   }
   if (oldVersion < 15) {
     await _addColumnIfNotExists(db, 'fish_catches', 'rig_type', 'TEXT');
@@ -1342,9 +1342,9 @@ Future<void> _migrateDatabase(
       )
     ''');
     await db.execute(
-        'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)');
+        'CREATE INDEX idx_alias_user_alias ON user_species_alias(user_alias)',);
     await db.execute(
-        'CREATE INDEX idx_alias_species ON user_species_alias(species_id)');
+        'CREATE INDEX idx_alias_species ON user_species_alias(species_id)',);
   }
   if (oldVersion < 18) {
     await _addColumnIfNotExists(db, 'fish_catches', 'reel_id', 'INTEGER');
@@ -1356,7 +1356,7 @@ Future<void> _migrateDatabase(
   }
   if (oldVersion < 20) {
     await db.execute(
-        'CREATE INDEX IF NOT EXISTS idx_fish_catches_location ON fish_catches(location_name)');
+        'CREATE INDEX IF NOT EXISTS idx_fish_catches_location ON fish_catches(location_name)',);
   }
   if (oldVersion < 21) {
     await db.execute(

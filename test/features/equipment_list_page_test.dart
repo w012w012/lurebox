@@ -45,7 +45,7 @@ void main() {
         ProviderScope(
           overrides: [
             equipmentListViewModelProvider.overrideWith(
-                (ref) => _MockEquipmentListViewModel(loadingState)),
+                (ref) => _MockEquipmentListViewModel(loadingState),),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(
@@ -96,7 +96,7 @@ void main() {
         ProviderScope(
           overrides: [
             equipmentListViewModelProvider.overrideWith(
-                (ref) => _MockEquipmentListViewModel(loadedState)),
+                (ref) => _MockEquipmentListViewModel(loadedState),),
             currentStringsProvider.overrideWithValue(AppStrings.chinese),
           ],
           child: const MaterialApp(

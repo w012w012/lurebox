@@ -469,7 +469,7 @@ class SqliteStatsRepository extends BaseSqliteRepository
             .map((row) => DailyTrend(
                   date: DateTime.parse(row['date'] as String),
                   count: row['count'] as int,
-                ))
+                ),)
             .toList(),
       );
     } catch (e) {

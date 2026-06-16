@@ -123,7 +123,7 @@ class EquipmentPieChart extends StatelessWidget {
                     final entry = e.value;
                     return Padding(
                       padding: const EdgeInsets.only(
-                          bottom: TeslaTheme.spacingMicro),
+                          bottom: TeslaTheme.spacingMicro,),
                       child: Row(
                         children: [
                           Container(

@@ -76,7 +76,7 @@ void main() {
       final indicators = find.byWidgetPredicate((widget) =>
           widget is Container &&
           widget.decoration is BoxDecoration &&
-          (widget.decoration as BoxDecoration).borderRadius != null);
+          (widget.decoration as BoxDecoration).borderRadius != null,);
       expect(indicators, findsWidgets);
     });
 

@@ -143,7 +143,7 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
     } on Exception catch (e) {
       if (!mounted) return;
       state = state.copyWith(
-          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
+          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e),);
     }
   }
 
@@ -157,7 +157,7 @@ class FishDetailViewModel extends StateNotifier<FishDetailState> {
     } on Exception catch (e) {
       if (!mounted) return false;
       state = state.copyWith(
-          isDeleting: false, errorMessage: () => ErrorService.toUserMessage(e));
+          isDeleting: false, errorMessage: () => ErrorService.toUserMessage(e),);
       return false;
     }
   }

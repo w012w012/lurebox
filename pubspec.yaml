@@ -61,6 +61,9 @@ dependencies:
   # 导出功能
   csv: ^5.1.1
 
+  # 注解支持（database_provider.dart @visibleForTesting）
+  meta: ^1.17.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -68,6 +71,8 @@ dev_dependencies:
   sqflite_common_ffi: ^2.3.4
   mocktail: ^1.0.4
 
+  # 测试文件模拟（backup/me/export tests）
+  cross_file: ^0.3.4
 flutter:
   uses-material-design: true
 

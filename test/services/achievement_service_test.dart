@@ -412,13 +412,13 @@ void main() {
         // 全 0：无任何解锁 → 不应写入。
         await achievementService.getAllAchievements();
         expect(fakeSettingsRepo.store.containsKey('unlocked_achievements'),
-            isFalse);
+            isFalse,);
 
         // 解锁后写入。
         when(mockStatsRepo.getTotalCatchCount).thenAnswer((_) async => 1);
         await achievementService.getAllAchievements();
         expect(fakeSettingsRepo.store.containsKey('unlocked_achievements'),
-            isTrue);
+            isTrue,);
       });
 
       test('write failure during persist does not throw', () async {

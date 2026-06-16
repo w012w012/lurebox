@@ -283,7 +283,7 @@ Future<File> createZipWithFilesAndMetadata(
     'metadata.json',
     metadataJson.codeUnits.length,
     metadataJson.codeUnits,
-  ));
+  ),);
 
   final zipData = ZipEncoder().encode(archive);
   if (zipData == null) throw Exception('Failed to encode ZIP');
@@ -358,7 +358,7 @@ void main() {
           expect(
               result.isSuccess ||
                   !result.errorMessage!.contains('checksum mismatch'),
-              true);
+              true,);
         } finally {
           await zipFile.delete();
         }
@@ -500,7 +500,7 @@ void main() {
           'metadata.json',
           jsonEncode(metadata).length,
           jsonEncode(metadata).codeUnits,
-        ));
+        ),);
         final newZipData = ZipEncoder().encode(modifiedArchive)!;
         await zipFile.writeAsBytes(newZipData);
 
@@ -522,14 +522,14 @@ void main() {
           'lurebox.db',
           'db content'.length,
           'db content'.codeUnits,
-        ));
+        ),);
 
         // Add malicious absolute path entry
         archive.addFile(ArchiveFile(
           '/tmp/malicious_file.txt',
           'malicious'.length,
           'malicious'.codeUnits,
-        ));
+        ),);
 
         // Add metadata
         final metadata = {
@@ -545,7 +545,7 @@ void main() {
           'metadata.json',
           jsonEncode(metadata).length,
           jsonEncode(metadata).codeUnits,
-        ));
+        ),);
 
         final zipData = ZipEncoder().encode(archive)!;
         final zipFile = File(
@@ -571,14 +571,14 @@ void main() {
           'lurebox.db',
           'db content'.length,
           'db content'.codeUnits,
-        ));
+        ),);
 
         // Nested path traversal
         archive.addFile(ArchiveFile(
           'photos/../../../etc/malicious',
           'malicious'.length,
           'malicious'.codeUnits,
-        ));
+        ),);
 
         final metadata = {
           'version': 1,
@@ -593,7 +593,7 @@ void main() {
           'metadata.json',
           jsonEncode(metadata).length,
           jsonEncode(metadata).codeUnits,
-        ));
+        ),);
 
         final zipData = ZipEncoder().encode(archive)!;
         final zipFile = File(
@@ -619,17 +619,17 @@ void main() {
           'lurebox.db',
           'db content'.length,
           'db content'.codeUnits,
-        ));
+        ),);
         archive.addFile(ArchiveFile(
           'photos/fish_001.jpg',
           'photo data'.length,
           'photo data'.codeUnits,
-        ));
+        ),);
         archive.addFile(ArchiveFile(
           'photos/subdir/catch.jpg',
           'nested photo'.length,
           'nested photo'.codeUnits,
-        ));
+        ),);
 
         final metadata = {
           'version': 1,
@@ -644,7 +644,7 @@ void main() {
           'metadata.json',
           jsonEncode(metadata).length,
           jsonEncode(metadata).codeUnits,
-        ));
+        ),);
 
         final zipData = ZipEncoder().encode(archive)!;
         final zipFile = File(
@@ -676,14 +676,14 @@ void main() {
           'lurebox.db',
           'db content'.length,
           'db content'.codeUnits,
-        ));
+        ),);
 
         // URL-encoded path traversal - NOT blocked by current implementation
         archive.addFile(ArchiveFile(
           '%2e%2e%2fmalicious.txt',
           'malicious'.length,
           'malicious'.codeUnits,
-        ));
+        ),);
 
         final metadata = {
           'version': 1,
@@ -698,7 +698,7 @@ void main() {
           'metadata.json',
           jsonEncode(metadata).length,
           jsonEncode(metadata).codeUnits,
-        ));
+        ),);
 
         final zipData = ZipEncoder().encode(archive)!;
         final zipFile = File(
@@ -747,13 +747,13 @@ void main() {
           'lurebox.db',
           'db content'.length,
           'db content'.codeUnits,
-        ));
+        ),);
         // Invalid JSON
         archive.addFile(ArchiveFile(
           'metadata.json',
           'not { valid json'.length,
           'not { valid json'.codeUnits,
-        ));
+        ),);
 
         final zipData = ZipEncoder().encode(archive)!;
         final zipFile = File(
@@ -777,7 +777,7 @@ void main() {
           'lurebox.db',
           'db content'.length,
           'db content'.codeUnits,
-        ));
+        ),);
         // No metadata.json
 
         final zipData = ZipEncoder().encode(archive)!;
@@ -806,7 +806,7 @@ void main() {
           'lurebox.db',
           truncatedContent.length,
           truncatedContent,
-        ));
+        ),);
 
         // Metadata claims checksum of FULL content, but ZIP contains truncated
         // This causes checksum mismatch during import validation
@@ -823,7 +823,7 @@ void main() {
           'metadata.json',
           jsonEncode(metadata).length,
           jsonEncode(metadata).codeUnits,
-        ));
+        ),);
 
         final zipData = ZipEncoder().encode(archive)!;
         final zipFile = File(
@@ -864,7 +864,7 @@ void main() {
           'lurebox.db',
           'db content'.length,
           'db content'.codeUnits,
-        ));
+        ),);
 
         final metadata = {
           'version': 999, // Future version
@@ -879,7 +879,7 @@ void main() {
           'metadata.json',
           jsonEncode(metadata).length,
           jsonEncode(metadata).codeUnits,
-        ));
+        ),);
 
         final zipData = ZipEncoder().encode(archive)!;
         final zipFile = File(
@@ -912,7 +912,7 @@ void main() {
           'lurebox.db',
           'new db content'.length,
           'new db content'.codeUnits,
-        ));
+        ),);
 
         final metadata = {
           'version': 1,
@@ -927,7 +927,7 @@ void main() {
           'metadata.json',
           jsonEncode(metadata).length,
           jsonEncode(metadata).codeUnits,
-        ));
+        ),);
 
         final zipData = ZipEncoder().encode(archive)!;
         final zipFile = File(
@@ -957,7 +957,7 @@ void main() {
           'lurebox.db',
           'db content'.length,
           'db content'.codeUnits,
-        ));
+        ),);
 
         final metadata = {
           'version': 1,
@@ -972,7 +972,7 @@ void main() {
           'metadata.json',
           jsonEncode(metadata).length,
           jsonEncode(metadata).codeUnits,
-        ));
+        ),);
 
         final zipData = ZipEncoder().encode(archive)!;
         final zipFile = File(
@@ -1002,7 +1002,7 @@ void main() {
           'lurebox.db',
           'db'.length,
           'db'.codeUnits,
-        ));
+        ),);
 
         // Missing 'databaseChecksum' field
         final metadata = {
@@ -1018,7 +1018,7 @@ void main() {
           'metadata.json',
           jsonEncode(metadata).length,
           jsonEncode(metadata).codeUnits,
-        ));
+        ),);
 
         final zipData = ZipEncoder().encode(archive)!;
         final zipFile = File(
@@ -1042,7 +1042,7 @@ void main() {
           'lurebox.db',
           'db'.length,
           'db'.codeUnits,
-        ));
+        ),);
 
         final metadata = {
           'version': -1,
@@ -1057,7 +1057,7 @@ void main() {
           'metadata.json',
           jsonEncode(metadata).length,
           jsonEncode(metadata).codeUnits,
-        ));
+        ),);
 
         final zipData = ZipEncoder().encode(archive)!;
         final zipFile = File(
@@ -1085,7 +1085,7 @@ void main() {
           'lurebox.db',
           'db'.length,
           'db'.codeUnits,
-        ));
+        ),);
 
         // Extremely long "checksum" (potential buffer overflow vector)
         final metadata = {
@@ -1101,7 +1101,7 @@ void main() {
           'metadata.json',
           jsonEncode(metadata).length,
           jsonEncode(metadata).codeUnits,
-        ));
+        ),);
 
         final zipData = ZipEncoder().encode(archive)!;
         final zipFile = File(

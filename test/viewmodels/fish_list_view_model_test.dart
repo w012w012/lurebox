@@ -36,11 +36,11 @@ void main() {
 
   final testCatches = [
     _createFishCatch(
-        id: 1, species: 'Bass', length: 30, catchTime: DateTime(2024)),
+        id: 1, species: 'Bass', length: 30, catchTime: DateTime(2024),),
     _createFishCatch(
-        id: 2, species: 'Trout', length: 25, catchTime: DateTime(2024, 1, 2)),
+        id: 2, species: 'Trout', length: 25, catchTime: DateTime(2024, 1, 2),),
     _createFishCatch(
-        id: 3, species: 'Bass', length: 35, catchTime: DateTime(2024, 1, 3)),
+        id: 3, species: 'Bass', length: 35, catchTime: DateTime(2024, 1, 3),),
   ];
 
   setUp(() {
@@ -753,7 +753,7 @@ void main() {
         viewModel.toggleSelection(1);
 
         when(() => mockRepository.getByIds([1])).thenAnswer((_) async =>
-            [_createFishCatch(id: 1, species: 'Bass', length: 30)]);
+            [_createFishCatch(id: 1, species: 'Bass', length: 30)],);
         when(() => mockRepository.deleteMultiple([1]))
             .thenThrow(Exception('Delete failed'));
 
@@ -785,7 +785,7 @@ void main() {
           page: 1,
           pageSize: 20,
           hasMore: false,
-        ));
+        ),);
         await load1;
 
         // Should only be called once because loadMore should be skipped during loading

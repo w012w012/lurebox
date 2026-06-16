@@ -117,7 +117,7 @@ void main() {
         imagePath: '/fake/path/image.jpg',
         species: 'Bass',
         length: 30.5,
-      ));
+      ),);
 
       // The widget should render with an Image widget
       expect(find.byType(Image), findsOneWidget);
@@ -130,7 +130,7 @@ void main() {
         species: 'Bass',
         length: 30.5,
         showWatermark: true,
-      ));
+      ),);
 
       // Should have Stack containing Image and CustomPaint
       expect(find.byType(Stack), findsWidgets);
@@ -155,7 +155,7 @@ void main() {
         length: 30.5,
         showWatermark: true,
         watermarkSettings: disabledSettings,
-      ));
+      ),);
 
       await tester.pump();
 
@@ -175,7 +175,7 @@ void main() {
         species: 'Bass',
         length: 30.5,
         showWatermark: false,
-      ));
+      ),);
 
       await tester.pump();
 
@@ -204,7 +204,7 @@ void main() {
         length: 30.5,
         showWatermark: true,
         watermarkSettings: customTextSettings,
-      ));
+      ),);
 
       await tester.pump();
 
@@ -227,7 +227,7 @@ void main() {
         length: 30.5,
         showWatermark: true,
         watermarkSettings: topLeftSettings,
-      ));
+      ),);
 
       await tester.pump();
 
@@ -250,7 +250,7 @@ void main() {
         length: 30.5,
         showWatermark: true,
         watermarkSettings: topRightSettings,
-      ));
+      ),);
 
       await tester.pump();
 
@@ -272,7 +272,7 @@ void main() {
         length: 30.5,
         showWatermark: true,
         watermarkSettings: bottomLeftSettings,
-      ));
+      ),);
 
       await tester.pump();
 
@@ -294,7 +294,7 @@ void main() {
         length: 30.5,
         showWatermark: true,
         watermarkSettings: bottomRightSettings,
-      ));
+      ),);
 
       await tester.pump();
 
@@ -316,7 +316,7 @@ void main() {
         length: 30.5,
         showWatermark: true,
         watermarkSettings: centerSettings,
-      ));
+      ),);
 
       await tester.pump();
 
@@ -345,7 +345,7 @@ void main() {
         length: 30.5,
         showWatermark: true,
         watermarkSettings: multiInfoSettings,
-      ));
+      ),);
 
       await tester.pump();
 
@@ -360,7 +360,7 @@ void main() {
         species: 'Bass',
         length: 30.5,
         showWatermark: true,
-      ));
+      ),);
 
       await tester.pump();
 

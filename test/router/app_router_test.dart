@@ -149,7 +149,7 @@ GoRouter _createShellRouter({
           GoRoute(path: '/fish', builder: (_, __) => const Text('fishList')),
           GoRoute(
               path: '/equipment',
-              builder: (_, __) => const Text('equipmentList')),
+              builder: (_, __) => const Text('equipmentList'),),
           GoRoute(path: '/me', builder: (_, __) => const Text('mePage')),
         ],
       ),
@@ -851,10 +851,10 @@ void main() {
             routes: [
               GoRoute(path: '/', builder: (_, __) => const Text('home')),
               GoRoute(
-                  path: '/fish', builder: (_, __) => const Text('fishList')),
+                  path: '/fish', builder: (_, __) => const Text('fishList'),),
               GoRoute(
                   path: '/equipment',
-                  builder: (_, __) => const Text('equipmentList')),
+                  builder: (_, __) => const Text('equipmentList'),),
               GoRoute(path: '/me', builder: (_, __) => const Text('mePage')),
             ],
           ),
@@ -898,10 +898,10 @@ void main() {
             routes: [
               GoRoute(path: '/', builder: (_, __) => const Text('home')),
               GoRoute(
-                  path: '/fish', builder: (_, __) => const Text('fishList')),
+                  path: '/fish', builder: (_, __) => const Text('fishList'),),
               GoRoute(
                   path: '/equipment',
-                  builder: (_, __) => const Text('equipmentList')),
+                  builder: (_, __) => const Text('equipmentList'),),
               GoRoute(path: '/me', builder: (_, __) => const Text('mePage')),
             ],
           ),

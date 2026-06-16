@@ -93,7 +93,7 @@ class ReelForm extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Text(strings.capacityLineUnit,
-                  style: const TextStyle(fontSize: 14)),
+                  style: const TextStyle(fontSize: 14),),
             ),
             Expanded(
               child: PremiumTextField(
@@ -119,15 +119,15 @@ class ReelForm extends ConsumerWidget {
             PremiumDropdownItem(value: 'none', label: strings.brakeTypeNone),
             PremiumDropdownItem(
                 value: 'traditional_magnetic',
-                label: strings.brakeTypeTraditionalMagnetic),
+                label: strings.brakeTypeTraditionalMagnetic,),
             PremiumDropdownItem(
-                value: 'centrifugal', label: strings.brakeTypeCentrifugal),
+                value: 'centrifugal', label: strings.brakeTypeCentrifugal,),
             PremiumDropdownItem(value: 'dc', label: strings.brakeTypeDC),
             PremiumDropdownItem(
                 value: 'floating_magnetic',
-                label: strings.brakeTypeFloatingMagnetic),
+                label: strings.brakeTypeFloatingMagnetic,),
             PremiumDropdownItem(
-                value: 'innovative', label: strings.brakeTypeInnovative),
+                value: 'innovative', label: strings.brakeTypeInnovative,),
           ],
           onChanged: (value) {
             if (value != null) {

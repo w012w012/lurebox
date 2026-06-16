@@ -96,7 +96,7 @@ class _LocationGroupCardState extends State<LocationGroupCard> {
                             (widget.strings?.containsNSimilarLocations ??
                                     '包含 %d 个相似钓点')
                                 .replaceAll(
-                                    '%d', '${widget.group.locations.length}'),
+                                    '%d', '${widget.group.locations.length}',),
                             style: TextStyle(
                               fontSize: 12,
                               color: textSecondary,

@@ -112,7 +112,7 @@ void main() {
         addTearDown(() => tempDir.deleteSync(recursive: true));
 
         final mockResponse = _createUtf8Response(
-            jsonEncode(_createSuccessfulGeminiResponse()), 200);
+            jsonEncode(_createSuccessfulGeminiResponse()), 200,);
 
         when(
           () => mockHttpClient.post(

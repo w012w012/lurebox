@@ -200,7 +200,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
                       const Icon(Icons.wb_sunny, size: 20),
                       const SizedBox(width: 8),
                       Text(s.weather,
-                          style: const TextStyle(fontWeight: FontWeight.w500)),
+                          style: const TextStyle(fontWeight: FontWeight.w500),),
                       const Spacer(),
                       IconButton(
                         icon: const Icon(Icons.edit, size: 20),

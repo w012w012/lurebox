@@ -319,9 +319,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text('需要${PermissionService.cameraInfo.title}'), findsOneWidget);
+          find.text('需要${PermissionService.cameraInfo.title}'), findsOneWidget,);
       expect(
-          find.text(PermissionService.cameraInfo.description), findsOneWidget);
+          find.text(PermissionService.cameraInfo.description), findsOneWidget,);
       expect(find.text('授权'), findsOneWidget);
       expect(find.text('暂不授权'), findsOneWidget);
     });

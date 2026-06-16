@@ -277,7 +277,7 @@ class EnhancedBackupService {
         deletedCount++;
       } catch (e) {
         AppLogger.e(
-            'EnhancedBackupService', 'Failed to delete recovery point', e);
+            'EnhancedBackupService', 'Failed to delete recovery point', e,);
       }
     }
 
@@ -443,7 +443,7 @@ class EnhancedBackupService {
             if (species == null) {
               errorCount++;
               AppLogger.e('EnhancedBackupService',
-                  'Failed to import fish catch: species is null', null);
+                  'Failed to import fish catch: species is null', null,);
               continue;
             }
 
@@ -466,7 +466,7 @@ class EnhancedBackupService {
           } catch (e) {
             errorCount++;
             AppLogger.e(
-                'EnhancedBackupService', 'Failed to import fish catch', e);
+                'EnhancedBackupService', 'Failed to import fish catch', e,);
           }
         }
       }
@@ -485,7 +485,7 @@ class EnhancedBackupService {
             if (type == null) {
               errorCount++;
               AppLogger.e('EnhancedBackupService',
-                  'Failed to import equipment: type is null', null);
+                  'Failed to import equipment: type is null', null,);
               continue;
             }
 
@@ -520,7 +520,7 @@ class EnhancedBackupService {
           } catch (e) {
             errorCount++;
             AppLogger.e(
-                'EnhancedBackupService', 'Failed to import equipment', e);
+                'EnhancedBackupService', 'Failed to import equipment', e,);
           }
         }
       }
@@ -550,7 +550,7 @@ class EnhancedBackupService {
           } catch (e) {
             errorCount++;
             AppLogger.e(
-                'EnhancedBackupService', 'Failed to import species history', e);
+                'EnhancedBackupService', 'Failed to import species history', e,);
           }
         }
       }
@@ -588,7 +588,7 @@ class EnhancedBackupService {
           } catch (e) {
             errorCount++;
             AppLogger.e('EnhancedBackupService',
-                'Failed to import user species alias', e);
+                'Failed to import user species alias', e,);
           }
         }
       }

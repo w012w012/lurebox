@@ -149,7 +149,7 @@ class SettingsService {
 
   /// 将 API keys 保存到安全存储
   Future<void> _saveApiKeysToSecureStorage(
-      AiRecognitionSettings settings) async {
+      AiRecognitionSettings settings,) async {
     for (final entry in settings.providerConfigs.entries) {
       final providerKey = entry.key.value.toString();
       final apiKey = entry.value.apiKey;
@@ -189,7 +189,7 @@ class SettingsService {
 
   /// 从设置中移除 API keys（用于 SQLite 存储）
   AiRecognitionSettings _removeApiKeysFromSettings(
-      AiRecognitionSettings settings) {
+      AiRecognitionSettings settings,) {
     final cleanedConfigs = <AiRecognitionProvider, AiProviderConfig>{};
 
     for (final entry in settings.providerConfigs.entries) {

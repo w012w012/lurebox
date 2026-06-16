@@ -194,7 +194,7 @@ class _BaseEquipmentEditNotifier {
       AppLogger.e('EquipmentEditViewModel', 'Failed to save equipment', e);
       _updateState(
         _state.withUpdates(
-            isSaving: false, errorMessage: ErrorService.toUserMessage(e)),
+            isSaving: false, errorMessage: ErrorService.toUserMessage(e),),
       );
       return false;
     }
@@ -224,7 +224,7 @@ class RodEditNotifier extends _BaseEquipmentEditNotifier {
     var categoryType2 = '';
 
     AppLogger.d(
-        'EquipmentEditViewModel', '[_loadData Rod] e.length: ${e.length}');
+        'EquipmentEditViewModel', '[_loadData Rod] e.length: ${e.length}',);
 
     final category = e.category;
     if (category != null && category.contains('|')) {
@@ -238,7 +238,7 @@ class RodEditNotifier extends _BaseEquipmentEditNotifier {
 
     final lengthValue = e.length ?? '';
     AppLogger.d('EquipmentEditViewModel',
-        '[_loadData Rod] lengthValue to set: $lengthValue');
+        '[_loadData Rod] lengthValue to set: $lengthValue',);
 
     _updateState(
       rodState.copyWith(

@@ -306,7 +306,7 @@ void main() {
 
       final result = await container.read(
         paginatedEquipmentProvider(
-            (page: 1, pageSize: 20, type: null, orderBy: null)).future,
+            (page: 1, pageSize: 20, type: null, orderBy: null),).future,
       );
 
       expect(result.items.length, equals(1));
@@ -326,7 +326,7 @@ void main() {
 
       final result = await container.read(
         paginatedEquipmentProvider(
-            (page: 2, pageSize: 10, type: null, orderBy: null)).future,
+            (page: 2, pageSize: 10, type: null, orderBy: null),).future,
       );
 
       expect(result.page, equals(2));
@@ -345,7 +345,7 @@ void main() {
 
       final result = await container.read(
         paginatedEquipmentProvider(
-            (page: 1, pageSize: 20, type: null, orderBy: null)).future,
+            (page: 1, pageSize: 20, type: null, orderBy: null),).future,
       );
 
       expect(result.items, isEmpty);
@@ -362,7 +362,7 @@ void main() {
       );
       final asyncValue = container.read(
         paginatedEquipmentProvider(
-            (page: 1, pageSize: 20, type: null, orderBy: null)),
+            (page: 1, pageSize: 20, type: null, orderBy: null),),
       );
       expect(asyncValue.isLoading, isTrue);
     });

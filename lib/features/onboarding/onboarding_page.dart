@@ -55,7 +55,7 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
       if (!mounted) return;
       final errorStrings = ref.read(currentStringsProvider);
       AppSnackBar.showError(context, errorStrings.errorSaveFailed,
-          debugError: e);
+          debugError: e,);
     } finally {
       if (mounted) setState(() => _isCompleting = false);
     }
@@ -151,10 +151,10 @@ class _WelcomePage extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(strings.onboardingWelcomeTitle,
-              style: Theme.of(context).textTheme.headlineMedium),
+              style: Theme.of(context).textTheme.headlineMedium,),
           const SizedBox(height: 16),
           Text(strings.onboardingWelcomeDesc,
-              style: Theme.of(context).textTheme.bodyLarge),
+              style: Theme.of(context).textTheme.bodyLarge,),
         ],
       ),
     );
@@ -172,7 +172,7 @@ class _FeaturesPage extends StatelessWidget {
       child: Column(
         children: [
           Text(strings.onboardingFeaturesTitle,
-              style: Theme.of(context).textTheme.headlineSmall),
+              style: Theme.of(context).textTheme.headlineSmall,),
           const SizedBox(height: 24),
           Expanded(
             child: GridView.count(
@@ -344,7 +344,7 @@ class _PermissionsPageState extends State<_PermissionsPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(Icons.check_circle,
-                    color: TeslaColors.success, size: 20),
+                    color: TeslaColors.success, size: 20,),
                 const SizedBox(width: 8),
                 Text(
                   widget.strings.onboardingPermissionsGranted,
@@ -433,13 +433,13 @@ class _SettingsPage extends StatelessWidget {
       child: Column(
         children: [
           Text(strings.onboardingSettingsTitle,
-              style: Theme.of(context).textTheme.headlineSmall),
+              style: Theme.of(context).textTheme.headlineSmall,),
           const SizedBox(height: 16),
           Text(strings.onboardingSettingsDesc,
-              style: Theme.of(context).textTheme.bodyMedium),
+              style: Theme.of(context).textTheme.bodyMedium,),
           const Spacer(),
           Text(strings.onboardingSettingsItems,
-              style: Theme.of(context).textTheme.titleMedium),
+              style: Theme.of(context).textTheme.titleMedium,),
           const Spacer(),
         ],
       ),
@@ -464,10 +464,10 @@ class _CompletePage extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           Text(strings.onboardingReadyTitle,
-              style: Theme.of(context).textTheme.headlineMedium),
+              style: Theme.of(context).textTheme.headlineMedium,),
           const SizedBox(height: 16),
           Text(strings.onboardingReadyDesc,
-              style: Theme.of(context).textTheme.bodyLarge),
+              style: Theme.of(context).textTheme.bodyLarge,),
         ],
       ),
     );

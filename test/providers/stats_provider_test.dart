@@ -279,15 +279,15 @@ void main() {
       final now = DateTime.now();
       fakeService.getByDateRangeResult = [
         _createFishCatch(
-            id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now),
+            id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now,),
         _createFishCatch(
             id: 2,
             species: 'Trout',
             fate: FishFateType.release,
             catchTime: now,
-            pendingRecognition: true), // Should be filtered
+            pendingRecognition: true,), // Should be filtered
         _createFishCatch(
-            id: 3, species: 'Carp', fate: FishFateType.keep, catchTime: now),
+            id: 3, species: 'Carp', fate: FishFateType.keep, catchTime: now,),
       ];
 
       final range = StatsTimeRange(
@@ -311,12 +311,12 @@ void main() {
             id: 1,
             species: 'Bass',
             fate: FishFateType.release,
-            catchTime: now), // fate = 0
+            catchTime: now,), // fate = 0
         _createFishCatch(
             id: 2,
             species: 'Trout',
             fate: FishFateType.release,
-            catchTime: now), // fate = 0
+            catchTime: now,), // fate = 0
       ];
 
       final range = StatsTimeRange(
@@ -338,12 +338,12 @@ void main() {
             id: 1,
             species: 'Bass',
             fate: FishFateType.keep,
-            catchTime: now), // fate = 1
+            catchTime: now,), // fate = 1
         _createFishCatch(
             id: 2,
             species: 'Trout',
             fate: FishFateType.keep,
-            catchTime: now), // fate = 1
+            catchTime: now,), // fate = 1
       ];
 
       final range = StatsTimeRange(
@@ -362,24 +362,24 @@ void main() {
       final now = DateTime.now();
       fakeService.getByDateRangeResult = [
         _createFishCatch(
-            id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now),
+            id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now,),
         _createFishCatch(
-            id: 2, species: 'Bass', fate: FishFateType.release, catchTime: now),
+            id: 2, species: 'Bass', fate: FishFateType.release, catchTime: now,),
         _createFishCatch(
             id: 3,
             species: 'Trout',
             fate: FishFateType.release,
-            catchTime: now),
+            catchTime: now,),
         _createFishCatch(
             id: 4,
             species: 'Trout',
             fate: FishFateType.release,
-            catchTime: now),
+            catchTime: now,),
         _createFishCatch(
             id: 5,
             species: 'Trout',
             fate: FishFateType.release,
-            catchTime: now),
+            catchTime: now,),
       ];
 
       final range = StatsTimeRange(
@@ -486,7 +486,7 @@ void main() {
             species: 'Bass',
             length: 50,
             fate: FishFateType.release,
-            catchTime: now),
+            catchTime: now,),
       ];
 
       final result = await container.read(top3LongestCatchesProvider.future);

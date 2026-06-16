@@ -171,7 +171,7 @@ void main() {
 
         expect(viewModel.state.selectedLocations.length, 3);
         expect(viewModel.state.selectedLocations,
-            containsAll(['Lake A', 'Lake B', 'Lake C']));
+            containsAll(['Lake A', 'Lake B', 'Lake C']),);
       });
     });
 

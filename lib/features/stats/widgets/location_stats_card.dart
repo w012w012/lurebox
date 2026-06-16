@@ -166,7 +166,7 @@ class _LocationStatsCardState extends State<LocationStatsCard>
                             widget.strings.speciesCountPattern
                                 .replaceAll('%s', speciesEntry.key)
                                 .replaceAll(
-                                    '%d', speciesEntry.value.toString()),
+                                    '%d', speciesEntry.value.toString(),),
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                         );

@@ -70,7 +70,7 @@ void main() {
       expect(resultMap['id'], equals(42));
       expect(resultMap['image_path'], equals('/path/to/image.jpg'));
       expect(resultMap['watermarked_image_path'],
-          equals('/path/to/watermarked.jpg'));
+          equals('/path/to/watermarked.jpg'),);
       expect(resultMap['species'], equals('Bass'));
       expect(resultMap['length'], equals(35.5));
       expect(resultMap['length_unit'], equals('cm'));
@@ -531,15 +531,15 @@ void main() {
     setUp(() {
       catches = [
         TestDataFactory.createFishCatch(
-            id: 1, species: 'Release 1', fate: FishFateType.release),
+            id: 1, species: 'Release 1', fate: FishFateType.release,),
         TestDataFactory.createFishCatch(
-            id: 2, species: 'Keep 1', fate: FishFateType.keep),
+            id: 2, species: 'Keep 1', fate: FishFateType.keep,),
         TestDataFactory.createFishCatch(
-            id: 3, species: 'Release 2', fate: FishFateType.release),
+            id: 3, species: 'Release 2', fate: FishFateType.release,),
         TestDataFactory.createFishCatch(
-            id: 4, species: 'Keep 2', fate: FishFateType.keep),
+            id: 4, species: 'Keep 2', fate: FishFateType.keep,),
         TestDataFactory.createFishCatch(
-            id: 5, species: 'Release 3', fate: FishFateType.release),
+            id: 5, species: 'Release 3', fate: FishFateType.release,),
       ];
     });
 
@@ -572,11 +572,11 @@ void main() {
     setUp(() {
       catches = [
         TestDataFactory.createFishCatch(
-            id: 1, species: 'Bass', fate: FishFateType.release),
+            id: 1, species: 'Bass', fate: FishFateType.release,),
         TestDataFactory.createFishCatch(
-            id: 2, species: 'Trout', fate: FishFateType.keep),
+            id: 2, species: 'Trout', fate: FishFateType.keep,),
         TestDataFactory.createFishCatch(
-            id: 3, species: 'Bass', fate: FishFateType.release),
+            id: 3, species: 'Bass', fate: FishFateType.release,),
       ];
     });
 
@@ -650,14 +650,14 @@ void main() {
       final result = catches.searchByKeyword('bass');
       expect(result.length, equals(2));
       expect(result.map((f) => f.species),
-          containsAll(['Largemouth Bass', 'Smallmouth Bass']));
+          containsAll(['Largemouth Bass', 'Smallmouth Bass']),);
     });
 
     test('matches by location name', () {
       final result = catches.searchByKeyword('lake');
       expect(result.length, equals(2));
       expect(result.map((f) => f.species),
-          containsAll(['Largemouth Bass', 'Smallmouth Bass']));
+          containsAll(['Largemouth Bass', 'Smallmouth Bass']),);
     });
 
     test('case insensitive', () {
@@ -761,9 +761,9 @@ void main() {
     test('handles null weight values in sort', () {
       final catchesWithNullWeight = [
         TestDataFactory.createFishCatch(
-            id: 1, species: 'With Weight', weight: 2.0),
+            id: 1, species: 'With Weight', weight: 2.0,),
         TestDataFactory.createFishCatch(
-            id: 2, species: 'No Weight', weight: null),
+            id: 2, species: 'No Weight', weight: null,),
         TestDataFactory.createFishCatch(id: 3, species: 'Another', weight: 1.0),
       ];
 
@@ -784,15 +784,15 @@ void main() {
     setUp(() {
       catches = [
         TestDataFactory.createFishCatch(
-            id: 1, species: 'Bass', fate: FishFateType.release),
+            id: 1, species: 'Bass', fate: FishFateType.release,),
         TestDataFactory.createFishCatch(
-            id: 2, species: 'Trout', fate: FishFateType.keep),
+            id: 2, species: 'Trout', fate: FishFateType.keep,),
         TestDataFactory.createFishCatch(
-            id: 3, species: 'Bass', fate: FishFateType.release),
+            id: 3, species: 'Bass', fate: FishFateType.release,),
         TestDataFactory.createFishCatch(
-            id: 4, species: 'Catfish', fate: FishFateType.keep),
+            id: 4, species: 'Catfish', fate: FishFateType.keep,),
         TestDataFactory.createFishCatch(
-            id: 5, species: 'Trout', fate: FishFateType.release),
+            id: 5, species: 'Trout', fate: FishFateType.release,),
       ];
     });
 
@@ -840,7 +840,7 @@ void main() {
     test('computed properties on single item list', () {
       final singleCatch = [
         TestDataFactory.createFishCatch(
-            id: 1, species: 'Bass', fate: FishFateType.release),
+            id: 1, species: 'Bass', fate: FishFateType.release,),
       ];
       expect(singleCatch.uniqueSpecies, equals(['Bass']));
       expect(singleCatch.releaseCount, equals(1));
@@ -990,7 +990,7 @@ void main() {
               length: 30,
               lengthUnit: 'unknown',
               weight: 2,
-              weightUnit: 'unknown')
+              weightUnit: 'unknown',)
           .toMap();
       expect(map['length_cm'], equals(30.0));
       expect(map['weight_kg'], equals(2.0));
@@ -999,7 +999,7 @@ void main() {
     test('fromMap 不读取派生列（以原始值+单位为准）', () {
       final now = DateTime.now();
       final map = buildCatch(
-              length: 20, lengthUnit: 'inch', weight: 1, weightUnit: 'lb')
+              length: 20, lengthUnit: 'inch', weight: 1, weightUnit: 'lb',)
           .toMap()
         ..['catch_time'] = now.toIso8601String()
         // 故意写入错误的派生值，验证 fromMap 忽略它们

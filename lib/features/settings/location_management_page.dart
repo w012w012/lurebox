@@ -278,7 +278,7 @@ class _LocationManagementPageState
           ),
           const SizedBox(height: TeslaTheme.spacingMd),
           Text(strings.noLocationRecords,
-              style: Theme.of(context).textTheme.titleLarge),
+              style: Theme.of(context).textTheme.titleLarge,),
           const SizedBox(height: TeslaTheme.spacingSm),
           Text(
             strings.locationStartFishing,

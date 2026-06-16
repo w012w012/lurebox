@@ -260,7 +260,7 @@ void main() {
                       confidence: 90,
                     ),
                     confidence: 90,
-                  ));
+                  ),);
 
           // Call the testable service which mirrors the validation
           await testService.identifySpeciesWithValidation(mockFile, settings);
@@ -289,7 +289,7 @@ void main() {
                       confidence: 88,
                     ),
                     confidence: 88,
-                  ));
+                  ),);
 
           await testService.identifySpeciesWithValidation(mockFile, settings);
 
@@ -317,7 +317,7 @@ void main() {
                       confidence: 92,
                     ),
                     confidence: 92,
-                  ));
+                  ),);
 
           await testService.identifySpeciesWithValidation(mockFile, settings);
 
@@ -345,7 +345,7 @@ void main() {
                       confidence: 80,
                     ),
                     confidence: 80,
-                  ));
+                  ),);
 
           await testService.identifySpeciesWithValidation(mockFile, settings);
 
@@ -373,7 +373,7 @@ void main() {
                       confidence: 85,
                     ),
                     confidence: 85,
-                  ));
+                  ),);
 
           await testService.identifySpeciesWithValidation(mockFile, settings);
 
@@ -558,7 +558,7 @@ void main() {
               .thenAnswer((_) async => expectedResult);
 
           final result = await testService.identifySpeciesWithValidation(
-              mockFile, settings);
+              mockFile, settings,);
 
           expect(result.primarySpecies.chineseName, equals('鲈鱼'));
           expect(result.confidence, equals(95));
@@ -584,7 +584,7 @@ void main() {
               .thenThrow(const FishRecognitionException(
             FishRecognitionErrorType.networkError,
             'Network connection failed',
-          ));
+          ),);
 
           expect(
             () => testService.identifySpeciesWithValidation(mockFile, settings),
@@ -675,7 +675,7 @@ void main() {
 
           expect(result.primarySpecies.chineseName, equals('鲤鱼'));
           expect(
-              result.primarySpecies.scientificName, equals('Cyprinus carpio'));
+              result.primarySpecies.scientificName, equals('Cyprinus carpio'),);
           expect(result.primarySpecies.confidence, equals(88));
           expect(result.confidence, equals(88));
           expect(result.alternatives.length, equals(1));
@@ -824,7 +824,7 @@ void main() {
           expect(
             exception.toString(),
             equals(
-                'FishRecognitionException(FishRecognitionErrorType.apiKeyInvalid): API key is invalid'),
+                'FishRecognitionException(FishRecognitionErrorType.apiKeyInvalid): API key is invalid',),
           );
         });
 
@@ -835,7 +835,7 @@ void main() {
           );
 
           expect(
-              exception.type, equals(FishRecognitionErrorType.apiKeyInvalid));
+              exception.type, equals(FishRecognitionErrorType.apiKeyInvalid),);
         });
 
         test('timeout type is correctly set', () {
@@ -890,7 +890,7 @@ class _TestableFishRecognitionService {
     '.jpg',
     '.jpeg',
     '.png',
-    '.webp'
+    '.webp',
   };
 
   Future<FishRecognitionResult> identifySpeciesWithValidation(

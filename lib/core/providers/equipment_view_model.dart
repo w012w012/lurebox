@@ -94,7 +94,7 @@ class EquipmentListViewModel extends StateNotifier<EquipmentListState> {
     } on Exception catch (e) {
       if (!mounted) return;
       state = state.copyWith(
-          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
+          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e),);
     }
   }
 

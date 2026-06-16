@@ -84,7 +84,7 @@ class BackupService {
         final fishCatches = backupData['fishCatches'] as List;
         for (final fish in fishCatches) {
           await txn.insert(
-              'fish_catches', Map<String, dynamic>.from(fish as Map));
+              'fish_catches', Map<String, dynamic>.from(fish as Map),);
           importedCount++;
         }
       }
@@ -93,7 +93,7 @@ class BackupService {
         final equipments = backupData['equipments'] as List;
         for (final equipment in equipments) {
           await txn.insert(
-              'equipments', Map<String, dynamic>.from(equipment as Map));
+              'equipments', Map<String, dynamic>.from(equipment as Map),);
         }
       }
 

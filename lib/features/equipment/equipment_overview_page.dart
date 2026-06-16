@@ -526,7 +526,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
               '%s',
               strings.priceOf.replaceFirst('%s', strings.rod),
             ),
-            TeslaColors.electricBlue),
+            TeslaColors.electricBlue,),
       ],
     );
   }

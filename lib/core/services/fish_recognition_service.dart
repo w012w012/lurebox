@@ -26,7 +26,7 @@ class FishRecognitionResult {
     final primaryJson = json['primarySpecies'];
     if (primaryJson is! Map<String, dynamic>) {
       throw const FormatException(
-          'Invalid primarySpecies in recognition result');
+          'Invalid primarySpecies in recognition result',);
     }
     return FishRecognitionResult(
       primarySpecies: SpeciesInfo.fromJson(primaryJson),
@@ -144,7 +144,7 @@ class FishRecognitionService {
     '.jpg',
     '.jpeg',
     '.png',
-    '.webp'
+    '.webp',
   };
 
   /// Provider factory map — only the selected provider is instantiated

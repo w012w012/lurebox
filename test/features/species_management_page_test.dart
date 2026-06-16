@@ -85,7 +85,7 @@ class FakeFishCatchRepository extends Fake implements FishCatchRepository {
           totalCount: 0,
           page: page,
           pageSize: pageSize,
-          hasMore: false);
+          hasMore: false,);
   @override
   Future<PaginatedResult<FishCatch>> getFilteredPage({
     required int page,
@@ -101,7 +101,7 @@ class FakeFishCatchRepository extends Fake implements FishCatchRepository {
           totalCount: 0,
           page: page,
           pageSize: pageSize,
-          hasMore: false);
+          hasMore: false,);
   @override
   Future<List<FishCatch>> getPendingRecognitionCatches() async {
     if (_error != null) throw _error;
@@ -142,7 +142,7 @@ class FakeFishCatchRepository extends Fake implements FishCatchRepository {
           totalCount: 0,
           page: page,
           pageSize: pageSize,
-          hasMore: false);
+          hasMore: false,);
   @override
   Future<int> getCount() async => 0;
 }
@@ -209,7 +209,7 @@ void main() {
       await tester.pump();
 
       expect(find.textContaining(AppStrings.chinese.errorLoadFailed),
-          findsOneWidget);
+          findsOneWidget,);
     });
 
     // FIX 4 (H-4): _recognizeSingle 在 await 后无 mounted 守卫时，

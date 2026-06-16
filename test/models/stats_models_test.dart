@@ -280,11 +280,11 @@ void main() {
 
       // Verify species counts increase over time periods
       expect(dashboard.todaySpecies.length,
-          lessThan(dashboard.monthSpecies.length));
+          lessThan(dashboard.monthSpecies.length),);
       expect(dashboard.monthSpecies.length,
-          lessThan(dashboard.yearSpecies.length));
+          lessThan(dashboard.yearSpecies.length),);
       expect(
-          dashboard.yearSpecies.length, lessThan(dashboard.allSpecies.length));
+          dashboard.yearSpecies.length, lessThan(dashboard.allSpecies.length),);
     });
 
     test('calculates release rates for all time periods', () {

@@ -95,13 +95,13 @@ class RodForm extends ConsumerWidget {
           value: jointType.isEmpty ? null : jointType,
           items: [
             PremiumDropdownItem(
-                value: 'spigot', label: strings.jointTypeSpigot),
+                value: 'spigot', label: strings.jointTypeSpigot,),
             PremiumDropdownItem(
-                value: 'reverse_spigot', label: strings.jointTypeReverseSpigot),
+                value: 'reverse_spigot', label: strings.jointTypeReverseSpigot,),
             PremiumDropdownItem(
-                value: 'dragon_spigot', label: strings.jointTypeDragonSpigot),
+                value: 'dragon_spigot', label: strings.jointTypeDragonSpigot,),
             PremiumDropdownItem(
-                value: 'telescopic', label: strings.jointTypeTelescopic),
+                value: 'telescopic', label: strings.jointTypeTelescopic,),
           ],
           onChanged: (value) {
             if (value != null) {

@@ -177,11 +177,11 @@ void main() {
         expect(notifier.state.blurRadius, 16); // from elegant preset
         expect(notifier.state.backgroundOpacity, 0.35); // from elegant preset
         expect(
-            notifier.state.backgroundColor, 0xFF1A1A2E); // from elegant preset
+            notifier.state.backgroundColor, 0xFF1A1A2E,); // from elegant preset
         expect(notifier.state.fontSize, 12); // from elegant preset
         expect(notifier.state.textColor, 0xFFE0E0E0); // from elegant preset
         expect(notifier.state.position,
-            WatermarkPosition.bottomRight); // from elegant preset
+            WatermarkPosition.bottomRight,); // from elegant preset
         verify(() => mockService.saveWatermarkSettings(any())).called(1);
       });
 
@@ -200,7 +200,7 @@ void main() {
         expect(notifier.state.fontSize, 20); // from bold preset
         expect(notifier.state.textColor, 0xFFFFFFFF); // from bold preset
         expect(notifier.state.position,
-            WatermarkPosition.center); // from bold preset
+            WatermarkPosition.center,); // from bold preset
         verify(() => mockService.saveWatermarkSettings(any())).called(1);
       });
     });
@@ -229,7 +229,7 @@ void main() {
         await notifier.toggleInfoType(WatermarkInfoType.species);
 
         expect(notifier.state.infoTypes,
-            isNot(contains(WatermarkInfoType.species)));
+            isNot(contains(WatermarkInfoType.species)),);
         verify(() => mockService.saveWatermarkSettings(any())).called(1);
       });
     });

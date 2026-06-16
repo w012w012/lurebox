@@ -9,12 +9,12 @@ void main() {
 
     test('fromString returns nextcloud for "nextcloud"', () {
       expect(CloudProvider.fromString('nextcloud'),
-          equals(CloudProvider.nextcloud));
+          equals(CloudProvider.nextcloud),);
     });
 
     test('fromString returns owncloud for "owncloud"', () {
       expect(
-          CloudProvider.fromString('owncloud'), equals(CloudProvider.owncloud));
+          CloudProvider.fromString('owncloud'), equals(CloudProvider.owncloud),);
     });
 
     test('fromString returns webdav as default for unknown value', () {
@@ -55,14 +55,14 @@ void main() {
       expect(config.id, equals(1));
       expect(config.provider, equals(CloudProvider.nextcloud));
       expect(
-          config.serverUrl, equals('https://cloud.example.com/remote.php/dav'));
+          config.serverUrl, equals('https://cloud.example.com/remote.php/dav'),);
       expect(config.username, equals('testuser'));
       expect(config.password, equals('secret123'));
       expect(config.isActive, isTrue);
       expect(
-          config.createdAt, equals(DateTime.parse('2024-06-15T10:30:00.000')));
+          config.createdAt, equals(DateTime.parse('2024-06-15T10:30:00.000')),);
       expect(
-          config.updatedAt, equals(DateTime.parse('2024-06-15T12:00:00.000')));
+          config.updatedAt, equals(DateTime.parse('2024-06-15T12:00:00.000')),);
     });
 
     test('defaults password to empty string when null', () {
@@ -180,7 +180,7 @@ void main() {
       expect(result['id'], equals(5));
       expect(result['provider'], equals('nextcloud'));
       expect(result['server_url'],
-          equals('https://cloud.example.com/remote.php/dav'));
+          equals('https://cloud.example.com/remote.php/dav'),);
       expect(result['username'], equals('testuser'));
       expect(result['password'], equals('mysecretpassword'));
       expect(result['is_active'], equals(1));
@@ -226,7 +226,7 @@ void main() {
       expect(result['id'], equals(5));
       expect(result['provider'], equals('nextcloud'));
       expect(result['server_url'],
-          equals('https://cloud.example.com/remote.php/dav'));
+          equals('https://cloud.example.com/remote.php/dav'),);
       expect(result['username'], equals('testuser'));
       expect(result['password'], equals('')); // password always empty in db map
       expect(result['is_active'], equals(1));

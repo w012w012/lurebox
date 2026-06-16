@@ -83,7 +83,7 @@ class LocationManagementViewModel
     } on Exception catch (e) {
       if (!mounted) return;
       state = state.copyWith(
-          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
+          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e),);
     }
   }
 
@@ -127,7 +127,7 @@ class LocationManagementViewModel
     } on Exception catch (e) {
       if (!mounted) return false;
       state = state.copyWith(
-          isMerging: false, errorMessage: () => ErrorService.toUserMessage(e));
+          isMerging: false, errorMessage: () => ErrorService.toUserMessage(e),);
       return false;
     }
   }
@@ -148,7 +148,7 @@ class LocationManagementViewModel
     } on Exception catch (e) {
       if (!mounted) return false;
       state = state.copyWith(
-          isMerging: false, errorMessage: () => ErrorService.toUserMessage(e));
+          isMerging: false, errorMessage: () => ErrorService.toUserMessage(e),);
       return false;
     }
   }
@@ -166,7 +166,7 @@ class LocationManagementViewModel
     } on Exception catch (e) {
       if (!mounted) return false;
       state = state.copyWith(
-          isMerging: false, errorMessage: () => ErrorService.toUserMessage(e));
+          isMerging: false, errorMessage: () => ErrorService.toUserMessage(e),);
       return false;
     }
   }

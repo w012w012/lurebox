@@ -54,7 +54,7 @@ void main() {
     test('trims whitespace from plain JSON', () {
       const content = '  \n  {"primarySpecies": {}}  \n  ';
       expect(
-          extractJsonFromResponse(content), equals('{"primarySpecies": {}}'));
+          extractJsonFromResponse(content), equals('{"primarySpecies": {}}'),);
     });
 
     test('handles extra newlines and spaces in markdown block', () {

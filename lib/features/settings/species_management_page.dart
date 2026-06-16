@@ -121,7 +121,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         if (mounted) {
           final s = ref.read(currentStringsProvider);
           AppSnackBar.showSuccess(
-              context, s.speciesUpdated.replaceFirst('%s', speciesName));
+              context, s.speciesUpdated.replaceFirst('%s', speciesName),);
         }
       } catch (e) {
         if (mounted) {
@@ -265,7 +265,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         if (mounted) {
           final s = ref.read(currentStringsProvider);
           AppSnackBar.showSuccess(
-              context, s.speciesUpdated.replaceFirst('%s', speciesName));
+              context, s.speciesUpdated.replaceFirst('%s', speciesName),);
         }
       } catch (e) {
         if (mounted) {
@@ -302,7 +302,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
             context,
             s.speciesRenamed
                 .replaceFirst('%s', oldName)
-                .replaceFirst('%s', result));
+                .replaceFirst('%s', result),);
       } catch (e) {
         if (!context.mounted) return;
         final s = ref.read(currentStringsProvider);

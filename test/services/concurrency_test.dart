@@ -203,14 +203,14 @@ void main() {
       await repository.create(TestDataFactory.createFishCatch(
         species: 'Bass',
         catchTime: DateTime(2024),
-      ));
+      ),);
 
       // Start read and write operations in parallel
       final readFuture = repository.getAll();
       final writeFuture = repository.create(TestDataFactory.createFishCatch(
         species: 'Trout',
         catchTime: DateTime(2024, 1, 2),
-      ));
+      ),);
 
       final results = await Future.wait([readFuture, writeFuture]);
       final readData = results[0] as List<FishCatch>;
@@ -261,17 +261,17 @@ void main() {
       // Create initial record
       await repository.create(TestDataFactory.createFishCatch(
         species: 'Initial',
-      ));
+      ),);
 
       // Perform mixed operations in parallel
       await Future.wait([
         repository.create(TestDataFactory.createFishCatch(
           species: 'Second',
-        )),
+        ),),
         repository.getAll(),
         repository.create(TestDataFactory.createFishCatch(
           species: 'Third',
-        )),
+        ),),
         repository.getCount(),
       ]);
 
@@ -370,9 +370,9 @@ void main() {
         repository.getAll(),
       ]);
 
-      final releaseList = results[0] as List<FishCatch>;
-      final keepList = results[1] as List<FishCatch>;
-      final allList = results[2] as List<FishCatch>;
+      final releaseList = results[0];
+      final keepList = results[1];
+      final allList = results[2];
 
       expect(releaseList.length, equals(1));
       expect(releaseList[0].species, equals('Bass'));

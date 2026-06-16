@@ -117,11 +117,11 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
           // Item 0: Pending recognition card
           StaggeredReveal.withAnimation(
               animation: _fadeAnimations[0],
-              child: _buildPendingRecognitionCard(context, ref)),
+              child: _buildPendingRecognitionCard(context, ref),),
           const SizedBox(height: 12),
           // Item 1: Podium
           StaggeredReveal.withAnimation(
-              animation: _fadeAnimations[1], child: _buildPodium(context)),
+              animation: _fadeAnimations[1], child: _buildPodium(context),),
           const SizedBox(height: 12),
           // Item 3: Today stat card
           StaggeredReveal.withAnimation(

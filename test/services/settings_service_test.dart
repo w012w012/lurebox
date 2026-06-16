@@ -173,7 +173,7 @@ void main() {
           () async {
         final apiKeyStorage = InMemoryApiKeyStorage();
         final service = SettingsService(mockRepository,
-            secureStorage: SecureStorageService(storage: apiKeyStorage));
+            secureStorage: SecureStorageService(storage: apiKeyStorage),);
 
         const settings = AiRecognitionSettings(
           currentProvider: AiRecognitionProvider.openai,
@@ -197,7 +197,7 @@ void main() {
           () async {
         final apiKeyStorage = InMemoryApiKeyStorage();
         final service = SettingsService(mockRepository,
-            secureStorage: SecureStorageService(storage: apiKeyStorage));
+            secureStorage: SecureStorageService(storage: apiKeyStorage),);
 
         final settings = AiRecognitionSettings(
           currentProvider: AiRecognitionProvider.openai,
@@ -313,7 +313,7 @@ void main() {
         expect(savedJson!.contains('sk-test-openai'), isFalse);
         expect(savedJson!.contains('"apiKey"'), isFalse);
         expect(savedJson!.contains('"currentProvider"'),
-            isTrue); // other fields preserved
+            isTrue,); // other fields preserved
       });
 
       test(

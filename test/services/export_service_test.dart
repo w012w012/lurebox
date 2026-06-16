@@ -193,7 +193,7 @@ void main() {
         expect(json['exportTime'], isA<String>());
         // Should be parseable as ISO8601
         expect(() => DateTime.parse(json['exportTime'] as String),
-            returnsNormally);
+            returnsNormally,);
       });
 
       test('JSON contains fishCatches array', () async {

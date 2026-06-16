@@ -186,7 +186,7 @@ class BackupExportPage extends ConsumerWidget {
   }
 
   void _showFullBackupDialog(
-      BuildContext context, WidgetRef ref, AppStrings strings) {
+      BuildContext context, WidgetRef ref, AppStrings strings,) {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(

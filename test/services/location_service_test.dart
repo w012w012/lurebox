@@ -333,7 +333,7 @@ void main() {
       mockDatabase.addQueryResult(
         'SELECT COUNT(*) as count FROM fish_catches WHERE location_name = ?',
         [
-          {'count': 10}
+          {'count': 10},
         ],
       );
 
@@ -346,7 +346,7 @@ void main() {
       mockDatabase.addQueryResult(
         'SELECT COUNT(*) as count FROM fish_catches WHERE location_name = ?',
         [
-          {'count': 0}
+          {'count': 0},
         ],
       );
 

@@ -103,7 +103,7 @@ void main() {
       final columns = await _columnNames(db, 'fish_catches');
       for (final column in requiredFishCatchColumns) {
         expect(columns, contains(column),
-            reason: '全新安装 fish_catches 缺列: $column');
+            reason: '全新安装 fish_catches 缺列: $column',);
       }
     });
 
@@ -163,7 +163,7 @@ void main() {
       final columns = await _columnNames(db, 'fish_catches');
       for (final column in requiredFishCatchColumns) {
         expect(columns, contains(column),
-            reason: 'v12 升级后 fish_catches 缺列: $column');
+            reason: 'v12 升级后 fish_catches 缺列: $column',);
       }
     });
   });
@@ -407,7 +407,7 @@ Future<Map<String, Map<String, Set<String>>>> _normalizedSchema(
     final columnRows = await db.rawQuery('PRAGMA table_info($table)');
     final columns = columnRows
         .map((r) => '${r['name']}|${(r['type'] as String?)?.toUpperCase()}'
-            '|nn=${r['notnull']}|df=${r['dflt_value']}|pk=${r['pk']}')
+            '|nn=${r['notnull']}|df=${r['dflt_value']}|pk=${r['pk']}',)
         .toSet();
     final indexRows = await db.rawQuery(
       "SELECT name FROM sqlite_master WHERE type='index' AND tbl_name=? "

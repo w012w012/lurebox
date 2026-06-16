@@ -83,7 +83,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
       );
     } catch (e) {
       state = state.copyWith(
-          errorMessage: () => error_service.ErrorService.toUserMessage(e));
+          errorMessage: () => error_service.ErrorService.toUserMessage(e),);
     }
   }
 
@@ -138,7 +138,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
       );
     } catch (e) {
       state = state.copyWith(
-          errorMessage: () => error_service.ErrorService.toUserMessage(e));
+          errorMessage: () => error_service.ErrorService.toUserMessage(e),);
     }
   }
 
@@ -153,7 +153,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
       );
     } catch (e) {
       state = state.copyWith(
-          errorMessage: () => error_service.ErrorService.toUserMessage(e));
+          errorMessage: () => error_service.ErrorService.toUserMessage(e),);
     }
   }
 
@@ -200,7 +200,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
       );
     } catch (e) {
       state = state.copyWith(
-          errorMessage: () => error_service.ErrorService.toUserMessage(e));
+          errorMessage: () => error_service.ErrorService.toUserMessage(e),);
     }
   }
 

@@ -728,7 +728,7 @@ void main() {
     test('very large values', () {
       expect(UnitConverter.toBaseCm(1000000000000000, 'm'), 1e17);
       expect(
-          UnitConverter.toBaseKg(10000000000, 'lb'), closeTo(4.53592e9, 1e6));
+          UnitConverter.toBaseKg(10000000000, 'lb'), closeTo(4.53592e9, 1e6),);
     });
 
     test('decimal precision in conversions', () {
@@ -787,22 +787,22 @@ void main() {
       // Length
       expect(UnitConverter.convertLength(-100, 'cm', 'm'), -1);
       expect(
-          UnitConverter.convertLength(-1, 'm', 'ft'), closeTo(-3.28084, 0.001));
+          UnitConverter.convertLength(-1, 'm', 'ft'), closeTo(-3.28084, 0.001),);
       // Weight
       expect(UnitConverter.convertWeight(-1, 'kg', 'lb'),
-          closeTo(-2.20462, 0.001));
+          closeTo(-2.20462, 0.001),);
       expect(UnitConverter.convertWeight(-2.20462, 'lb', 'kg'),
-          closeTo(-1, 0.001));
+          closeTo(-1, 0.001),);
       // Distance
       expect(UnitConverter.convertDistance(-1, 'km', 'mile'),
-          closeTo(-0.621371, 0.0001));
+          closeTo(-0.621371, 0.0001),);
       expect(UnitConverter.convertDistance(-1, 'mile', 'km'),
-          closeTo(-1.609344, 0.0001));
+          closeTo(-1.609344, 0.0001),);
       // Temperature: -40 C = -40 F (the special meeting point)
       expect(
-          UnitConverter.convertTemperature(-40, 'C', 'F'), closeTo(-40, 0.001));
+          UnitConverter.convertTemperature(-40, 'C', 'F'), closeTo(-40, 0.001),);
       expect(
-          UnitConverter.convertTemperature(-40, 'F', 'C'), closeTo(-40, 0.001));
+          UnitConverter.convertTemperature(-40, 'F', 'C'), closeTo(-40, 0.001),);
     });
 
     test('extreme negative temperature (absolute zero)', () {

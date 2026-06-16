@@ -99,7 +99,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
     } on Exception catch (e) {
       if (!mounted) return;
       state = state.copyWith(
-          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
+          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e),);
     }
   }
 
@@ -114,7 +114,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       if (!mounted) return null;
       state = state.copyWith(
           isExporting: false,
-          errorMessage: () => ErrorService.toUserMessage(e));
+          errorMessage: () => ErrorService.toUserMessage(e),);
       return null;
     }
   }
@@ -137,7 +137,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       if (!mounted) return null;
       state = state.copyWith(
           isExporting: false,
-          errorMessage: () => ErrorService.toUserMessage(e));
+          errorMessage: () => ErrorService.toUserMessage(e),);
       return null;
     }
   }
@@ -154,7 +154,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       if (!mounted) return null;
       state = state.copyWith(
           isImporting: false,
-          errorMessage: () => ErrorService.toUserMessage(e));
+          errorMessage: () => ErrorService.toUserMessage(e),);
       return null;
     }
   }
@@ -178,7 +178,7 @@ class SettingsViewModel extends StateNotifier<SettingsState> {
       if (!mounted) return null;
       state = state.copyWith(
           isUploading: false,
-          errorMessage: () => ErrorService.toUserMessage(e));
+          errorMessage: () => ErrorService.toUserMessage(e),);
       return null;
     }
   }

@@ -469,10 +469,10 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(Icons.error_outline,
-                          size: 48, color: Colors.grey),
+                          size: 48, color: Colors.grey,),
                       const SizedBox(height: 16),
                       Text(strings.error,
-                          style: Theme.of(context).textTheme.titleMedium),
+                          style: Theme.of(context).textTheme.titleMedium,),
                       const SizedBox(height: 8),
                       TextButton(
                         onPressed: _loadDetail,

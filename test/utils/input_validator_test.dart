@@ -48,7 +48,7 @@ void main() {
 
       test('preserves newlines and tabs', () {
         expect(InputValidator.validateName('line1\nline2'),
-            equals('line1\nline2'));
+            equals('line1\nline2'),);
         expect(InputValidator.validateName('col1\tcol2'), equals('col1\tcol2'));
       });
 

@@ -94,7 +94,7 @@ void main() {
         'purchase_date': '2024-01-15',
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
-      }));
+      }),);
 
       final state = notifier.state as RodEditState;
       expect(state.brand, 'Daiwa');
@@ -152,7 +152,7 @@ void main() {
             'model': 'Rod',
             'created_at': DateTime.now().toIso8601String(),
             'updated_at': DateTime.now().toIso8601String(),
-          }));
+          }),);
       notifier.updateBrand('Updated');
 
       final result = await notifier.save();
@@ -209,7 +209,7 @@ void main() {
         'reel_brake_type': 'magnetic',
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
-      }));
+      }),);
 
       final state = notifier.state as ReelEditState;
       expect(state.brand, 'Shimano');
@@ -251,7 +251,7 @@ void main() {
         'lure_color': 'sexy shad',
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
-      }));
+      }),);
 
       final state = notifier.state as LureEditState;
       expect(state.brand, 'Megabass');
@@ -277,7 +277,7 @@ void main() {
         'category': 'spinning|M',
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
-      }));
+      }),);
 
       expect(notifier.state.categoryType1, 'spinning');
       expect(notifier.state.categoryType2, 'M');
@@ -291,7 +291,7 @@ void main() {
         'category': 'spinning',
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
-      }));
+      }),);
 
       expect(notifier.state.categoryType1, '');
       expect(notifier.state.categoryType2, 'spinning');

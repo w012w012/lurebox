@@ -28,7 +28,7 @@ void main() {
           result,
           equals([
             {'id': 1, 'species': 'Bass'},
-          ]));
+          ]),);
     });
 
     test('insert delegates to wrapped database', () async {
@@ -68,8 +68,8 @@ void main() {
       expect(
           result,
           equals([
-            {'id': 1}
-          ]));
+            {'id': 1},
+          ]),);
     });
 
     test('rawUpdate delegates to wrapped database', () async {
@@ -122,7 +122,7 @@ void main() {
       expect(DatabaseHelper.tableBackupHistory, equals('backup_history'));
       expect(DatabaseHelper.tableFishSpecies, equals('fish_species'));
       expect(
-          DatabaseHelper.tableUserSpeciesAlias, equals('user_species_alias'));
+          DatabaseHelper.tableUserSpeciesAlias, equals('user_species_alias'),);
     });
 
     test('createFishCatchInsertSQL returns valid SQL', () {
@@ -164,7 +164,7 @@ void main() {
       final timestamp = DatabaseHelper.currentTimestamp();
 
       expect(
-          timestamp, matches(RegExp(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}')));
+          timestamp, matches(RegExp(r'^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}')),);
     });
   });
 }

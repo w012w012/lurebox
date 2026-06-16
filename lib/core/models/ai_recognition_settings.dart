@@ -132,7 +132,7 @@ class AiRecognitionSettings {
 
   factory AiRecognitionSettings.decode(String source) =>
       AiRecognitionSettings.fromJson(
-          jsonDecode(source) as Map<String, dynamic>);
+          jsonDecode(source) as Map<String, dynamic>,);
   final AiRecognitionProvider currentProvider;
   final Map<AiRecognitionProvider, AiProviderConfig> providerConfigs;
   final bool autoRecognize;

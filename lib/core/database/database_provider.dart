@@ -107,14 +107,14 @@ class DatabaseProvider {
   /// 数据库升级回调
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     AppLogger.i('DatabaseProvider',
-        'Upgrading database from $oldVersion to $newVersion');
+        'Upgrading database from $oldVersion to $newVersion',);
     await _migrateDatabase(db, oldVersion, newVersion);
   }
 
   /// 数据库降级回调
   Future<void> _onDowngrade(Database db, int oldVersion, int newVersion) async {
     AppLogger.i('DatabaseProvider',
-        'Downgrading database from $oldVersion to $newVersion');
+        'Downgrading database from $oldVersion to $newVersion',);
     // 降级时保留数据，不执行任何操作
   }
 
@@ -804,7 +804,7 @@ CREATE TABLE user_species_alias (
     } catch (e) {
       if (critical) rethrow;
       AppLogger.w(
-          'DatabaseProvider', 'Failed to add column $column to $table', e);
+          'DatabaseProvider', 'Failed to add column $column to $table', e,);
     }
   }
 

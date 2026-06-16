@@ -111,7 +111,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         totalCount: 8,
         speciesSummary: speciesSummary,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Should display total count
@@ -128,7 +128,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         totalCount: 10,
         speciesSummary: speciesSummary,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Species names should be displayed
@@ -147,7 +147,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         totalCount: 10,
         speciesSummary: speciesSummary,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // All species names should be visible
@@ -160,7 +160,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         totalCount: 0,
         speciesSummary: [],
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Should return SizedBox for empty data, so no text content
@@ -177,7 +177,7 @@ void main() {
         totalCount: 5,
         speciesSummary: speciesSummary,
         weightUnit: 'kg',
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Weight should be displayed with unit
@@ -225,7 +225,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         title: 'Rods',
         data: data,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Title should be displayed
@@ -242,7 +242,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         title: 'Single Rod',
         data: data,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       expect(find.text('Shimano'), findsOneWidget);
@@ -256,7 +256,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         title: 'Empty Chart',
         data: data,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Should return SizedBox for empty data
@@ -315,7 +315,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         speciesStats: speciesStats,
         totalCount: 18,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Species labels should be displayed
@@ -335,7 +335,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         speciesStats: speciesStats,
         totalCount: 15,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Should show percentages
@@ -351,7 +351,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         speciesStats: speciesStats,
         totalCount: 20,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       expect(find.text('Bass'), findsOneWidget);
@@ -365,7 +365,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         speciesStats: speciesStats,
         totalCount: 0,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Should return SizedBox for empty data
@@ -387,7 +387,7 @@ void main() {
         onToggleShowByWeight: () {
           showByWeight = !showByWeight;
         },
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Find and tap the weight toggle
@@ -445,7 +445,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         trendData: trendData,
         trendTitle: 'Monthly Catch Trend',
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Title should be displayed
@@ -464,7 +464,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         trendData: trendData,
         trendTitle: 'Trend',
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Month labels should be present in the chart area
@@ -478,7 +478,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         trendData: trendData,
         trendTitle: 'Single Month',
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       expect(find.byType(BarChart), findsOneWidget);
@@ -491,7 +491,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         trendData: trendData,
         trendTitle: 'Empty Trend',
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Should return SizedBox for empty data
@@ -510,7 +510,7 @@ void main() {
         onTrendTypeChanged: (type) {
           selectedType = type;
         },
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Dropdown button should be present
@@ -555,7 +555,7 @@ void main() {
         releaseRate: 70.0,
         title: 'January 2024',
         totalCount: 10,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       expect(find.text('January 2024'), findsOneWidget);
@@ -568,7 +568,7 @@ void main() {
         releaseRate: 75.0,
         title: 'March',
         totalCount: 20,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // The total count is displayed twice - large number + smaller with unit
@@ -584,7 +584,7 @@ void main() {
         releaseRate: 60.0,
         title: 'June',
         totalCount: 20,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Release and keep labels from strings
@@ -604,7 +604,7 @@ void main() {
         releaseRate: 0.0,
         title: 'Empty Month',
         totalCount: 0,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       expect(find.text('Empty Month'), findsOneWidget);
@@ -620,7 +620,7 @@ void main() {
         releaseRate: 80.0,
         title: 'October',
         totalCount: 10,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Should display the rate with % sign
@@ -666,7 +666,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         locationAnalysis: locationAnalysis,
         strings: _defaultStrings,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Location name should be displayed
@@ -683,7 +683,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         locationAnalysis: locationAnalysis,
         strings: _defaultStrings,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Total count pattern should show the total
@@ -701,7 +701,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         locationAnalysis: locationAnalysis,
         strings: _defaultStrings,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Location icon should be present
@@ -714,7 +714,7 @@ void main() {
       await tester.pumpWidget(createWidgetUnderTest(
         locationAnalysis: locationAnalysis,
         strings: _defaultStrings,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Should return SizedBox for empty data
@@ -735,7 +735,7 @@ void main() {
         onToggleDetails: () {
           showDetails = !showDetails;
         },
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Find the toggle button
@@ -759,7 +759,7 @@ void main() {
         locationAnalysis: locationAnalysis,
         strings: _defaultStrings,
         showDetails: false,
-      ));
+      ),);
       await tester.pumpAndSettle();
 
       // Location should be blurred (not showing actual name)
@@ -782,7 +782,7 @@ void main() {
             },
             strings: _defaultStrings,
             showDetails: false,
-          ));
+          ),);
           await tester.pumpAndSettle();
 
           // 没有异常即视为通过 RangeError 守卫

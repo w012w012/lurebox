@@ -142,7 +142,7 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
             ...widget.speciesSummary.map(
               (item) => Container(
                 padding: const EdgeInsets.symmetric(
-                    vertical: TeslaTheme.spacingMicro),
+                    vertical: TeslaTheme.spacingMicro,),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(

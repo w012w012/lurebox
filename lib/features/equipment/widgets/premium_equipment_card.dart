@@ -239,7 +239,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
             if (widget.equipment['purchase_date'] != null) ...[
               const SizedBox(height: TeslaTheme.spacingSm),
               _buildPurchaseDate(
-                  context, widget.equipment['purchase_date'] as String),
+                  context, widget.equipment['purchase_date'] as String,),
             ],
           ],
         ],
@@ -403,7 +403,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
         const SizedBox(height: TeslaTheme.spacingSm),
         _buildQuantityBadge(
             context, quantity, _localizedQuantityUnit(unitKey, strings),
-            strings: strings),
+            strings: strings,),
       ];
     }
 
@@ -444,7 +444,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     }
     if (e['joint_type'] != null) {
       items.add(_InfoItem(strings.cardJointMethod,
-          _getJointTypeLabel(e['joint_type'] as String, strings)));
+          _getJointTypeLabel(e['joint_type'] as String, strings),),);
     }
     if (e['hardness'] != null) {
       items.add(_InfoItem(strings.hardness, e['hardness'] as String));
@@ -494,7 +494,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     }
     if (e['reel_brake_type'] != null) {
       items.add(_InfoItem(strings.reelBrakeType,
-          _getBrakeTypeLabel(e['reel_brake_type'] as String, strings)));
+          _getBrakeTypeLabel(e['reel_brake_type'] as String, strings),),);
     }
     if (e['reel_drag'] != null && (e['reel_drag'] as String).isNotEmpty) {
       final dragUnit = (e['reel_drag_unit'] as String?) ?? 'kg';
@@ -645,7 +645,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
   }
 
   Widget _buildQuantityBadge(BuildContext context, int quantity, String unit,
-      {required AppStrings strings}) {
+      {required AppStrings strings,}) {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: TeslaTheme.spacingMicro,

@@ -240,7 +240,7 @@ void main() {
             'id': 1,
             'species': 'Bass',
             'length': 30.0,
-            'catch_time': 1234567890
+            'catch_time': 1234567890,
           },
         ];
         final equipmentsData = [

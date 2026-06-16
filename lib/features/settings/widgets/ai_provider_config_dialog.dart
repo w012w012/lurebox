@@ -387,7 +387,7 @@ class _AiProviderConfigDialogState
     if (mounted) {
       Navigator.pop(context);
       AppSnackBar.showSuccess(
-          context, ref.read(currentStringsProvider).aiConfigSaved);
+          context, ref.read(currentStringsProvider).aiConfigSaved,);
     }
   }
 }

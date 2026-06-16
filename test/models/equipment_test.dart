@@ -815,7 +815,7 @@ void main() {
     test('handles very large price values', () {
       final equipment = createTestEquipment(overrides: {
         'price': 9999999.99,
-      });
+      },);
 
       expect(equipment.price, equals(9999999.99));
     });

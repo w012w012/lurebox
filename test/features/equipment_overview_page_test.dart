@@ -53,7 +53,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -80,7 +80,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -107,7 +107,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -133,7 +133,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -159,7 +159,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -183,7 +183,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -211,7 +211,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -239,7 +239,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -267,7 +267,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -290,7 +290,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -320,7 +320,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -348,7 +348,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -384,7 +384,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -423,7 +423,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -452,7 +452,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -480,7 +480,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -508,7 +508,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -535,7 +535,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -562,7 +562,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(
@@ -587,7 +587,7 @@ void main() {
           ProviderScope(
             overrides: [
               equipmentListViewModelProvider.overrideWith(
-                  (ref) => _MockEquipmentListViewModel(mockState)),
+                  (ref) => _MockEquipmentListViewModel(mockState),),
               currentStringsProvider.overrideWithValue(AppStrings.chinese),
             ],
             child: const MaterialApp(

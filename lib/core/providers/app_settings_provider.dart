@@ -30,10 +30,10 @@ class AppSettingsNotifier extends StateNotifier<AppSettings> {
     } on SettingsCorruptedException catch (e) {
       // 记录损坏状态但不崩溃：让应用以默认值启动
       AppLogger.w(
-          'AppSettingsNotifier', 'Settings corrupted, using defaults: $e');
+          'AppSettingsNotifier', 'Settings corrupted, using defaults: $e',);
     } on Exception catch (e) {
       AppLogger.e(
-          'AppSettingsNotifier', 'Unexpected error loading settings: $e');
+          'AppSettingsNotifier', 'Unexpected error loading settings: $e',);
     }
   }
 

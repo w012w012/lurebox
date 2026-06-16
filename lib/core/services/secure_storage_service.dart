@@ -37,7 +37,7 @@ class SecureApiKeyStorage implements ApiKeyStorage {
     }
     await _storage.write(key: _getKeyName(providerKey), value: apiKey);
     AppLogger.i(
-        'SecureApiKeyStorage', 'Saved API key for provider: $providerKey');
+        'SecureApiKeyStorage', 'Saved API key for provider: $providerKey',);
   }
 
   @override
@@ -51,7 +51,7 @@ class SecureApiKeyStorage implements ApiKeyStorage {
     if (providerKey.isEmpty) return;
     await _storage.delete(key: _getKeyName(providerKey));
     AppLogger.i(
-        'SecureApiKeyStorage', 'Deleted API key for provider: $providerKey');
+        'SecureApiKeyStorage', 'Deleted API key for provider: $providerKey',);
   }
 
   @override

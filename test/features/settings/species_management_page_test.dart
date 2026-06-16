@@ -82,7 +82,7 @@ class FakeFishCatchRepository extends Fake implements FishCatchRepository {
           totalCount: 0,
           page: page,
           pageSize: pageSize,
-          hasMore: false);
+          hasMore: false,);
   @override
   Future<PaginatedResult<FishCatch>> getFilteredPage({
     required int page,
@@ -98,7 +98,7 @@ class FakeFishCatchRepository extends Fake implements FishCatchRepository {
           totalCount: 0,
           page: page,
           pageSize: pageSize,
-          hasMore: false);
+          hasMore: false,);
   @override
   Future<List<FishCatch>> getPendingRecognitionCatches() async {
     if (error != null) throw error as Exception;
@@ -139,7 +139,7 @@ class FakeFishCatchRepository extends Fake implements FishCatchRepository {
           totalCount: 0,
           page: page,
           pageSize: pageSize,
-          hasMore: false);
+          hasMore: false,);
   @override
   Future<int> getCount() async => 0;
 }
@@ -186,7 +186,7 @@ void main() {
       await tester.pump();
 
       expect(
-          find.text(AppStrings.chinese.pendingRecognitionList), findsOneWidget);
+          find.text(AppStrings.chinese.pendingRecognitionList), findsOneWidget,);
       expect(find.text(AppStrings.chinese.pendingNoFish), findsOneWidget);
     });
 
@@ -198,7 +198,7 @@ void main() {
 
       await tester.pumpWidget(buildTestPage(FakeFishCatchRepository(
         pendingCatches: pendingCatches,
-      )));
+      ),),);
       await tester.pump();
       await tester.pump();
 
@@ -208,7 +208,7 @@ void main() {
     testWidgets('shows species list section', (tester) async {
       await tester.pumpWidget(buildTestPage(FakeFishCatchRepository(
         speciesCounts: {'Bass': 5, 'Trout': 3},
-      )));
+      ),),);
       await tester.pump();
       await tester.pump();
 
@@ -223,7 +223,7 @@ void main() {
       await tester.pumpWidget(buildTestPage(FakeFishCatchRepository(
         pendingCatches: const [],
         speciesCounts: const {},
-      )));
+      ),),);
       await tester.pump();
 
       // The page shows CircularProgressIndicator while loading initial data
@@ -234,7 +234,7 @@ void main() {
     testWidgets('shows error message on failure', (tester) async {
       await tester.pumpWidget(buildTestPage(FakeFishCatchRepository(
         error: Exception('DB error'),
-      )));
+      ),),);
       await tester.pump();
       await tester.pump();
 
@@ -247,7 +247,7 @@ void main() {
     testWidgets('shows empty species list state', (tester) async {
       await tester.pumpWidget(buildTestPage(FakeFishCatchRepository(
         speciesCounts: const {},
-      )));
+      ),),);
       await tester.pump();
       await tester.pump();
 
@@ -257,7 +257,7 @@ void main() {
     testWidgets('species list shows count for each species', (tester) async {
       await tester.pumpWidget(buildTestPage(FakeFishCatchRepository(
         speciesCounts: {'Bass': 5},
-      )));
+      ),),);
       await tester.pump();
       await tester.pump();
 
@@ -269,7 +269,7 @@ void main() {
       await tester.pumpWidget(buildTestPage(FakeFishCatchRepository(
         pendingCatches: const [],
         speciesCounts: const {'Bass': 3},
-      )));
+      ),),);
       await tester.pump();
       await tester.pump();
 

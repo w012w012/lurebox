@@ -177,9 +177,9 @@ void main() {
     for (final (code, getExpected) in testCases) {
       test('returns correct string for code $code', () {
         expect(getLocalizedWeatherDescription(code, chinese),
-            equals(getExpected(chinese)));
+            equals(getExpected(chinese)),);
         expect(getLocalizedWeatherDescription(code, english),
-            equals(getExpected(english)));
+            equals(getExpected(english)),);
       });
     }
 

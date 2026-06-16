@@ -267,9 +267,9 @@ void main() {
       final now = DateTime.now();
       fakeService.getAllResult = [
         _createFishCatch(
-            id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now),
+            id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now,),
         _createFishCatch(
-            id: 2, species: 'Trout', fate: FishFateType.keep, catchTime: now),
+            id: 2, species: 'Trout', fate: FishFateType.keep, catchTime: now,),
       ];
 
       final result = await container.read(fishCatchesProviderV2.future);
@@ -398,9 +398,9 @@ void main() {
       final now = DateTime(2024, 6, 15);
       fakeService.getByDateRangeResult = [
         _createFishCatch(
-            id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now),
+            id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now,),
         _createFishCatch(
-            id: 2, species: 'Trout', fate: FishFateType.keep, catchTime: now),
+            id: 2, species: 'Trout', fate: FishFateType.keep, catchTime: now,),
       ];
 
       final result = await container.read(
@@ -474,12 +474,12 @@ void main() {
       final now = DateTime.now();
       fakeService.getByFateResult = [
         _createFishCatch(
-            id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now),
+            id: 1, species: 'Bass', fate: FishFateType.release, catchTime: now,),
         _createFishCatch(
             id: 2,
             species: 'Trout',
             fate: FishFateType.release,
-            catchTime: now),
+            catchTime: now,),
       ];
 
       final result = await container.read(
@@ -494,7 +494,7 @@ void main() {
       final now = DateTime.now();
       fakeService.getByFateResult = [
         _createFishCatch(
-            id: 1, species: 'Bass', fate: FishFateType.keep, catchTime: now),
+            id: 1, species: 'Bass', fate: FishFateType.keep, catchTime: now,),
       ];
 
       final result = await container.read(
@@ -563,9 +563,9 @@ void main() {
               id: 1,
               species: 'Bass',
               fate: FishFateType.release,
-              catchTime: now),
+              catchTime: now,),
           _createFishCatch(
-              id: 2, species: 'Trout', fate: FishFateType.keep, catchTime: now),
+              id: 2, species: 'Trout', fate: FishFateType.keep, catchTime: now,),
         ],
         totalCount: 10,
         page: 1,
@@ -734,19 +734,19 @@ void main() {
             species: 'Bass',
             length: 50,
             fate: FishFateType.release,
-            catchTime: now),
+            catchTime: now,),
         _createFishCatch(
             id: 2,
             species: 'Trout',
             length: 45,
             fate: FishFateType.release,
-            catchTime: now),
+            catchTime: now,),
         _createFishCatch(
             id: 3,
             species: 'Carp',
             length: 40,
             fate: FishFateType.keep,
-            catchTime: now),
+            catchTime: now,),
       ];
 
       final result = await container.read(top3LongestCatchesProvider.future);
@@ -814,7 +814,7 @@ void main() {
 
       final result = await container.read(
         speciesStatsProvider(
-            (start: DateTime(2024), end: DateTime(2024, 12, 31))).future,
+            (start: DateTime(2024), end: DateTime(2024, 12, 31)),).future,
       );
 
       expect(result['Bass'], equals(10));
@@ -828,7 +828,7 @@ void main() {
 
       final result = await container.read(
         speciesStatsProvider(
-            (start: DateTime(2024), end: DateTime(2024, 12, 31))).future,
+            (start: DateTime(2024), end: DateTime(2024, 12, 31)),).future,
       );
 
       expect(result, isEmpty);
@@ -838,7 +838,7 @@ void main() {
       fakeService.getSpeciesStatsResult = {};
       final asyncValue = container.read(
         speciesStatsProvider(
-            (start: DateTime(2024), end: DateTime(2024, 12, 31))),
+            (start: DateTime(2024), end: DateTime(2024, 12, 31)),),
       );
       expect(asyncValue.isLoading, isTrue);
     });
@@ -855,7 +855,7 @@ void main() {
       await expectLater(
         container.read(
           speciesStatsProvider(
-              (start: DateTime(2024), end: DateTime(2024, 12, 31))).future,
+              (start: DateTime(2024), end: DateTime(2024, 12, 31)),).future,
         ),
         throwsA(isA<Exception>()),
       );

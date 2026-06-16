@@ -117,7 +117,7 @@ class HomeViewModel extends StateNotifier<HomeState> {
     } on Exception catch (e) {
       if (!mounted) return;
       state = state.copyWith(
-          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e));
+          isLoading: false, errorMessage: () => ErrorService.toUserMessage(e),);
     }
   }
 

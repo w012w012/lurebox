@@ -22,7 +22,7 @@ void main() {
       target: 1,
       current: 0,
       progress: 0,
-    ));
+    ),);
   });
 
   setUp(() {

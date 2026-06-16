@@ -621,7 +621,7 @@ void main() {
         'model': 'E6X',
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
-      }));
+      }),);
 
       expect(vm.state.brand, equals('G. Loomis'));
       expect(vm.state.model, equals('E6X'));
@@ -635,7 +635,7 @@ void main() {
         'purchase_date': '2024-01-15',
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
-      }));
+      }),);
 
       expect(vm.state.price, equals('450.00'));
       expect(vm.state.purchaseDate, equals('2024-01-15'));
@@ -649,7 +649,7 @@ void main() {
         'purchase_date': '2024-06-20',
         'created_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),
-      }));
+      }),);
 
       expect(vm.state.purchaseDate, equals('2024-06-20'));
     });

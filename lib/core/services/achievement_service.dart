@@ -41,7 +41,7 @@ class AchievementService {
   /// 供分享成功站点调用（持有 [SettingsRepository] 引用即可）。失败仅告警，
   /// 不抛出，避免影响分享主流程。
   static Future<void> incrementShareCount(
-      SettingsRepository settingsRepo) async {
+      SettingsRepository settingsRepo,) async {
     try {
       final current = await settingsRepo.getInt(shareCountKey);
       await settingsRepo.setInt(shareCountKey, current + 1);

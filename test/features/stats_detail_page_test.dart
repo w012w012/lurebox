@@ -56,7 +56,7 @@ void main() {
           any(),
           startDate: any(named: 'startDate'),
           endDate: any(named: 'endDate'),
-        )).thenAnswer((invocation) async {
+        ),).thenAnswer((invocation) async {
       final type = invocation.positionalArguments[0] as String;
       switch (type) {
         case 'rod':
@@ -95,7 +95,7 @@ void main() {
         startDate: DateTime(2024, 1, 1),
         endDate: DateTime(2024, 12, 31),
         fishCatches: [],
-      ));
+      ),);
       await tester.pump();
       await tester
           .pump(const Duration(seconds: 2)); // Allow animations to complete
@@ -109,7 +109,7 @@ void main() {
         startDate: DateTime(2024, 1, 1),
         endDate: DateTime(2024, 12, 31),
         fishCatches: [],
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -151,7 +151,7 @@ void main() {
         startDate: DateTime(2024, 1, 1),
         endDate: DateTime(2024, 12, 31),
         fishCatches: fishCatches,
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -193,7 +193,7 @@ void main() {
         startDate: DateTime(2024, 1, 1),
         endDate: DateTime(2024, 12, 31),
         fishCatches: fishCatches,
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -218,7 +218,7 @@ void main() {
         startDate: DateTime(2024, 1, 1),
         endDate: DateTime(2024, 12, 31),
         fishCatches: fishCatches,
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -259,7 +259,7 @@ void main() {
         startDate: DateTime(2024, 1, 1),
         endDate: DateTime(2024, 12, 31),
         fishCatches: fishCatches,
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -291,7 +291,7 @@ void main() {
         rodDistribution: {'Rod A': 5, 'Rod B': 3},
         reelDistribution: {'Reel X': 4, 'Reel Y': 2},
         lureDistribution: {'Lure 1': 6},
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -313,7 +313,7 @@ void main() {
         startDate: DateTime(2024, 1, 1),
         endDate: DateTime(2024, 12, 31),
         fishCatches: [],
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -329,7 +329,7 @@ void main() {
         startDate: DateTime(2024, 1, 1),
         endDate: DateTime(2024, 12, 31),
         fishCatches: [],
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -360,7 +360,7 @@ void main() {
         startDate: DateTime(2024, 1, 1),
         endDate: DateTime(2024, 12, 31),
         fishCatches: fishCatches,
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -410,7 +410,7 @@ void main() {
         startDate: DateTime(2024, 1, 1),
         endDate: DateTime(2024, 12, 31),
         fishCatches: fishCatches,
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -445,7 +445,7 @@ void main() {
         startDate: DateTime(2024, 1, 1),
         endDate: DateTime(2024, 12, 31),
         fishCatches: fishCatches,
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -498,7 +498,7 @@ void main() {
         rodDistribution: {'Shimano': 3, 'Abu Garcia': 2},
         reelDistribution: {'Shimano': 3, 'Pflueger': 1},
         lureDistribution: {'Rapala': 4, 'Mepps': 1},
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
@@ -555,7 +555,7 @@ void main() {
         startDate: DateTime(2024, 1, 1),
         endDate: DateTime(2024, 12, 31),
         fishCatches: fishCatches,
-      ));
+      ),);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();

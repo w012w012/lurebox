@@ -90,7 +90,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       _getOrCreateController('brand', migratedEquipment.brand ?? '');
       _getOrCreateController('model', migratedEquipment.model ?? '');
       _getOrCreateController(
-          'price', migratedEquipment.price?.toString() ?? '');
+          'price', migratedEquipment.price?.toString() ?? '',);
       _getOrCreateController(
         'purchaseDate',
         migratedEquipment.purchaseDate?.toIso8601String().split('T').first ??
@@ -144,7 +144,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
         _getOrCreateController('weightRangeMax', _parseWeightRange(wr).$2);
       case 'reel':
         _getOrCreateController(
-            'reelBearings', equipment.reelBearings?.toString() ?? '');
+            'reelBearings', equipment.reelBearings?.toString() ?? '',);
         final ratio = equipment.reelRatio ?? '';
         _getOrCreateController('reelRatioA', _parseRatio(ratio).$1);
         _getOrCreateController('reelRatioB', _parseRatio(ratio).$2);
@@ -155,15 +155,15 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
         _getOrCreateController('reelDrag', equipment.reelDrag ?? '');
         _getOrCreateController('reelLine', equipment.reelLine ?? '');
         _getOrCreateController(
-            'reelLineNumber', equipment.reelLineNumber ?? '');
+            'reelLineNumber', equipment.reelLineNumber ?? '',);
         _getOrCreateController(
-            'reelLineLength', equipment.reelLineLength ?? '');
+            'reelLineLength', equipment.reelLineLength ?? '',);
       case 'lure':
         _getOrCreateController('lureWeight', equipment.lureWeight ?? '');
         _getOrCreateController('lureSize', equipment.lureSize ?? '');
         _getOrCreateController('lureColor', equipment.lureColor ?? '');
         _getOrCreateController(
-            'lureQuantity', equipment.lureQuantity?.toString() ?? '');
+            'lureQuantity', equipment.lureQuantity?.toString() ?? '',);
     }
   }
 
@@ -597,7 +597,7 @@ class _EquipmentEditPageState extends ConsumerState<EquipmentEditPage> {
       final s = ref.read(equipmentEditViewModelProvider(_params));
       if (s.errorMessage != null) {
         AppSnackBar.showError(context, strings.saveFailed,
-            debugError: s.errorMessage);
+            debugError: s.errorMessage,);
       }
     }
   }
