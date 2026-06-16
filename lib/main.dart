@@ -51,11 +51,11 @@ void main() async {
   };
 
   // 启动时清理残留的临时水印文件（不阻塞启动）
-  _cleanupLegacyTempFiles();
+  unawaited(_cleanupLegacyTempFiles());
 
   try {
     await DatabaseProvider.instance.database;
-  } catch (e, stackTrace) {
+  } on Exception catch (e, stackTrace) {
     AppLogger.e('Main', 'Database initialization failed', e, stackTrace);
     // 仍然启动 app，让各 feature 的 DB 操作自行处理错误，避免白屏
   }
@@ -66,7 +66,7 @@ void main() async {
   final container = ProviderContainer();
   try {
     await container.read(appSettingsProvider.notifier).loaded;
-  } catch (e, stackTrace) {
+  } on Exception catch (e, stackTrace) {
     // loaded 内部已吞异常回退默认值；此处再保险，避免阻断启动
     AppLogger.e('Main', 'App settings load failed', e, stackTrace);
   }
@@ -91,7 +91,8 @@ Future<void> _cleanupLegacyTempFiles() async {
   try {
     if (!Platform.isAndroid && !Platform.isIOS) return;
     final tempDir = Directory.systemTemp;
-    if (!await tempDir.exists()) return;
+    final tempStat = await FileStat.stat(tempDir.path);
+    if (tempStat.type == FileSystemEntityType.notFound) return;
 
     final now = DateTime.now();
     await for (final entity in tempDir.list()) {
@@ -99,7 +100,7 @@ Future<void> _cleanupLegacyTempFiles() async {
       final name = entity.path.split('/').last;
       if (!name.startsWith('watermark')) continue;
       try {
-        final stat = await entity.stat();
+        final stat = await FileStat.stat(entity.path);
         if (now.difference(stat.modified).inDays > staleThresholdDays) {
           await entity.delete(recursive: true);
           AppLogger.i(
