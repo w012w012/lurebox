@@ -219,11 +219,12 @@ class BackupExportPage extends ConsumerWidget {
   }) async {
     final viewModel = ref.read(settingsViewModelProvider.notifier);
 
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text(strings.creatingBackup),
+    unawaited(
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: Text(strings.creatingBackup),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -233,6 +234,7 @@ class BackupExportPage extends ConsumerWidget {
           ],
         ),
       ),
+    ),
     );
 
     try {

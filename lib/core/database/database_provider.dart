@@ -56,7 +56,7 @@ class DatabaseProvider {
 
     // 如果初始化还未开始
     if (_database == null && !completer.isCompleted) {
-      _doInitialize(completer);
+      unawaited(_doInitialize(completer));
     }
 
     return completer.future;

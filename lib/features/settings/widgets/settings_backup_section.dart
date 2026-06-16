@@ -203,18 +203,20 @@ class SettingsBackupSection extends ConsumerWidget {
     final viewModel = ref.read(settingsViewModelProvider.notifier);
 
     // 显示备份进行中对话框
-    showDialog<void>(
-      context: context,
-      barrierDismissible: false, // 防止用户关闭对话框
-      builder: (context) => AlertDialog(
-        title: Text(strings.creatingBackup),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: TeslaTheme.spacingMd),
-            Text(strings.backupRunning),
-          ],
+    unawaited(
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false, // 防止用户关闭对话框
+        builder: (context) => AlertDialog(
+          title: Text(strings.creatingBackup),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: TeslaTheme.spacingMd),
+              Text(strings.backupRunning),
+            ],
+          ),
         ),
       ),
     );

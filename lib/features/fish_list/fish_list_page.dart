@@ -130,7 +130,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
         ref.read(currentStringsProvider),
         (fish) async {
           await context.push('/fish/${fish.id}');
-          ref.read(fishListViewModelProvider.notifier).loadCatches(reset: true);
+      unawaited(    ref.read(fishListViewModelProvider.notifier).loadCatches(reset: true));
         },
       ),
     );

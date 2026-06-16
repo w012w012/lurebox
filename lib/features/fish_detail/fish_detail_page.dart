@@ -402,7 +402,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
     );
 
     if (context.mounted) {
-      Navigator.of(context).push(
+      unawaited(Navigator.of(context).push(
         MaterialPageRoute<void>(
           builder: (_) => WatermarkSharePreviewPage(data: previewData),
         ),
@@ -419,7 +419,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
       '/fish/${widget.fishId}/edit',
     );
     if (result != null) {
-      ref.read(fishDetailViewModelProvider(widget.fishId).notifier).refresh();
+      unawaited(ref.read(fishDetailViewModelProvider(widget.fishId).notifier).refresh());
       // 编辑成功后失效派生数据（鱼种/长度/重量变化影响统计与成就）
       invalidateDerivedFishData(ref.invalidate);
     }

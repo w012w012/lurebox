@@ -164,7 +164,7 @@ class EquipmentListPage extends ConsumerWidget {
       '/equipment/edit?type=$type${equipmentId != null ? '&id=$equipmentId' : ''}',
     );
     if (result ?? false) {
-      ref.read(equipmentListViewModelProvider.notifier).refresh();
+      unawaited(ref.read(equipmentListViewModelProvider.notifier).refresh());
     }
   }
 

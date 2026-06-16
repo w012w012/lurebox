@@ -190,7 +190,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
           _calculateWeightStats();
           _isLoading = false;
         });
-        _contentAnimationController.forward();
+      unawaited(  _contentAnimationController.forward());
       }
     } on Exception catch (e) {
       AppLogger.e('StatsDetailPage', 'Failed to load detail data', e);
