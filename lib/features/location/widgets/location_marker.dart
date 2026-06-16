@@ -69,13 +69,6 @@ class _LocationMarkerState extends State<LocationMarker> {
                 color: backgroundColor,
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                 border: Border.all(color: borderColor, width: 2),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -87,7 +80,7 @@ class _LocationMarkerState extends State<LocationMarker> {
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 12,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(width: AppTheme.spacingXs),
@@ -105,7 +98,7 @@ class _LocationMarkerState extends State<LocationMarker> {
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 10,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),

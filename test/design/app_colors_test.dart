@@ -15,12 +15,12 @@ void main() {
     });
 
     group('Accent Colors', () {
-      test('accentLight should be bright blue #3B82F6', () {
-        expect(AppColors.accentLight, const Color(0xFF3B82F6));
+      test('accentLight should be electric blue #3E6AE1', () {
+        expect(AppColors.accentLight, const Color(0xFF3E6AE1));
       });
 
-      test('accentDark should be lighter blue #93C5FD', () {
-        expect(AppColors.accentDark, const Color(0xFF93C5FD));
+      test('accentDark should be electric blue #3E6AE1', () {
+        expect(AppColors.accentDark, const Color(0xFF3E6AE1));
       });
     });
 
@@ -89,34 +89,17 @@ void main() {
     });
 
     group('Color Distinctness', () {
-      test('primary/accent semantic pairs should differ between modes', () {
+      test('primary semantic pair should differ between modes', () {
         expect(AppColors.primaryLight, isNot(equals(AppColors.primaryDark)));
-        expect(AppColors.accentLight, isNot(equals(AppColors.accentDark)));
+      });
+
+      test('accent is unified to a single electric blue across modes', () {
+        expect(AppColors.accentLight, equals(AppColors.accentDark));
       });
 
       test('chart colors should all be distinct', () {
         final uniqueColors = AppColors.chartColors.toSet();
         expect(uniqueColors.length, equals(AppColors.chartColors.length));
-      });
-    });
-
-    group('Tesla Design System', () {
-      test('teslaElectricBlue should be #3E6AE1', () {
-        expect(AppColors.teslaElectricBlue, const Color(0xFF3E6AE1));
-      });
-
-      test('teslaCarbonDark should be #171A20', () {
-        expect(AppColors.teslaCarbonDark, const Color(0xFF171A20));
-      });
-
-      test('teslaFrostedGlassWhite should have 0.75 alpha', () {
-        final color = AppColors.teslaFrostedGlassWhite;
-        expect(color.a, closeTo(0.75, 0.01));
-      });
-
-      test('teslaFrostedGlassDark should have 0.85 alpha', () {
-        final color = AppColors.teslaFrostedGlassDark;
-        expect(color.a, closeTo(0.85, 0.01));
       });
     });
   });

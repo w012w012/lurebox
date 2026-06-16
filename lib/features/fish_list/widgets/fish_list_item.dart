@@ -129,7 +129,7 @@ class FishListItem extends ConsumerWidget {
                         fish.displaySpecies(strings),
                         style: const TextStyle(
                           fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       if (fish.pendingRecognition) ...[
@@ -153,7 +153,7 @@ class FishListItem extends ConsumerWidget {
                                 style: const TextStyle(
                                   fontSize: 10,
                                   color: AppColors.warning,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],
@@ -240,7 +240,7 @@ class FishListItem extends ConsumerWidget {
                           color: fate == FishFateType.release
                               ? AppColors.release
                               : AppColors.keep,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
@@ -271,7 +271,7 @@ class FishListItem extends ConsumerWidget {
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: Theme.of(context).colorScheme.primary,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ],

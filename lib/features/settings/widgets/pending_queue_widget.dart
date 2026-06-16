@@ -89,7 +89,7 @@ class PendingQueueWidget extends StatelessWidget {
             Text(
               strings.pendingRecognitionList,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
             ),
             const SizedBox(width: TeslaTheme.spacingSm),
@@ -107,7 +107,7 @@ class PendingQueueWidget extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 12,
                   color: TeslaColors.electricBlue,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -312,7 +312,7 @@ class PendingQueueWidget extends StatelessWidget {
                     Text(
                       option.speciesName,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                           ),
                     ),
                     Text(
@@ -339,7 +339,7 @@ class PendingQueueWidget extends StatelessWidget {
                   '${(option.confidence * 100).toInt()}%',
                   style: TextStyle(
                     fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     color: _getConfidenceColor(option.confidence),
                   ),
                 ),

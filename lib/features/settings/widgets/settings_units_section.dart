@@ -313,7 +313,7 @@ class UnitSettingsPage extends ConsumerWidget {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                         color: TeslaColors.electricBlue,
                       ),
                 ),

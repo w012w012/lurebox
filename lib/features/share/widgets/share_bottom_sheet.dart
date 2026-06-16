@@ -72,7 +72,7 @@ class _ShareBottomSheetState extends ConsumerState<ShareBottomSheet> {
                 strings.share,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       color: colorScheme.onSurface,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
                 textAlign: TextAlign.center,
               ),
@@ -137,7 +137,7 @@ class _ShareBottomSheetState extends ConsumerState<ShareBottomSheet> {
                                 ? colorScheme.onPrimary
                                 : colorScheme.onSurfaceVariant,
                             fontWeight: isSelected
-                                ? FontWeight.bold
+                                ? FontWeight.w500
                                 : FontWeight.normal,
                           ),
                       textAlign: TextAlign.center,
@@ -214,19 +214,10 @@ class _ShareBottomSheetState extends ConsumerState<ShareBottomSheet> {
   }
 
   Widget _buildPreview() {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Center(
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.shadow.withValues(alpha: 0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),

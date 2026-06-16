@@ -6,10 +6,10 @@ import 'package:lurebox/core/repositories/base_repository.dart';
 import 'package:lurebox/core/repositories/fish_catch_repository.dart';
 import 'package:sqflite/sqflite.dart' hide DatabaseException;
 
-/// SQLite 瀹炵幇 - 娓旇幏璁板綍浠撳偍灞?
+/// SQLite 实现 - 渔获记录仓储层
 ///
-/// 浣跨敤 SQLite 鏁版嵁搴撳疄鐜版笖鑾疯褰曠殑鏁版嵁璁块棶銆?
-/// 鏁版嵁琛ㄥ悕锛歠ish_catches
+/// 使用 SQLite 数据库实现渔获记录的数据访问。
+/// 数据表名：fish_catches
 
 class SqliteFishCatchRepository extends BaseSqliteRepository
     implements FishCatchRepository {
@@ -349,7 +349,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
       final db = await database;
       final offset = (page - 1) * pageSize;
 
-      // 浼樺寲锛氫娇鐢ㄥ崟娆℃煡璇㈣幏鍙栨暟鎹拰COUNT
+      // 优化：使用单次查询同时获取数据与总数
       final results = await db.query(
         tableName,
         orderBy: orderBy,
@@ -357,7 +357,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         offset: offset,
       ) as List<Map<String, dynamic>>;
 
-      // 鍙湪绗竴椤垫煡璇㈡€绘暟
+      // 优化：只在第一页查询总数
       int totalCount;
       if (page == 1) {
         final countResult = await db.rawQuery(
@@ -365,8 +365,9 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         );
         totalCount = countResult.first['count'] as int? ?? 0;
       } else {
-        // 瀵逛簬闈炵涓€椤碉紝涓嶆彁渚涘噯纭€绘暟锛堥渶瑕侀澶栨煡璇級
-        totalCount = PaginationConstants.unknownTotalCount; // -1 琛ㄧず鏈煡
+        // 对于非第一页，不提供精确总数（需要额外查询）
+        totalCount =
+            PaginationConstants.unknownTotalCount; // -1 表示未知（非首页不计算精确总数）
       }
 
       final items = List<FishCatch>.from(results.map(FishCatch.fromMap));
@@ -416,7 +417,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         whereClauses.add('fate = ?');
         whereArgs.add(fate.value);
       }
-      // 浼樺寲锛氫娇鐢ㄦ洿楂樻晥鐨凩IKE鏌ヨ锛岄伩鍏嶅墠瀵奸€氶厤绗?
+      // 优化：使用更高效的 LIKE 查询，避免前导通配符
       if (species != null && species.isNotEmpty) {
         // LOW-1：转义用户输入中的 LIKE 通配符，避免过度匹配。
         whereClauses.add("(species = ? OR species LIKE ? ESCAPE '\\')");
@@ -427,7 +428,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
       final whereClause =
           whereClauses.isNotEmpty ? whereClauses.join(' AND ') : null;
 
-      // 浼樺寲锛氬彧鍦ㄧ涓€椤垫煡璇㈡€绘暟
+      // 优化：只在第一页查询总数
       int totalCount;
       if (page == 1) {
         final countQuery = whereClause != null
@@ -437,7 +438,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
         totalCount = countResult.first['count'] as int? ?? 0;
       } else {
         totalCount =
-            PaginationConstants.unknownTotalCount; // -1 琛ㄧず鏈煡锛岄渶瑕侀澶栨煡璇?
+            PaginationConstants.unknownTotalCount; // -1 表示未知（非首页不计算精确总数）
       }
 
       final results = await db.query(
@@ -726,7 +727,7 @@ class SqliteFishCatchRepository extends BaseSqliteRepository
   Future<Map<String, Map<String, int>>> getSoftWormRigAnalytics() async {
     try {
       final db = await database;
-      // Use INNER JOIN since we only want catches with a lure of type '杞櫕'
+      // Use INNER JOIN since we only want catches with a soft-worm lure
       final results = await db.rawQuery(
         '''
         SELECT

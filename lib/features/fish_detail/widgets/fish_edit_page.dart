@@ -218,7 +218,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
           const SizedBox(height: 20),
           Text(
             s.fate,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 8),
           Row(
@@ -243,7 +243,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
           const SizedBox(height: 20),
           Text(
             s.useEquipment,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
           const SizedBox(height: 8),
           _buildEquipmentDropdown(
@@ -332,7 +332,7 @@ class _FishEditPageState extends ConsumerState<FishEditPage> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 16,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
             color: isSelected ? color : TeslaColors.pewter,
           ),
         ),

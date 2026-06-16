@@ -181,7 +181,7 @@ class _LocationManagementPageState
                   Text(
                     '$totalLocations',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           color: Theme.of(context).colorScheme.primary,
                         ),
                   ),
@@ -197,7 +197,7 @@ class _LocationManagementPageState
                   Text(
                     '$totalFish',
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                           color: Theme.of(context).colorScheme.primary,
                         ),
                   ),
@@ -249,7 +249,7 @@ class _LocationManagementPageState
                 strings.locationSmartMergeSuggestion,
                 style: Theme.of(
                   context,
-                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
           ),

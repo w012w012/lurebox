@@ -47,7 +47,7 @@ class DistributionChart extends StatelessWidget {
           children: [
             Text(
               title,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 12),
             if (chartType == ChartType.bar)
@@ -103,7 +103,7 @@ class DistributionChart extends StatelessWidget {
                 '$percent%',
                 style: TextStyle(
                   fontSize: 13,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
@@ -114,7 +114,7 @@ class DistributionChart extends StatelessWidget {
                   '${item.value}',
                   style: const TextStyle(
                     fontSize: 13,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.right,
                 ),
@@ -177,7 +177,7 @@ class DistributionChart extends StatelessWidget {
                       '$percent%',
                       style: const TextStyle(
                         fontSize: 11,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],

@@ -89,7 +89,7 @@ class _TypeButton extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 13,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
               color: isSelected
                   ? Colors.white
                   : (isDark

@@ -75,7 +75,7 @@ class _LocationStatsCardState extends State<LocationStatsCard>
                 Text(
                   widget.strings.locationAnalysis,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                 ),
                 IconButton(
@@ -130,7 +130,7 @@ class _LocationStatsCardState extends State<LocationStatsCard>
                                 .textTheme
                                 .bodyMedium
                                 ?.copyWith(
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                   color: accentColor,
                                 ),
                           ),

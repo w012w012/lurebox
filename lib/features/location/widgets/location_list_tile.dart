@@ -69,7 +69,7 @@ class LocationListTile extends StatelessWidget {
                     Text(
                       name,
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w500,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

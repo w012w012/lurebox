@@ -144,7 +144,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
               strings.quantityStats,
               style: Theme.of(
                 context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 20),
             SizedBox(
@@ -216,7 +216,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                           '$label\n${rod.toY.toInt()}$unit',
                           const TextStyle(
                             color: TeslaColors.white,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w500,
                           ),
                         );
                       },
@@ -234,7 +234,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                                 '$rodCount${strings.rodUnit}',
                                 style: const TextStyle(
                                   fontSize: 11,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               );
                             case 1:
@@ -242,7 +242,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                                 '$reelCount${strings.reelUnit}',
                                 style: const TextStyle(
                                   fontSize: 11,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               );
                             case 2:
@@ -250,7 +250,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                                 '$lureCount${strings.lureUnit}',
                                 style: const TextStyle(
                                   fontSize: 11,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               );
                             default:
@@ -329,7 +329,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                   strings.equipmentCatchRanking,
                   style: Theme.of(
                     context,
-                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
                 ),
               ],
             ),
@@ -377,7 +377,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                             '$rank',
                             style: const TextStyle(
                               fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w500,
                               color: TeslaColors.white,
                             ),
                           ),
@@ -395,7 +395,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
                         '${stat.value}${strings.fishCountUnit}',
                         style: const TextStyle(
                           fontSize: 14,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -636,7 +636,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
             title,
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               color: color,
             ),
           ),
@@ -692,7 +692,7 @@ class _EquipmentOverviewPageState extends ConsumerState<EquipmentOverviewPage> {
               title,
               style: Theme.of(
                 context,
-              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+              ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 12),
             SizedBox(

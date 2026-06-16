@@ -75,7 +75,7 @@ class WatermarkStyleSelector extends StatelessWidget {
                         s.$2,
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               fontWeight: isSelected
-                                  ? FontWeight.w600
+                                  ? FontWeight.w500
                                   : FontWeight.normal,
                               color: isSelected
                                   ? Theme.of(context).colorScheme.primary

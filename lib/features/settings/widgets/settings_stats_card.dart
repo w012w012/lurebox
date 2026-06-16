@@ -46,7 +46,7 @@ class SettingsStatsCard extends ConsumerWidget {
           ),
           Text(
             '${settingsState.totalCount} ${strings.fishCountUnit}',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
           ),
         ],
       ),

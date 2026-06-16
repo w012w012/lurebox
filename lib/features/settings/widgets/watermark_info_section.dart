@@ -48,7 +48,7 @@ class WatermarkInfoSection extends StatelessWidget {
                 strings.displayInfo,
                 style: Theme.of(
                   context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
           ),

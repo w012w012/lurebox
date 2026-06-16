@@ -18,31 +18,6 @@ class AppTheme {
   static const double radiusXl = 24;
   static const double radiusFull = 9999;
 
-  // 阴影系统
-  static List<BoxShadow> get shadowSm => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.05),
-          blurRadius: 2,
-          offset: const Offset(0, 1),
-        ),
-      ];
-
-  static List<BoxShadow> get shadowMd => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.08),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-        ),
-      ];
-
-  static List<BoxShadow> get shadowLg => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.12),
-          blurRadius: 8,
-          offset: const Offset(0, 4),
-        ),
-      ];
-
   /// 浅色主题
   static ThemeData get light {
     final colorScheme = AppColors.lightColorScheme();
@@ -63,7 +38,7 @@ class AppTheme {
         foregroundColor: AppColors.textPrimaryLight,
         titleTextStyle: TextStyle(
           fontSize: 18,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryLight,
           letterSpacing: -0.3,
         ),
@@ -113,7 +88,7 @@ class AppTheme {
           if (states.contains(WidgetState.selected)) {
             return const TextStyle(
               fontSize: 12,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
               color: AppColors.accentLight,
             );
           }
@@ -128,7 +103,7 @@ class AppTheme {
       // 按钮主题 - iOS风格蓝色
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.accentLight, // #3B82F6 bright blue
+          backgroundColor: AppColors.accentLight, // #3E6AE1 electric blue
           foregroundColor: AppColors.surfaceLight,
           elevation: 0,
           padding: const EdgeInsets.symmetric(
@@ -140,7 +115,7 @@ class AppTheme {
           ),
           textStyle: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.1,
           ),
         ),
@@ -160,7 +135,7 @@ class AppTheme {
           side: const BorderSide(color: AppColors.accentLight),
           textStyle: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.1,
           ),
         ),
@@ -178,7 +153,7 @@ class AppTheme {
           ),
           textStyle: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.1,
           ),
         ),
@@ -227,21 +202,21 @@ class AppTheme {
         // 标题
         headlineLarge: TextStyle(
           fontSize: 28,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryLight,
           letterSpacing: -0.5,
           height: 1.2,
         ),
         headlineMedium: TextStyle(
           fontSize: 24,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryLight,
           letterSpacing: -0.3,
           height: 1.25,
         ),
         headlineSmall: TextStyle(
           fontSize: 20,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryLight,
           letterSpacing: -0.2,
           height: 1.3,
@@ -249,21 +224,21 @@ class AppTheme {
         // 标题
         titleLarge: TextStyle(
           fontSize: 18,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryLight,
           letterSpacing: -0.2,
           height: 1.35,
         ),
         titleMedium: TextStyle(
           fontSize: 16,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryLight,
           letterSpacing: 0,
           height: 1.4,
         ),
         titleSmall: TextStyle(
           fontSize: 14,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryLight,
           letterSpacing: 0.1,
           height: 1.45,
@@ -293,7 +268,7 @@ class AppTheme {
         // 标签
         labelLarge: TextStyle(
           fontSize: 14,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryLight,
           letterSpacing: 0.1,
           height: 1.4,
@@ -357,7 +332,7 @@ class AppTheme {
         ),
         titleTextStyle: const TextStyle(
           fontSize: 20,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryLight,
         ),
         contentTextStyle: const TextStyle(
@@ -409,7 +384,7 @@ class AppTheme {
         foregroundColor: AppColors.textPrimaryDark,
         titleTextStyle: TextStyle(
           fontSize: 18,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryDark,
           letterSpacing: -0.3,
         ),
@@ -459,7 +434,7 @@ class AppTheme {
           if (states.contains(WidgetState.selected)) {
             return const TextStyle(
               fontSize: 12,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
               color: AppColors.accentDark,
             );
           }
@@ -474,7 +449,7 @@ class AppTheme {
       // 按钮主题 - iOS风格蓝色
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.accentDark, // #93C5FD light blue
+          backgroundColor: AppColors.accentDark, // #3E6AE1 electric blue
           foregroundColor: AppColors.surfaceDark,
           elevation: 0,
           padding: const EdgeInsets.symmetric(
@@ -486,7 +461,7 @@ class AppTheme {
           ),
           textStyle: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.1,
           ),
         ),
@@ -506,7 +481,7 @@ class AppTheme {
           side: const BorderSide(color: AppColors.accentDark),
           textStyle: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.1,
           ),
         ),
@@ -524,7 +499,7 @@ class AppTheme {
           ),
           textStyle: const TextStyle(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
             letterSpacing: 0.1,
           ),
         ),
@@ -573,21 +548,21 @@ class AppTheme {
         // 标题
         headlineLarge: TextStyle(
           fontSize: 28,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryDark,
           letterSpacing: -0.5,
           height: 1.2,
         ),
         headlineMedium: TextStyle(
           fontSize: 24,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryDark,
           letterSpacing: -0.3,
           height: 1.25,
         ),
         headlineSmall: TextStyle(
           fontSize: 20,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryDark,
           letterSpacing: -0.2,
           height: 1.3,
@@ -595,21 +570,21 @@ class AppTheme {
         // 标题
         titleLarge: TextStyle(
           fontSize: 18,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryDark,
           letterSpacing: -0.2,
           height: 1.35,
         ),
         titleMedium: TextStyle(
           fontSize: 16,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryDark,
           letterSpacing: 0,
           height: 1.4,
         ),
         titleSmall: TextStyle(
           fontSize: 14,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryDark,
           letterSpacing: 0.1,
           height: 1.45,
@@ -639,7 +614,7 @@ class AppTheme {
         // 标签
         labelLarge: TextStyle(
           fontSize: 14,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryDark,
           letterSpacing: 0.1,
           height: 1.4,
@@ -703,7 +678,7 @@ class AppTheme {
         ),
         titleTextStyle: const TextStyle(
           fontSize: 20,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
           color: AppColors.textPrimaryDark,
         ),
         contentTextStyle: const TextStyle(

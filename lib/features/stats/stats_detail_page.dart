@@ -595,7 +595,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
           Text(
             strings.equipmentDistribution,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
           ),
           const SizedBox(height: TeslaTheme.spacingMicro),

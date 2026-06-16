@@ -87,7 +87,7 @@ class _LocationGroupCardState extends State<LocationGroupCard> {
                             '${widget.strings?.similarLocationsLabel ?? '相似钓点：'}${widget.group.representative}',
                             style: TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                               color: accentColor,
                             ),
                           ),

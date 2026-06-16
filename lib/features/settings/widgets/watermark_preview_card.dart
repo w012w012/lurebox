@@ -29,7 +29,7 @@ class WatermarkPreviewCard extends StatelessWidget {
                 strings.watermarkPreview,
                 style: Theme.of(
                   context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
           ),

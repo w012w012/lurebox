@@ -47,15 +47,6 @@ class TeslaTokens {
   /// No shadows — depth achieved via frosted glass and photography.
   static const List<BoxShadow> shadowNone = <BoxShadow>[];
 
-  /// Level 3 (Subtle): `rgba(0,0,0,0.05)` — used very sparingly on hover.
-  static List<BoxShadow> get shadowSubtle => [
-        const BoxShadow(
-          color: Color(0x0D000000),
-          blurRadius: 2,
-          offset: Offset(0, 1),
-        ),
-      ];
-
   // ─── Z-Index / Elevation ────────────────────────────────────────────────────
 
   /// Level 0 (Flat): default state — no shadow, no border.

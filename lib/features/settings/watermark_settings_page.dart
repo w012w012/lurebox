@@ -82,7 +82,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                 strings.watermarkStyle,
                 style: Theme.of(
                   context,
-                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w500),
               ),
             ],
           ),

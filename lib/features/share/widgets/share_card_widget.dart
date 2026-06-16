@@ -32,19 +32,8 @@ class ShareCardWidget extends StatelessWidget {
         );
       case ShareTemplate.card:
         return BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF16213E), Color(0xFF1A1A2E)],
-          ),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0xFF4A9EFF).withValues(alpha: 0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
+          color: const Color(0xFF1A1A2E),
+          borderRadius: BorderRadius.circular(12),
         );
       case ShareTemplate.minimal:
         return BoxDecoration(
@@ -76,7 +65,7 @@ class ShareCardWidget extends StatelessWidget {
             style: TextStyle(
               color: Color(0xFF4A9EFF),
               fontSize: 28,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 16),
@@ -119,7 +108,7 @@ class ShareCardWidget extends StatelessWidget {
             style: TextStyle(
               color: Colors.white,
               fontSize: 32,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
               letterSpacing: 2,
             ),
           ),
@@ -168,7 +157,7 @@ class ShareCardWidget extends StatelessWidget {
                 style: TextStyle(
                   color: AppColors.grey800,
                   fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             if (config.showHashtags)
@@ -208,7 +197,7 @@ class ShareCardWidget extends StatelessWidget {
                 style: const TextStyle(
                   color: Color(0xFF4A9EFF),
                   fontSize: 14,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
@@ -230,7 +219,7 @@ class ShareCardWidget extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 24,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: 4),
@@ -256,7 +245,7 @@ class ShareCardWidget extends StatelessWidget {
                 style: const TextStyle(
                   color: AppColors.grey800,
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               Text(

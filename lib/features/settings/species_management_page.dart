@@ -464,7 +464,7 @@ class _SpeciesListSection extends ConsumerWidget {
             Text(
               ref.read(currentStringsProvider).speciesSaved,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
             ),
           ],
@@ -587,7 +587,7 @@ class _SpeciesListItem extends StatelessWidget {
                   '$count',
                   style: TextStyle(
                     color: accentColor,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                     fontSize: 14,
                   ),
                 ),

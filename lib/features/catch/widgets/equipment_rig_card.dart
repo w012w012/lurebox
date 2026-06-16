@@ -44,7 +44,7 @@ class EquipmentRigCard extends StatelessWidget {
           title: Text(
             strings.useEquipment,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
           ),
           trailing: Row(

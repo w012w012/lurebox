@@ -43,16 +43,14 @@ class PremiumNavigationBar extends StatelessWidget {
 
   /// 标准模式
   Widget _buildStandardNavBar(bool isDark) {
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: isDark ? TeslaColors.carbonDark : TeslaColors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+        border: Border(
+          top: BorderSide(
+            color: isDark ? const Color(0xFF2A2D30) : TeslaColors.cloudGray,
           ),
-        ],
+        ),
       ),
       child: SafeArea(
         top: false,
@@ -88,16 +86,14 @@ class PremiumNavigationBar extends StatelessWidget {
     final tabs = destinations;
     final bgColor = isDark ? TeslaColors.carbonDark : TeslaColors.white;
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: bgColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
+        border: Border(
+          top: BorderSide(
+            color: isDark ? const Color(0xFF2A2D30) : TeslaColors.cloudGray,
           ),
-        ],
+        ),
       ),
       child: SafeArea(
         top: false,
@@ -194,22 +190,9 @@ class PremiumNavigationBar extends StatelessWidget {
               child: Container(
                 width: 82,
                 height: 82,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: TeslaColors.electricBlue,
                   shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: TeslaColors.electricBlue.withValues(alpha: 0.5),
-                      blurRadius: 20,
-                      offset: const Offset(0, 6),
-                    ),
-                    BoxShadow(
-                      color: TeslaColors.electricBlue.withValues(alpha: 0.25),
-                      blurRadius: 36,
-                      spreadRadius: 6,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
                 ),
                 child: const Icon(
                   Icons.camera_alt,

@@ -43,7 +43,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
             child: Text(
               strings.aiProviderLabel,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w500,
                   ),
             ),
           ),

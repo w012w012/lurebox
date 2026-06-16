@@ -86,7 +86,7 @@ class SpeciesManagementDialogs {
             Text(
               '${strings.speciesAiResult}：${option.speciesName}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                   ),
             ),
             Text(

@@ -57,7 +57,7 @@ class AppFilterChip extends StatelessWidget {
                   color: isSelected
                       ? Colors.white
                       : Theme.of(context).colorScheme.onSurface,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
                 ),
               ),
             ],
