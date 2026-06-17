@@ -368,7 +368,8 @@ class BackupZipService {
     } finally {
       // 清理临时 ZIP（成功路径已复制到文档目录，失败路径无需保留）
       final tempZip = File(tempZipPath);
-      if ((await FileStat.stat(tempZip.path)).type != FileSystemEntityType.notFound) {
+      if ((await FileStat.stat(tempZip.path)).type !=
+          FileSystemEntityType.notFound) {
         await tempZip.delete();
       }
     }
@@ -398,7 +399,8 @@ class BackupZipService {
       final dbCopyPath = p.join(backupDir.path, 'lurebox.db');
       await _dbProvider.runExclusive(() async {
         final dbFile = File(dbPath);
-        if ((await FileStat.stat(dbFile.path)).type == FileSystemEntityType.notFound) {
+        if ((await FileStat.stat(dbFile.path)).type ==
+            FileSystemEntityType.notFound) {
           throw const DatabaseException('Database file not found');
         }
         await dbFile.copy(dbCopyPath);
@@ -440,7 +442,8 @@ class BackupZipService {
       await _createZip(backupDir.path, zipPath);
     } finally {
       // 清理临时备份工作目录（成功/失败均清理）
-      if ((await FileStat.stat(backupDir.path)).type != FileSystemEntityType.notFound) {
+      if ((await FileStat.stat(backupDir.path)).type !=
+          FileSystemEntityType.notFound) {
         await backupDir.delete(recursive: true);
       }
     }
@@ -456,7 +459,8 @@ class BackupZipService {
   /// 用于清理 WAL/SHM 旁文件与失败的临时文件。
   Future<void> _deleteIfExists(String path) async {
     final file = File(path);
-    if ((await FileStat.stat(file.path)).type != FileSystemEntityType.notFound) {
+    if ((await FileStat.stat(file.path)).type !=
+        FileSystemEntityType.notFound) {
       await file.delete();
     }
   }
@@ -520,7 +524,8 @@ class BackupZipService {
     }
 
     final sourceFile = File(fullPath);
-    if ((await FileStat.stat(sourceFile.path)).type != FileSystemEntityType.notFound) {
+    if ((await FileStat.stat(sourceFile.path)).type !=
+        FileSystemEntityType.notFound) {
       final fileName = p.basename(fullPath);
       final destPath = p.join(photosDir, fileName);
       await sourceFile.copy(destPath);
@@ -621,7 +626,8 @@ class BackupZipService {
   Future<ImportResult> importFromZipPath(String zipPath) async {
     try {
       final zipFile = File(zipPath);
-      if ((await FileStat.stat(zipFile.path)).type == FileSystemEntityType.notFound) {
+      if ((await FileStat.stat(zipFile.path)).type ==
+          FileSystemEntityType.notFound) {
         return const ImportResult.failure('File not found');
       }
 
@@ -676,7 +682,8 @@ class BackupZipService {
         final metadataPath = p.join(extractDir.path, 'metadata.json');
         final metadataFile = File(metadataPath);
 
-        if ((await FileStat.stat(metadataFile.path)).type == FileSystemEntityType.notFound) {
+        if ((await FileStat.stat(metadataFile.path)).type ==
+            FileSystemEntityType.notFound) {
           return const ImportResult.failure(
             'Invalid backup: metadata.json not found',
           );
@@ -684,6 +691,27 @@ class BackupZipService {
 
         final metadataContent = await metadataFile.readAsString();
         final metadataMap = jsonDecode(metadataContent) as Map<String, dynamic>;
+
+        // 校验必需字段齐全：fromMap 的强制类型转换 (as String/as int) 在字段
+        // 缺失时抛出 TypeError（属于 Error，不被 on Exception 捕获），会逃逸为
+        // 未处理异常。这里在边界显式校验，缺字段时返回失败而非崩溃。
+        const requiredMetadataFields = [
+          'version',
+          'exportTime',
+          'databaseChecksum',
+          'photoCount',
+          'fishCatchesCount',
+          'equipmentCount',
+          'appVersion',
+        ];
+        for (final field in requiredMetadataFields) {
+          if (metadataMap[field] == null) {
+            return ImportResult.failure(
+              'Invalid backup: metadata missing required field "$field"',
+            );
+          }
+        }
+
         final metadata = BackupMetadata.fromMap(metadataMap);
 
         // 验证版本兼容性
@@ -710,7 +738,8 @@ class BackupZipService {
         final dbPath = p.join(extractDir.path, 'lurebox.db');
         final dbFile = File(dbPath);
 
-        if ((await FileStat.stat(dbFile.path)).type == FileSystemEntityType.notFound) {
+        if ((await FileStat.stat(dbFile.path)).type ==
+            FileSystemEntityType.notFound) {
           return const ImportResult.failure(
             'Invalid backup: database file not found',
           );
@@ -728,7 +757,8 @@ class BackupZipService {
         final currentDbPath = await _getDatabasePath();
         final currentDbFile = File(currentDbPath);
 
-        if ((await FileStat.stat(currentDbFile.path)).type != FileSystemEntityType.notFound) {
+        if ((await FileStat.stat(currentDbFile.path)).type !=
+            FileSystemEntityType.notFound) {
           final appDir = await getApplicationDocumentsDirectory();
           final recoveryDir = Directory(p.join(appDir.path, 'recovery'));
           await recoveryDir.create(recursive: true);
@@ -776,7 +806,8 @@ class BackupZipService {
         //    照片是幂等/增量的：先复制即使后续 DB 交换失败也安全（旧 DB 仍由
         //    步骤 5 的恢复点保护）。若照片复制失败，则在触碰活动 DB 之前失败。
         final photosDir = p.join(extractDir.path, 'photos');
-        if ((await FileStat.stat(Directory(photosDir).path)).type != FileSystemEntityType.notFound) {
+        if ((await FileStat.stat(Directory(photosDir).path)).type !=
+            FileSystemEntityType.notFound) {
           final destPhotosDir = Directory(p.join(appDir.path, 'photos'));
           await destPhotosDir.create(recursive: true);
 
@@ -837,7 +868,8 @@ class BackupZipService {
         return ImportResult.successWithMetadata(metadata);
       } on Exception catch (e) {
         // 清理临时目录
-        if ((await FileStat.stat(extractDir.path)).type != FileSystemEntityType.notFound) {
+        if ((await FileStat.stat(extractDir.path)).type !=
+            FileSystemEntityType.notFound) {
           await extractDir.delete(recursive: true);
         }
         rethrow;

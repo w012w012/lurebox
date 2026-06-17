@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
-import 'package:lurebox/core/services/adapters/deepseek_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/deepseek_provider.dart';
 import 'package:lurebox/core/services/fish_recognition_service.dart';
 
 void main() {

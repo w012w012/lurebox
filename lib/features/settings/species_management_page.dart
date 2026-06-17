@@ -121,7 +121,9 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         if (mounted) {
           final s = ref.read(currentStringsProvider);
           AppSnackBar.showSuccess(
-              context, s.speciesUpdated.replaceFirst('%s', speciesName),);
+            context,
+            s.speciesUpdated.replaceFirst('%s', speciesName),
+          );
         }
       } on Exception catch (e) {
         if (mounted) {
@@ -178,7 +180,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
       }
 
       final service = FishRecognitionService();
-      final result = await service.identifySpecies(file, settings);
+      final result =
+          await service.identifySpecies(File(fishCatch.imagePath), settings);
       if (!mounted) return;
 
       // 构建多选项列表
@@ -265,7 +268,9 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         if (mounted) {
           final s = ref.read(currentStringsProvider);
           AppSnackBar.showSuccess(
-              context, s.speciesUpdated.replaceFirst('%s', speciesName),);
+            context,
+            s.speciesUpdated.replaceFirst('%s', speciesName),
+          );
         }
       } on Exception catch (e) {
         if (mounted) {
@@ -299,10 +304,11 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         if (!context.mounted) return;
         final s = ref.read(currentStringsProvider);
         AppSnackBar.showSuccess(
-            context,
-            s.speciesRenamed
-                .replaceFirst('%s', oldName)
-                .replaceFirst('%s', result),);
+          context,
+          s.speciesRenamed
+              .replaceFirst('%s', oldName)
+              .replaceFirst('%s', result),
+        );
       } on Exception catch (e) {
         if (!context.mounted) return;
         final s = ref.read(currentStringsProvider);
@@ -377,7 +383,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           }
 
           final batchImageStat = await FileStat.stat(fishCatch.imagePath);
-          final fileExists = batchImageStat.type != FileSystemEntityType.notFound;
+          final fileExists =
+              batchImageStat.type != FileSystemEntityType.notFound;
           if (!mounted) return;
           if (!fileExists) {
             setState(() => _batchFailed++);
@@ -391,7 +398,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
             continue;
           }
 
-          final result = await service.identifySpecies(file, settings);
+          final result = await service.identifySpecies(
+              File(fishCatch.imagePath), settings);
           if (!mounted) return;
 
           if (result.primarySpecies.chineseName.isNotEmpty) {

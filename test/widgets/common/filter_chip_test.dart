@@ -56,9 +56,9 @@ void main() {
         ),
       );
 
-      // When selected, label text should be white (bold)
+      // When selected, label text should be white (w500, medium)
       final textWidget = tester.widget<Text>(find.text('Keep'));
-      expect(textWidget.style?.fontWeight, FontWeight.bold);
+      expect(textWidget.style?.fontWeight, FontWeight.w500);
       expect(textWidget.style?.color, Colors.white);
     });
 

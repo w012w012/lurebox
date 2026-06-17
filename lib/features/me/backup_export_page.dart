@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -186,7 +188,10 @@ class BackupExportPage extends ConsumerWidget {
   }
 
   void _showFullBackupDialog(
-      BuildContext context, WidgetRef ref, AppStrings strings,) {
+    BuildContext context,
+    WidgetRef ref,
+    AppStrings strings,
+  ) {
     showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
@@ -225,16 +230,16 @@ class BackupExportPage extends ConsumerWidget {
         barrierDismissible: false,
         builder: (context) => AlertDialog(
           title: Text(strings.creatingBackup),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: AppTheme.spacingMd),
-            Text(strings.backupRunning),
-          ],
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: AppTheme.spacingMd),
+              Text(strings.backupRunning),
+            ],
+          ),
         ),
       ),
-    ),
     );
 
     try {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lurebox/core/camera/camera_state.dart';
-import 'package:lurebox/core/camera/camera_view_model.dart';
+import 'package:lurebox/features/camera/services/camera_state.dart';
+import 'package:lurebox/features/camera/services/camera_view_model.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/services/equipment_service.dart';
 import 'package:lurebox/core/services/fish_catch_service.dart';

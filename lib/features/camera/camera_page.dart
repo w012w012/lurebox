@@ -44,10 +44,15 @@ class _CameraPageState extends ConsumerState<CameraPage>
   final _lengthController = TextEditingController();
   final _weightController = TextEditingController();
 
+  /// Captured in [initState] so [dispose] can release camera resources without
+  /// touching `ref` (illegal once the element is being unmounted).
+  late final CameraViewModel _cameraViewModel;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _cameraViewModel = ref.read(cameraViewModelProvider.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initialize();
     });
@@ -175,13 +180,8 @@ class _CameraPageState extends ConsumerState<CameraPage>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    // 释放相机资源
-    try {
-      final vm = ref.read(cameraViewModelProvider.notifier);
-      vm.disposeCamera();
-    } on Exception catch (_) {
-      // ViewModel may already be disposed
-    }
+    // 释放相机资源（用 initState 捕获的引用；dispose 阶段不能再访问 ref）
+    _cameraViewModel.disposeCamera();
 
     _lengthController.removeListener(_onLengthChanged);
     _speciesController.dispose();
@@ -535,9 +535,14 @@ class _CameraPageState extends ConsumerState<CameraPage>
       if (fishId != null && fishId > 0 && mounted) {
         // 保存成功：删除压缩前的原图（仅当与最终路径不同时），避免双份图片。
         await _deleteSupersededOriginal(originalPath, newPath);
-        // 保存成功后失效所有派生数据，确保首页/统计/成就/待识别角标即时刷新
-        invalidateDerivedFishData(ref.invalidate);
-        context.pushReplacement('/fish/$fishId');
+        // 上面有 await，widget 可能已卸载；在使用 ref/context 前重新校验，
+        // 否则会在已弃用的 context 上导航（use_build_context_synchronously）
+        // 或在已 dispose 的 ref 上 invalidate（StateError）。
+        if (mounted) {
+          // 保存成功后失效所有派生数据，确保首页/统计/成就/待识别角标即时刷新
+          invalidateDerivedFishData(ref.invalidate);
+          context.pushReplacement('/fish/$fishId');
+        }
       } else if (fishId == null || fishId <= 0) {
         // 从 viewModel 读取最新的错误信息
         final currentState = ref.read(cameraViewModelProvider);
@@ -593,7 +598,8 @@ class _CameraPageState extends ConsumerState<CameraPage>
       // 只删 photos/ 内的应用自有文件，避免误删外部路径。
       if (!p.isWithin(photosDir, originalPath)) return;
       final file = File(originalPath);
-      if ((await FileStat.stat(file.path)).type != FileSystemEntityType.notFound) {
+      if ((await FileStat.stat(file.path)).type !=
+          FileSystemEntityType.notFound) {
         await file.delete();
         AppLogger.i('CameraPage', '已删除压缩前原图: $originalPath');
       }

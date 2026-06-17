@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import 'package:lurebox/core/services/adapters/fish_recognition_shared.dart';
+import 'package:lurebox/features/camera/services/adapters/fish_recognition_shared.dart';
 import 'package:lurebox/core/services/fish_recognition_service.dart';
 
 void main() {
@@ -54,7 +54,9 @@ void main() {
     test('trims whitespace from plain JSON', () {
       const content = '  \n  {"primarySpecies": {}}  \n  ';
       expect(
-          extractJsonFromResponse(content), equals('{"primarySpecies": {}}'),);
+        extractJsonFromResponse(content),
+        equals('{"primarySpecies": {}}'),
+      );
     });
 
     test('handles extra newlines and spaces in markdown block', () {

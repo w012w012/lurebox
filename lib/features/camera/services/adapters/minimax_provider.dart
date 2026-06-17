@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
-import 'package:lurebox/core/services/adapters/fish_recognition_shared.dart';
+import 'package:lurebox/features/camera/services/adapters/fish_recognition_shared.dart';
 import 'package:lurebox/core/services/fish_recognition_service.dart';
 
 /// MiniMax 鱼类识别提供者

@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:lurebox/core/design/theme/animation_constants.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/design/theme/app_theme.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
@@ -131,7 +130,7 @@ void main() {
       expect(find.byType(PremiumCard), findsOneWidget);
     });
 
-    testWidgets('AnimatedContainer uses TeslaTheme transition duration',
+    testWidgets('AnimatedContainer uses AppTheme transition duration',
         (tester) async {
       await tester.pumpWidget(
         _wrapInTheme(
@@ -141,7 +140,7 @@ void main() {
       final container = tester.widget<AnimatedContainer>(
         find.byType(AnimatedContainer),
       );
-      expect(container.duration, equals(TeslaTheme.transitionDuration));
+      expect(container.duration, equals(AppTheme.transitionDuration));
     });
 
     testWidgets('multiple flat cards render in a list', (tester) async {
@@ -296,10 +295,9 @@ void main() {
     test('follows 4px base unit', () {
       expect(AppTheme.spacingXs, equals(4.0));
       expect(AppTheme.spacingSm, equals(8.0));
-      expect(AppTheme.spacingMd, equals(12.0));
-      expect(AppTheme.spacingLg, equals(16.0));
-      expect(AppTheme.spacingXl, equals(24.0));
-      expect(AppTheme.spacingXxl, equals(32.0));
+      expect(AppTheme.spacingMd, equals(16.0));
+      expect(AppTheme.spacingLg, equals(24.0));
+      expect(AppTheme.spacingXl, equals(32.0));
     });
 
     test('radius follows iOS design guidelines', () {

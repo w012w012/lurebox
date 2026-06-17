@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -41,8 +43,11 @@ class EquipmentListPage extends ConsumerWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error,
-                          size: 48, color: TeslaColors.electricBlue,),
+                      const Icon(
+                        Icons.error,
+                        size: 48,
+                        color: TeslaColors.electricBlue,
+                      ),
                       const SizedBox(height: 16),
                       Text('${strings.error}: ${state.errorMessage}'),
                       const SizedBox(height: 16),

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
+
 /// 水印样式枚举
 enum WatermarkStyle {
   minimal, // 简约左下
@@ -111,15 +113,11 @@ class WatermarkSettings {
         orElse: () => WatermarkStyle.minimal,
       ),
       infoTypes: (json['infoTypes'] as List<dynamic>?)
-              ?.map((e) {
-                try {
-                  return WatermarkInfoType.values.firstWhere(
-                    (type) => type.name == e,
-                  );
-                } on Exception catch (_) {
-                  return null;
-                }
-              })
+              ?.map(
+                (e) => WatermarkInfoType.values.firstWhereOrNull(
+                  (type) => type.name == e,
+                ),
+              )
               .whereType<WatermarkInfoType>()
               .toList() ??
           [

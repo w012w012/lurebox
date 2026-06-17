@@ -27,6 +27,8 @@
 /// - 统计各钓点的捕获记录
 library;
 
+import 'package:collection/collection.dart';
+
 class FishingLocation {
   const FishingLocation({
     required this.id,
@@ -132,10 +134,6 @@ extension FishingLocationListExtension on List<FishingLocation> {
   }
 
   FishingLocation? findByName(String name) {
-    try {
-      return firstWhere((l) => l.name == name);
-    } on Exception catch (_) {
-      return null;
-    }
+    return firstWhereOrNull((l) => l.name == name);
   }
 }

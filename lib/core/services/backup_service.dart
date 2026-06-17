@@ -82,37 +82,45 @@ class BackupService {
     var importedCount = 0;
 
     await db.transaction((txn) async {
-      if (backupData.containsKey('fishCatches')) {
+      if (backupData['fishCatches'] is List) {
         final fishCatches = backupData['fishCatches'] as List;
         for (final fish in fishCatches) {
+          if (fish is! Map) continue;
           await txn.insert(
-              'fish_catches', Map<String, dynamic>.from(fish as Map),);
+            'fish_catches',
+            Map<String, dynamic>.from(fish),
+          );
           importedCount++;
         }
       }
 
-      if (backupData.containsKey('equipments')) {
+      if (backupData['equipments'] is List) {
         final equipments = backupData['equipments'] as List;
         for (final equipment in equipments) {
+          if (equipment is! Map) continue;
           await txn.insert(
-              'equipments', Map<String, dynamic>.from(equipment as Map),);
-        }
-      }
-
-      if (backupData.containsKey('speciesHistory')) {
-        final speciesHistory = backupData['speciesHistory'] as List;
-        for (final species in speciesHistory) {
-          await txn.insert(
-            'species_history',
-            Map<String, dynamic>.from(species as Map),
+            'equipments',
+            Map<String, dynamic>.from(equipment),
           );
         }
       }
 
-      if (backupData.containsKey('settings')) {
+      if (backupData['speciesHistory'] is List) {
+        final speciesHistory = backupData['speciesHistory'] as List;
+        for (final species in speciesHistory) {
+          if (species is! Map) continue;
+          await txn.insert(
+            'species_history',
+            Map<String, dynamic>.from(species),
+          );
+        }
+      }
+
+      if (backupData['settings'] is List) {
         final settings = backupData['settings'] as List;
         for (final setting in settings) {
-          final map = Map<String, dynamic>.from(setting as Map);
+          if (setting is! Map) continue;
+          final map = Map<String, dynamic>.from(setting);
           await txn.insert(
             'settings',
             map,
@@ -123,10 +131,11 @@ class BackupService {
 
       // user_species_alias 在被引用的表（fish_species 等）之后导入；
       // user_alias 唯一，沿用 replace 冲突策略避免重复别名导入失败。
-      if (backupData.containsKey('userSpeciesAlias')) {
+      if (backupData['userSpeciesAlias'] is List) {
         final userSpeciesAlias = backupData['userSpeciesAlias'] as List;
         for (final alias in userSpeciesAlias) {
-          final map = Map<String, dynamic>.from(alias as Map);
+          if (alias is! Map) continue;
+          final map = Map<String, dynamic>.from(alias);
           await txn.insert(
             'user_species_alias',
             map,

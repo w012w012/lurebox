@@ -166,7 +166,9 @@ class EnhancedBackupService {
     int historyKeepCount = 20,
   }) async {
     final stat = await FileStat.stat(filePath);
-    final fileSize = stat.type != FileSystemEntityType.notFound ? await File(filePath).length() : 0;
+    final fileSize = stat.type != FileSystemEntityType.notFound
+        ? await File(filePath).length()
+        : 0;
 
     final db = await _dbProvider.database;
     final stats = await _getBackupStats(db);
@@ -228,7 +230,8 @@ class EnhancedBackupService {
     // 删除文件
     try {
       final file = File(filePath);
-      if ((await FileStat.stat(file.path)).type != FileSystemEntityType.notFound) {
+      if ((await FileStat.stat(file.path)).type !=
+          FileSystemEntityType.notFound) {
         await file.delete();
       }
     } on Exception catch (e) {
@@ -254,7 +257,8 @@ class EnhancedBackupService {
     final appDir = await getApplicationDocumentsDirectory();
     final recoveryDir = Directory(p.join(appDir.path, 'recovery'));
 
-    if ((await FileStat.stat(recoveryDir.path)).type == FileSystemEntityType.notFound) return 0;
+    if ((await FileStat.stat(recoveryDir.path)).type ==
+        FileSystemEntityType.notFound) return 0;
 
     final files = <File>[];
     await for (final entity in recoveryDir.list()) {
@@ -277,7 +281,10 @@ class EnhancedBackupService {
         deletedCount++;
       } on Exception catch (e) {
         AppLogger.e(
-            'EnhancedBackupService', 'Failed to delete recovery point', e,);
+          'EnhancedBackupService',
+          'Failed to delete recovery point',
+          e,
+        );
       }
     }
 
@@ -289,7 +296,8 @@ class EnhancedBackupService {
     final appDir = await getApplicationDocumentsDirectory();
     final recoveryDir = Directory(p.join(appDir.path, 'recovery'));
 
-    if ((await FileStat.stat(recoveryDir.path)).type == FileSystemEntityType.notFound) return [];
+    if ((await FileStat.stat(recoveryDir.path)).type ==
+        FileSystemEntityType.notFound) return [];
 
     final files = <File>[];
     await for (final entity in recoveryDir.list()) {
@@ -391,7 +399,8 @@ class EnhancedBackupService {
       AppLogger.e('EnhancedBackupService', 'Cloud restore import failed', e);
       return const CloudRestoreResult.failure('导入云端备份失败');
     } finally {
-      if ((await FileStat.stat(tempFile.path)).type != FileSystemEntityType.notFound) {
+      if ((await FileStat.stat(tempFile.path)).type !=
+          FileSystemEntityType.notFound) {
         await tempFile.delete();
       }
     }
@@ -418,7 +427,8 @@ class EnhancedBackupService {
     String filePath,
   ) async {
     final file = File(filePath);
-    if ((await FileStat.stat(file.path)).type == FileSystemEntityType.notFound) {
+    if ((await FileStat.stat(file.path)).type ==
+        FileSystemEntityType.notFound) {
       throw const DatabaseException('File not found');
     }
 
@@ -432,19 +442,26 @@ class EnhancedBackupService {
 
     await db.transaction((txn) async {
       // 导入渔获记录（基于 catch_time + species 去重）
-      if (backupData.containsKey('fishCatches')) {
+      if (backupData['fishCatches'] is List) {
         final fishCatches = backupData['fishCatches'] as List;
         for (final fish in fishCatches) {
           try {
-            final map = Map<String, dynamic>.from(fish as Map);
+            if (fish is! Map) {
+              errorCount++;
+              continue;
+            }
+            final map = Map<String, dynamic>.from(fish);
             final catchTime = map['catch_time'] as String?;
             final species = map['species'] as String?;
 
             // Can't insert with null species - skip as error
             if (species == null) {
               errorCount++;
-              AppLogger.e('EnhancedBackupService',
-                  'Failed to import fish catch: species is null', null,);
+              AppLogger.e(
+                'EnhancedBackupService',
+                'Failed to import fish catch: species is null',
+                null,
+              );
               continue;
             }
 
@@ -467,17 +484,24 @@ class EnhancedBackupService {
           } on Exception catch (e) {
             errorCount++;
             AppLogger.e(
-                'EnhancedBackupService', 'Failed to import fish catch', e,);
+              'EnhancedBackupService',
+              'Failed to import fish catch',
+              e,
+            );
           }
         }
       }
 
       // 导入装备（基于 type + brand + model 去重）
-      if (backupData.containsKey('equipments')) {
+      if (backupData['equipments'] is List) {
         final equipments = backupData['equipments'] as List;
         for (final equipment in equipments) {
           try {
-            final map = Map<String, dynamic>.from(equipment as Map);
+            if (equipment is! Map) {
+              errorCount++;
+              continue;
+            }
+            final map = Map<String, dynamic>.from(equipment);
             final type = map['type'] as String?;
             final brand = map['brand'] as String?;
             final model = map['model'] as String?;
@@ -485,8 +509,11 @@ class EnhancedBackupService {
             // Can't insert with null type - skip as error
             if (type == null) {
               errorCount++;
-              AppLogger.e('EnhancedBackupService',
-                  'Failed to import equipment: type is null', null,);
+              AppLogger.e(
+                'EnhancedBackupService',
+                'Failed to import equipment: type is null',
+                null,
+              );
               continue;
             }
 
@@ -521,17 +548,24 @@ class EnhancedBackupService {
           } on Exception catch (e) {
             errorCount++;
             AppLogger.e(
-                'EnhancedBackupService', 'Failed to import equipment', e,);
+              'EnhancedBackupService',
+              'Failed to import equipment',
+              e,
+            );
           }
         }
       }
 
       // 导入物种历史（基于 name 去重）
-      if (backupData.containsKey('speciesHistory')) {
+      if (backupData['speciesHistory'] is List) {
         final speciesHistory = backupData['speciesHistory'] as List;
         for (final species in speciesHistory) {
           try {
-            final map = Map<String, dynamic>.from(species as Map);
+            if (species is! Map) {
+              errorCount++;
+              continue;
+            }
+            final map = Map<String, dynamic>.from(species);
             final name = map['name'] as String?;
 
             if (name != null) {
@@ -551,17 +585,24 @@ class EnhancedBackupService {
           } on Exception catch (e) {
             errorCount++;
             AppLogger.e(
-                'EnhancedBackupService', 'Failed to import species history', e,);
+              'EnhancedBackupService',
+              'Failed to import species history',
+              e,
+            );
           }
         }
       }
 
       // 导入设置（使用 replace 策略）
-      if (backupData.containsKey('settings')) {
+      if (backupData['settings'] is List) {
         final settings = backupData['settings'] as List;
         for (final setting in settings) {
           try {
-            final map = Map<String, dynamic>.from(setting as Map);
+            if (setting is! Map) {
+              errorCount++;
+              continue;
+            }
+            final map = Map<String, dynamic>.from(setting);
             await txn.insert(
               'settings',
               map,
@@ -576,11 +617,15 @@ class EnhancedBackupService {
 
       // 导入用户自定义品种别名（user_alias 唯一，replace 策略）。
       // 与 BackupService.importFromJson 一致，确保 WebDAV 往返一致（FIX-7 / G-5）。
-      if (backupData.containsKey('userSpeciesAlias')) {
+      if (backupData['userSpeciesAlias'] is List) {
         final userSpeciesAlias = backupData['userSpeciesAlias'] as List;
         for (final alias in userSpeciesAlias) {
           try {
-            final map = Map<String, dynamic>.from(alias as Map);
+            if (alias is! Map) {
+              errorCount++;
+              continue;
+            }
+            final map = Map<String, dynamic>.from(alias);
             await txn.insert(
               'user_species_alias',
               map,
@@ -588,8 +633,11 @@ class EnhancedBackupService {
             );
           } on Exception catch (e) {
             errorCount++;
-            AppLogger.e('EnhancedBackupService',
-                'Failed to import user species alias', e,);
+            AppLogger.e(
+              'EnhancedBackupService',
+              'Failed to import user species alias',
+              e,
+            );
           }
         }
       }

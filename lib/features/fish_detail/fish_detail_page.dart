@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -406,7 +408,7 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
         MaterialPageRoute<void>(
           builder: (_) => WatermarkSharePreviewPage(data: previewData),
         ),
-      );
+      ));
     }
   }
 
@@ -419,7 +421,9 @@ class _FishDetailPageState extends ConsumerState<FishDetailPage> {
       '/fish/${widget.fishId}/edit',
     );
     if (result != null) {
-      unawaited(ref.read(fishDetailViewModelProvider(widget.fishId).notifier).refresh());
+      unawaited(ref
+          .read(fishDetailViewModelProvider(widget.fishId).notifier)
+          .refresh());
       // 编辑成功后失效派生数据（鱼种/长度/重量变化影响统计与成就）
       invalidateDerivedFishData(ref.invalidate);
     }

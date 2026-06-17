@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
-import 'package:lurebox/core/services/adapters/gemini_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/gemini_provider.dart';
 import 'package:lurebox/core/services/fish_recognition_service.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -112,7 +112,9 @@ void main() {
         addTearDown(() => tempDir.deleteSync(recursive: true));
 
         final mockResponse = _createUtf8Response(
-            jsonEncode(_createSuccessfulGeminiResponse()), 200,);
+          jsonEncode(_createSuccessfulGeminiResponse()),
+          200,
+        );
 
         when(
           () => mockHttpClient.post(

@@ -2,7 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:lurebox/core/camera/camera_helper.dart';
+import 'package:lurebox/features/camera/services/camera_helper.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/services/permission_service.dart';
 import 'package:permission_handler/permission_handler.dart' as perm_handler;

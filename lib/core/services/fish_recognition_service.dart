@@ -26,7 +26,8 @@ class FishRecognitionResult {
     final primaryJson = json['primarySpecies'];
     if (primaryJson is! Map<String, dynamic>) {
       throw const FormatException(
-          'Invalid primarySpecies in recognition result',);
+        'Invalid primarySpecies in recognition result',
+      );
     }
     return FishRecognitionResult(
       primarySpecies: SpeciesInfo.fromJson(primaryJson),
@@ -176,7 +177,7 @@ class FishRecognitionService {
     File image,
     AiRecognitionSettings settings,
   ) async {
-    if ((await FileStat.stat(image.path)).type == FileSystemEntityType.notFound) {
+    if (!await image.exists()) {
       throw const FishRecognitionException(
         FishRecognitionErrorType.unknown,
         '图片文件不存在',

@@ -289,20 +289,16 @@ void main() {
         expect(AppTheme.spacingSm, 8.0);
       });
 
-      test('spacingMd should be 12.0', () {
-        expect(AppTheme.spacingMd, 12.0);
+      test('spacingMd should be 16.0', () {
+        expect(AppTheme.spacingMd, 16.0);
       });
 
-      test('spacingLg should be 16.0', () {
-        expect(AppTheme.spacingLg, 16.0);
+      test('spacingLg should be 24.0', () {
+        expect(AppTheme.spacingLg, 24.0);
       });
 
-      test('spacingXl should be 24.0', () {
-        expect(AppTheme.spacingXl, 24.0);
-      });
-
-      test('spacingXxl should be 32.0', () {
-        expect(AppTheme.spacingXxl, 32.0);
+      test('spacingXl should be 32.0', () {
+        expect(AppTheme.spacingXl, 32.0);
       });
     });
 
@@ -328,21 +324,7 @@ void main() {
       });
     });
 
-    group('Shadow System', () {
-      test('shadowSm should return a list of BoxShadow', () {
-        expect(AppTheme.shadowSm, isA<List<BoxShadow>>());
-        expect(AppTheme.shadowSm.length, 1);
-      });
-
-      test('shadowMd should return a list of BoxShadow', () {
-        expect(AppTheme.shadowMd, isA<List<BoxShadow>>());
-        expect(AppTheme.shadowMd.length, 1);
-      });
-
-      test('shadowLg should return a list of BoxShadow', () {
-        expect(AppTheme.shadowLg, isA<List<BoxShadow>>());
-        expect(AppTheme.shadowLg.length, 1);
-      });
-    });
+    // Shadow System removed — flat design per DESIGN.md.
+    // Shadows were deleted from AppTheme; only TeslaTokens.shadowNone remains.
   });
 }

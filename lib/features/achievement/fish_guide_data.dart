@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:lurebox/core/models/fish_species.dart';
 import 'package:lurebox/features/achievement/fish_guide_data/freshwater_general_species.dart';
 import 'package:lurebox/features/achievement/fish_guide_data/freshwater_lure_species.dart';
@@ -36,11 +37,7 @@ class FishGuideData {
 
   /// 根据ID获取鱼类物种
   static FishSpecies? getById(String id) {
-    try {
-      return allSpecies.firstWhere((s) => s.id == id);
-    } on Exception catch (_) {
-      return null;
-    }
+    return allSpecies.firstWhereOrNull((s) => s.id == id);
   }
 
   /// 根据分类获取鱼类物种

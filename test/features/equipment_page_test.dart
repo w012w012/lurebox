@@ -19,16 +19,15 @@ void main() {
 
     test('AppColors has correct blue theme colors', () {
       expect(AppColors.primaryLight, const Color(0xFF1E3A5F));
-      expect(AppColors.accentLight, const Color(0xFF3B82F6));
+      expect(AppColors.accentLight, const Color(0xFF3E6AE1));
     });
 
     test('AppTheme has correct spacing system', () {
       expect(AppTheme.spacingXs, 4.0);
       expect(AppTheme.spacingSm, 8.0);
-      expect(AppTheme.spacingMd, 12.0);
-      expect(AppTheme.spacingLg, 16.0);
-      expect(AppTheme.spacingXl, 24.0);
-      expect(AppTheme.spacingXxl, 32.0);
+      expect(AppTheme.spacingMd, 16.0);
+      expect(AppTheme.spacingLg, 24.0);
+      expect(AppTheme.spacingXl, 32.0);
     });
 
     test('AppTheme has correct radius system', () {
@@ -208,7 +207,6 @@ void main() {
       expect(AppTheme.spacingMd % 4, 0);
       expect(AppTheme.spacingLg % 4, 0);
       expect(AppTheme.spacingXl % 4, 0);
-      expect(AppTheme.spacingXxl % 4, 0);
     });
 
     test('radius follows standard iOS values', () {
@@ -226,7 +224,7 @@ void main() {
     });
 
     test('accent color is bright blue', () {
-      expect(AppColors.accentLight, const Color(0xFF3B82F6));
+      expect(AppColors.accentLight, const Color(0xFF3E6AE1));
     });
 
     test('secondary color complements primary', () {

@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:lurebox/core/models/fish_species.dart';
 import 'package:lurebox/features/achievement/fish_guide_data.dart';
 
@@ -29,13 +30,9 @@ class FishSpeciesMatcher {
     if (alias.isEmpty) return null;
 
     final lowerAlias = alias.toLowerCase();
-    try {
-      return _allSpecies.firstWhere(
-        (s) => s.aliases.any((a) => a.toLowerCase() == lowerAlias),
-      );
-    } on Exception catch (_) {
-      return null;
-    }
+    return _allSpecies.firstWhereOrNull(
+      (s) => s.aliases.any((a) => a.toLowerCase() == lowerAlias),
+    );
   }
 
   /// 根据名称查找物种（模糊匹配）
@@ -57,26 +54,18 @@ class FishSpeciesMatcher {
 
     // 2. 精确匹配标准名称
     final lowerName = name.toLowerCase();
-    try {
-      final exactMatch = _allSpecies.firstWhere(
-        (s) => s.standardName.toLowerCase() == lowerName,
-      );
-      return exactMatch;
-    } on Exception catch (_) {
-      // continue to partial match
-    }
+    final exactMatch = _allSpecies.firstWhereOrNull(
+      (s) => s.standardName.toLowerCase() == lowerName,
+    );
+    if (exactMatch != null) return exactMatch;
 
     // 3. 部分匹配（输入包含在名称或别名中）
-    try {
-      final partialMatch = _allSpecies.firstWhere(
-        (s) =>
-            s.standardName.contains(name) ||
-            s.aliases.any((a) => a.contains(name)),
-      );
-      return partialMatch;
-    } on Exception catch (_) {
-      // continue to similarity match
-    }
+    final partialMatch = _allSpecies.firstWhereOrNull(
+      (s) =>
+          s.standardName.contains(name) ||
+          s.aliases.any((a) => a.contains(name)),
+    );
+    if (partialMatch != null) return partialMatch;
 
     // 4. 相似度匹配（Levenshtein距离）
     return _findSimilar(name);

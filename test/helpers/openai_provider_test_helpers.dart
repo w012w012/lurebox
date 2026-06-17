@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
-import 'package:lurebox/core/services/adapters/openai_compatible_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/openai_compatible_provider.dart';
 import 'package:lurebox/core/services/fish_recognition_service.dart';
 import 'package:mocktail/mocktail.dart';
 

@@ -157,6 +157,10 @@ class WeatherService {
         },
       ).timeout(requestTimeout);
 
+      // segments 可能为空（异常/空响应）；.first 在空列表上抛 StateError，
+      // 而 StateError 是 Error 不是 Exception，会逃逸下方的 on Exception，
+      // 使"失败则返回空天气"的降级失效。先显式守卫。
+      if (response.segments.isEmpty) return const WeatherData();
       final segment = response.segments.first;
       final current = segment.currentData;
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
@@ -190,7 +191,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
           _calculateWeightStats();
           _isLoading = false;
         });
-      unawaited(  _contentAnimationController.forward());
+        unawaited(_contentAnimationController.forward());
       }
     } on Exception catch (e) {
       AppLogger.e('StatsDetailPage', 'Failed to load detail data', e);
@@ -468,11 +469,16 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline,
-                          size: 48, color: Colors.grey,),
+                      const Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(height: 16),
-                      Text(strings.error,
-                          style: Theme.of(context).textTheme.titleMedium,),
+                      Text(
+                        strings.error,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                       const SizedBox(height: 8),
                       TextButton(
                         onPressed: _loadDetail,
