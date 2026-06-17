@@ -64,10 +64,12 @@ class BackupService {
   }
 
   Future<int> importFromJson(String filePath) async {
-    final file = File(filePath);
-    if (!await file.exists()) {
+    final stat = await FileStat.stat(filePath);
+    if (stat.type == FileSystemEntityType.notFound) {
       throw const DatabaseException('File not found');
     }
+
+    final file = File(filePath);
 
     final jsonString = await file.readAsString();
     final decoded = jsonDecode(jsonString);

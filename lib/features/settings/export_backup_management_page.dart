@@ -78,7 +78,7 @@ Future<List<FileInfo>> _listExportBackupFiles() async {
       }
 
       if (fileType != null) {
-        final stat = await entity.stat();
+        final stat = await FileStat.stat(entity.path);
         files.add(
           FileInfo(
             name: name,

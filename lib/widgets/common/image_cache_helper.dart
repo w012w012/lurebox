@@ -83,7 +83,7 @@ class ImageCacheHelper {
 
     try {
       final file = File(imagePath);
-      if (await file.exists()) {
+      if ((await FileStat.stat(file.path)).type != FileSystemEntityType.notFound) {
         if (!context.mounted) return;
         ImageProvider provider;
         if (width != null && height != null) {

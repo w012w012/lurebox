@@ -801,12 +801,12 @@ class WatermarkExporter {
     if (path == null) return;
     try {
       final file = File(path);
-      if (await file.exists()) {
+      if ((await FileStat.stat(file.path)).type != FileSystemEntityType.notFound) {
         await file.delete();
       }
       // 删除临时目录
       final dir = file.parent;
-      if (await dir.exists()) {
+      if ((await FileStat.stat(dir.path)).type != FileSystemEntityType.notFound) {
         final isEmpty = await dir.list().isEmpty;
         if (isEmpty) {
           await dir.delete();

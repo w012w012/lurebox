@@ -356,7 +356,7 @@ class _AiProviderConfigDialogState
         });
       }
     } finally {
-      if (tempFile != null && await tempFile.exists()) {
+      if (tempFile != null && (await FileStat.stat(tempFile.path)).type != FileSystemEntityType.notFound) {
         await tempFile.delete();
       }
     }

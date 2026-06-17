@@ -165,8 +165,8 @@ class EnhancedBackupService {
     int recoveryKeepCount = 2,
     int historyKeepCount = 20,
   }) async {
-    final file = File(filePath);
-    final fileSize = await file.exists() ? await file.length() : 0;
+    final stat = await FileStat.stat(filePath);
+    final fileSize = stat.type != FileSystemEntityType.notFound ? await File(filePath).length() : 0;
 
     final db = await _dbProvider.database;
     final stats = await _getBackupStats(db);
@@ -228,7 +228,7 @@ class EnhancedBackupService {
     // 删除文件
     try {
       final file = File(filePath);
-      if (await file.exists()) {
+      if ((await FileStat.stat(file.path)).type != FileSystemEntityType.notFound) {
         await file.delete();
       }
     } on Exception catch (e) {
@@ -254,7 +254,7 @@ class EnhancedBackupService {
     final appDir = await getApplicationDocumentsDirectory();
     final recoveryDir = Directory(p.join(appDir.path, 'recovery'));
 
-    if (!await recoveryDir.exists()) return 0;
+    if ((await FileStat.stat(recoveryDir.path)).type == FileSystemEntityType.notFound) return 0;
 
     final files = <File>[];
     await for (final entity in recoveryDir.list()) {
@@ -289,7 +289,7 @@ class EnhancedBackupService {
     final appDir = await getApplicationDocumentsDirectory();
     final recoveryDir = Directory(p.join(appDir.path, 'recovery'));
 
-    if (!await recoveryDir.exists()) return [];
+    if ((await FileStat.stat(recoveryDir.path)).type == FileSystemEntityType.notFound) return [];
 
     final files = <File>[];
     await for (final entity in recoveryDir.list()) {
@@ -302,7 +302,8 @@ class EnhancedBackupService {
     // 获取文件修改时间并排序（最新的在前）
     final fileWithTime = <(File file, DateTime time)>[];
     for (final file in files) {
-      fileWithTime.add((file, await file.lastModified()));
+      final fileStat = await FileStat.stat(file.path);
+      fileWithTime.add((file, fileStat.modified));
     }
     fileWithTime.sort((a, b) => b.$2.compareTo(a.$2));
 
@@ -390,7 +391,7 @@ class EnhancedBackupService {
       AppLogger.e('EnhancedBackupService', 'Cloud restore import failed', e);
       return const CloudRestoreResult.failure('导入云端备份失败');
     } finally {
-      if (await tempFile.exists()) {
+      if ((await FileStat.stat(tempFile.path)).type != FileSystemEntityType.notFound) {
         await tempFile.delete();
       }
     }
@@ -417,7 +418,7 @@ class EnhancedBackupService {
     String filePath,
   ) async {
     final file = File(filePath);
-    if (!await file.exists()) {
+    if ((await FileStat.stat(file.path)).type == FileSystemEntityType.notFound) {
       throw const DatabaseException('File not found');
     }
 

@@ -444,7 +444,7 @@ class CameraViewModel extends StateNotifier<CameraState> {
       final photosDir = p.join(appDir.path, 'photos');
       if (!p.isWithin(photosDir, path)) return;
       final file = File(path);
-      if (await file.exists()) {
+      if ((await FileStat.stat(file.path)).type != FileSystemEntityType.notFound) {
         await file.delete();
         AppLogger.i('CameraViewModel', '已删除未保存的拍摄副本: $path');
       }

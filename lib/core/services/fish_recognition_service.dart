@@ -176,7 +176,7 @@ class FishRecognitionService {
     File image,
     AiRecognitionSettings settings,
   ) async {
-    if (!await image.exists()) {
+    if ((await FileStat.stat(image.path)).type == FileSystemEntityType.notFound) {
       throw const FishRecognitionException(
         FishRecognitionErrorType.unknown,
         '图片文件不存在',

@@ -593,7 +593,7 @@ class _CameraPageState extends ConsumerState<CameraPage>
       // 只删 photos/ 内的应用自有文件，避免误删外部路径。
       if (!p.isWithin(photosDir, originalPath)) return;
       final file = File(originalPath);
-      if (await file.exists()) {
+      if ((await FileStat.stat(file.path)).type != FileSystemEntityType.notFound) {
         await file.delete();
         AppLogger.i('CameraPage', '已删除压缩前原图: $originalPath');
       }

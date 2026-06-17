@@ -155,8 +155,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
         return;
       }
 
-      final file = File(fishCatch.imagePath);
-      final fileExists = await file.exists();
+      final imageStat = await FileStat.stat(fishCatch.imagePath);
+      final fileExists = imageStat.type != FileSystemEntityType.notFound;
       if (!mounted) return;
       if (!fileExists) {
         setState(() {
@@ -376,8 +376,8 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
             continue;
           }
 
-          final file = File(fishCatch.imagePath);
-          final fileExists = await file.exists();
+          final batchImageStat = await FileStat.stat(fishCatch.imagePath);
+          final fileExists = batchImageStat.type != FileSystemEntityType.notFound;
           if (!mounted) return;
           if (!fileExists) {
             setState(() => _batchFailed++);

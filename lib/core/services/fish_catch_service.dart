@@ -246,7 +246,7 @@ class FishCatchService {
       if (path.isNotEmpty) {
         try {
           final file = File(path);
-          if (await file.exists()) {
+          if ((await FileStat.stat(file.path)).type != FileSystemEntityType.notFound) {
             await file.delete();
             AppLogger.i('FishCatchService', 'Deleted image: $path');
           }

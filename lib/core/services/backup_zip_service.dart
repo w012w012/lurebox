@@ -368,7 +368,7 @@ class BackupZipService {
     } finally {
       // 清理临时 ZIP（成功路径已复制到文档目录，失败路径无需保留）
       final tempZip = File(tempZipPath);
-      if (await tempZip.exists()) {
+      if ((await FileStat.stat(tempZip.path)).type != FileSystemEntityType.notFound) {
         await tempZip.delete();
       }
     }
@@ -398,7 +398,7 @@ class BackupZipService {
       final dbCopyPath = p.join(backupDir.path, 'lurebox.db');
       await _dbProvider.runExclusive(() async {
         final dbFile = File(dbPath);
-        if (!await dbFile.exists()) {
+        if ((await FileStat.stat(dbFile.path)).type == FileSystemEntityType.notFound) {
           throw const DatabaseException('Database file not found');
         }
         await dbFile.copy(dbCopyPath);
@@ -440,7 +440,7 @@ class BackupZipService {
       await _createZip(backupDir.path, zipPath);
     } finally {
       // 清理临时备份工作目录（成功/失败均清理）
-      if (await backupDir.exists()) {
+      if ((await FileStat.stat(backupDir.path)).type != FileSystemEntityType.notFound) {
         await backupDir.delete(recursive: true);
       }
     }
@@ -456,7 +456,7 @@ class BackupZipService {
   /// 用于清理 WAL/SHM 旁文件与失败的临时文件。
   Future<void> _deleteIfExists(String path) async {
     final file = File(path);
-    if (await file.exists()) {
+    if ((await FileStat.stat(file.path)).type != FileSystemEntityType.notFound) {
       await file.delete();
     }
   }
@@ -520,7 +520,7 @@ class BackupZipService {
     }
 
     final sourceFile = File(fullPath);
-    if (await sourceFile.exists()) {
+    if ((await FileStat.stat(sourceFile.path)).type != FileSystemEntityType.notFound) {
       final fileName = p.basename(fullPath);
       final destPath = p.join(photosDir, fileName);
       await sourceFile.copy(destPath);
@@ -621,7 +621,7 @@ class BackupZipService {
   Future<ImportResult> importFromZipPath(String zipPath) async {
     try {
       final zipFile = File(zipPath);
-      if (!await zipFile.exists()) {
+      if ((await FileStat.stat(zipFile.path)).type == FileSystemEntityType.notFound) {
         return const ImportResult.failure('File not found');
       }
 
@@ -676,7 +676,7 @@ class BackupZipService {
         final metadataPath = p.join(extractDir.path, 'metadata.json');
         final metadataFile = File(metadataPath);
 
-        if (!await metadataFile.exists()) {
+        if ((await FileStat.stat(metadataFile.path)).type == FileSystemEntityType.notFound) {
           return const ImportResult.failure(
             'Invalid backup: metadata.json not found',
           );
@@ -710,7 +710,7 @@ class BackupZipService {
         final dbPath = p.join(extractDir.path, 'lurebox.db');
         final dbFile = File(dbPath);
 
-        if (!await dbFile.exists()) {
+        if ((await FileStat.stat(dbFile.path)).type == FileSystemEntityType.notFound) {
           return const ImportResult.failure(
             'Invalid backup: database file not found',
           );
@@ -728,7 +728,7 @@ class BackupZipService {
         final currentDbPath = await _getDatabasePath();
         final currentDbFile = File(currentDbPath);
 
-        if (await currentDbFile.exists()) {
+        if ((await FileStat.stat(currentDbFile.path)).type != FileSystemEntityType.notFound) {
           final appDir = await getApplicationDocumentsDirectory();
           final recoveryDir = Directory(p.join(appDir.path, 'recovery'));
           await recoveryDir.create(recursive: true);
@@ -776,7 +776,7 @@ class BackupZipService {
         //    照片是幂等/增量的：先复制即使后续 DB 交换失败也安全（旧 DB 仍由
         //    步骤 5 的恢复点保护）。若照片复制失败，则在触碰活动 DB 之前失败。
         final photosDir = p.join(extractDir.path, 'photos');
-        if (await Directory(photosDir).exists()) {
+        if ((await FileStat.stat(Directory(photosDir).path)).type != FileSystemEntityType.notFound) {
           final destPhotosDir = Directory(p.join(appDir.path, 'photos'));
           await destPhotosDir.create(recursive: true);
 
@@ -837,7 +837,7 @@ class BackupZipService {
         return ImportResult.successWithMetadata(metadata);
       } on Exception catch (e) {
         // 清理临时目录
-        if (await extractDir.exists()) {
+        if ((await FileStat.stat(extractDir.path)).type != FileSystemEntityType.notFound) {
           await extractDir.delete(recursive: true);
         }
         rethrow;

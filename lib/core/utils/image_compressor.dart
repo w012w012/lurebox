@@ -42,7 +42,7 @@ class ImageCompressor {
   }) async {
     try {
       final inputFile = File(inputPath);
-      if (!await inputFile.exists()) {
+      if ((await FileStat.stat(inputFile.path)).type == FileSystemEntityType.notFound) {
         throw FileException('Input file does not exist: $inputPath');
       }
 
@@ -95,7 +95,7 @@ class ImageCompressor {
   }) async {
     try {
       final inputFile = File(inputPath);
-      if (!await inputFile.exists()) {
+      if ((await FileStat.stat(inputFile.path)).type == FileSystemEntityType.notFound) {
         throw FileException('Input file does not exist: $inputPath');
       }
 
@@ -141,7 +141,7 @@ class ImageCompressor {
     int daysToKeep = 30,
   }) async {
     try {
-      if (!await directory.exists()) {
+      if ((await FileStat.stat(directory.path)).type == FileSystemEntityType.notFound) {
         return 0;
       }
 
@@ -150,7 +150,7 @@ class ImageCompressor {
 
       await for (final entity in directory.list()) {
         if (entity is File && entity.path.endsWith('.jpg')) {
-          final stat = await entity.stat();
+          final stat = await FileStat.stat(entity.path);
           if (stat.modified.isBefore(cutoffDate)) {
             await entity.delete();
             deletedCount++;
