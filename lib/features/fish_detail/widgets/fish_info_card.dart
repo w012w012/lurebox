@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:lurebox/core/constants/constants.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
@@ -153,13 +153,13 @@ class FishInfoCard extends ConsumerWidget {
         : null;
 
     return Container(
-      margin: const EdgeInsets.all(TeslaTheme.spacingMd),
+      margin: const EdgeInsets.all(AppTheme.spacingMd),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+        borderRadius: BorderRadius.circular(AppTheme.radiusCard),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(TeslaTheme.spacingMd),
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -222,7 +222,7 @@ class FishInfoCard extends ConsumerWidget {
                 weatherCode != null) ...[
               _IOSDivider(),
               Padding(
-                padding: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
+                padding: const EdgeInsets.only(bottom: AppTheme.spacingMicro),
                 child: Text(
                   strings.weatherInfo,
                   style: TextStyle(
@@ -263,7 +263,7 @@ class FishInfoCard extends ConsumerWidget {
                 lureEquipment != null) ...[
               _IOSDivider(),
               Padding(
-                padding: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
+                padding: const EdgeInsets.only(bottom: AppTheme.spacingMicro),
                 child: Text(
                   strings.useEquipment,
                   style: TextStyle(
@@ -349,7 +349,7 @@ class _IOSDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(
-      padding: EdgeInsets.symmetric(vertical: TeslaTheme.spacingSm),
+      padding: EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
       child: Divider(height: 1, color: TeslaColors.cloudGray),
     );
   }

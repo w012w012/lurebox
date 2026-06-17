@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/animation_constants.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/providers/data_refresh.dart';
@@ -218,7 +218,7 @@ class _FishListPageState extends ConsumerState<FishListPage>
       curve: Interval(
         delayFraction.clamp(0.0, 0.6),
         1,
-        curve: TeslaTheme.transitionCurve,
+        curve: AppTheme.transitionCurve,
       ),
     );
 
@@ -605,7 +605,7 @@ class _SortButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: TeslaTheme.transitionDuration,
+        duration: AppTheme.transitionDuration,
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         decoration: BoxDecoration(
           color: isSelected

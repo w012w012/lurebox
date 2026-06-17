@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/constants/strings.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/location_view_model.dart';
 import 'package:lurebox/features/location/widgets/location_group_card.dart';
@@ -60,7 +60,7 @@ class _LocationManagementPageState
               : _buildContent(strings, state, viewModel),
       bottomNavigationBar: state.selectedLocations.length >= 2
           ? Padding(
-              padding: const EdgeInsets.all(TeslaTheme.spacingMd),
+              padding: const EdgeInsets.all(AppTheme.spacingMd),
               child: Row(
                 children: [
                   Expanded(
@@ -77,7 +77,7 @@ class _LocationManagementPageState
                       ),
                     ),
                   ),
-                  const SizedBox(width: TeslaTheme.spacingSm),
+                  const SizedBox(width: AppTheme.spacingSm),
                   ElevatedButton(
                     onPressed: state.isMerging
                         ? null
@@ -106,17 +106,17 @@ class _LocationManagementPageState
       children: [
         // 搜索框
         Padding(
-          padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+          padding: const EdgeInsets.all(AppTheme.spacingSm),
           child: TextField(
             decoration: InputDecoration(
               hintText: strings.locationSearchHint,
               prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
               ),
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: TeslaTheme.spacingSm,
-                vertical: TeslaTheme.spacingSm,
+                horizontal: AppTheme.spacingSm,
+                vertical: AppTheme.spacingSm,
               ),
             ),
             onChanged: (value) => setState(() => _searchQuery = value),
@@ -168,11 +168,11 @@ class _LocationManagementPageState
 
     return Card(
       margin: const EdgeInsets.symmetric(
-        horizontal: TeslaTheme.spacingSm,
-        vertical: TeslaTheme.spacingMicro,
+        horizontal: AppTheme.spacingSm,
+        vertical: AppTheme.spacingMicro,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(TeslaTheme.spacingMd),
+        padding: const EdgeInsets.all(AppTheme.spacingMd),
         child: Row(
           children: [
             Expanded(
@@ -185,7 +185,7 @@ class _LocationManagementPageState
                           color: Theme.of(context).colorScheme.primary,
                         ),
                   ),
-                  const SizedBox(height: TeslaTheme.spacingMicro),
+                  const SizedBox(height: AppTheme.spacingMicro),
                   Text(strings.locationCount),
                 ],
               ),
@@ -201,7 +201,7 @@ class _LocationManagementPageState
                           color: Theme.of(context).colorScheme.primary,
                         ),
                   ),
-                  const SizedBox(height: TeslaTheme.spacingMicro),
+                  const SizedBox(height: AppTheme.spacingMicro),
                   Text(strings.locationTotalFishCount),
                 ],
               ),
@@ -232,10 +232,10 @@ class _LocationManagementPageState
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(
-            TeslaTheme.spacingSm,
-            TeslaTheme.spacingMd,
-            TeslaTheme.spacingSm,
-            TeslaTheme.spacingSm,
+            AppTheme.spacingSm,
+            AppTheme.spacingMd,
+            AppTheme.spacingSm,
+            AppTheme.spacingSm,
           ),
           child: Row(
             children: [
@@ -244,7 +244,7 @@ class _LocationManagementPageState
                 size: 20,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              const SizedBox(width: TeslaTheme.spacingSm),
+              const SizedBox(width: AppTheme.spacingSm),
               Text(
                 strings.locationSmartMergeSuggestion,
                 style: Theme.of(
@@ -276,10 +276,10 @@ class _LocationManagementPageState
             size: 64,
             color: Theme.of(context).colorScheme.outline,
           ),
-          const SizedBox(height: TeslaTheme.spacingMd),
+          const SizedBox(height: AppTheme.spacingMd),
           Text(strings.noLocationRecords,
               style: Theme.of(context).textTheme.titleLarge,),
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           Text(
             strings.locationStartFishing,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(

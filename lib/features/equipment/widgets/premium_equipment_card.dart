@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
@@ -65,14 +65,14 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
             children: [
               // 类型图标
               Container(
-                padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+                padding: const EdgeInsets.all(AppTheme.spacingSm),
                 decoration: BoxDecoration(
                   color: typeInfo.color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
                 ),
                 child: Icon(typeInfo.icon, color: typeInfo.color, size: 24),
               ),
-              const SizedBox(width: TeslaTheme.spacingMicro),
+              const SizedBox(width: AppTheme.spacingMicro),
 
               // 标题区域
               Expanded(
@@ -94,13 +94,13 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
                     const SizedBox(height: 2),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: TeslaTheme.spacingSm,
+                        horizontal: AppTheme.spacingSm,
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
                         color: typeInfo.color.withValues(alpha: 0.08),
                         borderRadius:
-                            BorderRadius.circular(TeslaTheme.radiusMicro),
+                            BorderRadius.circular(AppTheme.radiusMicro),
                       ),
                       child: Text(
                         typeInfo.label,
@@ -121,13 +121,13 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
                   if (isDefault)
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: TeslaTheme.spacingSm,
+                        horizontal: AppTheme.spacingSm,
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.gold.withValues(alpha: 0.12),
                         borderRadius:
-                            BorderRadius.circular(TeslaTheme.radiusMicro),
+                            BorderRadius.circular(AppTheme.radiusMicro),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -154,13 +154,13 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
                     if (isDefault) const SizedBox(height: 4),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: TeslaTheme.spacingSm,
+                        horizontal: AppTheme.spacingSm,
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
                         color: TeslaColors.electricBlue.withValues(alpha: 0.12),
                         borderRadius:
-                            BorderRadius.circular(TeslaTheme.radiusMicro),
+                            BorderRadius.circular(AppTheme.radiusMicro),
                       ),
                       child: Text(
                         '$total${strings.fishCountUnit}',
@@ -213,7 +213,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
 
           // 分类标签（如果有）
           if (widget.equipment['category'] != null) ...[
-            const SizedBox(height: TeslaTheme.spacingSm),
+            const SizedBox(height: AppTheme.spacingSm),
             _buildCategoryChip(
               context,
               _getCategoryName(type, widget.equipment['category'] as String),
@@ -222,22 +222,22 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
 
           // 展开的详细信息
           if (_expanded) ...[
-            const SizedBox(height: TeslaTheme.spacingMicro),
+            const SizedBox(height: AppTheme.spacingMicro),
             const Divider(height: 1),
-            const SizedBox(height: TeslaTheme.spacingMicro),
+            const SizedBox(height: AppTheme.spacingMicro),
 
             // 信息行
             ..._buildInfoRows(type, widget.equipment),
 
             // 统计信息
             if (total > 0) ...[
-              const SizedBox(height: TeslaTheme.spacingSm),
+              const SizedBox(height: AppTheme.spacingSm),
               _buildStatsSection(context, widget.stats),
             ],
 
             // 购买日期
             if (widget.equipment['purchase_date'] != null) ...[
-              const SizedBox(height: TeslaTheme.spacingSm),
+              const SizedBox(height: AppTheme.spacingSm),
               _buildPurchaseDate(
                   context, widget.equipment['purchase_date'] as String,),
             ],
@@ -314,12 +314,12 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
   Widget _buildCategoryChip(BuildContext context, String category) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TeslaTheme.spacingSm,
+        horizontal: AppTheme.spacingSm,
         vertical: 2,
       ),
       decoration: BoxDecoration(
         color: TeslaColors.electricBlue.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
       ),
       child: Text(
         category,
@@ -335,17 +335,17 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     if (entries.isEmpty) return const SizedBox();
 
     return Wrap(
-      spacing: TeslaTheme.spacingSm,
+      spacing: AppTheme.spacingSm,
       runSpacing: 4,
       children: entries.map((e) {
         return Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: TeslaTheme.spacingSm,
+            horizontal: AppTheme.spacingSm,
             vertical: 2,
           ),
           decoration: BoxDecoration(
             color: TeslaColors.electricBlue.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
           ),
           child: Text(
             '${e.key}: ${e.value}',
@@ -366,7 +366,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
           size: 14,
           color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
-        const SizedBox(width: TeslaTheme.spacingSm),
+        const SizedBox(width: AppTheme.spacingSm),
         Text(date, style: Theme.of(context).textTheme.bodySmall),
       ],
     );
@@ -390,8 +390,8 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     if (items.isEmpty && reelLineItem == null) return [];
 
     final row = Wrap(
-      spacing: TeslaTheme.spacingMicro,
-      runSpacing: TeslaTheme.spacingSm,
+      spacing: AppTheme.spacingMicro,
+      runSpacing: AppTheme.spacingSm,
       children: items.map((item) => _buildInfoItem(context, item)).toList(),
     );
 
@@ -400,7 +400,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       final unitKey = e['lure_quantity_unit'] as String? ?? 'piece';
       return [
         row,
-        const SizedBox(height: TeslaTheme.spacingSm),
+        const SizedBox(height: AppTheme.spacingSm),
         _buildQuantityBadge(
             context, quantity, _localizedQuantityUnit(unitKey, strings),
             strings: strings,),
@@ -410,7 +410,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
     if (type == 'reel' && reelLineItem != null) {
       return [
         row,
-        const SizedBox(height: TeslaTheme.spacingSm),
+        const SizedBox(height: AppTheme.spacingSm),
         _buildInfoItemFullWidth(context, reelLineItem),
       ];
     }
@@ -648,12 +648,12 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
       {required AppStrings strings,}) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: TeslaTheme.spacingMicro,
-        vertical: TeslaTheme.spacingSm,
+        horizontal: AppTheme.spacingMicro,
+        vertical: AppTheme.spacingSm,
       ),
       decoration: BoxDecoration(
         color: TeslaColors.electricBlue.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+        borderRadius: BorderRadius.circular(AppTheme.radiusCard),
         border: Border.all(
           color: TeslaColors.electricBlue.withValues(alpha: 0.3),
         ),
@@ -666,7 +666,7 @@ class _PremiumEquipmentCardState extends ConsumerState<PremiumEquipmentCard> {
             size: 18,
             color: TeslaColors.electricBlue,
           ),
-          const SizedBox(width: TeslaTheme.spacingSm),
+          const SizedBox(width: AppTheme.spacingSm),
           Text(
             strings.quantityPrefix,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(

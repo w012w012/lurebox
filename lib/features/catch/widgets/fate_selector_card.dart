@@ -3,7 +3,7 @@ import 'package:lurebox/core/camera/camera_state.dart';
 import 'package:lurebox/core/camera/camera_view_model.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 
 /// A reusable fate selection button component.
@@ -34,7 +34,7 @@ class FateButton extends StatelessWidget {
             color: isSelected
                 ? color.withValues(alpha: 0.2)
                 : Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+            borderRadius: BorderRadius.circular(AppTheme.radiusCard),
             border: Border.all(
               color: isSelected ? color : Theme.of(context).colorScheme.outline,
               width: isSelected ? 2 : 1,

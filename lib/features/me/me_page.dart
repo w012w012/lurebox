@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -48,8 +48,8 @@ class _MePageState extends ConsumerState<MePage> {
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(
-          horizontal: TeslaTheme.spacingMd,
-          vertical: TeslaTheme.spacingSm,
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingSm,
         ),
         children: [
           // 成就
@@ -61,7 +61,7 @@ class _MePageState extends ConsumerState<MePage> {
             subtitle: strings.viewAchievements,
             onTap: () => context.push('/achievements'),
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
 
           // 钓点管理
           _buildTile(
@@ -71,7 +71,7 @@ class _MePageState extends ConsumerState<MePage> {
             subtitle: strings.locationManagementDesc,
             onTap: () => context.push('/settings/locations'),
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
 
           // 鱼种管理
           _buildTile(
@@ -81,7 +81,7 @@ class _MePageState extends ConsumerState<MePage> {
             subtitle: strings.speciesManagementDesc,
             onTap: () => context.push('/species'),
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
 
           // 水印管理
           _buildTile(
@@ -91,7 +91,7 @@ class _MePageState extends ConsumerState<MePage> {
             subtitle: strings.watermarkManagementDesc,
             onTap: () => context.push('/settings/watermark'),
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
 
           // 备份和导出
           _buildTile(
@@ -101,7 +101,7 @@ class _MePageState extends ConsumerState<MePage> {
             subtitle: strings.backupAndExportDesc,
             onTap: () => context.push('/me/backup-export'),
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
 
           // 设置
           _buildTile(
@@ -111,7 +111,7 @@ class _MePageState extends ConsumerState<MePage> {
             subtitle: strings.darkMode,
             onTap: () => context.push('/me/settings'),
           ),
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
 
           // 关于 LureBox
           _buildTile(
@@ -122,7 +122,7 @@ class _MePageState extends ConsumerState<MePage> {
             onTap: () => _showAboutDialog(context, strings),
           ),
 
-          const SizedBox(height: TeslaTheme.spacingXl),
+          const SizedBox(height: AppTheme.spacingXl),
         ],
       ),
     );
@@ -142,23 +142,23 @@ class _MePageState extends ConsumerState<MePage> {
       margin: EdgeInsets.zero,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+        borderRadius: BorderRadius.circular(AppTheme.radiusCard),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            vertical: TeslaTheme.spacingMd,
-            horizontal: TeslaTheme.spacingSm,
+            vertical: AppTheme.spacingMd,
+            horizontal: AppTheme.spacingSm,
           ),
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+                padding: const EdgeInsets.all(AppTheme.spacingSm),
                 decoration: BoxDecoration(
                   color: accentColor.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
                 ),
                 child: Icon(icon, color: accentColor, size: 22),
               ),
-              const SizedBox(width: TeslaTheme.spacingMd),
+              const SizedBox(width: AppTheme.spacingMd),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,7 +195,7 @@ class _MePageState extends ConsumerState<MePage> {
         title: Row(
           children: [
             Icon(Icons.set_meal, color: Theme.of(ctx).colorScheme.primary),
-            const SizedBox(width: TeslaTheme.spacingSm),
+            const SizedBox(width: AppTheme.spacingSm),
             Text(strings.appName),
           ],
         ),
@@ -210,14 +210,14 @@ class _MePageState extends ConsumerState<MePage> {
                       fontWeight: FontWeight.w500,
                     ),
               ),
-              const SizedBox(height: TeslaTheme.spacingMd),
+              const SizedBox(height: AppTheme.spacingMd),
               Text(
                 strings.features,
                 style: Theme.of(ctx).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
               ),
-              const SizedBox(height: TeslaTheme.spacingSm),
+              const SizedBox(height: AppTheme.spacingSm),
               _buildFeatureItem(ctx, '🐟', strings.aboutFeatureCatchTitle,
                   strings.aboutFeatureCatchDesc,),
               _buildFeatureItem(ctx, '🎣', strings.aboutFeatureEquipmentTitle,
@@ -234,7 +234,7 @@ class _MePageState extends ConsumerState<MePage> {
                   strings.aboutFeatureCloudDesc,),
               _buildFeatureItem(ctx, '🏆', strings.aboutFeatureAchievementTitle,
                   strings.aboutFeatureAchievementDesc,),
-              const SizedBox(height: TeslaTheme.spacingMd),
+              const SizedBox(height: AppTheme.spacingMd),
               Text(
                 strings.aboutCopyright,
                 style: Theme.of(ctx).textTheme.bodySmall?.copyWith(
@@ -261,12 +261,12 @@ class _MePageState extends ConsumerState<MePage> {
     String description,
   ) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: TeslaTheme.spacingMicro),
+      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMicro),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(emoji, style: const TextStyle(fontSize: 16)),
-          const SizedBox(width: TeslaTheme.spacingSm),
+          const SizedBox(width: AppTheme.spacingSm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

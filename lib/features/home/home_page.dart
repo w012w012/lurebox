@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/animation_constants.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/providers/home_view_model.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
@@ -66,7 +66,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
 
     _fadeAnimations = _controllers.map((controller) {
       return Tween<double>(begin: 0, end: 1).animate(
-        CurvedAnimation(parent: controller, curve: TeslaTheme.transitionCurve),
+        CurvedAnimation(parent: controller, curve: AppTheme.transitionCurve),
       );
     }).toList();
   }
@@ -246,7 +246,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
         height: 160,
         decoration: BoxDecoration(
           color: TeslaColors.lightAsh,
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           border: Border.all(
             color: TeslaColors.cloudGray,
           ),
@@ -287,7 +287,7 @@ class _HomePageBodyState extends ConsumerState<_HomePageBody>
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: TeslaColors.white,
-        borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+        borderRadius: BorderRadius.circular(AppTheme.radiusCard),
         border: Border.all(
           color: TeslaColors.cloudGray,
         ),

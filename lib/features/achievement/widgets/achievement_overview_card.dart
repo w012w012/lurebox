@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// Progress status of the achievement
@@ -118,8 +118,8 @@ class AchievementOverviewCard extends StatelessWidget {
         Expanded(
           child: TweenAnimationBuilder<double>(
             tween: Tween(begin: 0, end: progress),
-            duration: TeslaTheme.transitionDuration,
-            curve: TeslaTheme.transitionCurve,
+            duration: AppTheme.transitionDuration,
+            curve: AppTheme.transitionCurve,
             builder: (context, value, child) {
               return Container(
                 height: 8,

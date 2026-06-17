@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/providers/data_refresh.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
@@ -261,9 +261,9 @@ class _ExportBackupManagementPageState
                     size: 64,
                     color: TeslaColors.electricBlue,
                   ),
-                  const SizedBox(height: TeslaTheme.spacingMd),
+                  const SizedBox(height: AppTheme.spacingMd),
                   Text(strings.error),
-                  const SizedBox(height: TeslaTheme.spacingMd),
+                  const SizedBox(height: AppTheme.spacingMd),
                   ElevatedButton(
                     onPressed: _refreshFiles,
                     child: Text(strings.retry),
@@ -286,7 +286,7 @@ class _ExportBackupManagementPageState
                     color:
                         isDark ? const Color(0xFF9A9A9A) : TeslaColors.graphite,
                   ),
-                  const SizedBox(height: TeslaTheme.spacingMd),
+                  const SizedBox(height: AppTheme.spacingMd),
                   Text(
                     strings.noData,
                     style: TextStyle(
@@ -303,7 +303,7 @@ class _ExportBackupManagementPageState
           return RefreshIndicator(
             onRefresh: () async => _refreshFiles(),
             child: ListView.builder(
-              padding: const EdgeInsets.all(TeslaTheme.spacingMd),
+              padding: const EdgeInsets.all(AppTheme.spacingMd),
               itemCount: files.length,
               itemBuilder: (context, index) {
                 final file = files[index];
@@ -343,10 +343,10 @@ class _ExportBackupManagementPageState
     }
 
     return Card(
-      margin: const EdgeInsets.only(bottom: TeslaTheme.spacingSm),
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingSm),
       child: ListTile(
         leading: Container(
-          padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+          padding: const EdgeInsets.all(AppTheme.spacingSm),
           decoration: BoxDecoration(
             color: iconColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
@@ -368,7 +368,7 @@ class _ExportBackupManagementPageState
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: iconColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
                   ),
                   child: Text(
                     fileTypeLabel,
@@ -379,7 +379,7 @@ class _ExportBackupManagementPageState
                     ),
                   ),
                 ),
-                const SizedBox(width: TeslaTheme.spacingSm),
+                const SizedBox(width: AppTheme.spacingSm),
                 Text(
                   dateFormat.format(file.modified),
                   style: TextStyle(

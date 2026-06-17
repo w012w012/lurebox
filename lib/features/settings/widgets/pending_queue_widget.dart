@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/widgets/common/image_cache_helper.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
@@ -85,22 +85,22 @@ class PendingQueueWidget extends StatelessWidget {
         Row(
           children: [
             Icon(Icons.list_alt, size: 20, color: accentColor),
-            const SizedBox(width: TeslaTheme.spacingSm),
+            const SizedBox(width: AppTheme.spacingSm),
             Text(
               strings.pendingRecognitionList,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
             ),
-            const SizedBox(width: TeslaTheme.spacingSm),
+            const SizedBox(width: AppTheme.spacingSm),
             Container(
               padding: const EdgeInsets.symmetric(
-                horizontal: TeslaTheme.spacingSm,
+                horizontal: AppTheme.spacingSm,
                 vertical: 2,
               ),
               decoration: BoxDecoration(
                 color: TeslaColors.electricBlue.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+                borderRadius: BorderRadius.circular(AppTheme.radiusCard),
               ),
               child: Text(
                 '${pendingCatches.length}条',
@@ -113,7 +113,7 @@ class PendingQueueWidget extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: TeslaTheme.spacingMd),
+        const SizedBox(height: AppTheme.spacingMd),
         if (pendingCatches.isEmpty)
           PremiumCard(
             variant: PremiumCardVariant.flat,
@@ -125,7 +125,7 @@ class PendingQueueWidget extends StatelessWidget {
                     size: 48,
                     color: TeslaColors.electricBlue,
                   ),
-                  const SizedBox(height: TeslaTheme.spacingSm),
+                  const SizedBox(height: AppTheme.spacingSm),
                   Text(
                     strings.pendingNoFish,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -143,7 +143,7 @@ class PendingQueueWidget extends StatelessWidget {
           if (pendingCatches.length > 10)
             Padding(
               padding: const EdgeInsets.symmetric(
-                vertical: TeslaTheme.spacingSm,
+                vertical: AppTheme.spacingSm,
               ),
               child: Text(
                 '... 还有 ${pendingCatches.length - 10} 条',
@@ -153,7 +153,7 @@ class PendingQueueWidget extends StatelessWidget {
                     ),
               ),
             ),
-          const SizedBox(height: TeslaTheme.spacingMd),
+          const SizedBox(height: AppTheme.spacingMd),
           _buildBatchRecognizeButton(context, pendingCatches),
         ],
       ],
@@ -167,7 +167,7 @@ class PendingQueueWidget extends StatelessWidget {
     const accentColor = TeslaColors.electricBlue;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: TeslaTheme.spacingSm),
+      padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
       child: PremiumCard(
         variant: PremiumCardVariant.flat,
         onTap: () => _showPendingItemActions(fish),
@@ -177,7 +177,7 @@ class PendingQueueWidget extends StatelessWidget {
             Row(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
                   child: SizedBox(
                     width: 50,
                     height: 50,
@@ -202,7 +202,7 @@ class PendingQueueWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: TeslaTheme.spacingMd),
+                const SizedBox(width: AppTheme.spacingMd),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,29 +223,29 @@ class PendingQueueWidget extends StatelessWidget {
                   onPressed:
                       recState.isRecognizing ? null : () => onRecognize(fish),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: TeslaTheme.spacingMd,
-                    vertical: TeslaTheme.spacingSm,
+                    horizontal: AppTheme.spacingMd,
+                    vertical: AppTheme.spacingSm,
                   ),
                 ),
-                const SizedBox(width: TeslaTheme.spacingSm),
+                const SizedBox(width: AppTheme.spacingSm),
                 PremiumButton(
                   text: strings.pendingManual,
                   onPressed: () => onManualIdentify(fish),
                   variant: PremiumButtonVariant.outline,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: TeslaTheme.spacingMd,
-                    vertical: TeslaTheme.spacingSm,
+                    horizontal: AppTheme.spacingMd,
+                    vertical: AppTheme.spacingSm,
                   ),
                 ),
               ],
             ),
             // 识别中进度条
             if (recState.isRecognizing) ...[
-              const SizedBox(height: TeslaTheme.spacingMd),
+              const SizedBox(height: AppTheme.spacingMd),
               LinearProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(accentColor),
               ),
-              const SizedBox(height: TeslaTheme.spacingMicro),
+              const SizedBox(height: AppTheme.spacingMicro),
               Text(
                 strings.pendingRecognizing,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -255,14 +255,14 @@ class PendingQueueWidget extends StatelessWidget {
             ],
             // 识别结果选项
             if (recState.options.isNotEmpty) ...[
-              const SizedBox(height: TeslaTheme.spacingMd),
+              const SizedBox(height: AppTheme.spacingMd),
               ...recState.options.map(
                 (option) => _buildRecognitionOption(context, fish, option),
               ),
             ],
             // 错误信息
             if (recState.error != null) ...[
-              const SizedBox(height: TeslaTheme.spacingSm),
+              const SizedBox(height: AppTheme.spacingSm),
               Text(
                 recState.error!,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -286,18 +286,18 @@ class PendingQueueWidget extends StatelessWidget {
     AiRecognitionOption option,
   ) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: TeslaTheme.spacingSm),
+      padding: const EdgeInsets.only(bottom: AppTheme.spacingSm),
       child: InkWell(
         onTap: () => onConfirmOption(fish, option),
-        borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: TeslaTheme.spacingMd,
-            vertical: TeslaTheme.spacingSm,
+            horizontal: AppTheme.spacingMd,
+            vertical: AppTheme.spacingSm,
           ),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
             border: Border.all(
               color:
                   Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
@@ -327,13 +327,13 @@ class PendingQueueWidget extends StatelessWidget {
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: TeslaTheme.spacingSm,
+                  horizontal: AppTheme.spacingSm,
                   vertical: 2,
                 ),
                 decoration: BoxDecoration(
                   color: _getConfidenceColor(option.confidence)
                       .withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
                 ),
                 child: Text(
                   '${(option.confidence * 100).toInt()}%',
@@ -369,7 +369,7 @@ class PendingQueueWidget extends StatelessWidget {
             LinearProgressIndicator(
               value: batchTotal > 0 ? batchProgress / batchTotal : 0,
             ),
-            const SizedBox(height: TeslaTheme.spacingSm),
+            const SizedBox(height: AppTheme.spacingSm),
             Text(
               '识别中: $batchProgress/$batchTotal (成功: $batchSuccess, 失败: $batchFailed)',
               style: Theme.of(context).textTheme.bodySmall,

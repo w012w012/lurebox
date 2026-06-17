@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/widgets/common/filter_chip.dart';
 
@@ -266,7 +266,7 @@ class _FilterBottomSheetState extends ConsumerState<_FilterBottomSheet> {
       decoration: BoxDecoration(
         color: isDark ? TeslaColors.carbonDark : TeslaColors.white,
         borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(TeslaTheme.radiusCard),
+          top: Radius.circular(AppTheme.radiusCard),
         ),
       ),
       child: SafeArea(

@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
@@ -32,7 +32,7 @@ class OverviewItem extends ConsumerWidget {
             color: color,
           ),
         ),
-        const SizedBox(height: TeslaTheme.spacingMicro),
+        const SizedBox(height: AppTheme.spacingMicro),
         Text(
           label,
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -73,7 +73,7 @@ class EquipmentPieChart extends StatelessWidget {
     ];
 
     return PremiumCard(
-      margin: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
+      margin: const EdgeInsets.only(bottom: AppTheme.spacingMicro),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -83,7 +83,7 @@ class EquipmentPieChart extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
           Row(
             children: [
               SizedBox(
@@ -114,7 +114,7 @@ class EquipmentPieChart extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: TeslaTheme.spacingMicro),
+              const SizedBox(width: AppTheme.spacingMicro),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,7 +123,7 @@ class EquipmentPieChart extends StatelessWidget {
                     final entry = e.value;
                     return Padding(
                       padding: const EdgeInsets.only(
-                          bottom: TeslaTheme.spacingMicro,),
+                          bottom: AppTheme.spacingMicro,),
                       child: Row(
                         children: [
                           Container(
@@ -134,7 +134,7 @@ class EquipmentPieChart extends StatelessWidget {
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
-                          const SizedBox(width: TeslaTheme.spacingMicro),
+                          const SizedBox(width: AppTheme.spacingMicro),
                           Expanded(
                             child: Text(
                               entry.key,
@@ -142,7 +142,7 @@ class EquipmentPieChart extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          const SizedBox(width: TeslaTheme.spacingMicro),
+                          const SizedBox(width: AppTheme.spacingMicro),
                           Text(
                             '${entry.value}',
                             style:
@@ -199,7 +199,7 @@ class SpeciesPieChart extends ConsumerWidget {
                   fontWeight: FontWeight.w500,
                 ),
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
           SizedBox(
             height: 200,
             child: PieChart(
@@ -228,11 +228,11 @@ class SpeciesPieChart extends ConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
           ...speciesStats.entries.map(
             (e) => Padding(
               padding:
-                  const EdgeInsets.symmetric(vertical: TeslaTheme.spacingMicro),
+                  const EdgeInsets.symmetric(vertical: AppTheme.spacingMicro),
               child: Row(
                 children: [
                   Expanded(
@@ -300,7 +300,7 @@ class TrendBarChart extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color:
                         Theme.of(context).colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
                   ),
                   child: DropdownButton<String>(
                     value: trendType,
@@ -334,7 +334,7 @@ class TrendBarChart extends ConsumerWidget {
                 ),
             ],
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
           SizedBox(
             height: 180,
             child: BarChart(
@@ -351,10 +351,10 @@ class TrendBarChart extends ConsumerWidget {
                     getTooltipColor: (touchedGroup) => Theme.of(
                       context,
                     ).colorScheme.inverseSurface,
-                    tooltipRoundedRadius: TeslaTheme.radiusMicro,
+                    tooltipRoundedRadius: AppTheme.radiusMicro,
                     tooltipPadding: const EdgeInsets.symmetric(
-                      horizontal: TeslaTheme.spacingSm,
-                      vertical: TeslaTheme.spacingMicro,
+                      horizontal: AppTheme.spacingSm,
+                      vertical: AppTheme.spacingMicro,
                     ),
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       final keys = trendData.keys.toList();
@@ -385,7 +385,7 @@ class TrendBarChart extends ConsumerWidget {
                           if (value.toInt() % step == 0) {
                             return Padding(
                               padding: const EdgeInsets.only(
-                                top: TeslaTheme.spacingMicro,
+                                top: AppTheme.spacingMicro,
                               ),
                               child: Text(
                                 keys[value.toInt()],

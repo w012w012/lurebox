@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
 import 'package:lurebox/core/providers/ai_recognition_provider.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
@@ -31,14 +31,14 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
       ),
       body: ListView(
         children: [
-          const SizedBox(height: TeslaTheme.spacingMd),
+          const SizedBox(height: AppTheme.spacingMd),
           // 当前提供商选择
           _buildCurrentProviderSection(strings, context, ref, aiSettings),
-          const SizedBox(height: TeslaTheme.spacingLg),
+          const SizedBox(height: AppTheme.spacingLg),
           // 提供商列表
           Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: TeslaTheme.spacingMd,
+              horizontal: AppTheme.spacingMd,
             ),
             child: Text(
               strings.aiProviderLabel,
@@ -47,7 +47,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
                   ),
             ),
           ),
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           ...AiRecognitionProvider.values.map(
             (provider) => _buildProviderCard(
               strings,
@@ -57,7 +57,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
               aiSettings,
             ),
           ),
-          const SizedBox(height: TeslaTheme.spacingXl),
+          const SizedBox(height: AppTheme.spacingXl),
         ],
       ),
     );
@@ -71,7 +71,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: TeslaTheme.spacingMd,
+        horizontal: AppTheme.spacingMd,
       ),
       child: PremiumCard(
         child: Column(
@@ -83,7 +83,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
                     fontWeight: FontWeight.w500,
                   ),
             ),
-            const SizedBox(height: TeslaTheme.spacingSm),
+            const SizedBox(height: AppTheme.spacingSm),
             DropdownButtonFormField<AiRecognitionProvider>(
               initialValue: aiSettings.currentProvider,
               decoration: const InputDecoration(
@@ -124,8 +124,8 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: TeslaTheme.spacingMd,
-        vertical: TeslaTheme.spacingMicro,
+        horizontal: AppTheme.spacingMd,
+        vertical: AppTheme.spacingMicro,
       ),
       child: PremiumCard(
         onTap: () => _showConfigDialog(context, ref, provider, aiSettings),
@@ -135,7 +135,7 @@ class AiRecognitionSettingsPage extends ConsumerWidget {
               _getProviderIcon(provider),
               color: TeslaColors.electricBlue,
             ),
-            const SizedBox(width: TeslaTheme.spacingMd),
+            const SizedBox(width: AppTheme.spacingMd),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

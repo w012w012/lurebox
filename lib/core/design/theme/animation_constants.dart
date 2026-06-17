@@ -20,4 +20,4 @@ class AnimationConstants {
   static const Curve defaultCurve = Curves.easeOut;
 }
 
-// TeslaAnimation removed — use TeslaTheme.transitionDuration / TeslaTheme.transitionCurve directly.
+// TeslaAnimation removed — use AppTheme.transitionDuration / AppTheme.transitionCurve directly.

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
@@ -20,8 +20,8 @@ class SettingsAppearanceSection extends ConsumerWidget {
 
     return PremiumCard(
       padding: const EdgeInsets.symmetric(
-        horizontal: TeslaTheme.spacingLg,
-        vertical: TeslaTheme.spacingMd,
+        horizontal: AppTheme.spacingLg,
+        vertical: AppTheme.spacingMd,
       ),
       child: Column(
         children: [
@@ -112,20 +112,20 @@ class SettingsAppearanceSection extends ConsumerWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: TeslaTheme.spacingMd,
-          horizontal: TeslaTheme.spacingSm,
+          vertical: AppTheme.spacingMd,
+          horizontal: AppTheme.spacingSm,
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
               decoration: BoxDecoration(
                 color: accentColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
               ),
               child: Icon(icon, color: accentColor, size: 22),
             ),
-            const SizedBox(width: TeslaTheme.spacingMd),
+            const SizedBox(width: AppTheme.spacingMd),
             Expanded(
               child: Text(
                 title,

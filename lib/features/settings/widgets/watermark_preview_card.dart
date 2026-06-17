@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/features/common/watermarked_image.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
@@ -24,7 +24,7 @@ class WatermarkPreviewCard extends StatelessWidget {
           Row(
             children: [
               Icon(Icons.preview, color: Theme.of(context).colorScheme.primary),
-              const SizedBox(width: TeslaTheme.spacingSm),
+              const SizedBox(width: AppTheme.spacingSm),
               Text(
                 strings.watermarkPreview,
                 style: Theme.of(
@@ -33,9 +33,9 @@ class WatermarkPreviewCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           _LiveWatermarkPreview(settings: settings, strings: strings),
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           Text(
             _getPositionDesc(settings.position, strings),
             style: Theme.of(
@@ -69,7 +69,7 @@ class _LiveWatermarkPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+      borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
       child: AspectRatio(
         aspectRatio: 16 / 9,
         child: CustomPaint(

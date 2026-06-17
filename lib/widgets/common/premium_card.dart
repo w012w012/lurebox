@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lurebox/core/design/theme/animation_constants.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/core/design/theme/design_tokens.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 
 /// 高级极简卡片组件
 /// 提供统一的卡片样式，支持多种变体，iOS风格触摸反馈
@@ -44,18 +44,18 @@ class _PremiumCardState extends State<PremiumCard> {
     final borderColor =
         isDark ? const Color(0xFF2A2D30) : TeslaColors.cloudGray;
 
-    final effectiveBorderRadius = widget.borderRadius ?? TeslaTheme.radiusCard;
+    final effectiveBorderRadius = widget.borderRadius ?? AppTheme.radiusCard;
     final effectivePadding =
-        widget.padding ?? const EdgeInsets.all(TeslaTheme.spacingMd);
+        widget.padding ?? const EdgeInsets.all(AppTheme.spacingMd);
     final effectiveMargin = widget.margin ??
         const EdgeInsets.symmetric(
-          horizontal: TeslaTheme.spacingMd,
-          vertical: TeslaTheme.spacingSm,
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingSm,
         );
 
     Widget card = AnimatedContainer(
-      duration: TeslaTheme.transitionDuration,
-      curve: TeslaTheme.transitionCurve,
+      duration: AppTheme.transitionDuration,
+      curve: AppTheme.transitionCurve,
       transform: Matrix4.diagonal3Values(
         _isPressed ? AnimationConstants.touchScale : 1.0,
         _isPressed ? AnimationConstants.touchScale : 1.0,
@@ -156,7 +156,7 @@ class PremiumCardWithTitle extends StatelessWidget {
               if (trailing != null) trailing!,
             ],
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
           child,
         ],
       ),
@@ -192,14 +192,14 @@ class PremiumStatCard extends StatelessWidget {
         children: [
           if (icon != null) ...[
             Container(
-              padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
               decoration: BoxDecoration(
                 color: (iconColor ?? accentColor).withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
               ),
               child: Icon(icon, color: iconColor ?? accentColor, size: 24),
             ),
-            const SizedBox(width: TeslaTheme.spacingMicro),
+            const SizedBox(width: AppTheme.spacingMicro),
           ],
           Expanded(
             child: Column(
@@ -260,8 +260,8 @@ class PremiumImageCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(TeslaTheme.radiusCard),
-              topRight: Radius.circular(TeslaTheme.radiusCard),
+              topLeft: Radius.circular(AppTheme.radiusCard),
+              topRight: Radius.circular(AppTheme.radiusCard),
             ),
             child: Image.network(
               imageUrl,
@@ -279,7 +279,7 @@ class PremiumImageCard extends StatelessWidget {
           ),
           if (title != null || subtitle != null)
             Padding(
-              padding: const EdgeInsets.all(TeslaTheme.spacingMd),
+              padding: const EdgeInsets.all(AppTheme.spacingMd),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -324,12 +324,12 @@ class PremiumListCard extends StatelessWidget {
     return PremiumCard(
       variant: PremiumCardVariant.flat,
       onTap: onTap,
-      padding: const EdgeInsets.all(TeslaTheme.spacingMicro),
+      padding: const EdgeInsets.all(AppTheme.spacingMicro),
       showBorder: true,
       child: Row(
         children: [
           leading,
-          const SizedBox(width: TeslaTheme.spacingMicro),
+          const SizedBox(width: AppTheme.spacingMicro),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,7 +348,7 @@ class PremiumListCard extends StatelessWidget {
             ),
           ),
           if (trailing != null) ...[
-            const SizedBox(width: TeslaTheme.spacingSm),
+            const SizedBox(width: AppTheme.spacingSm),
             trailing!,
           ],
         ],

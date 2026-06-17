@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/services/share_template.dart';
 import 'package:lurebox/features/share/widgets/share_card_widget.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
@@ -37,7 +37,7 @@ class SharePreviewDialog extends StatelessWidget {
         constraints: const BoxConstraints(maxWidth: 450),
         decoration: BoxDecoration(
           color: TeslaColors.carbonDark,
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -69,7 +69,7 @@ class SharePreviewDialog extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: const Color(0xFF2A2D30).withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+                borderRadius: BorderRadius.circular(AppTheme.radiusCard),
               ),
               child: ShareCardWidget(config: config),
             ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:lurebox/core/constants/strings.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 
 class WatermarkColorSelector extends StatelessWidget {
   const WatermarkColorSelector({
@@ -34,10 +34,10 @@ class WatermarkColorSelector extends StatelessWidget {
           strings.watermarkFontColor,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: TeslaTheme.spacingSm),
+        const SizedBox(height: AppTheme.spacingSm),
         Wrap(
-          spacing: TeslaTheme.spacingSm,
-          runSpacing: TeslaTheme.spacingSm,
+          spacing: AppTheme.spacingSm,
+          runSpacing: AppTheme.spacingSm,
           children: colors.map((color) {
             final isSelected = selectedColor == color.$1;
             return GestureDetector(
@@ -47,7 +47,7 @@ class WatermarkColorSelector extends StatelessWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   color: Color(color.$1),
-                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
                   border: Border.all(
                     color: isSelected
                         ? Theme.of(context).colorScheme.primary

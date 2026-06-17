@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lurebox/core/design/theme/animation_constants.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 
 /// 高级极简按钮组件
 /// 提供多种样式的按钮，符合Premium Minimalist设计系统
@@ -52,13 +52,13 @@ class _PremiumButtonState extends State<PremiumButton> {
   );
 
   static const _defaultPadding = EdgeInsets.symmetric(
-    horizontal: TeslaTheme.spacingLg,
-    vertical: TeslaTheme.spacingMicro,
+    horizontal: AppTheme.spacingLg,
+    vertical: AppTheme.spacingMicro,
   );
 
   static const _textPadding = EdgeInsets.symmetric(
-    horizontal: TeslaTheme.spacingMd,
-    vertical: TeslaTheme.spacingSm,
+    horizontal: AppTheme.spacingMd,
+    vertical: AppTheme.spacingSm,
   );
 
   _ButtonColors _resolveColors() => switch (widget.variant) {
@@ -97,7 +97,7 @@ class _PremiumButtonState extends State<PremiumButton> {
 
   @override
   Widget build(BuildContext context) {
-    final borderRadius = widget.borderRadius ?? TeslaTheme.radiusMicro;
+    final borderRadius = widget.borderRadius ?? AppTheme.radiusMicro;
     final colors = _resolveColors();
 
     Widget button;
@@ -165,8 +165,8 @@ class _PremiumButtonState extends State<PremiumButton> {
       onTapCancel: widget.onPressed != null ? _handleTapCancel : null,
       child: AnimatedScale(
         scale: _isPressed ? AnimationConstants.touchScale : 1.0,
-        duration: TeslaTheme.transitionDuration,
-        curve: TeslaTheme.transitionCurve,
+        duration: AppTheme.transitionDuration,
+        curve: AppTheme.transitionCurve,
         child: button,
       ),
     );
@@ -201,7 +201,7 @@ class _PremiumButtonState extends State<PremiumButton> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(widget.icon, size: 20),
-          const SizedBox(width: TeslaTheme.spacingSm),
+          const SizedBox(width: AppTheme.spacingSm),
           Text(widget.text),
         ],
       );
@@ -260,7 +260,7 @@ class PremiumIconButton extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               color: backgroundColor ?? TeslaColors.electricBlue,
-              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
             ),
             child: IconButton(
               onPressed: onPressed,
@@ -283,7 +283,7 @@ class PremiumIconButton extends StatelessWidget {
             decoration: BoxDecoration(
               color: backgroundColor ??
                   TeslaColors.electricBlue.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
             ),
             child: IconButton(
               onPressed: onPressed,
@@ -307,7 +307,7 @@ class PremiumIconButton extends StatelessWidget {
               border: Border.all(
                 color: TeslaColors.electricBlue,
               ),
-              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
             ),
             child: IconButton(
               onPressed: onPressed,
@@ -341,7 +341,7 @@ class PremiumIconButton extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               color: backgroundColor ?? TeslaColors.danger,
-              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
             ),
             child: IconButton(
               onPressed: onPressed,
@@ -360,7 +360,7 @@ class PremiumIconButton extends StatelessWidget {
             height: size,
             decoration: BoxDecoration(
               color: backgroundColor ?? const Color(0xFF3E6AE1),
-              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
             ),
             child: IconButton(
               onPressed: onPressed,
@@ -414,7 +414,7 @@ class PremiumFAB extends StatelessWidget {
             (isDark ? TeslaColors.carbonDark : TeslaColors.white),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(
-            mini ? TeslaTheme.radiusMicro : TeslaTheme.radiusCard,
+            mini ? AppTheme.radiusMicro : AppTheme.radiusCard,
           ),
         ),
         child: Icon(icon, size: mini ? 20 : 24),

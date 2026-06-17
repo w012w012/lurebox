@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/utils/unit_converter.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
@@ -53,12 +53,12 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: TeslaTheme.transitionDuration,
+      duration: AppTheme.transitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: TeslaTheme.transitionCurve,
+      curve: AppTheme.transitionCurve,
     );
     _animationController.forward();
   }
@@ -117,7 +117,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                         context,
                       ).colorScheme.surfaceContainerHighest,
                       borderRadius:
-                          BorderRadius.circular(TeslaTheme.radiusCard),
+                          BorderRadius.circular(AppTheme.radiusCard),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -145,7 +145,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                   ),
               ],
             ),
-            const SizedBox(height: TeslaTheme.spacingMicro),
+            const SizedBox(height: AppTheme.spacingMicro),
             ...sortedEntries.asMap().entries.map((entry) {
               final index = entry.key;
               final e = entry.value;
@@ -159,7 +159,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                   : (e.value / widget.totalCount * 100).toStringAsFixed(1);
               return Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: TeslaTheme.spacingSm),
+                    const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
                 child: Column(
                   children: [
                     Row(
@@ -172,7 +172,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                        const SizedBox(width: TeslaTheme.spacingSm),
+                        const SizedBox(width: AppTheme.spacingSm),
                         Expanded(
                           child: Text(
                             e.key,
@@ -189,7 +189,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                                     ).colorScheme.onSurfaceVariant,
                                   ),
                         ),
-                        const SizedBox(width: TeslaTheme.spacingSm),
+                        const SizedBox(width: AppTheme.spacingSm),
                         Text(
                           '$value $unitLabel',
                           style:
@@ -199,7 +199,7 @@ class _SpeciesDistributionChartState extends State<SpeciesDistributionChart>
                         ),
                       ],
                     ),
-                    const SizedBox(height: TeslaTheme.spacingMicro),
+                    const SizedBox(height: AppTheme.spacingMicro),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(2),
                       child: LinearProgressIndicator(
@@ -246,12 +246,12 @@ class _ToggleOption extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: TeslaTheme.spacingMicro,
-          vertical: TeslaTheme.spacingMicro,
+          horizontal: AppTheme.spacingMicro,
+          vertical: AppTheme.spacingMicro,
         ),
         decoration: BoxDecoration(
           color: isSelected ? accentColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
         ),
         child: Text(
           label,

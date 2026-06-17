@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/constants/strings.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/watermark_provider.dart';
@@ -35,7 +35,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
               ref.read(watermarkSettingsProvider.notifier).updateEnabled(value);
             },
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
           if (settings.enabled) ...[
             WatermarkInfoSection(
               settings: settings,
@@ -51,9 +51,9 @@ class WatermarkSettingsPage extends ConsumerWidget {
                     .reorderInfoTypes(oldIndex, newIndex);
               },
             ),
-            const SizedBox(height: TeslaTheme.spacingMd),
+            const SizedBox(height: AppTheme.spacingMd),
             _buildStyleSection(context, ref, settings, strings),
-            const SizedBox(height: TeslaTheme.spacingMd),
+            const SizedBox(height: AppTheme.spacingMd),
             WatermarkPreviewCard(settings: settings, strings: strings),
           ],
         ],
@@ -77,7 +77,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                 Icons.style,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              const SizedBox(width: TeslaTheme.spacingSm),
+              const SizedBox(width: AppTheme.spacingSm),
               Text(
                 strings.watermarkStyle,
                 style: Theme.of(
@@ -86,7 +86,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: TeslaTheme.spacingMd),
+          const SizedBox(height: AppTheme.spacingMd),
           WatermarkStyleSelector(
             settings: settings,
             strings: strings,
@@ -94,7 +94,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
               ref.read(watermarkSettingsProvider.notifier).updateStyle(style);
             },
           ),
-          const SizedBox(height: TeslaTheme.spacingMd),
+          const SizedBox(height: AppTheme.spacingMd),
           WatermarkPositionSelector(
             settings: settings,
             strings: strings,
@@ -104,7 +104,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                   .updatePosition(position);
             },
           ),
-          const SizedBox(height: TeslaTheme.spacingMd),
+          const SizedBox(height: AppTheme.spacingMd),
           LabeledSlider(
             label: strings.watermarkBgRadius,
             value: settings.blurRadius,
@@ -116,7 +116,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                   .updateBlurRadius(value);
             },
           ),
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           LabeledSlider(
             label: strings.watermarkBgOpacity,
             value: settings.backgroundOpacity * 100,
@@ -129,7 +129,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
             },
             valueFormatter: (v) => '${v.toInt()}%',
           ),
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           LabeledSlider(
             label: strings.watermarkFontSize,
             value: settings.fontSize,
@@ -141,7 +141,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                   .updateFontSize(value);
             },
           ),
-          const SizedBox(height: TeslaTheme.spacingMd),
+          const SizedBox(height: AppTheme.spacingMd),
           WatermarkColorSelector(
             selectedColor: settings.textColor,
             strings: strings,
@@ -151,7 +151,7 @@ class WatermarkSettingsPage extends ConsumerWidget {
                   .updateTextColor(color);
             },
           ),
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           WatermarkCustomTextField(settings: settings, strings: strings),
         ],
       ),

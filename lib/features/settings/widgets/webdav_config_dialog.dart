@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/constants/strings.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/providers/data_refresh.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
@@ -73,7 +73,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
       title: Row(
         children: [
           Icon(Icons.cloud_sync, color: colorScheme.primary),
-          const SizedBox(width: TeslaTheme.spacingSm),
+          const SizedBox(width: AppTheme.spacingSm),
           Text(strings.webdavTitle),
         ],
       ),
@@ -91,7 +91,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                       color: colorScheme.onSurfaceVariant,
                     ),
               ),
-              const SizedBox(height: TeslaTheme.spacingLg),
+              const SizedBox(height: AppTheme.spacingLg),
 
               // 服务器 URL
               TextFormField(
@@ -115,7 +115,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                   return null;
                 },
               ),
-              const SizedBox(height: TeslaTheme.spacingMd),
+              const SizedBox(height: AppTheme.spacingMd),
 
               // 用户名
               TextFormField(
@@ -134,7 +134,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                   return null;
                 },
               ),
-              const SizedBox(height: TeslaTheme.spacingMd),
+              const SizedBox(height: AppTheme.spacingMd),
 
               // 密码
               TextFormField(
@@ -166,17 +166,17 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                   return null;
                 },
               ),
-              const SizedBox(height: TeslaTheme.spacingLg),
+              const SizedBox(height: AppTheme.spacingLg),
 
               // 连接测试结果
               if (_testResult != null) ...[
                 Container(
-                  padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+                  padding: const EdgeInsets.all(AppTheme.spacingSm),
                   decoration: BoxDecoration(
                     color: _isTestSuccess
                         ? colorScheme.primaryContainer
                         : colorScheme.errorContainer,
-                    borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
                   ),
                   child: Row(
                     children: [
@@ -186,7 +186,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                             ? colorScheme.primary
                             : colorScheme.error,
                       ),
-                      const SizedBox(width: TeslaTheme.spacingSm),
+                      const SizedBox(width: AppTheme.spacingSm),
                       Expanded(
                         child: Text(
                           _testResult!,
@@ -200,7 +200,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                     ],
                   ),
                 ),
-                const SizedBox(height: TeslaTheme.spacingMd),
+                const SizedBox(height: AppTheme.spacingMd),
               ],
 
               // 按钮行：测试连接 + 从云端恢复
@@ -219,7 +219,7 @@ class _WebDAVConfigDialogState extends ConsumerState<WebDAVConfigDialog> {
                       label: Text(strings.aiTestConnection),
                     ),
                   ),
-                  const SizedBox(width: TeslaTheme.spacingSm),
+                  const SizedBox(width: AppTheme.spacingSm),
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: _isRestoring ? null : _restoreFromCloud,

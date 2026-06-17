@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
@@ -49,20 +49,20 @@ class SettingsUnitsSection extends ConsumerWidget {
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: TeslaTheme.spacingMd,
-          horizontal: TeslaTheme.spacingSm,
+          vertical: AppTheme.spacingMd,
+          horizontal: AppTheme.spacingSm,
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
               decoration: BoxDecoration(
                 color: accentColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
               ),
               child: Icon(icon, color: accentColor, size: 22),
             ),
-            const SizedBox(width: TeslaTheme.spacingMd),
+            const SizedBox(width: AppTheme.spacingMd),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +104,7 @@ class UnitSettingsPage extends ConsumerWidget {
       appBar: AppBar(title: Text(strings.unitsSettings)),
       body: ListView(
         children: [
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           _buildUnitSection(
             context: context,
             title: strings.fishDetail,
@@ -280,7 +280,7 @@ class UnitSettingsPage extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: TeslaTheme.spacingLg),
+          const SizedBox(height: AppTheme.spacingLg),
         ],
       ),
     );
@@ -294,14 +294,14 @@ class UnitSettingsPage extends ConsumerWidget {
   }) {
     return PremiumCard(
       margin: const EdgeInsets.symmetric(
-        horizontal: TeslaTheme.spacingMd,
-        vertical: TeslaTheme.spacingMicro,
+        horizontal: AppTheme.spacingMd,
+        vertical: AppTheme.spacingMicro,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, TeslaTheme.spacingSm),
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, AppTheme.spacingSm),
             child: Row(
               children: [
                 Icon(
@@ -309,7 +309,7 @@ class UnitSettingsPage extends ConsumerWidget {
                   size: 20,
                   color: Theme.of(context).colorScheme.primary,
                 ),
-                const SizedBox(width: TeslaTheme.spacingSm),
+                const SizedBox(width: AppTheme.spacingSm),
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -334,7 +334,7 @@ class UnitSettingsPage extends ConsumerWidget {
     required ValueChanged<String?> onChanged,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: TeslaTheme.spacingMicro),
+      padding: const EdgeInsets.symmetric(vertical: AppTheme.spacingMicro),
       child: Row(
         children: [
           Expanded(

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/core/providers/watermark_provider.dart';
 
@@ -55,22 +55,22 @@ class _WatermarkCustomTextFieldState
           widget.strings.watermarkCustomText,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: TeslaTheme.spacingMicro),
+        const SizedBox(height: AppTheme.spacingMicro),
         Text(
           widget.strings.watermarkCustomTextHint,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: TeslaColors.graphite,
               ),
         ),
-        const SizedBox(height: TeslaTheme.spacingSm),
+        const SizedBox(height: AppTheme.spacingSm),
         TextField(
           decoration: InputDecoration(
             hintText: widget.strings.watermarkCustomTextPlaceholder,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
             ),
             contentPadding: const EdgeInsets.symmetric(
-              horizontal: TeslaTheme.spacingSm,
+              horizontal: AppTheme.spacingSm,
               vertical: 10,
             ),
             isDense: true,

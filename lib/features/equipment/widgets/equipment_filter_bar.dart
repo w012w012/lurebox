@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 
 class EquipmentFilterBar extends ConsumerWidget {
@@ -22,8 +22,8 @@ class EquipmentFilterBar extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: TeslaTheme.spacingMd,
-        vertical: TeslaTheme.spacingMicro,
+        horizontal: AppTheme.spacingMd,
+        vertical: AppTheme.spacingMicro,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,

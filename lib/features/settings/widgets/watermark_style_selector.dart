@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 
 class WatermarkStyleSelector extends StatelessWidget {
@@ -43,7 +43,7 @@ class WatermarkStyleSelector extends StatelessWidget {
           strings.watermarkTemplate,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: TeslaTheme.spacingSm),
+        const SizedBox(height: AppTheme.spacingSm),
         Row(
           children: styles.map((s) {
             final isSelected = settings.style == s.$1;
@@ -52,7 +52,7 @@ class WatermarkStyleSelector extends StatelessWidget {
                 onTap: () => onStyleChanged(s.$1),
                 child: Container(
                   margin: EdgeInsets.only(
-                    right: s != styles.last ? TeslaTheme.spacingSm : 0,
+                    right: s != styles.last ? AppTheme.spacingSm : 0,
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
@@ -62,7 +62,7 @@ class WatermarkStyleSelector extends StatelessWidget {
                             .primary
                             .withValues(alpha: 0.15)
                         : Theme.of(context).colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
                     border: Border.all(
                       color: isSelected
                           ? Theme.of(context).colorScheme.primary

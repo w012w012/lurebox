@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/settings_view_model.dart';
 import 'package:lurebox/core/services/export_service.dart';
@@ -82,16 +82,16 @@ class SettingsBackupSection extends ConsumerWidget {
       onTap: isLoading ? null : onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          vertical: TeslaTheme.spacingMd,
-          horizontal: TeslaTheme.spacingSm,
+          vertical: AppTheme.spacingMd,
+          horizontal: AppTheme.spacingSm,
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+              padding: const EdgeInsets.all(AppTheme.spacingSm),
               decoration: BoxDecoration(
                 color: accentColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
               ),
               child: Icon(
                 isLoading ? Icons.hourglass_empty : icon,
@@ -99,7 +99,7 @@ class SettingsBackupSection extends ConsumerWidget {
                 size: 22,
               ),
             ),
-            const SizedBox(width: TeslaTheme.spacingMd),
+            const SizedBox(width: AppTheme.spacingMd),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,7 +213,7 @@ class SettingsBackupSection extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const CircularProgressIndicator(),
-              const SizedBox(height: TeslaTheme.spacingMd),
+              const SizedBox(height: AppTheme.spacingMd),
               Text(strings.backupRunning),
             ],
           ),

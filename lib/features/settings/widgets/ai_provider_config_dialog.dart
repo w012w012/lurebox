@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/services/fish_recognition_service.dart';
@@ -74,7 +74,7 @@ class _AiProviderConfigDialogState
       title: Row(
         children: [
           Icon(_getProviderIcon(widget.provider), color: colorScheme.primary),
-          const SizedBox(width: TeslaTheme.spacingSm),
+          const SizedBox(width: AppTheme.spacingSm),
           Text('配置 ${widget.provider.displayName}'),
         ],
       ),
@@ -92,7 +92,7 @@ class _AiProviderConfigDialogState
                       color: colorScheme.onSurfaceVariant,
                     ),
               ),
-              const SizedBox(height: TeslaTheme.spacingLg),
+              const SizedBox(height: AppTheme.spacingLg),
 
               // API Key
               TextFormField(
@@ -122,7 +122,7 @@ class _AiProviderConfigDialogState
                   return null;
                 },
               ),
-              const SizedBox(height: TeslaTheme.spacingMd),
+              const SizedBox(height: AppTheme.spacingMd),
 
               // Base URL（可选）
               TextFormField(
@@ -149,7 +149,7 @@ class _AiProviderConfigDialogState
                       }
                     : null,
               ),
-              const SizedBox(height: TeslaTheme.spacingMd),
+              const SizedBox(height: AppTheme.spacingMd),
 
               // Model Name（可选）
               TextFormField(
@@ -163,17 +163,17 @@ class _AiProviderConfigDialogState
                 ),
                 textInputAction: TextInputAction.done,
               ),
-              const SizedBox(height: TeslaTheme.spacingLg),
+              const SizedBox(height: AppTheme.spacingLg),
 
               // 连接测试结果
               if (_testResult != null) ...[
                 Container(
-                  padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+                  padding: const EdgeInsets.all(AppTheme.spacingSm),
                   decoration: BoxDecoration(
                     color: _isTestSuccess
                         ? colorScheme.primaryContainer
                         : colorScheme.errorContainer,
-                    borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                    borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
                   ),
                   child: Row(
                     children: [
@@ -183,7 +183,7 @@ class _AiProviderConfigDialogState
                             ? colorScheme.primary
                             : colorScheme.error,
                       ),
-                      const SizedBox(width: TeslaTheme.spacingSm),
+                      const SizedBox(width: AppTheme.spacingSm),
                       Expanded(
                         child: Text(
                           _testResult!,
@@ -197,7 +197,7 @@ class _AiProviderConfigDialogState
                     ],
                   ),
                 ),
-                const SizedBox(height: TeslaTheme.spacingMd),
+                const SizedBox(height: AppTheme.spacingMd),
               ],
 
               // 测试连接按钮

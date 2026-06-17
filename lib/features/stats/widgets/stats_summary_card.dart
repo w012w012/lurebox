@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/providers/app_settings_provider.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
@@ -40,12 +40,12 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: TeslaTheme.transitionDuration,
+      duration: AppTheme.transitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: TeslaTheme.transitionCurve,
+      curve: AppTheme.transitionCurve,
     );
     _animationController.forward();
   }
@@ -87,10 +87,10 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
                 ),
               ],
             ),
-            const SizedBox(height: TeslaTheme.spacingMicro),
+            const SizedBox(height: AppTheme.spacingMicro),
             Container(
               padding:
-                  const EdgeInsets.symmetric(vertical: TeslaTheme.spacingSm),
+                  const EdgeInsets.symmetric(vertical: AppTheme.spacingSm),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
@@ -113,7 +113,7 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
                           ),
                     ),
                   ),
-                  const SizedBox(width: TeslaTheme.spacingSm),
+                  const SizedBox(width: AppTheme.spacingSm),
                   Expanded(
                     child: Text(
                       strings.quantity,
@@ -142,7 +142,7 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
             ...widget.speciesSummary.map(
               (item) => Container(
                 padding: const EdgeInsets.symmetric(
-                    vertical: TeslaTheme.spacingMicro,),
+                    vertical: AppTheme.spacingMicro,),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
@@ -163,7 +163,7 @@ class _StatsSummaryCardState extends ConsumerState<StatsSummaryCard>
                             ),
                       ),
                     ),
-                    const SizedBox(width: TeslaTheme.spacingSm),
+                    const SizedBox(width: AppTheme.spacingSm),
                     Expanded(
                       child: Text(
                         '${item['count']}${strings.fishCountUnit}',
@@ -217,12 +217,12 @@ class _EquipmentChartState extends State<EquipmentChart>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: TeslaTheme.transitionDuration,
+      duration: AppTheme.transitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: TeslaTheme.transitionCurve,
+      curve: AppTheme.transitionCurve,
     );
     _animationController.forward();
   }
@@ -256,7 +256,7 @@ class _EquipmentChartState extends State<EquipmentChart>
     return FadeTransition(
       opacity: _fadeAnimation,
       child: PremiumCard(
-        margin: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
+        margin: const EdgeInsets.only(bottom: AppTheme.spacingMicro),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -266,13 +266,13 @@ class _EquipmentChartState extends State<EquipmentChart>
                     fontWeight: FontWeight.w500,
                   ),
             ),
-            const SizedBox(height: TeslaTheme.spacingMicro),
+            const SizedBox(height: AppTheme.spacingMicro),
             ...sortedEntries.asMap().entries.map((entry) {
               final index = entry.key;
               final item = entry.value;
               final pct = (item.value / total * 100).toStringAsFixed(0);
               return Padding(
-                padding: const EdgeInsets.only(bottom: TeslaTheme.spacingMicro),
+                padding: const EdgeInsets.only(bottom: AppTheme.spacingMicro),
                 child: Row(
                   children: [
                     Container(
@@ -283,7 +283,7 @@ class _EquipmentChartState extends State<EquipmentChart>
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                    const SizedBox(width: TeslaTheme.spacingMicro),
+                    const SizedBox(width: AppTheme.spacingMicro),
                     Expanded(
                       child: Text(
                         item.key,
@@ -291,7 +291,7 @@ class _EquipmentChartState extends State<EquipmentChart>
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const SizedBox(width: TeslaTheme.spacingMicro),
+                    const SizedBox(width: AppTheme.spacingMicro),
                     Text(
                       '$pct%',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -300,7 +300,7 @@ class _EquipmentChartState extends State<EquipmentChart>
                                 Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                     ),
-                    const SizedBox(width: TeslaTheme.spacingMicro),
+                    const SizedBox(width: AppTheme.spacingMicro),
                     Text(
                       '${item.value}${widget.strings?.countSuffix ?? '条'}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(

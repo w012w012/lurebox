@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 
 /// 高级极简输入框组件
 /// 提供统一的输入框样式，符合Premium Minimalist设计系统
@@ -88,15 +88,15 @@ class PremiumTextField extends StatelessWidget {
         suffix: suffix,
         contentPadding: contentPadding ??
             const EdgeInsets.symmetric(
-              horizontal: TeslaTheme.spacingMd,
-              vertical: TeslaTheme.spacingMicro,
+              horizontal: AppTheme.spacingMd,
+              vertical: AppTheme.spacingMicro,
             ),
         filled: true,
         fillColor: isDark
             ? TeslaColors.carbonDark.withValues(alpha: 0.5)
             : TeslaColors.graphite.withValues(alpha: 0.06),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: BorderSide(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.12)
@@ -104,7 +104,7 @@ class PremiumTextField extends StatelessWidget {
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: BorderSide(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.12)
@@ -112,18 +112,18 @@ class PremiumTextField extends StatelessWidget {
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: const BorderSide(
             color: TeslaColors.electricBlue,
             width: 2,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: const BorderSide(color: TeslaColors.electricBlue),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide:
               const BorderSide(color: TeslaColors.electricBlue, width: 2),
         ),
@@ -211,15 +211,15 @@ class PremiumSearchField extends StatelessWidget {
               )
             : null,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: TeslaTheme.spacingMd,
-          vertical: TeslaTheme.spacingMicro,
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingMicro,
         ),
         filled: true,
         fillColor: isDark
             ? TeslaColors.carbonDark.withValues(alpha: 0.5)
             : TeslaColors.graphite.withValues(alpha: 0.06),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: BorderSide(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.12)
@@ -227,7 +227,7 @@ class PremiumSearchField extends StatelessWidget {
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: BorderSide(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.12)
@@ -235,7 +235,7 @@ class PremiumSearchField extends StatelessWidget {
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: const BorderSide(
             color: TeslaColors.electricBlue,
             width: 2,
@@ -314,15 +314,15 @@ class PremiumNumberField extends StatelessWidget {
         prefixText: prefixText,
         suffixText: suffixText,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: TeslaTheme.spacingMd,
-          vertical: TeslaTheme.spacingMicro,
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingMicro,
         ),
         filled: true,
         fillColor: isDark
             ? TeslaColors.carbonDark.withValues(alpha: 0.5)
             : TeslaColors.graphite.withValues(alpha: 0.06),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: BorderSide(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.12)
@@ -330,7 +330,7 @@ class PremiumNumberField extends StatelessWidget {
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: BorderSide(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.12)
@@ -338,18 +338,18 @@ class PremiumNumberField extends StatelessWidget {
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: const BorderSide(
             color: TeslaColors.electricBlue,
             width: 2,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: const BorderSide(color: TeslaColors.electricBlue),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide:
               const BorderSide(color: TeslaColors.electricBlue, width: 2),
         ),
@@ -470,15 +470,15 @@ class PremiumTextArea extends StatelessWidget {
         errorText: errorText,
         alignLabelWithHint: true,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: TeslaTheme.spacingMd,
-          vertical: TeslaTheme.spacingMicro,
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingMicro,
         ),
         filled: true,
         fillColor: isDark
             ? TeslaColors.carbonDark.withValues(alpha: 0.5)
             : TeslaColors.graphite.withValues(alpha: 0.06),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: BorderSide(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.12)
@@ -486,7 +486,7 @@ class PremiumTextArea extends StatelessWidget {
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: BorderSide(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.12)
@@ -494,18 +494,18 @@ class PremiumTextArea extends StatelessWidget {
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: const BorderSide(
             color: TeslaColors.electricBlue,
             width: 2,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: const BorderSide(color: TeslaColors.electricBlue),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide:
               const BorderSide(color: TeslaColors.electricBlue, width: 2),
         ),
@@ -579,15 +579,15 @@ class PremiumDropdown<T> extends StatelessWidget {
         errorText: errorText,
         prefixIcon: prefixIcon,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: TeslaTheme.spacingMd,
-          vertical: TeslaTheme.spacingMicro,
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingMicro,
         ),
         filled: true,
         fillColor: isDark
             ? TeslaColors.carbonDark.withValues(alpha: 0.5)
             : TeslaColors.graphite.withValues(alpha: 0.06),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: BorderSide(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.12)
@@ -595,7 +595,7 @@ class PremiumDropdown<T> extends StatelessWidget {
           ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: BorderSide(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.12)
@@ -603,18 +603,18 @@ class PremiumDropdown<T> extends StatelessWidget {
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: const BorderSide(
             color: TeslaColors.electricBlue,
             width: 2,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide: const BorderSide(color: TeslaColors.electricBlue),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           borderSide:
               const BorderSide(color: TeslaColors.electricBlue, width: 2),
         ),
@@ -628,7 +628,7 @@ class PremiumDropdown<T> extends StatelessWidget {
         ),
       ),
       dropdownColor: isDark ? TeslaColors.carbonDark : TeslaColors.white,
-      borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+      borderRadius: BorderRadius.circular(AppTheme.radiusCard),
       elevation: 4,
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lurebox/core/design/theme/animation_constants.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 
 /// Staggered reveal animation — fade in + slide up.
 ///
@@ -54,14 +54,14 @@ class _StaggeredRevealState extends State<StaggeredReveal>
     super.initState();
     if (widget.animation == null) {
       _controller = AnimationController(
-        duration: TeslaTheme.transitionDuration,
+        duration: AppTheme.transitionDuration,
         vsync: this,
       );
 
       _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
         CurvedAnimation(
           parent: _controller!,
-          curve: TeslaTheme.transitionCurve,
+          curve: AppTheme.transitionCurve,
         ),
       );
 
@@ -69,7 +69,7 @@ class _StaggeredRevealState extends State<StaggeredReveal>
           Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero).animate(
         CurvedAnimation(
           parent: _controller!,
-          curve: TeslaTheme.transitionCurve,
+          curve: AppTheme.transitionCurve,
         ),
       );
 

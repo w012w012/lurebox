@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lurebox/core/design/theme/animation_constants.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
 /// iOS-style Settings Tile widget.
@@ -65,10 +65,10 @@ class _SettingsTileState extends State<SettingsTile> {
       children: [
         // Icon container with blue accent
         Container(
-          padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+          padding: const EdgeInsets.all(AppTheme.spacingSm),
           decoration: BoxDecoration(
             color: accentColor.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+            borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
           ),
           child: Icon(
             widget.icon,
@@ -76,7 +76,7 @@ class _SettingsTileState extends State<SettingsTile> {
             size: 22,
           ),
         ),
-        const SizedBox(width: TeslaTheme.spacingMicro),
+        const SizedBox(width: AppTheme.spacingMicro),
 
         // Title and subtitle
         Expanded(
@@ -108,7 +108,7 @@ class _SettingsTileState extends State<SettingsTile> {
 
         // Trailing widget or chevron
         if (widget.trailing != null) ...[
-          const SizedBox(width: TeslaTheme.spacingSm),
+          const SizedBox(width: AppTheme.spacingSm),
           widget.trailing!,
         ] else if (shouldShowChevron) ...[
           Icon(
@@ -123,8 +123,8 @@ class _SettingsTileState extends State<SettingsTile> {
     // Wrap with animated scale for touch feedback
     tileContent = AnimatedScale(
       scale: _isPressed ? AnimationConstants.touchScale : 1.0,
-      duration: TeslaTheme.transitionDuration,
-      curve: TeslaTheme.transitionCurve,
+      duration: AppTheme.transitionDuration,
+      curve: AppTheme.transitionCurve,
       child: tileContent,
     );
 
@@ -132,8 +132,8 @@ class _SettingsTileState extends State<SettingsTile> {
     tileContent = PremiumCard(
       variant: widget.variant,
       padding: const EdgeInsets.symmetric(
-        horizontal: TeslaTheme.spacingMd,
-        vertical: TeslaTheme.spacingMicro,
+        horizontal: AppTheme.spacingMd,
+        vertical: AppTheme.spacingMicro,
       ),
       onTap: widget.onTap,
       showBorder: true,
@@ -149,7 +149,7 @@ class _SettingsTileState extends State<SettingsTile> {
           onTapDown: (_) => setState(() => _isPressed = true),
           onTapUp: (_) => setState(() => _isPressed = false),
           onTapCancel: () => setState(() => _isPressed = false),
-          borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+          borderRadius: BorderRadius.circular(AppTheme.radiusCard),
           splashColor: accentColor.withValues(alpha: 0.1),
           highlightColor: accentColor.withValues(alpha: 0.05),
           child: tileContent,
@@ -182,10 +182,10 @@ class SettingsSectionHeader extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(
-        left: TeslaTheme.spacingMd,
-        right: TeslaTheme.spacingMd,
-        top: TeslaTheme.spacingMd,
-        bottom: TeslaTheme.spacingSm,
+        left: AppTheme.spacingMd,
+        right: AppTheme.spacingMd,
+        top: AppTheme.spacingMd,
+        bottom: AppTheme.spacingSm,
       ),
       child: Row(
         children: [
@@ -222,9 +222,9 @@ class SettingsDivider extends StatelessWidget {
       height: 1,
       thickness: 1,
       color: dividerColor,
-      indent: TeslaTheme.spacingMd +
+      indent: AppTheme.spacingMd +
           22 +
-          TeslaTheme.spacingMicro, // Icon area width
+          AppTheme.spacingMicro, // Icon area width
     );
   }
 }

@@ -3,13 +3,15 @@ import 'package:lurebox/core/design/theme/app_colors.dart';
 
 /// Premium Minimalist 主题配置
 class AppTheme {
-  // 间距系统 (4px基础单位)
+  // 间距系统 (8px base unit — Tesla/DESIGN.md 规范)
   static const double spacingXs = 4;
   static const double spacingSm = 8;
-  static const double spacingMd = 12;
-  static const double spacingLg = 16;
-  static const double spacingXl = 24;
-  static const double spacingXxl = 32;
+  static const double spacingMd = 16;
+  static const double spacingLg = 24;
+  static const double spacingXl = 32;
+
+  // Tesla 兼容的间距别名
+  static const double spacingMicro = 4; // = spacingXs
 
   // 圆角系统
   static const double radiusSm = 6;
@@ -17,6 +19,14 @@ class AppTheme {
   static const double radiusLg = 16;
   static const double radiusXl = 24;
   static const double radiusFull = 9999;
+
+  // Tesla 兼容的圆角别名
+  static const double radiusMicro = 4;
+  static const double radiusCard = 12; // = radiusMd
+
+  // 过渡动画（Tesla 规范）
+  static const Duration transitionDuration = Duration(milliseconds: 330);
+  static const Curve transitionCurve = Cubic(0.16, 1, 0.3, 1);
 
   /// 浅色主题
   static ThemeData get light {

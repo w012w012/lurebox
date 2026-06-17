@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/settings_view_model.dart';
 import 'package:lurebox/core/widgets/error_view.dart';
@@ -68,7 +68,7 @@ class SettingsPage extends ConsumerWidget {
   ) {
     return ListView(
       children: [
-        const SizedBox(height: TeslaTheme.spacingMd),
+        const SizedBox(height: AppTheme.spacingMd),
 
         // Location Management
         SettingsTile(
@@ -78,7 +78,7 @@ class SettingsPage extends ConsumerWidget {
           showChevron: true,
           onTap: () => context.push('/settings/locations'),
         ),
-        const SizedBox(height: TeslaTheme.spacingSm),
+        const SizedBox(height: AppTheme.spacingSm),
 
         // Species Management
         SettingsTile(
@@ -88,7 +88,7 @@ class SettingsPage extends ConsumerWidget {
           showChevron: true,
           onTap: () => context.push('/species'),
         ),
-        const SizedBox(height: TeslaTheme.spacingSm),
+        const SizedBox(height: AppTheme.spacingSm),
 
         // AI Recognition Settings
         SettingsTile(
@@ -98,22 +98,22 @@ class SettingsPage extends ConsumerWidget {
           showChevron: true,
           onTap: () => context.push('/settings/ai'),
         ),
-        const SizedBox(height: TeslaTheme.spacingSm),
+        const SizedBox(height: AppTheme.spacingSm),
 
         // Units Settings - use existing section
         const SettingsUnitsSection(),
-        const SizedBox(height: TeslaTheme.spacingSm),
+        const SizedBox(height: AppTheme.spacingSm),
 
         // About Section - use existing section
         const SettingsAboutSection(),
-        const SizedBox(height: TeslaTheme.spacingLg),
+        const SizedBox(height: AppTheme.spacingLg),
 
         // Stats Card
         const SettingsStatsCard(),
-        const SizedBox(height: TeslaTheme.spacingXl),
+        const SizedBox(height: AppTheme.spacingXl),
 
         _buildFooter(context, strings),
-        const SizedBox(height: TeslaTheme.spacingXl),
+        const SizedBox(height: AppTheme.spacingXl),
       ],
     );
   }
@@ -124,7 +124,7 @@ class SettingsPage extends ConsumerWidget {
     AppStrings strings,
   ) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(TeslaTheme.spacingLg),
+      padding: const EdgeInsets.all(AppTheme.spacingLg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -133,25 +133,25 @@ class SettingsPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(child: _buildLocationCard(context, strings)),
-              const SizedBox(width: TeslaTheme.spacingMd),
+              const SizedBox(width: AppTheme.spacingMd),
               Expanded(child: _buildSpeciesCard(context, strings)),
-              const SizedBox(width: TeslaTheme.spacingMd),
+              const SizedBox(width: AppTheme.spacingMd),
               Expanded(child: _buildAiRecognitionCard(context, strings)),
             ],
           ),
-          const SizedBox(height: TeslaTheme.spacingMd),
+          const SizedBox(height: AppTheme.spacingMd),
           // Second row: Units and About in parallel
           const Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(child: SettingsUnitsSection()),
-              SizedBox(width: TeslaTheme.spacingMd),
+              SizedBox(width: AppTheme.spacingMd),
               Expanded(child: SettingsAboutSection()),
             ],
           ),
-          const SizedBox(height: TeslaTheme.spacingLg),
+          const SizedBox(height: AppTheme.spacingLg),
           Center(child: _buildFooter(context, strings)),
-          const SizedBox(height: TeslaTheme.spacingXl),
+          const SizedBox(height: AppTheme.spacingXl),
         ],
       ),
     );
@@ -172,7 +172,7 @@ class SettingsPage extends ConsumerWidget {
             Icons.auto_awesome,
             color: TeslaColors.electricBlue,
           ),
-          const SizedBox(width: TeslaTheme.spacingMd),
+          const SizedBox(width: AppTheme.spacingMd),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,7 +213,7 @@ class SettingsPage extends ConsumerWidget {
             Icons.location_on,
             color: TeslaColors.electricBlue,
           ),
-          const SizedBox(width: TeslaTheme.spacingMd),
+          const SizedBox(width: AppTheme.spacingMd),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,7 +254,7 @@ class SettingsPage extends ConsumerWidget {
             Icons.category,
             color: TeslaColors.electricBlue,
           ),
-          const SizedBox(width: TeslaTheme.spacingMd),
+          const SizedBox(width: AppTheme.spacingMd),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,7 +286,7 @@ class SettingsPage extends ConsumerWidget {
   Widget _buildFooter(BuildContext context, AppStrings strings) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: TeslaTheme.spacingXl),
+      padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingXl),
       child: Column(
         children: [
           Icon(
@@ -294,7 +294,7 @@ class SettingsPage extends ConsumerWidget {
             size: 48,
             color: TeslaColors.electricBlue,
           ),
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           Text(
             strings.protectionEcology,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -302,7 +302,7 @@ class SettingsPage extends ConsumerWidget {
                   color: TeslaColors.electricBlue,
                 ),
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
           Text(
             strings.reasonableRelease,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(

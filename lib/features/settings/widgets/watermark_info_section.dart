@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
@@ -43,7 +43,7 @@ class WatermarkInfoSection extends StatelessWidget {
                 Icons.info_outline,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              const SizedBox(width: TeslaTheme.spacingSm),
+              const SizedBox(width: AppTheme.spacingSm),
               Text(
                 strings.displayInfo,
                 style: Theme.of(
@@ -52,21 +52,21 @@ class WatermarkInfoSection extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           Text(
             strings.selectWatermarkInfo,
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: TeslaColors.graphite),
           ),
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           Text(
             strings.watermarkDragToSort,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                 ),
           ),
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           ReorderableListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -92,7 +92,7 @@ class WatermarkInfoSection extends StatelessWidget {
                 context,
               ).textTheme.bodySmall?.copyWith(color: TeslaColors.graphite),
             ),
-            const SizedBox(height: TeslaTheme.spacingSm),
+            const SizedBox(height: AppTheme.spacingSm),
             ...unselectedTypes.map((typeInfo) {
               return _WatermarkInfoTile(
                 key: ValueKey(typeInfo.type),
@@ -132,7 +132,7 @@ class _WatermarkInfoTile extends StatelessWidget {
                 context,
               ).colorScheme.primaryContainer.withValues(alpha: 0.3)
             : Colors.transparent,
-        borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+        borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
         border: Border.all(
           color: isSelected
               ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
@@ -146,7 +146,7 @@ class _WatermarkInfoTile extends StatelessWidget {
         title: Row(
           children: [
             Text(typeInfo.icon),
-            const SizedBox(width: TeslaTheme.spacingSm),
+            const SizedBox(width: AppTheme.spacingSm),
             Expanded(
               child: Text(
                 typeInfo.name,

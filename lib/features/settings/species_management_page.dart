@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
 import 'package:lurebox/core/providers/ai_recognition_provider.dart';
@@ -73,7 +73,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
     AppStrings strings,
   ) {
     return ListView(
-      padding: const EdgeInsets.all(TeslaTheme.spacingLg),
+      padding: const EdgeInsets.all(AppTheme.spacingLg),
       children: [
         PendingQueueWidget(
           pendingCatches: pendingCatches,
@@ -89,7 +89,7 @@ class _SpeciesManagementPageState extends ConsumerState<SpeciesManagementPage> {
           onBatchRecognize: () => _batchRecognize(pendingCatches),
           strings: strings,
         ),
-        const SizedBox(height: TeslaTheme.spacingXl),
+        const SizedBox(height: AppTheme.spacingXl),
         _SpeciesListSection(
           onRename: _showRenameDialog,
           onDelete: _showDeleteDialog,
@@ -460,7 +460,7 @@ class _SpeciesListSection extends ConsumerWidget {
         Row(
           children: [
             Icon(Icons.category, size: 20, color: accentColor),
-            const SizedBox(width: TeslaTheme.spacingSm),
+            const SizedBox(width: AppTheme.spacingSm),
             Text(
               ref.read(currentStringsProvider).speciesSaved,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -469,7 +469,7 @@ class _SpeciesListSection extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: TeslaTheme.spacingMd),
+        const SizedBox(height: AppTheme.spacingMd),
         speciesCountsAsync.when(
           data: (speciesCounts) {
             if (speciesCounts.isEmpty) {
@@ -527,7 +527,7 @@ class _SpeciesListSection extends ConsumerWidget {
             variant: PremiumCardVariant.flat,
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.all(TeslaTheme.spacingXl),
+                padding: const EdgeInsets.all(AppTheme.spacingXl),
                 child: const CircularProgressIndicator(),
               ),
             ),
@@ -570,8 +570,8 @@ class _SpeciesListItem extends StatelessWidget {
       onTap: () {}, // Placeholder for future expansion
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: TeslaTheme.spacingMd,
-          vertical: TeslaTheme.spacingSm,
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingSm,
         ),
         child: Row(
           children: [
@@ -580,7 +580,7 @@ class _SpeciesListItem extends StatelessWidget {
               height: 40,
               decoration: BoxDecoration(
                 color: accentColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
               ),
               child: Center(
                 child: Text(
@@ -593,7 +593,7 @@ class _SpeciesListItem extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: TeslaTheme.spacingMd),
+            const SizedBox(width: AppTheme.spacingMd),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

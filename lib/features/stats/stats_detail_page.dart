@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/models/app_settings.dart';
 import 'package:lurebox/core/models/fish_catch.dart';
@@ -99,12 +99,12 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
   void initState() {
     super.initState();
     _contentAnimationController = AnimationController(
-      duration: TeslaTheme.transitionDuration,
+      duration: AppTheme.transitionDuration,
       vsync: this,
     );
     _fadeAnimation = CurvedAnimation(
       parent: _contentAnimationController,
-      curve: TeslaTheme.transitionCurve,
+      curve: AppTheme.transitionCurve,
     );
     _loadDetail();
   }
@@ -487,7 +487,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                     children: [
                       SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.all(TeslaTheme.spacingMd),
+                        padding: const EdgeInsets.all(AppTheme.spacingMd),
                         child: _buildContent(
                           totalCount,
                           releaseCount,
@@ -509,7 +509,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                               width: MediaQuery.of(context).size.width,
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.all(TeslaTheme.spacingMd),
+                                    const EdgeInsets.all(AppTheme.spacingMd),
                                 child: _buildContent(
                                   totalCount,
                                   releaseCount,
@@ -549,7 +549,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
           keepCount: keepCount,
           releaseRate: releaseRate,
         ),
-        const SizedBox(height: TeslaTheme.spacingMd),
+        const SizedBox(height: AppTheme.spacingMd),
         if (_speciesStats.isNotEmpty) ...[
           SpeciesDistributionChart(
             speciesStats: _speciesStats,
@@ -562,7 +562,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
             weightUnit: weightUnit,
             isChinese: isChinese,
           ),
-          const SizedBox(height: TeslaTheme.spacingMd),
+          const SizedBox(height: AppTheme.spacingMd),
         ],
         if (_trendData.isNotEmpty) ...[
           CatchTrendChart(
@@ -574,7 +574,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
             trendType: _trendType,
             onTrendTypeChanged: _onTrendTypeChanged,
           ),
-          const SizedBox(height: TeslaTheme.spacingMd),
+          const SizedBox(height: AppTheme.spacingMd),
         ],
         if (_locationAnalysis.isNotEmpty) ...[
           LocationStatsCard(
@@ -587,7 +587,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
               });
             },
           ),
-          const SizedBox(height: TeslaTheme.spacingMd),
+          const SizedBox(height: AppTheme.spacingMd),
         ],
         if (_rodDistribution.isNotEmpty ||
             _reelDistribution.isNotEmpty ||
@@ -598,7 +598,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                   fontWeight: FontWeight.w500,
                 ),
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
         ],
         if (_rodDistribution.isNotEmpty)
           EquipmentChart(
@@ -625,7 +625,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
           PremiumCard(
             variant: PremiumCardVariant.flat,
             child: Padding(
-              padding: const EdgeInsets.all(TeslaTheme.spacingXl),
+              padding: const EdgeInsets.all(AppTheme.spacingXl),
               child: Center(
                 child: Column(
                   children: [
@@ -634,7 +634,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
                       size: 60,
                       color: Theme.of(context).colorScheme.outline,
                     ),
-                    const SizedBox(height: TeslaTheme.spacingMd),
+                    const SizedBox(height: AppTheme.spacingMd),
                     Text(
                       strings.noData,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -647,7 +647,7 @@ class _StatsDetailPageState extends ConsumerState<StatsDetailPage>
               ),
             ),
           ),
-        const SizedBox(height: TeslaTheme.spacingLg),
+        const SizedBox(height: AppTheme.spacingLg),
       ],
     );
   }

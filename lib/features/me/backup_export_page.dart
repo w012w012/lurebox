@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/providers/data_refresh.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/core/providers/settings_view_model.dart';
@@ -28,8 +28,8 @@ class BackupExportPage extends ConsumerWidget {
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(
-          horizontal: TeslaTheme.spacingMd,
-          vertical: TeslaTheme.spacingSm,
+          horizontal: AppTheme.spacingMd,
+          vertical: AppTheme.spacingSm,
         ),
         children: [
           // WebDAV备份
@@ -40,7 +40,7 @@ class BackupExportPage extends ConsumerWidget {
             subtitle: strings.syncToCloud,
             onTap: () => _showWebDAVDialog(context),
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
 
           // 导出CSV
           _buildSettingTile(
@@ -53,7 +53,7 @@ class BackupExportPage extends ConsumerWidget {
                 : () => _handleCsvExport(context, ref),
             isLoading: settingsState.isExporting,
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
 
           // 完整备份
           _buildSettingTile(
@@ -66,7 +66,7 @@ class BackupExportPage extends ConsumerWidget {
                 : () => _showFullBackupDialog(context, ref, strings),
             isLoading: settingsState.isCreatingZipBackup,
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
 
           // 恢复备份
           _buildSettingTile(
@@ -79,7 +79,7 @@ class BackupExportPage extends ConsumerWidget {
                 : () => _handleZipRestore(context, ref, strings),
             isLoading: settingsState.isRestoringZipBackup,
           ),
-          const SizedBox(height: TeslaTheme.spacingMicro),
+          const SizedBox(height: AppTheme.spacingMicro),
 
           // 文件管理
           _buildSettingTile(
@@ -89,7 +89,7 @@ class BackupExportPage extends ConsumerWidget {
             subtitle: strings.fileManagementDesc,
             onTap: () => context.push('/settings/export-backup'),
           ),
-          const SizedBox(height: TeslaTheme.spacingXl),
+          const SizedBox(height: AppTheme.spacingXl),
         ],
       ),
     );
@@ -109,23 +109,23 @@ class BackupExportPage extends ConsumerWidget {
       margin: EdgeInsets.zero,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+        borderRadius: BorderRadius.circular(AppTheme.radiusCard),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            vertical: TeslaTheme.spacingMd,
-            horizontal: TeslaTheme.spacingSm,
+            vertical: AppTheme.spacingMd,
+            horizontal: AppTheme.spacingSm,
           ),
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+                padding: const EdgeInsets.all(AppTheme.spacingSm),
                 decoration: BoxDecoration(
                   color: accentColor.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
                 ),
                 child: Icon(icon, color: accentColor, size: 22),
               ),
-              const SizedBox(width: TeslaTheme.spacingMd),
+              const SizedBox(width: AppTheme.spacingMd),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,7 +229,7 @@ class BackupExportPage extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const CircularProgressIndicator(),
-            const SizedBox(height: TeslaTheme.spacingMd),
+            const SizedBox(height: AppTheme.spacingMd),
             Text(strings.backupRunning),
           ],
         ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
@@ -35,7 +35,7 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: TeslaTheme.transitionDuration,
+      duration: AppTheme.transitionDuration,
       vsync: this,
     );
     _scaleAnimation = Tween<double>(
@@ -44,12 +44,12 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
     ).animate(
       CurvedAnimation(
         parent: _animationController,
-        curve: TeslaTheme.transitionCurve,
+        curve: AppTheme.transitionCurve,
       ),
     );
     _fadeAnimation = CurvedAnimation(
       parent: _animationController,
-      curve: TeslaTheme.transitionCurve,
+      curve: AppTheme.transitionCurve,
     );
     _animationController.forward();
   }
@@ -70,7 +70,7 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: PremiumCard(
-          padding: const EdgeInsets.all(TeslaTheme.spacingLg),
+          padding: const EdgeInsets.all(AppTheme.spacingLg),
           child: Column(
             children: [
               Text(
@@ -79,7 +79,7 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
                       fontWeight: FontWeight.w500,
                     ),
               ),
-              const SizedBox(height: TeslaTheme.spacingMicro),
+              const SizedBox(height: AppTheme.spacingMicro),
               Text(
                 '${widget.totalCount}',
                 style: const TextStyle(
@@ -89,14 +89,14 @@ class _MonthlyStatsCardState extends ConsumerState<MonthlyStatsCard>
                   height: 1,
                 ),
               ),
-              const SizedBox(height: TeslaTheme.spacingSm),
+              const SizedBox(height: AppTheme.spacingSm),
               Text(
                 '${widget.totalCount}${strings.fishCountUnit}',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
               ),
-              const SizedBox(height: TeslaTheme.spacingLg),
+              const SizedBox(height: AppTheme.spacingLg),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -156,17 +156,17 @@ class _AnimatedStatItemState extends State<_AnimatedStatItem>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: TeslaTheme.transitionDuration,
+      duration: AppTheme.transitionDuration,
       vsync: this,
     );
     _animation = CurvedAnimation(
       parent: _controller,
-      curve: TeslaTheme.transitionCurve,
+      curve: AppTheme.transitionCurve,
     );
 
     // Stagger the animation
     Future.delayed(
-      TeslaTheme.transitionDuration * widget.index,
+      AppTheme.transitionDuration * widget.index,
       () {
         if (mounted) {
           _controller.forward();
@@ -188,10 +188,10 @@ class _AnimatedStatItemState extends State<_AnimatedStatItem>
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+            padding: const EdgeInsets.all(AppTheme.spacingSm),
             decoration: BoxDecoration(
               color: widget.color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+              borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
             ),
             child: Icon(
               widget.isPercent ? Icons.percent : Icons.set_meal,
@@ -199,7 +199,7 @@ class _AnimatedStatItemState extends State<_AnimatedStatItem>
               size: 20,
             ),
           ),
-          const SizedBox(height: TeslaTheme.spacingSm),
+          const SizedBox(height: AppTheme.spacingSm),
           Text(
             '${widget.count}${widget.isPercent ? '%' : ''}',
             style: TextStyle(

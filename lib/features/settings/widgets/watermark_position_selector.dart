@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:lurebox/core/constants/strings.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/models/watermark_settings.dart';
 
 class WatermarkPositionSelector extends StatelessWidget {
@@ -52,7 +52,7 @@ class WatermarkPositionSelector extends StatelessWidget {
           strings.watermarkPositionLabel,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        const SizedBox(height: TeslaTheme.spacingSm),
+        const SizedBox(height: AppTheme.spacingSm),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: positions.map((pos) {
@@ -60,7 +60,7 @@ class WatermarkPositionSelector extends StatelessWidget {
             return GestureDetector(
               onTap: () => onPositionChanged(pos.$1),
               child: Container(
-                padding: const EdgeInsets.all(TeslaTheme.spacingSm),
+                padding: const EdgeInsets.all(AppTheme.spacingSm),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? Theme.of(context)
@@ -68,7 +68,7 @@ class WatermarkPositionSelector extends StatelessWidget {
                           .primary
                           .withValues(alpha: 0.2)
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(TeslaTheme.radiusMicro),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMicro),
                   border: Border.all(
                     color: isSelected
                         ? Theme.of(context).colorScheme.primary

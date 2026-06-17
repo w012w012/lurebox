@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/core/providers/language_provider.dart';
 import 'package:lurebox/widgets/common/premium_card.dart';
 
@@ -44,7 +44,7 @@ class _AchievementCollapseCardState
     super.initState();
     _isExpanded = widget.initiallyExpanded;
     _rotationController = AnimationController(
-      duration: TeslaTheme.transitionDuration,
+      duration: AppTheme.transitionDuration,
       vsync: this,
     );
     _rotationAnimation = Tween<double>(
@@ -53,7 +53,7 @@ class _AchievementCollapseCardState
     ).animate(
       CurvedAnimation(
         parent: _rotationController,
-        curve: TeslaTheme.transitionCurve,
+        curve: AppTheme.transitionCurve,
       ),
     );
 
@@ -183,7 +183,7 @@ class _AchievementCollapseCardState
             crossFadeState: _isExpanded
                 ? CrossFadeState.showSecond
                 : CrossFadeState.showFirst,
-            duration: TeslaTheme.transitionDuration,
+            duration: AppTheme.transitionDuration,
           ),
         ],
       ),
@@ -219,10 +219,10 @@ class _AchievementCollapseCardState
               return TweenAnimationBuilder<double>(
                 tween: Tween(begin: 0, end: 1),
                 duration: Duration(
-                  milliseconds: TeslaTheme.transitionDuration.inMilliseconds *
+                  milliseconds: AppTheme.transitionDuration.inMilliseconds *
                       (index + 1),
                 ),
-                curve: TeslaTheme.transitionCurve,
+                curve: AppTheme.transitionCurve,
                 builder: (context, value, child) {
                   return Opacity(
                     opacity: value,

@@ -5,7 +5,7 @@ import 'package:lurebox/core/camera/camera_state.dart';
 import 'package:lurebox/core/camera/camera_view_model.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
-import 'package:lurebox/core/design/theme/tesla_theme.dart';
+import 'package:lurebox/core/design/theme/app_theme.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';
 
 /// Camera view widget - displays camera preview with capture controls.
@@ -49,7 +49,7 @@ class CameraViewWidget extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(TeslaTheme.radiusCard),
+        borderRadius: BorderRadius.circular(AppTheme.radiusCard),
         child: CameraPreview(vm.cameraHelper.cameraController!),
       ),
     );
