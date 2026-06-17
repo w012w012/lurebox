@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lurebox/core/camera/camera_helper.dart';
-import 'package:lurebox/core/camera/camera_state.dart';
+import 'package:lurebox/features/camera/services/camera_helper.dart';
+import 'package:lurebox/features/camera/services/camera_state.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/di/di.dart';
 import 'package:lurebox/core/models/app_settings.dart';

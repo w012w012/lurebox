@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lurebox/core/camera/camera_state.dart';
-import 'package:lurebox/core/camera/camera_view_model.dart';
+import 'package:lurebox/features/camera/services/camera_state.dart';
+import 'package:lurebox/features/camera/services/camera_view_model.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/models/equipment.dart';
 import 'package:lurebox/widgets/common/premium_button.dart';

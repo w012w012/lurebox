@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lurebox/core/camera/camera_state.dart';
-import 'package:lurebox/core/camera/camera_view_model.dart';
+import 'package:lurebox/features/camera/services/camera_state.dart';
+import 'package:lurebox/features/camera/services/camera_view_model.dart';
 import 'package:lurebox/core/constants/strings.dart';
 import 'package:lurebox/core/design/theme/app_colors.dart';
 import 'package:lurebox/widgets/common/premium_input.dart';

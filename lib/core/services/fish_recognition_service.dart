@@ -1,17 +1,17 @@
 import 'dart:io';
 
 import 'package:lurebox/core/models/ai_recognition_settings.dart';
-import 'package:lurebox/core/services/adapters/aliyun_provider.dart';
-import 'package:lurebox/core/services/adapters/baidu_provider.dart';
-import 'package:lurebox/core/services/adapters/claude_provider.dart';
-import 'package:lurebox/core/services/adapters/custom_provider.dart';
-import 'package:lurebox/core/services/adapters/deepseek_provider.dart';
-import 'package:lurebox/core/services/adapters/gemini_provider.dart';
-import 'package:lurebox/core/services/adapters/minimax_provider.dart';
-import 'package:lurebox/core/services/adapters/openai_provider.dart';
-import 'package:lurebox/core/services/adapters/siliconflow_provider.dart';
-import 'package:lurebox/core/services/adapters/tencent_provider.dart';
-import 'package:lurebox/core/services/adapters/zhipu_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/aliyun_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/baidu_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/claude_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/custom_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/deepseek_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/gemini_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/minimax_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/openai_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/siliconflow_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/tencent_provider.dart';
+import 'package:lurebox/features/camera/services/adapters/zhipu_provider.dart';
 
 /// 鱼类识别结果
 class FishRecognitionResult {
